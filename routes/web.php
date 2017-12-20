@@ -28,7 +28,9 @@
 	Route::get('/login/{social}/callback','Auth\LoginController@handelProviderCallback')->where('social','facebook|google');
 
 	Route::get('/', 'HomeController@index');
-	Route::get('eat-later', 'HomeController@eatLater');
+	Route::post('eat-later', 'HomeController@eatLater');
+	Route::get('selectOrder-date', 'HomeController@selectOrderDate');
+	Route::get('eat-later-map', 'HomeController@eatLaterMap');
 	Route::get('eat-now', 'HomeController@index');
 	Route::get('restro-menu-list/{companyId}', 'HomeController@menuList');
 	Route::get('search-map-eatnow', 'MapController@searchMapEatnow');

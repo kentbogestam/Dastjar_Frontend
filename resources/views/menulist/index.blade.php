@@ -33,17 +33,17 @@
 													@endforeach
 												</p>
 												</div>
-											<input type="hidden" name="Product_{{$j}}" value="{{$menuDetail->product_id}}" />
+											<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />
 											<div class="qty-sec">
 												<input type="button" onclick="decrementValue('{{$menuDetail->product_id}}')" value="-"  class="min" />
-												<input type="text" name="ProductQuantity_{{$j}}" maxlength="2" max="10" size="1" value = 0 id="{{$menuDetail->product_id}}" />
+												<input type="text" name="product[{{$j}}][prod_quant]" maxlength="2" max="10" size="1" value = 0 id="{{$menuDetail->product_id}}" />
 												<input type="button" onclick="incrementValue('{{$menuDetail->product_id}}')" value="+" class="max" />
 											</div>
 											
 											<div class="extra-btn">
 													<label><img src="{{asset('images/icons/icon-wait-time.png')}}" width="15px">{{$menuDetail->preparation_Time}}</label>
 													<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('images/icons/icon-add-comments.png')}}" width="18px">Add Comments</a></label>
-													<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="ProductDiscription_{{$j}}" value="" />
+													<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="product[{{$j}}][prod_desc]" value="" />
 											</div>
 										</li>
 										<?php $j =$j+1 ?>
@@ -68,17 +68,17 @@
 													@endforeach
 												</p>
 												</div>
-											<input type="hidden" name="Product_{{$j}}" value="{{$menuDetail->product_id}}" />
+											<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />
 											<div class="qty-sec">
 												<input type="button" onclick="decrementValue('{{$menuDetail->product_id}}')" value="-"  class="min" />
-												<input type="text" name="ProductQuantity_{{$j}}" value="0" maxlength="2" max="10" size="1" id="{{$menuDetail->product_id}}" />
+												<input type="text" name="product[{{$j}}][prod_quant]" value="0" maxlength="2" max="10" size="1" id="{{$menuDetail->product_id}}" />
 												<input type="button" onclick="incrementValue('{{$menuDetail->product_id}}')" value="+" class="max" />
 											</div>
 
 											<div class="extra-btn">
 													<label><img src="{{asset('images/icons/icon-wait-time.png')}}" width="15px">{{$menuDetail->preparation_Time}}</label>
 													<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('images/icons/icon-add-comments.png')}}" width="18px">Add Comments</a></label>
-													<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="ProductDiscription_{{$j}}" value="" />
+													<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="product[{{$j}}][prod_desc]" value="" />
 											</div>
 										</li>
 										<?php $j =$j+1 ?>
@@ -111,7 +111,7 @@
 
 		<div data-role="footer" class="footer" data-position="fixed">
 			<div class="ui-grid-c inner-footer center">
-			<div class="ui-block-a"><a href="#" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
+			<div class="ui-block-a"><a href="{{ url('eat-now') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 				<div class="img-container">
 					<img src="{{asset('images/icons/select-store_01.png')}}">
 				</div>

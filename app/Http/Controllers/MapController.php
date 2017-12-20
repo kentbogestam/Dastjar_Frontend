@@ -37,6 +37,6 @@ class MapController extends Controller
     		$i++;
     	}
     	$latLngList = json_encode($latLng);
-        return view('map.index', compact('latLngList'));
+        return view('map.eatlater_map', compact('latLngList'));
     }
 }

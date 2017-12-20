@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use App\Exceptions\SocialAuthException;
 use Socialite;
 use App\User;
 use Auth;
@@ -44,8 +46,18 @@ class LoginController extends Controller
         return Socialite::driver($social)->redirect();
     }
 
-    public function handelProviderCallback($social){
-        $userSocial = Socialite::driver($social)->user();
+    public function handelProviderCallback( Request $request, $social){
+
+        if (!$request->has('code') || $request->has('denied')) {
+            return redirect('/');
+        }
+
+        try {
+            $userSocial = Socialite::driver($social)->user();
+        } catch (Exception $e) {
+            return redirect('/');
+        }
+        
         //dd($userSocial);
         //$user = User::where(['email' => $userSocial->getEmail()])->first();
         $user = User::where(['fac_id' => $userSocial->id])->first();

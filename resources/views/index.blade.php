@@ -1,22 +1,25 @@
 @extends('layouts.master')
 @section('content')
-	<div data-role="header" id="header">
-		<div class="logo">
-			<div class="inner-logo">
-				<img src="images/logo.png">
-				<span>Kent</span>
+	<div data-role="header" class="header" id="nav-header"  data-position="fixed"><!--  -->
+		<div class="nav_fixed">
+			<div class="logo">
+				<div class="inner-logo">
+					<img src="images/logo.png">
+					<span>Kent</span>
+				</div>
 			</div>
+			<a class="ui-btn-right map-btn user-link" onClick="makeRedirection('{{url('search-map-eatnow')}}')"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
 		</div>
-		<a class="ui-btn-right map-btn user-link" href="{{ url('search-map-eatnow') }}"><img src="images/icons/map-icon.png" width="30px"></a>
-	</div>
-	<div role="main" data-role="main-content" id="content">
 		<div class="cat-btn">
 			<div class="ui-grid-a top-btn">
-				<div class="ui-block-a"><a href="" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-active" class="active"><img src="images/icons/icon-eat-now-active.png" class="active"><img src="images/icons/icon-eat-now-inactive.png" class="inactive">Eat Now</a></div>
-				<div class="ui-block-b"><a href="{{ url('eat-later') }}" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-inactive"><img src="images/icons/icon-eat-later-active.png" class="active"><img src="images/icons/icon-eat-later-inactive.png" class="inactive">Eat Later</a></div>
+				<div class="ui-block-a"><a href="" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-active" class="active"><img src="{{asset('images/icons/icon-eat-now-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-now-inactive.png')}}" class="inactive">Eat Now</a></div>
+				<div class="ui-block-b"><a onClick="makeRedirection('{{url('selectOrder-date')}}')" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-inactive"><img src="{{asset('images/icons/icon-eat-later-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-later-inactive.png')}}" class="inactive">Eat Later</a></div>
 			</div>
 		</div>
-		<div class="cat-list-sec page-conatiner">
+	</div>
+	<div role="main" data-role="main-content" id="content">
+
+		<div class="cat-list-sec">
 			<ul data-role="listview" data-inset="true">
 
 				@foreach($companydetails as $companydetail)
@@ -84,6 +87,12 @@
 	var height = maincontent - (headerHeight + footerHeight);
 	/*alert( height);*/
 	$( '#content' ).height( height );
+
+
+	function makeRedirection(link){
+		window.location.href = link;
+	}
+
 </script>
 
 @endsection

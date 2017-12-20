@@ -66,7 +66,6 @@ $(document).ready(function($) {
 /* ============== qty box script =============== */
 function incrementValue(id)
 {
-
     var value = parseInt(document.getElementById(id).value, 10);
     value = isNaN(value) ? 0 : value;
     if(value<10){
@@ -88,7 +87,7 @@ function decrementValue(id)
 
 
 /* ==================== content height ============================ */
- 
+/* 
 $(document).ready(function($) {
     var headerHeight = $( '.header' ).height();
     var footerHeight = $( '.footer' ).height();
@@ -123,4 +122,4 @@ $(document).ready(function($) {
     })
  });
 
-
+*/
