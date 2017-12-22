@@ -8,16 +8,21 @@ use App\Company;
 
 use App\Store;
 
+use App\User;
+
 use App\Product;
 
 use DB;
+
+use Auth;
 
 class MapController extends Controller
 {
     //
 
     public function searchMapEatnow(){
-    	$restaurantLatLngList = Store::getRestaurantsList('27.398635','80.131693','1120','1','3');
+        $userDetail = User::whereId(Auth()->id())->first();
+    	$restaurantLatLngList = Store::getRestaurantsList($userDetail->customer_latitude,$userDetail->customer_longitude,'1','1','3');
     	$latLng = [];
     	$i = 0;
     	foreach ($restaurantLatLngList as $restaurantLatLng) {
@@ -29,7 +34,8 @@ class MapController extends Controller
     }
 
     public function searchMapEatlater(){
-    	$restaurantLatLngList = Store::getRestaurantsList('27.398635','80.131693','1120','2','3');
+        $userDetail = User::whereId(Auth()->id())->first();
+    	$restaurantLatLngList = Store::getRestaurantsList($userDetail->customer_latitude,$userDetail->customer_longitude,'1','2','3');
     	$latLng = [];
     	$i = 0;
     	foreach ($restaurantLatLngList as $restaurantLatLng) {

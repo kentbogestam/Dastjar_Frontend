@@ -36,7 +36,8 @@ class OrderController extends Controller
     	}
 
     	foreach ($data['product'] as $key => $value) {
-    		if($value['prod_quant'] != '0' && $value['prod_desc'] != null){
+            //if commant and quantity require then use condition "$value['prod_quant'] != '0' && $value['prod_desc'] != null"
+    		if($value['prod_quant'] != '0'){
 	    		$productTime = Product::select('preparation_Time','company_id')->whereProductId($value['id'])->first();
     			if($i == 0){
     				$order =  new Order();
@@ -79,5 +80,12 @@ class OrderController extends Controller
     	//$orderDetails = OrderDetail::select('*')->where('order_id',$orderId)->get();
     	$orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
     	return view('order.index', compact('order','orderDetails'));
+    }
+
+    public function orderView($orderId){
+        $order = Order::select('*')->where('order_id',$orderId)->first();
+
+        $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
+        return view('order.index', compact('order','orderDetails'));
     }
 }

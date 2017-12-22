@@ -8,6 +8,9 @@ use App\Product;
 use App\Company;
 use App\DishType;
 use Session;
+use DB;
+use App\User;
+use Auth;
 
 class HomeController extends Controller
 {
@@ -26,24 +29,40 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function userLatLong(Request $request){
+        $data = $request->input();
+
+        DB::table('customer')->where('id', Auth::id())->update([
+                    'customer_latitude' => $data['lat'],
+                    'customer_longitude' => $data['lng'],
+                ]);
+        $companydetails = Store::getListRestaurants($data['lat'],$data['lng'],'3','1','3');
+
+        
+        return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails]); 
+    }
     public function index()
     {
-        $companydetails = Store::getListRestaurants('28.584732','77.063363','1','1','3');
-         //dd($companydetails);
-        // $companydetails = Company::where('company_type' , '1')->orWhere('company_type' , '3')->with('products')->get();
+
+        $userDetail = User::whereId(Auth()->id())->first();
+        $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,'1','1','3');
+        
         return view('index', compact('companydetails'));
     }
 
     public function eatLater(Request $request){
         $data = $request->input();
         $request->session()->put('order_date', $data['dateorder']);
-        $companydetails = Store::getListRestaurants('28.584732','77.063363','1','2','3');
+        $userDetail = User::whereId(Auth()->id())->first();
+        $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,'1','2','3');
         //$companydetails = Company::where('company_type' , '2')->orWhere('company_type' , '3')->with('products')->get();
         return view('eat_later', compact('companydetails'));
     }
 
     public function eatLaterMap(){
-        $companydetails = Store::getListRestaurants('28.584732','77.063363','1','2','3');
+        $userDetail = User::whereId(Auth()->id())->first();
+        $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,'1','2','3');
         return view('eat_later', compact('companydetails'));
     }
 

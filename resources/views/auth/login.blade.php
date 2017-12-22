@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+<meta name="csrf-token" content="{{ csrf_token() }}">
 @section('content')
 <div class="login-page" data-role="page" data-theme="c">
     <div role="main" data-role="main-content" class="content">
@@ -20,4 +20,45 @@
         </div>
     </div>
 </div>
+<div id="login-popup" style="display: none;" class="login-popup" data-theme="a">
+  <div class="inner-popup">
+        <div id = "cancel-popup" class="cross"><img src="images/icons/cross.png"></div>
+        <div class="pop-body">
+           <p>please allow browser location</p>
+        </div>
+  </div>
+</div>
+@endsection
+@section('footer-script')
+
+
+    <script type="text/javascript">
+
+     $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+         });
+
+        $(function(){     
+
+// Check for Geolocation API permissions  
+navigator.geolocation.getCurrentPosition(function(position) { 
+
+    document.cookie="latitude=" + position.coords.latitude;
+    document.cookie="longitude=" + position.coords.longitude;
+    
+},function(error){
+    $('.login-inner-section a').attr('href','javascript:void(0)');
+    $('#login-popup').show();
+    
+});
+
+        });
+
+        $("#cancel-popup").click(function () {
+          $('#login-popup').hide();
+        });
+    
+</script>
 @endsection

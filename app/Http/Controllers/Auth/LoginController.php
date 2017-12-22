@@ -46,7 +46,7 @@ class LoginController extends Controller
         return Socialite::driver($social)->redirect();
     }
 
-    public function handelProviderCallback( Request $request, $social){
+    public function handelProviderCallback(Request $request, $social){
 
         if (!$request->has('code') || $request->has('denied')) {
             return redirect('/');

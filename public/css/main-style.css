@@ -72,6 +72,29 @@ a{text-decoration: none;}
 :focus{outline: none;}
 
 /* ======== login page design =============== */
+.login-popup{    
+  background: rgba(0, 0, 0, 0.25);
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+.login-popup .inner-popup{
+    width: 80%;
+    background: #fff;
+    top: 30%;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50% , -50%);
+    border-radius: 10px;
+    padding: 15px;
+}
+.login-popup .inner-popup p{ margin:0;padding: 0 }
+.cross{
+  position: absolute;
+    top: -5px;
+    right: -5px;
+}
+.cross img{ width: 18px; }
 .login-page [data-role="main-content"]{
   position: static;
 }
@@ -355,7 +378,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
 .setting-list .ui-radio-on:after{position: absolute;left: auto; right: 0; width: 20px; height: 20px; background: url("../images/icons/tick.png");    background-repeat: no-repeat; display: inline-block;}
 .setting-list input[type="radio"]{display: none;}
 .setting-list label{padding-left: 1em;}
-.order-active .ui-block-c a span{color: #86c22b !important}
+.order-active a span{color: #86c22b !important ; text-shadow: none;}
 /* ================= waiting for ready page design  ======================*/
 
 .wait-bg-img{background: url("../images/img-wait-for-ready.png");background-size: cover;
@@ -517,7 +540,10 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
 /* ==========setting page design here ====================*/
 .setting-page{background: url("../images/settings-bg.png")}.
 .ui-navbar li:last-child .ui-btn{margin-right: 0;}
-.setting-list{ margin: 1.2em 1em 0; background: #fff; border-radius: 10px;}
+.setting-list:first-child{
+  margin: 1.2em 1em 0;
+}
+.setting-list{ margin: .2em 1em 0; background: #fff; border-radius: 10px;}
 .setting-list a, .range-sec h2{color: #000; font-weight: normal;   border: none !important;
     border-bottom: 1px solid #ccc !important;     font-size: 1em;}
 .setting-list a p{color: rgba(0, 0, 0, 0.45) !important;     font-size: 1em; top: .6em !important}
@@ -563,11 +589,15 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
 	background: linear-gradient(to bottom, rgba(209,209,209,1) 0%, rgba(0,0,0,1) 87%, rgba(0,0,0,1) 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d1d1d1', endColorstr='#000000', GradientType=0 );
 }
-[data-role="footer"] .inner-footer a{
-	margin: 0; white-space: normal; padding: 0; border: none; box-shadow: none; text-align: center;
+[data-role="footer"] .inner-footer a{ text-shadow: none; margin: 0; white-space: normal; padding: 0; border: none; box-shadow: none; text-align: center;
 
 }
-
+[data-role="footer"] .ui-block-b .ui-btn{   
+  margin: 0;
+  padding: 0;
+  text-shadow: none;
+  color: #fff;
+}
 [data-role="footer"] .inner-footer > div{
 	text-align: center;
 }

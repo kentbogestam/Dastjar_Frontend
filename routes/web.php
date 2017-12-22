@@ -36,6 +36,9 @@
 	Route::get('search-map-eatnow', 'MapController@searchMapEatnow');
 	Route::get('search-map-eatlater', 'MapController@searchMapEatlater');
 	Route::post('save-order', 'OrderController@saveOrder');
+	Route::get('order-view/{OrderId}', 'OrderController@orderView');
+	Route::get('lat-long', 'HomeController@userLatLong');
+	Route::get('user-setting', 'CustomerController@index');
 
 
 

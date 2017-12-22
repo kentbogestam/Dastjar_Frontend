@@ -5,8 +5,7 @@
 		<div class="logo">
 			<div class="inner-logo">
 				<span class="rest-title">Domino's</span>
-				<span>poonam</span>
-				
+				<span>{{ Auth::user()->name}}</span>
 			</div>
 		</div>
 		<a class="ui-btn-right map-btn user-link" href="#left-side-bar"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
@@ -14,8 +13,6 @@
 	<div role="main" data-role="main-content" class="content">
 		<div id="map" style="height: 665px;"></div>
 	</div>
-
-
 
 	<div data-role="footer" class="footer" data-position="fixed">
 		<div class="ui-grid-c inner-footer center">
@@ -31,16 +28,38 @@
 			</div>
 			<span>send</span>
 		</a></div>
-		<div class="ui-block-c"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
-			<div class="img-container">
-				<img src="{{asset('images/icons/select-store_05.png')}}">
+		@if(count(Auth::user()->paidOrderList) == 0)
+			<div class="ui-block-c"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
+				<div class="img-container">
+					<img src="{{asset('images/icons/select-store_05.png')}}">
+				</div>
+				<span>Order</span>
+			</a></div>
+		@else
+			<div class="ui-block-c order-active">
+				<a href="#order-popup" data-transition="slideup" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline"  data-rel="popup">
+					<div class="img-container">
+						<!-- <img src="images/icons/select-store_05.png"> -->
+						<img src="{{asset('images/icons/select-store_05-active.png')}}">
+					</div>
+					<span >Order<span class="order-number">{{count(Auth::user()->paidOrderList)}}</span></span>
+				</a>
 			</div>
-			<span>Order</span>
-		</a></div>
+		@endif
 		<div class="ui-block-d"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
 			<div class="img-container"><img src="{{asset('images/icons/select-store_07.png')}}"></div>
 		</a></div>
 		</div>
+	</div>
+	<!-- pop-up -->
+	<div data-role="popup" id="order-popup" class="ui-content" data-theme="a">
+		<ul data-role="listview">
+			@foreach(Auth::user()->paidOrderList as $order)
+				<li>
+					<a href="{{ url('order-view/'.$order->order_id) }}" data-ajax="false">Order id - {{$order->order_id}}</a>
+				</li>
+			@endforeach
+		</ul>
 	</div>
 
 @endsection

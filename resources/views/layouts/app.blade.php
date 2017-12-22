@@ -7,7 +7,7 @@
     <div class="top-container">
         <div class="main-content">
             @yield('content')
-        </div>
+        </div>	
         @yield('footer-script')
     </div>
 </body>
