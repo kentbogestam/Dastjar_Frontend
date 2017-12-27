@@ -13,6 +13,15 @@ class ProductPriceList extends Model
         parent::__construct($attributes);
     }
 
+ 	public function menuPrice()
+    {
+    	return $this->hasMany('App\ProductPriceList','product_id','product_id');
+    }
+
+    public function storeProduct()
+    {
+    	return $this->hasMany('App\Product','product_id','product_id');
+    }
 
     protected $fillable = ['product_id', 'store_id', 'text', 'lang'];
     

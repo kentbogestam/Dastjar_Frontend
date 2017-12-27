@@ -61,7 +61,7 @@
 						</a>
 					</div>
 				@endif
-				<div class="ui-block-d"><a href="#" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
+				<div class="ui-block-d"><a href="{{url('user-setting')}}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container"><img src="images/icons/select-store_07.png"></div>
 				</a></div>
 			</div>

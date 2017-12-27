@@ -29,16 +29,22 @@
 
 	Route::get('/', 'HomeController@index');
 	Route::post('eat-later', 'HomeController@eatLater');
+	Route::get('eat-later', 'HomeController@eatLater');
 	Route::get('selectOrder-date', 'HomeController@selectOrderDate');
 	Route::get('eat-later-map', 'HomeController@eatLaterMap');
 	Route::get('eat-now', 'HomeController@index');
-	Route::get('restro-menu-list/{companyId}', 'HomeController@menuList');
+	Route::get('restro-menu-list/{storeID}', 'HomeController@menuList');
 	Route::get('search-map-eatnow', 'MapController@searchMapEatnow');
+	Route::get('search-store-map', 'MapController@searchStoreMap');
 	Route::get('search-map-eatlater', 'MapController@searchMapEatlater');
 	Route::post('save-order', 'OrderController@saveOrder');
 	Route::get('order-view/{OrderId}', 'OrderController@orderView');
 	Route::get('lat-long', 'HomeController@userLatLong');
 	Route::get('user-setting', 'CustomerController@index');
+	Route::post('save-setting', 'CustomerController@saveSetting');
+	Route::resource('customer', 'CustomerController');
+	Route::get('select-location', 'CustomerController@selectLocation');
+	Route::post('save-location', 'CustomerController@saveLocation');
 
 
 

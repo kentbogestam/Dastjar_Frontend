@@ -141,47 +141,53 @@
     function(returnedData){
 
     	//console.log(returnedData["data"]);
+    	var url = "{{url('restro-menu-list/')}}";
 
           var temp = returnedData["data"];
-
-
+          console.log(temp);
+          console.log(temp.length);
           var liItem = "";
-          for (var i=0;i<temp.length;i++){
-          	console.log(temp[i]["store_id"]);
+	          if(temp.length != 0){
 
-          	liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
-          	liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href='{{ url('restro-menu-list/'.$companydetail->company_id) }}'>";
-          	liItem += "<img src='images/img-store-3.png'>";
-          	liItem += "<h2>{{$companydetail->company_name}}</h2>";
-          	liItem += "<p>";
-          	
-          	for (var j=0;j<temp[i]["products"].length;j++){
-          		console.log(temp[i]["products"][j]);
-          		;
-          		if(j <= 1){
-          			liItem += temp[i]["products"][j]["product_name"];
-          		}   
-          		if(temp[i]["products"].length > 1 && j <= 1){
-          			liItem += ",&nbsp;";
-          		}
-          	}
+	          for (var i=0;i<temp.length;i++){
+	          	console.log(temp[i]["store_id"]);
 
-      		if(temp[i]["products"].length > 1){
-      			liItem += "&nbsp;&more";
-      		} 
-			liItem += "</p>";
-          	liItem += "<div class='ui-li-count ui-body-inherit'>";
-          	liItem += "<span>"+temp[i]["distance"].toFixed(2)+ "&nbsp;Km" + "</span>";
+	          	liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
+	          	liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+temp[i]['store_id']+">";
+	          	liItem += "<img src='images/img-store-3.png'>";
+	          	liItem += "<h2>"+temp[i]["company_name"]+"</h2>";
+	          	liItem += "<p>";
+	          	
+	          	for (var j=0;j<temp[i]["products"].length;j++){
+	          		console.log(temp[i]["products"][j]);
+	          		;
+	          		if(j <= 1){
+	          			liItem += temp[i]["products"][j]["product_name"];
+	          		}   
+	          		if(temp[i]["products"].length > 1 && j <= 1){
+	          			liItem += ",&nbsp;";
+	          		}
+	          	}
 
-          	liItem += "</div></a></li>";
+	      		if(temp[i]["products"].length > 1){
+	      			liItem += "&nbsp;&more";
+	      		} 
+				liItem += "</p>";
+	          	liItem += "<div class='ui-li-count ui-body-inherit'>";
+	          	liItem += "<span>"+temp[i]["distance"].toFixed(2)+ "&nbsp;Km" + "</span>";
 
-
-
-          	console.log(liItem);
+	          	liItem += "</div></a></li>";
+	          }
+        }else{
 
           }
+          	console.log(liItem);
+
+          
 
           $("#companyDetailContianer").append(liItem);	
+
+          
 
 		});
 	});

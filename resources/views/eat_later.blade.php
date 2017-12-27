@@ -19,11 +19,16 @@
 	</div>
 	<div role="main" data-role="main-content" id="content">
 		<div class="cat-list-sec">
+		@if(count($companydetails) == '0')
+		<div class="table-content">
+			<p>Restaurants are not available in this Area.</p>
+		</div>
+		@endif
 			<ul data-role="listview" data-inset="true">
 
 				@foreach($companydetails as $companydetail)
 					<li>
-						<a href="{{ url('restro-menu-list/'.$companydetail->company_id) }}">
+						<a href="{{ url('restro-menu-list/'.$companydetail->store_id) }}">
 							<img src="images/img-store-3.png">
 							<h2>{{$companydetail->company_name}}</h2>
 							<p>@foreach($companydetail->products as  $key => $product)
@@ -80,7 +85,7 @@
 				</a>
 			</div>
 		@endif
-		<div class="ui-block-d"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
+		<div class="ui-block-d"><a href = "{{url('user-setting')}}"  class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
 			<div class="img-container"><img src="{{asset('images/icons/select-store_07.png')}}"></div>
 		</a></div>
 		</div>

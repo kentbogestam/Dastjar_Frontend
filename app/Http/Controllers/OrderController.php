@@ -18,6 +18,7 @@ class OrderController extends Controller
     	//$request->session()->forget('order_date');
     	//dd($request->session()->get('order_date') != null);
     	$data = $request->input();
+        //dd($data['storeID']);
     	$i = 0;
     	$total_price = 0;
     	$max_time = "00:00:00";
@@ -42,6 +43,7 @@ class OrderController extends Controller
     			if($i == 0){
     				$order =  new Order();
 					$order->user_id = Auth::id();
+                    $order->store_id = $data['storeID'];
 					$order->company_id = $productTime->company_id;
 					$order->order_type = $orderType;
 					$order->deliver_date = $orderDate;

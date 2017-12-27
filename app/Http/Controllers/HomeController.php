@@ -11,6 +11,7 @@ use Session;
 use DB;
 use App\User;
 use Auth;
+use App\ProductPriceList;
 
 class HomeController extends Controller
 {
@@ -32,12 +33,12 @@ class HomeController extends Controller
 
     public function userLatLong(Request $request){
         $data = $request->input();
-
         DB::table('customer')->where('id', Auth::id())->update([
                     'customer_latitude' => $data['lat'],
                     'customer_longitude' => $data['lng'],
                 ]);
-        $companydetails = Store::getListRestaurants($data['lat'],$data['lng'],'3','1','3');
+        $userDetail = User::whereId(Auth()->id())->first();
+        $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3');
 
         
         return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails]); 
@@ -46,31 +47,51 @@ class HomeController extends Controller
     {
 
         $userDetail = User::whereId(Auth()->id())->first();
-        $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,'1','1','3');
+        $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3');
         
         return view('index', compact('companydetails'));
     }
 
     public function eatLater(Request $request){
-        $data = $request->input();
-        $request->session()->put('order_date', $data['dateorder']);
-        $userDetail = User::whereId(Auth()->id())->first();
-        $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,'1','2','3');
-        //$companydetails = Company::where('company_type' , '2')->orWhere('company_type' , '3')->with('products')->get();
-        return view('eat_later', compact('companydetails'));
+
+        if(!empty($request->input())) {
+
+            $data = $request->input();
+            $request->session()->put('order_date', $data['dateorder']);
+            $userDetail = User::whereId(Auth()->id())->first();
+            $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'2','3');
+            //$companydetails = Company::where('company_type' , '2')->orWhere('company_type' , '3')->with('products')->get();
+            return view('eat_later', compact('companydetails'));
+        } else {
+            $userDetail = User::whereId(Auth()->id())->first();
+            $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3');
+            
+            return view('index', compact('companydetails'));
+        }
     }
 
     public function eatLaterMap(){
         $userDetail = User::whereId(Auth()->id())->first();
-        $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,'1','2','3');
+        $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'2','3');
         return view('eat_later', compact('companydetails'));
     }
 
-    public function menuList(Request $request, $companyId){
-        $menuDetails = Product::where('company_id' , $companyId)->with('menuPrice')->get();
-        $menuTypes = DishType::where('company_id' , $companyId)->where('dish_activate','1')->get();
+    public function menuList(Request $request, $storeId){
+        $userDetail = User::whereId(Auth()->id())->first();
+        //$menuDetails = Product::where('company_id' , $companyId)->with('menuPrice')->get();
+        $menuDetails = ProductPriceList::where('store_id',$storeId)->with('menuPrice')->with('storeProduct')->get();
+        foreach ($menuDetails as $menuDetail) {
+            foreach ($menuDetail->storeProduct as $storeProduct) {
+                $companyId = $storeProduct->company_id;
+                $dish_typeId[] = $storeProduct->dish_type;
+            }
+        }
+        //dd(array_unique($dish_typeId));
+        $menuTypes = DishType::where('company_id' , $companyId)->whereIn('dish_id', array_unique($dish_typeId))->where('dish_activate','1')->where('dish_lang',$userDetail->language)->get();
+        $dish_typeId = null;
+        $request->session()->put('storeId'.Auth()->id(), $storeId);
         $companydetails = Company::where('company_id' , $companyId)->first();
-        return view('menulist.index', compact('menuDetails','companydetails','menuTypes'));
+        return view('menulist.index', compact('menuDetails','companydetails','menuTypes','storeId'));
 
     }
 
