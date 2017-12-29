@@ -28,7 +28,7 @@ class CustomerController extends Controller
                     'range' => $data['range-1b'],
                 ]);
         return redirect('customer')->with('success', 'Setting updated successfully.');
-        return view('settings.index', compact(''));
+        //return view('settings.index', compact(''));
         //dd($data['radio-choice-v-2']);
         //dd($data['range-1b']);
     }
@@ -38,16 +38,19 @@ class CustomerController extends Controller
     }
 
     public function saveLocation(Request $request){
-        $data = $request->input();
-        $address = Helper::getLocation($data['street_address']);
-        //dd($address['latitude'] != null && $address['longitude'] != null);
-        if($address['latitude'] != null && $address['longitude'] != null){
+        if(!empty($request->input())){
 
-            DB::table('customer')->where('id', Auth::id())->update([
-                    'customer_latitude' => $address['latitude'],
-                    'customer_longitude' => $address['longitude'],
-                    'address' => $address['street_address'],
-                ]);
+            $data = $request->input();
+            $address = Helper::getLocation($data['street_address']);
+            //dd($address['latitude'] != null && $address['longitude'] != null);
+            if($address['latitude'] != null && $address['longitude'] != null){
+
+                DB::table('customer')->where('id', Auth::id())->update([
+                        'customer_latitude' => $address['latitude'],
+                        'customer_longitude' => $address['longitude'],
+                        'address' => $address['street_address'],
+                    ]);
+            }
         }
         return view('settings.index', compact(''));
     }

@@ -31,13 +31,23 @@ class HomeController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function userLatLong(Request $request){
-        $data = $request->input();
-        DB::table('customer')->where('id', Auth::id())->update([
-                    'customer_latitude' => $data['lat'],
-                    'customer_longitude' => $data['lng'],
-                ]);
+    public function userLatLong(Request $request){        
+        
         $userDetail = User::whereId(Auth()->id())->first();
+
+        if(!empty($request->input())){
+            $data = $request->input();
+            if($userDetail->customer_latitude == null && $userDetail->customer_longitude == null){
+
+                DB::table('customer')->where('id', Auth::id())->update([
+                            'customer_latitude' => $data['lat'],
+                            'customer_longitude' => $data['lng'],
+                            'range' => '3',
+                            'language' => 'ENG',
+                        ]);
+            }
+        }
+        $request->session()->forget('order_date');
         $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3');
 
         
@@ -46,10 +56,23 @@ class HomeController extends Controller
     public function index()
     {
 
+        return view('index', compact(''));
+    }
+
+    public function eatNow()
+    {
+
         $userDetail = User::whereId(Auth()->id())->first();
+       //dd($userDetail);
         $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3');
-        
-        return view('index', compact('companydetails'));
+        //dd($companydetails);
+        return view('eat-now', compact('companydetails'));
+    }
+
+    public function eatLaterData(){
+        $userDetail = User::whereId(Auth()->id())->first();
+        $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'2','3');
+        return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails]); 
     }
 
     public function eatLater(Request $request){
@@ -58,10 +81,10 @@ class HomeController extends Controller
 
             $data = $request->input();
             $request->session()->put('order_date', $data['dateorder']);
-            $userDetail = User::whereId(Auth()->id())->first();
-            $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'2','3');
+            //$userDetail = User::whereId(Auth()->id())->first();
+            //$companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'2','3');
             //$companydetails = Company::where('company_type' , '2')->orWhere('company_type' , '3')->with('products')->get();
-            return view('eat_later', compact('companydetails'));
+            return view('eat_later', compact(''));
         } else {
             $userDetail = User::whereId(Auth()->id())->first();
             $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3');

@@ -10,9 +10,22 @@
 			  <li class="done-btn">  <input type="button" value="Done" id="dataSave"/></li> </ul> </div><!-- /navbar -->
 		</div>
 	</div>
+
 	<form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('save-setting') }}">
 		{{ csrf_field() }}
 		<div role="main" data-role="main-content" class="content">
+			@if ($message = Session::get('success'))
+				<div class="table-content sucess_msg">
+					<img src="{{asset('images/icons/Yes_Check_Circle.png')}}">
+					 @if(is_array($message))
+			            @foreach ($message as $m)
+			                {{ $languageStrings[$m] or $m }}
+			            @endforeach
+			        @else
+			            {{ $languageStrings[$message] or $message }}
+			        @endif
+			    </div>
+			@endif
 			<div class="setting-list">
 
 				<ul data-role="listview"> 
@@ -46,7 +59,7 @@
 						
 					</li>	
 					<!-- <li><a href="#">Unit <p class="ui-li-aside">Meter</p></a></li>  -->
-					<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">Range<p class="ui-li-aside">{{Auth::user()->range}}</p></h2>
+					<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">Range<p class="ui-li-aside">{{Auth::user()->range}} Km</p></h2>
 					<p>
 						<div data-role="rangeslider">
 						    <input type="range" name="range-1b" id="range-1b" min="3" max="10" value="">

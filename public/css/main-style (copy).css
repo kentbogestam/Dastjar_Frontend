@@ -399,7 +399,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
 .setting-list .ui-radio-on:after{position: absolute;left: auto; right: 0; width: 20px; height: 20px; background: url("../images/icons/tick.png");    background-repeat: no-repeat; display: inline-block;}
 .setting-list input[type="radio"]{display: none;}
 .setting-list label{padding-left: 1em;}
-.order-active a span{color: #86c22b !important ; text-shadow: none; font-size: 12.5px}
+.order-active a span{color: #86c22b !important ; text-shadow: none;}
 .sucess_msg{
     background: #e6f9caf2;
     margin-top: 1.4em !important;
@@ -652,21 +652,19 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     top: auto ;
-    bottom: -100em ;
+    bottom: -9em ;
     width: 8em;
-    height: auto;
+    height: 4em;
     display: inline-block;
     position: absolute;
     padding: 10px;  
     left: 50%;
     transform: translateX(-50%);
-    transition: 0.3s all linear;
+    transition: 0.4s all linear;
 }
 .hide-popup{
   
-  /*top: -5.5em !important;;*/
-  top: auto !important;
-    bottom: 3.5em !important;
+  top: -5.5em !important;;
   
 }
 [data-role="footer"] .inner-footer > div{

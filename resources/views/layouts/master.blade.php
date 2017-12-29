@@ -3,7 +3,7 @@
     @include('includes.head')
 <body>
     <div class="top-container">
-        <div class="main-content">
+        <div class="main-content ">
             @yield('content')
         </div>
         @yield('footer-script')

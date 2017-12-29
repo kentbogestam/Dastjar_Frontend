@@ -8,20 +8,23 @@
 					<span>{{ Auth::user()->name}}</span>
 				</div>
 			</div>
-			<a class="ui-btn-right map-btn user-link" onClick="makeRedirection('{{url('search-map-eatlater')}}')"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
+			<a class="ui-btn-right map-btn user-link" onClick="makeRedirection('{{url('search-map-eatnow')}}')"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
 		</div>
 		<div class="cat-btn">
 			<div class="ui-grid-a top-btn">
-				<div class="ui-block-a"><a onClick="makeRedirection('{{url('eat-now')}}')" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-inactive" class="active"><img src="{{asset('images/icons/icon-eat-now-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-now-inactive.png')}}" class="inactive">Eat Now</a></div>
-				<div class="ui-block-b"><a href="#" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-active"><img src="{{asset('images/icons/icon-eat-later-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-later-inactive.png')}}" class="inactive">Eat Later</a></div>
+				<div class="ui-block-a"><a href="" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-active" class="active"><img src="{{asset('images/icons/icon-eat-now-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-now-inactive.png')}}" class="inactive">Eat Now</a></div>
+				<div class="ui-block-b"><a onClick="makeRedirection('{{url('selectOrder-date')}}')" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-inactive"><img src="{{asset('images/icons/icon-eat-later-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-later-inactive.png')}}" class="inactive">Eat Later</a></div>
 			</div>
 		</div>
 	</div>
 	<div role="main" data-role="main-content" id="content">
+
 		<div class="cat-list-sec">
 			<ul data-role="listview" data-inset="true" id="companyDetailContianer">
 
 				
+
+
 			</ul>
 		</div>
 
@@ -35,56 +38,76 @@
 			</div>
 			<span>Restaurant</span>
 		</a></div>
-		<div class="ui-block-b"><a href = "#" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
+		<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
 			<div class="img-container">
 				<img src="{{asset('images/icons/select-store_03.png')}}">
 			</div>
 			<span>send</span>
 		</a></div>
 		@if(count(Auth::user()->paidOrderList) == 0)
-			<div class="ui-block-c"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
-				<div class="img-container">
-					<img src="{{asset('images/icons/select-store_05.png')}}">
-				</div>
-				<span>Order</span>
-			</a></div>
+			<div class="ui-block-c">
+				<a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
+					<div class="img-container">
+						<img src="{{asset('images/icons/select-store_05.png')}}">
+					</div>
+					<span>Order</span>
+				</a>
+			</div>
 		@else
 			<div class="ui-block-c order-active">
-		    	<a  class="ui-shadow ui-corner-all icon-img ui-btn-inline ordersec">
-			        <div class="img-container">
-			       		<!-- <img src="images/icons/select-store_05.png"> -->
-			        	<img src="images/icons/select-store_05-active.png">
-			        </div>
-		        	<span>Order<span class="order-number">{{count(Auth::user()->paidOrderList)}}</span></span>
-		        </a>
-		        <div id="order-popup" data-theme="a">
-			      <ul data-role="listview">
-			      	@foreach(Auth::user()->paidOrderList as $order)
-						<li>
-							<a href="{{ url('order-view/'.$order->order_id) }}" data-ajax="false">Order id - {{$order->order_id}}</a>
-						</li>
-					@endforeach
-			      </ul>
-			    </div>
-		    </div>
+				<a href="#order-popup" data-transition="slideup" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline"  data-rel="popup">
+					<div class="img-container">
+						<!-- <img src="images/icons/select-store_05.png"> -->
+						<img src="{{asset('images/icons/select-store_05-active.png')}}">
+					</div>
+					<span >Order<span class="order-number">{{count(Auth::user()->paidOrderList)}}</span></span>
+				</a>
+			</div>
 		@endif
-		<div class="ui-block-d"><a href = "{{url('user-setting')}}"  class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
+
+		<div class="ui-block-d"><a href = "{{url('user-setting')}}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
 			<div class="img-container"><img src="{{asset('images/icons/select-store_07.png')}}"></div>
 		</a></div>
 		</div>
 	</div>
+	<!-- pop-up -->
+	<div data-role="popup" id="order-popup" class="ui-content" data-theme="a">
+		<ul data-role="listview">
+			@foreach(Auth::user()->paidOrderList as $order)
+				<li>
+					<a href="{{ url('order-view/'.$order->order_id) }}" data-ajax="false">Order id - {{$order->order_id}}</a>
+				</li>
+			@endforeach
+		</ul>
+	</div>
+
+	
+
 @endsection
 
 @section('footer-script')
 
 <script type="text/javascript">
 
-	$(".ordersec").click(function(){
-	    $("#order-popup").toggleClass("hide-popup");
-	 });
-
 var list = Array();
 var totalCount = 0;
+
+	function getCookie(cname) {
+	    var name = cname + "=";
+	    var decodedCookie = decodeURIComponent(document.cookie);
+	    var ca = decodedCookie.split(';');
+	    for(var i = 0; i <ca.length; i++) {
+	        var c = ca[i];
+	        while (c.charAt(0) == ' ') {
+	            c = c.substring(1);
+	        }
+	        if (c.indexOf(name) == 0) {
+	            return c.substring(name.length, c.length);
+	        }
+	    }
+	    return "";
+	}
+
 
 	function makeRedirection(link){
 		window.location.href = link;
@@ -123,63 +146,68 @@ var totalCount = 0;
 
 	function  addMore(len){
 		var liItem = "";
-		var url = "{{url('restro-menu-list/')}}";
-		var limit = 0;
-		var countCheck = 1;
-		if(totalCount > 10){
-			limit = 10;
-			totalCount -= 10;
-		} else if(totalCount<=0){
-			return;
-		} else{
-			limit = totalCount;
-			totalCount -= totalCount;
-		}
+	            	var url = "{{url('restro-menu-list/')}}";
+	            	var limit = 0;
+	            	var countCheck = 1;
+ if(totalCount > 10){
+ 	limit = 10;
+ 	totalCount -= 10;
+ } else if(totalCount<=0){
+ 	return;
+ } else{
+ 	limit = totalCount;
+ 	totalCount -= totalCount;
+ }
 
 
-		for (var i=len;i<len + 10;i++){
+	          for (var i=len;i<len + 10;i++){
+	          
+	          	if(countCheck>limit){
+	          		break;
+	          	}
 
-			if(countCheck>limit){
-				break;
-			}
+	          	liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
+	          	liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+list[i]['store_id']+">";
+	          	liItem += "<img src='images/img-store-3.png'>";
+	          	liItem += "<h2>"+list[i]["store_name"]+"</h2>";
+	          	liItem += "<p>";
+	          	
+	          	for (var j=0;j<list[i]["products"].length;j++){
+	          		console.log(list[i]["products"][j]);
+	          		;
+	          		if(j <= 1){
+	          			liItem += list[i]["products"][j]["product_name"];
+	          		}   
+	          		if(list[i]["products"].length > 1 && j <= 1){
+	          			liItem += ",&nbsp;";
+	          		}
+	          	}
 
-			liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
-			liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+list[i]['store_id']+">";
-			liItem += "<img src='images/img-store-3.png'>";
-			liItem += "<h2>"+list[i]["store_name"]+"</h2>";
-			liItem += "<p>";
-			
-			for (var j=0;j<list[i]["products"].length;j++){
-				console.log(list[i]["products"][j]);
-				;
-				if(j <= 1){
-					liItem += list[i]["products"][j]["product_name"];
-				}   
-				if(list[i]["products"].length > 1 && j <= 1){
-					liItem += ",&nbsp;";
-				}
-			}
+	      		if(list[i]["products"].length > 1){
+	      			liItem += "&nbsp;&more";
+	      		} 
+				liItem += "</p>";
+	          	liItem += "<div class='ui-li-count ui-body-inherit'>";
+	          	liItem += "<span>"+list[i]["distance"].toFixed(2)+ "&nbsp;Km" + "</span>";
 
-			if(list[i]["products"].length > 1){
-				liItem += "&nbsp;&more";
-			} 
-		liItem += "</p>";
-			liItem += "<div class='ui-li-count ui-body-inherit'>";
-			liItem += "<span>"+list[i]["distance"].toFixed(2)+ "&nbsp;Km" + "</span>";
-
-			liItem += "</div></a></li>";
-			countCheck++;
-		}
-		$("#companyDetailContianer").append(liItem);	
+	          	liItem += "</div></a></li>";
+	          	countCheck++;
+	          }
+	            $("#companyDetailContianer").append(liItem);	
 	}
 
 
 
 	 $(function(){
-	$.get("{{url('eat-later-data')}}",
+
+
+	
+
+	$.get("{{url('lat-long')}}", { lat: getCookie("latitude"), lng : getCookie("longitude")}, 
     function(returnedData){
 
     	var count = 10;
+
     	//console.log(returnedData["data"]);
     	var url = "{{url('restro-menu-list/')}}";
 
