@@ -38,13 +38,13 @@ return [
     'facebook' => [
         'client_id' => '1505059276215071',
         'client_secret' => '8c91580ce59a5e18fb53aa30486d7fdb',
-        'redirect' => 'http://localhost/dast-jar-frontend/public/login/facebook/callback',
+        'redirect' => env('APP_URL').'/public/login/facebook/callback',
     ],
 
     'google' => [
         'client_id' => '138146471532-vmahv67i4a7uadabaficvl9734g9dlea.apps.googleusercontent.com',
         'client_secret' => 'h2eoa0iTmIhMxzP1rGO4D-X8',
-        'redirect' => 'http://localhost/dast-jar-frontend/public/login/google/callback',
+        'redirect' => env('APP_URL').'/public/login/google/callback',
     ],
 
 ];

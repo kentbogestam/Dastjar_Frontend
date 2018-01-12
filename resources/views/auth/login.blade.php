@@ -49,8 +49,8 @@ navigator.geolocation.getCurrentPosition(function(position) {
     document.cookie="longitude=" + position.coords.longitude;
     
 },function(error){
-    $('.login-inner-section a').attr('href','javascript:void(0)');
-    $('#login-popup').show();
+   $('.login-inner-section a').attr('href','javascript:void(0)');
+   $('#login-popup').show();
     
 });
 
