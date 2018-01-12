@@ -16,3 +16,9 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::group(['middleware' => ['api']], function () { 
+	Route::group(['prefix' => 'v1'], function () { 
+		Route::post('save-password', 'Api\v1\UsersController@savePassword');
+	});
+});

@@ -73,6 +73,10 @@ a{text-decoration: none;}
 
 
 /* ======== login page design =============== */
+.pac-container{
+  border-radius: 10px;
+border: 1px solid #ccc;
+}
 .login-popup{    
   background: rgba(0, 0, 0, 0.25);
   position: fixed;

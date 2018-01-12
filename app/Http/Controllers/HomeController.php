@@ -103,6 +103,7 @@ class HomeController extends Controller
         $userDetail = User::whereId(Auth()->id())->first();
         //$menuDetails = Product::where('company_id' , $companyId)->with('menuPrice')->get();
         $menuDetails = ProductPriceList::where('store_id',$storeId)->with('menuPrice')->with('storeProduct')->get();
+        //dd($menuDetails);
         foreach ($menuDetails as $menuDetail) {
             foreach ($menuDetail->storeProduct as $storeProduct) {
                 $companyId = $storeProduct->company_id;
