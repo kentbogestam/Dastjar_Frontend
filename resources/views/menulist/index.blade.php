@@ -35,9 +35,7 @@
 														<h2>{{$menuDetail->product_name}}</h2>
 													<p>{{$menuDetail->product_description}}</p>
 													<p class="price">
-														@foreach($productDetail->menuPrice as  $key => $menuPrices)
-															$ {{$menuPrices->price}}
-														@endforeach
+														${{$productDetail->price}}
 													</p>
 													</div>
 												<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />
@@ -63,6 +61,7 @@
 						@else
 							<div data-role="collapsible" data-iconpos="right"> <h3>{{$menuType->dish_name}}</h3> <p>
 							@foreach($menuDetails as $productDetail)
+							
 								@foreach($productDetail->storeProduct as $menuDetail)
 									@if($menuType->dish_id == $menuDetail->dish_type)
 										<ul data-role="listview" data-inset="true" >
@@ -72,9 +71,7 @@
 														<h2>{{$menuDetail->product_name}}</h2>
 													<p>{{$menuDetail->product_description}}</p>
 													<p class="price">
-														@foreach($productDetail->menuPrice as  $key => $menuPrices)
-															$ {{$menuPrices->price}}
-														@endforeach
+														${{$productDetail->price}}
 													</p>
 													</div>
 												<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />

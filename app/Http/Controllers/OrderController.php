@@ -29,15 +29,20 @@ class OrderController extends Controller
             $orderType;
             $orderDate;
             $orderTime;
+            $checkOrderDate;
             if($request->session()->get('order_date') != null){
                 $pieces = explode(" ", $request->session()->get('order_date'));
+                $date=date_create($pieces[3]."-".$pieces[1]."-".$pieces[2]);
+                $checkOrderDate = date_format($date,"Y-m-d");
                 $orderType = 'eat_later';
                 $orderDate = $pieces[0]." ".$pieces[1]." ".$pieces[2]." ".$pieces[3];
                 $orderTime = $pieces[4];
                 $request->session()->forget('order_date');
             }else{
+                $dt = Carbon::now();
+                $checkOrderDate = Carbon::now()->toDateString();
                 $orderType = 'eat_now';
-                $orderDate = Carbon::now()->toDateString();
+                $orderDate = $dt->formatLocalized('%A %d %B %Y');
                 $orderTime = Carbon::now()->toTimeString();
             }
 
@@ -53,6 +58,7 @@ class OrderController extends Controller
                         $order->order_type = $orderType;
                         $order->deliver_date = $orderDate;
                         $order->deliver_time = $orderTime;
+                        $order->check_deliveryDate = $checkOrderDate;
                         $order->save();
                         $orders = Order::select('*')->whereUserId(Auth::id())->orderBy('order_id', 'DESC')->first();
                         $orderId = $orders->order_id;
@@ -73,6 +79,9 @@ class OrderController extends Controller
                     $orderDetail->product_description = $value['prod_desc'];
                     $orderDetail->price = $productPrice->price;
                     $orderDetail->time = $productTime->preparation_Time;
+                    $orderDetail->company_id = $productTime->company_id;
+                    $orderDetail->store_id = $data['storeID'];
+                    $orderDetail->delivery_date = $checkOrderDate;
                     $orderDetail->save();
                 }
             }
