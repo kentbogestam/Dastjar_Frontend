@@ -15,6 +15,7 @@ class HttpsProtocol
      */
     public function handle($request, Closure $next)
     {
+        //dd('dddd');
         if (!$request->secure() && env('APP_ENV') === 'pro') {
             dd(redirect()->secure($request->getRequestUri()));
             return redirect()->secure($request->getRequestUri());
