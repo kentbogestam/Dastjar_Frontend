@@ -1,6 +1,5 @@
 <?php
-
-/**
+/*
  * Laravel - A PHP Framework For Web Artisans
  *
  * @package  Laravel
@@ -8,6 +7,7 @@
  */
 
 define('LARAVEL_START', microtime(true));
+
 
 /*
 |--------------------------------------------------------------------------
