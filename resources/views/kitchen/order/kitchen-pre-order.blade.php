@@ -44,83 +44,83 @@
 		
 			<div class="cat-list-sec single-restro-list-sec">
 				<div class="ui-grid-a">
-					@if($menuDetails == null || $menuTypes == null)
-						<p>Menu is not available.</p>
-					@else
-						<div class="ui-block-a">
-							<?php $i =0 ?>
-							<?php $j =1 ?>
-							@foreach($menuTypes as $menuType)
-								@if($i == 0)
-								<div data-role="collapsible" data-iconpos="right" data-collapsed="false"> <h3 class="">{{$menuType->dish_name}}</h3>
-									@foreach($menuDetails as $productDetail)
-										@foreach($productDetail->storeProduct as $menuDetail)
-											@if($menuType->dish_id == $menuDetail->dish_type)
-											<ul data-role="listview" data-inset="true">
-												<li>
-													<img class="product_image" src="{{asset('kitchenImages/pizza1.png')}}">
-													<div class="list-content">
-														<h2>{{$menuDetail->product_name}}</h2>
-													<p>{{$menuDetail->product_description}}</p>
-														<p class="price">
-															${{$productDetail->price}}
-													</p>
-													</div>
-													<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />
-													<div class="qty-sec">
-														<input type="button" onclick="decrementValue('{{$menuDetail->product_id}}')" value="-"  class="min" />
-														<input type="text" name="product[{{$j}}][prod_quant]" value="0" maxlength="2" max="10" size="1" id="{{$menuDetail->product_id}}" />
-														<input type="button" onclick="incrementValue('{{$menuDetail->product_id}}')" value="+" class="max" />
-													</div>
-													<div class="extra-btn">
-															<label><img src="{{asset('kitchenImages/icon-wait-time.png')}}" width="15px">{{$menuDetail->preparation_Time}}</label></label>
-															<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('kitchenImages/icon-add-comments.png')}}" width="18px">Add Comments</a></label>
-															<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="product[{{$j}}][prod_desc]" value="" />
-													</div>
-												</li>
-												<?php $j =$j+1 ?>
-											</ul>
-											@endif
-										@endforeach
+					<div class="ui-block-a">
+						@if($menuDetails == null || $menuTypes == null)
+							<p>Menu is not available.</p>
+						@else
+						<?php $i =0 ?>
+						<?php $j =1 ?>
+						@foreach($menuTypes as $menuType)
+							@if($i == 0)
+							<div data-role="collapsible" data-iconpos="right" data-collapsed="false"> <h3 class="">{{$menuType->dish_name}}</h3>
+								@foreach($menuDetails as $productDetail)
+									@foreach($productDetail->storeProduct as $menuDetail)
+										@if($menuType->dish_id == $menuDetail->dish_type)
+										<ul data-role="listview" data-inset="true">
+											<li>
+												<img class="product_image" src="{{asset('kitchenImages/pizza1.png')}}">
+												<div class="list-content">
+													<h2>{{$menuDetail->product_name}}</h2>
+												<p>{{$menuDetail->product_description}}</p>
+													<p class="price">
+														${{$productDetail->price}}
+												</p>
+												</div>
+												<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />
+												<div class="qty-sec">
+													<input type="button" onclick="decrementValue('{{$menuDetail->product_id}}')" value="-"  class="min" />
+													<input type="text" name="product[{{$j}}][prod_quant]" value="0" maxlength="2" max="10" size="1" id="{{$menuDetail->product_id}}" />
+													<input type="button" onclick="incrementValue('{{$menuDetail->product_id}}')" value="+" class="max" />
+												</div>
+												<div class="extra-btn">
+														<label><img src="{{asset('kitchenImages/icon-wait-time.png')}}" width="15px">{{$menuDetail->preparation_Time}}</label></label>
+														<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('kitchenImages/icon-add-comments.png')}}" width="18px">Add Comments</a></label>
+														<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="product[{{$j}}][prod_desc]" value="" />
+												</div>
+											</li>
+											<?php $j =$j+1 ?>
+										</ul>
+										@endif
 									@endforeach
-								</div>
-								<?php $i =1 ?>
-								@else
-								<div data-role="collapsible" data-iconpos="right"> <h3 class="">{{$menuType->dish_name}}</h3>
-									@foreach($menuDetails as $productDetail)
-										@foreach($productDetail->storeProduct as $menuDetail)
-											@if($menuType->dish_id == $menuDetail->dish_type)
-											<ul data-role="listview" data-inset="true">
-												<li>
-													<img class="product_image" src="{{asset('kitchenImages/pizza1.png')}}">
-													<div class="list-content">
-														<h2>{{$menuDetail->product_name}}</h2>
-													<p>{{$menuDetail->product_description}}</p>
-													<p class="price">${{$productDetail->price}}
-													 </p>
-													</div>
-													<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />
-													<div class="qty-sec">
-														<input type="button" onclick="decrementValue('{{$menuDetail->product_id}}')" value="-"  class="min" />
-														<input type="text" name="product[{{$j}}][prod_quant]" value="0" maxlength="2" max="10" size="1" id="{{$menuDetail->product_id}}" />
-														<input type="button" onclick="incrementValue('{{$menuDetail->product_id}}')" value="+" class="max" />
-													</div>
-													<div class="extra-btn">
-															<label><img src="{{asset('kitchenImages/icon-wait-time.png')}}" width="15px">{{$menuDetail->preparation_Time}}</label>
-															<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('kitchenImages/icon-add-comments.png')}}" width="18px">Add Comments</a></label>
-															<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="product[{{$j}}][prod_desc]" value="" />
-													</div>
-												</li>
-												<?php $j =$j+1 ?>
-											</ul>
-											@endif
-										@endforeach
+								@endforeach
+							</div>
+							<?php $i =1 ?>
+							@else
+							<div data-role="collapsible" data-iconpos="right"> <h3 class="">{{$menuType->dish_name}}</h3>
+								@foreach($menuDetails as $productDetail)
+									@foreach($productDetail->storeProduct as $menuDetail)
+										@if($menuType->dish_id == $menuDetail->dish_type)
+										<ul data-role="listview" data-inset="true">
+											<li>
+												<img class="product_image" src="{{asset('kitchenImages/pizza1.png')}}">
+												<div class="list-content">
+													<h2>{{$menuDetail->product_name}}</h2>
+												<p>{{$menuDetail->product_description}}</p>
+												<p class="price">${{$productDetail->price}}
+												 </p>
+												</div>
+												<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />
+												<div class="qty-sec">
+													<input type="button" onclick="decrementValue('{{$menuDetail->product_id}}')" value="-"  class="min" />
+													<input type="text" name="product[{{$j}}][prod_quant]" value="0" maxlength="2" max="10" size="1" id="{{$menuDetail->product_id}}" />
+													<input type="button" onclick="incrementValue('{{$menuDetail->product_id}}')" value="+" class="max" />
+												</div>
+												<div class="extra-btn">
+														<label><img src="{{asset('kitchenImages/icon-wait-time.png')}}" width="15px">{{$menuDetail->preparation_Time}}</label>
+														<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('kitchenImages/icon-add-comments.png')}}" width="18px">Add Comments</a></label>
+														<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="product[{{$j}}][prod_desc]" value="" />
+												</div>
+											</li>
+											<?php $j =$j+1 ?>
+										</ul>
+										@endif
 									@endforeach
-								</div>
-								@endif
-							@endforeach 
-						</div>
-					@endif
+								@endforeach
+							</div>
+							@endif
+						@endforeach
+						@endif
+					</div>
 					<div class="ui-block-b second-part">
 							<h3>Download the Web App to your Mobile and get 10% discount on your order</h3>
 							<div class="mid_para">
@@ -136,7 +136,7 @@
 							</form>
 							<h3>or use the QR code to get the App</h3>
 							<div class="scan_code">
-								<img src="{{asset('kitchenImages/bar-code.png')}}">
+								<img src="http://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=https://dastjar.com/dbuzzu/public/">
 							</div>
 					</div>
 				</div>
