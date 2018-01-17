@@ -63,7 +63,7 @@
 					      <ul data-role="listview">
 					      	@foreach(Auth::user()->paidOrderList as $order)
 								<li>
-									<a href="{{ url('order-view/'.$order->order_id) }}" data-ajax="false">Order id - {{$order->order_id}}</a>
+									<a href="{{ url('order-view/'.$order->order_id) }}" data-ajax="false">Order id - {{$order->customer_order_id}}</a>
 								</li>
 							@endforeach
 					      </ul>

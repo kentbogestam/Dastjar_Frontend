@@ -4,7 +4,7 @@
 		<div class="logo">
 			<div class="inner-logo">
 				<img src="{{asset('images/logo.png')}}">
-				<span>Kent</span>
+				<span>{{ Auth::user()->name}}</span>
 			</div>
 		</div>
 		<a class="ui-btn-right map-btn user-link" href="#left-side-bar"  data-ajax="false"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
@@ -15,7 +15,7 @@
 				<div class="text-content">
 					<p>We are preaparing your order </p>
 					<p>Order Number </p>
-					<p class="large-text">{{$order->order_id}}</p>
+					<p class="large-text">{{$order->customer_order_id}}</p>
 					<p>To be ready in {{$order->order_delivery_time}} mins
 						@if($order->order_type == 'eat_later')
 						{{$order->deliver_date}}
@@ -73,7 +73,7 @@
 		      <ul data-role="listview">
 		      	@foreach(Auth::user()->paidOrderList as $order)
 					<li>
-						<a href="{{ url('order-view/'.$order->order_id) }}" data-ajax="false">Order id - {{$order->order_id}}</a>
+						<a href="{{ url('order-view/'.$order->order_id) }}" data-ajax="false">Order id - {{$order->customer_order_id}}</a>
 					</li>
 				@endforeach
 		      </ul>
