@@ -12,7 +12,7 @@
 				<div class="order-ready-text">
 					<p>We are preaparing your order </p>
 					<p>Order Number </p>
-					<p class="order-no">{{$order->order_id}}</p>
+					<p class="order-no">{{$order->customer_order_id}}</p>
 					<p>To be ready in {{$order->order_delivery_time}} mins
 						@if($order->order_type == 'eat_later')
 						{{$order->deliver_date}}

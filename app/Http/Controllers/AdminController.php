@@ -188,6 +188,7 @@ class AdminController extends Controller
                         $productTime = Product::select('preparation_Time','company_id')->whereProductId($value['id'])->first();
                         if($i == 0){
                             $order =  new Order();
+                            $order->customer_order_id = $this->random_num(6);
                             $order->user_id = Auth::guard('admin')->user()->id;
                             $order->store_id = Auth::guard('admin')->user()->store_id;
                             $order->company_id = $productTime->company_id;
@@ -303,5 +304,25 @@ class AdminController extends Controller
         $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 
         return view('kitchen.order.order-detail', compact('order','orderDetails'));
+    }
+
+    public function random_num($size) {
+        $alpha_key = '';
+        $keys = range('A', 'Z');
+
+        for ($i = 0; $i < 3; $i++) {
+            $alpha_key .= $keys[array_rand($keys)];
+        }
+
+        $length = $size - 3;
+
+        $key = '';
+        $keys = range(0, 9);
+
+        for ($i = 0; $i < $length; $i++) {
+            $key .= $keys[array_rand($keys)];
+        }
+
+        return $alpha_key . $key;
     }
 }

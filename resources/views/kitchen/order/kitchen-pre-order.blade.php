@@ -33,7 +33,7 @@
         <ul data-role="listview" data-inset="true" style="min-width:210px;">
             <!-- <li data-role="list-divider">Choose an action</li> -->
             @foreach(Auth::guard('admin')->user()->kitchenPaidOrderList as $order)
-            	<li><a href="{{ url('kitchen/kitchen-order-view/'.$order->order_id) }}">Order - {{$order->order_id}}</a></li>
+            	<li><a href="{{ url('kitchen/kitchen-order-view/'.$order->order_id) }}">Order - {{$order->customer_order_id}}</a></li>
             @endforeach
         </ul>
 	</div>
