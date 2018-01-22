@@ -1,0 +1,8 @@
+{
+  "name": "GCM Notifications",
+  "description": "Chrome platform app.",
+  "manifest_version": 2,
+  "version": "0.1",
+  "permissions": ["gcm", "storage", "notifications"],
+  "gcm_sender_id": "826006507359"
+}
