@@ -29,6 +29,7 @@
 	Route::get('/login/{social}/callback','Auth\LoginController@handelProviderCallback')->where('social','facebook|google');
 
 	Route::get('/', 'HomeController@index');
+	Route::get('blank-view', 'HomeController@blankView');
 	Route::post('eat-later', 'HomeController@eatLater');
 	Route::get('eat-later', 'HomeController@eatLater');
 	Route::get('eat-later-data', 'HomeController@eatLaterData');

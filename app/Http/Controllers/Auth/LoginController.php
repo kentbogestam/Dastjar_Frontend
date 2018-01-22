@@ -63,7 +63,8 @@ class LoginController extends Controller
         $user = User::where(['fac_id' => $userSocial->id])->first();
         if($user){
             Auth::login($user);
-            return redirect()->action('HomeController@index');
+            return redirect()->action('HomeController@blankView');   //After some time remove this.
+            //return redirect()->action('HomeController@index');
         }else{
             $user = User::create([
                     'fac_id' => $userSocial->id,
@@ -71,7 +72,8 @@ class LoginController extends Controller
                     'email' => $userSocial->email,
                 ]);
             Auth::login($user);
-            return redirect()->action('HomeController@index');
+            return redirect()->action('HomeController@blankView');
+            //return redirect()->action('HomeController@index');
         }
     }
 }

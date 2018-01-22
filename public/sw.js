@@ -12,7 +12,7 @@ self.addEventListener('activate', function(event) {
 self.addEventListener('push', function(event) {
  console.log('Push message', event);
   var title = 'Push message';
-  var FETCH_ENDPOINT = "https://in-api.shephertz.com/cloud/1.0/storage/getAllNotications/deviceId/";  
+  var FETCH_ENDPOINT = "https://api.shephertz.com/cloud/1.0/storage/getAllNotications/deviceId/";  
 	event.waitUntil(self.registration.pushManager.getSubscription().then(function(subscription) {
         var regID = null;
         if ('subscriptionId' in subscription) {

@@ -59,6 +59,10 @@ class HomeController extends Controller
         return view('index', compact(''));
     }
 
+    public function blankView(){
+      return view('blankPage');    
+    }
+
     public function eatNow()
     {
 
