@@ -16,7 +16,7 @@
               App42.enableEventService(true);
               var userName;
               new Fingerprint2().get(function(result, components){
-                  userName = "{{ Auth::user()->name}}";
+                  userName = "{{ Auth::user()->email}}";
                   console.log("Username : " + userName); //a hash, representing your device fingerprint
                   App42.setLoggedInUser(userName);
                   getDeviceToken();
