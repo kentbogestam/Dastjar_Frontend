@@ -36,7 +36,7 @@ class AdminController extends Controller
             $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
             $reCompanyId = $companydetails->company_id;
 
-            $orderDetailscustomer = Order::select('orders.*','customer.name as name')->where(['company_id' => $reCompanyId])->where('user_type','!=','admin')->where('check_deliveryDate',Carbon::now()->toDateString())->join('customer','orders.user_id','=','customer.id');
+            $orderDetailscustomer = Order::select('orders.*','customer.name as name')->where(['company_id' => $reCompanyId])->where('user_type','=','customer')->where('check_deliveryDate',Carbon::now()->toDateString())->join('customer','orders.user_id','=','customer.id');
             $orderDetails = Order::select('orders.*','user.fname as name')->where('orders.company_id', '=' ,$reCompanyId)->where('user_type','=','admin')->where('check_deliveryDate',Carbon::now()->toDateString())->join('user','orders.user_id','=','user.id');
             $results = $orderDetailscustomer->union($orderDetails)->get();
 
@@ -44,7 +44,7 @@ class AdminController extends Controller
             //In this function where condition work store_id
             $reCompanyId = Auth::guard('admin')->user()->store_id;
 
-            $orderDetailscustomer = Order::select('orders.*','customer.name as name')->where(['store_id' => $reCompanyId])->where('user_type','!=','admin')->where('check_deliveryDate',Carbon::now()->toDateString())->join('customer','orders.user_id','=','customer.id');
+            $orderDetailscustomer = Order::select('orders.*','customer.name as name')->where(['store_id' => $reCompanyId])->where('user_type','=','customer')->where('check_deliveryDate',Carbon::now()->toDateString())->join('customer','orders.user_id','=','customer.id');
             $orderDetails = Order::select('orders.*','user.fname as name')->where('orders.store_id', '=' ,$reCompanyId)->where('user_type','=','admin')->where('check_deliveryDate',Carbon::now()->toDateString())->join('user','orders.user_id','=','user.id');
             $results = $orderDetailscustomer->union($orderDetails)->get();
         }
@@ -99,7 +99,7 @@ class AdminController extends Controller
     }
 
     public function orderReady(Request $request, $orderID){
-        dd($orderID);
+        return view('order.alert-ready',compact('orderID'));
     }
 
     public function cateringDetails(){

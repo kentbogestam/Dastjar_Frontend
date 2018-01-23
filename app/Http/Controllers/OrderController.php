@@ -57,6 +57,7 @@ class OrderController extends Controller
                         $order->store_id = $data['storeID'];
                         $order->company_id = $productTime->company_id;
                         $order->order_type = $orderType;
+                        $order->user_type = 'customer';
                         $order->deliver_date = $orderDate;
                         $order->deliver_time = $orderTime;
                         $order->check_deliveryDate = $checkOrderDate;

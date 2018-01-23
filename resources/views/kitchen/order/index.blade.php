@@ -82,7 +82,7 @@
 			var count = 18;
 			var temp = returnedData["data"];
           	list = temp;
-          	console.log(temp.length);
+          	//console.log(temp.length);
           	var liItem = "";
           	if(temp.length != 0){
           		totalCount = temp.length;
