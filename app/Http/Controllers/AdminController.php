@@ -26,7 +26,7 @@ class AdminController extends Controller
     }
 
     public function index(){
-        return view('kitchen.order.index');
+              return view('kitchen.order.index');
     }
 
     public function orderDetail(){
@@ -46,7 +46,7 @@ class AdminController extends Controller
 
             $orderDetailscustomer = Order::select('orders.*','customer.name as name')->where(['store_id' => $reCompanyId])->where('user_type','=','customer')->where('check_deliveryDate',Carbon::now()->toDateString())->join('customer','orders.user_id','=','customer.id');
             $orderDetails = Order::select('orders.*','user.fname as name')->where('orders.store_id', '=' ,$reCompanyId)->where('user_type','=','admin')->where('check_deliveryDate',Carbon::now()->toDateString())->join('user','orders.user_id','=','user.id');
-            $results = $orderDetailscustomer->union($orderDetails)->get();
+            $results = $orderDetailscustomer->union($orderDetails)->get();           
         }
         // $user = Admin::where(['u_id' => Auth::guard('admin')->user()->company_id])->first();
         return response()->json(['status' => 'success', 'response' => true,'data'=>$results]);
