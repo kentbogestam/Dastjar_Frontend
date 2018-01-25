@@ -63,7 +63,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c70711', end
     border-width: 0px;}
 .table_size input.yes_check{background: #7cc576;box-shadow: inset 0px 3px 3px 0px #466f42;}
 .table_size input.no_check{background: #ffae00;box-shadow: inset 0px 3px 3px 0px #ca8a00}
-.footer_container .ui-block-a.active{ background: rgba(171,8,16,1);
+.ui-block-b.hover_colr:hover{color: #fff; background: rgba(171,8,16,1);
+background: -moz-linear-gradient(top, rgba(171,8,16,1) 0%, rgba(88,12,15,1) 100%);
+background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(171,8,16,1)), color-stop(100%, rgba(88,12,15,1)));
+background: -webkit-linear-gradient(top, rgba(171,8,16,1) 0%, rgba(88,12,15,1) 100%);
+background: -o-linear-gradient(top, rgba(171,8,16,1) 0%, rgba(88,12,15,1) 100%);
+background: -ms-linear-gradient(top, rgba(171,8,16,1) 0%, rgba(88,12,15,1) 100%);
+background: linear-gradient(to bottom, rgba(171,8,16,1) 0%, rgba(88,12,15,1) 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ab0810', endColorstr='#580c0f', GradientType=0 );}
+.footer_container .block_div.active{ background: rgba(171,8,16,1);
 background: -moz-linear-gradient(top, rgba(171,8,16,1) 0%, rgba(88,12,15,1) 100%);
 background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(171,8,16,1)), color-stop(100%, rgba(88,12,15,1)));
 background: -webkit-linear-gradient(top, rgba(171,8,16,1) 0%, rgba(88,12,15,1) 100%);
@@ -77,7 +85,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ab0810', end
 .ui-block-b.right-side_menu .ui-block-b.middle-menu{width: 32%;}
 .left-side_menu a.ui-shadow{box-shadow: none;}
 .right-side_menu a.ui-shadow{box-shadow: none;}
-.footer_container .ui-block-a.active span{color:#fff; text-shadow: none;}
+.footer_container .block_div.active span{color:#fff; text-shadow: none;}
 .footer_container .img-container img{width: 2.5em;}
 .footer_container .img-container{float: left;}
 .footer_container .ui-btn{border-color: transparent;box-shadow: none;background: transparent;border: none;} 
@@ -194,10 +202,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ab0810', end
 }
 /*.perfect-datetimepicker .ui-btn-icon-right:after{width: 30px;height: 30px;}*/
 
-.ui-page-theme-a .ui-btn:active, .ui-page-theme-a .ui-btn:hover, .ui-page-theme-a .ui-btn:focus{
+/*.ui-page-theme-a .ui-btn:active, .ui-page-theme-a .ui-btn:hover, .ui-page-theme-a .ui-btn:focus{
         background: #c2444c;
     color: #fff;
-}
+}*/
 
 /*.perfect-datetimepicker table.tt tbody td{width: 5em;}*/
 /*end of date time picker page*/
@@ -226,6 +234,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c70711', end
 .top_two-menu .img-container img{    width: 2em;margin-right: .5em;}
 .top_two-menu .ui-grid-a>.ui-block-a,.top_two-menu .ui-grid-a>.ui-block-b{width: 18%;}
 .top_two-menu .ui-grid-a>.ui-block-a{border-right: 1px solid rgba(0, 0, 0, 0.5);}
+.top_two-menu .ui-grid-a>.ui-block-b{border-right: 1px solid rgba(0, 0, 0, 0.5);}
 .top_two-menu .ui-btn{ padding: .5em 1em; margin: .4em 0;border-color: transparent;box-shadow: none;background:transparent;border: transparent;}
 .top_two-menu .ui-btn:hover{background:transparent;border: transparent;}
 .top_two-menu span{vertical-align: -webkit-baseline-middle;color: #fff;text-align: left;white-space: normal;font-size: 1em;}
