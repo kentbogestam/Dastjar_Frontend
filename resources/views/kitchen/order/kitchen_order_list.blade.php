@@ -9,6 +9,20 @@
 		<h3 class="ui-bar ui-bar-a order_background">Kitchen</h3>
 	</div>
 	<div role="main" class="ui-content">
+		<div class="ready_notification">
+			@if ($message = Session::get('success'))
+			<div class="table-content sucess_msg">
+				<img src="{{asset('images/icons/Yes_Check_Circle.png')}}">
+				 @if(is_array($message))
+		            @foreach ($message as $m)
+		                {{ $languageStrings[$m] or $m }}
+		            @endforeach
+		        @else
+		            {{ $languageStrings[$message] or $message }}
+		        @endif
+		    </div>
+		@endif
+		</div>
 		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow table-stripe ui-responsive table_size" >
 		 	<thead>
 		 		<tr class="ui-bar-d">
@@ -73,6 +87,7 @@
 	<script type="text/javascript">
 		var list = Array();
 		var totalCount = 0;
+		var totallength = 0;
 		var url = "{{url('kitchen/order-started')}}";
 		var urlReady = "{{url('kitchen/order-readyKitchen')}}";
 
@@ -85,6 +100,7 @@
 	          	list = temp;
 	          	console.log(temp.length);
 	          	var liItem = "";
+	          	totallength = temp.length;
 	          	if(temp.length != 0){
 	          		totalCount = temp.length;
 
@@ -94,6 +110,9 @@
 
 		          	totalCount -= 10;
 		          	for (var i=0;i<count;i++){
+		          		if(i>=totallength){
+				      		break;
+				      	}
 		          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
 		          		liItem += "<tr>";
 		          		liItem += "<th>"+temp[i]["order_id"]+"</th>";
@@ -157,6 +176,9 @@
 
 		          	totalCount -= 10;
 		          	for (var i=0;i<count;i++){
+		          		if(i>totallength){
+				      		break;
+				      	}
 		          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
 		          		liItem += "<tr>";
 		          		liItem += "<th>"+temp[i]["order_id"]+"</th>";
@@ -227,7 +249,11 @@
 			    	});
 			    	setTimeout(function () {
 			         addMore(tempCount);
-			         tempCount += 10;
+			         if(tempCount<totallength){
+			         	tempCount += 10;
+			         }else{
+			         	tempCount = 18;
+			         }
 			         $.mobile.loading("hide");
 			     },500);
 	    	}
@@ -250,7 +276,13 @@
 
 	      for (var i=len;i<len + 10;i++){
 	      //console.log(returnedData["data"]);
-
+	      console.log("len="+len);
+	      console.log("i="+i);
+	      console.log("totallength="+totallength);
+	      	if(i>=totallength){
+	      		tempCount = 10;
+	      		break;
+	      	}
 	      	if(countCheck>limit){
 	      		break;
 	      	}

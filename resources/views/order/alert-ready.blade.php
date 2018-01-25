@@ -5,7 +5,7 @@
 		<div class="logo">
 			<div class="inner-logo">
 				<img src="{{asset('images/logo.png')}}">
-				<span>Kent</span>
+				<span>{{ Auth::user()->name}}</span>
 			</div>
 		</div>
 		<a class="ui-btn-right map-btn user-link" href="#left-side-bar"  data-ajax="false"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>

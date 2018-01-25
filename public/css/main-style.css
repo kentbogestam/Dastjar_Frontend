@@ -441,6 +441,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
     display: inline-block;
     font-family: "ProximaNova-Semibold"; 
 }
+.successmsg p{
+  font-family: "ProximaNova-Semibold"; 
+  font-size: 1.2em;
+
+}
+
+.successmsg p span{
+      font-size: 0.8em;
+}
 .wait-bg-img .text-content p{
     margin-top: 0;
     color: #ffac00;  font-family: "ProximaNova-Semibold";    font-size: 16px;

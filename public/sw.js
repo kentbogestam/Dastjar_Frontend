@@ -1,5 +1,5 @@
 console.log('Started', self);
-
+var clickURL = "";
 self.addEventListener('install', function(event) {
   self.skipWaiting();
   console.log('Installed', event);
@@ -36,16 +36,15 @@ self.addEventListener('push', function(event) {
 				console.log(jsonOBJECT.length)
 				for(var i=0;i<jsonOBJECT.length;i++){
 					var jsonPayload = jsonOBJECT[i];
-					
+					console.log(jsonPayload)
 					//promise.push(jsonPayload)
 					messagePayload = jsonPayload.message
 					id= jsonPayload.id
-					console.log(messagePayload)
-					console.log(id)
-					
-					 self.registration.showNotification(title, {  
-					  body: messagePayload,  
-					  icon: "images/icon.png"
+					clickURL = messagePayload.Url;
+          title = messagePayload.alert;
+          console.log(clickURL);
+					 self.registration.showNotification(title, { 
+					  icon: "http://localhost/dast-jar-frontend/public/images/dastjar.png"
 					})
 					
 				}
@@ -74,7 +73,7 @@ function endpointCorrection(pushSubscription) {
 }
 
 self.addEventListener('notificationclick', function(event) {
-  let url = 'https://akshaymshephertz.github.io/';
+  var url = clickURL;
   event.notification.close(); // Android needs explicit close.
   event.waitUntil(
       clients.matchAll({type: 'window'}).then( windowClients => {
