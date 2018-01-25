@@ -28,6 +28,10 @@
 	Route::get('/login/{social}','Auth\LoginController@socialLogin')->where('social','facebook|google');
 	Route::get('/login/{social}/callback','Auth\LoginController@handelProviderCallback')->where('social','facebook|google');
 
+
+	Route::get('ready-notifaction/{OrderId}', 'PushNotifactionController@readyNotifaction');
+	Route::get('deliver-notifaction', 'PushNotifactionController@deliverNotifaction');
+
 	Route::get('/', 'HomeController@index');
 	Route::get('blank-view', 'HomeController@blankView');
 	Route::post('eat-later', 'HomeController@eatLater');
@@ -64,7 +68,6 @@
 		Route::get('catering', 'AdminController@cateringDetails');
 		Route::get('catering-orders', 'AdminController@cateringOrders');
 		Route::get('kitchen-pre-order', 'AdminController@kitchenPreOrder');
-		Route::get('order-ready/{OrderId}', 'AdminController@orderReady');
 		Route::get('order-started/{OrderId}', 'AdminController@orderStarted');
 		Route::get('order-readyKitchen/{OrderId}', 'AdminController@orderReadyKitchen');
 		Route::post('kitchen-order-save','AdminController@kitchenOrderSave');
@@ -73,6 +76,8 @@
 		Route::post('kitchen-eat-later', 'AdminController@kitchenEatLater');
 		Route::get('kitchen-eat-later', 'AdminController@kitchenEatLater');
 		Route::get('kitchen-order-view/{OrderId}', 'AdminController@kitchenOrderView');
+		Route::get('order-ready/{OrderId}', 'PushNotifactionController@orderReady');
+		Route::get('order-deliver/{OrderId}', 'PushNotifactionController@orderDeliver');
 	});
 
 

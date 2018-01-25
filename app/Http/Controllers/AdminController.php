@@ -80,7 +80,8 @@ class AdminController extends Controller
         DB::table('order_details')->where('id', $orderID)->update([
                             'order_started' => 1,
                         ]);
-        return view('kitchen.order.kitchen_order_list');
+        return redirect()->action('AdminController@kitchenOrderDetail')->with('success', 'Order Started Successfully.');
+        //return view('kitchen.order.kitchen_order_list');
     }
 
     public function orderReadyKitchen(Request $request, $orderID){
@@ -95,13 +96,10 @@ class AdminController extends Controller
                             'order_ready' => 1,
                         ]);
         }
-        return view('kitchen.order.kitchen_order_list');
+        return redirect()->action('AdminController@kitchenOrderDetail')->with('success', 'Order Ready Successfully.');
+        //return view('kitchen.order.kitchen_order_list');
     }
-
-    public function orderReady(Request $request, $orderID){
-        return view('order.alert-ready',compact('orderID'));
-    }
-
+    
     public function cateringDetails(){
         return view('kitchen.order.catering', compact('')); 
     }
