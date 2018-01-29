@@ -29,20 +29,20 @@
 	</div>	
 	<div data-role="footer" id="footer" data-position="fixed">
 		<div class="ui-grid-c inner-footer center">
-		<div class="ui-block-a"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
+		<div class="ui-block-a"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 			<div class="img-container">
 				<img src="{{asset('images/icons/select-store_01.png')}}">
 			</div>
 			<span>Restaurant</span>
 		</a></div>
-		<div class="ui-block-b"><a href = "#" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
+		<div class="ui-block-b"><a href = "#" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 			<div class="img-container">
 				<img src="{{asset('images/icons/select-store_03.png')}}">
 			</div>
 			<span>send</span>
 		</a></div>
 		@if(count(Auth::user()->paidOrderList) == 0)
-			<div class="ui-block-c"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
+			<div class="ui-block-c"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 				<div class="img-container">
 					<img src="{{asset('images/icons/select-store_05.png')}}">
 				</div>
@@ -50,7 +50,7 @@
 			</a></div>
 		@else
 			<div class="ui-block-c order-active">
-		    	<a  class="ui-shadow ui-corner-all icon-img ui-btn-inline ordersec">
+		    	<a  class="ui-shadow ui-corner-all icon-img ui-btn-inline ordersec" data-ajax="false">
 			        <div class="img-container">
 			       		<!-- <img src="images/icons/select-store_05.png"> -->
 			        	<img src="images/icons/select-store_05-active.png">
@@ -68,7 +68,7 @@
 			    </div>
 		    </div>
 		@endif
-		<div class="ui-block-d"><a href = "{{url('user-setting')}}"  class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
+		<div class="ui-block-d"><a href = "{{url('user-setting')}}"  class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 			<div class="img-container"><img src="{{asset('images/icons/select-store_07.png')}}"></div>
 		</a></div>
 		</div>

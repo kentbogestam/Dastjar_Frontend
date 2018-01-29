@@ -32,13 +32,13 @@
 	</div>	
 	<div data-role="footer" id="footer" data-position="fixed">
 		<div class="ui-grid-c inner-footer center">
-		<div class="ui-block-a"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
+		<div class="ui-block-a"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 			<div class="img-container">
 				<img src="{{asset('images/icons/select-store_01.png')}}">
 			</div>
 			<span>Restaurant</span>
 		</a></div>
-		<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
+		<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 			<div class="img-container">
 				<img src="{{asset('images/icons/select-store_03.png')}}">
 			</div>
@@ -46,7 +46,7 @@
 		</a></div>
 		@if(count(Auth::user()->paidOrderList) == 0)
 			<div class="ui-block-c">
-				<a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
+				<a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">
 						<img src="{{asset('images/icons/select-store_05.png')}}">
 					</div>
@@ -55,7 +55,7 @@
 			</div>
 		@else
 			<div class="ui-block-c order-active">
-				<a href="#order-popup" data-transition="slideup" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline"  data-rel="popup">
+				<a href="#order-popup" data-transition="slideup" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline"  data-rel="popup" data-ajax="false">
 					<div class="img-container">
 						<!-- <img src="images/icons/select-store_05.png"> -->
 						<img src="{{asset('images/icons/select-store_05-active.png')}}">
@@ -65,13 +65,13 @@
 			</div>
 		@endif
 
-		<div class="ui-block-d"><a href = "{{url('user-setting')}}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
+		<div class="ui-block-d"><a href = "{{url('user-setting')}}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 			<div class="img-container"><img src="{{asset('images/icons/select-store_07.png')}}"></div>
 		</a></div>
 		</div>
 	</div>
 	<!-- pop-up -->
-	<div data-role="popup" id="order-popup" class="ui-content" data-theme="a">
+	<div data-role="popup" id="order-popup" class="ui-content" data-theme="a" >
 		<ul data-role="listview">
 			@foreach(Auth::user()->paidOrderList as $order)
 				<li>

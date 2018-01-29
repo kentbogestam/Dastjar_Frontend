@@ -29,7 +29,7 @@
 			<div class="setting-list">
 
 				<ul data-role="listview"> 
-					<li class="range-sec"><a onClick="makeRedirection('{{url('select-location')}}')">Location<p class="ui-li-aside">@if(Auth::user()->address == null)
+					<li class="range-sec"><a onClick="makeRedirection('{{url('select-location')}}')" data-ajax="false">Location<p class="ui-li-aside">@if(Auth::user()->address == null)
 						Current Location
 					@else	
 						{{Auth::user()->address}}
@@ -94,7 +94,7 @@ console.log('gggg');
 				alert("Please fill some value");	
 				e.preventDefault();
 			}
-		})
+		});
 
 		function makeRedirection(link){
 			window.location.href = link;

@@ -15,7 +15,7 @@
 		<div role="main" data-role="main-content" class="content map-container">
 			
 			<div class="map-input">
-				<input type="text" name="street_address" id="pac-input" class="" placeholder="Enter a Location*" value="" required placeholder="Address*">
+				<input type="text" name="street_address" id="pac-input" class="" placeholder="Enter a Location*" value="{{ Auth::user()->address}}" required placeholder="Address*">
 			</div>
             <div id="map" style="height: 665px;">
             </div>
@@ -26,19 +26,21 @@
 
 @section('footer-script')
 	
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyByLiizP2XW9JUAiD92x57u7lFvU3pS630&libraries=places&callback=initMap" async defer></script>
+        
 	<script type="text/javascript">
 
 		$(function(){
 			
-			document.getElementById("dataSave").disabled = true;    
+			//document.getElementById("dataSave").disabled = true;    
 		});
 
 
 		function initMap() {
+            var location  = {lat: {{Auth::user()->customer_latitude}} , lng: {{ Auth::user()->customer_longitude}} };
+            
             var map = new google.maps.Map(document.getElementById('map'), {
-                center: {lat: 0, lng: 0},
-                zoom: 2,
+                center: location,
+                zoom: 5,
                 mapTypeId: 'roadmap',
                 mapTypeControl: false,
                 scrollwheel: false
@@ -55,6 +57,7 @@
 
             var infowindow = new google.maps.InfoWindow();
             var marker = new google.maps.Marker({
+                position:location,
                 map: map,
                 icon: {
                     url:"{{ asset('images/pointer.png') }}",
@@ -161,4 +164,5 @@
 			}
 		})
 	</script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyByLiizP2XW9JUAiD92x57u7lFvU3pS630&libraries=places&callback=initMap" async defer></script>
 @endsection
