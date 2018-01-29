@@ -13,6 +13,7 @@ use App\DishType;
 use App\Company;
 use DB;
 use Carbon\Carbon;
+use App\Store;
 class AdminController extends Controller
 {
     /**
@@ -147,7 +148,8 @@ class AdminController extends Controller
         if(count($companydetails) == 0){
             $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
         }
-        return view('kitchen.order.kitchen-pre-order', compact('menuDetails','companydetails','menuTypes'));
+        $storedetails = Store::where('store_id' , Auth::guard('admin')->user()->store_id)->first();
+        return view('kitchen.order.kitchen-pre-order', compact('menuDetails','companydetails','menuTypes','storedetails'));
     }
 
 
@@ -255,7 +257,9 @@ class AdminController extends Controller
             if(count($companydetails) == 0){
                 $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
             }
-            return view('kitchen.order.kitchen-pre-order', compact('menuDetails','companydetails','menuTypes'));
+
+            $storedetails = Store::where('store_id' , Auth::guard('admin')->user()->store_id)->first();
+            return view('kitchen.order.kitchen-pre-order', compact('menuDetails','companydetails','menuTypes','storedetails'));
         }
     }
 
@@ -293,7 +297,9 @@ class AdminController extends Controller
         if(count($companydetails) == 0){
             $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
         }
-        return view('kitchen.order.kitchen-pre-order', compact('menuDetails','companydetails','menuTypes'));
+
+        $storedetails = Store::where('store_id' , Auth::guard('admin')->user()->store_id)->first();
+        return view('kitchen.order.kitchen-pre-order', compact('menuDetails','companydetails','menuTypes','storedetails'));
     }
 
     public function kitchenOrderView($orderId){

@@ -29,7 +29,11 @@
 		<div class="logo_header">
 			<img src="{{asset('kitchenImages/logo-img.png')}}">
 		</div>
-		<h3 class="ui-bar ui-bar-a order_background">Pizza Hut Store</h3>
+			<h3 class="ui-bar ui-bar-a order_background">
+				<a href="{{ URL::previous() }}" data-ajax="false" class="text-left ui-link ui-btn back_btn"><img src="http://localhost/dast-jar-frontend/public/images/icons/backarrow.png" width="11px"></a>
+
+				{{$storedetails->store_name}}
+			</h3>
 		<div class="top_two-menu">
 			<div class="ui-grid-a center">
 				<div class="ui-block-a"><a href="#order-popup" data-rel="popup" data-transition="turn" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">

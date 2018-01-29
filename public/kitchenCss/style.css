@@ -128,6 +128,14 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ab0810', end
     font-family: "MavenPro-Medium";font-size: 20px;
 }
 /*end of order detail page*/
+a.back_btn{
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: transparent !important;
+    border: none !important;
+}
+a.back_btn:focus{box-shadow: none !important;}
 
 /*date time picker page*/
 .show-date-time {
