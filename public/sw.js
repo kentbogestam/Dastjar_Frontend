@@ -44,7 +44,7 @@ self.addEventListener('push', function(event) {
           title = messagePayload.alert;
           console.log(clickURL);
 					 self.registration.showNotification(title, { 
-					  icon: "http://localhost/dast-jar-frontend/public/images/dastjar.png"
+					  icon: "http://dastjar.com/dbuzzu/public/images/dastjar.png"
 					})
 					
 				}
