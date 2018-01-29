@@ -38,6 +38,6 @@ class User extends Authenticatable
 
     public function paidOrderList()
     {
-        return $this->hasMany('App\Order','user_id')->where('paid', 0);
+        return $this->hasMany('App\Order','user_id')->where('paid', 0)->orderBy('order_id', 'desc');
     }
 }
