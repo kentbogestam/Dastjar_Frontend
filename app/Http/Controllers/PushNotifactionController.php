@@ -27,7 +27,7 @@ class PushNotifactionController extends Controller
     public function orderReady(Request $request, $orderID){
     	$message = 'orderReady';
     	$this->sendNotifaction($orderID , $message);
-		DB::table('orders')->where('order_id', $orderID)->update([
+		DB::table('orders')->where('customer_order_id', $orderID)->update([
                             'ready_notifaction' => 1,
                         ]);
     	return redirect()->action('AdminController@index')->with('success', 'Order Ready Notifaction Send Successfully.');
@@ -42,7 +42,7 @@ class PushNotifactionController extends Controller
     public function orderDeliver(Request $request, $orderID){
     	$message = 'orderDeliver';
     	$this->sendNotifaction($orderID , $message);
-		DB::table('orders')->where('order_id', $orderID)->update([
+		DB::table('orders')->where('customer_order_id', $orderID)->update([
                             'paid' => 1,
                         ]);
     	return redirect()->action('AdminController@index')->with('success', 'Order Deliver Notifaction Send Successfully.');
@@ -53,7 +53,7 @@ class PushNotifactionController extends Controller
     }
 
     public function sendNotifaction($orderID, $message){
-    	$order = Order::select('*')->where('order_id',$orderID)->first();
+    	$order = Order::select('*')->where('customer_order_id',$orderID)->first();
     	if($order->user_type == 'customer'){
     		$userDetail = User::whereId($order->user_id)->first();
     		$userName =$userDetail->email;

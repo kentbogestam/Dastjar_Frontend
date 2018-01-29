@@ -1,10 +1,11 @@
 @extends('layouts.master')
 @section('content')
 
-	<div data-role="header" class="header" >
+	<div data-role="header" class="header" id="nav-header"  data-position="fixed" >
 		<div class="logo">
 			<div class="inner-logo">
-				<span class="rest-title">Domino's</span>
+				<!-- <span class="rest-title">Domino's</span> -->
+				<img src="{{asset('images/logo.png')}}">
 				<span>{{ Auth::user()->name}}</span>
 				
 			</div>

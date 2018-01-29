@@ -4,7 +4,7 @@
 	<div data-role="header" class="header"  data-position="fixed" data-tap-toggle="false">
 		<div class="logo">
 			<div class="inner-logo">
-				<span class="rest-title">{{$companydetails->company_name}}</span>
+				<span class="rest-title">{{$storedetails->store_name}}</span>
 				<span>{{ Auth::user()->name}}</span>
 			</div>
 		</div>

@@ -48,10 +48,11 @@ class MapController extends Controller
 
     public function searchStoreMap(Request $request){
         $storeDetails = Store::where('store_id',$request->session()->get('storeId'.Auth()->id()))->first();
+        $storedetails = Store::where('store_id' , $request->session()->get('storeId'.Auth()->id()))->first();
         $request->session()->forget('storeId'.Auth()->id());
         $latLng = [];
         array_push($latLng,[$storeDetails->latitude, $storeDetails->longitude]);
         $latLngList = json_encode($latLng);
-        return view('map.eatlater_map', compact('latLngList'));
+        return view('map.single_res_map', compact('latLngList','storedetails'));
     }
 }

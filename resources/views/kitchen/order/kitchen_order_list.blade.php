@@ -115,7 +115,7 @@
 				      	}
 		          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
 		          		liItem += "<tr>";
-		          		liItem += "<th>"+temp[i]["order_id"]+"</th>";
+		          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 		          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
 		          		liItem += "<td>"+temp[i]["product_name"]+"</td>";
 		          		liItem += "<td>"+temp[i]["product_description"]+"</td>";
@@ -181,7 +181,7 @@
 				      	}
 		          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
 		          		liItem += "<tr>";
-		          		liItem += "<th>"+temp[i]["order_id"]+"</th>";
+		          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 		          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
 		          		liItem += "<td>"+temp[i]["product_name"]+"</td>";
 		          		liItem += "<td>"+temp[i]["product_description"]+"</td>";
@@ -288,7 +288,7 @@
 	      	}
 	      	var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
       		liItem += "<tr>";
-      		liItem += "<th>"+list[i]["order_id"]+"</th>";
+      		liItem += "<th>"+list[i]["customer_order_id"]+"</th>";
       		liItem += "<td>"+list[i]["product_quality"]+"</td>";
       		liItem += "<td>"+list[i]["product_name"]+"</td>";
       		liItem += "<td>"+list[i]["product_description"]+"</td>";

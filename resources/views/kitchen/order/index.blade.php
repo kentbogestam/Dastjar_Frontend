@@ -116,7 +116,7 @@
 			      	}
 	          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
 	          		liItem += "<tr>";
-	          		liItem += "<th>"+temp[i]["order_id"]+"</th>";
+	          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 	          		liItem += "<td>"+temp[i]["name"]+"</td>";
 	          		liItem += "<td>"+temp[i]["deliver_date"]+' '+temp[i]["deliver_time"]+"</td>";
 	          		liItem += "<td>"
@@ -124,7 +124,7 @@
 	          			liItem += "<a data-ajax='false'>"
 			  				liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
 			  		}else if(list[i]["order_ready"] == 1 && list[i]["ready_notifaction"] == 0) {
-	          			liItem += "<a data-ajax='false' href="+url+"/"+list[i]['order_id']+" >"
+	          			liItem += "<a data-ajax='false' href="+url+"/"+list[i]['customer_order_id']+" >"
 			  				liItem += "<img src='{{asset('kitchenImages/yellow_right_sign.png')}}'>"
 			  		}else{
 	          			liItem += "<a data-ajax='false'>"
@@ -139,7 +139,7 @@
 		          		liItem += "<a data-ajax='false' >"
 		          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
 	          		}else if(list[i]["paid"] == 0 && list[i]["order_ready"] == 1 && list[i]["ready_notifaction"] == 1){
-		          		liItem += "<a data-ajax='false' href="+urldeliver+"/"+list[i]['order_id']+" >"
+		          		liItem += "<a data-ajax='false' href="+urldeliver+"/"+list[i]['customer_order_id']+" >"
 		          		liItem += "<img src='{{asset('kitchenImages/yellow_right_sign.png')}}'>"
 	          		}
 	          		else{
@@ -190,7 +190,7 @@
 			      	}
 	          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
 	          		liItem += "<tr>";
-	          		liItem += "<th>"+temp[i]["order_id"]+"</th>";
+	          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 	          		liItem += "<td>"+temp[i]["name"]+"</td>";
 	          		liItem += "<td>"+temp[i]["deliver_date"]+' '+temp[i]["deliver_time"]+"</td>";
 	          		liItem += "<td>"
@@ -198,7 +198,7 @@
 	          			liItem += "<a data-ajax='false'>"
 			  			liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
 			  		}else if(list[i]["order_ready"] == 1 && list[i]["ready_notifaction"] == 0) {
-	          			liItem += "<a data-ajax='false' href="+url+"/"+list[i]['order_id']+" >"
+	          			liItem += "<a data-ajax='false' href="+url+"/"+list[i]['customer_order_id']+" >"
 			  			liItem += "<img src='{{asset('kitchenImages/yellow_right_sign.png')}}'>"
 			  		}else{
 	          			liItem += "<a data-ajax='false'>"
@@ -213,7 +213,7 @@
 		          		liItem += "<a data-ajax='false' >"
 		          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
 	          		}else if(list[i]["paid"] == 0 && list[i]["order_ready"] == 1 && list[i]["ready_notifaction"] == 1){
-		          		liItem += "<a data-ajax='false' href="+urldeliver+"/"+list[i]['order_id']+" >"
+		          		liItem += "<a data-ajax='false' href="+urldeliver+"/"+list[i]['customer_order_id']+" >"
 		          		liItem += "<img src='{{asset('kitchenImages/yellow_right_sign.png')}}'>"
 	          		}
 	          		else{
@@ -301,7 +301,7 @@
       	}
       	var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
       	liItem += "<tr>";
-  		liItem += "<th>"+list[i]["order_id"]+"</th>";
+  		liItem += "<th>"+list[i]["customer_order_id"]+"</th>";
   		liItem += "<td>"+list[i]["name"]+"</td>";
   		liItem += "<td>"+list[i]["deliver_date"]+' '+list[i]["deliver_time"]+"</td>";
   		liItem += "<td>"
@@ -309,7 +309,7 @@
   			liItem += "<a data-ajax='false'>"
   			liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
   		}else if(list[i]["order_ready"] == 1 && list[i]["ready_notifaction"] == 0) {
-	        liItem += "<a data-ajax='false' href="+url+"/"+list[i]['order_id']+" >"
+	        liItem += "<a data-ajax='false' href="+url+"/"+list[i]['customer_order_id']+" >"
   			liItem += "<img src='{{asset('kitchenImages/yellow_right_sign.png')}}'>"
   		}else{
   			liItem += "<a data-ajax='false'>"
@@ -324,7 +324,7 @@
       		liItem += "<a data-ajax='false' >"
       		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
   		}else if(list[i]["paid"] == 0 && list[i]["order_ready"] == 1 && list[i]["ready_notifaction"] == 1){
-      		liItem += "<a data-ajax='false' href="+urldeliver+"/"+list[i]['order_id']+" >"
+      		liItem += "<a data-ajax='false' href="+urldeliver+"/"+list[i]['customer_order_id']+" >"
       		liItem += "<img src='{{asset('kitchenImages/yellow_right_sign.png')}}'>"
   		}
   		else{

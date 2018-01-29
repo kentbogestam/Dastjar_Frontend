@@ -1,7 +1,7 @@
 @extends('layouts.master')
 @section('content')
 <div data-role="page" data-theme="c">
-	<div data-role="header" class="header">
+	<div data-role="header" class="header" id="nav-header"  data-position="fixed">
 		<div class="logo">
 			<div class="inner-logo">
 				<img src="{{asset('images/logo.png')}}">

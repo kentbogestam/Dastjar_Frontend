@@ -119,7 +119,8 @@ class HomeController extends Controller
         $dish_typeId = null;
         $request->session()->put('storeId'.Auth()->id(), $storeId);
         $companydetails = Company::where('company_id' , $companyId)->first();
-        return view('menulist.index', compact('menuDetails','companydetails','menuTypes','storeId'));
+        $storedetails = Store::where('store_id' , $storeId)->first();
+        return view('menulist.index', compact('menuDetails','companydetails','menuTypes','storeId','storedetails'));
 
     }
 
