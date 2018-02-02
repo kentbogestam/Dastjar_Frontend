@@ -201,7 +201,6 @@ var totalCount = 0;
 
 	          	liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
 	          	liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+list[i]['store_id']+" data-ajax='false'>";
-	          	liItem += "<img src='images/img-store-3.png'>";
 	          	liItem += "<img src="+"'"+list[i]["store_image"]+"'"+">";
 	          	liItem += "<p>";
 	          	

@@ -173,7 +173,7 @@ var totalCount = 0;
 	          	liItem += "<p>";
 	          	
 	          	for (var j=0;j<list[i]["products"].length;j++){
-	          		console.log(list[i]["products"][j]);
+	          		//console.log(list[i]["products"][j]);
 	          		;
 	          		if(j <= 1){
 	          			liItem += list[i]["products"][j]["product_name"];
