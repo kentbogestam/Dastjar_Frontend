@@ -202,6 +202,7 @@ var totalCount = 0;
 	          	liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
 	          	liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+list[i]['store_id']+" data-ajax='false'>";
 	          	liItem += "<img src="+"'"+list[i]["store_image"]+"'"+">";
+	          	liItem += "<h2>"+temp[i]["store_name"]+"</h2>";
 	          	liItem += "<p>";
 	          	
 	          	for (var j=0;j<list[i]["products"].length;j++){
