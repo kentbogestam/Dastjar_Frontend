@@ -116,7 +116,7 @@ class AdminController extends Controller
         }else{
             $reCompanyId = Auth::guard('admin')->user()->store_id;
 
-            $cateringorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time')->where(['order_details.store_id' => $reCompanyId])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();  //->orderBy('order_details.created_at','DESC
+            $cateringorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.customer_order_id')->where(['order_details.store_id' => $reCompanyId])->where('order_details.delivery_date','>', Carbon::now()->toDateString())->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();  //->orderBy('order_details.created_at','DESC
         }
 
         //$user = Admin::where(['u_id' => '32130ad3-e08c-5fc5-b863-1336a3ba4bde'])->first();')
@@ -229,7 +229,7 @@ class AdminController extends Controller
                             'order_total' => $total_price,
                         ]);
 
-                $order = Order::select('*')->where('order_id',$orderId)->first();
+                $order = Order::select('orders.*','store.store_name')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->first();
 
                 $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 
@@ -303,7 +303,7 @@ class AdminController extends Controller
     }
 
     public function kitchenOrderView($orderId){
-        $order = Order::select('*')->where('order_id',$orderId)->first();
+        $order = Order::select('orders.*','store.store_name')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->first();
 
         $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 

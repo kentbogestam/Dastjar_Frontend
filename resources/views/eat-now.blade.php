@@ -168,7 +168,7 @@ var totalCount = 0;
 
 	          	liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
 	          	liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+list[i]['store_id']+">";
-	          	liItem += "<img src='images/img-store-3.png'>";
+	          	liItem += "<img src="+"'"+list[i]["store_image"]+"'"+">";
 	          	liItem += "<h2>"+list[i]["store_name"]+"</h2>";
 	          	liItem += "<p>";
 	          	
@@ -213,8 +213,8 @@ var totalCount = 0;
 
           var temp = returnedData["data"];
           list = temp;
-          console.log(temp);
-           console.log(temp.length);
+          //console.log(temp);
+           //console.log(temp.length);
           var liItem = "";
 	          if(temp.length != 0){
 	          	totalCount = temp.length;
@@ -226,16 +226,16 @@ var totalCount = 0;
 	          	totalCount -= 10;
 
 	          for (var i=0;i<count;i++){
-	          	console.log(temp[i]["store_id"]);
+	          	//console.log(temp[i]["store_id"]);
 
 	          	liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
 	          	liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+temp[i]['store_id']+">";
-	          	liItem += "<img src='images/img-store-3.png'>";
+	          	liItem += "<img src="+"'"+temp[i]["store_image"]+"'"+">";
 	          	liItem += "<h2>"+temp[i]["store_name"]+"</h2>";
 	          	liItem += "<p>";
 	          	
 	          	for (var j=0;j<temp[i]["products"].length;j++){
-	          		console.log(temp[i]["products"][j]);
+	          		//console.log(temp[i]["products"][j]);
 	          		;
 	          		if(j <= 1){
 	          			liItem += temp[i]["products"][j]["product_name"];
@@ -262,7 +262,7 @@ var totalCount = 0;
         	liItem += "</p>";
         	liItem += "</div>";
           }
-          	console.log(liItem);
+          	//console.log(liItem);
 
           
 

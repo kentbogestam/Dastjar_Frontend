@@ -12,13 +12,11 @@
 		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow table-stripe ui-responsive table_size" >
 		 	<thead>
 		 		<tr class="ui-bar-d">
-			  		<th data-priority="2">Order No</th>
+			  		<th data-priority="2">Orders</th>
 			   		<th>Amount</th> 
 			   		<th data-priority="3">Product</th>
 			    	<th data-priority="1">Comment</th> 
 			    	<th data-priority="5">Date and Time</th>
-			     	<th data-priority="3">Set to Started</th>
-			      	<th data-priority="3">Set to Ready</th>
 			     	<th data-priority="1">Pick up Time</th>
 		      	</tr>
 		    </thead>
@@ -30,18 +28,26 @@
 	<div data-role="footer" data-position="fixed" data-tap-toggle="false" class="footer_container">
 		<div class="ui-grid-a center">
 			<div class="ui-block-a left-side_menu">
-				<div class="ui-block-a active"><a  href = "{{ url('kitchen/dashboard') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
+				<div class="ui-block-a active"><a  href = "{{ url('/admin') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/icon-1.png')}}">
 					</div>
 					<span>Orders</span>
 				</a></div>
-				<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
+				<div class="ui-block-b"><a href = "{{ url('kitchen/kitchen-detail') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/icon-2.png')}}">
 					</div>
 					<span>kitchen</span>
 				</a></div>
+				<div class="ui-block-b block_div active">
+					<a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
+					<div class="img-container">
+						<img src="{{asset('kitchenImages/icon-3.png')}}">
+					</div>
+					<span>catering</span>
+					</a>
+				</div>
 			</div>
 			<div class="ui-block-b right-side_menu">
 			
@@ -57,11 +63,11 @@
 					</div>
 					<span>Admin</span>
 				</a></div>
-				<div class="ui-block-c"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
+				<div class="ui-block-c"><a href = "{{ url('kitchen/kitchen-order-onside') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/icon-4.png')}}">
 					</div>
-					<span>pre ordered</span>
+					<span>order onside</span>
 				</a></div>
 			</div>
 		</div>
@@ -94,19 +100,11 @@
 		          	for (var i=0;i<count;i++){
 		          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
 		          		liItem += "<tr>";
-		          		liItem += "<th>"+temp[i]["order_id"]+"</th>";
+		          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 		          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
 		          		liItem += "<td>"+temp[i]["product_name"]+"</td>";
 		          		liItem += "<td>"+temp[i]["product_description"]+"</td>";
 		          		liItem += "<td>"+temp[i]["deliver_date"]+' '+temp[i]["deliver_time"]+"</td>";
-		          		liItem += "<td>"
-		          		liItem += "<a>"
-		          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
-		          		liItem +="</a></td>";
-		          		liItem += "<td>"
-		          		liItem += "<a>"
-		          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
-		          		liItem +="</a></td>";
 		          		liItem += "<td>"+time+"</td>";
 		          		liItem += "</tr>";
 		          	}
@@ -137,19 +135,11 @@
 		          	for (var i=0;i<count;i++){
 		          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
 		          		liItem += "<tr>";
-		          		liItem += "<th>"+temp[i]["order_id"]+"</th>";
+		          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 		          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
 		          		liItem += "<td>"+temp[i]["product_name"]+"</td>";
 		          		liItem += "<td>"+temp[i]["product_description"]+"</td>";
 		          		liItem += "<td>"+temp[i]["deliver_date"]+' '+temp[i]["deliver_time"]+"</td>";
-		          		liItem += "<td>"
-		          		liItem += "<a>"
-		          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
-		          		liItem +="</a></td>";
-		          		liItem += "<td>"
-		          		liItem += "<a>"
-		          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
-		          		liItem +="</a></td>";
 		          		liItem += "<td>"+time+"</td>";
 		          		liItem += "</tr>";
 		          	}
@@ -160,7 +150,7 @@
 			}); 
 		}
 
-		setInterval(ajaxCall, 50000);
+		setInterval(ajaxCall, 10000);
 		var tempCount = 10;
 
 		$(document).on("scrollstop", function (e) {
@@ -215,19 +205,11 @@
 	      	}
 	      	var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
       		liItem += "<tr>";
-      		liItem += "<th>"+list[i]["order_id"]+"</th>";
+      		liItem += "<th>"+list[i]["customer_order_id"]+"</th>";
       		liItem += "<td>"+list[i]["product_quality"]+"</td>";
       		liItem += "<td>"+list[i]["product_name"]+"</td>";
       		liItem += "<td>"+list[i]["product_description"]+"</td>";
       		liItem += "<td>"+list[i]["deliver_date"]+' '+list[i]["deliver_time"]+"</td>";
-      		liItem += "<td>"
-      		liItem += "<a>"
-      		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
-      		liItem +="</a></td>";
-      		liItem += "<td>"
-      		liItem += "<a>"
-      		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
-      		liItem +="</a></td>";
       		liItem += "<td>"+time+"</td>";
       		liItem += "</tr>";
 	      	countCheck++;

@@ -25,7 +25,7 @@
 		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow table-stripe ui-responsive table_size" >
 			<thead>
 			 	<tr class="ui-bar-d">
-			 		<th data-priority="2">Order No</th>
+			 		<th data-priority="2">Orders</th>
 			   		<th>Alias</th> 
 			   		<th data-priority="3">Date and Time</th>
 			    	<th data-priority="1">Ready</th> 
@@ -58,6 +58,14 @@
 					<span>kitchen</span>
 					</a>
 				</div>
+				<div class="ui-block-b">
+					<a href = "{{ url('kitchen/catering') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
+					<div class="img-container">
+						<img src="{{asset('kitchenImages/icon-3.png')}}">
+					</div>
+					<span>catering</span>
+					</a>
+				</div>
 			</div>
 			<div class="ui-block-b right-side_menu">
 				
@@ -73,11 +81,11 @@
 					</div>
 					<span>Admin</span>
 				</a></div>
-				<div class="ui-block-c"><a href = "{{ url('kitchen/kitchen-pre-order') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
+				<div class="ui-block-c"><a href = "{{ url('kitchen/kitchen-order-onside') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/icon-4.png')}}">
 					</div>
-					<span>pre ordered</span>
+					<span>order onside</span>
 				</a></div>
 			</div>
 		</div>

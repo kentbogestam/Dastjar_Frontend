@@ -13,10 +13,11 @@
 		<div class="inner-page-container">
 			<div class="wait-bg-img">
 				<div class="text-content">
-					<p>We are preaparing your order </p>
+					<p>Thanks for your order </p>
 					<p>Order Number </p>
 					<p class="large-text">{{$order->customer_order_id}}</p>
-					<p>To be ready in {{$order->order_delivery_time}} mins
+					<p>({{$order->store_name}})</p>
+					<p>Your order will be ready at {{$order->order_delivery_time}} mins
 						@if($order->order_type == 'eat_later')
 						{{$order->deliver_date}}
 						@endif

@@ -30,7 +30,7 @@
 									@if($menuType->dish_id == $menuDetail->dish_type)
 										<ul data-role="listview" data-inset="true" >
 											<li>
-													<img src="{{asset('images/img-item-1.png')}}">
+													<img src="{{$menuDetail->small_image}}">
 													<div class="list-content">
 														<h2>{{$menuDetail->product_name}}</h2>
 													<p>{{$menuDetail->product_description}}</p>
@@ -66,7 +66,7 @@
 									@if($menuType->dish_id == $menuDetail->dish_type)
 										<ul data-role="listview" data-inset="true" >
 											<li>
-													<img src="{{asset('images/img-item-1.png')}}">
+													<img src="{{$menuDetail->small_image}}">
 													<div class="list-content">
 														<h2>{{$menuDetail->product_name}}</h2>
 													<p>{{$menuDetail->product_description}}</p>

@@ -10,10 +10,11 @@
 		<div class="order_display">
 			<div class="order_bg">
 				<div class="order-ready-text">
-					<p>We are preaparing your order </p>
+					<p>Thanks for your order </p>
 					<p>Order Number </p>
 					<p class="order-no">{{$order->customer_order_id}}</p>
-					<p>To be ready in {{$order->order_delivery_time}} mins
+					<p>({{$order->store_name}})</p>
+					<p>Your order will be ready at {{$order->order_delivery_time}} mins
 						@if($order->order_type == 'eat_later')
 						{{$order->deliver_date}}
 						@endif
@@ -67,11 +68,11 @@
 					</div>
 					<span>Admin</span>
 				</a></div>
-				<div class="ui-block-c"><a href = "{{ url('kitchen/kitchen-pre-order') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
+				<div class="ui-block-c"><a href = "{{ url('kitchen/kitchen-order-onside') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/icon-4.png')}}">
 					</div>
-					<span>pre ordered</span>
+					<span>order onside</span>
 				</a></div>
 			</div>
 		</div>
