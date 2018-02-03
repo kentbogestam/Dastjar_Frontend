@@ -112,7 +112,7 @@ class AdminController extends Controller
             $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
             $reCompanyId = $companydetails->company_id;
 
-            $cateringorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time')->where(['order_details.company_id' => $reCompanyId])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();  //->orderBy('order_details.created_at','DESC
+            $cateringorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time')->where(['order_details.company_id' => $reCompanyId])->where('order_details.delivery_date','>', Carbon::now()->toDateString())->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();  //->orderBy('order_details.created_at','DESC
         }else{
             $reCompanyId = Auth::guard('admin')->user()->store_id;
 
@@ -127,29 +127,34 @@ class AdminController extends Controller
     public function kitchenPreOrder(Request $request){
         $menuTypes = null;
         $request->session()->forget('order_date');
-        $menuDetails = ProductPriceList::where('store_id',Auth::guard('admin')->user()->store_id)->with('menuPrice')->with('storeProduct')->get();
-        if(count($menuDetails) != 0){
 
-            foreach ($menuDetails as $menuDetail) {
-                foreach ($menuDetail->storeProduct as $storeProduct) {
-                    $companyId = $storeProduct->company_id;
-                    $dish_typeId[] = $storeProduct->dish_type;
+        if(Auth::guard('admin')->user()->store_id){
+            $menuDetails = ProductPriceList::where('store_id',Auth::guard('admin')->user()->store_id)->with('menuPrice')->with('storeProduct')->get();
+            if(count($menuDetails) != 0){
+
+                foreach ($menuDetails as $menuDetail) {
+                    foreach ($menuDetail->storeProduct as $storeProduct) {
+                        $companyId = $storeProduct->company_id;
+                        $dish_typeId[] = $storeProduct->dish_type;
+                    }
                 }
+                //dd($menuDetails);
+                //dd(array_unique($dish_typeId));
+                $menuTypes = DishType::where('company_id' , $companyId)->whereIn('dish_id', array_unique($dish_typeId))->where('dish_activate','1')->where('dish_lang','ENG')->get();
+                $dish_typeId = null;
+                //$request->session()->put('storeId'.Auth()->id(), $storeId);
             }
-            //dd($menuDetails);
-            //dd(array_unique($dish_typeId));
-            $menuTypes = DishType::where('company_id' , $companyId)->whereIn('dish_id', array_unique($dish_typeId))->where('dish_activate','1')->where('dish_lang','ENG')->get();
-            $dish_typeId = null;
-            //$request->session()->put('storeId'.Auth()->id(), $storeId);
-        }
 
 
-        $companydetails = Company::where('company_id' , Auth::guard('admin')->user()->company_id)->first();
-        if(count($companydetails) == 0){
-            $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
+            $companydetails = Company::where('company_id' , Auth::guard('admin')->user()->company_id)->first();
+            if(count($companydetails) == 0){
+                $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
+            }
+            $storedetails = Store::where('store_id' , Auth::guard('admin')->user()->store_id)->first();
+            return view('kitchen.order.kitchen-pre-order', compact('menuDetails','companydetails','menuTypes','storedetails'));
+        }else{
+            return view('kitchen.order.kitchen-main-admin');
         }
-        $storedetails = Store::where('store_id' , Auth::guard('admin')->user()->store_id)->first();
-        return view('kitchen.order.kitchen-pre-order', compact('menuDetails','companydetails','menuTypes','storedetails'));
     }
 
 
