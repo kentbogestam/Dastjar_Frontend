@@ -64,7 +64,7 @@ class AdminController extends Controller
             $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
             $reCompanyId = $companydetails->company_id;
             
-            $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time')->where(['order_details.company_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
+            $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id')->where(['order_details.company_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
 
         }else{
             $reCompanyId = Auth::guard('admin')->user()->store_id;
