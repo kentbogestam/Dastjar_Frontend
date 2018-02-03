@@ -107,21 +107,25 @@ class HomeController extends Controller
         $userDetail = User::whereId(Auth()->id())->first();
         //$menuDetails = Product::where('company_id' , $companyId)->with('menuPrice')->get();
         $menuDetails = ProductPriceList::where('store_id',$storeId)->with('menuPrice')->with('storeProduct')->get();
-        //dd($menuDetails);
-        foreach ($menuDetails as $menuDetail) {
-            foreach ($menuDetail->storeProduct as $storeProduct) {
-                $companyId = $storeProduct->company_id;
-                $dish_typeId[] = $storeProduct->dish_type;
+        if(count($menuDetails) !=0 ){
+            foreach ($menuDetails as $menuDetail) {
+                foreach ($menuDetail->storeProduct as $storeProduct) {
+                    $companyId = $storeProduct->company_id;
+                    $dish_typeId[] = $storeProduct->dish_type;
+                }
             }
-        }
-        //dd(array_unique($dish_typeId));
-        $menuTypes = DishType::where('company_id' , $companyId)->whereIn('dish_id', array_unique($dish_typeId))->where('dish_activate','1')->where('dish_lang',$userDetail->language)->get();
-        $dish_typeId = null;
-        $request->session()->put('storeId'.Auth()->id(), $storeId);
-        $companydetails = Company::where('company_id' , $companyId)->first();
-        $storedetails = Store::where('store_id' , $storeId)->first();
-        return view('menulist.index', compact('menuDetails','companydetails','menuTypes','storeId','storedetails'));
+            //dd(array_unique($dish_typeId));
+            $menuTypes = DishType::where('company_id' , $companyId)->whereIn('dish_id', array_unique($dish_typeId))->where('dish_activate','1')->where('dish_lang',$userDetail->language)->get();
+            $dish_typeId = null;
+            $request->session()->put('storeId'.Auth()->id(), $storeId);
+            $companydetails = Company::where('company_id' , $companyId)->first();
+            $storedetails = Store::where('store_id' , $storeId)->first();
+            return view('menulist.index', compact('menuDetails','companydetails','menuTypes','storeId','storedetails'));
+        }else{
+            $storedetails = Store::where('store_id' , $storeId)->first();
 
+            return view('menulist.blankMenu', compact('storedetails'));
+        }
     }
 
     public function selectOrderDate(){
