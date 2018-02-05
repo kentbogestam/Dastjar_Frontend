@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'Eat Now' => 'Ät nu',
+    'Eat Later'  => 'Ät senare',
+    'Restaurant'  => 'Restaurang',
+    'send'  => 'skicka',
+    'Order'  => 'Beställa',
+    'Setting'  => 'Miljö',
+    'Order id'  => 'Beställnings-ID',
+    'Done'  => 'Gjort',
+    'Setting updated successfully.'   => 'Inställningen uppdateras framgångsrikt.',
+    'Location'   => 'Plats',
+    'Current Location'   => 'Nuvarande position',
+    'Language'   => 'Språk',
+    'Range'   => 'Räckvidd',
+    'Go'   => 'Gå',
+    'Menu is not available in your selected language.'   => 'Menyn är inte tillgänglig på ditt valda språk.',
+    'Add Comments'   => 'Lägg till kommentarer',
+    'cancel'   => 'annullera',
+    'submit'   => 'lämna',
+    'Items is not available in your selected Restaurant.'   => 'Objekt är inte tillgängliga i din valda restaurang.',
+    'Thanks for your order'   => 'tack för din beställning',
+    'Order Number'   => 'Ordernummer',
+    'Your order will be ready at'   => 'Din beställning är klar till',
+    'ORDER DETAILS'   => 'ORDERDETALJER',
+    'TOTAL'   => 'TOTAL',
+];

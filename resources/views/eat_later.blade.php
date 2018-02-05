@@ -12,8 +12,8 @@
 		</div>
 		<div class="cat-btn">
 			<div class="ui-grid-a top-btn">
-				<div class="ui-block-a"><a onClick="makeRedirection('{{url('eat-now')}}')" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-inactive" class="active"><img src="{{asset('images/icons/icon-eat-now-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-now-inactive.png')}}" class="inactive">Eat Now</a></div>
-				<div class="ui-block-b"><a href="#" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-active"><img src="{{asset('images/icons/icon-eat-later-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-later-inactive.png')}}" class="inactive">Eat Later</a></div>
+				<div class="ui-block-a"><a onClick="makeRedirection('{{url('eat-now')}}')" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-inactive" class="active"><img src="{{asset('images/icons/icon-eat-now-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-now-inactive.png')}}" class="inactive">{{ __('messages.Eat Now') }}</a></div>
+				<div class="ui-block-b"><a href="#" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-active"><img src="{{asset('images/icons/icon-eat-later-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-later-inactive.png')}}" class="inactive">{{ __('messages.Eat Later') }}</a></div>
 			</div>
 		</div>
 	</div>
@@ -33,20 +33,20 @@
 			<div class="img-container">
 				<img src="{{asset('images/icons/select-store_01.png')}}">
 			</div>
-			<span>Restaurant</span>
+			<span>{{ __('messages.Restaurant') }}</span>
 		</a></div>
 		<div class="ui-block-b"><a href = "#" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 			<div class="img-container">
 				<img src="{{asset('images/icons/select-store_03.png')}}">
 			</div>
-			<span>send</span>
+			<span>{{ __('messages.send') }}</span>
 		</a></div>
 		@if(count(Auth::user()->paidOrderList) == 0)
 			<div class="ui-block-c"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 				<div class="img-container">
 					<img src="{{asset('images/icons/select-store_05.png')}}">
 				</div>
-				<span>Order</span>
+				<span>{{ __('messages.Order') }}</span>
 			</a></div>
 		@else
 			<div class="ui-block-c order-active">
@@ -55,13 +55,13 @@
 			       		<!-- <img src="images/icons/select-store_05.png"> -->
 			        	<img src="images/icons/select-store_05-active.png">
 			        </div>
-		        	<span>Order<span class="order-number">{{count(Auth::user()->paidOrderList)}}</span></span>
+		        	<span>{{ __('messages.Order') }}<span class="order-number">{{count(Auth::user()->paidOrderList)}}</span></span>
 		        </a>
 		        <div id="order-popup" data-theme="a">
 			      <ul data-role="listview">
 			      	@foreach(Auth::user()->paidOrderList as $order)
 						<li>
-							<a href="{{ url('order-view/'.$order->order_id) }}" data-ajax="false">Order id - {{$order->customer_order_id}}</a>
+							<a href="{{ url('order-view/'.$order->order_id) }}" data-ajax="false">{{ __('messages.Order id') }} - {{$order->customer_order_id}}</a>
 						</li>
 					@endforeach
 			      </ul>

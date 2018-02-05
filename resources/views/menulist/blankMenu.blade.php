@@ -12,7 +12,7 @@
 	</div>
 	
 	<div class="table-content">
-		<p>Items is not available in your selected Restaurant.</p>
+		<p>{{ __('messages.Items is not available in your selected Restaurant.') }}</p>
 	</div>
 	
 	<form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('save-order') }}">
@@ -23,14 +23,14 @@
 
 			<div data-role="popup" id="transitionExample" class="ui-content comment-popup" data-theme="a">
 				<div class="pop-header">
-				<a href="#" data-rel="back"  class="cancel-btn ui-btn ui-btn-left ui-corner-all ui-shadow ui-btn-a">cancel</a>
-				<label>Add comment</label>
+				<a href="#" data-rel="back"  class="cancel-btn ui-btn ui-btn-left ui-corner-all ui-shadow ui-btn-a">{{ __('messages.cancel') }}</a>
+				<label>{{ __('messages.Add Comments') }}</label>
 				
 				</div>
 				<div class="pop-body">
 					
 						<textarea name="textarea-1" id="textarea-1" placeholder="Add a comment"></textarea>
-						<a id="submitId" href="" data-ajax="false" class="submit-btn ui-btn ui-btn-right ui-corner-all ui-shadow ui-btn-a">submit</a>
+						<a id="submitId" href="" data-ajax="false" class="submit-btn ui-btn ui-btn-right ui-corner-all ui-shadow ui-btn-a">{{ __('messages.submit') }}</a>
 
 					
 				</div>
@@ -45,20 +45,20 @@
 				<div class="img-container">
 					<img src="{{asset('images/icons/select-store_01.png')}}">
 				</div>
-				<span>Restaurant</span>
+				<span>{{ __('messages.Restaurant') }}</span>
 			</a></div>
 			<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 				<div class="img-container" id = "menudataSave">
 					<img src="{{asset('images/icons/select-store_03.png')}}">
 				</div>
-				<input type="button" value="Submit" id="dataSave"/>
+				<input type="button" value="{{ __('messages.submit') }}" id="dataSave"/>
 			</a></div>
 			@if(count(Auth::user()->paidOrderList) == 0)
 				<div class="ui-block-c"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">
 						<img src="{{asset('images/icons/select-store_05.png')}}">
 					</div>
-					<span>Order</span>
+					<span>{{ __('messages.Order') }}</span>
 				</a></div>
 			@else
 				<div class="ui-block-c order-active">
@@ -67,13 +67,13 @@
 				       		<!-- <img src="images/icons/select-store_05.png"> -->
 				        	<img src="{{asset('images/icons/select-store_05-active.png')}}">
 				        </div>
-			        	<span>Order<span class="order-number">{{count(Auth::user()->paidOrderList)}}</span></span>
+			        	<span>{{ __('messages.Order') }}<span class="order-number">{{count(Auth::user()->paidOrderList)}}</span></span>
 			        </a>
 			        <div id="order-popup" data-theme="a">
 				      <ul data-role="listview">
 				      	@foreach(Auth::user()->paidOrderList as $order)
 							<li>
-								<a href="{{ url('order-view/'.$order->order_id) }}" data-ajax="false">Order id - {{$order->customer_order_id}}</a>
+								<a href="{{ url('order-view/'.$order->order_id) }}" data-ajax="false">{{ __('messages.Order id') }} - {{$order->customer_order_id}}</a>
 							</li>
 						@endforeach
 				      </ul>

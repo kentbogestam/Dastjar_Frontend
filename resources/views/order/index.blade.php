@@ -13,11 +13,11 @@
 		<div class="inner-page-container">
 			<div class="wait-bg-img">
 				<div class="text-content">
-					<p>Thanks for your order </p>
-					<p>Order Number </p>
+					<p>{{ __('messages.Thanks for your order') }} </p>
+					<p>{{ __('messages.Order Number') }} </p>
 					<p class="large-text">{{$order->customer_order_id}}</p>
 					<p>({{$order->store_name}})</p>
-					<p>Your order will be ready at {{$order->order_delivery_time}} mins
+					<p>{{ __('messages.Your order will be ready at') }} {{$order->order_delivery_time}} mins
 						@if($order->order_type == 'eat_later')
 						{{$order->deliver_date}}
 						@endif
@@ -25,7 +25,7 @@
 				</div>
 			</div>
 			<div class="table-content">
-				<h2>ORDER DETAILS</h2>
+				<h2>{{ __('messages.ORDER DETAILS') }}</h2>
 				<table data-role="table" id="table-custom-2" data-mode="" class="ui-body-d ui-shadow table-stripe ui-responsive">
 					@foreach($orderDetails as $orderDetail)
 						<tr>
@@ -46,20 +46,20 @@
 			<div class="img-container">
 				<img src="{{asset('images/icons/select-store_01.png')}}">
 			</div>
-			<span>Restaurant</span>
+			<span>{{ __('messages.Restaurant') }}</span>
 		</a></div>
 		<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 			<div class="img-container">
 				<img src="{{asset('images/icons/select-store_03.png')}}">
 			</div>
-			<span>send</span>
+			<span>{{ __('messages.send') }}</span>
 		</a></div>
 		@if(count(Auth::user()->paidOrderList) == 0)
 		<div class="ui-block-c"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 			<div class="img-container">
 				<img src="{{asset('images/icons/select-store_05.png')}}">
 			</div>
-			<span>Order</span>
+			<span>{{ __('messages.Order') }}</span>
 		</a></div>
 		@else
 		<div class="ui-block-c order-active">
@@ -68,13 +68,13 @@
 		       		<!-- <img src="images/icons/select-store_05.png"> -->
 		        	<img src="{{asset('images/icons/select-store_05-active.png')}}">
 		        </div>
-	        	<span>Order<span class="order-number">{{count(Auth::user()->paidOrderList)}}</span></span>
+	        	<span>{{ __('messages.Order') }}<span class="order-number">{{count(Auth::user()->paidOrderList)}}</span></span>
 	        </a>
 	        <div id="order-popup" data-theme="a">
 		      <ul data-role="listview">
 		      	@foreach(Auth::user()->paidOrderList as $order)
 					<li>
-						<a href="{{ url('order-view/'.$order->order_id) }}" data-ajax="false">Order id - {{$order->customer_order_id}}</a>
+						<a href="{{ url('order-view/'.$order->order_id) }}" data-ajax="false">__('messages.Order id') }} - {{$order->customer_order_id}}</a>
 					</li>
 				@endforeach
 		      </ul>

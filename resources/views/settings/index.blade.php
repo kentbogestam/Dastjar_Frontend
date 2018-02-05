@@ -6,8 +6,8 @@
 			<div data-role="navbar"> 
 				<ul> 
 			<li><a href="{{url('eat-now')}}" data-ajax="false" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
-			 <li><a data-ajax="false" class="ui-btn-active">Setting</a></li>
-			  <li class="done-btn" id="dataSave">  <input type="button" value="Done" /></li> </ul> </div><!-- /navbar -->
+			 <li><a data-ajax="false" class="ui-btn-active">{{ __('messages.Setting') }}</a></li>
+			  <li class="done-btn" id="dataSave">  <input type="button" value="{{ __('messages.Done') }}" /></li> </ul> </div><!-- /navbar -->
 		</div>
 	</div>
 
@@ -22,15 +22,15 @@
 			                {{ $languageStrings[$m] or $m }}
 			            @endforeach
 			        @else
-			            {{ $languageStrings[$message] or $message }}
+			            {{  __("messages.$message") }}
 			        @endif
 			    </div>
 			@endif
 			<div class="setting-list">
 
 				<ul data-role="listview"> 
-					<li class="range-sec"><a onClick="makeRedirection('{{url('select-location')}}')" data-ajax="false">Location<p class="ui-li-aside">@if(Auth::user()->address == null)
-						Current Location
+					<li class="range-sec"><a onClick="makeRedirection('{{url('select-location')}}')" data-ajax="false">{{ __('messages.Location') }}<p class="ui-li-aside">@if(Auth::user()->address == null)
+						{{ __('messages.Current Location') }}
 					@else	
 						{{Auth::user()->address}}
 					@endif</p></a>
@@ -39,7 +39,7 @@
 			</div>
 			<div class="setting-list">
 				<ul data-role="listview"> 
-					<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">Language<p class="ui-li-aside">
+					<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Language') }}<p class="ui-li-aside">
 						@if(Auth::user()->language == 'ENG')
 						English
 						@elseif(Auth::user()->language == 'SWE')
@@ -59,7 +59,7 @@
 						
 					</li>	
 					<!-- <li><a href="#">Unit <p class="ui-li-aside">Meter</p></a></li>  -->
-					<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">Range<p class="ui-li-aside">{{Auth::user()->range}} Km</p></h2>
+					<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Range') }}<p class="ui-li-aside">{{Auth::user()->range}} Km</p></h2>
 					<p>
 						<div data-role="rangeslider">
 						    <input type="range" name="range-1b" id="range-1b" min="3" max="10" value="{{Auth::user()->range}}">

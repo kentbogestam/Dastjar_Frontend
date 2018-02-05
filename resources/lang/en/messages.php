@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'Eat Now' => 'Eat Now',
+    'Eat Later'  => 'Eat Later',
+    'Restaurant'  => 'Restaurant',
+    'send'  => 'send',
+    'Order'  => 'Order',
+    'Setting'  => 'Setting',
+    'Order id'  => 'Order id',
+    'Done'  => 'Done',
+    'Setting updated successfully.'   => 'Setting updated successfully.',
+    'Location'   => 'Location',
+    'Current Location'   => 'Current Location',
+    'Language'   => 'Language',
+    'Range'   => 'Range',
+    'Go'   => 'Go',
+    'Menu is not available in your selected language.'   => 'Menu is not available in your selected language.',
+    'Add Comments'   => 'Add Comments',
+    'cancel'   => 'cancel',
+    'submit'   => 'submit',
+    'Items is not available in your selected Restaurant.'   => 'Items is not available in your selected Restaurant.',
+    'Thanks for your order'   => 'Thanks for your order',
+    'Order Number'   => 'Order Number',
+    'Your order will be ready at'   => 'Your order will be ready at',
+    'ORDER DETAILS'   => 'ORDER DETAILS',
+    'TOTAL'   => 'TOTAL',
+];

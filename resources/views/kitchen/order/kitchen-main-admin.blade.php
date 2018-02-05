@@ -78,19 +78,21 @@
 						
 					</div>
 					<div class="ui-block-b second-part">
-							<h3>Download the Web App to your Mobile and get 10% discount on your order</h3>
 							<div class="mid_para">
-								<p>To gain instant information to when your oreder is ready</p>
-								<p>To order ahead of your arrival so tha food is ready when you get here</p>
+								<h2>Gain Time by Ordering go</h2>
+								<h4><img src="{{asset('kitchenImages/600px-Black_check.svg.png')}}">Your food is ready by the time of arrival</h4>
+								<h3>Get notification, when your order is ready</h3>
 							</div>
-							<h3 class="no-margin">Pick it up from here</h3>
-							<a href="">dastjar.com/download</a>
-							<h3>Or</h3>
-							<h3>enter your mobile number here to get a message with the app</h3>
-							<form>
+							<h3 class="no-margin"><strong>DOWNLOAD</strong> the app <span>"anar"</span> ang get the benefites</h3>
+							<a class="blue_link" href="">dastjar.com/download</a>
+							<h3>OR</h3>
+							<h3 class="blue_link">Enter your mobile number here, to get the app</h3>
+							<h3 class="grey_text">070-12345678</h3>
+							<!-- <form>
 							<div class="ui-field-contain search_container"> <input type="text" data-clear-btn="true" data-mini="true" name="text-15" id="text-15" value=""> <button type="submit" id="submit-6" class="ui-shadow ui-btn ui-corner-all ui-mini">ok</button> </div>
-							</form>
-							<h3>or use the QR code to get the App</h3>
+							</form> -->
+							<h3>OR</h3>
+							<h3 class="blue_link">use the QR-code below</h3>
 							<div class="scan_code">
 								<img src="http://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=https://dastjar.com/dbuzzu/public/">
 							</div>

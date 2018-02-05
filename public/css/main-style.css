@@ -344,6 +344,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
     border: 1px solid rgba(0, 0, 0, 0.2) !important;
     border-radius: 40px;    
 }
+.active-btn{ opacity: 1;
+    background: #ccc;}
 .single-restro-list-sec .ui-collapsible-content{padding: 0 !important;}
 .extra-btn{
     border-top: 1px solid rgba(0, 0, 0, 0.2) !important; padding: .3em 0; text-align: right;

@@ -115,7 +115,7 @@ class HomeController extends Controller
                 }
             }
             //dd(array_unique($dish_typeId));
-            $menuTypes = DishType::where('company_id' , $companyId)->whereIn('dish_id', array_unique($dish_typeId))->where('dish_activate','1')->where('dish_lang',$userDetail->language)->get();
+            $menuTypes = DishType::where('company_id' , $companyId)->whereIn('dish_id', array_unique($dish_typeId))->where('dish_activate','1')->get();
             $dish_typeId = null;
             $request->session()->put('storeId'.Auth()->id(), $storeId);
             $companydetails = Company::where('company_id' , $companyId)->first();

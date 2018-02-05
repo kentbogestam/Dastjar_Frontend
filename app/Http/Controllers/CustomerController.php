@@ -7,9 +7,11 @@ use App\User;
 use DB;
 use Auth;
 use App\Helper;
+use Session;
 
 class CustomerController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -23,6 +25,21 @@ class CustomerController extends Controller
 
     public function saveSetting(Request $request){
         $data = $request->input();
+
+        if($data['radio-choice-v-2'] == 'ENG'){
+            Session::put('applocale', 'en');
+        }else{
+            Session::put('applocale', 'sv');
+        }
+        // if (array_key_exists($lang, Config::get('languages'))) {
+        //     Session::put('applocale', $lang);
+        // }
+        // dd(Session::has('locale'));
+        // if($data['radio-choice-v-2'] == 'ENG'){
+        //     \Session::set('locale', 'en');
+        // }else{
+        //     \Session::put('locale', 'sv');
+        // }
         DB::table('customer')->where('id', Auth::id())->update([
                     'language' => $data['radio-choice-v-2'],
                     'range' => $data['range-1b'],
