@@ -9,6 +9,7 @@ use App\Exceptions\SocialAuthException;
 use Socialite;
 use App\User;
 use Auth;
+use Session;
 
 class LoginController extends Controller
 {
@@ -63,7 +64,13 @@ class LoginController extends Controller
         $user = User::where(['fac_id' => $userSocial->id])->first();
         if($user){
             Auth::login($user);
-            return redirect()->action('HomeController@index');
+            if($user->language == 'ENG'){
+                Session::put('applocale', 'en');
+            }else{
+                Session::put('applocale', 'sv');
+            }
+            return redirect('/');
+            //return redirect()->action('HomeController@index');
         }else{
             $user = User::create([
                     'fac_id' => $userSocial->id,

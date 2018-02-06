@@ -25,7 +25,11 @@ class CustomerController extends Controller
 
     public function saveSetting(Request $request){
         $data = $request->input();
-
+        // if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
+        //   $languages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
+        //   $languagesServer = explode('-', $languages[0]);
+        //   dd($languagesServer[0]);  
+        // }
         if($data['radio-choice-v-2'] == 'ENG'){
             Session::put('applocale', 'en');
         }else{

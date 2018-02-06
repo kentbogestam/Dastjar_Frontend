@@ -6,7 +6,7 @@
 		<div class="logo_header">
 			<img src="{{asset('kitchenImages/logo-img.png')}}">
 		</div>
-		<h3 class="ui-bar ui-bar-a order_background">Catering</h3>
+		<h3 class="ui-bar ui-bar-a order_background">Catering <span>{{$storeName}}</span></h3>
 	</div>
 	<div role="main" class="ui-content">
 		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow table-stripe ui-responsive table_size" >

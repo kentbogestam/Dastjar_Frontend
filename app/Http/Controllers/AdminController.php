@@ -27,7 +27,15 @@ class AdminController extends Controller
     }
 
     public function index(){
-              return view('kitchen.order.index');
+            if(Auth::guard('admin')->user()->store_id == null){
+                $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
+                $storeName = $companydetails->company_name;
+            }else{
+                $storedetails = Store::where('store_id' , Auth::guard('admin')->user()->store_id)->first();
+                $storeName = $storedetails->store_name;
+            }
+
+              return view('kitchen.order.index', compact('storeName'));
     }
 
     public function orderDetail(){
@@ -54,7 +62,14 @@ class AdminController extends Controller
     }
 
     public function kitchenOrderDetail(){
-       return view('kitchen.order.kitchen_order_list', compact(''));
+        if(Auth::guard('admin')->user()->store_id == null){
+            $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
+            $storeName = $companydetails->company_name;
+        }else{
+            $storedetails = Store::where('store_id' , Auth::guard('admin')->user()->store_id)->first();
+            $storeName = $storedetails->store_name;
+        }
+       return view('kitchen.order.kitchen_order_list', compact('storeName'));
     }
 
     public function kitchenOrders(){
@@ -102,7 +117,14 @@ class AdminController extends Controller
     }
     
     public function cateringDetails(){
-        return view('kitchen.order.catering', compact('')); 
+        if(Auth::guard('admin')->user()->store_id == null){
+            $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
+            $storeName = $companydetails->company_name;
+        }else{
+            $storedetails = Store::where('store_id' , Auth::guard('admin')->user()->store_id)->first();
+            $storeName = $storedetails->store_name;
+        }
+        return view('kitchen.order.catering', compact('storeName')); 
     }
 
     public function cateringOrders(){

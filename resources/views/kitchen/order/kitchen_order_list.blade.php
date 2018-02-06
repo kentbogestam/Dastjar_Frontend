@@ -6,7 +6,7 @@
 		<div class="logo_header">
 			<img src="{{asset('kitchenImages/logo-img.png')}}">
 		</div>
-		<h3 class="ui-bar ui-bar-a order_background">Kitchen</h3>
+		<h3 class="ui-bar ui-bar-a order_background">Kitchen <span>{{$storeName}}</span></h3>
 	</div>
 	<div role="main" class="ui-content">
 		<div class="ready_notification">
