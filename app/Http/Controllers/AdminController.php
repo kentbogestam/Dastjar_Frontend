@@ -14,6 +14,20 @@ use App\Company;
 use DB;
 use Carbon\Carbon;
 use App\Store;
+use Session;
+use App\User;
+
+use App\App42\PushNotificationService;
+use App\App42\DeviceType;
+use App\App42\App42Log;
+use App\App42\App42Exception;
+use App\App42\App42NotFoundException;
+use App\App42\App42BadParameterException;
+use App\App42\StorageService;
+use App\App42\QueryBuilder;
+use App\App42\Query;
+use App\App42\App42API;
+
 class AdminController extends Controller
 {
     /**
@@ -108,9 +122,15 @@ class AdminController extends Controller
         $userOrderStatus = OrderDetail::where('order_id' , $userOrderId->order_id)->get();
         $readyOrderStatus = OrderDetail::where('order_id' , $userOrderId->order_id)->where('order_ready' , '1')->get();
         if(count($userOrderStatus) == count($readyOrderStatus)){
+
+            $OrderId = Order::where('order_id' , $userOrderId->order_id)->first();
             DB::table('orders')->where('order_id', $userOrderId->order_id)->update([
                             'order_ready' => 1,
                         ]);
+
+            $message = 'orderReady';
+            $this->sendNotifaction($OrderId->customer_order_id , $message);
+            return redirect()->action('AdminController@kitchenOrderDetail')->with('success', 'Order Ready Nofifaction Send Successfully.');
         }
         return redirect()->action('AdminController@kitchenOrderDetail')->with('success', 'Order Ready Successfully.');
         //return view('kitchen.order.kitchen_order_list');
@@ -355,5 +375,49 @@ class AdminController extends Controller
         }
 
         return $alpha_key . $key;
+    }
+
+    public function kitchenSetting(){
+        return view('kitchen.setting.index');
+    }
+
+    public function saveKitchenSetting(Request $request){
+        //dd($request->input());
+        $data = $request->input();
+        if($data['radio-choice-v-2'] == 'ENG'){
+            Session::put('applocale', 'en');
+        }else{
+            Session::put('applocale', 'sv');
+        }
+        DB::table('user')->where('id', Auth::guard('admin')->id())->update([
+                    'language' => $data['radio-choice-v-2'],
+                ]);
+        return redirect()->back()->with('success', 'Setting updated successfully.');
+    }
+
+    public function sendNotifaction($orderID, $message){
+        $order = Order::select('*')->where('customer_order_id',$orderID)->first();
+        if($order->user_type == 'customer'){
+            $userDetail = User::whereId($order->user_id)->first();
+            $userName =$userDetail->email;
+        }else{
+            $userDetail = Admin::whereId($order->user_id)->first();
+            $userName =$userDetail->email;
+        }
+
+        if($message == 'orderDeliver'){
+            $url = env('APP_URL').'/public/deliver-notifaction';
+            $message = "{'alert':'Your Order Deliver.','badge':1,'sound':'default','Url':" ."'". $url."'" . "}";
+        }else{
+            $url = env('APP_URL').'/public/ready-notifaction/'.$orderID;
+            $message = "{'alert':'Your Order Ready.','badge':1,'sound':'default','Url':" ."'". $url."'" . "}";
+        }
+        //dd(Config::get('app.php.varname'));
+        //dd(env('APP_URL').'/ready-notifaction/'.$orderID);
+        //dd($request->url());
+        App42API::initialize("cc9334430f14aa90c623aaa1dc4fa404d1cfc8194ab2fd144693ade8a9d1e1f2","297b31b7c66e206b39598260e6bab88e701ed4fa891f8995be87f786053e9946"); 
+        $pushNotificationService = App42API::buildPushNotificationService(); 
+        $pushNotification = $pushNotificationService->sendPushMessageToUser($userName,$message);
+        $jsonResponse = $pushNotification->toString();
     }
 }

@@ -27,7 +27,6 @@
 			    </div>
 			@endif
 			<div class="setting-list">
-
 				<ul data-role="listview"> 
 					<li class="range-sec"><a onClick="makeRedirection('{{url('select-location')}}')" data-ajax="false">{{ __('messages.Location') }}<p class="ui-li-aside">@if(Auth::user()->address == null)
 						{{ __('messages.Current Location') }}

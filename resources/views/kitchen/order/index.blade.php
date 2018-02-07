@@ -5,7 +5,7 @@
 		<div class="logo_header">
 		<img src="{{asset('kitchenImages/logo-img.png')}}">
 		</div>
-		<h3 class="ui-bar ui-bar-a order_background">Orders <span>{{$storeName}}</span></h3>
+		<h3 class="ui-bar ui-bar-a order_background">{{ __('messages.Orders') }} <span>{{$storeName}}</span></h3>
 	</div>
 	<div role="main" class="ui-content">
 		<div class="ready_notification">
@@ -25,12 +25,13 @@
 		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow table-stripe ui-responsive table_size" >
 			<thead>
 			 	<tr class="ui-bar-d">
-			 		<th data-priority="2">Orders</th>
-			   		<th>Alias</th> 
-			   		<th data-priority="3">Date and Time</th>
-			    	<th data-priority="1">Ready</th> 
-			    	<th data-priority="5">Delivered</th> <th data-priority="3">Paid</th>
-			     	<th data-priority="1">Pick up Time</th>
+			 		<th data-priority="2">{{ __('messages.Orders') }}</th>
+			   		<th>{{ __('messages.Alias') }}</th> 
+			   		<th data-priority="3">{{ __('messages.Date and Time') }}</th>
+			    	<th data-priority="1">{{ __('messages.Ready') }}</th> 
+			    	<th data-priority="5">{{ __('messages.Delivered') }}</th>
+			    	 <th data-priority="3">{{ __('messages.Paid') }}</th>
+			     	<th data-priority="1">{{ __('messages.Pick up Time') }}</th>
 			    </tr>
 			</thead>
 		    <tbody id="orderDetailContianer">
@@ -47,7 +48,7 @@
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/icon-1.png')}}">
 					</div>
-					<span>Orders</span>
+					<span>{{ __('messages.Orders') }}</span>
 					</a>
 				</div>
 				<div class="ui-block-b">
@@ -55,7 +56,7 @@
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/icon-2.png')}}">
 					</div>
-					<span>kitchen</span>
+					<span>{{ __('messages.kitchen') }}</span>
 					</a>
 				</div>
 				<div class="ui-block-b">
@@ -63,14 +64,14 @@
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/icon-3.png')}}">
 					</div>
-					<span>catering</span>
+					<span>{{ __('messages.catering') }}</span>
 					</a>
 				</div>
 			</div>
 			<div class="ui-block-b right-side_menu">
 				
 				
-				<div class="ui-block-a drop_down"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
+				<div class="ui-block-a drop_down"><a href = "{{ url('kitchen/kitchen-setting') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/icon-6.png')}}">
 					</div>
@@ -79,13 +80,13 @@
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/icon-5.png')}}">
 					</div>
-					<span>Admin</span>
+					<span>{{ __('messages.Admin') }}</span>
 				</a></div>
 				<div class="ui-block-c"><a href = "{{ url('kitchen/kitchen-order-onside') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/icon-4.png')}}">
 					</div>
-					<span>order onside</span>
+					<span>{{ __('messages.order onside') }}</span>
 				</a></div>
 			</div>
 		</div>

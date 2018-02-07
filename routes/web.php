@@ -81,6 +81,8 @@ Route::group(['middleware' => ['auth']], function(){
 		Route::get('kitchen-order-view/{OrderId}', 'AdminController@kitchenOrderView');
 		Route::get('order-ready/{OrderId}', 'PushNotifactionController@orderReady');
 		Route::get('order-deliver/{OrderId}', 'PushNotifactionController@orderDeliver');
+		Route::get('kitchen-setting', 'AdminController@kitchenSetting');
+		Route::post('save-kitchenSetting', 'AdminController@saveKitchenSetting');
 	});
 
 

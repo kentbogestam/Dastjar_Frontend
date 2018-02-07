@@ -40,7 +40,7 @@
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/order-img.png')}}">
 					</div>
-					<span>Order<span class="order_number">{{count(Auth::guard('admin')->user()->kitchenPaidOrderList)}}</span></span>
+					<span>{{ __('messages.Orders') }}<span class="order_number">{{count(Auth::guard('admin')->user()->kitchenPaidOrderList)}}</span></span>
 				</a></div>
 				<!-- <div class="ui-block-b"><a onClick="makeRedirection('{{url('kitchen/selectOrder-dateKitchen')}}')" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">
@@ -61,7 +61,7 @@
         <ul data-role="listview" data-inset="true" style="min-width:210px;">
             <!-- <li data-role="list-divider">Choose an action</li> -->
             @foreach(Auth::guard('admin')->user()->kitchenPaidOrderList as $order)
-            	<li><a href="{{ url('kitchen/kitchen-order-view/'.$order->order_id) }}">Order - {{$order->customer_order_id}}</a></li>
+            	<li><a href="{{ url('kitchen/kitchen-order-view/'.$order->order_id) }}">{{ __('messages.Order') }} - {{$order->customer_order_id}}</a></li>
             @endforeach
         </ul>
 	</div>
@@ -74,25 +74,25 @@
 				<div class="ui-grid-a">
 					<div class="ui-block-a">
 						
-						<p>You are the man admin company.Please log in from any store of the company and then the menu of that store will appear</p>
+						<p>{{ __('messages.You are the man admin company.Please log in from any store of the company and then the menu of that store will appear') }}</p>
 						
 					</div>
 					<div class="ui-block-b second-part">
 							<div class="mid_para">
-								<h2>Gain Time by Ordering go</h2>
-								<h4><img src="{{asset('kitchenImages/600px-Black_check.svg.png')}}">Your food is ready by the time of arrival</h4>
-								<h3>Get notification, when your order is ready</h3>
+								<h2>{{ __('messages.Gain Time by Ordering go') }}</h2>
+								<h4><img src="{{asset('kitchenImages/600px-Black_check.svg.png')}}">{{ __('messages.Your food is ready by the time of arrival') }}</h4>
+								<h3>{{ __('messages.Get notification, when your order is ready') }}</h3>
 							</div>
-							<h3 class="no-margin"><strong>DOWNLOAD</strong> the app <span>"anar"</span> ang get the benefites</h3>
+							<h3 class="no-margin"><strong>{{ __('messages.DOWNLOAD') }}</strong> {{ __('messages.the app') }} <span>{{ __('messages."anar"') }}</span> {{ __('messages.ang get the benefites') }}</h3>
 							<a class="blue_link" href="">dastjar.com/download</a>
 							<h3>OR</h3>
-							<h3 class="blue_link">Enter your mobile number here, to get the app</h3>
+							<h3 class="blue_link">{{ __('messages.Enter your mobile number here, to get the app') }}</h3>
 							<h3 class="grey_text">070-12345678</h3>
 							<!-- <form>
 							<div class="ui-field-contain search_container"> <input type="text" data-clear-btn="true" data-mini="true" name="text-15" id="text-15" value=""> <button type="submit" id="submit-6" class="ui-shadow ui-btn ui-corner-all ui-mini">ok</button> </div>
 							</form> -->
-							<h3>OR</h3>
-							<h3 class="blue_link">use the QR-code below</h3>
+							<h3>{{ __('messages.OR') }}</h3>
+							<h3 class="blue_link">{{ __('messages.use the QR-code below') }}</h3>
 							<div class="scan_code">
 								<img src="http://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=https://dastjar.com/dbuzzu/public/">
 							</div>
@@ -104,14 +104,14 @@
 
 		<div data-role="popup" id="transitionExample" class="ui-content comment-popup" data-theme="a">
 			<div class="pop-header">
-			<a href="#" data-rel="back"  class="cancel-btn ui-btn ui-btn-left ui-corner-all ui-shadow ui-btn-a">cancel</a>
-			<label>Add comment</label>
+			<a href="#" data-rel="back"  class="cancel-btn ui-btn ui-btn-left ui-corner-all ui-shadow ui-btn-a">{{ __('messages.cancel') }}</a>
+			<label>{{ __('messages.Add Comments') }}</label>
 			
 			</div>
 			<div class="pop-body">
 				
 				<textarea name="textarea-1" id="textarea-1" placeholder="Add a comment"></textarea>
-				<a id="submitId" href="" data-ajax="false" class="submit-btn ui-btn ui-btn-right ui-corner-all ui-shadow ui-btn-a">submit</a>
+				<a id="submitId" href="" data-ajax="false" class="submit-btn ui-btn ui-btn-right ui-corner-all ui-shadow ui-btn-a">{{ __('messages.submit') }}</a>
 			</div>
 		</div>
 
@@ -126,7 +126,7 @@
 			<div class="img-container" id = "menudataSave">
 				<img src="{{asset('kitchenImages/send_icon.png')}}">
 			</div>
-			<span>send</span>
+			<span>{{ __('messages.send') }}</span>
 		</a></div>
 		</div>
 	</div>
