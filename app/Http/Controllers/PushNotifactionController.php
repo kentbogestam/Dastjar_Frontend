@@ -61,7 +61,7 @@ class PushNotifactionController extends Controller
     		$userDetail = Admin::whereId($order->user_id)->first();
     		$userName =$userDetail->email;
     	}
-
+	
     	if($message == 'orderDeliver'){
     		$url = env('APP_URL').'/public/deliver-notifaction';
     		$message = "{'alert':'Your Order Deliver.','badge':1,'sound':'default','Url':" ."'". $url."'" . "}";
@@ -73,9 +73,10 @@ class PushNotifactionController extends Controller
     	//dd(env('APP_URL').'/ready-notifaction/'.$orderID);
     	//dd($request->url());
     	App42API::initialize("cc9334430f14aa90c623aaa1dc4fa404d1cfc8194ab2fd144693ade8a9d1e1f2","297b31b7c66e206b39598260e6bab88e701ed4fa891f8995be87f786053e9946"); 
-		$pushNotificationService = App42API::buildPushNotificationService(); 
+		$pushNotificationService = App42API::buildPushNotificationService();
 		$pushNotification = $pushNotificationService->sendPushMessageToUser($userName,$message);
+		if($pushNotification){
 		$jsonResponse = $pushNotification->toString();
-    }
-
+ 	}
+	}
 }
