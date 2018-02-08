@@ -4,7 +4,8 @@
 	<div data-role="header" class="header" id="nav-header"  data-position="fixed">
 		<div class="logo">
 			<div class="inner-logo">
-				<img src="{{asset('images/logo.png')}}">
+				<!-- <img src="{{asset('images/logo.png')}}"> -->
+				<span class="rest-title">{{$companydetails->store_name}}</span>
 				<span>{{ Auth::user()->name}}</span>
 			</div>
 		</div>

@@ -19,6 +19,7 @@ use App\Order;
 use App\User;
 use App\Admin;
 use DB;
+use App\Store;
 
 
 
@@ -36,7 +37,9 @@ class PushNotifactionController extends Controller
     }
 
     public function readyNotifaction(Request $request, $orderID){
-    	return view('order.alert-ready',compact('orderID'));
+        $orderDetail = Order::where('customer_order_id', $orderID)->first();
+        $companydetails = Store::where('store_id', $orderDetail->store_id)->first();
+    	return view('order.alert-ready',compact('orderID','companydetails'));
     }
 
     public function orderDeliver(Request $request, $orderID){
@@ -48,8 +51,10 @@ class PushNotifactionController extends Controller
     	return redirect()->action('AdminController@index')->with('success', 'Order Deliver Notifaction Send Successfully.');
     }
 
-    public function deliverNotifaction(){
-    	return view('order.alert-deliver');
+    public function deliverNotifaction(Request $request, $orderID){
+        $orderDetail = Order::where('customer_order_id', $orderID)->first();
+        $companydetails = Store::where('store_id', $orderDetail->store_id)->first();
+    	return view('order.alert-deliver',compact('orderID','companydetails'));
     }
 
     public function sendNotifaction($orderID, $message){
@@ -63,7 +68,7 @@ class PushNotifactionController extends Controller
     	}
 	
     	if($message == 'orderDeliver'){
-    		$url = env('APP_URL').'/public/deliver-notifaction';
+    		$url = env('APP_URL').'/public/deliver-notifaction/'.$orderID;
     		$message = "{'alert':'Your Order Deliver.','badge':1,'sound':'default','Url':" ."'". $url."'" . "}";
     	}else{
     		$url = env('APP_URL').'/public/ready-notifaction/'.$orderID;

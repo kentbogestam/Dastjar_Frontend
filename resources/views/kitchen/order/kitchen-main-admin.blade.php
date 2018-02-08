@@ -48,7 +48,7 @@
 					</div>
 					<span>Eat Later</span>
 				</a></div>
-				<div class="ui-block-c"><a onClick="makeRedirection('{{url('kitchen/kitchen-order-onside')}}')" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
+				<div class="ui-block-c"><a onClick="makeRedirection('{{url('kitchen/kitchen-order-onsite')}}')" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/eat-icon.png')}}">
 					</div>

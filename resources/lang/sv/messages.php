@@ -35,7 +35,7 @@ return [
     'kitchen'  => 'kök',      
     'catering'  => 'catering',      
     'Admin'  => 'administration',      
-    'order onside'  => 'beställa onside',       
+    'order onsite'  => 'beställa onsite',       
     'Amount'  => 'Belopp',           
     'Product'  => 'Produkt',             
     'Comment'  => 'Kommentar',         
@@ -51,5 +51,6 @@ return [
     'Enter your mobile number here, to get the app'  => 'Ange ditt mobilnummer här för att få appen',           
     'use the QR-code below'  => 'använd QR-koden nedan',         
     'Menu is not available.'  => 'Menyn är inte tillgänglig.',         
-    'You are the man admin company.Please log in from any store of the company and then the menu of that store will appear'  => 'Du är mannen admin company.Please logga in från någon butik i företaget och sedan menyn i den butiken kommer att visas', 
+    'You are the man admin company.Please log in from any store of the company and then the menu of that store will appear'  => 'Du är mannen admin company.Please logga in från någon butik i företaget och sedan menyn i den butiken kommer att visas',           
+    'Location updated successfully.'  => 'Plats uppdaterad.',    
 ];

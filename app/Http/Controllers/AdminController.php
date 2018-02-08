@@ -59,16 +59,16 @@ class AdminController extends Controller
             $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
             $reCompanyId = $companydetails->company_id;
 
-            $orderDetailscustomer = Order::select('orders.*','customer.name as name')->where(['company_id' => $reCompanyId])->where('user_type','=','customer')->where('check_deliveryDate',Carbon::now()->toDateString())->join('customer','orders.user_id','=','customer.id');
-            $orderDetails = Order::select('orders.*','user.fname as name')->where('orders.company_id', '=' ,$reCompanyId)->where('user_type','=','admin')->where('check_deliveryDate',Carbon::now()->toDateString())->join('user','orders.user_id','=','user.id');
+            $orderDetailscustomer = Order::select('orders.*','customer.name as name')->where(['company_id' => $reCompanyId])->where('user_type','=','customer')->where('check_deliveryDate',Carbon::now()->toDateString())->where('orders.paid', '0')->join('customer','orders.user_id','=','customer.id');
+            $orderDetails = Order::select('orders.*','user.fname as name')->where('orders.company_id', '=' ,$reCompanyId)->where('user_type','=','admin')->where('check_deliveryDate',Carbon::now()->toDateString())->where('orders.paid', '0')->join('user','orders.user_id','=','user.id');
             $results = $orderDetailscustomer->union($orderDetails)->get();
 
         }else{
             //In this function where condition work store_id
             $reCompanyId = Auth::guard('admin')->user()->store_id;
 
-            $orderDetailscustomer = Order::select('orders.*','customer.name as name')->where(['store_id' => $reCompanyId])->where('user_type','=','customer')->where('check_deliveryDate',Carbon::now()->toDateString())->join('customer','orders.user_id','=','customer.id');
-            $orderDetails = Order::select('orders.*','user.fname as name')->where('orders.store_id', '=' ,$reCompanyId)->where('user_type','=','admin')->where('check_deliveryDate',Carbon::now()->toDateString())->join('user','orders.user_id','=','user.id');
+            $orderDetailscustomer = Order::select('orders.*','customer.name as name')->where(['store_id' => $reCompanyId])->where('user_type','=','customer')->where('check_deliveryDate',Carbon::now()->toDateString())->where('orders.paid', '0')->join('customer','orders.user_id','=','customer.id');
+            $orderDetails = Order::select('orders.*','user.fname as name')->where('orders.store_id', '=' ,$reCompanyId)->where('user_type','=','admin')->where('check_deliveryDate',Carbon::now()->toDateString())->where('orders.paid', '0')->join('user','orders.user_id','=','user.id');
             $results = $orderDetailscustomer->union($orderDetails)->get();           
         }
         // $user = Admin::where(['u_id' => Auth::guard('admin')->user()->company_id])->first();
@@ -93,12 +93,12 @@ class AdminController extends Controller
             $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
             $reCompanyId = $companydetails->company_id;
             
-            $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id')->where(['order_details.company_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
+            $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id')->where(['order_details.company_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
 
         }else{
             $reCompanyId = Auth::guard('admin')->user()->store_id;
 
-            $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id')->where(['order_details.store_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
+            $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id')->where(['order_details.store_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
 
         }
 
