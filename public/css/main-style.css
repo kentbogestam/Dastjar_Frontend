@@ -719,7 +719,7 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
 .icon-img img{
   width: 36px;
 }
-
+.map_container{height: 100%;}
 /*[data-role="footer"] .inner-footer a .img-container{
     height: 55px;
     line-height: 55px;
