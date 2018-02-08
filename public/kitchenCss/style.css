@@ -260,24 +260,25 @@ background: -o-linear-gradient(top, rgba(199,7,17,1) 0%, rgba(72,13,13,1) 100%);
 background: -ms-linear-gradient(top, rgba(199,7,17,1) 0%, rgba(72,13,13,1) 100%);
 background: linear-gradient(to bottom, rgba(199,7,17,1) 0%, rgba(72,13,13,1) 100%);
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c70711', endColorstr='#480d0d', GradientType=0 );}
-.mid_para{text-align: center;}
-.mid_para h2{font-size: 16px;}
-.mid_para h3{font-size: 14px;}
-.mid_para h4{font-size: 12px;}
+.mid_para{text-align: center;margin-bottom: 2em;}
+.mid_para h2{font-size: 15px;margin: 0;margin-bottom: 10px;font-family: "MavenPro-Medium";}
+.mid_para h3{font-size: 12px !important;margin: 0;margin-bottom: 10px;font-family: "MavenPro-Regular";}
+.mid_para h4{font-size: 11px;margin: 0;margin-bottom: 10px;font-family: "MavenPro-Medium";}
 .mid_para h4 img{max-width: 100%;
 width: 1em;
 margin-right: 5px;}
-.no-margin{}
-.no-margin span{color: #ea1919;}
+.no-margin{color: rgba(0, 0, 0, 0.52);}
+.no-margin strong{color: #000;}
+.no-margin span{color: #ea1919;font-family: "MavenPro-Medium";}
 .search_container .ui-mini.ui-input-has-clear{display: inline-block;padding-right:0;margin: 0;width: 75%;border-radius: 0em;border-color: #898989;}
-.search_container .ui-input-text input{text-align: left !important;padding: .3em !important;background: #fff; }
-.search_container button.ui-btn{    width: 20%;display: inline-block;margin:0;background: #000;color: #b2bb4a;border: 1px solid #000; border-radius: 0em;padding: .6em 1em;}
-.single-restro-list-sec  .ui-grid-a>.ui-block-a{width: 65%;}
-.single-restro-list-sec  .ui-grid-a>.ui-block-b{width: 35%;}
+.search_container .ui-input-text input{border-radius: 0;text-align: left !important;padding: .3em !important;background: #fff; }
+.search_container .ui-input-text{border-radius: 0px;width: 80%;display: inline-block;float: left;margin: 0;}
+.search_container button.ui-btn{    width: calc(100% - 80%);display: inline-block;margin:0;background: #000;color: #b2bb4a;border: 1px solid #000; border-radius: 0em;}
+.single-restro-list-sec  .ui-grid-a>.ui-block-a{width: 65% !important;}
+.single-restro-list-sec  .ui-grid-a>.ui-block-b{width:calc(100% - 65%);}
 .single-restro-list-sec .ui-collapsible-heading a {
     border: none;
     background: #EBEBEB;
-    border-top: 1px solid rgba(0, 0, 0, 0.2) !important;
     box-shadow: 1px 1px 1px 0px #ccc;
     color: #8e8e8e;border-radius: 0;
 }
@@ -290,9 +291,15 @@ margin-right: 5px;}
     background-position: center;
     right: 0 !important;background-color: transparent;}
 .single-restro-list-sec .ui-collapsible-inset.ui-collapsible-themed-content .ui-collapsible-content{padding: 0;border: none;}
-.second-part{text-shadow:none;background: #d6dbdf;padding: 1.2em !important;position: fixed;height: 100%;right: 0;overflow-y: scroll;padding-bottom: 15em !important;text-align: center;}
+.second-part{text-shadow:none;background: #cfd5da;position: fixed;height: 100%;right: 0;overflow-y: scroll;padding-bottom: 15em !important;text-align: center;}
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+.seprate_qr{padding: .8em !important;background-color: #e9e9e9;margin: 0em 0.2em;}
 .second-part .grey_text{color: #777575;text-shadow: none;}
-.second-part h3{font-size: 14px;line-height: 18px;}
+.second-part h3{font-size: 12px;line-height: 18px;}
 .blue_link{color: #4141cb;}
 .second-part p{font-size: 12px;line-height: 16px;color: #525252;}
 .second-part a{color: #5dacd9;}
@@ -374,8 +381,9 @@ margin-right: 5px;}
 	        margin: 4px 2px !important;
     padding: 1px 5px !important;
 }
+.left_part_kit .ui-collapsible-content>.ui-listview{border-radius: 0;box-shadow: none;border-bottom: 1px solid rgba(0, 0, 0, 0.2) !important;}
+.left_part_kit a.ui-btn:focus{box-shadow: none;}
 .single-restro-list-sec .ui-listview>li{
-	border-bottom: 1px solid rgba(0, 0, 0, 0.2) !important;
 	margin:0 .6em 0.8em !important;
 	    padding: 0 !important;
 	    border:none;padding-bottom: .8em !important;
@@ -400,7 +408,7 @@ margin-right: 5px;}
 .setting-list .ui-radio-on{ background: #7b0e00; color: #fff}
 .setting-list input[type="radio"]{display: none;}
 .setting-list label{padding-left: 1em;}
-.scan_code{text-align: center;}
+.scan_code{text-align: center;background-color: #cfd5da;padding: 1em 2em;}
 .scan_code img{width: 7em;}
 /*catering page*/
 .table_size .ui-bar-d.catering_row th:nth-child(6){width: 10%;}

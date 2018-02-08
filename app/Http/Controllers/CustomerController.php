@@ -73,7 +73,8 @@ class CustomerController extends Controller
                     ]);
             }
         }
-        return view('settings.index', compact(''));
+        return redirect('customer')->with('success', 'Location updated successfully.');
+        //return view('settings.index', compact(''));
     }
 
     /**

@@ -31,7 +31,7 @@
 Route::group(['middleware' => ['auth']], function(){
 
 	Route::get('ready-notifaction/{OrderId}', 'PushNotifactionController@readyNotifaction');
-	Route::get('deliver-notifaction', 'PushNotifactionController@deliverNotifaction');
+	Route::get('deliver-notifaction/{OrderId}', 'PushNotifactionController@deliverNotifaction');
 
 	Route::get('/', 'HomeController@index');
 	Route::get('blank-view', 'HomeController@blankView');
@@ -70,7 +70,7 @@ Route::group(['middleware' => ['auth']], function(){
 		Route::get('kitchen-orders', 'AdminController@kitchenOrders');
 		Route::get('catering', 'AdminController@cateringDetails');
 		Route::get('catering-orders', 'AdminController@cateringOrders');
-		Route::get('kitchen-order-onside', 'AdminController@kitchenPreOrder');
+		Route::get('kitchen-order-onsite', 'AdminController@kitchenPreOrder');
 		Route::get('order-started/{OrderId}', 'AdminController@orderStarted');
 		Route::get('order-readyKitchen/{OrderId}', 'AdminController@orderReadyKitchen');
 		Route::post('kitchen-order-save','AdminController@kitchenOrderSave');

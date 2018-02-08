@@ -49,7 +49,7 @@
 					</div>
 					<span>Eat Later</span>
 				</a></div>
-				<div class="ui-block-c"><a onClick="makeRedirection('{{url('kitchen/kitchen-order-onside')}}')" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
+				<div class="ui-block-c"><a onClick="makeRedirection('{{url('kitchen/kitchen-order-onsite')}}')" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/eat-icon.png')}}">
 					</div>
@@ -73,7 +73,7 @@
 		
 			<div class="cat-list-sec single-restro-list-sec">
 				<div class="ui-grid-a">
-					<div class="ui-block-a">
+					<div class="ui-block-a left_part_kit">
 						@if($menuDetails == null || $menuTypes == null)
 							<p>{{ __('messages.Menu is not available.') }}</p>
 						@else
@@ -151,21 +151,23 @@
 						@endif
 					</div>
 					<div class="ui-block-b second-part">
+						<div class="seprate_qr">
 							<div class="mid_para">
-								<h2>{{ __('messages.Gain Time by Ordering go') }}</h2>
+								<h2>{{ __('messages.Gain Time by Ordering on the go') }}</h2>
 								<h4><img src="{{asset('kitchenImages/600px-Black_check.svg.png')}}">{{ __('messages.Your food is ready by the time of arrival') }}</h4>
 								<h3>{{ __('messages.Get notification, when your order is ready') }}</h3>
 							</div>
-							<h3 class="no-margin"><strong>{{ __('messages.DOWNLOAD') }}</strong>{{ __('messages.the app') }}  <span>{{ __('messages."anar"') }}</span>{{ __('messages.ang get the benefites') }} </h3>
+							<h3 class="no-margin"><strong>{{ __('messages.DOWNLOAD') }}</strong> {{ __('messages.the App') }}  <span>{{ __('messages."anar"') }}</span> {{ __('messages.and get the benefites') }} </h3>
 							<a class="blue_link" href="">dastjar.com/download</a>
 							<h3>{{ __('messages.OR') }}</h3>
 							<h3 class="blue_link">{{ __('messages.Enter your mobile number here, to get the app') }}</h3>
-							<h3 class="grey_text">070-12345678</h3>
-							<!-- <form>
-							<div class="ui-field-contain search_container"> <input type="text" data-clear-btn="true" data-mini="true" name="text-15" id="text-15" value=""> <button type="submit" id="submit-6" class="ui-shadow ui-btn ui-corner-all ui-mini">ok</button> </div>
-							</form> -->
+							<!-- <h3 class="grey_text">070-12345678</h3> -->
+							<form>
+							<div class="ui-field-contain search_container"> <input type="number" data-clear-btn="false" name="number-1" id="number-1" value=""> <button type="submit" id="submit-6" class="ui-shadow ui-btn ui-corner-all ui-mini">ok</button> </div>
+							</form>
 							<h3>{{ __('messages.OR') }}</h3>
 							<h3 class="blue_link">{{ __('messages.use the QR-code below') }}</h3>
+						</div>
 							<div class="scan_code">
 								<img src="http://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=https://dastjar.com/dbuzzu/public/">
 							</div>
