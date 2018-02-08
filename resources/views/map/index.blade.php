@@ -13,7 +13,7 @@
 		<a class="ui-btn-right map-btn user-link" href="#left-side-bar"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
 	</div>
 	<div role="main" data-role="main-content" class="content">
-		<div id="map" style="height: 575px;"></div>
+		<div id="map" class="map_container"></div>
 	</div>
 
 
@@ -141,7 +141,7 @@
 
 	    // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
 	    var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
-	        this.setZoom(14);
+	        this.setZoom(17);
 	        google.maps.event.removeListener(boundsListener);
 	    });
 	    
