@@ -19,6 +19,7 @@
 		{{ csrf_field() }}
 		<div role="main" data-role="main-content" class="content">
 			<div class="cat-list-sec single-restro-list-sec">
+				<input type="hidden" id="browserCurrentTime" name="browserCurrentTime" value="" />
 				<input type="hidden" name="storeID" value="{{$storeId}}" />
 					<?php $i =0 ?>
 					<?php $j =1 ?>
@@ -129,7 +130,7 @@
 				<div class="img-container" id = "menudataSave">
 					<img src="{{asset('images/icons/select-store_03.png')}}">
 				</div>
-				<input type="button" value="{{ __('messages.Submit') }}" id="dataSave"/>
+				<input type="button" value="{{ __('messages.Send') }}" id="dataSave"/>
 			</a></div>
 			@if(count(Auth::user()->paidOrderList) == 0)
 				<div class="ui-block-c"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
@@ -186,7 +187,10 @@
 });
 
 	$("#menudataSave").click(function(e){
-
+		
+			var d = new Date();
+			//console.log(d);
+			$("#browserCurrentTime").val(d);
 		var flag = false;
 		var x = $('form input[type="text"]').each(function(){
         // Do your magic here

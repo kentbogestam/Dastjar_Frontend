@@ -51,7 +51,7 @@
 				<div class="img-container" id = "menudataSave">
 					<img src="{{asset('images/icons/select-store_03.png')}}">
 				</div>
-				<input type="button" value="{{ __('messages.Submit') }}" id="dataSave"/>
+				<input type="button" value="{{ __('messages.Send') }}" id="dataSave"/>
 			</a></div>
 			@if(count(Auth::user()->paidOrderList) == 0)
 				<div class="ui-block-c"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">

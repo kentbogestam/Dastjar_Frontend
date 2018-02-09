@@ -101,12 +101,13 @@
 		          	totalCount -= 10;
 		          	for (var i=0;i<count;i++){
 		          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
+		          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
 		          		liItem += "<tr>";
 		          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 		          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
 		          		liItem += "<td>"+temp[i]["product_name"]+"</td>";
 		          		liItem += "<td>"+temp[i]["product_description"]+"</td>";
-		          		liItem += "<td>"+temp[i]["deliver_date"]+' '+temp[i]["deliver_time"]+"</td>";
+		          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
 		          		liItem += "<td>"+time+"</td>";
 		          		liItem += "</tr>";
 		          	}
@@ -136,12 +137,13 @@
 		          	totalCount -= 10;
 		          	for (var i=0;i<count;i++){
 		          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
+		          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
 		          		liItem += "<tr>";
 		          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 		          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
 		          		liItem += "<td>"+temp[i]["product_name"]+"</td>";
 		          		liItem += "<td>"+temp[i]["product_description"]+"</td>";
-		          		liItem += "<td>"+temp[i]["deliver_date"]+' '+temp[i]["deliver_time"]+"</td>";
+		          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
 		          		liItem += "<td>"+time+"</td>";
 		          		liItem += "</tr>";
 		          	}
@@ -206,12 +208,13 @@
 	      		break;
 	      	}
 	      	var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
+	      	var timeOrder = addTimes("00:00:00",list[i]["deliver_time"]);
       		liItem += "<tr>";
       		liItem += "<th>"+list[i]["customer_order_id"]+"</th>";
       		liItem += "<td>"+list[i]["product_quality"]+"</td>";
       		liItem += "<td>"+list[i]["product_name"]+"</td>";
       		liItem += "<td>"+list[i]["product_description"]+"</td>";
-      		liItem += "<td>"+list[i]["deliver_date"]+' '+list[i]["deliver_time"]+"</td>";
+      		liItem += "<td>"+list[i]["deliver_date"]+' '+timeOrder+"</td>";
       		liItem += "<td>"+time+"</td>";
       		liItem += "</tr>";
 	      	countCheck++;

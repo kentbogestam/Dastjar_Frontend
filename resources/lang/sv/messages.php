@@ -4,7 +4,7 @@ return [
     'Eat Now' => 'Ät nu',
     'Eat Later'  => 'Ät senare',
     'Restaurant'  => 'Restaurang',
-    'send'  => 'skicka',
+    'Send'  => 'Skicka',
     'Order'  => 'Beställa',
     'Setting'  => 'Miljö',
     'Order id'  => 'Beställnings-ID',

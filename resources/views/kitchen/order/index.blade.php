@@ -126,10 +126,11 @@
 			      		break;
 			      	}
 	          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
+	          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
 	          		liItem += "<tr>";
 	          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 	          		liItem += "<td>"+temp[i]["name"]+"</td>";
-	          		liItem += "<td>"+temp[i]["deliver_date"]+' '+temp[i]["deliver_time"]+"</td>";
+	          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
 	          		liItem += "<td>"
 			  		if(list[i]["order_ready"] == 0){
 	          			liItem += "<a data-ajax='false'>"
@@ -194,10 +195,11 @@
 			      		break;
 			      	}
 	          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
+	          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
 	          		liItem += "<tr>";
 	          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 	          		liItem += "<td>"+temp[i]["name"]+"</td>";
-	          		liItem += "<td>"+temp[i]["deliver_date"]+' '+temp[i]["deliver_time"]+"</td>";
+	          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
 	          		liItem += "<td>"
 			  		if(list[i]["order_ready"] == 0){
 	          			liItem += "<a data-ajax='false'>"
@@ -299,10 +301,11 @@
       		break;
       	}
       	var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
+      	var timeOrder = addTimes("00:00:00",list[i]["deliver_time"]);
       	liItem += "<tr>";
   		liItem += "<th>"+list[i]["customer_order_id"]+"</th>";
   		liItem += "<td>"+list[i]["name"]+"</td>";
-  		liItem += "<td>"+list[i]["deliver_date"]+' '+list[i]["deliver_time"]+"</td>";
+  		liItem += "<td>"+list[i]["deliver_date"]+' '+timeOrder+"</td>";
   		liItem += "<td>"
   		if(list[i]["order_ready"] == 0){
   			liItem += "<a data-ajax='false'>"
