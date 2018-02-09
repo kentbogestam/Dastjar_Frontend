@@ -33,7 +33,7 @@
 			</a>
 		</div>
 			<h3 class="ui-bar ui-bar-a order_background">
-				<a href="{{ URL::previous() }}" data-ajax="false" class="text-left ui-link ui-btn back_btn"><img src="http://localhost/dast-jar-frontend/public/images/icons/backarrow.png" width="11px"></a>
+				<a href="{{ URL::previous() }}" data-ajax="false" class="text-left ui-link ui-btn back_btn"><img src="{{asset('kitchenImages/backarrow.png')}}" width="11px"></a>
 
 				{{$storedetails->store_name}}
 			</h3>
