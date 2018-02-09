@@ -222,11 +222,12 @@ class AdminController extends Controller
                 $orderTime = $pieces[4];
                 $request->session()->forget('order_date');
             }else{
-                $dt = Carbon::now();
-                $checkOrderDate = Carbon::now()->toDateString();
+                $pieces = explode(" ", $data['browserCurrentTime']);
+                $date=date_create($pieces[3]."-".$pieces[1]."-".$pieces[2]);
+                $checkOrderDate = date_format($date,"Y-m-d");
                 $orderType = 'eat_now';
-                $orderDate = $dt->formatLocalized('%A %d %B %Y');
-                $orderTime = Carbon::now()->toTimeString();
+                 $orderDate = $pieces[0]." ".$pieces[1]." ".$pieces[2]." ".$pieces[3];
+                $orderTime = $pieces[4];
             }
 
             foreach ($data['product'] as $key => $value) {

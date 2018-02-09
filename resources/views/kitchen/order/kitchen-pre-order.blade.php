@@ -75,6 +75,7 @@
 		
 			<div class="cat-list-sec single-restro-list-sec">
 				<div class="ui-grid-a">
+					<input type="hidden" id="browserCurrentTime" name="browserCurrentTime" value="" />
 					<div class="ui-block-a left_part_kit">
 						@if($menuDetails == null || $menuTypes == null)
 							<p>{{ __('messages.Menu is not available.') }}</p>
@@ -104,7 +105,8 @@
 													<input type="button" onclick="incrementValue('{{$menuDetail->product_id}}')" value="+" class="max" />
 												</div>
 												<div class="extra-btn">
-														<label><img src="{{asset('kitchenImages/icon-wait-time.png')}}" width="15px">{{$menuDetail->preparation_Time}}</label></label>
+														<label><img src="{{asset('kitchenImages/icon-wait-time.png')}}" width="15px">
+															{{'00:'.date_format(date_create($menuDetail->preparation_Time), 'i')}}</label></label>
 														<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('kitchenImages/icon-add-comments.png')}}" width="18px">{{ __('messages.Add Comments') }}</a></label>
 														<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="product[{{$j}}][prod_desc]" value="" />
 												</div>
@@ -137,7 +139,7 @@
 													<input type="button" onclick="incrementValue('{{$menuDetail->product_id}}')" value="+" class="max" />
 												</div>
 												<div class="extra-btn">
-														<label><img src="{{asset('kitchenImages/icon-wait-time.png')}}" width="15px">{{$menuDetail->preparation_Time}}</label>
+														<label><img src="{{asset('kitchenImages/icon-wait-time.png')}}" width="15px">{{'00:'.date_format(date_create($menuDetail->preparation_Time), 'i')}}</label>
 														<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('kitchenImages/icon-add-comments.png')}}" width="18px">{{ __('messages.Add Comments') }}</a></label>
 														<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="product[{{$j}}][prod_desc]" value="" />
 												</div>
@@ -203,7 +205,7 @@
 			<div class="img-container" id = "menudataSave">
 				<img src="{{asset('kitchenImages/send_icon.png')}}">
 			</div>
-			<span>{{ __('messages.Submit') }}</span>
+			<span>{{ __('messages.Send') }}</span>
 		</a></div>
 		</div>
 	</div>
@@ -227,7 +229,8 @@
 		});
 
 		$("#menudataSave").click(function(e){
-
+			var d = new Date();
+			$("#browserCurrentTime").val(d);
 			var flag = false;
 			var x = $('form input[type="text"]').each(function(){
 	        // Do your magic here

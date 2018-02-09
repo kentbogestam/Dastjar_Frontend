@@ -4,7 +4,7 @@ return [
     'Eat Now' => 'Eat Now',
     'Eat Later'  => 'Eat Later',
     'Restaurant'  => 'Restaurant',
-    'send'  => 'send',
+    'Send'  => 'Send',
     'Order'  => 'Order',
     'Setting'  => 'Setting',
     'Order id'  => 'Order id',
