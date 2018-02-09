@@ -68,4 +68,15 @@ class AdminLoginController extends Controller
             $this->credentials($request), $request->filled('remember')
         );
     }
+
+    public function logout(Request $request){
+
+        $this->guard()->logout();
+
+        //$request->session()->flush();
+
+        //$request->session()->regenerate();
+
+        return redirect('admin/login');
+    }
 }

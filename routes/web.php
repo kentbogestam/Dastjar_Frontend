@@ -65,6 +65,7 @@ Route::group(['middleware' => ['auth']], function(){
 
 
 	Route::group(['prefix' => 'kitchen'], function(){
+		Route::get('logout', 'Auth\AdminLoginController@logout');
 		Route::get('order-detail', 'AdminController@orderDetail');
 		Route::get('kitchen-detail', 'AdminController@kitchenOrderDetail');
 		Route::get('kitchen-orders', 'AdminController@kitchenOrders');

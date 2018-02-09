@@ -53,7 +53,7 @@
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/icon-2.png')}}">
 					</div>
-					<span>{{ __('messages.kitchen') }}</span>
+					<span>{{ __('messages.Kitchen') }}</span>
 				</a></div>
 			</div>
 			<div class="ui-block-b right-side_menu">
@@ -72,7 +72,7 @@
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/icon-4.png')}}">
 					</div>
-					<span>{{ __('messages.order onsite') }}</span>
+					<span>{{ __('messages.Order Onsite') }}</span>
 				</a></div>
 			</div>
 		</div>

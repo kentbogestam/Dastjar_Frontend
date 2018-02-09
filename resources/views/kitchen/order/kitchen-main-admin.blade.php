@@ -1,5 +1,6 @@
 @extends('layouts.blank')
 @section('head-scripts')
+<link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.5.1/fingerprint2.min.js"></script>
 
 
@@ -28,11 +29,13 @@
 	<div data-role="header"  data-position="fixed" data-tap-toggle="false" class="header">
 		<div class="logo_header">
 			<img src="{{asset('kitchenImages/logo-img.png')}}">
+			<a href = "{{ url('kitchen/logout') }}"  class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">{{ __('messages.Logout') }}
+			</a>
 		</div>
 			<h3 class="ui-bar ui-bar-a order_background">
 				<a href="{{ URL::previous() }}" data-ajax="false" class="text-left ui-link ui-btn back_btn"><img src="http://localhost/dast-jar-frontend/public/images/icons/backarrow.png" width="11px"></a>
-
-
+				{{ __('messages.Main Admin') }}
+				
 			</h3>
 		<div class="top_two-menu">
 			<div class="ui-grid-a center">
@@ -40,7 +43,7 @@
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/order-img.png')}}">
 					</div>
-					<span>{{ __('messages.Orders') }}<span class="order_number">{{count(Auth::guard('admin')->user()->kitchenPaidOrderList)}}</span></span>
+					<span>{{ __('messages.Order') }}<span class="order_number">{{count(Auth::guard('admin')->user()->kitchenPaidOrderList)}}</span></span>
 				</a></div>
 				<!-- <div class="ui-block-b"><a onClick="makeRedirection('{{url('kitchen/selectOrder-dateKitchen')}}')" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">
@@ -72,27 +75,27 @@
 		
 			<div class="cat-list-sec single-restro-list-sec">
 				<div class="ui-grid-a">
-					<div class="ui-block-a">
-						
-						<p>{{ __('messages.You are the man admin company.Please log in from any store of the company and then the menu of that store will appear') }}</p>
-						
+					<div class="ui-block-a left_part_kit">
+						<p>{{ __('messages.You are the main admin of company.Please log in from any store of that company and then the menu of that store will appear') }}</p>
 					</div>
 					<div class="ui-block-b second-part">
+						<div class="seprate_qr">
 							<div class="mid_para">
-								<h2>{{ __('messages.Gain Time by Ordering go') }}</h2>
+								<h2>{{ __('messages.Gain Time by Ordering on the go') }}</h2>
 								<h4><img src="{{asset('kitchenImages/600px-Black_check.svg.png')}}">{{ __('messages.Your food is ready by the time of arrival') }}</h4>
 								<h3>{{ __('messages.Get notification, when your order is ready') }}</h3>
 							</div>
-							<h3 class="no-margin"><strong>{{ __('messages.DOWNLOAD') }}</strong> {{ __('messages.the app') }} <span>{{ __('messages."anar"') }}</span> {{ __('messages.ang get the benefites') }}</h3>
+							<h3 class="no-margin"><strong>{{ __('messages.DOWNLOAD') }}</strong> {{ __('messages.the App') }}  <span>{{ __('messages."anar"') }}</span> {{ __('messages.and get the benefites') }} </h3>
 							<a class="blue_link" href="">dastjar.com/download</a>
-							<h3>OR</h3>
+							<h3>{{ __('messages.OR') }}</h3>
 							<h3 class="blue_link">{{ __('messages.Enter your mobile number here, to get the app') }}</h3>
-							<h3 class="grey_text">070-12345678</h3>
-							<!-- <form>
-							<div class="ui-field-contain search_container"> <input type="text" data-clear-btn="true" data-mini="true" name="text-15" id="text-15" value=""> <button type="submit" id="submit-6" class="ui-shadow ui-btn ui-corner-all ui-mini">ok</button> </div>
-							</form> -->
+							<!-- <h3 class="grey_text">070-12345678</h3> -->
+							<form>
+							<div class="ui-field-contain search_container"> <input type="number" data-clear-btn="false" name="number-1" id="number-1" value=""> <button type="submit" id="submit-6" class="ui-shadow ui-btn ui-corner-all ui-mini">ok</button> </div>
+							</form>
 							<h3>{{ __('messages.OR') }}</h3>
 							<h3 class="blue_link">{{ __('messages.use the QR-code below') }}</h3>
+						</div>
 							<div class="scan_code">
 								<img src="http://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=https://dastjar.com/dbuzzu/public/">
 							</div>
@@ -104,14 +107,14 @@
 
 		<div data-role="popup" id="transitionExample" class="ui-content comment-popup" data-theme="a">
 			<div class="pop-header">
-			<a href="#" data-rel="back"  class="cancel-btn ui-btn ui-btn-left ui-corner-all ui-shadow ui-btn-a">{{ __('messages.cancel') }}</a>
+			<a href="#" data-rel="back"  class="cancel-btn ui-btn ui-btn-left ui-corner-all ui-shadow ui-btn-a">{{ __('messages.Cancel') }}</a>
 			<label>{{ __('messages.Add Comments') }}</label>
 			
 			</div>
 			<div class="pop-body">
 				
-				<textarea name="textarea-1" id="textarea-1" placeholder="Add a comment"></textarea>
-				<a id="submitId" href="" data-ajax="false" class="submit-btn ui-btn ui-btn-right ui-corner-all ui-shadow ui-btn-a">{{ __('messages.submit') }}</a>
+				<textarea name="textarea-1" id="textarea-1" placeholder="{{ __('messages.Add Comments') }}"></textarea>
+				<a id="submitId" href="" data-ajax="false" class="submit-btn ui-btn ui-btn-right ui-corner-all ui-shadow ui-btn-a">{{ __('messages.Submit') }}</a>
 			</div>
 		</div>
 
@@ -126,7 +129,7 @@
 			<div class="img-container" id = "menudataSave">
 				<img src="{{asset('kitchenImages/send_icon.png')}}">
 			</div>
-			<span>{{ __('messages.send') }}</span>
+			<span>{{ __('messages.Submit') }}</span>
 		</a></div>
 		</div>
 	</div>
