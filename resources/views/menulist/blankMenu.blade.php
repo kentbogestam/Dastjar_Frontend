@@ -23,14 +23,14 @@
 
 			<div data-role="popup" id="transitionExample" class="ui-content comment-popup" data-theme="a">
 				<div class="pop-header">
-				<a href="#" data-rel="back"  class="cancel-btn ui-btn ui-btn-left ui-corner-all ui-shadow ui-btn-a">{{ __('messages.cancel') }}</a>
+				<a href="#" data-rel="back"  class="cancel-btn ui-btn ui-btn-left ui-corner-all ui-shadow ui-btn-a">{{ __('messages.Cancel') }}</a>
 				<label>{{ __('messages.Add Comments') }}</label>
 				
 				</div>
 				<div class="pop-body">
 					
 						<textarea name="textarea-1" id="textarea-1" placeholder="Add a comment"></textarea>
-						<a id="submitId" href="" data-ajax="false" class="submit-btn ui-btn ui-btn-right ui-corner-all ui-shadow ui-btn-a">{{ __('messages.submit') }}</a>
+						<a id="submitId" href="" data-ajax="false" class="submit-btn ui-btn ui-btn-right ui-corner-all ui-shadow ui-btn-a">{{ __('messages.Submit') }}</a>
 
 					
 				</div>
@@ -51,7 +51,7 @@
 				<div class="img-container" id = "menudataSave">
 					<img src="{{asset('images/icons/select-store_03.png')}}">
 				</div>
-				<input type="button" value="{{ __('messages.submit') }}" id="dataSave"/>
+				<input type="button" value="{{ __('messages.Submit') }}" id="dataSave"/>
 			</a></div>
 			@if(count(Auth::user()->paidOrderList) == 0)
 				<div class="ui-block-c"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">

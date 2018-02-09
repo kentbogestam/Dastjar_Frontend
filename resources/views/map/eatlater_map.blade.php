@@ -12,7 +12,7 @@
 		<a class="ui-btn-right map-btn user-link" href="#left-side-bar"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
 	</div>
 	<div role="main" data-role="main-content" class="content">
-		<div id="map" style="height: 575px;"></div>
+		<div id="map" class="map_container"></div>
 	</div>
 
 	<div data-role="footer" class="footer" data-position="fixed">
@@ -27,7 +27,7 @@
 			<div class="img-container">
 				<img src="{{asset('images/icons/select-store_03.png')}}">
 			</div>
-			<span>{{ __('messages.send') }}</span>
+			<span>{{ __('messages.Submit') }}</span>
 		</a></div>
 		@if(count(Auth::user()->paidOrderList) == 0)
 			<div class="ui-block-c"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
@@ -138,7 +138,7 @@
 
 	    // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
 	    var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
-	        this.setZoom(14);
+	        this.setZoom(17);
 	        google.maps.event.removeListener(boundsListener);
 	    });
 	    

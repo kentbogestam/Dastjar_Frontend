@@ -46,7 +46,8 @@
 												</div>
 												
 												<div class="extra-btn">
-														<label><img src="{{asset('images/icons/icon-wait-time.png')}}" width="15px">{{$menuDetail->preparation_Time}}</label>
+														<label><img src="{{asset('images/icons/icon-wait-time.png')}}" width="15px">
+															{{'00:'.date_format(date_create($menuDetail->preparation_Time), 'i')}}</label>
 														<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('images/icons/icon-add-comments.png')}}" width="18px">{{ __('messages.Add Comments') }}</a></label>
 														<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="product[{{$j}}][prod_desc]" value="" />
 												</div>
@@ -82,7 +83,7 @@
 												</div>
 
 												<div class="extra-btn">
-														<label><img src="{{asset('images/icons/icon-wait-time.png')}}" width="15px">{{$menuDetail->preparation_Time}}</label>
+														<label><img src="{{asset('images/icons/icon-wait-time.png')}}" width="15px">{{'00:'.date_format(date_create($menuDetail->preparation_Time), 'i')}}</label>
 														<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('images/icons/icon-add-comments.png')}}" width="18px">{{ __('messages.Add Comments') }}</a></label>
 														<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="product[{{$j}}][prod_desc]" value="" />
 												</div>
@@ -100,14 +101,14 @@
 
 			<div data-role="popup" id="transitionExample" class="ui-content comment-popup" data-theme="a">
 				<div class="pop-header">
-				<a href="#" data-rel="back"  class="cancel-btn ui-btn ui-btn-left ui-corner-all ui-shadow ui-btn-a">{{ __('messages.cancel') }}</a>
+				<a href="#" data-rel="back"  class="cancel-btn ui-btn ui-btn-left ui-corner-all ui-shadow ui-btn-a">{{ __('messages.Cancel') }}</a>
 				<label>{{ __('messages.Add Comments') }}</label>
 				
 				</div>
 				<div class="pop-body">
 					
 						<textarea name="textarea-1" id="textarea-1" placeholder="{{ __('messages.Add Comments') }}"></textarea>
-						<a id="submitId" href="" data-ajax="false" class="submit-btn ui-btn ui-btn-right ui-corner-all ui-shadow ui-btn-a">{{ __('messages.submit') }}</a>
+						<a id="submitId" href="" data-ajax="false" class="submit-btn ui-btn ui-btn-right ui-corner-all ui-shadow ui-btn-a">{{ __('messages.Submit') }}</a>
 
 					
 				</div>
@@ -128,7 +129,7 @@
 				<div class="img-container" id = "menudataSave">
 					<img src="{{asset('images/icons/select-store_03.png')}}">
 				</div>
-				<input type="button" value="{{ __('messages.submit') }}" id="dataSave"/>
+				<input type="button" value="{{ __('messages.Submit') }}" id="dataSave"/>
 			</a></div>
 			@if(count(Auth::user()->paidOrderList) == 0)
 				<div class="ui-block-c"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">

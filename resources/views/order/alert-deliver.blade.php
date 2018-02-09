@@ -15,7 +15,7 @@
 		<div class="inner-page-container">
 			<div class="alt-msg successmsg">
 				<div class="text-msg">
-					<p>Thanks for your visit. <span>Hope to seen you soon again !</span></p>
+					<p>{{ __('messages.Thanks for your visit.') }} <span>{{ __('messages.Hope to seen you soon again') }} !</span></p>
 				</div>
 				<img src="{{asset('images/ready-chef.png')}}">
 			</div>
@@ -29,7 +29,7 @@
 			<div class="img-container">
 				<img src="{{asset('images/icons/select-store_01.png')}}">
 			</div>
-			<span>Restaurant</span>
+			<span>{{ __('messages.Restaurant') }}</span>
 		</a></div>
 		<div class="ui-block-d pull-right"><a href="{{url('user-setting')}}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 			<div class="img-container"><img src="{{asset('images/icons/select-store_07.png')}}"></div>
@@ -39,7 +39,7 @@
 			<div class="img-container">
 				<img src="{{asset('images/icons/select-store_05.png')}}">
 			</div>
-			<span>Order</span>
+			<span>{{ __('messages.Order') }}</span>
 		</a></div>
 		@else
 		<div class="ui-block-c pull-right order-active">
@@ -48,13 +48,13 @@
 		       		<!-- <img src="images/icons/select-store_05.png"> -->
 		        	<img src="{{asset('images/icons/select-store_05-active.png')}}">
 		        </div>
-	        	<span>Order<span class="order-number">{{count(Auth::user()->paidOrderList)}}</span></span>
+	        	<span>{{ __('messages.Order') }}<span class="order-number">{{count(Auth::user()->paidOrderList)}}</span></span>
 	        </a>
 	        <div id="order-popup" data-theme="a">
 		      <ul data-role="listview">
 		      	@foreach(Auth::user()->paidOrderList as $order)
 					<li>
-						<a href="{{ url('order-view/'.$order->order_id) }}" data-ajax="false">Order id - {{$order->customer_order_id}}</a>
+						<a href="{{ url('order-view/'.$order->order_id) }}" data-ajax="false">{{ __('messages.Order id') }} - {{$order->customer_order_id}}</a>
 					</li>
 				@endforeach
 		      </ul>

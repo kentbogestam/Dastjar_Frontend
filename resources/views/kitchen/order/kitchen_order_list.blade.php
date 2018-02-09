@@ -5,8 +5,10 @@
 <div data-role="header" data-position="fixed" data-tap-toggle="false" class="header">
 		<div class="logo_header">
 			<img src="{{asset('kitchenImages/logo-img.png')}}">
+			<a href = "{{ url('kitchen/logout') }}"  class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">{{ __('messages.Logout') }}
+			</a>
 		</div>
-		<h3 class="ui-bar ui-bar-a order_background">{{ __('messages.kitchen') }} <span>{{$storeName}}</span></h3>
+		<h3 class="ui-bar ui-bar-a order_background">{{ __('messages.Kitchen') }} <span>{{$storeName}}</span></h3>
 	</div>
 	<div role="main" class="ui-content">
 		<div class="ready_notification">
@@ -54,14 +56,14 @@
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/icon-2.png')}}">
 					</div>
-					<span>{{ __('messages.kitchen') }}</span>
+					<span>{{ __('messages.Kitchen') }}</span>
 				</a></div>
 				<div class="ui-block-b">
 					<a href = "{{ url('kitchen/catering') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/icon-3.png')}}">
 					</div>
-					<span>{{ __('messages.catering') }}</span>
+					<span>{{ __('messages.Catering') }}</span>
 					</a>
 				</div>
 			</div>
@@ -83,7 +85,7 @@
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/icon-4.png')}}">
 					</div>
-					<span>{{ __('messages.order onsite') }}</span>
+					<span>{{ __('messages.Order Onsite') }}</span>
 				</a></div>
 			</div>
 		</div>
@@ -164,7 +166,7 @@
 	          	}else{
 	          		liItem += "<div class='table-content'>";
 		        	liItem += "<p>";
-		        	liItem += 'No any Order Available.';
+		        	liItem += '{{ __('messages.Order is not available.') }}';
 		        	liItem += "</p>";
 		        	liItem += "</div>";
 	          	}
@@ -235,7 +237,7 @@
 	          	}else{
 	          		liItem += "<div class='table-content'>";
 		        	liItem += "<p>";
-		        	liItem += 'No any Order Available.';
+		        	liItem += '{{ __('messages.Order is not available.') }}';
 		        	liItem += "</p>";
 		        	liItem += "</div>";
 	          	}
@@ -384,7 +386,7 @@
 		    minutes -= 60 * h
 		  }
 
-		  return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2)
+		  return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2)
 		}
 	</script>
 @endsection

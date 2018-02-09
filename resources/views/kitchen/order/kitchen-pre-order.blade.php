@@ -29,6 +29,8 @@
 	<div data-role="header"  data-position="fixed" data-tap-toggle="false" class="header">
 		<div class="logo_header">
 			<img src="{{asset('kitchenImages/logo-img.png')}}">
+			<a href = "{{ url('kitchen/logout') }}"  class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">{{ __('messages.Logout') }}
+			</a>
 		</div>
 			<h3 class="ui-bar ui-bar-a order_background">
 				<a href="{{ URL::previous() }}" data-ajax="false" class="text-left ui-link ui-btn back_btn"><img src="http://localhost/dast-jar-frontend/public/images/icons/backarrow.png" width="11px"></a>
@@ -179,14 +181,14 @@
 
 		<div data-role="popup" id="transitionExample" class="ui-content comment-popup" data-theme="a">
 			<div class="pop-header">
-			<a href="#" data-rel="back"  class="cancel-btn ui-btn ui-btn-left ui-corner-all ui-shadow ui-btn-a">{{ __('messages.cancel') }}</a>
+			<a href="#" data-rel="back"  class="cancel-btn ui-btn ui-btn-left ui-corner-all ui-shadow ui-btn-a">{{ __('messages.Cancel') }}</a>
 			<label>{{ __('messages.Add Comments') }}</label>
 			
 			</div>
 			<div class="pop-body">
 				
 				<textarea name="textarea-1" id="textarea-1" placeholder="{{ __('messages.Add Comments') }}"></textarea>
-				<a id="submitId" href="" data-ajax="false" class="submit-btn ui-btn ui-btn-right ui-corner-all ui-shadow ui-btn-a">{{ __('messages.submit') }}</a>
+				<a id="submitId" href="" data-ajax="false" class="submit-btn ui-btn ui-btn-right ui-corner-all ui-shadow ui-btn-a">{{ __('messages.Submit') }}</a>
 			</div>
 		</div>
 
@@ -201,7 +203,7 @@
 			<div class="img-container" id = "menudataSave">
 				<img src="{{asset('kitchenImages/send_icon.png')}}">
 			</div>
-			<span>{{ __('messages.send') }}</span>
+			<span>{{ __('messages.Submit') }}</span>
 		</a></div>
 		</div>
 	</div>

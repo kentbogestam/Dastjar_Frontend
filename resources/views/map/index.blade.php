@@ -30,7 +30,7 @@
 			<div class="img-container">
 				<img src="{{asset('images/icons/select-store_03.png')}}">
 			</div>
-			<span>{{ __('messages.send') }}</span>
+			<span>{{ __('messages.Submit') }}</span>
 		</a></div>
 		@if(count(Auth::user()->paidOrderList) == 0)
 			<div class="ui-block-c"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">

@@ -17,7 +17,8 @@
 					<p>{{ __('messages.Order Number') }} </p>
 					<p class="large-text">{{$order->customer_order_id}}</p>
 					<p>({{$order->store_name}})</p>
-					<p>{{ __('messages.Your order will be ready at') }} {{$order->order_delivery_time}} mins
+					<p>{{ __('messages.Your order will be ready at') }}
+					{{'00:'.date_format(date_create($order->order_delivery_time), 'i')}} mins
 						@if($order->order_type == 'eat_later')
 						{{$order->deliver_date}}
 						@endif
@@ -52,7 +53,7 @@
 			<div class="img-container">
 				<img src="{{asset('images/icons/select-store_03.png')}}">
 			</div>
-			<span>{{ __('messages.send') }}</span>
+			<span>{{ __('messages.Submit') }}</span>
 		</a></div>
 		@if(count(Auth::user()->paidOrderList) == 0)
 		<div class="ui-block-c"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
