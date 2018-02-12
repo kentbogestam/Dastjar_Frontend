@@ -27,13 +27,13 @@
 					<tbody>
 						@foreach($orderDetails as $orderDetail)
 							<tr>
-								<td>{{$orderDetail->product_name}}	</td><td>{{$orderDetail->product_quality}} x {{$orderDetail->price}}</td><td>$ {{$orderDetail->product_quality*$orderDetail->price}}</td>
+								<td>{{$orderDetail->product_name}}	</td><td>{{$orderDetail->product_quality}} x {{$orderDetail->price}}</td><td>{{$order->currencies}} {{$orderDetail->product_quality*$orderDetail->price}}</td>
 							</tr>	
 						@endforeach
 						<tr class="last-row">
 							<td> </td>
 							<td>         </td>
-							<td>  {{ __('messages.TOTAL') }}    ${{$order->order_total}}</td>
+							<td>  {{ __('messages.TOTAL') }}    {{$order->currencies}} {{$order->order_total}}</td>
 						</tr>
 					</tbody>
 				</table>
