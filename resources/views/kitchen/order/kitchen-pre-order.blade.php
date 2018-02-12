@@ -95,7 +95,7 @@
 													<h2>{{$menuDetail->product_name}}</h2>
 												<p>{{$menuDetail->product_description}}</p>
 													<p class="price">
-														${{$productDetail->price}}
+														{{$companydetails->currencies}} {{$productDetail->price}}
 												</p>
 												</div>
 												<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />
@@ -129,7 +129,7 @@
 												<div class="list-content">
 													<h2>{{$menuDetail->product_name}}</h2>
 												<p>{{$menuDetail->product_description}}</p>
-												<p class="price">${{$productDetail->price}}
+												<p class="price">{{$companydetails->currencies}} {{$productDetail->price}}
 												 </p>
 												</div>
 												<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />

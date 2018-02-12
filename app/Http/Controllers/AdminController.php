@@ -192,6 +192,7 @@ class AdminController extends Controller
             if(count($companydetails) == 0){
                 $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
             }
+            //dd($companydetails->currencies);
             $storedetails = Store::where('store_id' , Auth::guard('admin')->user()->store_id)->first();
             return view('kitchen.order.kitchen-pre-order', compact('menuDetails','companydetails','menuTypes','storedetails'));
         }else{
@@ -277,7 +278,7 @@ class AdminController extends Controller
                             'order_total' => $total_price,
                         ]);
 
-                $order = Order::select('orders.*','store.store_name')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->first();
+                $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
 
                 $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 
@@ -351,8 +352,8 @@ class AdminController extends Controller
     }
 
     public function kitchenOrderView($orderId){
-        $order = Order::select('orders.*','store.store_name')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->first();
-
+        $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
+        //dd($order->currencies);
         $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 
         return view('kitchen.order.order-detail', compact('order','orderDetails'));

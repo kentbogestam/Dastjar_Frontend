@@ -20,6 +20,9 @@ class ProductPriceList extends Model
 
     public function storeProduct()
     {
+//Jab description vali error aaye tb ye use krna.
+        // return $this->hasMany('App\Product','product_id','product_id')->join('product_offer_sub_slogan_lang_list', 'product.product_id','=', 'product_offer_sub_slogan_lang_list.product_id')->join('lang_text', 'product_offer_sub_slogan_lang_list.offer_sub_slogan_lang_list','=', 'lang_text.id');
+
     	return $this->hasMany('App\Product','product_id','product_id');
     }
 
