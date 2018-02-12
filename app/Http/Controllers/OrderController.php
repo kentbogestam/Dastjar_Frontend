@@ -94,7 +94,7 @@ class OrderController extends Controller
                         'order_total' => $total_price,
                     ]);
 
-            $order = Order::select('orders.*','store.store_name')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->first();
+            $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
 
             //$orderDetails = OrderDetail::select('*')->where('order_id',$orderId)->get();
             $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
@@ -109,7 +109,8 @@ class OrderController extends Controller
     }
 
     public function orderView($orderId){
-        $order = Order::select('orders.*','store.store_name')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->first();
+        $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
+        //dd($order->currencies);
         $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
         return view('order.index', compact('order','orderDetails'));
     }
