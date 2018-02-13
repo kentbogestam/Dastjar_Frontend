@@ -9,6 +9,8 @@ use App\Exceptions\SocialAuthException;
 use Socialite;
 use App\User;
 use Auth;
+use DB;
+use Session;
 
 class AdminLoginController extends Controller
 {
@@ -64,6 +66,35 @@ class AdminLoginController extends Controller
      */
     protected function attemptLogin(Request $request)
     {
+
+        if($this->guard()->attempt(
+            $this->credentials($request), $request->filled('remember'))){
+            
+            if(Auth::guard('admin')->user()->language == null){
+                $lang;
+                if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
+                  $languages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
+                  $languagesServer = explode('-', $languages[0]);
+                  if($languagesServer[0] == 'sv'){
+                    $lang = 'SWE';
+                    Session::put('applocale', 'sv');
+                  }else{
+                    $lang =  'ENG';
+                    Session::put('applocale', 'en');
+                  }
+                }
+                DB::table('user')->where('id', Auth::guard('admin')->id())->update([
+                            'language' => $lang,
+                        ]);
+            }else{
+                if(Auth::guard('admin')->user()->language == 'ENG'){
+                    Session::put('applocale', 'en');
+                }else{
+                    Session::put('applocale', 'sv');
+                }
+            }
+
+        }
         return $this->guard()->attempt(
             $this->credentials($request), $request->filled('remember')
         );
