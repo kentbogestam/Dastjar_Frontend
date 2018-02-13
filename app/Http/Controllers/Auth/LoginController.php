@@ -72,15 +72,15 @@ class LoginController extends Controller
             return redirect('/');
             //return redirect()->action('HomeController@index');
         }else{
-            $language;
+            $lang;
             if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
               $languages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
               $languagesServer = explode('-', $languages[0]);
               if($languagesServer[0] == 'sv'){
-                $language = 'SWE';
+                $lang = 'SWE';
                 Session::put('applocale', 'sv');
               }else{
-                $language =  'ENG';
+                $lang =  'ENG';
                 Session::put('applocale', 'en');
               }
             }
@@ -88,7 +88,7 @@ class LoginController extends Controller
                     'fac_id' => $userSocial->id,
                     'name' => $userSocial->name,
                     'email' => $userSocial->email,
-                    'language' => $language;
+                    'language' => $lang,
                 ]);
             Auth::login($user);
             return redirect()->action('HomeController@index');
