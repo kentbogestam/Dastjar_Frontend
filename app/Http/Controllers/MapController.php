@@ -22,13 +22,17 @@ class MapController extends Controller
 
     public function searchMapEatnow(){
         $userDetail = User::whereId(Auth()->id())->first();
+        //dd($userDetail->customer_latitude);
+        // dd($userDetail->customer_longitude);
     	$restaurantLatLngList = Store::getRestaurantsList($userDetail->customer_latitude,$userDetail->customer_longitude,'1','1','3');
     	$latLng = [];
     	$i = 0;
+        array_push($latLng,[$userDetail->customer_latitude, $userDetail->customer_longitude]);
     	foreach ($restaurantLatLngList as $restaurantLatLng) {
     		array_push($latLng,[$restaurantLatLng->latitude, $restaurantLatLng->longitude]);
     		$i++;
     	}
+        //dd($latLng);
     	$latLngList = json_encode($latLng);
         return view('map.index', compact('latLngList'));
     }
@@ -38,6 +42,7 @@ class MapController extends Controller
     	$restaurantLatLngList = Store::getRestaurantsList($userDetail->customer_latitude,$userDetail->customer_longitude,'1','2','3');
     	$latLng = [];
     	$i = 0;
+        array_push($latLng,[$userDetail->customer_latitude, $userDetail->customer_longitude]);
     	foreach ($restaurantLatLngList as $restaurantLatLng) {
     		array_push($latLng,[$restaurantLatLng->latitude, $restaurantLatLng->longitude]);
     		$i++;
@@ -47,10 +52,12 @@ class MapController extends Controller
     }
 
     public function searchStoreMap(Request $request){
+        $userDetail = User::whereId(Auth()->id())->first();
         $storeDetails = Store::where('store_id',$request->session()->get('storeId'.Auth()->id()))->first();
         $storedetails = Store::where('store_id' , $request->session()->get('storeId'.Auth()->id()))->first();
         $request->session()->forget('storeId'.Auth()->id());
         $latLng = [];
+        array_push($latLng,[$userDetail->customer_latitude, $userDetail->customer_longitude]);
         array_push($latLng,[$storeDetails->latitude, $storeDetails->longitude]);
         $latLngList = json_encode($latLng);
         return view('map.single_res_map', compact('latLngList','storedetails'));
