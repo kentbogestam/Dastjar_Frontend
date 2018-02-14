@@ -81,16 +81,18 @@
 	<script type="text/javascript">
 		var list = Array();
 		var totalCount = 0;
+		var totallength = 0;
 
 		$(function(){
 			$.get("{{url('kitchen/catering-orders')}}",
 			function(returnedData){
 				console.log(returnedData["data"]);
-				var count = 10;
+				var count = 18;
 				var temp = returnedData["data"];
 	          	list = temp;
 	          	console.log(temp.length);
 	          	var liItem = "";
+	          	totallength = temp.length;
 	          	if(temp.length != 0){
 	          		totalCount = temp.length;
 
@@ -100,6 +102,9 @@
 
 		          	totalCount -= 10;
 		          	for (var i=0;i<count;i++){
+		          		if(i>=totallength){
+				      		break;
+				      	}
 		          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
 		          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
 		          		liItem += "<tr>";
@@ -122,7 +127,7 @@
 			$.get("{{url('kitchen/catering-orders')}}",
 			function(returnedData){
 				//console.log(returnedData["data"]);
-				var count = 10;
+				var count = 18;
 				var temp = returnedData["data"];
 	          	list = temp;
 	          	console.log(temp.length);
@@ -136,6 +141,9 @@
 
 		          	totalCount -= 10;
 		          	for (var i=0;i<count;i++){
+		          		if(i>totallength){
+				      		break;
+				      	}
 		          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
 		          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
 		          		liItem += "<tr>";
@@ -154,8 +162,8 @@
 			}); 
 		}
 
-		setInterval(ajaxCall, 10000);
-		var tempCount = 10;
+		setInterval(ajaxCall, 30000);
+		var tempCount = 18;
 
 		$(document).on("scrollstop", function (e) {
 	    	var activePage = $.mobile.pageContainer.pagecontainer("getActivePage"),
@@ -204,6 +212,10 @@
 
 	      for (var i=len;i<len + 10;i++){
 	      //console.log(returnedData["data"]);
+	      	if(i>=totallength){
+	      		tempCount = 18;
+	      		break;
+	      	}
 	      	if(countCheck>limit){
 	      		break;
 	      	}
