@@ -36,11 +36,8 @@
 
 
 		function initMap() {
-            if({{Auth::user()->customer_latitude}} == null && {{ Auth::user()->customer_longitude}} == null){
-                var location  = {lat: {{Auth::user()->customer_latitude}} , lng: {{ Auth::user()->customer_longitude}} };
-            }else{
-               var location  = {lat: 0 , lng: 0 }; 
-            }
+            var location  = {lat: {{Auth::user()->customer_latitude}} , lng: {{ Auth::user()->customer_longitude}} };
+            
             var map = new google.maps.Map(document.getElementById('map'), {
                 center: location,
                 zoom: 5,
