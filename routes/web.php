@@ -27,6 +27,12 @@
 
 	Route::get('/login/{social}','Auth\LoginController@socialLogin')->where('social','facebook|google');
 	Route::get('/login/{social}/callback','Auth\LoginController@handelProviderCallback')->where('social','facebook|google');
+	Route::get('/userRegister','Auth\RegisterController@userRegister');
+	Route::post('/userRegisterSave','Auth\RegisterController@userDetailSave');
+	Route::post('/userLogin','Auth\LoginController@userLogin');
+	Route::post('/userLogin','Auth\LoginController@userLogin');
+	Route::get('/mobileLogin','Auth\LoginController@mobileLogin');
+	Route::post('/sentOtp','Auth\RegisterController@sentOtp');
 
 Route::group(['middleware' => ['auth']], function(){
 
@@ -34,6 +40,7 @@ Route::group(['middleware' => ['auth']], function(){
 	Route::get('deliver-notifaction/{OrderId}', 'PushNotifactionController@deliverNotifaction');
 
 	Route::get('/', 'HomeController@index');
+	Route::get('getList', 'HomeController@getList');
 	Route::get('blank-view', 'HomeController@blankView');
 	Route::post('eat-later', 'HomeController@eatLater');
 	Route::get('eat-later', 'HomeController@eatLater');

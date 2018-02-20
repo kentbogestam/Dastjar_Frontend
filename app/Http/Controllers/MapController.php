@@ -20,11 +20,14 @@ class MapController extends Controller
 {
     //
 
-    public function searchMapEatnow(){
+    public function searchMapEatnow(Request $request){
         $userDetail = User::whereId(Auth()->id())->first();
-        //dd($userDetail->customer_latitude);
-        // dd($userDetail->customer_longitude);
-    	$restaurantLatLngList = Store::getRestaurantsList($userDetail->customer_latitude,$userDetail->customer_longitude,'1','1','3');
+        $pieces = explode(" ", $request->session()->get('current_date_time'));
+        $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
+        $currentTime = $pieces[4];
+        $todayDay = $pieces[0];
+
+    	$restaurantLatLngList = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
     	$latLng = [];
     	$i = 0;
         array_push($latLng,[$userDetail->customer_latitude, $userDetail->customer_longitude]);
@@ -37,9 +40,14 @@ class MapController extends Controller
         return view('map.index', compact('latLngList'));
     }
 
-    public function searchMapEatlater(){
+    public function searchMapEatlater(Request $request){
         $userDetail = User::whereId(Auth()->id())->first();
-    	$restaurantLatLngList = Store::getRestaurantsList($userDetail->customer_latitude,$userDetail->customer_longitude,'1','2','3');
+        $pieces = explode(" ", $request->session()->get('current_date_time'));
+        $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
+        $currentTime = $pieces[4];
+        $todayDay = $pieces[0];
+
+    	$restaurantLatLngList = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'2','3',$todayDate,$currentTime,$todayDay);
     	$latLng = [];
     	$i = 0;
         array_push($latLng,[$userDetail->customer_latitude, $userDetail->customer_longitude]);

@@ -94,4 +94,15 @@ class LoginController extends Controller
             return redirect()->action('HomeController@index');
         }
     }
+
+    public function userLogin(Request $request){
+        $data = $request->input();
+        $user = User::where(['otp' => $data['otp']])->first();
+        Auth::login($user);
+        return redirect()->action('HomeController@index');
+    }
+
+    public function mobileLogin(){
+        return view('auth.mobile'); 
+    }
 }

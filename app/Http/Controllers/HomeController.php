@@ -12,6 +12,7 @@ use DB;
 use App\User;
 use Auth;
 use App\ProductPriceList;
+use App\WebVersion;
 
 class HomeController extends Controller
 {
@@ -31,31 +32,92 @@ class HomeController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function userLatLong(Request $request){        
-        
+    public function getList(Request $request){
+       
+        $recipients = [+919818314026];
+        dd($recipients);
+            $url = "https://gatewayapi.com/rest/mtsms";
+            $api_token = "Q67Aydr2SNmYJax7B0yxtGe5VwjL3_nDxc9-XIiaEl9Wk2Y1t9THIMFemCDcqafb";
+            $json = [
+                'sender' => 'Dastjar',
+                'message' => '12345',
+                'recipients' => [],
+            ];
+            foreach ($recipients as $msisdn) {
+                $json['recipients'][] = ['msisdn' => $msisdn];}
+
+            $ch = curl_init();
+            curl_setopt($ch,CURLOPT_URL, $url);
+            curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+            curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
+            curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
+            curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+            $result = curl_exec($ch);
+            curl_close($ch);   
+        dd($request->session()->get('current_date_time'));
+        $pieces = explode(" ", $request->session()->get('current_date_time'));
+        $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
+        $currentTime = $pieces[4];
+        $todayDay = $pieces[0];
+
+       $userDetail = User::whereId(Auth()->id())->first();
+       //dd($userDetail);
+        $companydetails = Store::getListRestaurantsCheck($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);  
+    }
+
+    public function userLatLong(Request $request){  
+        $request->session()->forget('current_date_time');
+      
+        $versionDetail = WebVersion::orderBy('created_at', 'DESC')->first();
         $userDetail = User::whereId(Auth()->id())->first();
 
         if(!empty($request->input())){
             $data = $request->input();
-            if($userDetail->customer_latitude == null && $userDetail->customer_longitude == null){
+
+            $request->session()->put('current_date_time', $data['currentdateTime']);
+            $pieces = explode(" ", $request->session()->get('current_date_time'));
+            $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
+            $currentTime = $pieces[4];
+            $todayDay = $pieces[0];
+            
+            if($userDetail->customer_latitude == null && $userDetail->customer_longitude == null && $userDetail->web_version == null){
 
                 DB::table('customer')->where('id', Auth::id())->update([
                             'customer_latitude' => $data['lat'],
                             'customer_longitude' => $data['lng'],
                             'range' => '3',
                             'language' => 'ENG',
+                            'web_version' => $versionDetail->version,
                         ]);
             }
         }
+
+        if($userDetail->web_version != $versionDetail->version){
+            DB::table('customer')->where('id', Auth::id())->update(['web_version' => $versionDetail->version,]);
+            Auth::logout();
+            return redirect()->action('HomeController@versionUpdate');
+        }
+
         $request->session()->forget('order_date');
-        $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3');
+        $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
 
         
         return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails]); 
     }
+
+
     public function index()
     {
 
+        $versionDetail = WebVersion::orderBy('created_at', 'DESC')->first();
+        $userDetail = User::whereId(Auth()->id())->first();
+        if($userDetail->web_version == null){
+            DB::table('customer')->where('id', Auth::id())->update(['web_version' => $versionDetail->version,]);
+        }else if($userDetail->web_version != $versionDetail->version){
+            DB::table('customer')->where('id', Auth::id())->update(['web_version' => $versionDetail->version,]);
+            Auth::logout();
+            return redirect('/login')->with('success', 'App version is updated.Please login again');
+        }
         return view('index', compact(''));
     }
 
@@ -63,23 +125,39 @@ class HomeController extends Controller
       return view('blankPage');    
     }
 
-    public function eatNow()
+    public function eatNow(Request $request)
     {
 
         $userDetail = User::whereId(Auth()->id())->first();
        //dd($userDetail);
-        $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3');
+        $pieces = explode(" ", $request->session()->get('current_date_time'));
+        $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
+        $currentTime = $pieces[4];
+        $todayDay = $pieces[0];
+
+        $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
         //dd($companydetails);
         return view('eat-now', compact('companydetails'));
     }
 
-    public function eatLaterData(){
+    public function eatLaterData(Request $request){
         $userDetail = User::whereId(Auth()->id())->first();
-        $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'2','3');
+        $pieces = explode(" ", $request->session()->get('current_date_time'));
+        $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
+        $currentTime = $pieces[4];
+        $todayDay = $pieces[0];
+
+        $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'2','3',$todayDate,$currentTime,$todayDay);
         return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails]); 
     }
 
     public function eatLater(Request $request){
+
+        $pieces = explode(" ", $request->session()->get('current_date_time'));
+        $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
+        $currentTime = $pieces[4];
+        $todayDay = $pieces[0];
+
 
         if(!empty($request->input())) {
 
@@ -91,15 +169,20 @@ class HomeController extends Controller
             return view('eat_later', compact(''));
         } else {
             $userDetail = User::whereId(Auth()->id())->first();
-            $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3');
+            $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
             
             return view('index', compact('companydetails'));
         }
     }
 
-    public function eatLaterMap(){
+    public function eatLaterMap(Request $request){
         $userDetail = User::whereId(Auth()->id())->first();
-        $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'2','3');
+        $pieces = explode(" ", $request->session()->get('current_date_time'));
+        $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
+        $currentTime = $pieces[4];
+        $todayDay = $pieces[0];
+
+        $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'2','3',$todayDate,$currentTime,$todayDay);
         return view('eat_later', compact('companydetails'));
     }
 
