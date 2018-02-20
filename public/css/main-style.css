@@ -73,6 +73,28 @@ a{text-decoration: none;}
 
 
 /* ======== login page design =============== */
+.mobile_otp_btn{background-color: #375722;
+    color: #fff;
+    border: none;
+    padding: 1em 1em;
+    margin-top: 30px;}
+.social-sec_login .ui-select .ui-btn select{height: 30px !important;}
+.social-sec_login .ui-icon-carat-d:after{background-repeat: no-repeat;}
+.social-sec_login .ui-select .ui-btn{border: 1px solid #000;}
+.social-sec .ui-grid-solo>.ui-block-a .ui-btn span{color: #375722;font-size: 16px;}
+.bottom_login_text{ position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%);}
+.login_mobile{margin-top: 25px;}
+.bottom_login_text{margin-bottom: 25px;}
+.bottom_login_text a span{color: #375722;}
+.social-sec_login .reg_btn .ui-btn{background-color: #375722;
+    color: #fff;
+    border: none;
+    padding: 1em 1em;
+    margin-top: 30px;}
+.social-sec_login{padding: 0px 40px;}
 .pac-container{
   border-radius: 10px;
 border: 1px solid #ccc;

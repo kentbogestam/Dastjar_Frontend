@@ -45,6 +45,7 @@
 	<div role="main" data-role="main-content" id="content">
 
 		<div class="cat-list-sec">
+			<input type="hidden" id="browserCurrentTime" name="browserCurrentTime" value="" />
 			<ul data-role="listview" data-inset="true" id="companyDetailContianer">
 
 				
@@ -233,10 +234,12 @@ var totalCount = 0;
 
 	 $(function(){
 
-
+			var d = new Date();
+			console.log(d);
+			$("#browserCurrentTime").val(d);
 	
 
-	$.get("{{url('lat-long')}}", { lat: getCookie("latitude"), lng : getCookie("longitude")}, 
+	$.get("{{url('lat-long')}}", { lat: getCookie("latitude"), lng : getCookie("longitude"), currentdateTime : d}, 
     function(returnedData){
 
     	var count = 10;
