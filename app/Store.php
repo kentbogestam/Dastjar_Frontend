@@ -50,8 +50,8 @@ class Store extends Model
 
             $results = $latLngList->union($latLngList1)->get();
 
-        dd($todayDay);
-        return $latLngList;
+        //dd($todayDay);
+        return $results;
     }
 
     public static function getRestaurantsList($latitude,$longitude,$radius,$companytype1,$companytype2)

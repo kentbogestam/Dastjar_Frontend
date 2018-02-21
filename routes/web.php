@@ -30,7 +30,6 @@
 	Route::get('/userRegister','Auth\RegisterController@userRegister');
 	Route::post('/userRegisterSave','Auth\RegisterController@userDetailSave');
 	Route::post('/userLogin','Auth\LoginController@userLogin');
-	Route::post('/userLogin','Auth\LoginController@userLogin');
 	Route::get('/mobileLogin','Auth\LoginController@mobileLogin');
 	Route::post('/sentOtp','Auth\RegisterController@sentOtp');
 
