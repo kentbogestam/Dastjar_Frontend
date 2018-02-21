@@ -34,27 +34,7 @@ class HomeController extends Controller
 
     public function getList(Request $request){
        
-        $recipients = [+919818314026];
-        dd($recipients);
-            $url = "https://gatewayapi.com/rest/mtsms";
-            $api_token = "Q67Aydr2SNmYJax7B0yxtGe5VwjL3_nDxc9-XIiaEl9Wk2Y1t9THIMFemCDcqafb";
-            $json = [
-                'sender' => 'Dastjar',
-                'message' => '12345',
-                'recipients' => [],
-            ];
-            foreach ($recipients as $msisdn) {
-                $json['recipients'][] = ['msisdn' => $msisdn];}
-
-            $ch = curl_init();
-            curl_setopt($ch,CURLOPT_URL, $url);
-            curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
-            curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
-            curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
-            curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
-            $result = curl_exec($ch);
-            curl_close($ch);   
-        dd($request->session()->get('current_date_time'));
+      
         $pieces = explode(" ", $request->session()->get('current_date_time'));
         $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
         $currentTime = $pieces[4];
@@ -62,7 +42,8 @@ class HomeController extends Controller
 
        $userDetail = User::whereId(Auth()->id())->first();
        //dd($userDetail);
-        $companydetails = Store::getListRestaurantsCheck($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);  
+        $companydetails = Store::getListRestaurantsCheck($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
+        dd($companydetails);  
     }
 
     public function userLatLong(Request $request){  
@@ -80,7 +61,7 @@ class HomeController extends Controller
             $currentTime = $pieces[4];
             $todayDay = $pieces[0];
             
-            if($userDetail->customer_latitude == null && $userDetail->customer_longitude == null && $userDetail->web_version == null){
+            if($userDetail->customer_latitude == null && $userDetail->customer_longitude == null){
 
                 DB::table('customer')->where('id', Auth::id())->update([
                             'customer_latitude' => $data['lat'],

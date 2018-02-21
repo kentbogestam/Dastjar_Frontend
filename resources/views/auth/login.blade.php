@@ -64,7 +64,8 @@
 
 // Check for Geolocation API permissions  
 navigator.geolocation.getCurrentPosition(function(position) { 
-
+    console.log("latitude=" + position.coords.latitude);
+    console.log("longitude=" + position.coords.longitude);
     document.cookie="latitude=" + position.coords.latitude;
     document.cookie="longitude=" + position.coords.longitude;
     

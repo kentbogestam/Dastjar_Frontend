@@ -237,7 +237,8 @@ var totalCount = 0;
 			var d = new Date();
 			console.log(d);
 			$("#browserCurrentTime").val(d);
-	
+			console.log(getCookie("latitude"));
+			console.log(getCookie("longitude"));
 
 	$.get("{{url('lat-long')}}", { lat: getCookie("latitude"), lng : getCookie("longitude"), currentdateTime : d}, 
     function(returnedData){
