@@ -95,6 +95,13 @@
                 this.setOptions({scrollwheel:false});
             });
 
+
+            var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
+                    this.setZoom(25);
+                    google.maps.event.removeListener(boundsListener);
+                });
+
+
             autocomplete.addListener('place_changed', function() {
                 infowindow.close();
                 marker.setVisible(false);
