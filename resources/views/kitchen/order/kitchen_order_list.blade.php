@@ -1,5 +1,8 @@
 @extends('layouts.blank')
 
+@section('head-scripts') 
+<script src="{{asset('speakJs/speakClient.js')}}"></script>
+@endsection
 @section('content')
 
 <div data-role="header" data-position="fixed" data-tap-toggle="false" class="header">
@@ -11,6 +14,7 @@
 		<h3 class="ui-bar ui-bar-a order_background">{{ __('messages.Kitchen') }} <span>{{$storeName}}</span></h3>
 	</div>
 	<div role="main" class="ui-content">
+		<div id="audio"></div>
 		<div class="ready_notification">
 			@if ($message = Session::get('success'))
 			<div class="table-content sucess_msg">
@@ -100,11 +104,13 @@
 		var totallength = 0;
 		var url = "{{url('kitchen/order-started')}}";
 		var urlReady = "{{url('kitchen/order-readyKitchen')}}";
+		var textSpeachDone = "{{url('kitchen/textSpeachDone')}}";
 
 		$(function(){
 			$.get("{{url('kitchen/kitchen-orders')}}",
 			function(returnedData){
 				console.log(returnedData["data"]);
+				var textSpeach = returnedData["user"];
 				var count = 18;
 				var temp = returnedData["data"];
 	          	list = temp;
@@ -123,46 +129,57 @@
 		          		if(i>=totallength){
 				      		break;
 				      	}
-		          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
-		          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
-		          		liItem += "<tr>";
-		          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
-		          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
-		          		liItem += "<td>"+temp[i]["product_name"]+"</td>";
-		          		liItem += "<td>"+temp[i]["product_description"]+"</td>";
-		          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
-
-		          		if(temp[i]["order_started"] == 0){
-			          		liItem += "<td >"
-			          		liItem += "<a data-ajax='false' href="+url+"/"+temp[i]['id']+" >"
-			          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
-			          		liItem +="</a></td>";
-		          		}else{
-		          			liItem += "<td>"
-			          		liItem += "<a>"
-			          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
-			          		liItem +="</a></td>";
-		          		}
-
-		          		if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 0){
-			          		liItem += "<td>"
-			          		liItem += "<a data-ajax='false' >"
-			          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
-			          		liItem +="</a></td>";
-			          		}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
-			          		liItem += "<td>"
-			          		liItem += "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+" >"
-			          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
-			          		liItem +="</a></td>";
-
+				      	(function (i) {
+						    setTimeout(function () {
+			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
+			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
+			          		liItem += "<tr>";
+			          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
+			          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
+			          		liItem += "<td>"+temp[i]["product_name"]+
+			          		"</td>";
+			          		if(textSpeach == 1 && temp[i]['is_speak'] == 0){
+				          		liItem += "<td>"+temp[i]["product_description"]+speak(temp[i]["product_quality"]+temp[i]["product_name"], { amplitude: 100, wordgap: 0, pitch: 50, speed: 150 }, updateSpeak(temp[i]['id']))+"</td>";
 			          		}else{
-			          		liItem += "<td>"
-			          		liItem += "<a>"
-			          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
-			          		liItem +="</a></td>";
-		          		}
-		          		liItem += "<td>"+time+"</td>";
-		          		liItem += "</tr>";
+			          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
+			          		}
+			          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
+
+			          		if(temp[i]["order_started"] == 0){
+				          		liItem += "<td >"
+				          		liItem += "<a data-ajax='false' href="+url+"/"+temp[i]['id']+" >"
+				          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
+				          		liItem +="</a></td>";
+			          		}else{
+			          			liItem += "<td>"
+				          		liItem += "<a>"
+				          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
+				          		liItem +="</a></td>";
+			          		}
+
+			          		if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 0){
+				          		liItem += "<td>"
+				          		liItem += "<a data-ajax='false' >"
+				          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
+				          		liItem +="</a></td>";
+				          		}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
+				          		liItem += "<td>"
+				          		liItem += "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+" >"
+				          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
+				          		liItem +="</a></td>";
+
+				          		}else{
+				          		liItem += "<td>"
+				          		liItem += "<a>"
+				          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
+				          		liItem +="</a></td>";
+			          		}
+			          		liItem += "<td>"+time+"</td>";
+			          		liItem += "</tr>"
+					    	$("#orderDetailContianer").append(liItem);
+					    	liItem = null;
+						     }, 3000*i);
+					    })(i);
 		          	}
 	          	}else{
 	          		liItem += "<div class='table-content'>";
@@ -181,6 +198,7 @@
 				//console.log(returnedData["data"]);
 				var count = 18;
 				var temp = returnedData["data"];
+				var textSpeach = returnedData["user"];
 	          	list = temp;
 	          	console.log(temp.length);
 	          	var liItem = "";
@@ -196,45 +214,56 @@
 		          		if(i>totallength){
 				      		break;
 				      	}
-		          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
-		          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
-		          		liItem += "<tr>";
-		          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
-		          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
-		          		liItem += "<td>"+temp[i]["product_name"]+"</td>";
-		          		liItem += "<td>"+temp[i]["product_description"]+"</td>";
-		          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
-		          		if(temp[i]["order_started"] == 0){
-			          		liItem += "<td >"
-			          		liItem += "<a data-ajax='false' href="+url+"/"+temp[i]['id']+" >"
-			          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
-			          		liItem +="</a></td>";
-		          		}else{
-		          			liItem += "<td>"
-			          		liItem += "<a>"
-			          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
-			          		liItem +="</a></td>";
-		          		}
-
-		          		if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 0){
-			          		liItem += "<td>"
-			          		liItem += "<a data-ajax='false' >"
-			          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
-			          		liItem +="</a></td>";
-			          		}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
-			          		liItem += "<td>"
-			          		liItem += "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+" >"
-			          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
-			          		liItem +="</a></td>";
-
+				      	(function (i) {
+						    setTimeout(function () {
+			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
+			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
+			          		liItem += "<tr>";
+			          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
+			          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
+			          		liItem += "<td>"+temp[i]["product_name"]+
+			          		"</td>";
+			          		if(textSpeach == 1 && temp[i]['is_speak'] == 0){
+				          		liItem += "<td>"+temp[i]["product_description"]+speak(temp[i]["product_quality"]+temp[i]["product_name"], { amplitude: 100, wordgap: 0, pitch: 50, speed: 150 }, updateSpeak(temp[i]['id']))+"</td>";
 			          		}else{
-			          		liItem += "<td>"
-			          		liItem += "<a>"
-			          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
-			          		liItem +="</a></td>";
-		          		}
-		          		liItem += "<td>"+time+"</td>";
-		          		liItem += "</tr>";
+			          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
+			          		}
+			          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
+
+			          		if(temp[i]["order_started"] == 0){
+				          		liItem += "<td >"
+				          		liItem += "<a data-ajax='false' href="+url+"/"+temp[i]['id']+" >"
+				          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
+				          		liItem +="</a></td>";
+			          		}else{
+			          			liItem += "<td>"
+				          		liItem += "<a>"
+				          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
+				          		liItem +="</a></td>";
+			          		}
+
+			          		if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 0){
+				          		liItem += "<td>"
+				          		liItem += "<a data-ajax='false' >"
+				          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
+				          		liItem +="</a></td>";
+				          		}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
+				          		liItem += "<td>"
+				          		liItem += "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+" >"
+				          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
+				          		liItem +="</a></td>";
+
+				          		}else{
+				          		liItem += "<td>"
+				          		liItem += "<a>"
+				          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
+				          		liItem +="</a></td>";
+			          		}
+			          		liItem += "<td>"+time+"</td>";
+			          		liItem += "</tr>"
+					    	$("#orderDetailContianer").html(liItem);
+						     }, 3000*i);
+					    })(i);
 		          	}
 	          	}else{
 	          		liItem += "<div class='table-content'>";
@@ -247,7 +276,7 @@
 			}); 
 		}
 
-		setInterval(ajaxCall, 10000);
+		setInterval(ajaxCall, 50000);
 
 		var tempCount = 10;
 		$(document).on("scrollstop", function (e) {
@@ -310,47 +339,69 @@
 	      	if(countCheck>limit){
 	      		break;
 	      	}
-	      	var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
-	      	var timeOrder = addTimes("00:00::",list[i]["deliver_time"]);
-      		liItem += "<tr>";
-      		liItem += "<th>"+list[i]["customer_order_id"]+"</th>";
-      		liItem += "<td>"+list[i]["product_quality"]+"</td>";
-      		liItem += "<td>"+list[i]["product_name"]+"</td>";
-      		liItem += "<td>"+list[i]["product_description"]+"</td>";
-      		liItem += "<td>"+list[i]["deliver_date"]+' '+timeOrder+"</td>";
-      		if(list[i]["order_started"] == 0){
-          		liItem += "<td >"
-          		liItem += "<a data-ajax='false' href="+url+"/"+list[i]['id']+" >"
-          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
-          		liItem +="</a></td>";
-      		}else{
-      			liItem += "<td>"
-          		liItem += "<a>"
-          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
-          		liItem +="</a></td>";
-      		}
-      		if(list[i]["order_ready"] == 0 && list[i]["order_started"] == 0){
-          		liItem += "<td>"
-          		liItem += "<a data-ajax='false' >"
-          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
-          		liItem +="</a></td>";
-          		}else if(list[i]["order_ready"] == 0 && list[i]["order_started"] == 1){
-          		liItem += "<td>"
-          		liItem += "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+" >"
-          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
-          		liItem +="</a></td>";
+	      	 (function (i) {
+			    setTimeout(function () {
+			      	var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
+			      	var timeOrder = addTimes("00:00::",list[i]["deliver_time"]);
+		      		liItem += "<tr>";
+		      		liItem += "<th>"+list[i]["customer_order_id"]+"</th>";
+		      		liItem += "<td>"+list[i]["product_quality"]+"</td>";
+		      		liItem += "<td>"+list[i]["product_name"]+"</td>";
+		      		if(textSpeach == 1 && list[i]['is_speak'] == 0){
+		          		liItem += "<td>"+list[i]["product_description"]+speak(list[i]["product_quality"]+list[i]["product_name"], { amplitude: 100, wordgap: 0, pitch: 50, speed: 150 }, updateSpeak(list[i]['id']))+"</td>";
+	          		}else{
+	          			liItem += "<td>"+list[i]["product_description"]+"</td>";
+	          		}
+		      		liItem += "<td>"+list[i]["deliver_date"]+' '+timeOrder+"</td>";
+		      		if(list[i]["order_started"] == 0){
+		          		liItem += "<td >"
+		          		liItem += "<a data-ajax='false' href="+url+"/"+list[i]['id']+" >"
+		          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
+		          		liItem +="</a></td>";
+		      		}else{
+		      			liItem += "<td>"
+		          		liItem += "<a>"
+		          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
+		          		liItem +="</a></td>";
+		      		}
+		      		if(list[i]["order_ready"] == 0 && list[i]["order_started"] == 0){
+		          		liItem += "<td>"
+		          		liItem += "<a data-ajax='false' >"
+		          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
+		          		liItem +="</a></td>";
+		          		}else if(list[i]["order_ready"] == 0 && list[i]["order_started"] == 1){
+		          		liItem += "<td>"
+		          		liItem += "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+" >"
+		          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
+		          		liItem +="</a></td>";
 
-          		}else{
-          		liItem += "<td>"
-          		liItem += "<a>"
-          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
-          		liItem +="</a></td>";
-      		}
-      		liItem += "<td>"+time+"</td>";
-      		liItem += "</tr>";
-	      	countCheck++;
+		          		}else{
+		          		liItem += "<td>"
+		          		liItem += "<a>"
+		          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
+		          		liItem +="</a></td>";
+		      		}
+		      		liItem += "<td>"+time+"</td>";
+		      		liItem += "</tr>";
+			      	countCheck++;
+			      	$("#orderDetailContianer").append(liItem);
+			      	liItem = null;
+			     }, 3000*i);
+		    })(i);
 	      }
 	      $("#orderDetailContianer").append(liItem);	
+		}
+
+		function updateSpeak(id){
+			var url = '{{url('kitchen/updateTextspeach')}}'+'/'+id;
+			console.log('urlurl'+url);
+			$.ajax({
+	            url: url, //This is the current doc
+	            type: "GET",//variables should be pass like this
+	            success: function(data){
+	               console.log('fff');
+	            }
+	        }); 
 		}
 
 

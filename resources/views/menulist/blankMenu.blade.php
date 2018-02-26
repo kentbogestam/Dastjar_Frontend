@@ -12,7 +12,7 @@
 	</div>
 	
 	<div class="table-content">
-		<p>{{ __('messages.Items is not available in your selected Restaurant.') }}</p>
+		<p>{{ __('messages.Menu is not available.') }}</p>
 	</div>
 	
 	<form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('save-order') }}">

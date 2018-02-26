@@ -90,6 +90,7 @@ Route::group(['middleware' => ['auth']], function(){
 		Route::get('order-deliver/{OrderId}', 'PushNotifactionController@orderDeliver');
 		Route::get('kitchen-setting', 'AdminController@kitchenSetting');
 		Route::post('save-kitchenSetting', 'AdminController@saveKitchenSetting');
+		Route::get('updateTextspeach/{id}','AdminController@updateTextspeach');
 	});
 
 
