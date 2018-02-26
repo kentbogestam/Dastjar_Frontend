@@ -103,7 +103,8 @@ class AdminController extends Controller
         }
 
         //$user = Admin::where(['u_id' => '32130ad3-e08c-5fc5-b863-1336a3ba4bde'])->first();
-        return response()->json(['status' => 'success', 'response' => true,'data'=>$kitchenorderDetails]);
+        $text_speech = Auth::guard('admin')->user()->text_speech;
+        return response()->json(['status' => 'success', 'user' => $text_speech,'data'=>$kitchenorderDetails]);
     }
 
     public function orderStarted(Request $request, $orderID){
@@ -393,6 +394,7 @@ class AdminController extends Controller
         }
         DB::table('user')->where('id', Auth::guard('admin')->id())->update([
                     'language' => $data['radio-choice-v-2'],
+                    'text_speech' => $data['text_speech'],
                 ]);
         return redirect()->back()->with('success', 'Setting updated successfully.');
     }
@@ -421,5 +423,13 @@ class AdminController extends Controller
         $pushNotificationService = App42API::buildPushNotificationService(); 
         $pushNotification = $pushNotificationService->sendPushMessageToUser($userName,$message);
         $jsonResponse = $pushNotification->toString();
+    }
+
+    public function updateTextspeach($id){
+        //dd($id);
+        DB::table('order_details')->where('id', $id)->update([
+                    'is_speak' => 1,
+                ]);
+         return response()->json(['status' => 'success', 'response' => true,'data'=>$id]);
     }
 }

@@ -61,6 +61,19 @@
 				        <label for="radio-choice-v-2c"  @if(Auth::guard('admin')->user()->language == 'GER') checked="checked" @endif>German</label>
 				    </fieldset>
 				</li>
+				<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">Text To Speech <span>
+					@if(Auth::guard('admin')->user()->text_speech == 0)
+					Off
+					@elseif(Auth::guard('admin')->user()->text_speech == 1)
+					On
+					@endif</span></h2>
+				    <fieldset data-role="controlgroup">
+				        <input type="radio" name="text_speech" id="radio-choice-v-2d" value="0" @if(Auth::guard('admin')->user()->text_speech == 0) checked="checked" @else checked="checked" @endif>
+				        <label for="radio-choice-v-2d">Off</label>
+				        <input type="radio" name="text_speech" id="radio-choice-v-2e" value="1" @if(Auth::guard('admin')->user()->text_speech == 1) checked="checked" @endif>
+				        <label for="radio-choice-v-2e">On</label>
+				    </fieldset>
+				</li>
 			</div>
 		</div>
 	</form>
