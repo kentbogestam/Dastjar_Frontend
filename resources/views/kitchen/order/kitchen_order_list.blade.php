@@ -276,7 +276,7 @@
 			}); 
 		}
 
-		setInterval(ajaxCall, 50000);
+		setInterval(ajaxCall, 30000);
 
 		var tempCount = 10;
 		$(document).on("scrollstop", function (e) {
