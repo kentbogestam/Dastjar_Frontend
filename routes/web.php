@@ -33,6 +33,11 @@
 	Route::get('/mobileLogin','Auth\LoginController@mobileLogin');
 	Route::post('/sentOtp','Auth\RegisterController@sentOtp');
 
+   //This is for testing stripe payment
+
+	Route::get('/redirectStripe', 'StripePaymentController@redirectStripe');
+	Route::get('/stripeResponse', 'StripePaymentController@stripeResponse');
+
 Route::group(['middleware' => ['auth']], function(){
 
 	Route::get('ready-notifaction/{OrderId}', 'PushNotifactionController@readyNotifaction');
