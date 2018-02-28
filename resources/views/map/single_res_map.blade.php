@@ -98,7 +98,7 @@
 				var userLong = markers[0][1];
 			}
 			var map = new google.maps.Map(document.getElementById('map'), {
-			  zoom: 7,
+			  zoom: 18,
 			  center: {lat: userLat, lng: userLong}
 			});
 			directionsDisplay.setMap(map);

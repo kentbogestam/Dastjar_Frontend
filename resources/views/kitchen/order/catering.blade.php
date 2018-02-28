@@ -106,6 +106,7 @@
 				      		break;
 				      	}
 		          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
+		          		var orderCreate = orderCreateTime(temp[i]["created_at"]);
 		          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
 		          		liItem += "<tr>";
 		          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
@@ -116,8 +117,8 @@
 		          		}else{
 		          			liItem += "<td>"+''+"</td>";
 		          		}
+		          		liItem += "<td>"+orderCreate+"</td>";
 		          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
-		          		liItem += "<td>"+time+"</td>";
 		          		liItem += "</tr>";
 		          	}
 	          	}else{
@@ -149,6 +150,7 @@
 				      		break;
 				      	}
 		          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
+		          		var orderCreate = orderCreateTime(temp[i]["created_at"]);
 		          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
 		          		liItem += "<tr>";
 		          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
@@ -159,8 +161,8 @@
 		          		}else{
 		          			liItem += "<td>"+''+"</td>";
 		          		}
+		          		liItem += "<td>"+orderCreate+"</td>";
 		          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
-		          		liItem += "<td>"+time+"</td>";
 		          		liItem += "</tr>";
 		          	}
 	          	}else{
@@ -228,6 +230,7 @@
 	      		break;
 	      	}
 	      	var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
+		    var orderCreate = orderCreateTime(list[i]["created_at"]);
 	      	var timeOrder = addTimes("00:00:00",list[i]["deliver_time"]);
       		liItem += "<tr>";
       		liItem += "<th>"+list[i]["customer_order_id"]+"</th>";
@@ -238,12 +241,21 @@
       		}else{
       			liItem += "<td>"+ +"</td>";
       		}
-      		liItem += "<td>"+list[i]["deliver_date"]+' '+timeOrder+"</td>";
-      		liItem += "<td>"+time+"</td>";
+      		liItem += "<td>"+orderCreate+"</td>";
+		    liItem += "<td>"+list[i]["deliver_date"]+' '+timeOrder+"</td>";
       		liItem += "</tr>";
 	      	countCheck++;
 	      }
 	      $("#orderDetailContianer").append(liItem);	
+		}
+
+		function orderCreateTime(time){
+			var date = new Date(time);
+			var dd = date.toString();
+			var ddd = dd.split(" ");
+			var ddddd = ddd[4].split(":");
+			var dddd = ddd[0]+" "+ddd[1]+" "+ddd[2]+" "+ddd[3]+" "+ddddd[0]+":"+ddddd[1];
+			return dddd;
 		}
 
 
