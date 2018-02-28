@@ -52,7 +52,7 @@
             var autocomplete = new google.maps.places.Autocomplete(input);
             autocomplete.bindTo('bounds', map);
 
-            var opt = { minZoom: 2, maxZoom: 12};
+            var opt = {maxZoom: 50};
             map.setOptions(opt);
 
             var infowindow = new google.maps.InfoWindow();

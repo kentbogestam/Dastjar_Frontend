@@ -14,7 +14,7 @@
 					<p>{{ __('messages.Order Number') }} </p>
 					<p class="order-no">{{$order->customer_order_id}}</p>
 					<p>({{$order->store_name}})</p>
-					<p>{{ __('messages.Your order will be ready at') }} {{$order->order_delivery_time}} mins
+					<p>{{ __('messages.Your order will be ready on') }} {{$order->order_delivery_time}} mins
 						@if($order->order_type == 'eat_later')
 						{{$order->deliver_date}}
 						@endif
