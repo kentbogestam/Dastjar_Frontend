@@ -7,7 +7,10 @@
 				<ul> 
 			<li><a href="{{url('eat-now')}}" data-ajax="false" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
 			 <li><a data-ajax="false" class="ui-btn-active">{{ __('messages.Setting') }}</a></li>
-			  <li class="done-btn" id="dataSave">  <input type="button" value="{{ __('messages.Done') }}" /></li> </ul> </div><!-- /navbar -->
+
+			  <li class="done-btn" id="dataSave">  <input type="button" value="{{ __('messages.Done') }}" /></li> </ul> 
+			  <span class="location_icon"><a href="#"><img src="{{asset('images/icons/location.png')}}"></a></span>
+			</div><!-- /navbar -->
 		</div>
 	</div>
 
