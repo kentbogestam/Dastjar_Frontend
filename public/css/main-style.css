@@ -224,6 +224,7 @@ color: #365622}
 .text-left{text-align: left;}
 .text-right{text-align: right;}
 .done-btn .ui-btn{text-align: right;padding: 0;}
+.done-btn .ui-input-btn input{width: auto}
 .map-container .ui-input-text{margin:0;border-width: 0;}
 .map-container #pac-input{
  display: inline-block;
@@ -438,6 +439,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
 .sucess_msg img{
   vertical-align: middle;
 }
+.location_icon{position: absolute;
+    top: 14px;
+    right: 65px;z-index: 99}
+.location_icon img{width: 25px;}
 /* ================= waiting for ready page design  ======================*/
 
 .wait-bg-img{background: url("../images/img-wait-for-ready.png");background-size: cover;

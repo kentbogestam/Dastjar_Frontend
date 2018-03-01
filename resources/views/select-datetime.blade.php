@@ -84,15 +84,15 @@
 	<script type="text/javascript" src="{{asset('js/jquery-1.11.1.min.js')}}"></script>
 	<script type="text/javascript" src="{{asset('js/jquery.datetimepicker.min.js')}}"></script>
 	<script type="text/javascript">
-
+		/*$('.error_time').hide();	*/
 		 $(".ordersec").click(function(){
 		    $("#order-popup").toggleClass("hide-popup");
 		 });
 
 
 		var date = new Date();
-		
 		date.setDate(date.getDate() + 1);
+		date.setHours(00, 00, 00);
 		var dateToday = new Date();
 
 
@@ -114,12 +114,22 @@
             }
 
         });
-	   $("#ss").click(function(e){
 
-		
-        	$("#form").submit();
+	   $("#ss").click(function(e){
+			var timeHH = $('#timeH').val();
+			if(timeHH == 00){
+				$('.error_time').show();
+				console.log(timeHH);
+			}else{
+				$('.error_time').hide();
+				$("#form").submit();
+			}
 		
 	})
+	  $('.perfect-datetimepicker').append("<p class='error_time'>Please fill time </p>");
 	</script>
+	<style type="text/css">
+		.error_time{color: red; font-size: 14px; text-align: center;margin-top: 15px; display: none;}
+	</style>
 
 @endsection

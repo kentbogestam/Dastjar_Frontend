@@ -22,7 +22,7 @@ return [
     'Items is not available in your selected Restaurant.'   => 'Items is not available in your selected Restaurant.',
     'Thanks for your order'   => 'Thanks for your order',
     'Order Number'   => 'Order Number',
-    'Your order will be ready at'   => 'Your order will be ready at',
+    'Your order will be ready on'   => 'Your order will be ready on',
     'ORDER DETAILS'   => 'ORDER DETAILS',
     'TOTAL'   => 'TOTAL',
     'Orders'  => 'Orders', 
