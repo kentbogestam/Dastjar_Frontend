@@ -427,9 +427,9 @@ class AdminController extends Controller
 
     public function updateTextspeach($id){
         //dd($id);
-        DB::table('order_details')->where('id', $id)->update([
-                    'is_speak' => 1,
-                ]);
+        // DB::table('order_details')->where('id', $id)->update([
+        //             'is_speak' => 1,
+        //         ]);
          return response()->json(['status' => 'success', 'response' => true,'data'=>$id]);
     }
 }

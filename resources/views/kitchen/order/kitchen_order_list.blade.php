@@ -1,7 +1,7 @@
 @extends('layouts.blank')
 
 @section('head-scripts') 
-<script src="{{asset('kitchenJs/speekJs.js')}}"></script>
+
 @endsection
 @section('content')
 
@@ -224,7 +224,7 @@
 			          		liItem += "<td>"+temp[i]["product_name"]+
 			          		"</td>";
 			          		if(textSpeach == 1 && temp[i]['is_speak'] == 0){
-				          		liItem += "<td>"+temp[i]["product_description"]+test(temp[i]["product_quality"]+temp[i]["product_name"], { amplitude: 100, wordgap: 0, pitch: 50, speed: 150 }, updateSpeak(temp[i]['id']))+"</td>";
+				          		liItem += "<td>"+temp[i]["product_description"]+test(temp[i]["product_quality"]+temp[i]["product_name"])+"</td>";
 			          		}else{
 			          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
 			          		}
@@ -348,7 +348,7 @@
 		      		liItem += "<td>"+list[i]["product_quality"]+"</td>";
 		      		liItem += "<td>"+list[i]["product_name"]+"</td>";
 		      		if(textSpeach == 1 && list[i]['is_speak'] == 0){
-		          		liItem += "<td>"+list[i]["product_description"]+test(list[i]["product_quality"]+list[i]["product_name"], { amplitude: 100, wordgap: 0, pitch: 50, speed: 150 }, updateSpeak(list[i]['id']))+"</td>";
+		          		liItem += "<td>"+list[i]["product_description"]+test(list[i]["product_quality"]+list[i]["product_name"])+"</td>";
 	          		}else{
 	          			liItem += "<td>"+list[i]["product_description"]+"</td>";
 	          		}
@@ -443,4 +443,5 @@
 		  return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2)
 		}
 	</script>
+	<script src="{{asset('kitchenJs/speekJs.js')}}"></script>
 @endsection
