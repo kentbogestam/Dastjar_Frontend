@@ -1,4 +1,3 @@
-console.log('Started', self);
 var clickURL = "";
 self.addEventListener('install', function(event) {
   self.skipWaiting();
@@ -12,8 +11,8 @@ self.addEventListener('activate', function(event) {
 self.addEventListener('push', function(event) {
  console.log('Push message', event);
   var title = 'Push message';
-  var FETCH_ENDPOINT = "https://api.shephertz.com/cloud/1.0/storage/getAllNotications/deviceId/";  
-	event.waitUntil(self.registration.pushManager.getSubscription().then(function(subscription) {
+  var FETCH_ENDPOINT = " https://api.shephertz.com/cloud/1.0/storage/getAllNotications/deviceId/";  
+ event.waitUntil(self.registration.pushManager.getSubscription().then(function(subscription) {
         var regID = null;
         if ('subscriptionId' in subscription) {
             regID = subscription.subscriptionId;
@@ -22,36 +21,36 @@ self.addEventListener('push', function(event) {
             regID = subscription.endpoint;
         }
         var idD = regID.substring(regID.indexOf("d/")+1);
-       	regID =  idD.substring(idD.indexOf("/")+1);
+          regID =  idD.substring(idD.indexOf("/")+1);
        
-		var URL = FETCH_ENDPOINT +btoa(regID)+ "/CHROME"+"?apiKey=cc9334430f14aa90c623aaa1dc4fa404d1cfc8194ab2fd144693ade8a9d1e1f2";
-		console.log(URL);
+ var URL = FETCH_ENDPOINT +btoa(regID)+ "/CHROME"+"?apiKey=cc9334430f14aa90c623aaa1dc4fa404d1cfc8194ab2fd144693ade8a9d1e1f2";
+ console.log(URL);
         return fetch(URL).then(function(response) {
-				
+ 
             return response.json().then(function(json) {
-				var jsonOBJECT = json.app42.response.notification.messages
-				var messagePayload
-				var id
-				console.log(messagePayload)
-				console.log(jsonOBJECT.length)
-				for(var i=0;i<jsonOBJECT.length;i++){
-					var jsonPayload = jsonOBJECT[i];
-					console.log(jsonPayload)
-					//promise.push(jsonPayload)
-					messagePayload = jsonPayload.message
-					id= jsonPayload.id
-					clickURL = messagePayload.Url;
+ var jsonOBJECT = json.app42.response.notification.messages
+ var messagePayload
+ var id
+ console.log(messagePayload)
+ console.log(jsonOBJECT.length)
+ for(var i=0;i<jsonOBJECT.length;i++){
+ var jsonPayload = jsonOBJECT[i];
+ console.log(jsonPayload)
+ //promise.push(jsonPayload)
+ messagePayload = jsonPayload.message
+ id= jsonPayload.id
+ clickURL = messagePayload.Url;
           title = messagePayload.alert;
           console.log(clickURL);
-					 self.registration.showNotification(title, { 
-					  icon: "http://dastjar.com/dbuzzu/public/images/dastjar.png"
-					})
-					
-				}
+  self.registration.showNotification(title, { 
+   icon: " http://localhost/dast-jar-frontend/public/images/dastjar.png"
+ })
+ 
+ }
             });
         });
     }));
-	//return Promise.all(promise)
+ //return Promise.all(promise)
 });
 
 self.addEventListener('message', function(event) {
@@ -59,7 +58,7 @@ self.addEventListener('message', function(event) {
 });
 
 function endpointCorrection(pushSubscription) {
-  if (pushSubscription.endpoint.indexOf('https://android.googleapis.com/gcm/send') !== 0) {
+  if (pushSubscription.endpoint.indexOf(' https://android.googleapis.com/gcm/send') !== 0) {
     return pushSubscription.endpoint;
   }
 
@@ -73,7 +72,7 @@ function endpointCorrection(pushSubscription) {
 }
 
 self.addEventListener('notificationclick', function(event) {
-  var url = clickURL;
+  var url = event.target.clickURL;
   event.notification.close(); // Android needs explicit close.
   event.waitUntil(
       clients.matchAll({type: 'window'}).then( windowClients => {
@@ -100,8 +99,8 @@ self.addEventListener('notificationclick', function(event) {
 //     if (Notification.prototype.hasOwnProperty('data')) {
 //     console.log('Using Data');
 //     var url = event.notification.body;
-// 	console.log("Through click "+ url)
-// 	}
+//   console.log("Through click "+ url)
+//   }
   
 //   event.notification.close();
 //   // This looks to see if the current is already open and
@@ -113,9 +112,8 @@ self.addEventListener('notificationclick', function(event) {
 //       var client = clientList[i];
 //    }
 //     if (clients.openWindow){
-// 		return clients.openWindow("");
-// 	}
+//   return clients.openWindow("");
+//   }
 //   }));
 
-// });
-
+// }); 
