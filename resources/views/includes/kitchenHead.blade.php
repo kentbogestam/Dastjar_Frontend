@@ -1,6 +1,7 @@
 <head>
 
-	<title>Dastjar</title>
+	<title>Anar</title>
+    <link rel="icon" href="{{asset('images/logo.png')}}">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="{{asset('kitchenCss/jquery.mobile-1.4.5.min.css')}}">
 	<link rel="stylesheet" type="text/css" href="{{asset('kitchenCss/style.css')}}">
