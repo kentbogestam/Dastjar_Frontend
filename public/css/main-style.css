@@ -752,3 +752,18 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
     height: 55px;
     line-height: 55px;
 }*/
+.ui-select .ui-btn{text-align: left; padding-left: .4em}
+.ui-icon-carat-d:after{
+    background-image: url("../images/icons/down-arrow1.png") !important; background-position: center;
+}
+
+@media screen and (orientation : landscape){
+    .bottom_login_text{position: relative;}
+    .login-inner-section{
+        margin: 30px 0;
+        position: static;
+        top: 0;
+        left: 0;
+        transform: none;
+    }
+}
