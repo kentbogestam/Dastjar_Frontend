@@ -2,7 +2,7 @@
 
 @section('content')
         <div data-role="header" data-theme="c">
-             <div class="logo_header">
+             <div class="logo_header icon_logo">
                 <img src="{{asset('kitchenImages/logo.png')}}">
             </div>
         </div><!-- /header -->

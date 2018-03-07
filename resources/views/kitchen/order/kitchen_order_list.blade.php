@@ -185,7 +185,7 @@
 	          	}else{
 	          		liItem += "<div class='table-content'>";
 		        	liItem += "<p>";
-		        	liItem += '{{ __('messages.Order is not available.') }}';
+		        	//liItem += '{{ __('messages.Order is not available.') }}';
 		        	liItem += "</p>";
 		        	liItem += "</div>";
 	          	}
@@ -269,7 +269,7 @@
 	          	}else{
 	          		liItem += "<div class='table-content'>";
 		        	liItem += "<p>";
-		        	liItem += '{{ __('messages.Order is not available.') }}';
+		        	//liItem += '{{ __('messages.Order is not available.') }}';
 		        	liItem += "</p>";
 		        	liItem += "</div>";
 	          	}
