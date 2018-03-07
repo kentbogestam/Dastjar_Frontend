@@ -46,6 +46,16 @@ class HomeController extends Controller
         dd($companydetails);  
     }
 
+    public function saveCurrentLatLong(Request $request){
+        $data = $request->input();
+        DB::table('customer')->where('id', Auth::id())->update([
+                            'customer_latitude' => $data['lat'],
+                            'customer_longitude' => $data['lng'],
+                            'address' => NULL,
+                        ]);
+       return response()->json(['status' => 'success', 'response' => true,'data'=>true]);  
+    }
+
     public function userLatLong(Request $request){  
         $request->session()->forget('current_date_time');
       

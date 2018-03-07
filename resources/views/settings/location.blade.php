@@ -7,7 +7,7 @@
 				<ul> 
 			<li><a href="{{url('user-setting')}}" data-ajax="false" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
 			 <li><a data-ajax="false" class="ui-btn-active">{{ __('messages.Setting') }}</a></li>
-			  <li class="done-btn">  <input  type="button" value="{{ __('messages.Done') }}" id="dataSave"/></li> </ul> </div><!-- /navbar -->
+			  <li class="done-btn" id="dataSave">  <input type="button" value="{{ __('messages.Done') }}" /></li>  </ul> </div><!-- /navbar -->
 		</div>
 	</div>
 	<form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('save-location') }}">

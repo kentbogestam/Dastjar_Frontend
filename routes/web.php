@@ -21,9 +21,9 @@
 // });
 
 	Auth::routes();
-
-	Route::get('/home', 'HomeController@index')->name('home');
+	
 	Route::get('/admin', 'AdminController@index')->name('admin');
+	Route::get('/home', 'HomeController@index')->name('home');
 
 	Route::get('/login/{social}','Auth\LoginController@socialLogin')->where('social','facebook|google');
 	Route::get('/login/{social}/callback','Auth\LoginController@handelProviderCallback')->where('social','facebook|google');
@@ -60,6 +60,7 @@ Route::group(['middleware' => ['auth']], function(){
 	Route::get('save-order', 'OrderController@saveOrder');
 	Route::get('order-view/{OrderId}', 'OrderController@orderView');
 	Route::get('lat-long', 'HomeController@userLatLong');
+	Route::get('saveCurrentlat-long', 'HomeController@saveCurrentLatLong');
 	Route::get('user-setting', 'CustomerController@index');
 	Route::post('save-setting', 'CustomerController@saveSetting');
 	Route::resource('customer', 'CustomerController');
