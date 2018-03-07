@@ -101,6 +101,7 @@
 	<script type="text/javascript">
 		var list = Array();
 		var totalCount = 0;
+		var textSpeach = 0;
 		var totallength = 0;
 		var url = "{{url('kitchen/order-started')}}";
 		var urlReady = "{{url('kitchen/order-readyKitchen')}}";
@@ -110,7 +111,7 @@
 			$.get("{{url('kitchen/kitchen-orders')}}",
 			function(returnedData){
 				console.log(returnedData["data"]);
-				var textSpeach = returnedData["user"];
+				textSpeach = returnedData["user"];
 				var count = 18;
 				var temp = returnedData["data"];
 	          	list = temp;
@@ -139,7 +140,7 @@
 			          		liItem += "<td>"+temp[i]["product_name"]+
 			          		"</td>";
 			          		if(textSpeach == 1 && temp[i]['is_speak'] == 0){
-				          		liItem += "<td>"+temp[i]["product_description"]+test(temp[i]["product_quality"]+temp[i]["product_name"])+"</td>";
+				          		liItem += "<td>"+temp[i]["product_description"]+test(temp[i]["product_quality"]+temp[i]["product_name"])+updateSpeak(temp[i]['id'])+"</td>";
 			          		}else{
 			          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
 			          		}
@@ -198,7 +199,7 @@
 				//console.log(returnedData["data"]);
 				var count = 18;
 				var temp = returnedData["data"];
-				var textSpeach = returnedData["user"];
+				textSpeach = returnedData["user"];
 	          	list = temp;
 	          	console.log(temp.length);
 	          	var liItem = "";
@@ -224,7 +225,7 @@
 			          		liItem += "<td>"+temp[i]["product_name"]+
 			          		"</td>";
 			          		if(textSpeach == 1 && temp[i]['is_speak'] == 0){
-				          		liItem += "<td>"+temp[i]["product_description"]+test(temp[i]["product_quality"]+temp[i]["product_name"])+"</td>";
+				          		liItem += "<td>"+temp[i]["product_description"]+test(temp[i]["product_quality"]+temp[i]["product_name"])+updateSpeak(temp[i]['id'])+"</td>";
 			          		}else{
 			          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
 			          		}
@@ -348,7 +349,7 @@
 		      		liItem += "<td>"+list[i]["product_quality"]+"</td>";
 		      		liItem += "<td>"+list[i]["product_name"]+"</td>";
 		      		if(textSpeach == 1 && list[i]['is_speak'] == 0){
-		          		liItem += "<td>"+list[i]["product_description"]+test(list[i]["product_quality"]+list[i]["product_name"])+"</td>";
+		          		liItem += "<td>"+list[i]["product_description"]+test(list[i]["product_quality"]+list[i]["product_name"])+updateSpeak(list[i]['id'])+"</td>";
 	          		}else{
 	          			liItem += "<td>"+list[i]["product_description"]+"</td>";
 	          		}
@@ -393,6 +394,7 @@
 		}
 
 		function updateSpeak(id){
+			console.log('ssssssssssssssssssssssssssssssssssssssssssssssssssssss');
 			var url = '{{url('kitchen/updateTextspeach')}}'+'/'+id;
 			console.log('urlurl'+url);
 			$.ajax({
