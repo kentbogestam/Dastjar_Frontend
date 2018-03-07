@@ -62,5 +62,6 @@ return [
     'Order is not available.'  => 'Order is not available.',        
     'Logout'  => 'Logout',         
     'Main Admin'  => 'Main Admin', 
+    'Current Position' => 'Current Position',
 
 ];

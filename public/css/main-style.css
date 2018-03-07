@@ -186,7 +186,9 @@ color: #365622}
     display: inline-block;
 }
 [data-role="header"] .logo img{
-    max-width: 35px;
+    max-width: 95px;
+    margin-top: 10px;
+    margin-bottom: 2px;
 }
 [data-role="header"] .logo span{
     font-family: "ProximaNova-Semibold"; color: #c2444c; display: block; font-size: 16px; line-height: 10px;
@@ -442,8 +444,13 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
 }
 .location_icon{position: absolute;
     top: 14px;
-    right: 65px;z-index: 99}
-.location_icon img{width: 25px;}
+    right: 14%;z-index: 99 !important}
+.location_icon img{width: 20px;margin-top: 5px;}
+.location_icon p{
+    font-size: 11px;
+    margin-top: 2px;
+    color: #000;
+}
 /* ================= waiting for ready page design  ======================*/
 
 .wait-bg-img{background: url("../images/img-wait-for-ready.png");background-size: cover;

@@ -61,5 +61,6 @@ return [
     'Please log in here!'  => 'Logga in här',                     
     'Order is not available.'  => 'Beställningen är inte tillgänglig.',       
     'Logout'  => 'Logga ut',          
-    'Restaurant name'  => 'Restaurant name',  
+    'Restaurant name'  => 'Restaurant name', 
+    'Current Position' => 'Nuvarande position', 
 ];
