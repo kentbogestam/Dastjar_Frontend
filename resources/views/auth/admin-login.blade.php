@@ -3,7 +3,7 @@
 @section('content')
         <div data-role="header" data-theme="c">
              <div class="logo_header">
-                <img src="{{asset('kitchenImages/logo-img.png')}}">
+                <img src="{{asset('kitchenImages/logo.png')}}">
             </div>
         </div><!-- /header -->
         <form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ route('admin-login') }}">

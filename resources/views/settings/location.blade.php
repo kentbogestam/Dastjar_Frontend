@@ -6,8 +6,14 @@
 			<div data-role="navbar"> 
 				<ul> 
 			<li><a href="{{url('user-setting')}}" data-ajax="false" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
-			 <li><a data-ajax="false" class="ui-btn-active">{{ __('messages.Setting') }}</a></li>
-			  <li class="done-btn" id="dataSave">  <input type="button" value="{{ __('messages.Done') }}" /></li>  </ul> </div><!-- /navbar -->
+			 <li><a data-ajax="false" class="ui-btn-active">{{ __('messages.Location') }}</a></li>
+			  <li class="done-btn" id="dataSave">  <input type="button" value="{{ __('messages.Done') }}" /></li>  </ul>
+              
+                <a href="#" class="location_icon" id="locationSave">
+                   <img src="{{asset('images/icons/location.png')}}">
+                   <p>{{ __('messages.Current Position') }}</p> 
+                      </a>
+            </div><!-- /navbar -->
 		</div>
 	</div>
 	<form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('save-location') }}">
@@ -52,7 +58,7 @@
             var autocomplete = new google.maps.places.Autocomplete(input);
             autocomplete.bindTo('bounds', map);
 
-            var opt = {maxZoom: 50};
+            var opt = {maxZoom: 20};
             map.setOptions(opt);
 
             var infowindow = new google.maps.InfoWindow();
@@ -171,5 +177,52 @@
 			}
 		})
 	</script>
+
+    <script type="text/javascript">
+        $("#locationSave").click(function(e){
+            console.log('gggg');
+            // Check for Geolocation API permissions  
+            navigator.geolocation.getCurrentPosition(function(position) {
+
+                console.log("latitude=" + position.coords.latitude);
+                console.log("longitude=" + position.coords.longitude);
+                document.cookie="latitude=" + position.coords.latitude;
+                document.cookie="longitude=" + position.coords.longitude;
+                
+            },function(error){
+               $('.login-inner-section a').attr('href','javascript:void(0)');
+               $('#login-popup').show();
+                
+            });
+            var latitude = getCookie("latitude");
+            var longitude = getCookie("longitude");
+            $.get("{{url('saveCurrentlat-long')}}", { lat: latitude, lng : longitude}, function(returnedData){
+                console.log(returnedData["data"]);
+                location.reload();
+            });
+            console.log(latitude);
+            console.log(longitude);
+        });
+
+        function makeRedirection(link){
+            window.location.href = link;
+        }
+
+        function getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for(var i = 0; i <ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+    </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyByLiizP2XW9JUAiD92x57u7lFvU3pS630&libraries=places&callback=initMap" async defer></script>
 @endsection

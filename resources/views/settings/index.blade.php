@@ -8,8 +8,7 @@
 			<li><a href="{{url('eat-now')}}" data-ajax="false" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
 			 <li><a data-ajax="false" class="ui-btn-active">{{ __('messages.Setting') }}</a></li>
 
-			  <li class="done-btn" id="dataSave">  <input type="button" value="{{ __('messages.Done') }}" /></li> </ul> 
-			  <span class="location_icon" id="locationSave"><a href="#"><img src="{{asset('images/icons/location.png')}}"></a></span>
+			  <li class="done-btn" id="dataSave">  <input type="button" value="{{ __('messages.Done') }}" /></li> </ul>
 			</div><!-- /navbar -->
 		</div>
 	</div>
@@ -100,52 +99,6 @@
 
 		function makeRedirection(link){
 			window.location.href = link;
-		}
-	</script>
-	<script type="text/javascript">
-		$("#locationSave").click(function(e){
-			console.log('gggg');
-			// Check for Geolocation API permissions  
-			navigator.geolocation.getCurrentPosition(function(position) {
-
-			    console.log("latitude=" + position.coords.latitude);
-			    console.log("longitude=" + position.coords.longitude);
-			    document.cookie="latitude=" + position.coords.latitude;
-			    document.cookie="longitude=" + position.coords.longitude;
-			    
-			},function(error){
-			   $('.login-inner-section a').attr('href','javascript:void(0)');
-			   $('#login-popup').show();
-			    
-			});
-			var latitude = getCookie("latitude");
-			var longitude = getCookie("longitude");
-			$.get("{{url('saveCurrentlat-long')}}", { lat: latitude, lng : longitude}, function(returnedData){
-				console.log(returnedData["data"]);
-				location.reload();
-			});
-			console.log(latitude);
-			console.log(longitude);
-		});
-
-		function makeRedirection(link){
-			window.location.href = link;
-		}
-
-		function getCookie(cname) {
-		    var name = cname + "=";
-		    var decodedCookie = decodeURIComponent(document.cookie);
-		    var ca = decodedCookie.split(';');
-		    for(var i = 0; i <ca.length; i++) {
-		        var c = ca[i];
-		        while (c.charAt(0) == ' ') {
-		            c = c.substring(1);
-		        }
-		        if (c.indexOf(name) == 0) {
-		            return c.substring(name.length, c.length);
-		        }
-		    }
-		    return "";
 		}
 	</script>
 @endsection
