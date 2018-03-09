@@ -590,6 +590,18 @@
         },
         {
             "name": "laravel/framework",
+<<<<<<< HEAD
+            "version": "v5.5.29",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/framework.git",
+                "reference": "c58b6ff96fb56cc92e24545870be13cdcfcbc43a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/c58b6ff96fb56cc92e24545870be13cdcfcbc43a",
+                "reference": "c58b6ff96fb56cc92e24545870be13cdcfcbc43a",
+=======
             "version": "v5.5.37",
             "source": {
                 "type": "git",
@@ -600,6 +612,7 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/laravel/framework/zipball/cf750b00c77d0d73e889c86f7db6a0e13b8dea8c",
                 "reference": "cf750b00c77d0d73e889c86f7db6a0e13b8dea8c",
+>>>>>>> 7bc9a39d7340d34388fd3e4b371da2f08d90b331
                 "shasum": ""
             },
             "require": {
@@ -720,7 +733,11 @@
                 "framework",
                 "laravel"
             ],
+<<<<<<< HEAD
+            "time": "2018-01-15T14:07:47+00:00"
+=======
             "time": "2018-03-07T14:11:09+00:00"
+>>>>>>> 7bc9a39d7340d34388fd3e4b371da2f08d90b331
         },
         {
             "name": "laravel/socialite",
@@ -1536,6 +1553,18 @@
         },
         {
             "name": "ramsey/uuid",
+<<<<<<< HEAD
+            "version": "3.7.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ramsey/uuid.git",
+                "reference": "bba83ad77bb9deb6d3c352a7361b818e415b221d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ramsey/uuid/zipball/bba83ad77bb9deb6d3c352a7361b818e415b221d",
+                "reference": "bba83ad77bb9deb6d3c352a7361b818e415b221d",
+=======
             "version": "3.7.3",
             "source": {
                 "type": "git",
@@ -1546,6 +1575,7 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/ramsey/uuid/zipball/44abcdad877d9a46685a3a4d221e3b2c4b87cb76",
                 "reference": "44abcdad877d9a46685a3a4d221e3b2c4b87cb76",
+>>>>>>> 7bc9a39d7340d34388fd3e4b371da2f08d90b331
                 "shasum": ""
             },
             "require": {
@@ -1556,6 +1586,10 @@
                 "rhumsaa/uuid": "self.version"
             },
             "require-dev": {
+<<<<<<< HEAD
+                "apigen/apigen": "^4.1",
+=======
+>>>>>>> 7bc9a39d7340d34388fd3e4b371da2f08d90b331
                 "codeception/aspect-mock": "^1.0 | ~2.0.0",
                 "doctrine/annotations": "~1.2.0",
                 "goaop/framework": "1.0.0-alpha.2 | ^1.0 | ^2.1",
@@ -1565,6 +1599,10 @@
                 "moontoast/math": "^1.1",
                 "php-mock/php-mock-phpunit": "^0.3|^1.1",
                 "phpunit/phpunit": "^4.7|^5.0",
+<<<<<<< HEAD
+                "satooshi/php-coveralls": "^0.6.1",
+=======
+>>>>>>> 7bc9a39d7340d34388fd3e4b371da2f08d90b331
                 "squizlabs/php_codesniffer": "^2.3"
             },
             "suggest": {
@@ -1612,6 +1650,9 @@
                 "identifier",
                 "uuid"
             ],
+<<<<<<< HEAD
+            "time": "2018-01-13T22:22:03+00:00"
+=======
             "time": "2018-01-20T00:28:24+00:00"
         },
         {
@@ -1668,6 +1709,7 @@
                 "stripe"
             ],
             "time": "2018-03-02T13:36:28+00:00"
+>>>>>>> 7bc9a39d7340d34388fd3e4b371da2f08d90b331
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -3716,6 +3758,18 @@
         },
         {
             "name": "sebastian/comparator",
+<<<<<<< HEAD
+            "version": "2.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sebastianbergmann/comparator.git",
+                "reference": "11c07feade1d65453e06df3b3b90171d6d982087"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/11c07feade1d65453e06df3b3b90171d6d982087",
+                "reference": "11c07feade1d65453e06df3b3b90171d6d982087",
+=======
             "version": "2.1.3",
             "source": {
                 "type": "git",
@@ -3726,6 +3780,7 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/34369daee48eafb2651bea869b4b15d75ccc35f9",
                 "reference": "34369daee48eafb2651bea869b4b15d75ccc35f9",
+>>>>>>> 7bc9a39d7340d34388fd3e4b371da2f08d90b331
                 "shasum": ""
             },
             "require": {
@@ -3776,7 +3831,11 @@
                 "compare",
                 "equality"
             ],
+<<<<<<< HEAD
+            "time": "2018-01-12T06:34:42+00:00"
+=======
             "time": "2018-02-01T13:46:46+00:00"
+>>>>>>> 7bc9a39d7340d34388fd3e4b371da2f08d90b331
         },
         {
             "name": "sebastian/diff",

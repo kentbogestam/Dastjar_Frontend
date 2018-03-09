@@ -58,7 +58,7 @@ return [
     'Ready to Pick Up'  => 'Ready to Pick Up',                
     'Thanks for your visit.'  => 'Thanks for your visit.',                
     'Hope to seen you soon again'  => 'Hope to seen you soon again',               
-    'You are the main admin of company.Please log in from any store of that company and then the menu of that store will appear'  => 'You are the main admin of company.Please log in from any store of that company and then the menu of that store will appear',          
+    'You are the main admin of company.Please log in from any store of that company and then the menu of that store will appear'  => 'Please log in to the store',          
     'Order is not available.'  => 'Order is not available.',        
     'Logout'  => 'Logout',         
     'Main Admin'  => 'Main Admin', 
