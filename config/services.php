@@ -47,4 +47,10 @@ return [
         'redirect' => env('APP_URL').'/public/login/google/callback',
     ],
 
+    'stripe' => [
+        'model' => App\User::class,
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET'),
+    ],
+
 ];

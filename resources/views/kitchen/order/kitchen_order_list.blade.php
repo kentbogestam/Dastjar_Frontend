@@ -140,7 +140,7 @@
 			          		liItem += "<td>"+temp[i]["product_name"]+
 			          		"</td>";
 			          		if(textSpeach == 1 && temp[i]['is_speak'] == 0){
-				          		liItem += "<td>"+temp[i]["product_description"]+test(temp[i]["product_quality"]+temp[i]["product_name"])+updateSpeak(temp[i]['id'])+"</td>";
+				          		liItem += "<td>"+temp[i]["product_description"]+test(temp[i]["product_quality"]+temp[i]["product_name"]+temp[i]["product_description"])+updateSpeak(temp[i]['id'])+"</td>";
 			          		}else{
 			          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
 			          		}
@@ -196,10 +196,11 @@
 		var ajaxCall = function(){
 			$.get("{{url('kitchen/kitchen-orders')}}",
 			function(returnedData){
-				//console.log(returnedData["data"]);
+				console.log(returnedData["data"]);
 				var count = 18;
 				var temp = returnedData["data"];
 				textSpeach = returnedData["user"];
+				totallength = temp.length;
 	          	list = temp;
 	          	console.log(temp.length);
 	          	var liItem = "";
@@ -225,7 +226,7 @@
 			          		liItem += "<td>"+temp[i]["product_name"]+
 			          		"</td>";
 			          		if(textSpeach == 1 && temp[i]['is_speak'] == 0){
-				          		liItem += "<td>"+temp[i]["product_description"]+test(temp[i]["product_quality"]+temp[i]["product_name"])+updateSpeak(temp[i]['id'])+"</td>";
+				          		liItem += "<td>"+temp[i]["product_description"]+test(temp[i]["product_quality"]+temp[i]["product_name"]+temp[i]["product_description"])+updateSpeak(temp[i]['id'])+"</td>";
 			          		}else{
 			          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
 			          		}
@@ -330,8 +331,8 @@
 
 	      for (var i=len;i<len + 10;i++){
 	      //console.log(returnedData["data"]);
-	      console.log("len="+len);
-	      console.log("i="+i);
+	      //console.log("len="+len);
+	     // console.log("i="+i);
 	      console.log("totallength="+totallength);
 	      	if(i>=totallength){
 	      		tempCount = 10;
@@ -349,7 +350,7 @@
 		      		liItem += "<td>"+list[i]["product_quality"]+"</td>";
 		      		liItem += "<td>"+list[i]["product_name"]+"</td>";
 		      		if(textSpeach == 1 && list[i]['is_speak'] == 0){
-		          		liItem += "<td>"+list[i]["product_description"]+test(list[i]["product_quality"]+list[i]["product_name"])+updateSpeak(list[i]['id'])+"</td>";
+		          		liItem += "<td>"+list[i]["product_description"]+test(list[i]["product_quality"]+list[i]["product_name"]+list[i]["product_description"])+updateSpeak(list[i]['id'])+"</td>";
 	          		}else{
 	          			liItem += "<td>"+list[i]["product_description"]+"</td>";
 	          		}
@@ -394,14 +395,14 @@
 		}
 
 		function updateSpeak(id){
-			console.log('ssssssssssssssssssssssssssssssssssssssssssssssssssssss');
+			//console.log('ssssssssssssssssssssssssssssssssssssssssssssssssssssss');
 			var url = '{{url('kitchen/updateTextspeach')}}'+'/'+id;
-			console.log('urlurl'+url);
+			//console.log('urlurl'+url);
 			$.ajax({
 	            url: url, //This is the current doc
 	            type: "GET",//variables should be pass like this
 	            success: function(data){
-	               console.log('fff');
+	               //console.log('fff');
 	            }
 	        }); 
 		}

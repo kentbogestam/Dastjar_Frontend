@@ -72,6 +72,7 @@ function speak(arg){
 function test(test){
   console.log(test);
   speak(test);
+  return true;
 
 }
 

@@ -67,6 +67,8 @@ Route::group(['middleware' => ['auth']], function(){
 	Route::get('select-location', 'CustomerController@selectLocation');
 	Route::post('save-location', 'CustomerController@saveLocation');
 	Route::get('save-location', 'CustomerController@saveLocation');
+	Route::post('payment', 'PaymentController@payment');
+	Route::get('payment', 'PaymentController@payment');
 	
 });
 
