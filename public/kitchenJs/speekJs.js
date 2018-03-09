@@ -48,7 +48,8 @@ function speak(arg){
     utterThis.onerror = function (event) {
         console.error('SpeechSynthesisUtterance.onerror');
     }
-    var selectedOption = 'icelandic';
+    //var selectedOption = 'icelandic';
+    var selectedOption = 'swahili-test';
     console.log('selectedOption='+selectedOption);
     for(i = 0; i < voices.length ; i++) {
       if(voices[i].name === selectedOption) {
