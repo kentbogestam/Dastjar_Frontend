@@ -140,9 +140,19 @@
 			          		liItem += "<td>"+temp[i]["product_name"]+
 			          		"</td>";
 			          		if(textSpeach == 1 && temp[i]['is_speak'] == 0){
-				          		liItem += "<td>"+temp[i]["product_description"]+test(temp[i]["product_quality"]+temp[i]["product_name"]+temp[i]["product_description"])+updateSpeak(temp[i]['id'])+"</td>";
+			          			test(temp[i]["product_quality"]+temp[i]["product_name"]+temp[i]["product_description"]);
+			          			updateSpeak(temp[i]['id']);
+			          			if(temp[i]["product_description"] != null){
+				          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
+				          		}else{
+				          			liItem += "<td>"+''+"</td>";
+				          		}
 			          		}else{
-			          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
+			          			if(temp[i]["product_description"] != null){
+				          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
+				          		}else{
+				          			liItem += "<td>"+''+"</td>";
+				          		}
 			          		}
 			          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
 
@@ -226,9 +236,19 @@
 			          		liItem += "<td>"+temp[i]["product_name"]+
 			          		"</td>";
 			          		if(textSpeach == 1 && temp[i]['is_speak'] == 0){
-				          		liItem += "<td>"+temp[i]["product_description"]+test(temp[i]["product_quality"]+temp[i]["product_name"]+temp[i]["product_description"])+updateSpeak(temp[i]['id'])+"</td>";
+			          			test(temp[i]["product_quality"]+temp[i]["product_name"]+temp[i]["product_description"]);
+			          			updateSpeak(temp[i]['id']);
+				          		if(temp[i]["product_description"] != null){
+				          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
+				          		}else{
+				          			liItem += "<td>"+''+"</td>";
+				          		}
 			          		}else{
-			          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
+			          			if(temp[i]["product_description"] != null){
+				          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
+				          		}else{
+				          			liItem += "<td>"+''+"</td>";
+				          		}
 			          		}
 			          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
 
@@ -350,9 +370,18 @@
 		      		liItem += "<td>"+list[i]["product_quality"]+"</td>";
 		      		liItem += "<td>"+list[i]["product_name"]+"</td>";
 		      		if(textSpeach == 1 && list[i]['is_speak'] == 0){
-		          		liItem += "<td>"+list[i]["product_description"]+test(list[i]["product_quality"]+list[i]["product_name"]+list[i]["product_description"])+updateSpeak(list[i]['id'])+"</td>";
+		      			test(list[i]["product_quality"]+list[i]["product_name"]+list[i]["product_description"]);updateSpeak(list[i]['id']);
+		          		if(list[i]["product_description"] != null){
+		          			liItem += "<td>"+list[i]["product_description"]+"</td>";
+		          		}else{
+		          			liItem += "<td>"+''+"</td>";
+		          		}
 	          		}else{
-	          			liItem += "<td>"+list[i]["product_description"]+"</td>";
+	          			if(list[i]["product_description"] != null){
+		          			liItem += "<td>"+list[i]["product_description"]+"</td>";
+		          		}else{
+		          			liItem += "<td>"+''+"</td>";
+		          		}
 	          		}
 		      		liItem += "<td>"+list[i]["deliver_date"]+' '+timeOrder+"</td>";
 		      		if(list[i]["order_started"] == 0){
