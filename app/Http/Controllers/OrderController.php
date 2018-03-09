@@ -12,6 +12,8 @@ use Carbon\Carbon;
 use DB;
 use App\Store;
 use App\User;
+use App\Company;
+use App\Admin;
 
 class OrderController extends Controller
 {
@@ -22,7 +24,6 @@ class OrderController extends Controller
         if(!empty($request->input())){
 
             $data = $request->input();
-            //dd($data['browserCurrentTime']);
             $i = 0;
             $total_price = 0;
             $max_time = "00:00:00";
@@ -43,7 +44,7 @@ class OrderController extends Controller
                 $date=date_create($pieces[3]."-".$pieces[1]."-".$pieces[2]);
                 $checkOrderDate = date_format($date,"Y-m-d");
                 $orderType = 'eat_now';
-                 $orderDate = $pieces[0]." ".$pieces[1]." ".$pieces[2]." ".$pieces[3];
+                $orderDate = $pieces[0]." ".$pieces[1]." ".$pieces[2]." ".$pieces[3];
                 $orderTime = $pieces[4];
             }
 
@@ -72,7 +73,7 @@ class OrderController extends Controller
                     if($max_time < $productTime->preparation_Time){
                         $max_time = $productTime->preparation_Time;
                     }else{}
-                    $productPrice = ProductPriceList::select('price')->whereProductId($value['id'])->first();
+                    $productPrice = ProductPriceList::select('price')->whereProductId($value['id'])->where('store_id' , $data['storeID'])->first();
                     $total_price = $total_price + ($productPrice->price * $value['prod_quant']); 
                     $orderDetail =  new OrderDetail();
                     $orderDetail->order_id = $orders->order_id;
@@ -96,15 +97,35 @@ class OrderController extends Controller
 
             $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
 
+            $request->session()->put('currentOrderId', $order->order_id);
             //$orderDetails = OrderDetail::select('*')->where('order_id',$orderId)->get();
             $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
-            return view('order.index', compact('order','orderDetails'));
+
+            $storeDetail = Store::where('store_id', $data['storeID'])->first();
+            //If store support ontine payment then if condition run.
+            if($storeDetail->online_payment == 1){
+                $companyDetail = Company::where('company_id', $productTime->company_id)->first();
+                $companyUserDetail = Admin::where('u_id', $companyDetail->u_id)->first();
+                DB::table('orders')->where('order_id', $orderId)->update([
+                        'online_paid' => 2,
+                    ]);
+                $request->session()->put('paymentAmount', $order->order_total);
+                $request->session()->put('OrderId', $order->order_id);
+                $request->session()->put('stripeAccount', $companyUserDetail->stripe_user_id);
+                 return view('order.paymentIndex', compact('order','orderDetails'));
+            }else{
+                return view('order.index', compact('order','orderDetails'));
+            }
         }else{
-             $userDetail = User::whereId(Auth()->id())->first();
-            //dd($userDetail);
-            $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3');
-            //dd($companydetails);
-            return view('eat-now', compact('companydetails'));
+
+
+            $todayDate = $request->session()->get('browserTodayDate');
+            $currentTime = $request->session()->get('browserTodayTime');
+            $todayDay = $request->session()->get('browserTodayDay');
+            $userDetail = User::whereId(Auth()->id())->first();
+            $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
+            
+            return view('index', compact('companydetails'));
         }
     }
 

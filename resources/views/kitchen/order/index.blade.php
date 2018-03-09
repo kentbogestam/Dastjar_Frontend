@@ -154,7 +154,7 @@
 	          		}
 	          		liItem +="</a></td>";
 	          		liItem += "<td>"
-	          		if(list[i]["paid"] == 1){
+	          		if(list[i]["paid"] == 1 || list[i]["online_paid"] == 1){
 	          			liItem += "<input class='yes_check'  type='button' data-role='none' value='yes' name=''>"
 	          		}else{
 	          			liItem += "<input class='no_check'  type='button' data-role='none' value='no' name=''>"
@@ -223,7 +223,7 @@
 	          		}
 	          		liItem +="</a></td>";
 	          		liItem += "<td>"
-	          		if(list[i]["paid"] == 1){
+	          		if(list[i]["paid"] == 1 || list[i]["online_paid"] == 1){
 	          			liItem += "<input class='yes_check'  type='button' data-role='none' value='yes' name=''>"
 	          		}else{
 	          			liItem += "<input class='no_check'  type='button' data-role='none' value='no' name=''>"
@@ -329,7 +329,11 @@
   		}
   		liItem +="</a></td>";
   		liItem += "<td>"
-  		liItem += "<input class='yes_check'  type='button' data-role='none' value='yes' name=''>"
+  		if(list[i]["paid"] == 1 || list[i]["online_paid"] == 1){
+  			liItem += "<input class='yes_check'  type='button' data-role='none' value='yes' name=''>"
+  		}else{
+  			liItem += "<input class='no_check'  type='button' data-role='none' value='no' name=''>"
+  		}
   		liItem += "<td>"+time+"</td>";
   		liItem += "</tr>";
       	countCheck++;

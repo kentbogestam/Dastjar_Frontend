@@ -89,6 +89,10 @@ class HomeController extends Controller
             return redirect()->action('HomeController@versionUpdate');
         }
 
+        $request->session()->put('browserTodayDate', $todayDate);
+        $request->session()->put('browserTodayTime', $currentTime);
+        $request->session()->put('browserTodayDay', $todayDay);
+
         $request->session()->forget('order_date');
         $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
 

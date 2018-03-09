@@ -11,19 +11,7 @@
 	</div>
 	<div role="main" data-role="main-content" class="content">
 		<div class="inner-page-container">
-			@if ($message = Session::get('success'))
-				<div class="table-content sucess_msg">
-					<img src="{{asset('images/icons/Yes_Check_Circle.png')}}">
-					 @if(is_array($message))
-			            @foreach ($message as $m)
-			                {{ $languageStrings[$m] or $m }}
-			            @endforeach
-			        @else
-			            {{  __("messages.$message") }}
-			        @endif
-			    </div>
-			@endif
-			<div class="wait-bg-img">
+			<!-- <div class="wait-bg-img">
 				<div class="text-content">
 					<p>{{ __('messages.Thanks for your order') }} </p>
 					<p>{{ __('messages.Order Number') }} </p>
@@ -38,7 +26,7 @@
 						@endif
 					</p>
 				</div>
-			</div>
+			</div> -->
 			<div class="table-content">
 				<h2>{{ __('messages.ORDER DETAILS') }}</h2>
 				<table data-role="table" id="table-custom-2" data-mode="" class="ui-body-d ui-shadow table-stripe ui-responsive">
@@ -53,7 +41,23 @@
 			</div>
 		</div>
 	</div>
-	
+
+
+
+	<form action="{{ url('/payment') }}" method="POST">
+        {{ csrf_field() }} 
+        <script
+                src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                data-key="pk_test_5P1GedJTk0HsWb3AnjYBbz6G"
+                data-amount=""
+                data-name="Stripe"
+                data-description="DastJar"
+                data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+                data-locale="auto"
+                data-zip-code="false">
+        </script>
+    </form>
+
 	<div data-role="footer" class="footer" data-position="fixed">
 		<div class="ui-grid-c inner-footer center">
 		<div class="ui-block-a"><a href="{{ url('eat-now') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
