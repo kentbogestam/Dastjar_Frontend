@@ -240,4 +240,33 @@
 @endsection
 @section('footer-script')
 
+ <script type="text/javascript">
+     $(document).ready(function(){
+       
+       $("#phone_number").on("blur", function(){
+             var mobNum = $(this).val();
+             var filter = /^\d*(?:\.\d{1,2})?$/;
+
+               if (filter.test(mobNum)) {
+                 if(mobNum.length==10){
+                       return true;
+                  } else {
+                     alert('Please put 10  digit mobile number');
+                    $("#folio-invalid").removeClass("hidden");
+                    $("#mobile-valid").addClass("hidden");
+                     return false;
+                   }
+                 }
+                 else {
+                   alert('Not a valid number');
+                   $("#folio-invalid").removeClass("hidden");
+                   $("#mobile-valid").addClass("hidden");
+                   return false;
+                }
+         
+       });
+       
+     });
+ </script>
+
 @endsection
