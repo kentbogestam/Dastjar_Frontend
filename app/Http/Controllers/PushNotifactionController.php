@@ -46,8 +46,7 @@ class PushNotifactionController extends Controller
     public function orderDeliver(Request $request, $orderID){
     	$message = 'orderDeliver';
 
-        $userOrderId = OrderDetail::where('id' , $orderID)->first();
-        $OrderId = Order::where('order_id' , $userOrderId->order_id)->first();
+        $OrderId = Order::where('customer_order_id' , $orderID)->first();
         if($OrderId->user_type == 'customer'){
             $adminDetail = User::where('id' , $OrderId->user_id)->first();
             $recipients = ['+'.$adminDetail->phone_number_prifix.$adminDetail->phone_number];
