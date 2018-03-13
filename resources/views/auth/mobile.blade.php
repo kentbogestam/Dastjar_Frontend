@@ -12,7 +12,7 @@
                     </div>
                     <div class="social-sec">
                         <div class="ui-grid-solo">
-                         <input id="mobileNo" type="text" class="form-control" name="mobileNo" value="" required autofocus placeholder="Enter Mobile No.*">
+                         <input id="mobileNo" type="text" class="form-control" name="mobileNo" min="0" max="100" value="" required autofocus placeholder="Enter Mobile No.*">
                         </div>
                     </div>
                     <div class="ui-grid-solo">
@@ -28,5 +28,32 @@
 </div>
 @endsection
 @section('footer-script')
+    <script type="text/javascript">
+        $(document).ready(function(){
+          
+          $("#mobileNo").on("blur", function(){
+                var mobNum = $(this).val();
+                var filter = /^\d*(?:\.\d{1,2})?$/;
 
+                  if (filter.test(mobNum)) {
+                    if(mobNum.length==10){
+                          return true;
+                     } else {
+                        alert('Please put 10  digit mobile number');
+                       $("#folio-invalid").removeClass("hidden");
+                       $("#mobile-valid").addClass("hidden");
+                        return false;
+                      }
+                    }
+                    else {
+                      alert('Not a valid number');
+                      $("#folio-invalid").removeClass("hidden");
+                      $("#mobile-valid").addClass("hidden");
+                      return false;
+                   }
+            
+          });
+          
+        });
+    </script>
 @endsection
