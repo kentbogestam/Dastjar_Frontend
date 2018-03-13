@@ -29,6 +29,7 @@
 	Route::get('/login/{social}/callback','Auth\LoginController@handelProviderCallback')->where('social','facebook|google');
 	Route::get('/userRegister','Auth\RegisterController@userRegister');
 	Route::post('/userRegisterSave','Auth\RegisterController@userDetailSave');
+	Route::get('/userRegisterSave','Auth\RegisterController@userDetailSave');
 	Route::post('/userLogin','Auth\LoginController@userLogin');
 	Route::get('/mobileLogin','Auth\LoginController@mobileLogin');
 	Route::post('/sentOtp','Auth\RegisterController@sentOtp');

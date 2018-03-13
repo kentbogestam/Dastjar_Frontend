@@ -98,8 +98,12 @@ class LoginController extends Controller
     public function userLogin(Request $request){
         $data = $request->input();
         $user = User::where(['otp' => $data['otp']])->first();
-        Auth::login($user);
-        return redirect()->action('HomeController@index');
+        if($user){
+            Auth::login($user);
+            return redirect()->action('HomeController@index');
+        }else{
+            return redirect()->action('Auth\LoginController@mobileLogin')->with('success', 'Please Enter again Mobile number.');
+        }
     }
 
     public function mobileLogin(){

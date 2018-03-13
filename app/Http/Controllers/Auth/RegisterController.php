@@ -48,43 +48,49 @@ class RegisterController extends Controller
     }
 
     public function userDetailSave(Request $request){
-        $validator = $this->validator($request->all());
-        if ($validator->fails()) {
+        if(!empty($request->input())){
+
+            $validator = $this->validator($request->all());
+            if ($validator->fails()) {
+                return redirect()->action('Auth\RegisterController@userRegister')->with('success', 'This Email already register.');
+            }
+            $user = $this->create($request->all());
+            if ($user) {
+
+
+                // Define recipients
+                $recipients = ['+'.$user->phone_number_prifix.$user->phone_number];
+                $url = "https://gatewayapi.com/rest/mtsms";
+                $api_token = "Q67Aydr2SNmYJax7B0yxtGe5VwjL3_nDxc9-XIiaEl9Wk2Y1t9THIMFemCDcqafb";
+                $message = $user->otp;
+                $json = [
+                    'sender' => 'Dastjar',
+                    'message' => ''.$message.'',
+                    'recipients' => [],
+                ];
+                foreach ($recipients as $msisdn) {
+                    $json['recipients'][] = ['msisdn' => $msisdn];}
+
+                $ch = curl_init();
+                curl_setopt($ch,CURLOPT_URL, $url);
+                curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+                curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
+                curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
+                curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+                $result = curl_exec($ch);
+                curl_close($ch);
+                // print($result);
+                // $json = json_decode($result);
+                // print_r($json->ids);
+
+
+              return view('auth.otp');  
+            }
             return redirect('/')->with('success', 'Your EmailId already exist.');
+
+        }else{
+            return redirect()->action('Auth\RegisterController@userRegister')->with('success', 'This Email already register.');
         }
-        $user = $this->create($request->all());
-        if ($user) {
-
-
-            // Define recipients
-            $recipients = ['+'.$user->phone_number_prifix.$user->phone_number];
-            $url = "https://gatewayapi.com/rest/mtsms";
-            $api_token = "Q67Aydr2SNmYJax7B0yxtGe5VwjL3_nDxc9-XIiaEl9Wk2Y1t9THIMFemCDcqafb";
-            $message = $user->otp;
-            $json = [
-                'sender' => 'Dastjar',
-                'message' => ''.$message.'',
-                'recipients' => [],
-            ];
-            foreach ($recipients as $msisdn) {
-                $json['recipients'][] = ['msisdn' => $msisdn];}
-
-            $ch = curl_init();
-            curl_setopt($ch,CURLOPT_URL, $url);
-            curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
-            curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
-            curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
-            curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
-            $result = curl_exec($ch);
-            curl_close($ch);
-            // print($result);
-            // $json = json_decode($result);
-            // print_r($json->ids);
-
-
-          return view('auth.otp');  
-        }
-        return redirect('/')->with('success', 'Your EmailId already exist.');
     }
 
 
