@@ -66,7 +66,7 @@ class AdminLoginController extends Controller
      */
     protected function attemptLogin(Request $request)
     {
-
+        $data = $request->input();
         if($this->guard()->attempt(
             $this->credentials($request), $request->filled('remember'))){
             
@@ -95,6 +95,9 @@ class AdminLoginController extends Controller
             }
 
         }
+        DB::table('user')->where('id', Auth::guard('admin')->id())->update([
+                            'browser' => $data['browser'],
+                        ]);
         return $this->guard()->attempt(
             $this->credentials($request), $request->filled('remember')
         );

@@ -79,9 +79,12 @@ class HomeController extends Controller
                             'range' => '3',
                             'language' => 'ENG',
                             'web_version' => $versionDetail->version,
+                            'browser' => $data['browserVersion'],
                         ]);
             }
         }
+
+        DB::table('customer')->where('id', Auth::id())->update(['browser' => $data['browserVersion'],]);
 
         if($userDetail->web_version != $versionDetail->version){
             DB::table('customer')->where('id', Auth::id())->update(['web_version' => $versionDetail->version,]);

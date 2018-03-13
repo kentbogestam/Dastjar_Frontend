@@ -131,7 +131,38 @@ class AdminController extends Controller
                         ]);
 
             $message = 'orderReady';
-            $this->sendNotifaction($OrderId->customer_order_id , $message);
+            if($OrderId->user_type == 'customer'){
+                $adminDetail = User::where('id' , $OrderId->user_id)->first();
+                $recipients = ['+'.$adminDetail->phone_number_prifix.$adminDetail->phone_number];
+            }else{
+                $adminDetail = Admin::where('id' , $OrderId->user_id)->first();
+                $recipients = ['+'.$adminDetail->mobile_phone];
+            }
+            $pieces = explode(" ", $adminDetail->browser);
+            if($pieces[0] == 'Safari'){
+                //dd($recipients);
+                $url = "https://gatewayapi.com/rest/mtsms";
+                $api_token = "Q67Aydr2SNmYJax7B0yxtGe5VwjL3_nDxc9-XIiaEl9Wk2Y1t9THIMFemCDcqafb";
+                $message = env('APP_URL').'/public/ready-notifaction/'.$orderID;;
+                $json = [
+                    'sender' => 'Dastjar',
+                    'message' => ''.$message.'',
+                    'recipients' => [],
+                ];
+                foreach ($recipients as $msisdn) {
+                    $json['recipients'][] = ['msisdn' => $msisdn];}
+
+                $ch = curl_init();
+                curl_setopt($ch,CURLOPT_URL, $url);
+                curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+                curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
+                curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
+                curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+                $result = curl_exec($ch);
+                curl_close($ch);   
+            }else{
+                $this->sendNotifaction($OrderId->customer_order_id , $message);
+            }
             return redirect()->action('AdminController@kitchenOrderDetail')->with('success', 'Order Ready Nofifaction Send Successfully.');
         }
         return redirect()->action('AdminController@kitchenOrderDetail')->with('success', 'Order Ready Successfully.');

@@ -239,8 +239,9 @@ var totalCount = 0;
 			$("#browserCurrentTime").val(d);
 			console.log(getCookie("latitude"));
 			console.log(getCookie("longitude"));
+			console.log(getCookie("browserVersion"));
 
-	$.get("{{url('lat-long')}}", { lat: getCookie("latitude"), lng : getCookie("longitude"), currentdateTime : d}, 
+	$.get("{{url('lat-long')}}", { lat: getCookie("latitude"), lng : getCookie("longitude"), currentdateTime : d, browserVersion : getCookie("browserVersion")}, 
     function(returnedData){
 
     	var count = 10;
