@@ -33,6 +33,7 @@
 	Route::post('/userLogin','Auth\LoginController@userLogin');
 	Route::get('/mobileLogin','Auth\LoginController@mobileLogin');
 	Route::post('/sentOtp','Auth\RegisterController@sentOtp');
+	Route::get('/sentOtp','Auth\RegisterController@sentOtp');
 
    //This is for testing stripe payment
 
