@@ -140,7 +140,11 @@
 			          		liItem += "<td>"+temp[i]["product_name"]+
 			          		"</td>";
 			          		if(textSpeach == 1 && temp[i]['is_speak'] == 0){
-			          			test(temp[i]["product_quality"]+temp[i]["product_name"]+temp[i]["product_description"]);
+			          			if(temp[i]["product_description"] != null){
+			          				test(temp[i]["product_quality"]+temp[i]["product_name"]+temp[i]["product_description"]);
+			          			}else{
+			          				test(temp[i]["product_quality"]+temp[i]["product_name"]);
+			          			}
 			          			updateSpeak(temp[i]['id']);
 			          			if(temp[i]["product_description"] != null){
 				          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
@@ -236,7 +240,11 @@
 			          		liItem += "<td>"+temp[i]["product_name"]+
 			          		"</td>";
 			          		if(textSpeach == 1 && temp[i]['is_speak'] == 0){
-			          			test(temp[i]["product_quality"]+temp[i]["product_name"]+temp[i]["product_description"]);
+			          			if(temp[i]["product_description"] != null){
+			          				test(temp[i]["product_quality"]+temp[i]["product_name"]+temp[i]["product_description"]);
+			          			}else{
+			          				test(temp[i]["product_quality"]+temp[i]["product_name"]);
+			          			}
 			          			updateSpeak(temp[i]['id']);
 				          		if(temp[i]["product_description"] != null){
 				          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
@@ -370,7 +378,12 @@
 		      		liItem += "<td>"+list[i]["product_quality"]+"</td>";
 		      		liItem += "<td>"+list[i]["product_name"]+"</td>";
 		      		if(textSpeach == 1 && list[i]['is_speak'] == 0){
-		      			test(list[i]["product_quality"]+list[i]["product_name"]+list[i]["product_description"]);updateSpeak(list[i]['id']);
+		      			if(list[i]["product_description"] != null){
+	          				test(list[i]["product_quality"]+list[i]["product_name"]+list[i]["product_description"]);
+	          			}else{
+	          				test(list[i]["product_quality"]+list[i]["product_name"]);
+	          			}
+		      			updateSpeak(list[i]['id']);
 		          		if(list[i]["product_description"] != null){
 		          			liItem += "<td>"+list[i]["product_description"]+"</td>";
 		          		}else{

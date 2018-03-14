@@ -58,7 +58,7 @@
             var autocomplete = new google.maps.places.Autocomplete(input);
             autocomplete.bindTo('bounds', map);
 
-            var opt = {maxZoom: 20};
+            var opt = {maxZoom: 17};
             map.setOptions(opt);
 
             var infowindow = new google.maps.InfoWindow();
@@ -103,7 +103,7 @@
 
 
             var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
-                    this.setZoom(25);
+                    this.setZoom(17);
                     google.maps.event.removeListener(boundsListener);
                 });
 

@@ -36,7 +36,7 @@
 														<h2>{{$menuDetail->product_name}}</h2>
 													<p>{{$menuDetail->product_description}}</p>
 													<p class="price">
-														{{$companydetails->currencies}} {{$productDetail->price}}
+														{{$companydetails->currencies}} {{number_format((float)$productDetail->price, 2, '.', '')}}
 													</p>
 													</div>
 												<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />
@@ -73,7 +73,7 @@
 														<h2>{{$menuDetail->product_name}}</h2>
 													<p>{{$menuDetail->product_description}}</p>
 													<p class="price">
-														{{$companydetails->currencies}} {{$productDetail->price}}
+														{{$companydetails->currencies}} {{number_format((float)$productDetail->price, 2, '.', '')}}
 													</p>
 													</div>
 												<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />

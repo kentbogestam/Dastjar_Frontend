@@ -774,6 +774,10 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
     background-image: url("../images/icons/down-arrow1.png") !important; background-position: center;
 }
 
+#otp{
+    font-size: 13px;
+}
+
 @media screen and (orientation : landscape){
     .bottom_login_text{position: relative;}
     .login-inner-section{
