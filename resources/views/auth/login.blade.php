@@ -20,14 +20,14 @@
         <div class="inner-page-container">
             <div class="login-inner-section">
                 <div class="logo-img-sec">
-                    <img src="images/l-logo.png">
+                    <img src="{{asset('images/l-logo.png')}}">
                 </div>
                 <div class="social-sec">
                     <div id="facebook-hide" class="ui-grid-solo">
-                        <div class="ui-block-a"><a href="{{ url('login/facebook')}}" class="ui-btn ui-shadow ui-corner-all" data-ajax="false"><img src="images/fb-icon.png"></a></div>
+                        <div class="ui-block-a"><a href="{{ url('login/facebook')}}" class="ui-btn ui-shadow ui-corner-all" data-ajax="false"><img src="{{asset('images/fb-icon.png')}}"></a></div>
                     </div>
                     <div id="google-hide" class="ui-grid-solo">
-                        <div class="ui-block-a"><a href="{{ url('login/google')}}" class="ui-btn ui-shadow ui-corner-all" data-ajax="false"><img src="images/gplus.png"></a></div>
+                        <div class="ui-block-a"><a href="{{ url('login/google')}}" class="ui-btn ui-shadow ui-corner-all" data-ajax="false"><img src="{{asset('images/gplus.png')}}"></a></div>
                     </div>
                      <div class="ui-grid-solo login_mobile">
                         <div class="ui-block-a"><a href="{{ url('/mobileLogin') }}" class="ui-btn ui-shadow ui-corner-all" data-ajax="false"><span>Login with Mobile Number</span></a></div>
@@ -42,7 +42,7 @@
 </div>
 <div id="login-popup" style="display: none;" class="login-popup" data-theme="a">
   <div class="inner-popup">
-        <div id = "cancel-popup" class="cross"><img src="images/icons/cross.png"></div>
+        <div id = "cancel-popup" class="cross"><img src="{{asset('images/icons/cross.png')}}"></div>
         <div class="pop-body">
            <p>please allow browser location</p>
         </div>
