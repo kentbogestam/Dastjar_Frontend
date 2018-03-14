@@ -142,7 +142,7 @@ class AdminController extends Controller
             if($pieces[0] == 'Safari'){
                 //dd($recipients);
                 $url = "https://gatewayapi.com/rest/mtsms";
-                $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
+                $api_token = "mspSa5_ZQWuitntge1bgwK4rwTviVxnEGtU6h_39bO2GWK04Gv-L5FDfzgE9HpZ4";
                 $message = env('APP_URL').'/public/ready-notifaction/'.$orderID;;
                 $json = [
                     'sender' => 'Dastjar',

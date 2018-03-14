@@ -61,7 +61,7 @@ class RegisterController extends Controller
                 // Define recipients
                 $recipients = ['+'.$user->phone_number_prifix.$user->phone_number];
                 $url = "https://gatewayapi.com/rest/mtsms";
-                $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
+                $api_token = "mspSa5_ZQWuitntge1bgwK4rwTviVxnEGtU6h_39bO2GWK04Gv-L5FDfzgE9HpZ4";
                 $message = $user->otp;
                 $json = [
                     'sender' => 'Dastjar',
@@ -132,7 +132,7 @@ class RegisterController extends Controller
                 $recipients = ['+'.$user->phone_number_prifix.$user->phone_number];
                 //dd($recipients);
                 $url = "https://gatewayapi.com/rest/mtsms";
-                $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
+                $api_token = "mspSa5_ZQWuitntge1bgwK4rwTviVxnEGtU6h_39bO2GWK04Gv-L5FDfzgE9HpZ4";
                 $message = $user->otp;
                 $json = [
                     'sender' => 'Dastjar',
