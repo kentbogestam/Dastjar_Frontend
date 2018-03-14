@@ -41,10 +41,10 @@
 			</a></div>
 		@else
 			<div class="ui-block-c order-active">
-		    	<a  class="ui-shadow ui-corner-all icon-img ui-btn-inline ordersec">
+		    	<a  class="ui-shadow ui-corner-all icon-img ui-btn-inline ordersec" data-ajax="false">
 			        <div class="img-container">
 			       		<!-- <img src="images/icons/select-store_05.png"> -->
-			        	<img src="images/icons/select-store_05-active.png">
+			        	<img src="{{asset('images/icons/select-store_05-active.png')}}">
 			        </div>
 		        	<span>{{ __('messages.Order') }}<span class="order-number">{{count(Auth::user()->paidOrderList)}}</span></span>
 		        </a>
