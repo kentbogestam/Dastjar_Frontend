@@ -22,7 +22,7 @@ return [
     'Menu is not available.'   => 'Menyn är inte tillgänglig.',
     'Thanks for your order'   => 'Tack för din beställning',
     'Order Number'   => 'Order-ID',
-    'Your order will be ready in about'   => 'Din beställning är klar om ca: ', 
+    'Your order will be ready on'   => 'Din beställning är klar om ca: ', 
     'ORDER DETAILS'   => 'ORDERDETALJER',
     'TOTAL'   => 'TOTAL',
     'Orders'  => 'Beställningar',
