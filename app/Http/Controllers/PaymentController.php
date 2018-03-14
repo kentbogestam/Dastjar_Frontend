@@ -21,7 +21,7 @@ class PaymentController extends Controller
     public function payment(Request $request)
     {
     	if(!empty($request->input())){
-    		$amount = $request->session()->get('paymentAmount');
+    		$amount = $request->session()->get('paymentAmount') * 100;
     		//dd($amount);
 	    	$stripeAccount = $request->session()->get('stripeAccount');
 	    	$orderId = $request->session()->get('OrderId');

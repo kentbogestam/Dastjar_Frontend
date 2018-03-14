@@ -58,7 +58,7 @@ class PushNotifactionController extends Controller
         if($pieces[0] == 'Safari'){
             //dd($recipients);
             $url = "https://gatewayapi.com/rest/mtsms";
-            $api_token = "Q67Aydr2SNmYJax7B0yxtGe5VwjL3_nDxc9-XIiaEl9Wk2Y1t9THIMFemCDcqafb";
+            $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
             $message = env('APP_URL').'/public/deliver-notifaction/'.$orderID;
             $json = [
                 'sender' => 'Dastjar',
