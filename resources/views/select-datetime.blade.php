@@ -1,7 +1,7 @@
 @extends('layouts.master')
 @section('content')
 	<div data-role="page" data-theme="c">
-		<div data-role="header" class="header" data-position="fixed" id="nav-header"  data-position="fixed"> 
+		<div data-role="header" class="header" data-position="fixed" id="nav-header"  data-position="fixed" data-tap-toggle="false"> 
 			<div class="nav_fixed">
 				<a href="{{ url('eat-now') }}" data-ajax="false" class="ui-btn-left text-left backarrow-btn"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a>
 				<div class="logo">
