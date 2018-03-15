@@ -48,11 +48,20 @@ class HomeController extends Controller
 
     public function saveCurrentLatLong(Request $request){
         $data = $request->input();
-        DB::table('customer')->where('id', Auth::id())->update([
-                            'customer_latitude' => $data['lat'],
-                            'customer_longitude' => $data['lng'],
-                            'address' => NULL,
-                        ]);
+        if($data['lat'] != null || $data['lng'] != null){
+            DB::table('customer')->where('id', Auth::id())->update([
+                                'customer_latitude' => $data['lat'],
+                                'customer_longitude' => $data['lng'],
+                                'address' => NULL,
+                            ]);
+        }else{
+            
+            DB::table('customer')->where('id', Auth::id())->update([
+                                'customer_latitude' => 28.585337,
+                                'customer_longitude' => 77.0704041,
+                                'address' => NULL,
+                            ]);
+        }
        return response()->json(['status' => 'success', 'response' => true,'data'=>true]);  
     }
 
