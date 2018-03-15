@@ -101,6 +101,8 @@ Route::group(['middleware' => ['auth']], function(){
 		Route::get('kitchen-setting', 'AdminController@kitchenSetting');
 		Route::post('save-kitchenSetting', 'AdminController@saveKitchenSetting');
 		Route::get('updateTextspeach/{id}','AdminController@updateTextspeach');
+		Route::post('payment', 'AdminController@payment');
+		Route::get('payment', 'AdminController@payment');
 	});
 
 

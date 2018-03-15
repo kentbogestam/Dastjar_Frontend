@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use App\Store;
 use Session;
 use App\User;
+use App\Payment;
 
 use App\App42\PushNotificationService;
 use App\App42\DeviceType;
@@ -27,6 +28,10 @@ use App\App42\StorageService;
 use App\App42\QueryBuilder;
 use App\App42\Query;
 use App\App42\App42API;
+
+use Stripe\Stripe;
+use Stripe\Customer;
+use Stripe\Charge;
 
 class AdminController extends Controller
 {
@@ -313,9 +318,25 @@ class AdminController extends Controller
 
                 $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
 
+                $request->session()->put('currentOrderId', $order->order_id);
+
                 $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 
-                return view('kitchen.order.order-detail', compact('order','orderDetails'));
+                $storeDetail = Store::where('store_id', Auth::guard('admin')->user()->store_id)->first();
+
+                if($storeDetail->online_payment == 1){
+                    $companyDetail = Company::where('company_id', $productTime->company_id)->first();
+                    $companyUserDetail = Admin::where('u_id', $companyDetail->u_id)->first();
+                    DB::table('orders')->where('order_id', $orderId)->update([
+                            'online_paid' => 2,
+                        ]);
+                    $request->session()->put('paymentAmount', $order->order_total);
+                    $request->session()->put('OrderId', $order->order_id);
+                    $request->session()->put('stripeAccount', $companyUserDetail->stripe_user_id);
+                    return view('kitchen.order.kitchenPaymentIndex', compact('order','orderDetails'));
+                }else{
+                    return view('kitchen.order.order-detail', compact('order','orderDetails'));
+                }
         }else{
             $menuTypes = null;
             $menuDetails = ProductPriceList::where('store_id',Auth::guard('admin')->user()->store_id)->with('menuPrice')->with('storeProduct')->get();
@@ -463,5 +484,64 @@ class AdminController extends Controller
                     'is_speak' => 1,
                 ]);
          return response()->json(['status' => 'success', 'response' => true,'data'=>$id]);
+    }
+
+
+
+    // Kitchen Payment 
+
+    public function payment(Request $request){
+
+        if(!empty($request->input())){
+            $amount = $request->session()->get('paymentAmount') * 100;
+            //dd($amount);
+            $stripeAccount = $request->session()->get('stripeAccount');
+            $orderId = $request->session()->get('OrderId');
+          try {
+            $token = $request->stripeToken;
+            Stripe::setApiKey('sk_test_EypGXzv2qqngDIPIkuK6aXNi');
+            $charge = Charge::create(array(
+                'amount' => $amount,
+                'currency' => 'sek',
+                'description' => 'Order charge',
+                'source' => $token
+            ), array('stripe_account' => $stripeAccount));
+            if($charge->status == "succeeded"){
+
+                DB::table('orders')->where('order_id', $orderId)->update([
+                            'online_paid' => 1,
+                        ]);
+
+                $paymentSave =  new Payment();
+                $paymentSave->user_id = Auth()->id();
+                $paymentSave->order_id = $orderId;
+                $paymentSave->transaction_id = $charge->application;
+                $paymentSave->amount = $charge->amount;
+                $paymentSave->balance_transaction = $charge->balance_transaction;
+                $paymentSave->save();
+
+                $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
+                //dd($order->currencies);
+                $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
+                return view('kitchen.order.order-detail', compact('order','orderDetails'))->with('success', 'Payment Done Successfully');
+
+            }else{
+
+            }
+        } catch (\Exception $ex) {
+            return $ex->getMessage();
+          }
+        }else{
+
+            if(Auth::guard('admin')->user()->store_id == null){
+                $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
+                $storeName = $companydetails->company_name;
+            }else{
+                $storedetails = Store::where('store_id' , Auth::guard('admin')->user()->store_id)->first();
+                $storeName = $storedetails->store_name;
+            }
+
+              return view('kitchen.order.index', compact('storeName'));
+        }
     }
 }

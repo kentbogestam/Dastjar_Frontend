@@ -90,7 +90,7 @@
 										@if($menuType->dish_id == $menuDetail->dish_type)
 										<ul data-role="listview" data-inset="true">
 											<li>
-												<img class="product_image" src="{{asset('kitchenImages/pizza1.png')}}">
+												<img class="product_image" src="{{$menuDetail->small_image}}">
 												<div class="list-content">
 													<h2>{{$menuDetail->product_name}}</h2>
 												<p>{{$menuDetail->product_description}}</p>
@@ -125,12 +125,12 @@
 										@if($menuType->dish_id == $menuDetail->dish_type)
 										<ul data-role="listview" data-inset="true">
 											<li>
-												<img class="product_image" src="{{asset('kitchenImages/pizza1.png')}}">
+												<img class="product_image" src="{{$menuDetail->small_image}}">
 												<div class="list-content">
 													<h2>{{$menuDetail->product_name}}</h2>
 												<p>{{$menuDetail->product_description}}</p>
 												<p class="price">{{$companydetails->currencies}} {{$productDetail->price}}
-												 </p>
+												 </p> 
 												</div>
 												<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />
 												<div class="qty-sec">
@@ -173,7 +173,7 @@
 							<h3 class="blue_link">{{ __('messages.use the QR-code below') }}</h3>
 						</div>
 							<div class="scan_code">
-								<img src="http://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=https://dastjar.com/dbuzzu/public/">
+								<img src="http://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=https://dastjar.com/anar/public/">
 							</div>
 					</div>
 				</div>
