@@ -57,7 +57,7 @@
 			<div class="ui-block-c order-active">
 				<a href="#order-popup" data-rel="popup" data-transition="slideup" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
 					<div class="img-container">
-						<img src="images/icons/select-store_05-active.png">
+						<img src="{{asset('images/icons/select-store_05-active.png')}}">
 					</div>
 					<span>{{ __('messages.Order') }}<span class="order_number">{{count(Auth::user()->paidOrderList)}}</span></span>
 				</a>
