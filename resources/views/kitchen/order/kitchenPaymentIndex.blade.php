@@ -38,7 +38,7 @@
 					</tbody>
 				</table>
 			</div>
-					<form action="{{ url('kitchen/payment') }}" method="POST">
+					<form action="{{ url('kitchen/payment') }}" class="payment_form_btn" method="POST">
 		        {{ csrf_field() }} 
 		        <script
 		                src="https://checkout.stripe.com/checkout.js" class="stripe-button"

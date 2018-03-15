@@ -44,7 +44,7 @@
 
 
 
-	<form action="{{ url('/payment') }}" method="POST">
+	<form action="{{ url('/payment') }}" class="payment_form_btn" method="POST">
         {{ csrf_field() }} 
         <script
                 src="https://checkout.stripe.com/checkout.js" class="stripe-button"

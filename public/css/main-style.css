@@ -777,6 +777,8 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
 #otp{
     font-size: 13px;
 }
+.payment_form_btn{text-align: center;margin-top: 25px;}
+.payment_form_btn button{width: 50%;}
 
 @media screen and (orientation : landscape){
     .bottom_login_text{position: relative;}

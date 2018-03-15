@@ -560,3 +560,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 .sucess_msg img{vertical-align: middle;}
 .ui-collapsible-content{background: #fff}
+
+
+.payment_form_btn{text-align: center;margin-top: 25px;}
+.payment_form_btn button{width: 50%;}
