@@ -93,7 +93,7 @@ class HomeController extends Controller
             }
         }
 
-        DB::table('customer')->where('id', Auth::id())->update(['browser' => $data['browserVersion'],]);
+        //DB::table('customer')->where('id', Auth::id())->update(['browser' => $data['browserVersion'],]);
 
         if($userDetail->web_version != $versionDetail->version){
             DB::table('customer')->where('id', Auth::id())->update(['web_version' => $versionDetail->version,]);
