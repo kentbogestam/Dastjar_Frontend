@@ -59,7 +59,8 @@ class RegisterController extends Controller
 
 
                 // Define recipients
-                $recipients = ['+'.$user->phone_number_prifix.$user->phone_number];
+                $afterRemoveFirstZeroNumber = substr($user->phone_number, -9);
+                $recipients = ['+'.$user->phone_number_prifix.$afterRemoveFirstZeroNumber];
                 $url = "https://gatewayapi.com/rest/mtsms";
                 $api_token = "mspSa5_ZQWuitntge1bgwK4rwTviVxnEGtU6h_39bO2GWK04Gv-L5FDfzgE9HpZ4";
                 $message = $user->otp;
@@ -129,7 +130,8 @@ class RegisterController extends Controller
             $data = $request->input();
             $user = User::where(['phone_number' => $data['mobileNo']])->first();
             if($user){
-                $recipients = ['+'.$user->phone_number_prifix.$user->phone_number];
+                $afterRemoveFirstZeroNumber = substr($user->phone_number, -9);
+                $recipients = ['+'.$user->phone_number_prifix.$afterRemoveFirstZeroNumber];
                 //dd($recipients);
                 $url = "https://gatewayapi.com/rest/mtsms";
                 $api_token = "mspSa5_ZQWuitntge1bgwK4rwTviVxnEGtU6h_39bO2GWK04Gv-L5FDfzgE9HpZ4";
