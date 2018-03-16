@@ -6,7 +6,6 @@
     <script src="{{asset('notifactionJs/App42-all-3.1.min.js')}}"></script>
     <script src="{{asset('notifactionJs/SiteTwo.js')}}"></script>
     <script src="{{asset('notifactionJs/serviceWorker.js')}}"></script>
-    <script src="{{asset('browserShortcutJs/main.min.js')}}"></script>
     <script src="{{asset('browserShortcutJs/comlink.global.js')}}"></script>
     <script src="{{asset('browserShortcutJs/messagechanneladapter.global.js')}}"></script>
     
