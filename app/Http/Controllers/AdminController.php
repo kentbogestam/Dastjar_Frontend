@@ -145,7 +145,7 @@ class AdminController extends Controller
             }
             $pieces = explode(" ", $adminDetail->browser);
             if($pieces[0] == 'Safari' || $pieces[0] != null){
-                //dd($recipients);
+               // dd($recipients);
                 $url = "https://gatewayapi.com/rest/mtsms";
                 $api_token = "mspSa5_ZQWuitntge1bgwK4rwTviVxnEGtU6h_39bO2GWK04Gv-L5FDfzgE9HpZ4";
                 $message = env('APP_URL').'/public/ready-notifaction/'.$OrderId->customer_order_id;
