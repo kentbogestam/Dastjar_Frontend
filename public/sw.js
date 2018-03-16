@@ -117,8 +117,7 @@ self.addEventListener('notificationclick', function(event) {
 //   }));
 
 // }); 
-<<<<<<< HEAD
-=======
+
 
 
 let version = '0.6.2';
@@ -152,4 +151,4 @@ self.addEventListener('fetch', event => {
     })
   );
 });
->>>>>>> 3425055b8c85f04bc196f88e43aaa9da367562f8
+
