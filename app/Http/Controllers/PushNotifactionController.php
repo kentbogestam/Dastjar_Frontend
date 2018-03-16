@@ -49,7 +49,8 @@ class PushNotifactionController extends Controller
         $OrderId = Order::where('customer_order_id' , $orderID)->first();
         if($OrderId->user_type == 'customer'){
             $adminDetail = User::where('id' , $OrderId->user_id)->first();
-            $recipients = ['+'.$adminDetail->phone_number_prifix.$adminDetail->phone_number];
+            $afterRemoveFirstZeroNumber = substr($adminDetail->phone_number, -9);
+            $recipients = ['+'.$adminDetail->phone_number_prifix.$afterRemoveFirstZeroNumber];
         }else{
             $adminDetail = Admin::where('id' , $OrderId->user_id)->first();
             $recipients = ['+'.$adminDetail->mobile_phone];
