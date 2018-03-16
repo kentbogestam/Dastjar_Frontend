@@ -43,7 +43,11 @@ self.addEventListener('push', function(event) {
           title = messagePayload.alert;
           console.log(clickURL);
   self.registration.showNotification(title, { 
-   icon: " https://localhost/dast-jar-frontend/public/images/dastjar.png"
+
+   //icon: " http://localhost/dast-jar-frontend/public/images/dastjar.png"
+
+   icon: "https://dastjar.com/anar/public/images/dastjar.png"
+
  })
  
  }
@@ -119,6 +123,7 @@ self.addEventListener('notificationclick', function(event) {
 // }); 
 
 
+
 let version = '0.6.2';
 
 self.addEventListener('install', e => {
@@ -150,3 +155,4 @@ self.addEventListener('fetch', event => {
     })
   );
 });
+
