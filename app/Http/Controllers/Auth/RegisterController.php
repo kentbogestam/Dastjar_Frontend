@@ -153,11 +153,8 @@ class RegisterController extends Controller
                 curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
                 curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
                 $result = curl_exec($ch);
-<<<<<<< HEAD
-                curl_close($ch);   
-=======
+                curl_close($ch); 
                 curl_close($ch);
->>>>>>> 6fea152b976af6b7a82e7be457d7900ed124d124
                // print($result);
                 // $json = json_decode($result);
                 // dd($json);
