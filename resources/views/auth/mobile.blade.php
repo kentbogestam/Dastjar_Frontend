@@ -28,7 +28,7 @@
                         </div>
                     </div>
                     <div class="ui-grid-solo">
-                        <button id="mySubmit" type="submit" class="mobile_otp_btn" placeholder="Login">
+                        <button type="button" class="mobile_otp_btn" placeholder="Login">
                             Login
                         </button>
                     </div>
@@ -49,13 +49,12 @@
 
                   if (filter.test(mobNum)) {
                     if(mobNum.length==9){
-                          document.getElementById("mySubmit").disabled = false;
+                          document.getElementById('form11').submit();
                           return true;
                      } else {
                         alert('Please put 9  digit mobile number');
                        $("#folio-invalid").removeClass("hidden");
                        $("#mobile-valid").addClass("hidden");
-                       document.getElementById("mySubmit").disabled = true;
                         return false;
                       }
                     }
@@ -63,7 +62,6 @@
                       alert('Not a valid number');
                       $("#folio-invalid").removeClass("hidden");
                       $("#mobile-valid").addClass("hidden");
-                      document.getElementById("mySubmit").disabled = true;
                       return false;
                    }
             

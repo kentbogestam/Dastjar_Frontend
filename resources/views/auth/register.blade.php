@@ -238,7 +238,7 @@
                         </div>
                     </div>
                     <div class="ui-grid-solo reg_btn">
-                        <button id="mySubmit" type="submit" class="" placeholder="Register">
+                        <button type="button" class="" placeholder="Register">
                             Register
                         </button>
                     </div>
@@ -261,13 +261,12 @@
 
                if (filter.test(mobNum)) {
                  if(mobNum.length==9){
-                     document.getElementById("mySubmit").disabled = false;
+                     document.getElementById('form').submit();
                        return true;
                   } else {
                      alert('Please put 9  digit mobile number');
                     $("#folio-invalid").removeClass("hidden");
                     $("#mobile-valid").addClass("hidden");
-                    document.getElementById("mySubmit").disabled = true;
                      return false;
                    }
                  }
@@ -275,7 +274,6 @@
                    alert('Not a valid number');
                    $("#folio-invalid").removeClass("hidden");
                    $("#mobile-valid").addClass("hidden");
-                   document.getElementById("mySubmit").disabled = true;
                    return false;
                 }
          
