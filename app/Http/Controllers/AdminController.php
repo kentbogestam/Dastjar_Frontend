@@ -148,7 +148,7 @@ class AdminController extends Controller
             if($pieces[0] == 'Safari' || $pieces[0] != null){
                // dd($recipients);
                 $url = "https://gatewayapi.com/rest/mtsms";
-                $api_token = "mspSa5_ZQWuitntge1bgwK4rwTviVxnEGtU6h_39bO2GWK04Gv-L5FDfzgE9HpZ4";
+                $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
                 $message = env('APP_URL').'/public/ready-notifaction/'.$OrderId->customer_order_id;
                 $json = [
                     'sender' => 'Dastjar',
