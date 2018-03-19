@@ -154,6 +154,11 @@ class RegisterController extends Controller
                 curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
                 $result = curl_exec($ch);
                 curl_close($ch);   
+<<<<<<< HEAD
+               // print($result);
+                // $json = json_decode($result);
+                // dd($json);
+=======
                 //print($result);
                 $json = json_decode($result);
                 if($json->message == 'Insufficient credit'){
@@ -161,6 +166,7 @@ class RegisterController extends Controller
                 }else{
                     return view('auth.otp');
                 }
+>>>>>>> 5d28fcdd9fb8af97e0d853a2c51c4b92c4b78ffc
                 // print_r($json->ids);
             }
             return redirect()->action('Auth\RegisterController@userRegister')->with('success', 'Your Number is not register.Please register mobile number');
