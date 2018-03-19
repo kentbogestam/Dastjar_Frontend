@@ -48,10 +48,10 @@
                 var filter = /^\d*(?:\.\d{1,2})?$/;
 
                   if (filter.test(mobNum)) {
-                    if(mobNum.length==10){
+                    if(mobNum.length==9){
                           return true;
                      } else {
-                        alert('Please put 10  digit mobile number');
+                        alert('Please put 9  digit mobile number');
                        $("#folio-invalid").removeClass("hidden");
                        $("#mobile-valid").addClass("hidden");
                         return false;

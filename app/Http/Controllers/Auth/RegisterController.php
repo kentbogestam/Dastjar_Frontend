@@ -81,11 +81,13 @@ class RegisterController extends Controller
                 $result = curl_exec($ch);
                 curl_close($ch);
                 // print($result);
-                // $json = json_decode($result);
+                $json = json_decode($result);
                 // print_r($json->ids);
-
-
-              return view('auth.otp');  
+                if($json->message == 'Insufficient credit'){
+                    return redirect()->action('Auth\LoginController@mobileLogin')->with('success', 'Otp is not sent due to some technical issue.');
+                }else{
+                    return view('auth.otp');
+                }
             }
             return redirect('/')->with('success', 'Your EmailId already exist.');
 
@@ -152,13 +154,16 @@ class RegisterController extends Controller
                 curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
                 $result = curl_exec($ch);
                 curl_close($ch);   
-                //  print($result);
-                // $json = json_decode($result);
-                // dd($json);
+                //print($result);
+                $json = json_decode($result);
+                if($json->message == 'Insufficient credit'){
+                    return redirect()->action('Auth\LoginController@mobileLogin')->with('success', 'Otp is not sent due to some technical issue.');
+                }else{
+                    return view('auth.otp');
+                }
                 // print_r($json->ids);
-                return view('auth.otp');  
             }
-            return redirect('/')->with('success', 'Your Number not register.');
+            return redirect()->action('Auth\RegisterController@userRegister')->with('success', 'Your Number is not register.Please register mobile number');
 
         }else{
             return view('auth.otp');
