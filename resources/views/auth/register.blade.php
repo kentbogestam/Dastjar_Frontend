@@ -19,7 +19,7 @@
             <div class="inner-page-container">
                 <div class="login-inner-section">
                     <div class="logo-img-sec">
-                        <img src="images/l-logo.png">
+                        <img src="{{asset('images/l-logo.png')}}">
                     </div>
                     <div class="social-sec social-sec_login">
                         <div class="ui-grid-solo">
