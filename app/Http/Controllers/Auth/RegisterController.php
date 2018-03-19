@@ -154,7 +154,6 @@ class RegisterController extends Controller
                 curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
                 $result = curl_exec($ch);
                 curl_close($ch); 
-                curl_close($ch);
                // print($result);
                 // $json = json_decode($result);
                 // dd($json);
