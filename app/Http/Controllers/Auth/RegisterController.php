@@ -80,9 +80,10 @@ class RegisterController extends Controller
                 curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
                 $result = curl_exec($ch);
                 curl_close($ch);
-                // print($result);
+                print($result);dd($result);
                 $json = json_decode($result);
                 // print_r($json->ids);
+                return view('auth.otp');
                 if($json->message == 'Insufficient credit'){
                     return redirect()->action('Auth\LoginController@mobileLogin')->with('success', 'Otp is not sent due to some technical issue.');
                 }else{
@@ -159,6 +160,7 @@ class RegisterController extends Controller
                 // dd($json);
                 //print($result);
                 $json = json_decode($result);
+                return view('auth.otp');
                 if($json->message == 'Insufficient credit'){
                     return redirect()->action('Auth\LoginController@mobileLogin')->with('success', 'Otp is not sent due to some technical issue.');
                 }else{
