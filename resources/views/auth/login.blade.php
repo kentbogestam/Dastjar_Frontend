@@ -30,14 +30,14 @@
                         <div class="ui-block-a"><a href="{{ url('login/google')}}" class="ui-btn ui-shadow ui-corner-all" data-ajax="false"><img src="{{asset('images/gplus.png')}}"></a></div>
                     </div>
                      <div class="ui-grid-solo login_mobile">
-                        <div class="ui-block-a"><a href="{{ url('/mobileLogin') }}" class="ui-btn ui-shadow ui-corner-all" data-ajax="false"><span>Login with Mobile Number</span></a></div>
+                        <div class="ui-block-a"><a href="{{ url('/mobileLogin') }}" class="ui-btn ui-shadow ui-corner-all orange_box" data-ajax="false"><div class="text_box_login"><img src="{{asset('images/phone.png')}}"><div class="wrap_text_signin"><p>Sign in with Mobile Number</p> <p>If you don't use any of the above!</p></div></div></a></div></div>
                     </div>
                 </div>
             </div>  
         </div>
-         <div class="ui-grid-solo bottom_login_text">
+       <!--   <div class="ui-grid-solo bottom_login_text">
                     <div class="ui-block-a"><a href="{{ url('/userRegister') }}" class="ui-btn ui-shadow ui-corner-all" data-ajax="false"><span>Not a member ? sign up now</span></a></div>
-                </div>
+                </div> -->
     </div>
 </div>
 <div id="login-popup" style="display: none;" class="login-popup" data-theme="a">

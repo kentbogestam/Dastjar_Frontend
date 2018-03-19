@@ -57,8 +57,8 @@ class HomeController extends Controller
         }else{
             
             DB::table('customer')->where('id', Auth::id())->update([
-                                'customer_latitude' => 28.585337,
-                                'customer_longitude' => 77.0704041,
+                                'customer_latitude' => 59.303566,
+                                'customer_longitude' => 18.0065041,
                                 'address' => NULL,
                             ]);
         }
