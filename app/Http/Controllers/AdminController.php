@@ -145,7 +145,7 @@ class AdminController extends Controller
                 $recipients = ['+'.$adminDetail->mobile_phone];
             }
             $pieces = explode(" ", $adminDetail->browser);
-            if($pieces[0] == 'Safari' || $pieces[0] != null){
+            if($pieces[0] == 'Safari'){
                // dd($recipients);
                 $url = "https://gatewayapi.com/rest/mtsms";
                 $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
