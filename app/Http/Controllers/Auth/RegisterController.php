@@ -80,7 +80,7 @@ class RegisterController extends Controller
                 curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
                 $result = curl_exec($ch);
                 curl_close($ch);
-                print($result);dd($result);
+                //print($result);
                 $json = json_decode($result);
                 // print_r($json->ids);
                 return view('auth.otp');
