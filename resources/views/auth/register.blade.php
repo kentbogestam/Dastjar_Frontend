@@ -260,7 +260,7 @@
              var filter = /^\d*(?:\.\d{1,2})?$/;
 
                if (filter.test(mobNum)) {
-                 if(mobNum.length==9){
+                 if(mobNum.length==9 || mobNum.length==10){
                      document.getElementById('form').submit();
                        return true;
                   } else {

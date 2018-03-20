@@ -59,8 +59,8 @@ class RegisterController extends Controller
 
 
                 // Define recipients
-                $afterRemoveFirstZeroNumber = substr($user->phone_number, -9);
-                $recipients = ['+'.$user->phone_number_prifix.$afterRemoveFirstZeroNumber];
+                //$afterRemoveFirstZeroNumber = substr($user->phone_number, -9);
+                $recipients = ['+'.$user->phone_number_prifix.$user->phone_number];
                 $url = "https://gatewayapi.com/rest/mtsms";
                 $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
                 $message = $user->otp;
@@ -120,7 +120,17 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $afterRemoveFirstZeroNumber = substr($data['phone_number'], 0, 1);
+        if($afterRemoveFirstZeroNumber == 0){
+            $number = substr($data['phone_number'], -9);
+        }else{
+           $number =  $data['phone_number'];
+        }
         $user = User::create($data);
+        $user->name = $data['name'];
+        $user->email = $data['email'];
+        $user->phone_number_prifix = $data['phone_number_prifix'];
+        $user->phone_number = $number;
         $user->otp = rand(1000, 9999);
         $user->save();
         return $user;
@@ -133,8 +143,8 @@ class RegisterController extends Controller
             $data = $request->input();
             $user = User::where(['phone_number' => $data['mobileNo']])->first();
             if($user){
-                $afterRemoveFirstZeroNumber = substr($user->phone_number, -9);
-                $recipients = ['+'.$user->phone_number_prifix.$afterRemoveFirstZeroNumber];
+                //$afterRemoveFirstZeroNumber = substr($user->phone_number, -9);
+                $recipients = ['+'.$user->phone_number_prifix.$user->phone_number];
                 //dd($recipients);
                 $url = "https://gatewayapi.com/rest/mtsms";
                 $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
