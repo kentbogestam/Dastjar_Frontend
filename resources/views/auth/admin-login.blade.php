@@ -12,14 +12,14 @@
                 <h3>Kitchen Login</h3>
                 @if ($message = Session::get('error'))
                     <div class="notifications">
-                        <div class="alert alert-danger alert-block">
-                            <h4>Error</h4>
+                        <div class="alert alert-danger alert-block error_msg_login">
+                            <h4>Error:</h4>
                             @if(is_array($message))
                                 @foreach ($message as $m)
-                                    {{ $languageStrings[$m] or $m }}
+                                    <p>{{ $languageStrings[$m] or $m }}</p>
                                 @endforeach
                             @else
-                                {{ $languageStrings[$message] or $message }}
+                                <p>{{ $languageStrings[$message] or $message }}</p>
                             @endif
                         </div>
                     </div>

@@ -809,9 +809,9 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
     margin: 0 auto;
     text-align: left;margin: 3px;
 }
-.text_box_login img{max-width: 100%;    width: 20px !important;
+.text_box_login img{max-width: 100%;    width: 15px !important;
     float: left;
     padding-right: 7px;}
-.wrap_text_signin{width: calc(100% - 8%);}
-.text_box_login p{text-align: left;color: #fff; font-size: 14px;margin-bottom: 5px;margin-top: 0px;}
+.wrap_text_signin{width: calc(100% - 8%);padding: 6px 0px;}
+.text_box_login p{text-align: left;color: #fff; font-size: 14px;margin-bottom: 5px;margin-top: 0px;padding-left: 26px;}
 .text_box_login p:last-child{margin-bottom: 0px;}

@@ -98,9 +98,10 @@ class AdminLoginController extends Controller
         DB::table('user')->where('id', Auth::guard('admin')->id())->update([
                             'browser' => $data['browser'],
                         ]);
-        return $this->guard()->attempt(
-            $this->credentials($request), $request->filled('remember')
-        );
+        if(!$this->guard()->attempt($this->credentials($request), $request->filled('remember'))) {
+
+          redirect($request->url())->with('error', 'Email id or password is incorrect');
+        }
     }
 
     public function logout(Request $request){

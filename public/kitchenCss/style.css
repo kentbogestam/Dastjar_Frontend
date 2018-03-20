@@ -23,6 +23,12 @@
   font-style: normal;
 }
 body{margin: 0;}
+.error_msg_login{background: #e6f9caf2;
+    margin-top: 1.4em !important;
+    margin-bottom: .9em !important;
+    padding: .5em;
+    border-radius: 10px;}
+.error_msg_login h4,.error_msg_login p{display: inline-block;margin: 0;}
 .ui-header.header{    border-width: 0;}
 .logo_header{padding: .6em 0em;    text-align: center;background: rgba(129,132,140,1);
 background: -moz-linear-gradient(top, rgba(129,132,140,1) 0%, rgba(129,132,140,1) 50%, rgba(88,91,96,1) 100%);
