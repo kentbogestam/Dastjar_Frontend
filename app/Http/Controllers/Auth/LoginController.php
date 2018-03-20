@@ -102,11 +102,15 @@ class LoginController extends Controller
             Auth::login($user);
             return redirect()->action('HomeController@index');
         }else{
-            return redirect()->action('Auth\LoginController@mobileLogin')->with('success', 'Please Enter again Mobile number.');
+            return redirect()->action('Auth\LoginController@enterOtp')->with('success', 'You have entered wrong otp.');
         }
     }
 
     public function mobileLogin(){
         return view('auth.mobile'); 
+    }
+
+    public function enterOtp(){
+        return view('auth.otp');
     }
 }
