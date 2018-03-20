@@ -10,6 +10,7 @@ use Socialite;
 use App\User;
 use Auth;
 use Session;
+use DB;
 
 class LoginController extends Controller
 {
@@ -64,11 +65,20 @@ class LoginController extends Controller
         $user = User::where(['fac_id' => $userSocial->id])->first();
         if($user){
             Auth::login($user);
-            if($user->language == 'ENG'){
-                Session::put('applocale', 'en');
-            }else{
+            if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
+              $languages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
+              $languagesServer = explode('-', $languages[0]);
+              if($languagesServer[0] == 'sv'){
+                $lang = 'SWE';
                 Session::put('applocale', 'sv');
+              }else{
+                $lang =  'ENG';
+                Session::put('applocale', 'en');
+              }
             }
+            DB::table('customer')->where('fac_id', $userSocial->id)->update([
+                        'language' => $lang,
+                    ]);
             return redirect('/');
             //return redirect()->action('HomeController@index');
         }else{
@@ -99,7 +109,22 @@ class LoginController extends Controller
         $data = $request->input();
         $user = User::where(['otp' => $data['otp']])->first();
         if($user){
+            
             Auth::login($user);
+            if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
+              $languages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
+              $languagesServer = explode('-', $languages[0]);
+              if($languagesServer[0] == 'sv'){
+                $lang = 'SWE';
+                Session::put('applocale', 'sv');
+              }else{
+                $lang =  'ENG';
+                Session::put('applocale', 'en');
+              }
+            }
+            DB::table('customer')->where('otp', $data['otp'])->update([
+                        'language' => $lang,
+                    ]);
             return redirect()->action('HomeController@index');
         }else{
             return redirect()->action('Auth\LoginController@enterOtp')->with('success', 'You have entered wrong otp.');
