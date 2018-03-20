@@ -117,9 +117,16 @@
 
 	   $("#ss").click(function(e){
 			var timeHH = $('#timeH').val();
-			if(timeHH == 00){
+			var timeMM = $('#timeM').val();
+			if(timeHH == 00 && timeMM == 00){
 				$('.error_time').show();
 				console.log(timeHH);
+			}else if(timeHH == 00 && timeMM != 00){
+				$('.error_time').hide();
+				$("#form").submit();
+			}else if(timeHH != 00 && timeMM == 00){
+				$('.error_time').hide();
+				$("#form").submit();
 			}else{
 				$('.error_time').hide();
 				$("#form").submit();
