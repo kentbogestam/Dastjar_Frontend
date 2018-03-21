@@ -104,6 +104,7 @@ Route::group(['middleware' => ['auth']], function(){
 		Route::get('updateTextspeach/{id}','AdminController@updateTextspeach');
 		Route::post('payment', 'AdminController@payment');
 		Route::get('payment', 'AdminController@payment');
+		Route::get('kitchen-orders-new/{lastId}', 'AdminController@kitchenOrdersNew');
 	});
 
 

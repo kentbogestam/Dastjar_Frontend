@@ -113,6 +113,25 @@ class AdminController extends Controller
         return response()->json(['status' => 'success', 'user' => $text_speech,'data'=>$kitchenorderDetails]);
     }
 
+    public function kitchenOrdersNew($id){
+        if(Auth::guard('admin')->user()->store_id == null){
+
+            $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
+            $reCompanyId = $companydetails->company_id;
+            
+            $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.company_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->where('order_details.id', '>', $id)->whereNotIn('orders.online_paid', [2])->where('order_details.id' > $id)->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
+
+        }else{
+            $reCompanyId = Auth::guard('admin')->user()->store_id;
+
+            $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->where('order_details.id', '>', $id)->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
+
+        }
+        //$user = Admin::where(['u_id' => '32130ad3-e08c-5fc5-b863-1336a3ba4bde'])->first();
+        $text_speech = Auth::guard('admin')->user()->text_speech;
+        return response()->json(['status' => 'success', 'user' => $text_speech,'data'=>$kitchenorderDetails]);
+    }
+
     public function orderStarted(Request $request, $orderID){
         DB::table('order_details')->where('id', $orderID)->update([
                             'order_started' => 1,

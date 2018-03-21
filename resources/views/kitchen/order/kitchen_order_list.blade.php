@@ -106,6 +106,7 @@
 		var url = "{{url('kitchen/order-started')}}";
 		var urlReady = "{{url('kitchen/order-readyKitchen')}}";
 		var textSpeachDone = "{{url('kitchen/textSpeachDone')}}";
+		var lastOrderId;
 
 		$(function(){
 			$.get("{{url('kitchen/kitchen-orders')}}",
@@ -113,6 +114,7 @@
 				console.log(returnedData["data"]);
 				textSpeach = returnedData["user"];
 				var count = 18;
+				
 				var temp = returnedData["data"];
 	          	list = temp;
 	          	console.log(temp.length);
@@ -130,6 +132,7 @@
 		          		if(i>=totallength){
 				      		break;
 				      	}
+				      	lastOrderId = temp[i]["id"];
 				      	(function (i) {
 						    setTimeout(function () {
 			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
@@ -206,9 +209,9 @@
 	          	$("#orderDetailContianer").append(liItem);
 			}); 
 		});
-
+console.log('lastOrderId'+lastOrderId);
 		var ajaxCall = function(){
-			$.get("{{url('kitchen/kitchen-orders')}}",
+			$.get("{{url('kitchen/kitchen-orders-new')}}/"+lastOrderId,
 			function(returnedData){
 				console.log(returnedData["data"]);
 				var count = 18;
@@ -230,8 +233,11 @@
 		          		if(i>totallength){
 				      		break;
 				      	}
+				      	lastOrderId = temp[i]["id"];
+				      	
 				      	(function (i) {
 						    setTimeout(function () {
+						    	console.log('iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'+i);
 			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
 			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
 			          		liItem += "<tr>";
@@ -291,7 +297,8 @@
 			          		}
 			          		liItem += "<td>"+time+"</td>";
 			          		liItem += "</tr>"
-					    	$("#orderDetailContianer").html(liItem);
+					    	$("#orderDetailContianer").append(liItem);
+					    	var liItem = "";
 						     }, 4000*i);
 					    })(i);
 		          	}
@@ -302,11 +309,11 @@
 		        	liItem += "</p>";
 		        	liItem += "</div>";
 	          	}
-	          	$("#orderDetailContianer").html(liItem);
+	          	//$("#orderDetailContianer").append(liItem);
 			}); 
 		}
 
-		setInterval(ajaxCall, 40000);
+		setInterval(ajaxCall, 10000);
 
 		var tempCount = 10;
 		$(document).on("scrollstop", function (e) {
@@ -369,6 +376,7 @@
 	      	if(countCheck>limit){
 	      		break;
 	      	}
+	      	console.log('iiiiiiiiissssssssssssssssss'+i);
 	      	 (function (i) {
 			    setTimeout(function () {
 			      	var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
@@ -429,7 +437,7 @@
 		      		liItem += "</tr>";
 			      	countCheck++;
 			      	$("#orderDetailContianer").append(liItem);
-			      	liItem = null;
+			      	var liItem = "";
 			     }, 4000*i);
 		    })(i);
 	      }
