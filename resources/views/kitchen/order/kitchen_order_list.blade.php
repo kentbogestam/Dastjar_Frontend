@@ -193,7 +193,7 @@
 			          		liItem += "</tr>"
 					    	$("#orderDetailContianer").append(liItem);
 					    	liItem = null;
-						     }, 3000*i);
+						     }, 4000*i);
 					    })(i);
 		          	}
 	          	}else{
@@ -292,7 +292,7 @@
 			          		liItem += "<td>"+time+"</td>";
 			          		liItem += "</tr>"
 					    	$("#orderDetailContianer").html(liItem);
-						     }, 3000*i);
+						     }, 4000*i);
 					    })(i);
 		          	}
 	          	}else{
@@ -306,7 +306,7 @@
 			}); 
 		}
 
-		setInterval(ajaxCall, 30000);
+		setInterval(ajaxCall, 40000);
 
 		var tempCount = 10;
 		$(document).on("scrollstop", function (e) {
@@ -430,7 +430,7 @@
 			      	countCheck++;
 			      	$("#orderDetailContianer").append(liItem);
 			      	liItem = null;
-			     }, 3000*i);
+			     }, 4000*i);
 		    })(i);
 	      }
 	      $("#orderDetailContianer").append(liItem);	
