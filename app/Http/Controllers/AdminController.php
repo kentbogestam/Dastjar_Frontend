@@ -221,7 +221,7 @@ class AdminController extends Controller
                 }
                 //dd($menuDetails);
                 //dd(array_unique($dish_typeId));
-                $menuTypes = DishType::where('company_id' , $companyId)->whereIn('dish_id', array_unique($dish_typeId))->where('dish_activate','1')->where('dish_lang','ENG')->get();
+                $menuTypes = DishType::where('company_id' , $companyId)->whereIn('dish_id', array_unique($dish_typeId))->where('dish_activate','1')->get();
                 $dish_typeId = null;
                 //$request->session()->put('storeId'.Auth()->id(), $storeId);
             }
