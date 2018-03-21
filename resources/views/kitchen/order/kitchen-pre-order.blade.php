@@ -84,7 +84,7 @@
 						<?php $j =1 ?>
 						@foreach($menuTypes as $menuType)
 							@if($i == 0)
-							<div data-role="collapsible" data-iconpos="right" data-collapsed="false"> <h3 class="">{{$menuType->dish_name}}</h3>
+							<div data-role="collapsible" data-iconpos="right" > <h3 class="">{{$menuType->dish_name}}</h3>
 								@foreach($menuDetails as $productDetail)
 									@foreach($productDetail->storeProduct as $menuDetail)
 										@if($menuType->dish_id == $menuDetail->dish_type)
