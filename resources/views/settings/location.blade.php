@@ -40,6 +40,23 @@
 			//document.getElementById("dataSave").disabled = true;    
 		});
 
+        $(function(){     
+
+            // Check for Geolocation API permissions  
+            navigator.geolocation.getCurrentPosition(function(position) { 
+                console.log("latitude=" + position.coords.latitude);
+                console.log("longitude=" + position.coords.longitude);
+                document.cookie="latitude=" + position.coords.latitude;
+                document.cookie="longitude=" + position.coords.longitude;
+                
+            },function(error){
+               $('.login-inner-section a').attr('href','javascript:void(0)');
+               $('#login-popup').show();
+                
+            });
+
+        });
+
 
 		function initMap() {
             var location  = {lat: {{Auth::user()->customer_latitude}} , lng: {{ Auth::user()->customer_longitude}} };
