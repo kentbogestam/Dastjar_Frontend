@@ -85,7 +85,7 @@ class HomeController extends Controller
                 DB::table('customer')->where('id', Auth::id())->update([
                             'customer_latitude' => $data['lat'],
                             'customer_longitude' => $data['lng'],
-                            'range' => '3',
+                            'range' => '6',
                             'language' => 'ENG',
                             'web_version' => $versionDetail->version,
                             'browser' => $data['browserVersion'],
