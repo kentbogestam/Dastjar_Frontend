@@ -106,7 +106,8 @@ class HomeController extends Controller
         $request->session()->put('browserTodayDay', $todayDay);
 
         $request->session()->forget('order_date');
-        $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
+        $currentUser = User::whereId(Auth()->id())->first();
+        $companydetails = Store::getListRestaurants($currentUser->customer_latitude,$currentUser->customer_longitude,$currentUser->range,'1','3',$todayDate,$currentTime,$todayDay);
 
         
         return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails]); 
