@@ -344,19 +344,23 @@ class AdminController extends Controller
 
                 $storeDetail = Store::where('store_id', Auth::guard('admin')->user()->store_id)->first();
 
-                if($storeDetail->online_payment == 1){
-                    $companyDetail = Company::where('company_id', $productTime->company_id)->first();
-                    $companyUserDetail = Admin::where('u_id', $companyDetail->u_id)->first();
-                    DB::table('orders')->where('order_id', $orderId)->update([
-                            'online_paid' => 2,
-                        ]);
-                    $request->session()->put('paymentAmount', $order->order_total);
-                    $request->session()->put('OrderId', $order->order_id);
-                    $request->session()->put('stripeAccount', $companyUserDetail->stripe_user_id);
-                    return view('kitchen.order.kitchenPaymentIndex', compact('order','orderDetails'));
-                }else{
-                    return view('kitchen.order.order-detail', compact('order','orderDetails'));
-                }
+                return view('kitchen.order.order-detail', compact('order','orderDetails'));
+
+                //If use online payment then uncomment below code and comment above return line.
+
+                // if($storeDetail->online_payment == 1){
+                //     $companyDetail = Company::where('company_id', $productTime->company_id)->first();
+                //     $companyUserDetail = Admin::where('u_id', $companyDetail->u_id)->first();
+                //     DB::table('orders')->where('order_id', $orderId)->update([
+                //             'online_paid' => 2,
+                //         ]);
+                //     $request->session()->put('paymentAmount', $order->order_total);
+                //     $request->session()->put('OrderId', $order->order_id);
+                //     $request->session()->put('stripeAccount', $companyUserDetail->stripe_user_id);
+                //     return view('kitchen.order.kitchenPaymentIndex', compact('order','orderDetails'));
+                // }else{
+                //     return view('kitchen.order.order-detail', compact('order','orderDetails'));
+                // }
         }else{
             $menuTypes = null;
             $menuDetails = ProductPriceList::where('store_id',Auth::guard('admin')->user()->store_id)->with('menuPrice')->with('storeProduct')->get();
