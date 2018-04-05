@@ -371,56 +371,116 @@
 	});
 
 	function checkTime($time){
-		var d = new Date();
-		var currentTime = d.toLocaleTimeString();
-		var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-		var todayDay = days[d.getDay()];
-		// console.log(currentTime);
-		// console.log('todayDay'+todayDay);
-		var time = $time;
-		var day = time.split(' :: ')
-		var checkday = time.split(',')
-		if(day[0] == 'All'){
-			var timeSplit = day[1].split(' to ');
-			var openTime = timeSplit[0];
-			var closeTime = timeSplit[1];
-			if(openTime < currentTime && closeTime > currentTime){
-				return true;
-			}else{
-				return false;
-			}
-		}else{
-			if(day.length == 2){
-				if(day[0] == todayDay){
-					var timeSplit = day[1].split(' to ');
-					var openTime = timeSplit[0];
-					var closeTime = timeSplit[1];
-					if(openTime < currentTime && closeTime > currentTime){
-						return true;
-					}else{
-						return false;
-					}
-				}else{
-					return false;
-				}
-			}else{
-				for(i=0;i<checkday.length;i++){
-					var getDay = checkday[i].split(' :: ');
-					if(getDay[0] == todayDay){
-						var timeSplit = getDay[1].split(' to ');
-						var openTime = timeSplit[0];
-						var closeTime = timeSplit[1];
-						if(openTime < currentTime && closeTime > currentTime){
-							return true;
-						}else{
-							return false;
-						}
-					}
-				}
-			}
-		}
-		return false;
+        var d = new Date();
+        var currentTime1 = d.toLocaleTimeString();
+        var currentTime2  = currentTime1.split(',');
+        var currentTime3  =  currentTime2[0].split(' '); 
+        var currentTime4  =  (currentTime3[0]).trim();
+        var currentTime  =  (currentTime4.replace(':', '')).replace(':', '');
+        var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+        var todayDay = days[d.getDay()];
+        // console.log(currentTime);
+        // console.log('todayDay'+todayDay);
+        var time = $time;
+        var day = time.split(' :: ')
+        var checkday = time.split(',');
+        if(day[0] == 'All'){
+                var timeSplit = day[1].split(' to ');
+                var openTime = (timeSplit[0].replace(':', '')).replace(':', '');
+                var closeTime = ((timeSplit[1].replace(':', '')).replace(':', '')).trim();
+                var diff = closeTime - currentTime;
+                if(openTime < currentTime && diff > 1){
+                        return true;
+                }else{
+                        return false;
+                }
+        }else{
+            if(day.length == 2){
+                    if(day[0] == todayDay){
+                            var timeSplit = day[1].split(' to ');   
+                            var openTime = (timeSplit[0].replace(':', '')).replace(':', '');
+                            var closeTime = ((timeSplit[1].replace(':', '')).replace(':', '')).trim();
+                            var diff = closeTime - currentTime;
+                            if(openTime < currentTime && diff > 1){
+                                    return true;
+                            }else{
+                                    return false;
+                            }
+                    }else{
+                            return false;
+                    }
+            }else{
+                for(i=0;i<checkday.length;i++){
+                    var getDay = checkday[i].split(' :: ');
+                    if(getDay[0] == todayDay){
+                        var timeSplit = getDay[1].split(' to ');
+                        var openTime = (timeSplit[0].replace(':', '')).replace(':', '');
+                        var closeTime = ((timeSplit[1].replace(':', '')).replace(':', '')).trim();
+                        var diff = closeTime - currentTime;
+                        if(openTime < currentTime && diff  > 1){
+                                return true;
+                        }else{
+                                return false;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
 	}
+
+
+	// function checkTime($time){
+	// 	var d = new Date();
+	// 	var currentTime = d.toLocaleTimeString();
+	// 	var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+	// 	var todayDay = days[d.getDay()];
+	// 	// console.log(currentTime);
+	// 	// console.log('todayDay'+todayDay);
+	// 	var time = $time;
+	// 	var day = time.split(' :: ')
+	// 	var checkday = time.split(',')
+	// 	if(day[0] == 'All'){
+	// 		var timeSplit = day[1].split(' to ');
+	// 		var openTime = timeSplit[0];
+	// 		var closeTime = timeSplit[1];
+	// 		if(openTime < currentTime && closeTime > currentTime){
+	// 			return true;
+	// 		}else{
+	// 			return false;
+	// 		}
+	// 	}else{
+	// 		if(day.length == 2){
+	// 			if(day[0] == todayDay){
+	// 				var timeSplit = day[1].split(' to ');
+	// 				var openTime = timeSplit[0];
+	// 				var closeTime = timeSplit[1];
+	// 				if(openTime < currentTime && closeTime > currentTime){
+	// 					return true;
+	// 				}else{
+	// 					return false;
+	// 				}
+	// 			}else{
+	// 				return false;
+	// 			}
+	// 		}else{
+	// 			for(i=0;i<checkday.length;i++){
+	// 				var getDay = checkday[i].split(' :: ');
+	// 				if(getDay[0] == todayDay){
+	// 					var timeSplit = getDay[1].split(' to ');
+	// 					var openTime = timeSplit[0];
+	// 					var closeTime = timeSplit[1];
+	// 					if(openTime < currentTime && closeTime > currentTime){
+	// 						return true;
+	// 					}else{
+	// 						return false;
+	// 					}
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// 	return false;
+	// }
 
 </script>
 
