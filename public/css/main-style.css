@@ -673,6 +673,12 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
     background: #dedede;
     border-radius: 16px;
 }
+.ui-listview, .ui-listview>li{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    top: 60px;
+}
 .range-sec input.ui-slider-input{ border: none; font-size: 1em}
 .ui-slider-track .ui-btn.ui-slider-handle{
     width: 15px;
