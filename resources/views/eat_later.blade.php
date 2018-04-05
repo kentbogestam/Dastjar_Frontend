@@ -1,11 +1,14 @@
 @extends('layouts.master')
+@section('head-scripts')
+<script src="{{asset('locationJs/currentLocation.js')}}"></script>
+@endsection
 @section('content')
 	<div data-role="header" class="header" id="nav-header"  data-position="fixed"><!--  -->
 		<div class="nav_fixed">
 			<div class="logo">
 				<div class="inner-logo">
 					<img src="{{asset('images/logo.png')}}">
-					<span>{{ Auth::user()->name}}</span>
+					@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
 				</div>
 			</div>
 			<a class="ui-btn-right map-btn user-link" onClick="makeRedirection('{{url('search-map-eatlater')}}')"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
@@ -41,33 +44,7 @@
 			</div>
 			<span>{{ __('messages.Send') }}</span>
 		</a></div>
-		@if(count(Auth::user()->paidOrderList) == 0)
-			<div class="ui-block-c"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-				<div class="img-container">
-					<img src="{{asset('images/icons/select-store_05.png')}}">
-				</div>
-				<span>{{ __('messages.Order') }}</span>
-			</a></div>
-		@else
-			<div class="ui-block-c order-active">
-		    	<a  class="ui-shadow ui-corner-all icon-img ui-btn-inline ordersec" data-ajax="false">
-			        <div class="img-container">
-			       		<!-- <img src="images/icons/select-store_05.png"> -->
-			        	<img src="{{asset('images/icons/select-store_05-active.png')}}">
-			        </div>
-		        	<span>{{ __('messages.Order') }}<span class="order-number">{{count(Auth::user()->paidOrderList)}}</span></span>
-		        </a>
-		        <div id="order-popup" data-theme="a">
-			      <ul data-role="listview">
-			      	@foreach(Auth::user()->paidOrderList as $order)
-						<li>
-							<a href="{{ url('order-view/'.$order->order_id) }}" data-ajax="false">{{ __('messages.Order id') }} - {{$order->customer_order_id}}</a>
-						</li>
-					@endforeach
-			      </ul>
-			    </div>
-		    </div>
-		@endif
+		@include('orderQuantity')
 		<div class="ui-block-d"><a href = "{{url('user-setting')}}"  class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 			<div class="img-container"><img src="{{asset('images/icons/select-store_07.png')}}"></div>
 		</a></div>
@@ -142,32 +119,34 @@ var totalCount = 0;
 			if(countCheck>limit){
 				break;
 			}
+			if(checkTime(temp[i]["store_open_close_day_time"])){
 
-			liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
-			liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+list[i]['store_id']+" data-ajax='false' >";
-			liItem += "<img src="+"'"+list[i]["store_image"]+"'"+">";
-			liItem += "<h2>"+list[i]["store_name"]+"</h2>";
-			liItem += "<p>";
-			
-			for (var j=0;j<list[i]["products"].length;j++){
-				console.log(list[i]["products"][j]);
-				;
-				if(j <= 1){
-					liItem += list[i]["products"][j]["product_name"];
-				}   
-				if(list[i]["products"].length > 1 && j <= 1){
-					liItem += ",&nbsp;";
+				liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
+				liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+list[i]['store_id']+" data-ajax='false' >";
+				liItem += "<img src="+"'"+list[i]["store_image"]+"'"+">";
+				liItem += "<h2>"+list[i]["store_name"]+"</h2>";
+				liItem += "<p>";
+				
+				for (var j=0;j<list[i]["products"].length;j++){
+					console.log(list[i]["products"][j]);
+					;
+					if(j <= 1){
+						liItem += list[i]["products"][j]["product_name"];
+					}   
+					if(list[i]["products"].length > 1 && j <= 1){
+						liItem += ",&nbsp;";
+					}
 				}
+
+				if(list[i]["products"].length > 1){
+					liItem += "&nbsp;&more";
+				} 
+			liItem += "</p>";
+				liItem += "<div class='ui-li-count ui-body-inherit'>";
+				liItem += "<span>"+list[i]["distance"].toFixed(2)+ "&nbsp;Km" + "</span>";
+
+				liItem += "</div></a></li>";
 			}
-
-			if(list[i]["products"].length > 1){
-				liItem += "&nbsp;&more";
-			} 
-		liItem += "</p>";
-			liItem += "<div class='ui-li-count ui-body-inherit'>";
-			liItem += "<span>"+list[i]["distance"].toFixed(2)+ "&nbsp;Km" + "</span>";
-
-			liItem += "</div></a></li>";
 			countCheck++;
 		}
 		$("#companyDetailContianer").append(liItem);	
@@ -199,32 +178,36 @@ var totalCount = 0;
 
 	          for (var i=0;i<count;i++){
 	          	//console.log(temp[i]["store_id"]);
+	          	if(checkTime(temp[i]["store_open_close_day_time"])){
 
-	          	liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
-	          	liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+temp[i]['store_id']+" data-ajax='false' >";
-	          	liItem += "<img src="+"'"+temp[i]["store_image"]+"'"+">";
-	          	liItem += "<h2>"+temp[i]["store_name"]+"</h2>";
-	          	liItem += "<p>";
-	          	
-	          	for (var j=0;j<temp[i]["products"].length;j++){
-	          		//console.log(temp[i]["products"][j]);
-	          		;
-	          		if(j <= 1){
-	          			liItem += temp[i]["products"][j]["product_name"];
-	          		}   
-	          		if(temp[i]["products"].length > 1 && j <= 1){
-	          			liItem += ",&nbsp;";
-	          		}
+
+		          	liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
+		          	liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+temp[i]['store_id']+" data-ajax='false' >";
+		          	liItem += "<img src="+"'"+temp[i]["store_image"]+"'"+">";
+		          	liItem += "<h2>"+temp[i]["store_name"]+"</h2>";
+		          	liItem += "<p>";
+		          	
+		          	for (var j=0;j<temp[i]["products"].length;j++){
+		          		//console.log(temp[i]["products"][j]);
+		          		;
+		          		if(j <= 1){
+		          			liItem += temp[i]["products"][j]["product_name"];
+		          		}   
+		          		if(temp[i]["products"].length > 1 && j <= 1){
+		          			liItem += ",&nbsp;";
+		          		}
+		          	}
+
+		      		if(temp[i]["products"].length > 1){
+		      			liItem += "&nbsp;&more";
+		      		} 
+					liItem += "</p>";
+		          	liItem += "<div class='ui-li-count ui-body-inherit'>";
+		          	liItem += "<span>"+temp[i]["distance"].toFixed(2)+ "&nbsp;Km" + "</span>";
+
+		          	liItem += "</div></a></li>";
+
 	          	}
-
-	      		if(temp[i]["products"].length > 1){
-	      			liItem += "&nbsp;&more";
-	      		} 
-				liItem += "</p>";
-	          	liItem += "<div class='ui-li-count ui-body-inherit'>";
-	          	liItem += "<span>"+temp[i]["distance"].toFixed(2)+ "&nbsp;Km" + "</span>";
-
-	          	liItem += "</div></a></li>";
 	          }
         }else{
 
@@ -244,6 +227,58 @@ var totalCount = 0;
 
 		});
 	});
+
+	 function checkTime($time){
+		var d = new Date();
+		var currentTime = d.toLocaleTimeString();
+		var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+		var todayDay = days[d.getDay()];
+		// console.log(currentTime);
+		// console.log('todayDay'+todayDay);
+		var time = $time;
+		var day = time.split(' :: ')
+		var checkday = time.split(',')
+		if(day[0] == 'All'){
+			var timeSplit = day[1].split(' to ');
+			var openTime = timeSplit[0];
+			var closeTime = timeSplit[1];
+			if(openTime < currentTime && closeTime > currentTime){
+				return true;
+			}else{
+				return false;
+			}
+		}else{
+			if(day.length == 2){
+				if(day[0] == todayDay){
+					var timeSplit = day[1].split(' to ');
+					var openTime = timeSplit[0];
+					var closeTime = timeSplit[1];
+					if(openTime < currentTime && closeTime > currentTime){
+						return true;
+					}else{
+						return false;
+					}
+				}else{
+					return false;
+				}
+			}else{
+				for(i=0;i<checkday.length;i++){
+					var getDay = checkday[i].split(' :: ');
+					if(getDay[0] == todayDay){
+						var timeSplit = getDay[1].split(' to ');
+						var openTime = timeSplit[0];
+						var closeTime = timeSplit[1];
+						if(openTime < currentTime && closeTime > currentTime){
+							return true;
+						}else{
+							return false;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
 
 </script>
 

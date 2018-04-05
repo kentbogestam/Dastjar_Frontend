@@ -45,68 +45,71 @@ class AdminController extends Controller
         $this->middleware('auth:admin');
     }
 
-    public function index(){
-            if(Auth::guard('admin')->user()->store_id == null){
-                $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
-                $storeName = $companydetails->company_name;
+    public function checkStore(){
+        if(Session::get('checkStore') == 1){
+            return redirect('kitchen/store');
+        }else{
+            $storeDetails = null;
+            $companydetails = Company::where('company_id' , Auth::guard('admin')->user()->company_id)->first();
+            if($companydetails){
+                $storeDetails = Store::where('u_id' , $companydetails->u_id)->get();
             }else{
-                $storedetails = Store::where('store_id' , Auth::guard('admin')->user()->store_id)->first();
-                $storeName = $storedetails->store_name;
+                $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
+                $storeDetails = Store::where('u_id' , $companydetails->u_id)->get();
             }
+            return view('kitchen.storeList', compact('storeDetails'));
+        }
+    }
 
-              return view('kitchen.order.index', compact('storeName'));
+    public function checkStoreFirst(){
+        if(Session::get('checkStore') == 1){
+            $url = url('kitchen/store');
+            return response()->json(['status' => 'success', 'response' => true,'data'=>$url]);
+        }
+        return response()->json(['status' => 'success', 'response' => true,'data'=>true]);
+    }
+
+    public function index(Request $request){
+
+            if(!empty($request->input())){
+                $data = $request->input();
+                Session::put('storeId', $data['storeId']);
+                $storeId = $data['storeId'];
+
+            }else{
+                $storeId = Session::get('storeId');
+            }
+            Session::put('checkStore', 1);
+            $storedetails = Store::where('store_id' , $storeId)->first();
+            $storeName = $storedetails->store_name;
+
+            return view('kitchen.order.index', compact('storeName'));
     }
 
     public function orderDetail(){
 
-        if(Auth::guard('admin')->user()->store_id == null){
+        $reCompanyId = Session::get('storeId');
 
-            $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
-            $reCompanyId = $companydetails->company_id;
+        $orderDetailscustomer = Order::select('orders.*','customer.name as name')->where(['store_id' => $reCompanyId])->where('user_type','=','customer')->where('check_deliveryDate',Carbon::now()->toDateString())->where('orders.paid', '0')->whereNotIn('orders.online_paid', [2])->join('customer','orders.user_id','=','customer.id');
+        $orderDetails = Order::select('orders.*','user.fname as name')->where('orders.store_id', '=' ,$reCompanyId)->where('user_type','=','admin')->where('check_deliveryDate',Carbon::now()->toDateString())->where('orders.paid', '0')->whereNotIn('orders.online_paid', [2])->join('user','orders.user_id','=','user.id');
+        $results = $orderDetailscustomer->union($orderDetails)->get();
 
-            $orderDetailscustomer = Order::select('orders.*','customer.name as name')->where(['company_id' => $reCompanyId])->where('user_type','=','customer')->where('check_deliveryDate',Carbon::now()->toDateString())->where('orders.paid', '0')->whereNotIn('orders.online_paid', [2])->join('customer','orders.user_id','=','customer.id');
-            $orderDetails = Order::select('orders.*','user.fname as name')->where('orders.company_id', '=' ,$reCompanyId)->where('user_type','=','admin')->where('check_deliveryDate',Carbon::now()->toDateString())->where('orders.paid', '0')->whereNotIn('orders.online_paid', [2])->join('user','orders.user_id','=','user.id');
-            $results = $orderDetailscustomer->union($orderDetails)->get();
-
-        }else{
-            //In this function where condition work store_id
-            $reCompanyId = Auth::guard('admin')->user()->store_id;
-
-            $orderDetailscustomer = Order::select('orders.*','customer.name as name')->where(['store_id' => $reCompanyId])->where('user_type','=','customer')->where('check_deliveryDate',Carbon::now()->toDateString())->where('orders.paid', '0')->whereNotIn('orders.online_paid', [2])->join('customer','orders.user_id','=','customer.id');
-            $orderDetails = Order::select('orders.*','user.fname as name')->where('orders.store_id', '=' ,$reCompanyId)->where('user_type','=','admin')->where('check_deliveryDate',Carbon::now()->toDateString())->where('orders.paid', '0')->whereNotIn('orders.online_paid', [2])->join('user','orders.user_id','=','user.id');
-            $results = $orderDetailscustomer->union($orderDetails)->get();           
-        }
-        // $user = Admin::where(['u_id' => Auth::guard('admin')->user()->company_id])->first();
         return response()->json(['status' => 'success', 'response' => true,'data'=>$results]);
     }
 
     public function kitchenOrderDetail(){
-        if(Auth::guard('admin')->user()->store_id == null){
-            $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
-            $storeName = $companydetails->company_name;
-        }else{
-            $storedetails = Store::where('store_id' , Auth::guard('admin')->user()->store_id)->first();
-            $storeName = $storedetails->store_name;
-        }
+
+        $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
+        $storeName = $storedetails->store_name;
         
        return view('kitchen.order.kitchen_order_list', compact('storeName'));
     }
 
     public function kitchenOrders(){
 
-        if(Auth::guard('admin')->user()->store_id == null){
+        $reCompanyId = Session::get('storeId');
 
-            $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
-            $reCompanyId = $companydetails->company_id;
-            
-            $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.company_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
-
-        }else{
-            $reCompanyId = Auth::guard('admin')->user()->store_id;
-
-            $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
-
-        }
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
 
         //$user = Admin::where(['u_id' => '32130ad3-e08c-5fc5-b863-1336a3ba4bde'])->first();
         $text_speech = Auth::guard('admin')->user()->text_speech;
@@ -114,19 +117,11 @@ class AdminController extends Controller
     }
 
     public function kitchenOrdersNew($id){
-        if(Auth::guard('admin')->user()->store_id == null){
 
-            $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
-            $reCompanyId = $companydetails->company_id;
-            
-            $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.company_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->where('order_details.id', '>', $id)->whereNotIn('orders.online_paid', [2])->where('order_details.id' > $id)->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
+        $reCompanyId = Session::get('storeId');
 
-        }else{
-            $reCompanyId = Auth::guard('admin')->user()->store_id;
-
-            $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->where('order_details.id', '>', $id)->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
-
-        }
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->where('order_details.id', '>', $id)->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
+        
         //$user = Admin::where(['u_id' => '32130ad3-e08c-5fc5-b863-1336a3ba4bde'])->first();
         $text_speech = Auth::guard('admin')->user()->text_speech;
         return response()->json(['status' => 'success', 'user' => $text_speech,'data'=>$kitchenorderDetails]);
@@ -195,31 +190,18 @@ class AdminController extends Controller
     }
     
     public function cateringDetails(){
-        if(Auth::guard('admin')->user()->store_id == null){
-            $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
-            $storeName = $companydetails->company_name;
-        }else{
-            $storedetails = Store::where('store_id' , Auth::guard('admin')->user()->store_id)->first();
-            $storeName = $storedetails->store_name;
-        }
+
+        $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
+        $storeName = $storedetails->store_name;
         return view('kitchen.order.catering', compact('storeName')); 
     }
 
     public function cateringOrders(){
 
-        if(Auth::guard('admin')->user()->store_id == null){
+        $reCompanyId = Session::get('storeId');
 
-            $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
-            $reCompanyId = $companydetails->company_id;
+        $cateringorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('order_details.delivery_date','>', Carbon::now()->toDateString())->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->orderBy('order_details.delivery_date','ASC')->get();
 
-            $cateringorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.customer_order_id','orders.online_paid')->where(['order_details.company_id' => $reCompanyId])->where('order_details.delivery_date','>', Carbon::now()->toDateString())->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->orderBy('order_details.delivery_date','ASC')->get();  //->orderBy('order_details.created_at','DESC
-        }else{
-            $reCompanyId = Auth::guard('admin')->user()->store_id;
-
-            $cateringorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('order_details.delivery_date','>', Carbon::now()->toDateString())->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->orderBy('order_details.delivery_date','ASC')->get();  //->orderBy('order_details.created_at','DESC
-        }
-
-        //$user = Admin::where(['u_id' => '32130ad3-e08c-5fc5-b863-1336a3ba4bde'])->first();')
 
         return response()->json(['status' => 'success', 'response' => true,'data'=>$cateringorderDetails]);
     }
@@ -227,9 +209,8 @@ class AdminController extends Controller
     public function kitchenPreOrder(Request $request){
         $menuTypes = null;
         $request->session()->forget('order_date');
-
-        if(Auth::guard('admin')->user()->store_id){
-            $menuDetails = ProductPriceList::where('store_id',Auth::guard('admin')->user()->store_id)->with('menuPrice')->with('storeProduct')->get();
+        if(Session::get('storeId')){
+            $menuDetails = ProductPriceList::where('store_id',Session::get('storeId'))->with('menuPrice')->with('storeProduct')->get();
             if(count($menuDetails) != 0){
 
                 foreach ($menuDetails as $menuDetail) {
@@ -251,7 +232,7 @@ class AdminController extends Controller
                 $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
             }
             //dd($companydetails->currencies);
-            $storedetails = Store::where('store_id' , Auth::guard('admin')->user()->store_id)->first();
+            $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
             return view('kitchen.order.kitchen-pre-order', compact('menuDetails','companydetails','menuTypes','storedetails'));
         }else{
             return view('kitchen.order.kitchen-main-admin');
@@ -297,7 +278,7 @@ class AdminController extends Controller
                             $order =  new Order();
                             $order->customer_order_id = $this->random_num(6);
                             $order->user_id = Auth::guard('admin')->user()->id;
-                            $order->store_id = Auth::guard('admin')->user()->store_id;
+                            $order->store_id = Session::get('storeId');
                             $order->company_id = $productTime->company_id;
                             $order->order_type = $orderType;
                             $order->user_type = 'admin';
@@ -325,7 +306,7 @@ class AdminController extends Controller
                         $orderDetail->price = $productPrice->price;
                         $orderDetail->time = $productTime->preparation_Time;
                         $orderDetail->company_id = $productTime->company_id;
-                        $orderDetail->store_id = Auth::guard('admin')->user()->store_id;
+                        $orderDetail->store_id = Session::get('storeId');
                         $orderDetail->delivery_date = $checkOrderDate;
                         $orderDetail->save();
                     }
@@ -342,7 +323,7 @@ class AdminController extends Controller
 
                 $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 
-                $storeDetail = Store::where('store_id', Auth::guard('admin')->user()->store_id)->first();
+                $storeDetail = Store::where('store_id', Session::get('storeId'))->first();
 
                 return view('kitchen.order.order-detail', compact('order','orderDetails'));
 
@@ -363,7 +344,7 @@ class AdminController extends Controller
                 // }
         }else{
             $menuTypes = null;
-            $menuDetails = ProductPriceList::where('store_id',Auth::guard('admin')->user()->store_id)->with('menuPrice')->with('storeProduct')->get();
+            $menuDetails = ProductPriceList::where('store_id',Session::get('storeId'))->with('menuPrice')->with('storeProduct')->get();
             if(count($menuDetails) != 0){
 
                 foreach ($menuDetails as $menuDetail) {
@@ -385,7 +366,7 @@ class AdminController extends Controller
                 $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
             }
 
-            $storedetails = Store::where('store_id' , Auth::guard('admin')->user()->store_id)->first();
+            $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
             return view('kitchen.order.kitchen-pre-order', compact('menuDetails','companydetails','menuTypes','storedetails'));
         }
     }
@@ -403,7 +384,7 @@ class AdminController extends Controller
         }else{}
 
         $menuTypes = null;
-        $menuDetails = ProductPriceList::where('store_id',Auth::guard('admin')->user()->store_id)->with('menuPrice')->with('storeProduct')->get();
+        $menuDetails = ProductPriceList::where('store_id',Session::get('storeId'))->with('menuPrice')->with('storeProduct')->get();
         if(count($menuDetails) != 0){
 
             foreach ($menuDetails as $menuDetail) {
@@ -425,7 +406,7 @@ class AdminController extends Controller
             $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
         }
 
-        $storedetails = Store::where('store_id' , Auth::guard('admin')->user()->store_id)->first();
+        $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
         return view('kitchen.order.kitchen-pre-order', compact('menuDetails','companydetails','menuTypes','storedetails'));
     }
 
@@ -508,6 +489,13 @@ class AdminController extends Controller
                     'is_speak' => 1,
                 ]);
          return response()->json(['status' => 'success', 'response' => true,'data'=>$id]);
+    }
+
+    public function orderSpecificOdrderDetail($orderId){
+
+         $orderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.order_id' => $orderId])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
+
+        return response()->json(['status' => 'success', 'data'=>$orderDetails]);
     }
 
 

@@ -79,7 +79,7 @@ class LoginController extends Controller
             DB::table('customer')->where('fac_id', $userSocial->id)->update([
                         'language' => $lang,
                     ]);
-            return redirect('/');
+            return redirect()->action('OrderController@withOutLogin');
             //return redirect()->action('HomeController@index');
         }else{
             $lang;
@@ -101,7 +101,8 @@ class LoginController extends Controller
                     'language' => $lang,
                 ]);
             Auth::login($user);
-            return redirect()->action('HomeController@index');
+            //return redirect()->action('HomeController@index');
+            return redirect()->action('OrderController@withOutLogin');
         }
     }
 
@@ -125,10 +126,20 @@ class LoginController extends Controller
             DB::table('customer')->where('otp', $data['otp'])->update([
                         'language' => $lang,
                     ]);
-            return redirect()->action('HomeController@index');
+            //return redirect()->action('HomeController@index');
+            return redirect()->action('OrderController@withOutLogin');
         }else{
             return redirect()->action('Auth\LoginController@enterOtp')->with('success', 'You have entered wrong otp.');
         }
+    }
+
+    public function userSessionLogin(Request $request){
+      $data = $request->input();
+      $user = User::where(['id' => $data['usetId']])->first();
+      if($user){
+        Auth::login($user);
+        return response()->json(['status' => 'success', 'response' => true,'data'=>true]);
+      }
     }
 
     public function mobileLogin(){

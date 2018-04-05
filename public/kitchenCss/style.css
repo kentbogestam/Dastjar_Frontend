@@ -570,3 +570,13 @@ input[type=number]::-webkit-outer-spin-button {
 
 .payment_form_btn{text-align: center;margin-top: 25px;}
 .payment_form_btn button{width: 50%;}
+#popupCloseRight-screen{height: auto !important;}
+.store_container{width: 65%;margin: 20px auto;box-shadow: 0px 0px 6px 5px #eee;padding: 10px 15px;}
+.store_title{    text-align: center;
+    color: #c12c0c;
+    text-transform: uppercase;
+    font-size: 20px;
+    letter-spacing: 0.6px;}
+.select_store{    background-color: #b8bcb8;border-color: #b8bcb8;
+    text-shadow: none;
+    color: #000;}

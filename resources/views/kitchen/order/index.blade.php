@@ -93,6 +93,25 @@
 			</div>
 		</div>
 	</div>
+	<div data-role="popup" id="popupCloseRight" class="ui-content" style="max-width:100%;border: none;">
+	    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" style="background-color:#000;border-color: #000;">Close</a>
+		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow table-stripe ui-responsive table_size" >
+			<thead>
+				<tr class="ui-bar-d">
+					<th data-priority="2">Order No</th>
+			   		<th>Amount</th> 
+			   		<th data-priority="3">Product</th>
+			    	<th data-priority="1">Comment</th> 
+			    </tr>
+			</thead>
+			<tbody id="specificOrderDetailContianer">
+				<tr>
+					
+
+				</tr> 
+			</tbody>
+		</table>
+	</div>
 @endsection
 
 @section('footer-script')
@@ -127,8 +146,12 @@
 			      	}
 	          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
 	          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
+	          		var orderIdSpecific = temp[i]["order_id"] ;
 	          		liItem += "<tr>";
-	          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
+	          		liItem += "<th>"
+	          		liItem += "<a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>"
+	          		liItem += temp[i]["customer_order_id"] 
+	          		liItem += "</a></th>";
 	          		liItem += "<td>"+temp[i]["name"]+"</td>";
 	          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
 	          		liItem += "<td>"
@@ -173,6 +196,30 @@
 		}); 
 	});
 
+	function getList(orderId){
+		var liItem = "";
+		$.get("{{url('kitchen/orderSpecificOdrderDetail')}}/"+orderId,
+		function(returnedData){
+			//console.log(returnedData["data"]);
+			var temp = returnedData["data"];
+			for (var i=0;i<temp.length;i++){
+				liItem += "<tr>";
+				liItem += "<td>"+temp[i]["customer_order_id"]+"</td>";
+				liItem += "<td>"+temp[i]["product_quality"]+"</td>";
+				liItem += "<td>"+temp[i]["product_name"]+"</td>";
+				if(temp[i]["product_description"] != null){
+					liItem += "<td>"+temp[i]["product_description"]+"</td>";
+				}else{
+					liItem += "<td>"+' '+"</td>";
+				}
+				liItem += "</tr>";
+			}
+			$("#specificOrderDetailContianer").html(liItem);
+			$("#popupCloseRight").popup("open");
+			var liItem = "";
+		});
+	}
+
 	var ajaxCall = function(){
 		$.get("{{url('kitchen/order-detail')}}",
 		function(returnedData){
@@ -196,8 +243,12 @@
 			      	}
 	          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
 	          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
+	          		var orderIdSpecific = temp[i]["order_id"] ;
 	          		liItem += "<tr>";
-	          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
+	          		liItem += "<th>"
+	          		liItem += "<a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>"
+	          		liItem += temp[i]["customer_order_id"]
+	          		liItem += "</a></th>";
 	          		liItem += "<td>"+temp[i]["name"]+"</td>";
 	          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
 	          		liItem += "<td>"
@@ -302,8 +353,12 @@
       	}
       	var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
       	var timeOrder = addTimes("00:00:00",list[i]["deliver_time"]);
+      	var orderIdSpecific = list[i]["order_id"] ;
       	liItem += "<tr>";
-  		liItem += "<th>"+list[i]["customer_order_id"]+"</th>";
+  		liItem += "<th>"
+  		liItem += "<a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>"
+  		liItem += temp[i]["customer_order_id"]
+  		liItem += "</a></th>";
   		liItem += "<td>"+list[i]["name"]+"</td>";
   		liItem += "<td>"+list[i]["deliver_date"]+' '+timeOrder+"</td>";
   		liItem += "<td>"

@@ -8,6 +8,7 @@ use DB;
 use Auth;
 use App\Helper;
 use Session;
+use Cache;
 
 class CustomerController extends Controller
 {
@@ -25,33 +26,26 @@ class CustomerController extends Controller
 
     public function saveSetting(Request $request){
         $data = $request->input();
-        // if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
-        //   $languages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
-        //   $languagesServer = explode('-', $languages[0]);
-        //   dd($languagesServer[0]);  
-        // }
+      
         if($data['radio-choice-v-2'] == 'ENG'){
             Session::put('applocale', 'en');
+            $lang =  'ENG';
         }else{
             Session::put('applocale', 'sv');
+            $lang = 'SWE';
         }
-        // if (array_key_exists($lang, Config::get('languages'))) {
-        //     Session::put('applocale', $lang);
-        // }
-        // dd(Session::has('locale'));
-        // if($data['radio-choice-v-2'] == 'ENG'){
-        //     \Session::set('locale', 'en');
-        // }else{
-        //     \Session::put('locale', 'sv');
-        // }
-        DB::table('customer')->where('id', Auth::id())->update([
-                    'language' => $data['radio-choice-v-2'],
-                    'range' => $data['range-1b'],
-                ]);
+
+        if(Auth::check()){
+            DB::table('customer')->where('id', Auth::id())->update([
+                'language' => $data['radio-choice-v-2'],
+                'range' => $data['range-1b'],
+            ]);
+        }else{
+            $request->session()->put('sessionBrowserLanguageValue', 1);
+            $request->session()->put('browserLanguageWithOutLogin', $lang);
+            $request->session()->put('rang', $data['range-1b']);
+        }
         return redirect('customer')->with('success', 'Setting updated successfully.');
-        //return view('settings.index', compact(''));
-        //dd($data['radio-choice-v-2']);
-        //dd($data['range-1b']);
     }
 
     public function selectLocation(){
@@ -66,11 +60,19 @@ class CustomerController extends Controller
             //dd($address['latitude'] != null && $address['longitude'] != null);
             if($address['latitude'] != null && $address['longitude'] != null){
 
-                DB::table('customer')->where('id', Auth::id())->update([
+                if(Auth::check()){
+                    DB::table('customer')->where('id', Auth::id())->update([
                         'customer_latitude' => $address['latitude'],
                         'customer_longitude' => $address['longitude'],
                         'address' => $address['street_address'],
                     ]);
+                    $request->session()->put('setLocationBySettingValueAfterLogin', 1);
+                }else{
+                    $request->session()->put('with_out_login_lat', $address['latitude']);
+                    $request->session()->put('with_out_login_lng', $address['longitude']);
+                    $request->session()->put('address', $address['street_address']);
+                    $request->session()->put('setLocationBySettingValue', 1);
+                }
             }
         }
         return redirect('customer')->with('success', 'Location updated successfully.');
