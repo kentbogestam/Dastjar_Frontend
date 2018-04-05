@@ -44,7 +44,7 @@
   <div class="inner-popup">
         <div id = "cancel-popup" class="cross"><img src="{{asset('images/icons/cross.png')}}"></div>
         <div class="pop-body">
-           <p>please allow browser location</p>
+           <p>Please allow browser location</p>
         </div>
   </div>
 </div>

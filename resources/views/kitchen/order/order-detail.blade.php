@@ -43,7 +43,7 @@
 	<div data-role="footer" data-position="fixed" data-tap-toggle="false" class="footer_container">
 		<div class="ui-grid-a center">
 			<div class="ui-block-a left-side_menu">
-				<div class="ui-block-a active"><a href = "{{ url('/admin') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
+				<div class="ui-block-a active"><a href = "{{ url('kitchen/store') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/icon-1.png')}}">
 					</div>

@@ -1,4 +1,7 @@
 @extends('layouts.master')
+@section('head-scripts')
+<script src="{{asset('locationJs/currentLocation.js')}}"></script>
+@endsection
 @section('content')
 <div class="setting-page" data-role="page" data-theme="c">
 	<div data-role="header" class="header" data-position="fixed">
@@ -30,40 +33,76 @@
 			@endif
 			<div class="setting-list">
 				<ul data-role="listview"> 
-					<li class="range-sec"><a onClick="makeRedirection('{{url('select-location')}}')" data-ajax="false">{{ __('messages.Location') }}<p class="ui-li-aside">@if(Auth::user()->address == null)
-						{{ __('messages.Current Location') }}
-					@else	
-						{{Auth::user()->address}}
-					@endif</p></a>
+					<li class="range-sec"><a onClick="makeRedirection('{{url('select-location')}}')" data-ajax="false">{{ __('messages.Location') }}
+						<p class="ui-li-aside">
+							@if(Auth::check())
+								@if(Auth::user()->address == null)
+									{{ __('messages.Current Location') }}
+								@else	
+									{{Auth::user()->address}}
+								@endif
+							@else
+								@if(Session::get('address') == null)
+									{{ __('messages.Current Location') }}
+								@else	
+									{{Session::get('address')}}
+								@endif
+							@endif
+						</p></a>
 					</li> 
 				</ul>
 			</div>
 			<div class="setting-list">
 				<ul data-role="listview"> 
-					<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Language') }}<p class="ui-li-aside">
-						@if(Auth::user()->language == 'ENG')
-						English
-						@elseif(Auth::user()->language == 'SWE')
-						Swedish
-						@elseif(Auth::user()->language == 'GER')
-						German
-						@endif </p></h2>
-						
+					<li data-role="collapsible" class="range-sec">
+						<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Language') }}
+						<p class="ui-li-aside">
+							@if(Auth::check())
+								@if(Auth::user()->language == 'ENG')
+								English
+								@elseif(Auth::user()->language == 'SWE')
+								Swedish
+								@endif
+							@else
+								@if(Session::get('browserLanguageWithOutLogin') == 'ENG')
+								English
+								@elseif(Session::get('browserLanguageWithOutLogin') == 'SWE')
+								Swedish
+								@endif
+							@endif
+						</p></h2>
+						@if(Auth::check())
 						    <fieldset data-role="controlgroup">
 						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2a" value="ENG" @if(Auth::user()->language == 'ENG') checked="checked" @else checked="checked" @endif>
 						        <label for="radio-choice-v-2a">English</label>
 						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2b" value="SWE" @if(Auth::user()->language == 'SWE') checked="checked" @endif>
 						        <label for="radio-choice-v-2b">Swedish</label>
-						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2c" value="GER" >
-						        <label for="radio-choice-v-2c" @if(Auth::user()->language == 'GER') checked="checked" @endif>German</label>
 						    </fieldset>
-						
+						@else
+							<fieldset data-role="controlgroup">
+						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2a" value="ENG" @if(Session::get('browserLanguageWithOutLogin') == 'ENG') checked="checked" @else checked="checked" @endif>
+						        <label for="radio-choice-v-2a">English</label>
+						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2b" value="SWE" @if(Session::get('browserLanguageWithOutLogin') == 'SWE') checked="checked" @endif>
+						        <label for="radio-choice-v-2b">Swedish</label>
+						    </fieldset>
+						@endif
 					</li>	
 					<!-- <li><a href="#">Unit <p class="ui-li-aside">Meter</p></a></li>  -->
-					<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Range') }}<p class="ui-li-aside">{{Auth::user()->range}} Km</p></h2>
+					<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Range') }}
+						<p class="ui-li-aside">
+							@if(Auth::check())
+								{{Auth::user()->range}} Km
+							@else
+								{{Session::get('rang')}}
+							@endif
+						</p></h2>
 					<p>
 						<div data-role="rangeslider">
-						    <input type="range" name="range-1b" id="range-1b" min="3" max="10" value="{{Auth::user()->range}}">
+							@if(Auth::check())
+						   		<input type="range" name="range-1b" id="range-1b" min="3" max="10" value="{{Auth::user()->range}}">
+						   	@else
+						   		<input type="range" name="range-1b" id="range-1b" min="3" max="10" value="{{Session::get('rang')}}">
+						   	@endif
 						</div>
 					</p>
 					</li> 

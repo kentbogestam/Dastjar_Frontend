@@ -8,23 +8,7 @@
     <script src="{{asset('notifactionJs/serviceWorker.js')}}"></script>
     <script src="{{asset('browserShortcutJs/comlink.global.js')}}"></script>
     <script src="{{asset('browserShortcutJs/messagechanneladapter.global.js')}}"></script>
-    
-     <script>
-          $(document).ready(function () {
-              App42.setEventBaseUrl("https://analytics.shephertz.com/cloud/1.0/");
-              App42.setBaseUrl("https://api.shephertz.com/cloud/1.0/");
 
-              App42.initialize("cc9334430f14aa90c623aaa1dc4fa404d1cfc8194ab2fd144693ade8a9d1e1f2","297b31b7c66e206b39598260e6bab88e701ed4fa891f8995be87f786053e9946");
-              App42.enableEventService(true);
-              var userName;
-              new Fingerprint2().get(function(result, components){
-                  userName = "{{ Auth::user()->email}}";
-                  console.log("Username : " + userName); //a hash, representing your device fingerprint
-                  App42.setLoggedInUser(userName);
-                  getDeviceToken();
-              });
-          });
-      </script>
 @endsection
 @section('content')
 	<div data-role="header" class="header" id="nav-header"  data-position="fixed"><!--  -->
@@ -32,7 +16,7 @@
 			<div class="logo">
 				<div class="inner-logo">
 					<img src="{{asset('images/logo.png')}}">
-					<span>{{ Auth::user()->name}}</span>
+					@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
 				</div>
 			</div>
 			<a class="ui-btn-right map-btn user-link" onClick="makeRedirection('{{url('search-map-eatnow')}}')"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
@@ -72,35 +56,8 @@
 			</div>
 			<span>{{ __('messages.Send') }}</span>
 		</a></div>
-		@if(count(Auth::user()->paidOrderList) == 0)
-			<div class="ui-block-c">
-				<a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('images/icons/select-store_05.png')}}">
-					</div>
-					<span>{{ __('messages.Order') }}</span>
-				</a>
-			</div>
-		@else
-		<div class="ui-block-c order-active">
-	    	<a  class="ui-shadow ui-corner-all icon-img ui-btn-inline ordersec" data-ajax="false">
-		        <div class="img-container">
-		       		<!-- <img src="images/icons/select-store_05.png"> -->
-		        	<img src="{{asset('images/icons/select-store_05-active.png')}}">
-		        </div>
-	        	<span>{{ __('messages.Order') }}<span class="order-number">{{count(Auth::user()->paidOrderList)}}</span></span>
-	        </a>
-	        <div id="order-popup" data-theme="a">
-		      <ul data-role="listview">
-		      	@foreach(Auth::user()->paidOrderList as $order)
-					<li>
-						<a href="{{ url('order-view/'.$order->order_id) }}" data-ajax="false">{{ __('messages.Order id') }} - {{$order->customer_order_id}}</a>
-					</li>
-				@endforeach
-		      </ul>
-		    </div>
-	    </div>
-		@endif
+		@include('orderQuantity')
+		
 
 		<div class="ui-block-d">
 			<a href = "{{url('user-setting')}}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
@@ -110,6 +67,14 @@
 			</a>
 		</div>
 		</div>
+	</div>
+	<div id="login-popup" style="display: none;" class="login-popup" data-theme="a">
+	  <div class="inner-popup">
+	        <div id = "cancel-popup" class="cross"><img src="{{asset('images/icons/cross.png')}}"></div>
+	        <div class="pop-body">
+	           <p>Please allow browser location.</p>
+	        </div>
+	  </div>
 	</div>
 
 
@@ -121,12 +86,18 @@
 
 <script type="text/javascript">
 
-	 $(".ordersec").click(function(){
-	    $("#order-popup").toggleClass("hide-popup");
-	 });
+	$("#cancel-popup").click(function () {
+      $('#login-popup').hide();
+      var extraclass = document.body;
+	  extraclass.classList.add("disableClass");
+    });
 
-var list = Array();
-var totalCount = 0;
+	$(".ordersec").click(function(){
+		$("#order-popup").toggleClass("hide-popup");
+	});
+
+	var list = Array();
+	var totalCount = 0;
 
 	function getCookie(cname) {
 	    var name = cname + "=";
@@ -152,7 +123,7 @@ var totalCount = 0;
 
 	$(document).on("scrollstop", function (e) {
 		var tempCount = 10;
-    var activePage = $.mobile.pageContainer.pagecontainer("getActivePage"),
+    	var activePage = $.mobile.pageContainer.pagecontainer("getActivePage"),
         screenHeight = $.mobile.getScreenHeight(),
         contentHeight = $(".ui-content", activePage).outerHeight(),
         header = $(".ui-header", activePage).outerHeight() - 1,
@@ -166,153 +137,292 @@ var totalCount = 0;
     	
     	//if in future this page will get it, then add this condition in and in below if activePage[0].id == "home" 
     	if (scrolled >= scrollEnd) {
-        console.log(list);
-        $.mobile.loading("show", {
-        text: "loading more..",
-        textVisible: true,
-        theme: "b"
-    	});
-    	setTimeout(function () {
-         addMore(tempCount);
-         tempCount += 10;
-         $.mobile.loading("hide");
-     },500);
+	        console.log(list);
+	        $.mobile.loading("show", {
+	        text: "loading more..",
+	        textVisible: true,
+	        theme: "b"
+	    	});
+	    	setTimeout(function () {
+		        addMore(tempCount);
+		        tempCount += 10;
+		        $.mobile.loading("hide");
+		    },500);
     	}
-});
+	});
 
 	function  addMore(len){
 		var liItem = "";
-	            	var url = "{{url('restro-menu-list/')}}";
-	            	var limit = 0;
-	            	var countCheck = 1;
- if(totalCount > 10){
- 	limit = 10;
- 	totalCount -= 10;
- } else if(totalCount<=0){
- 	return;
- } else{
- 	limit = totalCount;
- 	totalCount -= totalCount;
- }
+    	var url = "{{url('restro-menu-list/')}}";
+    	var limit = 0;
+    	var countCheck = 1;
+		if(totalCount > 10){
+			limit = 10;
+			totalCount -= 10;
+		} else if(totalCount<=0){
+			return;
+		} else{
+			limit = totalCount;
+			totalCount -= totalCount;
+		}
 
 
-	          for (var i=len;i<len + 10;i++){
-	          
-	          	if(countCheck>limit){
-	          		break;
-	          	}
+		for (var i=len;i<len + 10;i++){
 
-	          	liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
-	          	liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+list[i]['store_id']+" data-ajax='false'>";
-	          	liItem += "<img src="+"'"+list[i]["store_image"]+"'"+">";
-	          	liItem += "<h2>"+list[i]["store_name"]+"</h2>";
-	          	liItem += "<p>";
-	          	
-	          	for (var j=0;j<list[i]["products"].length;j++){
-	          		//console.log(list[i]["products"][j]);
-	          		;
-	          		if(j <= 1){
-	          			liItem += list[i]["products"][j]["product_name"];
-	          		}   
-	          		if(list[i]["products"].length > 1 && j <= 1){
-	          			liItem += ",&nbsp;";
-	          		}
-	          	}
+			if(countCheck>limit){
+				break;
+			}
+			if(checkTime(temp[i]["store_open_close_day_time"])){
+				
+				liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
+				liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+list[i]['store_id']+" data-ajax='false'>";
+				liItem += "<img src="+"'"+list[i]["store_image"]+"'"+">";
+				liItem += "<h2>"+list[i]["store_name"]+"</h2>";
+				liItem += "<p>";
+				
+				for (var j=0;j<list[i]["products"].length;j++){
+					//console.log(list[i]["products"][j]);
+					;
+					if(j <= 1){
+						liItem += list[i]["products"][j]["product_name"];
+					}   
+					if(list[i]["products"].length > 1 && j <= 1){
+						liItem += ",&nbsp;";
+					}
+				}
 
-	      		if(list[i]["products"].length > 1){
-	      			liItem += "&nbsp;&more";
-	      		} 
+				if(list[i]["products"].length > 1){
+					liItem += "&nbsp;&more";
+				} 
+			liItem += "</p>";
+				liItem += "<div class='ui-li-count ui-body-inherit'>";
+				liItem += "<span>"+list[i]["distance"].toFixed(2)+ "&nbsp;Km" + "</span>";
+
+				liItem += "</div></a></li>";
+
+			}
+			countCheck++;
+		}
+		$("#companyDetailContianer").append(liItem);	
+	}
+
+	function add(){
+		var d = new Date();
+		console.log(d);
+		$("#browserCurrentTime").val(d);
+		$.get("{{url('lat-long')}}", { lat: getCookie("latitude"), lng : getCookie("longitude"), currentdateTime : d, browserVersion : getCookie("browserVersion")}, 
+    	function(returnedData){
+
+	    	var count = 10;
+	    	console.log(returnedData["data"]);
+	    	var url = "{{url('restro-menu-list/')}}";
+			var temp = returnedData["data"];
+			list = temp;
+			var liItem = "";
+			if(temp.length != 0){
+				totalCount = temp.length;
+				if(temp.length < count){
+					count = temp.length
+				}
+				totalCount -= 10;
+
+				for (var i=0;i<count;i++){
+					if(checkTime(temp[i]["store_open_close_day_time"])){
+
+						liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
+						liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+temp[i]['store_id']+" data-ajax='false'>";
+						liItem += "<img src="+"'"+temp[i]["store_image"]+"'"+">";
+						liItem += "<h2>"+temp[i]["store_name"]+"</h2>";
+						liItem += "<p>";
+						
+						for (var j=0;j<temp[i]["products"].length;j++){
+							//console.log(temp[i]["products"][j]);
+							;
+							if(j <= 1){
+								liItem += temp[i]["products"][j]["product_name"];
+							}   
+							if(temp[i]["products"].length > 1 && j <= 1){
+								liItem += ",&nbsp;";
+							}
+						}
+
+						if(temp[i]["products"].length > 1){
+							liItem += "&nbsp;&more";
+						} 
+						liItem += "</p>";
+						liItem += "<div class='ui-li-count ui-body-inherit'>";
+						liItem += "<span>"+temp[i]["distance"].toFixed(2)+ "&nbsp;Km" + "</span>";
+
+						liItem += "</div></a></li>";
+					}
+				}
+			}else{
+				liItem += "<div class='table-content'>";
+				liItem += "<p>";
+				liItem += '';
 				liItem += "</p>";
-	          	liItem += "<div class='ui-li-count ui-body-inherit'>";
-	          	liItem += "<span>"+list[i]["distance"].toFixed(2)+ "&nbsp;Km" + "</span>";
-
-	          	liItem += "</div></a></li>";
-	          	countCheck++;
-	          }
-	            $("#companyDetailContianer").append(liItem);	
+				liItem += "</div>";
+			}
+	  		$("#companyDetailContianer").append(liItem);
+		});	
 	}
 
 
+	$(function(){
+		var extraclass = document.body;
+		extraclass.classList.add("disableClass");
+		navigator.geolocation.getCurrentPosition(function(position) { 
+	    document.cookie="latitude=" + position.coords.latitude;
+	    document.cookie="longitude=" + position.coords.longitude;
+	    var extraclass = document.body;
+			extraclass.classList.remove('disableClass');
+			//location.reload ();
+			add();
+	},function(error){
+	   $('.login-inner-section a').attr('href','javascript:void(0)');
+	   $('#login-popup').show();
+	    
+	});
 
-	 $(function(){
+	var d = new Date();
+	console.log(d);
+	$("#browserCurrentTime").val(d);
+	console.log(getCookie("latitude"));
+	console.log(getCookie("longitude"));
+	console.log(getCookie("browserVersion"));
 
-			var d = new Date();
-			console.log(d);
-			$("#browserCurrentTime").val(d);
-			console.log(getCookie("latitude"));
-			console.log(getCookie("longitude"));
-			console.log(getCookie("browserVersion"));
+	$.get("{{url('checkUserLogin')}}", 
+	    function(returnedData){
+	    	var temp = returnedData["data"];
+	    	if(temp){
+	    		 document.cookie="userId=" + temp;
+	    		localStorage.setItem("userId", temp);
+	    		 console.log('loginId='+localStorage.getItem("userId"));
+	    	}else{
+	    		if(localStorage.getItem("userId")){
+	    			console.log('logoutloginId='+localStorage.getItem("userId"));
+	    			$.get("{{url('userLogin')}}", { usetId : localStorage.getItem("userId")}, 
+	    				function(returnedData){
+	    					console.log(returnedData["data"]);
+	    					location.reload();
+	    				});
+	    		}else{
+	    			console.log('logout');
+	    		}
+	    	}
+	    });
 
 	$.get("{{url('lat-long')}}", { lat: getCookie("latitude"), lng : getCookie("longitude"), currentdateTime : d, browserVersion : getCookie("browserVersion")}, 
-    function(returnedData){
+	    function(returnedData){
 
-    	var count = 10;
+	    	var count = 10;
+	    	console.log(returnedData["data"]);
+	    	var url = "{{url('restro-menu-list/')}}";
+			var temp = returnedData["data"];
+			list = temp;
+			var liItem = "";
+			if(temp.length != 0){
+				totalCount = temp.length;
 
-    	console.log(returnedData["data"]);
-    	var url = "{{url('restro-menu-list/')}}";
+				if(temp.length < count){
+					count = temp.length
+				}
 
-          var temp = returnedData["data"];
-          list = temp;
-          //console.log(temp);
-           //console.log(temp.length);
-          var liItem = "";
-	          if(temp.length != 0){
-	          	totalCount = temp.length;
+				totalCount -= 10;
 
-	          	if(temp.length < count){
-	          		count = temp.length
-	          	}
+				for (var i=0;i<count;i++){
+					if(checkTime(temp[i]["store_open_close_day_time"])){
+						liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
+						liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+temp[i]['store_id']+" data-ajax='false'>";
+						liItem += "<img src="+"'"+temp[i]["store_image"]+"'"+">";
+						liItem += "<h2>"+temp[i]["store_name"]+"</h2>";
+						liItem += "<p>";
+						
+						for (var j=0;j<temp[i]["products"].length;j++){
+							//console.log(temp[i]["products"][j]);
+							;
+							if(j <= 1){
+								liItem += temp[i]["products"][j]["product_name"];
+							}   
+							if(temp[i]["products"].length > 1 && j <= 1){
+								liItem += ",&nbsp;";
+							}
+						}
 
-	          	totalCount -= 10;
+						if(temp[i]["products"].length > 1){
+							liItem += "&nbsp;&more";
+						} 
+						liItem += "</p>";
+						liItem += "<div class='ui-li-count ui-body-inherit'>";
+						liItem += "<span>"+temp[i]["distance"].toFixed(2)+ "&nbsp;Km" + "</span>";
 
-	          for (var i=0;i<count;i++){
-	          	//console.log(temp[i]["store_id"]);
-
-	          	liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
-	          	liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+temp[i]['store_id']+" data-ajax='false'>";
-	          	liItem += "<img src="+"'"+temp[i]["store_image"]+"'"+">";
-	          	liItem += "<h2>"+temp[i]["store_name"]+"</h2>";
-	          	liItem += "<p>";
-	          	
-	          	for (var j=0;j<temp[i]["products"].length;j++){
-	          		//console.log(temp[i]["products"][j]);
-	          		;
-	          		if(j <= 1){
-	          			liItem += temp[i]["products"][j]["product_name"];
-	          		}   
-	          		if(temp[i]["products"].length > 1 && j <= 1){
-	          			liItem += ",&nbsp;";
-	          		}
-	          	}
-
-	      		if(temp[i]["products"].length > 1){
-	      			liItem += "&nbsp;&more";
-	      		} 
+						liItem += "</div></a></li>";
+					}
+				}
+			}else{
+				liItem += "<div class='table-content'>";
+				liItem += "<p>";
+				liItem += '';
 				liItem += "</p>";
-	          	liItem += "<div class='ui-li-count ui-body-inherit'>";
-	          	liItem += "<span>"+temp[i]["distance"].toFixed(2)+ "&nbsp;Km" + "</span>";
-
-	          	liItem += "</div></a></li>";
-	          }
-        }else{
-
-        	liItem += "<div class='table-content'>";
-        	liItem += "<p>";
-        	liItem += 'Restaurants are not available';
-        	liItem += "</p>";
-        	liItem += "</div>";
-          }
-          	//console.log(liItem);
-
-          
-
-          $("#companyDetailContianer").append(liItem);	
-
-          
-
+				liItem += "</div>";
+			}
+	        //$("#companyDetailContianer").append(liItem);
 		});
 	});
 
+	function checkTime($time){
+		var d = new Date();
+		var currentTime = d.toLocaleTimeString();
+		var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+		var todayDay = days[d.getDay()];
+		// console.log(currentTime);
+		// console.log('todayDay'+todayDay);
+		var time = $time;
+		var day = time.split(' :: ')
+		var checkday = time.split(',')
+		if(day[0] == 'All'){
+			var timeSplit = day[1].split(' to ');
+			var openTime = timeSplit[0];
+			var closeTime = timeSplit[1];
+			if(openTime < currentTime && closeTime > currentTime){
+				return true;
+			}else{
+				return false;
+			}
+		}else{
+			if(day.length == 2){
+				if(day[0] == todayDay){
+					var timeSplit = day[1].split(' to ');
+					var openTime = timeSplit[0];
+					var closeTime = timeSplit[1];
+					if(openTime < currentTime && closeTime > currentTime){
+						return true;
+					}else{
+						return false;
+					}
+				}else{
+					return false;
+				}
+			}else{
+				for(i=0;i<checkday.length;i++){
+					var getDay = checkday[i].split(' :: ');
+					if(getDay[0] == todayDay){
+						var timeSplit = getDay[1].split(' to ');
+						var openTime = timeSplit[0];
+						var closeTime = timeSplit[1];
+						if(openTime < currentTime && closeTime > currentTime){
+							return true;
+						}else{
+							return false;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+
 </script>
 
+<script src="{{asset('locationJs/currentLocation.js')}}"></script>
 @endsection

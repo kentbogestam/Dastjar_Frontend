@@ -11,7 +11,7 @@
 		<div class="order_background setting_head_container">
 			<div class="ui-grid-b center">
 				<div class="ui-block-a">
-					<a href="{{ URL::to('/admin') }}" class="back_btn_link ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline right_arrow" data-ajax="false">
+					<a href="{{ URL::to('kitchen/store') }}" class="back_btn_link ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline right_arrow" data-ajax="false">
 					<img src="{{asset('kitchenImages/backarrow.png')}}" width="11px">
 				</a>
 				</div>

@@ -107,7 +107,8 @@ class AdminLoginController extends Controller
     public function logout(Request $request){
 
         $this->guard()->logout();
-
+        Session::forget('storeId');
+        Session::forget('checkStore');
         //$request->session()->flush();
 
         //$request->session()->regenerate();
