@@ -100,14 +100,13 @@ class HomeController extends Controller
 
             if(!empty($request->input())){
                 $data = $request->input();
-
                 $request->session()->put('current_date_time', $data['currentdateTime']);
                 $pieces = explode(" ", $request->session()->get('current_date_time'));
                 $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
                 $currentTime = $pieces[4];
                 $todayDay = $pieces[0];
                 
-                if($userDetail->customer_latitude == null && $userDetail->customer_longitude == null){
+                if($userDetail->customer_latitude == null || $userDetail->customer_longitude == null || $userDetail->range){
 
                     DB::table('customer')->where('id', Auth::id())->update([
                                 'customer_latitude' => $data['lat'],
