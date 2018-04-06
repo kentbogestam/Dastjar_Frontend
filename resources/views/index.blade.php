@@ -427,11 +427,7 @@
 				}
 			}
 		}
-<<<<<<< HEAD
-		return false;                        
-=======
 		return false;
->>>>>>> 3f2227ba68f9ff70f90b3c34c7bd0c70d523d5bd
 	}
 
 
