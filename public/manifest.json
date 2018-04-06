@@ -6,8 +6,8 @@
   "permissions": ["gcm", "storage", "notifications"],
   "gcm_sender_id": "826006507359",
 
-  "name": "DastJar",
-  "short_name": "DastJar",
+  "name": "anar",
+  "short_name": "anar",
   "icons": [{
         "src": "images/touch/Dastjar_128.png",
         "type": "image/png",
