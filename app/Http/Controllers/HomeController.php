@@ -91,6 +91,7 @@ class HomeController extends Controller
     }
 
     public function userLatLong(Request $request){ 
+        $request->session()->forget('order_date');
         if(Auth::check()){
 
             $request->session()->forget('current_date_time');
