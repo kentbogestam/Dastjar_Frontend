@@ -105,13 +105,11 @@ class HomeController extends Controller
                 $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
                 $currentTime = $pieces[4];
                 $todayDay = $pieces[0];
-                
-                if($userDetail->customer_latitude == null || $userDetail->customer_longitude == null || $userDetail->range){
-
+                if($userDetail->customer_latitude == null || $userDetail->customer_longitude == null || $userDetail->range == null){
                     DB::table('customer')->where('id', Auth::id())->update([
                                 'customer_latitude' => $data['lat'],
                                 'customer_longitude' => $data['lng'],
-                                'range' => '6',
+                                'range' => 6,
                                 'language' => 'ENG',
                                 'web_version' => $versionDetail->version,
                                 'browser' => $data['browserVersion'],
