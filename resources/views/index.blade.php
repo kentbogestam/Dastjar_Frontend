@@ -8,8 +8,12 @@
     <script src="{{asset('notifactionJs/serviceWorker.js')}}"></script>
     <script src="{{asset('browserShortcutJs/comlink.global.js')}}"></script>
     <script src="{{asset('browserShortcutJs/messagechanneladapter.global.js')}}"></script>
-    <script type="text/javascript"> swJs();</script>
+     <script>
 
+	  $(document).ready(function () {
+	        registerSwjs();
+	  });
+</script>
 @endsection
 @section('content')
 	<div data-role="header" class="header" id="nav-header"  data-position="fixed"><!--  -->
