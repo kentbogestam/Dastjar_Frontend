@@ -25,9 +25,7 @@
 				        <span id="date-value1-2" value = ""></span>
 				        <input type="hidden" id="date-value1-23" name="dateorder" value="" />
 		    		</div>
-		    		<div class="go-btn">
-		    			<input type="button" value="{{ __('messages.Go') }}" id="ss"/>
-		    		</div>
+		    		
 			</div>
 		</form>
 		<div data-role="footer" class="footer" data-position="fixed" data-tap-toggle="false">
@@ -109,6 +107,8 @@
 		
 	})
 	  $('.perfect-datetimepicker').append("<p class='error_time'>Please fill time </p>");
+	var lar_r =   $('.tt tbody').find('tr:first')
+	var bb = $(lar_r).append('<td class=""><div class="go-btn"><input type="button" value="{{ __('messages.Go') }}" id="ss"/></div></td>');
 	</script>
 	<style type="text/css">
 		.error_time{color: red; font-size: 14px; text-align: center;margin-top: 15px; display: none;}
