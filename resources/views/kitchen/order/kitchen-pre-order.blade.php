@@ -245,7 +245,7 @@
 			if(flag){
 				$("#form").submit();
 			} else{
-				alert("Please fill some value");	
+				alert("Please select item from the menu");	
 				e.preventDefault();
 			}
 		});
