@@ -563,20 +563,23 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
     border-radius: 5px;
 }
 .go-btn{
-   margin: 1.5em 0.5em;
+   margin: 0;
    text-align: right;
+   display: inline-block;
 }
 .go-btn .ui-btn{
   text-align: right; display: inline-block;background:#c2444c;
   color: #fff;
-    padding: 0.7em 1em;
-    border-radius: 10px !important;
-    opacity: 1;
-    font-size: .9em;
-    width: auto;
-    position: relative;
-    text-indent: unset;
+  padding: 1.4em 1.5em;
+  margin:0;
+  border-radius: 10px !important;
+  opacity: 1;
+  font-size: .9em;
+  width: auto;
+  position: relative;
+  text-indent: unset;
 }
+.perfect-datetimepicker table.tt input{border: none !important; height: auto; width: auto;}
 .go-btn input[type="button"]{
 
 /*  background:#c2444c;
