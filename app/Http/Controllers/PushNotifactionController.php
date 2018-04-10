@@ -104,10 +104,12 @@ class PushNotifactionController extends Controller
 	
     	if($message == 'orderDeliver'){
     		$url = env('APP_URL').'/public/deliver-notifaction/'.$orderID;
-    		$message = "{'alert':'Your Order Deliver.','badge':1,'sound':'default','Url':" ."'". $url."'" . "}";
+            $message = "{'alert': 'Your Order Deliver.','_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': 'Your Order Deliver.','type':'openUrl','content':" ."'". $url."'" . "}}";
+    		//$message = "{'alert':'Your Order Deliver.','badge':1,'sound':'default','Url':" ."'". $url."'" . "}";
     	}else{
     		$url = env('APP_URL').'/public/ready-notifaction/'.$orderID;
-    		$message = "{'alert':'Your Order Ready.','badge':1,'sound':'default','Url':" ."'". $url."'" . "}";
+            $message = "{'alert': 'Your Order Deliver.','_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': 'Your Order Deliver.','type':'openUrl','content':" ."'". $url."'" . "}}";
+    		//$message = "{'alert':'Your Order Ready.','badge':1,'sound':'default','Url':" ."'". $url."'" . "}";
     	}
     	//dd(Config::get('app.php.varname'));
     	//dd(env('APP_URL').'/ready-notifaction/'.$orderID);
