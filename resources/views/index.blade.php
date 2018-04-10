@@ -8,12 +8,43 @@
     <script src="{{asset('notifactionJs/serviceWorker.js')}}"></script>
     <script src="{{asset('browserShortcutJs/comlink.global.js')}}"></script>
     <script src="{{asset('browserShortcutJs/messagechanneladapter.global.js')}}"></script>
+
+    <script src="{{asset('addToHomeIphoneJs/addtohomescreen.js')}}"></script>
+    <script type="text/javascript">
+	  navigator.sayswho= (function(){
+	    var ua= navigator.userAgent, tem, 
+	    M= ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+	    if(/trident/i.test(M[1])){
+	        tem=  /\brv[ :]+(\d+)/g.exec(ua) || [];
+	        return 'IE '+(tem[1] || '');
+	    }
+	    if(M[1]=== 'Chrome'){
+	        tem= ua.match(/\b(OPR|Edge)\/(\d+)/);
+	        if(tem!= null) return tem.slice(1).join(' ').replace('OPR', 'Opera');
+	    }
+	    M= M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
+	    if((tem= ua.match(/version\/(\d+)/i))!= null) M.splice(1, 1, tem[1]);
+
+	    console.log("browserVersion=" + M.join(' '));
+	    var browserVersion = M.join(' ');
+	    var getBrowser = browserVersion.split(" ");
+	    var browser = getBrowser[0];
+	    document.cookie="browser=" + browser;
+	    document.cookie="browserVersion=" + M.join(' ');
+	    var string = M.join(' ');
+	    string = string.split(" ");
+	    if(string[0] == 'Safari'){
+	     $('#facebook-hide').hide();
+	     $('#google-hide').hide();
+	    }
+	})();
+	</script>
      <script>
 
 	  $(document).ready(function () {
 	        registerSwjs();
 	  });
-</script>
+	</script>
 @endsection
 @section('content')
 	<div data-role="header" class="header" id="nav-header"  data-position="fixed"><!--  -->
@@ -488,6 +519,36 @@
 		return false;
 	}
 
+</script>
+
+<script type="text/javascript">
+	function getCookie(cname) {
+	    var name = cname + "=";
+	    var decodedCookie = decodeURIComponent(document.cookie);
+	    var ca = decodedCookie.split(';');
+	    for(var i = 0; i <ca.length; i++) {
+	        var c = ca[i];
+	        while (c.charAt(0) == ' ') {
+	            c = c.substring(1);
+	        }
+	        if (c.indexOf(name) == 0) {
+	            return c.substring(name.length, c.length);
+	        }
+	    }
+	    return "";
+	}
+	if(getCookie("browser") == 'Safari'){
+		console.log('Iphone');
+		var ath = addToHomescreen({
+		    debug: 'ios',           // activate debug mode in ios emulation
+		    skipFirstVisit: false,	// show at first access
+		    startDelay: 0,          // display the message right away
+		    lifespan: 0,            // do not automatically kill the call out
+		    displayPace: 0,         // do not obey the display pace
+		    privateModeOverride: true,	// show the message in private mode
+		    maxDisplayCount: 0      // do not obey the max display count
+		});
+	}
 </script>
 
 <script src="{{asset('locationJs/currentLocation.js')}}"></script>
