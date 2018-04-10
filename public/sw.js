@@ -129,7 +129,7 @@ let version = '0.6.2';
 self.addEventListener('install', e => {
   let timeStamp = Date.now();
   e.waitUntil(
-    caches.open('dastjar').then(cache => {
+    caches.open('anar').then(cache => {
       return cache.addAll([
         `/`,
         // `/cloneAddtohomescreen/index.html?timestamp=${timeStamp}`,
