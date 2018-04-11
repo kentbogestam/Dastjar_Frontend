@@ -29,6 +29,7 @@
 	    var browserVersion = M.join(' ');
 	    var getBrowser = browserVersion.split(" ");
 	    var browser = getBrowser[0];
+	    document.cookie="iphonePopupcount=" + 1;
 	    document.cookie="browser=" + browser;
 	    document.cookie="browserVersion=" + M.join(' ');
 	    var string = M.join(' ');
@@ -537,8 +538,11 @@
 	    }
 	    return "";
 	}
-	if(getCookie("browser") == 'Safari'){
-		console.log('Iphone');
+	var count = getCookie("iphonePopupcount") + getCookie("iphonePopupcountIncrease");
+	console.log('count='+count);
+	if(getCookie("browser") == 'Safari' && count == 1){
+		console.log('iphonePopupcount='+getCookie("iphonePopupcount"));
+		document.cookie="iphonePopupcountIncrease=" + 2;
 		var ath = addToHomescreen({
 		    debug: 'ios',           // activate debug mode in ios emulation
 		    skipFirstVisit: false,	// show at first access
