@@ -173,7 +173,7 @@
 							<h3 class="blue_link">{{ __('messages.use the QR-code below') }}</h3>
 						</div>
 							<div class="scan_code">
-								<img src="http://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=https://dastjar.com/anar/public/">
+								<img src="https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=https://dastjar.com/anar/public/">
 							</div>
 					</div>
 				</div>
