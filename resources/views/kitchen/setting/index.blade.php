@@ -17,7 +17,7 @@
 				</div>
 				<div class="ui-block-b middle_section">
 					<a class="title_name ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					{{ __('messages.Setting') }}
+					{{ __('messages.Settings') }}
 				</a>
 				</div>
 				<div class="ui-block-c">
@@ -57,11 +57,9 @@
 				        <label for="radio-choice-v-2a">English</label>
 				        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2b" value="SWE" @if(Auth::guard('admin')->user()->language == 'SWE') checked="checked" @endif>
 				        <label for="radio-choice-v-2b">Swedish</label>
-				        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2c" value="GER">
-				        <label for="radio-choice-v-2c"  @if(Auth::guard('admin')->user()->language == 'GER') checked="checked" @endif>German</label>
 				    </fieldset>
 				</li>
-				<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">Text To Speech <span>
+				<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.Text To Speech") }} <span>
 					@if(Auth::guard('admin')->user()->text_speech == 0)
 					Off
 					@elseif(Auth::guard('admin')->user()->text_speech == 1)

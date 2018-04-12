@@ -65,4 +65,5 @@ return [
     'Current Position' => 'Nuvarande position', 
     'Go' => 'Gå',
     'Enter a Location' => 'Ange en plats',
+    'Text To Speech' => 'Text till tal',
 ];

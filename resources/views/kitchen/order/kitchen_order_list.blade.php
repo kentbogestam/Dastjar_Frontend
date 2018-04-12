@@ -35,7 +35,7 @@
 			  		<th data-priority="2">{{ __('messages.Orders') }}</th>
 			   		<th>{{ __('messages.Amount') }}</th> 
 			   		<th data-priority="3">{{ __('messages.Product') }}</th>
-			    	<th data-priority="1">{{ __('messages.Comment') }}</th> 
+			    	<th data-priority="1">{{ __('messages.Comments') }}</th> 
 			    	<th data-priority="5">{{ __('messages.Date and Time') }}</th>
 			     	<th data-priority="3">{{ __('messages.Started') }}</th>
 			      	<th data-priority="3">{{ __('messages.Ready') }}</th>

@@ -98,10 +98,10 @@
 		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow table-stripe ui-responsive table_size" >
 			<thead>
 				<tr class="ui-bar-d">
-					<th data-priority="2">Order No</th>
-			   		<th>Amount</th> 
-			   		<th data-priority="3">Product</th>
-			    	<th data-priority="1">Comment</th> 
+					<th data-priority="2">{{ __('messages.Orders') }}</th>
+			   		<th>{{ __('messages.Amount') }}</th> 
+			   		<th data-priority="3">{{ __('messages.Product') }}</th>
+			    	<th data-priority="1">{{ __('messages.Comments') }}</th> 
 			    </tr>
 			</thead>
 			<tbody id="specificOrderDetailContianer">

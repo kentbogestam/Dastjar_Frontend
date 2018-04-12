@@ -43,7 +43,7 @@
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/order-img.png')}}">
 					</div>
-					<span>{{ __('messages.Order') }}<span class="order_number">{{count(Auth::guard('admin')->user()->kitchenPaidOrderList)}}</span></span>
+					<span>{{ __('messages.Orders') }}<span class="order_number">{{count(Auth::guard('admin')->user()->kitchenPaidOrderList)}}</span></span>
 				</a></div>
 				<!-- <div class="ui-block-b"><a onClick="makeRedirection('{{url('kitchen/selectOrder-dateKitchen')}}')" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">
@@ -64,7 +64,7 @@
         <ul data-role="listview" data-inset="true" style="min-width:210px;">
             <!-- <li data-role="list-divider">Choose an action</li> -->
             @foreach(Auth::guard('admin')->user()->kitchenPaidOrderList as $order)
-            	<li><a href="{{ url('kitchen/kitchen-order-view/'.$order->order_id) }}">{{ __('messages.Order') }} - {{$order->customer_order_id}}</a></li>
+            	<li><a href="{{ url('kitchen/kitchen-order-view/'.$order->order_id) }}">{{ __('messages.Orders') }} - {{$order->customer_order_id}}</a></li>
             @endforeach
         </ul>
 	</div>

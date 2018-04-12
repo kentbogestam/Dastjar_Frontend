@@ -64,5 +64,7 @@ return [
     'Main Admin'  => 'Main Admin', 
     'Current Position' => 'Current Position',
     'Enter a Location' => 'Enter a Location',
+    'Comments' => 'Comment',
+    'Text To Speech' => 'Text To Speech',
 
 ];
