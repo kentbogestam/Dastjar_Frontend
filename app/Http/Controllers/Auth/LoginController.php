@@ -79,8 +79,11 @@ class LoginController extends Controller
             DB::table('customer')->where('fac_id', $userSocial->id)->update([
                         'language' => $lang,
                     ]);
-            return redirect()->action('OrderController@withOutLogin');
-            //return redirect()->action('HomeController@index');
+            if(Session::get('orderData') == null ){
+              return redirect()->action('HomeController@index');
+            }else{
+              return redirect()->action('OrderController@withOutLogin');
+            }
         }else{
             $lang;
             if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){

@@ -228,6 +228,7 @@ class OrderController extends Controller
                 $request->session()->put('paymentAmount', $order->order_total);
                 $request->session()->put('OrderId', $order->order_id);
                 $request->session()->put('stripeAccount', $companyUserDetail->stripe_user_id);
+                Session::forget('orderData');
                  return view('order.paymentIndex', compact('order','orderDetails'));
             }else{
                 return view('order.index', compact('order','orderDetails'));
