@@ -16,7 +16,7 @@ return [
     'Range'   => 'Avstånd',
     'OK'   => 'OK', 
     'Menu is not available in your selected language.'   => 'Menyn är inte tillgänglig på ditt valda språk.',
-    'Add Comment'   => 'Lägg till kommentar', 
+    'Add Comments'   => 'Lägg till kommentar', 
     'Cancel'   => 'Avbryt',
     'Submit'   => 'Klar',
     'Menu is not available.'   => 'Menyn är inte tillgänglig.',
