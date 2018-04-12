@@ -22,9 +22,9 @@
 			
 			<div class="map-input">
                 @if(Auth::check())
-				    <input type="text" name="street_address" id="pac-input" class="" placeholder="Enter a Location*" value="{{ Session::get('with_login_address')}}" required placeholder="Address*">
+				    <input type="text" name="street_address" id="pac-input" class="" placeholder="{{ __('messages.Enter a Location') }}*" value="{{ Session::get('with_login_address')}}" required placeholder="Address*">
                 @else
-                    <input type="text" name="street_address" id="pac-input" class="" placeholder="Enter a Location*" value="{{ Session::get('address')}}" required placeholder="Address*">
+                    <input type="text" name="street_address" id="pac-input" class="" placeholder="{{ __('messages.Enter a Location') }}*" value="{{ Session::get('address')}}" required placeholder="Address*">
                 @endif
 			</div>
             <div id="map" style="height: 665px;">

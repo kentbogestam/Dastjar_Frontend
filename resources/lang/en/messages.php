@@ -63,5 +63,6 @@ return [
     'Logout'  => 'Logout',         
     'Main Admin'  => 'Main Admin', 
     'Current Position' => 'Current Position',
+    'Enter a Location' => 'Enter a Location',
 
 ];

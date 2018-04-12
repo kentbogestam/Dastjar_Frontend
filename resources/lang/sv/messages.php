@@ -64,4 +64,5 @@ return [
     'Restaurant name'  => 'Restaurant name', 
     'Current Position' => 'Nuvarande position', 
     'Go' => 'Gå',
+    'Enter a Location' => 'Ange en plats',
 ];
