@@ -5,7 +5,7 @@
 				<div class="img-container">
 					<img src="{{asset('images/icons/select-store_05.png')}}">
 				</div>
-				<span>{{ __('messages.Order') }}</span>
+				<span>{{ __('messages.Orders') }}</span>
 			</a>
 		</div>
 	@else
@@ -15,13 +15,13 @@
 	       		<!-- <img src="images/icons/select-store_05.png"> -->
 	        	<img src="{{asset('images/icons/select-store_05-active.png')}}">
 	        </div>
-        	<span>{{ __('messages.Order') }}<span class="order-number">{{count(Auth::user()->paidOrderList)}}</span></span>
+        	<span>{{ __('messages.Orders') }}<span class="order-number">{{count(Auth::user()->paidOrderList)}}</span></span>
         </a>
         <div id="order-popup" data-theme="a">
 	      <ul data-role="listview">
 	      	@foreach(Auth::user()->paidOrderList as $order)
 				<li>
-					<a href="{{ url('order-view/'.$order->order_id) }}" data-ajax="false">{{ __('messages.Order id') }} - {{$order->customer_order_id}}</a>
+					<a href="{{ url('order-view/'.$order->order_id) }}" data-ajax="false">{{ __('messages.Orders id') }} - {{$order->customer_order_id}}</a>
 				</li>
 			@endforeach
 	      </ul>
@@ -35,7 +35,7 @@
 		<div class="img-container">
 			<img src="{{asset('images/icons/select-store_05.png')}}">
 		</div>
-		<span>{{ __('messages.Order') }}</span>
+		<span>{{ __('messages.Orders') }}</span>
 	</a>
 </div>
 

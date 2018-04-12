@@ -9,7 +9,7 @@
 			<div data-role="navbar"> 
 				<ul> 
 			<li><a href="{{url('eat-now')}}" data-ajax="false" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
-			 <li><a data-ajax="false" class="ui-btn-active">{{ __('messages.Setting') }}</a></li>
+			 <li><a data-ajax="false" class="ui-btn-active">{{ __('messages.Settings') }}</a></li>
 
 			  <li class="done-btn" id="dataSave">  <input type="button" value="{{ __('messages.Done') }}" /></li> </ul>
 			</div><!-- /navbar -->

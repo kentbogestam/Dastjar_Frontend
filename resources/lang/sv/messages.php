@@ -63,4 +63,5 @@ return [
     'Logout'  => 'Logga ut',          
     'Restaurant name'  => 'Restaurant name', 
     'Current Position' => 'Nuvarande position', 
+    'Go' => 'Gå',
 ];
