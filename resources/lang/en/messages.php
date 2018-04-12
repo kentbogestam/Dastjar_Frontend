@@ -6,7 +6,7 @@ return [
     'Restaurant'  => 'Restaurant',
     'Send'  => 'Send',
     'Order'  => 'Order',
-    'Setting'  => 'Setting',
+    'Settings'  => 'Setting',
     'Order id'  => 'Order id',
     'Done'  => 'Done',
     'Setting updated successfully.'   => 'Setting updated successfully.',
