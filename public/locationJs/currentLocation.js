@@ -38,14 +38,14 @@ $(document).ready(function($) {
         }
     });
 
-    setInterval(ajaxCall, 20000);
+    //setInterval(ajaxCall, 20000);
 
 });
 
 
-var ajaxCall = function(){
-		$.get("checkDistance", { lat: lat, lng : lng},
-		function(returnedData){
-			console.log(returnedData);
-		});
-	}
+// var ajaxCall = function(){
+// 		$.get("checkDistance", { lat: lat, lng : lng},
+// 		function(returnedData){
+// 			console.log(returnedData);
+// 		});
+// 	}
