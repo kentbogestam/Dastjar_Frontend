@@ -141,7 +141,13 @@ class RegisterController extends Controller
         if(!empty($request->input())){
 
             $data = $request->input();
-            $user = User::where(['phone_number' => $data['mobileNo']])->first();
+            $afterRemoveFirstZeroNumber = substr($data['mobileNo'], 0, 1);
+            if($afterRemoveFirstZeroNumber == 0){
+                $number = substr($data['mobileNo'], -9);
+            }else{
+               $number =  $data['mobileNo'];
+            }
+            $user = User::where(['phone_number' => $number])->first();
             if($user){
                 //$afterRemoveFirstZeroNumber = substr($user->phone_number, -9);
                 $recipients = ['+'.$user->phone_number_prifix.$user->phone_number];
