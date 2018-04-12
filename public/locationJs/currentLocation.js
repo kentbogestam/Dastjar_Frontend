@@ -38,10 +38,9 @@ $(document).ready(function($) {
         }
     });
 
-    //setInterval(ajaxCall, 20000);
-
 });
 
+<<<<<<< HEAD
 
 // var ajaxCall = function(){
 // 		$.get("checkDistance", { lat: lat, lng : lng},
@@ -49,3 +48,5 @@ $(document).ready(function($) {
 // 			console.log(returnedData);
 // 		});
 // 	}
+=======
+>>>>>>> 38513f8c7168afabb2a9129284b31696e4c7910c
