@@ -61,11 +61,15 @@ class CustomerController extends Controller
             if($address['latitude'] != null && $address['longitude'] != null){
 
                 if(Auth::check()){
-                    DB::table('customer')->where('id', Auth::id())->update([
-                        'customer_latitude' => $address['latitude'],
-                        'customer_longitude' => $address['longitude'],
-                        'address' => $address['street_address'],
-                    ]);
+                    // DB::table('customer')->where('id', Auth::id())->update([
+                    //     'customer_latitude' => $address['latitude'],
+                    //     'customer_longitude' => $address['longitude'],
+                    //     'address' => $address['street_address'],
+                    // ]);
+                    $request->session()->put('with_login_lat', $address['latitude']);
+                    $request->session()->put('with_login_lng', $address['longitude']);
+                    $request->session()->put('with_login_address', $address['street_address']);
+                    $request->session()->put('updateLocationBySettingAfterLogin', 1);
                     $request->session()->put('setLocationBySettingValueAfterLogin', 1);
                 }else{
                     $request->session()->put('with_out_login_lat', $address['latitude']);

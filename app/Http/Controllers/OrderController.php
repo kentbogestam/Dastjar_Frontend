@@ -126,7 +126,7 @@ class OrderController extends Controller
                 $currentTime = $request->session()->get('browserTodayTime');
                 $todayDay = $request->session()->get('browserTodayDay');
                 $userDetail = User::whereId(Auth()->id())->first();
-                $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
+                $companydetails = Store::getListRestaurants($request->session()->get('with_login_lat'),$request->session()->get('with_login_lng'),$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
                 
                 return view('index', compact('companydetails'));
             } 
@@ -239,7 +239,7 @@ class OrderController extends Controller
             $currentTime = $request->session()->get('browserTodayTime');
             $todayDay = $request->session()->get('browserTodayDay');
             $userDetail = User::whereId(Auth()->id())->first();
-            $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
+            $companydetails = Store::getListRestaurants($request->session()->get('with_login_lat'),$request->session()->get('with_login_lng'),$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
             
             return view('index', compact('companydetails'));
         } 

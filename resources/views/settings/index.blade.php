@@ -36,10 +36,10 @@
 					<li class="range-sec"><a onClick="makeRedirection('{{url('select-location')}}')" data-ajax="false">{{ __('messages.Location') }}
 						<p class="ui-li-aside">
 							@if(Auth::check())
-								@if(Auth::user()->address == null)
+								@if(Session::get('with_login_address') == null)
 									{{ __('messages.Current Location') }}
 								@else	
-									{{Auth::user()->address}}
+									{{Session::get('with_login_address')}}
 								@endif
 							@else
 								@if(Session::get('address') == null)

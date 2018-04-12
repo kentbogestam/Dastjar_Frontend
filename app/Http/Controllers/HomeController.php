@@ -42,8 +42,10 @@ class HomeController extends Controller
         if(Auth::check()){
 
            $userDetail = User::whereId(Auth()->id())->first();
+            $lat = $request->session()->get('with_login_lat');
+            $lng = $request->session()->get('with_login_lng');
            //dd($userDetail);
-            $companydetails = Store::getListRestaurantsCheck($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
+            $companydetails = Store::getListRestaurantsCheck($lat,$lng,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
         }else{
 
              $lat = $request->session()->get('with_out_login_lat');
@@ -66,19 +68,28 @@ class HomeController extends Controller
         $data = $request->input();
         if(Auth::check()){
             if($data['lat'] != null || $data['lng'] != null){
-                DB::table('customer')->where('id', Auth::id())->update([
-                                    'customer_latitude' => $data['lat'],
-                                    'customer_longitude' => $data['lng'],
-                                    'address' => NULL,
-                                ]);
+                $request->session()->put('with_login_lat', $data['lat']);
+                $request->session()->put('with_login_lng', $data['lng']);
+                $request->session()->put('with_login_address', null);
+                // DB::table('customer')->where('id', Auth::id())->update([
+                //                     'customer_latitude' => $data['lat'],
+                //                     'customer_longitude' => $data['lng'],
+                //                     'address' => NULL,
+                //                 ]);
+                $request->session()->put('updateLocationBySettingAfterLogin', 1);
                 $request->session()->put('setLocationBySettingValueAfterLogin', null);
             }else{
+                $request->session()->put('with_login_lat', 59.303566);
+                $request->session()->put('with_login_lng', 18.0065041);
+                $request->session()->put('updateLocationBySettingAfterLogin', 1);
+                $request->session()->put('setLocationBySettingValueAfterLogin', null);
+                $request->session()->put('with_login_address', null);
                 
-                DB::table('customer')->where('id', Auth::id())->update([
-                                    'customer_latitude' => 59.303566,
-                                    'customer_longitude' => 18.0065041,
-                                    'address' => NULL,
-                                ]);
+                // DB::table('customer')->where('id', Auth::id())->update([
+                //                     'customer_latitude' => 59.303566,
+                //                     'customer_longitude' => 18.0065041,
+                //                     'address' => NULL,
+                //                 ]);
             }
         }else{
             $request->session()->put('with_out_login_lat', $data['lat']);
@@ -106,16 +117,30 @@ class HomeController extends Controller
                 $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
                 $currentTime = $pieces[4];
                 $todayDay = $pieces[0];
-                if($userDetail->customer_latitude == null || $userDetail->customer_longitude == null || $userDetail->range == null){
+                if($userDetail->range == null){
                     DB::table('customer')->where('id', Auth::id())->update([
-                                'customer_latitude' => $data['lat'],
-                                'customer_longitude' => $data['lng'],
-                                'range' => 6,
+                                'range' => 7,
                                 'language' => 'ENG',
                                 'web_version' => $versionDetail->version,
                                 'browser' => $data['browserVersion'],
                             ]);
                 }
+            }
+
+            if($request->session()->get('updateThreeHundrMeterAfterLogin') == null && $request->session()->get('updateLocationBySettingAfterLogin') == null){
+                    $request->session()->put('with_login_lat', $data['lat']);
+                    $request->session()->put('with_login_lng', $data['lng']);
+                    $lat =  $data['lat'];
+                    $lng =  $data['lng'];   
+            }else if($request->session()->get('updateThreeHundrMeterAfterLogin') == 1 && $request->session()->get('updateLocationBySettingAfterLogin') == null){
+                $lat = $request->session()->get('with_login_lat');
+                $lng = $request->session()->get('with_login_lng');
+            }else if($request->session()->get('updateThreeHundrMeterAfterLogin') == null && $request->session()->get('updateLocationBySettingAfterLogin') == 1){
+                $lat = $request->session()->get('with_login_lat');
+                $lng = $request->session()->get('with_login_lng');
+            }else{
+                $lat = $request->session()->get('with_login_lat');
+                $lng = $request->session()->get('with_login_lng'); 
             }
 
             //DB::table('customer')->where('id', Auth::id())->update(['browser' => $data['browserVersion'],]);
@@ -132,7 +157,7 @@ class HomeController extends Controller
 
             $request->session()->forget('order_date');
             $currentUser = User::whereId(Auth()->id())->first();
-            $companydetails = Store::getListRestaurants($currentUser->customer_latitude,$currentUser->customer_longitude,$currentUser->range,'1','3',$todayDate,$currentTime,$todayDay);
+            $companydetails = Store::getListRestaurants($lat,$lng,$currentUser->range,'1','3',$todayDate,$currentTime,$todayDay);
 
             
             return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails]);
@@ -220,8 +245,9 @@ class HomeController extends Controller
         $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
         $currentTime = $pieces[4];
         $todayDay = $pieces[0];
-
-        $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
+        $lat = $request->session()->get('with_login_lat');
+        $lng = $request->session()->get('with_login_lng');
+        $companydetails = Store::getListRestaurants($lat,$lng,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
         //dd($companydetails);
         return view('eat-now', compact('companydetails'));
     }
@@ -233,7 +259,9 @@ class HomeController extends Controller
         $todayDay = $pieces[0];
         if(Auth::check()){
             $userDetail = User::whereId(Auth()->id())->first();
-            $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'2','3',$todayDate,$currentTime,$todayDay);
+            $lat = $request->session()->get('with_login_lat');
+            $lng = $request->session()->get('with_login_lng');
+            $companydetails = Store::getListRestaurants($lat,$lng,$userDetail->range,'2','3',$todayDate,$currentTime,$todayDay);
         }else{
             $lat = $request->session()->get('with_out_login_lat');
             $lng = $request->session()->get('with_out_login_lng');
@@ -265,7 +293,9 @@ class HomeController extends Controller
         } else {
             if(Auth::check()){
                 $userDetail = User::whereId(Auth()->id())->first();
-                $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
+                $lat = $request->session()->get('with_login_lat');
+                $lng = $request->session()->get('with_login_lng');
+                $companydetails = Store::getListRestaurants($lat,$lng,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
             }else{
                 $lat = $request->session()->get('with_out_login_lat');
                 $lng = $request->session()->get('with_out_login_lng');
@@ -289,7 +319,9 @@ class HomeController extends Controller
         $todayDay = $pieces[0];
         if(Auth::check()){
             $userDetail = User::whereId(Auth()->id())->first();
-            $companydetails = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'2','3',$todayDate,$currentTime,$todayDay);
+            $lat = $request->session()->get('with_login_lat');
+            $lng = $request->session()->get('with_login_lng');
+            $companydetails = Store::getListRestaurants($lat,$lng,$userDetail->range,'2','3',$todayDate,$currentTime,$todayDay);
         }else{
             $companydetails = Store::getListRestaurants($request->session()->get('with_out_login_lat'),$request->session()->get('with_out_login_lng'),$request->session()->get('rang'),'2','3',$todayDate,$currentTime,$todayDay);
         }

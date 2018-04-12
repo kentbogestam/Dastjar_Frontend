@@ -17,14 +17,17 @@ class DistanceController extends Controller
     	if($data['lat'] != null){
     		if(Auth::check()){
     			if($request->session()->get('setLocationBySettingValueAfterLogin') == null){
-    				$userDetail = User::whereId(Auth()->id())->first();
-					$distance = $this->distance($userDetail->customer_latitude, $userDetail->customer_longitude, $lat, $lng, "K");
+					$distance = $this->distance($request->session()->get('with_login_lat'), $request->session()->get('with_login_lng'), $lat, $lng, "K");
 					if($distance*100 > 300){
-		    			DB::table('customer')->where('id', Auth::id())->update([
-		                    'customer_latitude' => $data['lat'],
-		                    'customer_longitude' => $data['lng'],
-		                    'address' => NULL,
-		                ]);
+						$request->session()->put('with_login_lat', $lat);
+                    	$request->session()->put('with_login_lng', $lng);
+                		$request->session()->put('with_login_address', null);
+		    			// DB::table('customer')->where('id', Auth::id())->update([
+		       //              'customer_latitude' => $data['lat'],
+		       //              'customer_longitude' => $data['lng'],
+		       //              'address' => NULL,
+		       //          ]);
+
 					}    				
     			}
     		}else{

@@ -22,7 +22,7 @@
 			
 			<div class="map-input">
                 @if(Auth::check())
-				    <input type="text" name="street_address" id="pac-input" class="" placeholder="Enter a Location*" value="{{ Auth::user()->address}}" required placeholder="Address*">
+				    <input type="text" name="street_address" id="pac-input" class="" placeholder="Enter a Location*" value="{{ Session::get('with_login_address')}}" required placeholder="Address*">
                 @else
                     <input type="text" name="street_address" id="pac-input" class="" placeholder="Enter a Location*" value="{{ Session::get('address')}}" required placeholder="Address*">
                 @endif
@@ -64,7 +64,7 @@
 
 		function initMap() {
             @if(Auth::check())
-                var location  = {lat: {{Auth::user()->customer_latitude}} , lng: {{ Auth::user()->customer_longitude}} };
+                var location  = {lat: {{Session::get('with_login_lat')}} , lng: {{ Session::get('with_login_lng')}} };
             @else
                 var location  = {lat: {{Session::get('with_out_login_lat')}} , lng: {{ Session::get('with_out_login_lng')}} };
             @endif

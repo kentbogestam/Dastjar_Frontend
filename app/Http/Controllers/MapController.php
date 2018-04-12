@@ -28,10 +28,10 @@ class MapController extends Controller
             $currentTime = $pieces[4];
             $todayDay = $pieces[0];
 
-            $restaurantLatLngList = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
+            $restaurantLatLngList = Store::getListRestaurants($request->session()->get('with_login_lat'),$request->session()->get('with_login_lng'),$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
             $latLng = [];
             $i = 0;
-            array_push($latLng,[$userDetail->customer_latitude, $userDetail->customer_longitude]);
+            array_push($latLng,[$request->session()->get('with_login_lat'), $request->session()->get('with_login_lng')]);
             foreach ($restaurantLatLngList as $restaurantLatLng) {
                 $getTime = explode('::', $restaurantLatLng['store_open_close_day_time']);
                 if(count($getTime) == 2){
@@ -119,11 +119,11 @@ class MapController extends Controller
 
         if(Auth::check()){
             $userDetail = User::whereId(Auth()->id())->first();
-            $restaurantLatLngList = Store::getListRestaurants($userDetail->customer_latitude,$userDetail->customer_longitude,$userDetail->range,'2','3',$todayDate,$currentTime,$todayDay);
+            $restaurantLatLngList = Store::getListRestaurants($request->session()->get('with_login_lat'),$request->session()->get('with_login_lng'),$userDetail->range,'2','3',$todayDate,$currentTime,$todayDay);
 
             $latLng = [];
             $i = 0;
-            array_push($latLng,[$userDetail->customer_latitude, $userDetail->customer_longitude]);
+            array_push($latLng,[$request->session()->get('with_login_lat'), $request->session()->get('with_login_lng')]);
             foreach ($restaurantLatLngList as $restaurantLatLng) {
                 $getTime = explode('::', $restaurantLatLng['store_open_close_day_time']);
                 if(count($getTime) == 2){
@@ -200,7 +200,7 @@ class MapController extends Controller
         $latLng = [];
         if(Auth::check()){
             $userDetail = User::whereId(Auth()->id())->first();
-            array_push($latLng,[$userDetail->customer_latitude, $userDetail->customer_longitude]);
+            array_push($latLng,[floatval($request->session()->get('with_login_lat')), floatval($request->session()->get('with_login_lng'))]);
         }else{
             array_push($latLng,[floatval($request->session()->get('with_out_login_lat')), floatval($request->session()->get('with_out_login_lng'))]);
         }
