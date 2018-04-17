@@ -247,11 +247,11 @@ class PushNotificationService extends App42Service {
             $pushResponseObj = new PushNotificationResponseBuilder();
             $pushObj = $pushResponseObj->buildResponse($response->getResponse());
         } catch (App42Exception $e) {
-            throw $e;
+            return false;
         } catch (Exception $e) {
             throw new App42Exception($e);
         }
-        return $pushObj;
+        return true;
     }
 
     function sendPushMessageToAllByType($message, $type) {
