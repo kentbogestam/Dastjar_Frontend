@@ -243,8 +243,11 @@ class PushNotificationService extends App42Service {
             $accept = $this->accept;
             $baseURL = $this->url;
             $baseURL = $baseURL . "/sendMessage/" . $encodedUserName;
-            $response = RestClient::post($baseURL, $params, null, null, $contentType, $accept, $body, $headerParams);
-            $pushResponseObj = new PushNotificationResponseBuilder();
+	    $response = RestClient::post($baseURL, $params, null, null, $contentType, $accept, $body, $headerParams);
+	    if (isset($response->app42Fault->httpErrorCode) && $response->app42Fault->httpErrorCode == 404) {
+		return false;
+		} 
+           $pushResponseObj = new PushNotificationResponseBuilder();
             $pushObj = $pushResponseObj->buildResponse($response->getResponse());
         } catch (App42Exception $e) {
             throw $e;
