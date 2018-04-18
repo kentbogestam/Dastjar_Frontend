@@ -32,6 +32,7 @@ use App\App42\App42API;
 use Stripe\Stripe;
 use Stripe\Customer;
 use Stripe\Charge;
+use Log;
 
 class AdminController extends Controller
 {
@@ -135,6 +136,12 @@ class AdminController extends Controller
         //return view('kitchen.order.kitchen_order_list');
     }
 
+    public function orderStartedKitchen(Request $request, $orderID){
+        DB::table('order_details')->where('id', $orderID)->update(['order_started' => 1,]);
+        return response()->json(['status' => 'success', 'data'=>true]);
+
+    }
+
     public function orderReadyKitchen(Request $request, $orderID){
         DB::table('order_details')->where('id', $orderID)->update([
                             'order_ready' => 1,
@@ -187,6 +194,61 @@ class AdminController extends Controller
         }
         return redirect()->action('AdminController@kitchenOrderDetail')->with('success', 'Order Ready Successfully.');
         //return view('kitchen.order.kitchen_order_list');
+    }
+
+    public function onReadyAjax(Request $request, $orderID){
+        DB::table('order_details')->where('id', $orderID)->update(['order_ready' => 1,]);
+        $userOrderId = OrderDetail::where('id' , $orderID)->first();
+        $userOrderStatus = OrderDetail::where('order_id' , $userOrderId->order_id)->get();
+        $readyOrderStatus = OrderDetail::where('order_id' , $userOrderId->order_id)->where('order_ready' , '1')->get();
+        if(count($userOrderStatus) == count($readyOrderStatus)){
+
+            $OrderId = Order::where('order_id' , $userOrderId->order_id)->first();
+            DB::table('orders')->where('order_id', $userOrderId->order_id)->update([
+                            'order_ready' => 1,
+                        ]);
+
+            $message = 'orderReady';
+            if($OrderId->user_type == 'customer'){
+                $adminDetail = User::where('id' , $OrderId->user_id)->first();
+                //$afterRemoveFirstZeroNumber = substr($adminDetail->phone_number, -9);
+                $recipients = ['+'.$adminDetail->phone_number_prifix.$adminDetail->phone_number];
+            }else{
+                $adminDetail = Admin::where('id' , $OrderId->user_id)->first();
+                $recipients = ['+'.$adminDetail->mobile_phone];
+            }
+            $pieces = explode(" ", $adminDetail->browser);
+            if($pieces[0] == 'Safari'){
+               // dd($recipients);
+                $url = "https://gatewayapi.com/rest/mtsms";
+                $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
+                $message = env('APP_URL').'/public/ready-notifaction/'.$OrderId->customer_order_id;
+                $json = [
+                    'sender' => 'Dastjar',
+                    'message' => ''.$message.'',
+                    'recipients' => [],
+                ];
+                foreach ($recipients as $msisdn) {
+                    $json['recipients'][] = ['msisdn' => $msisdn];}
+
+                $ch = curl_init();
+                curl_setopt($ch,CURLOPT_URL, $url);
+                curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+                curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
+                curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
+                curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+                $result = curl_exec($ch);
+                curl_close($ch);   
+            }else{
+                $result = $this->sendNotifaction($OrderId->customer_order_id , $message);
+            }
+            //return redirect()->action('AdminController@kitchenOrderDetail')->with('success', 'Order Ready Nofifaction Send Successfully.');
+            return response()->json(['status' => 'success', 'data'=>'Order Ready Nofifaction Send Successfully.']);
+        }
+        //return redirect()->action('AdminController@kitchenOrderDetail')->with('success', 'Order Ready Successfully.');
+        //return view('kitchen.order.kitchen_order_list'); 
+        return response()->json(['status' => 'ready', 'data'=>'Order Ready Successfully.']);
+
     }
     
     public function cateringDetails(){
@@ -477,9 +539,11 @@ class AdminController extends Controller
         //dd(Config::get('app.php.varname'));
         //dd(env('APP_URL').'/ready-notifaction/'.$orderID);
         //dd($request->url());
-        App42API::initialize("cc9334430f14aa90c623aaa1dc4fa404d1cfc8194ab2fd144693ade8a9d1e1f2","297b31b7c66e206b39598260e6bab88e701ed4fa891f8995be87f786053e9946"); 
+        App42API::initialize("cc9334430f14aa90c623aaa1dc4fa404d1cfc8194ab2fd144693ade8a9d1e1f2","297b31b7c66e206b39598260e6bab88e701ed4fa891f8995be87f786053e9946");
+        Log::info('Before pushNotifaction time : '.Carbon::now()); 
         $pushNotificationService = App42API::buildPushNotificationService(); 
         $pushNotification = $pushNotificationService->sendPushMessageToUser($userName,$message);
+        Log::info('After pushNotifaction time : '.Carbon::now()); 
         return $pushNotification;
         //$jsonResponse = $pushNotification->toString();
     }
