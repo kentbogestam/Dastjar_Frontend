@@ -117,8 +117,9 @@ class PushNotifactionController extends Controller
     	App42API::initialize("cc9334430f14aa90c623aaa1dc4fa404d1cfc8194ab2fd144693ade8a9d1e1f2","297b31b7c66e206b39598260e6bab88e701ed4fa891f8995be87f786053e9946"); 
 		$pushNotificationService = App42API::buildPushNotificationService();
 		$pushNotification = $pushNotificationService->sendPushMessageToUser($userName,$message);
-		if($pushNotification){
-		$jsonResponse = $pushNotification->toString();
- 	}
+        return $pushNotification;
+		// if($pushNotification){
+		// $jsonResponse = $pushNotification->toString();
+ 	//}
 	}
 }
