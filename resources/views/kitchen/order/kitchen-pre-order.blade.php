@@ -176,12 +176,6 @@
 							<h3>{{ __('messages.OR') }}</h3>
 							<h3 class="blue_link">{{ __('messages.use the QR-code below') }}</h3>
 						</div>
-<<<<<<< HEAD
-							<div class="scan_code">
-								<img src="https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=https://anar.dastjar.com/">
-							</div>
-=======
->>>>>>> d2acac1d7be0727a31b94bc04e3465b1f40c9c59
 					</div>
 				</div>
 			</div>
