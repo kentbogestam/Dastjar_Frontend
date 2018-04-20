@@ -104,7 +104,9 @@ Route::group(['middleware' => ['auth']], function(){
 		Route::get('catering-orders', 'AdminController@cateringOrders');
 		Route::get('kitchen-order-onsite', 'AdminController@kitchenPreOrder');
 		Route::get('order-started/{OrderId}', 'AdminController@orderStarted');
+		Route::get('orderStartedKitchen/{OrderId}', 'AdminController@orderStartedKitchen');
 		Route::get('order-readyKitchen/{OrderId}', 'AdminController@orderReadyKitchen');
+		Route::get('onReadyAjax/{OrderId}', 'AdminController@onReadyAjax');
 		Route::post('kitchen-order-save','AdminController@kitchenOrderSave');
 		Route::get('kitchen-order-save','AdminController@kitchenOrderSave');
 		Route::get('selectOrder-dateKitchen', 'AdminController@selectOrderDateKitchen');
