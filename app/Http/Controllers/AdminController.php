@@ -273,7 +273,7 @@ class AdminController extends Controller
         $request->session()->forget('order_date');
         if(Session::get('storeId')){
             $menuDetails = ProductPriceList::where('store_id',Session::get('storeId'))->with('menuPrice')->with('storeProduct')->get();
-            if(count($menuDetails) != 0){
+            if($menuDetails){
 
                 foreach ($menuDetails as $menuDetail) {
                     foreach ($menuDetail->storeProduct as $storeProduct) {
@@ -290,7 +290,7 @@ class AdminController extends Controller
 
 
             $companydetails = Company::where('company_id' , Auth::guard('admin')->user()->company_id)->first();
-            if(count($companydetails) == 0){
+            if(!$companydetails){
                 $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
             }
             //dd($companydetails->currencies);
