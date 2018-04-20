@@ -162,6 +162,10 @@
 								<h3>{{ __('messages.Get notification, when your order is ready') }}</h3>
 							</div>
 							<h3 class="no-margin"><strong>{{ __('messages.DOWNLOAD') }}</strong> {{ __('messages.the App') }}  <span>{{ __('messages."anar"') }}</span> {{ __('messages.and get the benefites') }} </h3>
+							<h3 class="blue_link">{{ __('messages.Requires no extra Memory!') }}</h3>
+							<div class="">
+								<img src="https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=https://anar.dastjar.com/">
+							</div>
 							<a class="blue_link" href="">dastjar.com/download</a>
 							<h3>{{ __('messages.OR') }}</h3>
 							<h3 class="blue_link">{{ __('messages.Enter your mobile number here, to get the app') }}</h3>
@@ -172,9 +176,6 @@
 							<h3>{{ __('messages.OR') }}</h3>
 							<h3 class="blue_link">{{ __('messages.use the QR-code below') }}</h3>
 						</div>
-							<div class="scan_code">
-								<img src="https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=https://dastjar.com/anar/public/">
-							</div>
 					</div>
 				</div>
 			</div>
@@ -205,7 +206,7 @@
 			<div class="img-container" id = "menudataSave">
 				<img src="{{asset('kitchenImages/send_icon.png')}}">
 			</div>
-			<span>{{ __('messages.Send') }}</span>
+			<span>{{ __('messages.Sent') }}</span>
 		</a></div>
 		</div>
 	</div>
