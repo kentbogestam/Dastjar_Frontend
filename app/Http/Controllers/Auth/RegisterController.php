@@ -107,11 +107,11 @@ class RegisterController extends Controller
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data)
-    {
+    {   
         return Validator::make($data, [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:customer',
-            'email' => 'required|phone_number|max:10|unique:customer',
+            'phone_number' => 'min:0|max:999999999999|numeric|unique:customer',
         ]);
     }
 
