@@ -130,17 +130,21 @@ class HomeController extends Controller
             if($request->session()->get('updateThreeHundrMeterAfterLogin') == null && $request->session()->get('updateLocationBySettingAfterLogin') == null){
                     $request->session()->put('with_login_lat', $data['lat']);
                     $request->session()->put('with_login_lng', $data['lng']);
+                    $request->session()->put('with_login_lat', $data['lat']);
                     $lat =  $data['lat'];
                     $lng =  $data['lng'];   
             }else if($request->session()->get('updateThreeHundrMeterAfterLogin') == 1 && $request->session()->get('updateLocationBySettingAfterLogin') == null){
                 $lat = $request->session()->get('with_login_lat');
                 $lng = $request->session()->get('with_login_lng');
+                $request->session()->put('with_login_lat', $request->session()->get('with_login_lat'));
             }else if($request->session()->get('updateThreeHundrMeterAfterLogin') == null && $request->session()->get('updateLocationBySettingAfterLogin') == 1){
                 $lat = $request->session()->get('with_login_lat');
                 $lng = $request->session()->get('with_login_lng');
+                $request->session()->put('with_login_lat', $request->session()->get('with_login_lat'));
             }else{
                 $lat = $request->session()->get('with_login_lat');
-                $lng = $request->session()->get('with_login_lng'); 
+                $lng = $request->session()->get('with_login_lng');
+                $request->session()->put('with_login_lat', $request->session()->get('with_login_lat')); 
             }
 
             //DB::table('customer')->where('id', Auth::id())->update(['browser' => $data['browserVersion'],]);
@@ -150,7 +154,6 @@ class HomeController extends Controller
                 Auth::logout();
                 return redirect()->action('HomeController@versionUpdate');
             }
-            $request->session()->put('with_login_lat', $data['lat']);
             $request->session()->put('browserTodayDate', $todayDate);
             $request->session()->put('browserTodayTime', $currentTime);
             $request->session()->put('browserTodayDay', $todayDay);
