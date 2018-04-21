@@ -55,12 +55,12 @@ class LoginController extends Controller
         }
 
         try {
-            $userSocial = Socialite::driver($social)->user();
+            $userSocial = Socialite::with($social)->user();
         } catch (Exception $e) {
             return redirect('/');
         }
         
-        //dd($userSocial);
+        //dd($userSocial->id);
         //$user = User::where(['email' => $userSocial->getEmail()])->first();
         $user = User::where(['fac_id' => $userSocial->id])->first();
         if($user){
@@ -111,7 +111,7 @@ class LoginController extends Controller
 
     public function userLogin(Request $request){
         $data = $request->input();
-        $user = User::where(['otp' => $data['otp']])->first();
+        $user = User::where(['otp' => $data['otp']])->where(['phone_number' => $request->session()->get('userPhoneNumber')])->first();
         if($user){
             
             Auth::login($user);
