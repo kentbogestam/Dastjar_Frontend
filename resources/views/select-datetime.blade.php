@@ -107,7 +107,7 @@
 			}
 		
 	})
-	  $('.perfect-datetimepicker').append("<p class='error_time'>Please enter time in 24 hours format. </p>");
+	  $('.perfect-datetimepicker').append("<p class='error_time'>Please enter PickUp time in 24 hours format. </p>");
 	// var lar_r =   $('.tt tbody').find('tr:first')
 	// var bb = $(lar_r).append('<td class=""></td>');
 	</script>

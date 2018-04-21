@@ -58,7 +58,7 @@
             if(flag){
                 $("#form").submit();
             } else{
-                alert("Please fill some value");    
+                alert("Please Enter vailed Email and Password.");    
                 e.preventDefault();
             }
         })
