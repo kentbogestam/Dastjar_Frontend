@@ -170,7 +170,7 @@ class AdminController extends Controller
                // dd($recipients);
                 $url = "https://gatewayapi.com/rest/mtsms";
                 $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
-                $message = env('APP_URL').'/public/ready-notifaction/'.$OrderId->customer_order_id;
+                $message = "Your Order Ready Please click on Link \n ".env('APP_URL').'ready-notifaction/'.$OrderId->customer_order_id;
                 $json = [
                     'sender' => 'Dastjar',
                     'message' => ''.$message.'',
@@ -222,7 +222,7 @@ class AdminController extends Controller
                // dd($recipients);
                 $url = "https://gatewayapi.com/rest/mtsms";
                 $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
-                $message = env('APP_URL').'/public/ready-notifaction/'.$OrderId->customer_order_id;
+                $message = "Your order ready please click on link \n ".env('APP_URL').'ready-notifaction/'.$OrderId->customer_order_id;
                 $json = [
                     'sender' => 'Dastjar',
                     'message' => ''.$message.'',
@@ -530,11 +530,12 @@ class AdminController extends Controller
         }
 
         if($message == 'orderDeliver'){
-            $url = env('APP_URL').'/public/deliver-notifaction';
+            $url = env('APP_URL').'deliver-notifaction';
             $message = "{'alert': 'Your Order Deliver.','_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': 'Your Order Deliver.','type':'openUrl','content':" ."'". $url."'" . "}}";
         }else{
-            $url = env('APP_URL').'/public/ready-notifaction/'.$orderID;
-            $message = "{'alert': 'Your Order Ready.','_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': 'Your Order Ready.','type':'openUrl','content':" ."'". $url."'" . "}}";
+            $url = env('APP_URL').'ready-notifaction/'.$orderID;
+            $messageDelever = "Your Order ". $orderID . " Ready";
+            $message = "{'alert': " ."'". $messageDelever."'" . ",'_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': " ."'". $messageDelever."'" . ",'type':'openUrl','content':" ."'". $url."'" . "}}";
         }
         //dd(Config::get('app.php.varname'));
         //dd(env('APP_URL').'/ready-notifaction/'.$orderID);
