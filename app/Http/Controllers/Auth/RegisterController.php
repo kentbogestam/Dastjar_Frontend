@@ -53,7 +53,7 @@ class RegisterController extends Controller
 
             $validator = $this->validator($request->all());
             if ($validator->fails()) {
-                return redirect()->action('Auth\RegisterController@userRegister')->with('success', 'This Email already register.');
+                return redirect()->action('Auth\RegisterController@userRegister')->with('success', 'This Email or Mobile Number already register.');
             }
             $user = $this->create($request->all());
             if ($user) {
@@ -111,6 +111,7 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:customer',
+            'email' => 'required|phone_number|max:10|unique:customer',
         ]);
     }
 
