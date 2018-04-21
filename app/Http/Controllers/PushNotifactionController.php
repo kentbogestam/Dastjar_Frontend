@@ -103,8 +103,14 @@ class PushNotifactionController extends Controller
     	}
 	
     	if($message == 'orderDeliver'){
+<<<<<<< HEAD
     		$url = env('APP_URL').'deliver-notifaction/'.$orderID;
             $message = "{'alert': 'Your Order Deliver.','_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': 'Your Order Deliver.','type':'openUrl','content':" ."'". $url."'" . "}}";
+=======
+    		$url = env('APP_URL').'/public/deliver-notifaction/'.$orderID;
+            $messageDelever = "Your Order ". $orderID . " Deliver";
+            $message = "{'alert': " ."'". $messageDelever."'" . ",'_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': " ."'". $messageDelever."'" . ",'type':'openUrl','content':" ."'". $url."'" . "}}";
+>>>>>>> 335e63836841fc9f6d8d4af7d8f5eb9475d21583
     		//$message = "{'alert':'Your Order Deliver.','badge':1,'sound':'default','Url':" ."'". $url."'" . "}";
     	}else{
     		$url = env('APP_URL').'ready-notifaction/'.$orderID;
