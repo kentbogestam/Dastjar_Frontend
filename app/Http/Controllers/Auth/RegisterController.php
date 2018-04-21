@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use App\Country;
+use DB;
 
 class RegisterController extends Controller
 {
@@ -60,6 +61,7 @@ class RegisterController extends Controller
 
                 // Define recipients
                 //$afterRemoveFirstZeroNumber = substr($user->phone_number, -9);
+                $request->session()->put('userPhoneNumber', $user->phone_number);
                 $recipients = ['+'.$user->phone_number_prifix.$user->phone_number];
                 $url = "https://gatewayapi.com/rest/mtsms";
                 $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
@@ -150,11 +152,13 @@ class RegisterController extends Controller
             $user = User::where(['phone_number' => $number])->first();
             if($user){
                 //$afterRemoveFirstZeroNumber = substr($user->phone_number, -9);
+                $request->session()->put('userPhoneNumber', $user->phone_number);
                 $recipients = ['+'.$user->phone_number_prifix.$user->phone_number];
-                //dd($recipients);
+                $otp = rand(1000, 9999);
+                DB::table('customer')->where('phone_number', $number)->update(['otp' => $otp,]);
                 $url = "https://gatewayapi.com/rest/mtsms";
                 $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
-                $message = $user->otp;
+                $message =  $otp;
                 $json = [
                     'sender' => 'Dastjar',
                     'message' => ''.$message.'',
