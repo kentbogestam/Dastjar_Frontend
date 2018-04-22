@@ -96,11 +96,11 @@
 	</div>
 	<div data-role="popup" id="popupNotifaction" class="ui-content" style="max-width:280px;padding: 15px;">
 	    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
-	<p style="color: #0c780c;line-height: 22px;margin: 0;">Order Ready Notification Send Successfully.</p>
+	<p style="color: #0c780c;line-height: 22px;margin: 0;">{{ __('messages.Order Ready Notification Send Successfully.') }}</p>
 	</div>
 	<div data-role="popup" id="popupCloseRight" class="ui-content" style="max-width:280px; padding: 15px;">
 	    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
-	<p style="color: #0c780c;line-height: 22px;margin: 0;">Order Ready Successfully.</p>
+	<p style="color: #0c780c;line-height: 22px;margin: 0;">{{ __('messages.Order Ready Successfully.') }}</p>
 	</div>
 
 @endsection

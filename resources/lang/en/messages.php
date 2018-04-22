@@ -68,5 +68,8 @@ return [
     'Enter a Location' => 'Enter a Location',
     'Comments' => 'Comment',
     'Text To Speech' => 'Text To Speech',
+    'Order Ready Notification Send Successfully.' => 'Order Ready Notification Send Successfully.',
+    'Order Ready Successfully.' => 'Order Ready Successfully.',
+    'Order Deliver Notification Send Successfully' => 'Order Deliver Notification Send Successfully',
 
 ];

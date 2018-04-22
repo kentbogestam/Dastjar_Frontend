@@ -68,4 +68,7 @@ return [
     'Go' => 'Gå',
     'Enter a Location' => 'Ange en plats',
     'Text To Speech' => 'Text till tal',
+    'Order Ready Notification Send Successfully.' => 'Beställ Klar Meddelande Skicka framgångsrikt.',
+    'Order Ready Successfully.' => 'Beställ ordentligt framgångsrikt.',
+    'Order Deliver Notification Send Successfully' => 'Beställ leveransmeddelande skickas framgångsrikt',
 ];
