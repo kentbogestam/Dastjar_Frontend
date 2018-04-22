@@ -60,7 +60,9 @@ class PushNotifactionController extends Controller
             //dd($recipients);
             $url = "https://gatewayapi.com/rest/mtsms";
             $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
-            $message = "Your Order Ready".env('APP_URL').'deliver-notifaction/'.$orderID;
+
+            $message = "Your order deliver please click on link \n".env('APP_URL').'deliver-notifaction/'.$orderID;
+
             $json = [
                 'sender' => 'Dastjar',
                 'message' => ''.$message.'',

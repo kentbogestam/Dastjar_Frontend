@@ -166,15 +166,15 @@
 							<div class="">
 								<img src="https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=https://anar.dastjar.com/">
 							</div>
-							<a class="blue_link" href="">dastjar.com/download</a>
+							<a class="blue_link" href="">anar.dastjar.com</a>
 							<h3>{{ __('messages.OR') }}</h3>
 							<h3 class="blue_link">{{ __('messages.Enter your mobile number here, to get the app') }}</h3>
 							<!-- <h3 class="grey_text">070-12345678</h3> -->
-							<form>
-							<div class="ui-field-contain search_container"> <input type="number" data-clear-btn="false" name="number-1" id="number-1" value=""> <button type="submit" id="submit-6" class="ui-shadow ui-btn ui-corner-all ui-mini">ok</button> </div>
-							</form>
-							<h3>{{ __('messages.OR') }}</h3>
-							<h3 class="blue_link">{{ __('messages.use the QR-code below') }}</h3>
+							
+							<div class="ui-field-contain search_container"> <input type="number" data-clear-btn="false" name="number-1" id="number-1" value=""> <button  class="ui-shadow ui-btn ui-corner-all ui-mini" disabled>ok</button> </div>
+							
+							<!-- <h3>{{ __('messages.OR') }}</h3>
+							<h3 class="blue_link">{{ __('messages.use the QR-code below') }}</h3> -->
 						</div>
 					</div>
 				</div>
