@@ -196,8 +196,8 @@
 </script>
 @endsection
 
-<style type="text/css">
+<!-- <style type="text/css">
 	[data-role="page"]{;background-position: center;
     background-repeat: no-repeat;
 		background-image: url({{asset('images/paint.jpg')}})}
-</style>
+</style> -->
