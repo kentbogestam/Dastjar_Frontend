@@ -59,7 +59,7 @@
 						<img src="{{asset('kitchenImages/icon-6.png')}}">
 					</div>
 				</a></div>
-				<div class="ui-block-b middle-menu"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" target="_blank" href="{{ url('/') }}">
+				<div class="ui-block-b middle-menu"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" target="_blank" href="https://admin.dastjar.com/admin/">
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/icon-5.png')}}">
 					</div>
@@ -250,7 +250,7 @@
 		}
 
 		function orderCreateTime(time){
-			var date = new Date(time);
+			var date = new Date();
 			var dd = date.toString();
 			var ddd = dd.split(" ");
 			var ddddd = ddd[4].split(":");
