@@ -71,4 +71,5 @@ return [
     'Order Ready Notification Send Successfully.' => 'Beställ Klar Meddelande Skicka framgångsrikt.',
     'Order Ready Successfully.' => 'Beställ ordentligt framgångsrikt.',
     'Order Deliver Notification Send Successfully' => 'Beställ leveransmeddelande skickas framgångsrikt',
+    'Your order will be ready in about' => 'Din beställning kommer att vara klar om',
 ];

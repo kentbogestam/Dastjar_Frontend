@@ -119,11 +119,13 @@ function registerDeviceWithApp42(token,type ){
 					<p>{{ __('messages.Order Number') }} </p>
 					<p class="large-text">{{$order->customer_order_id}}</p>
 					<p>({{$order->store_name}})</p>
-					<p>{{ __('messages.Your order will be ready on') }}
+					<p>
 						@if($order->order_type == 'eat_later')
+						{{ __('messages.Your order will be ready on') }}
 						{{$order->deliver_date}}
 						{{date_format(date_create($order->deliver_time), 'G:i')}} 
 						@else
+						{{ __('messages.Your order will be ready in about') }}
 						{{date_format(date_create($order->order_delivery_time), 'i')}} mins
 						@endif
 					</p>
