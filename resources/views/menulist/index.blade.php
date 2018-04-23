@@ -43,7 +43,7 @@
 												<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />
 												<div class="qty-sec">
 													<input type="button" onclick="decrementValue('{{$menuDetail->product_id}}')" value="-"  class="min" />
-													<input type="text" name="product[{{$j}}][prod_quant]" maxlength="2" max="10" size="1" value = 0 id="{{$menuDetail->product_id}}" />
+													<input type="text" readonly name="product[{{$j}}][prod_quant]" maxlength="2" max="10" size="1" value = 0 id="{{$menuDetail->product_id}}" />
 													<input type="button" onclick="incrementValue('{{$menuDetail->product_id}}')" value="+" class="max" />
 												</div>
 												
@@ -80,7 +80,7 @@
 												<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />
 												<div class="qty-sec">
 													<input type="button" onclick="decrementValue('{{$menuDetail->product_id}}')" value="-"  class="min" />
-													<input type="text" name="product[{{$j}}][prod_quant]" value="0" maxlength="2" max="10" size="1" id="{{$menuDetail->product_id}}" />
+													<input type="text" name="product[{{$j}}][prod_quant]" value="0" maxlength="2" max="10" readonly size="1" id="{{$menuDetail->product_id}}" />
 													<input type="button" onclick="incrementValue('{{$menuDetail->product_id}}')" value="+" class="max" />
 												</div>
 
