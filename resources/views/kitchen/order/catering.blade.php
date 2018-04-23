@@ -250,7 +250,7 @@
 		}
 
 		function orderCreateTime(time){
-			var date = new Date(time);
+			var date = new Date();
 			var dd = date.toString();
 			var ddd = dd.split(" ");
 			var ddddd = ddd[4].split(":");
