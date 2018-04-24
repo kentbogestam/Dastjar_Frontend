@@ -35,7 +35,7 @@
 													<img src="{{$menuDetail->small_image}}">
 													<div class="list-content">
 														<h2>{{$menuDetail->product_name}}</h2>
-													<p>{{$menuDetail->product_description}}</p>
+													<div class="fulldiscription"><p>{{$menuDetail->product_description}}</p></div>
 													<p class="price">
 														{{$companydetails->currencies}} {{number_format((float)$productDetail->price, 2, '.', '')}}
 													</p>
@@ -72,7 +72,7 @@
 													<img src="{{$menuDetail->small_image}}">
 													<div class="list-content">
 														<h2>{{$menuDetail->product_name}}</h2>
-													<p>{{$menuDetail->product_description}}</p>
+													<div class="fulldiscription"><p>{{$menuDetail->product_description}}</p></div>
 													<p class="price">
 														{{$companydetails->currencies}} {{number_format((float)$productDetail->price, 2, '.', '')}}
 													</p>
