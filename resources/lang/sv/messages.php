@@ -46,7 +46,7 @@ return [
     'Your food is ready by the time of arrival'  => 'Din mat kommer att vara klar vid ankomsten',           
     'Get notification, when your order is ready'  => 'Få meddelande när din beställning är klar',           
     'DOWNLOAD'  => 'LADDA NER',           
-    'the app'  => 'appen',           
+    'the App'  => 'appen',           
     '"anar"'  => '"anar"',           
     'and get the benefits'  => 'och få fördelarna',        
     'OR'  => 'ELLER',           
@@ -71,5 +71,6 @@ return [
     'Order Ready Notification Send Successfully.' => 'Beställ Klar Meddelande Skicka framgångsrikt.',
     'Order Ready Successfully.' => 'Beställ ordentligt framgångsrikt.',
     'Order Deliver Notification Send Successfully' => 'Beställ leveransmeddelande skickas framgångsrikt',
-    'Your order will be ready in about' => 'Din beställning kommer att vara klar om',
+    'Your order will be ready in about' => 'Din beställning kommer att vara klar om',          
+    'and get the benefites'  => 'och få fördelarna',
 ];
