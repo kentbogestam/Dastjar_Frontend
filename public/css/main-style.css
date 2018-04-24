@@ -272,6 +272,9 @@ button[title="Toggle fullscreen view"]{
   top: 30px !important
 }
 
+
+.fulldiscription p{white-space: normal;height: 35px;line-height: 19px;}
+
 /* ======= main content style ============== */
 .top-btn{
     background: rgba(255,255,255,1);
