@@ -85,7 +85,9 @@ class PushNotifactionController extends Controller
 		DB::table('orders')->where('customer_order_id', $orderID)->update([
                             'paid' => 1,
                         ]);
-    	return redirect()->action('AdminController@index')->with('success', \Lang::get('messages.Order Deliver Notification Send Successfully'));
+    	// return redirect()->action('AdminController@index')->with('success', \Lang::get('messages.Order Deliver Notification Send Successfully'));
+
+        return redirect()->action('AdminController@index');
     }
 
     public function deliverNotifaction(Request $request, $orderID){
