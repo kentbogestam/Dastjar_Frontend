@@ -273,7 +273,7 @@ button[title="Toggle fullscreen view"]{
 }
 
 
-.fulldiscription p{white-space: normal;height: 35px;line-height: 19px;}
+.fulldiscription p{white-space: normal !important; height: 35px; line-height: 19px;}
 
 /* ======= main content style ============== */
 .top-btn{
