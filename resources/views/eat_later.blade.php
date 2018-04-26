@@ -311,7 +311,7 @@ var totalCount = 0;
 			var timeSplit = day[1].split(' to ');
 			var openTime = timeSplit[0];
 			var closeTime = timeSplit[1];
-			if(openTime < currentTime && closeTime > currentTime){
+			if(openTime <= currentTime && closeTime >= currentTime){
 				return true;
 			}else{
 				return false;
@@ -322,7 +322,7 @@ var totalCount = 0;
 					var timeSplit = day[1].split(' to ');
 					var openTime = timeSplit[0];
 					var closeTime = timeSplit[1];
-					if(openTime < currentTime && closeTime > currentTime){
+					if(openTime <= currentTime && closeTime >= currentTime){
 						return true;
 					}else{
 						return false;
@@ -337,7 +337,7 @@ var totalCount = 0;
 						var timeSplit = getDay[1].split(' to ');
 						var openTime = timeSplit[0];
 						var closeTime = timeSplit[1];
-						if(openTime < currentTime && closeTime > currentTime){
+						if(openTime <= currentTime && closeTime >= currentTime){
 							return true;
 						}else{
 							return false;
