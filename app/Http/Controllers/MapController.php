@@ -112,10 +112,29 @@ class MapController extends Controller
     }
 
     public function searchMapEatlater(Request $request){
-        $pieces = explode(" ", $request->session()->get('current_date_time'));
-        $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
-        $currentTime = $pieces[4];
-        $todayDay = $pieces[0];
+        if($request->session()->get('order_date')){
+            $pieces = explode(" ", $request->session()->get('order_date'));
+            $month = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+            for($i=0;$i<count($month);$i++){
+                if($month[$i] == $pieces[1]){
+                 $months = $i;
+                }
+            } 
+            $monthadd = $months+1;
+            if($monthadd < 10){
+                $monthFinal = sprintf("%02d",$monthadd);
+            }else{
+                $monthFinal = $monthadd;
+            }
+            $todayDate = $pieces[2].'-'.$monthFinal.'-'.$pieces[3];
+            $currentTime = $pieces[4];
+            $todayDay = $pieces[0];
+        }else{
+            $pieces = explode(" ", $request->session()->get('current_date_time'));
+            $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
+            $currentTime = $pieces[4];
+            $todayDay = $pieces[0];
+        }
 
         if(Auth::check()){
             $userDetail = User::whereId(Auth()->id())->first();

@@ -256,10 +256,17 @@ class HomeController extends Controller
     }
 
     public function eatLaterData(Request $request){
-        $pieces = explode(" ", $request->session()->get('current_date_time'));
-        $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
-        $currentTime = $pieces[4];
-        $todayDay = $pieces[0];
+        if($request->session()->get('order_date')){
+            $pieces = explode(" ", $request->session()->get('order_date'));
+            $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
+            $currentTime = $pieces[4];
+            $todayDay = $pieces[0]; 
+        }else{
+            $pieces = explode(" ", $request->session()->get('current_date_time'));
+            $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
+            $currentTime = $pieces[4];
+            $todayDay = $pieces[0]; 
+        }
         if(Auth::check()){
             $userDetail = User::whereId(Auth()->id())->first();
             $lat = $request->session()->get('with_login_lat');

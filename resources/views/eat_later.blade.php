@@ -159,7 +159,7 @@ var totalCount = 0;
     function(returnedData){
 
     	var count = 10;
-    	//console.log(returnedData["data"]);
+    	console.log(returnedData["data"]);
     	var url = "{{url('restro-menu-list/')}}";
 
           var temp = returnedData["data"];
@@ -288,11 +288,20 @@ var totalCount = 0;
 	// } 
 
 	 function checkTime($time){
-		var d = new Date();
-		var dd = (d.toString()).split(' ');
-		var currentTime = dd[4];
-		var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-		var todayDay = days[d.getDay()];
+	 	if("{{ Session::get('order_date') }}"){	 
+	 		var d = new Date("{{ Session::get('order_date') }}");
+			var dd = (d.toString()).split(' ');
+			var currentTime = dd[4];
+			var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+			var todayDay = days[d.getDay()];
+
+	 	}else{
+			var d = new Date();
+			var dd = (d.toString()).split(' ');
+			var currentTime = dd[4];
+			var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+			var todayDay = days[d.getDay()];
+	 	}
 		// console.log(currentTime);
 		// console.log('todayDay'+todayDay);
 		var time = $time;
