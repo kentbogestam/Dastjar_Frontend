@@ -73,4 +73,5 @@ return [
     'Order Deliver Notification Send Successfully' => 'Beställ leveransmeddelande skickas framgångsrikt',
     'Your order will be ready in about' => 'Din beställning kommer att vara klar om',          
     'and get the benefites'  => 'och få fördelarna',
+    'Please go to "Setting/ General /Reset/Reset Location & Privacy"' => 'Vänligen gå till "Inställningar/Allmänt/Nollställ/Nollställ integritetsskydd"',
 ];

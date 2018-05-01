@@ -72,5 +72,6 @@ return [
     'Order Ready Successfully.' => 'Order Ready Successfully.',
     'Order Deliver Notification Send Successfully' => 'Order Deliver Notification Send Successfully',
     'Your order will be ready in about' => 'Your order will be ready in about',
+    'Please go to "Setting/ General /Reset/Reset Location & Privacy"' => 'Please go to "Setting/ General /Reset/Reset Location & Privacy"',
 
 ];
