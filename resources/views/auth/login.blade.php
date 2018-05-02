@@ -44,7 +44,7 @@
   <div class="inner-popup">
         <div id = "cancel-popup" class="cross"><img src="{{asset('images/icons/cross.png')}}"></div>
         <div class="pop-body">
-           <p>{{ __('messages.Please go to "Setting/ General /Reset/Reset Location & Privacy"') }}</p>
+           <p>{{ __('messages.Please activate Location Services in your mobile: Settings >Privacy >Location Services') }}</p>
         </div>
   </div>
 </div>
