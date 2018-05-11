@@ -16,9 +16,9 @@
 
 // });
 
-// Route::get('/', function () {
-//     return view('index');
-// });
+Route::get('/install', function () {
+    return view('install');
+});
 
 	Auth::routes();
 	
@@ -27,6 +27,8 @@
 	});
 
 	Route::get('/home', 'HomeController@index')->name('home');
+
+	Route::post('contact-us', 'HomeController@contact_us');
 
 	Route::get('/login/{social}','Auth\LoginController@socialLogin')->where('social','facebook|google');
 	Route::get('/login/{social}/callback','Auth\LoginController@handelProviderCallback')->where('social','facebook|google');
@@ -75,15 +77,15 @@
 		Route::get('/withOutLogin', 'OrderController@withOutLogin');
 		Route::get('checkDistance','DistanceController@checkDistance');
 	});
-Route::group(['middleware' => ['auth']], function(){
 
+
+Route::group(['middleware' => ['auth']], function(){
 	Route::get('ready-notifaction/{OrderId}', 'PushNotifactionController@readyNotifaction');
 	Route::get('deliver-notifaction/{OrderId}', 'PushNotifactionController@deliverNotifaction');
 	Route::get('blank-view', 'HomeController@blankView');
 	Route::get('order-view/{OrderId}', 'OrderController@orderView');
 	Route::post('payment', 'PaymentController@payment');
-	Route::get('payment', 'PaymentController@payment');
-	
+	Route::get('payment', 'PaymentController@payment');	
 });
 
 	Route::prefix('admin')->group(function(){

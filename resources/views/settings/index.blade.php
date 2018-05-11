@@ -52,6 +52,7 @@
 					</li> 
 				</ul>
 			</div>
+
 			<div class="setting-list">
 				<ul data-role="listview"> 
 					<li data-role="collapsible" class="range-sec">
@@ -88,6 +89,11 @@
 						@endif
 					</li>	
 					<!-- <li><a href="#">Unit <p class="ui-li-aside">Meter</p></a></li>  -->
+				</ul> 
+			</div>
+
+			<div class="setting-list">
+				<ul data-role="listview"> 
 					<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Range') }}
 						<p class="ui-li-aside">
 							@if(Auth::check())
@@ -108,8 +114,34 @@
 					</li> 
 				</ul> 
 			</div>
+
 		</div>
 	</form>
+
+	{{-- <form method="post" action="contact-us" style="margin-top: -14px"> --}}
+		<div class="setting-list">
+			<ul data-role="listview"> 
+				<li data-role="collapsible" class="range-sec">
+					<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">Contact Us
+						<p class="ui-li-aside">
+							Contact Us
+						</p>
+					</h2>
+					<p>
+						<label style="color: #000"><h2>Message</h2></label>
+
+						<div data-role="controlgroup">
+							<form method="post" action="{{ url('contact-us') }}" data-ajax="false">
+								{{ csrf_field() }}
+								<textarea type="text" name="message" placeholder="Enter Your Message" style="margin-bottom: 10px; border: 1px solid #777;" required></textarea>
+								<button type="submit" class="btn btn-primary">Send</button>		
+							</form>
+						</div>
+					</p>
+				</li> 
+			</ul> 
+		</div>
+	{{-- </form>	 --}}
 </div>
 @endsection
 
@@ -118,15 +150,6 @@
 		$("#dataSave").click(function(e){
 			console.log('gggg');
 			var flag = true;
-			// var x = $('form input[type="radio"]').each(function(){
-	  //       // Do your magic here
-	  //       	var checkVal = parseInt($(this).val());
-	  //       	console.log(checkVal);
-	  //       	if(checkVal > 0){
-	  //       		flag = true;
-	  //       		return flag;
-	  //       	}
-			// });
 
 			if(flag){
 				$("#form").submit();
