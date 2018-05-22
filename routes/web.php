@@ -16,11 +16,16 @@
 
 // });
 
-Route::get('/install', function () {
-    return view('install');
-});
+// Route::get('/', function () {
+//     return view('index');
+// });
 
 	Auth::routes();
+
+	Route::get('logout', function(){
+		\Auth::logout();
+		return redirect()->route('home');
+	});
 	
 	Route::group(['middleware' => ['preventBackHistory']], function(){
 		Route::get('/admin', 'AdminController@checkStore')->name('admin');
@@ -29,7 +34,11 @@ Route::get('/install', function () {
 	Route::get('/home', 'HomeController@index')->name('home');
 
 	Route::post('contact-us', 'HomeController@contact_us');
+	Route::post('gdpr', 'AjaxController@gdpr');
+	Route::post('accept-gdpr', 'AjaxController@accept_gdpr');
 
+	Route::post('/delete-me', 'HomeController@deleteUser')->name('delete-user');
+	
 	Route::get('/login/{social}','Auth\LoginController@socialLogin')->where('social','facebook|google');
 	Route::get('/login/{social}/callback','Auth\LoginController@handelProviderCallback')->where('social','facebook|google');
 	Route::get('/userRegister','Auth\RegisterController@userRegister');
@@ -46,7 +55,6 @@ Route::get('/install', function () {
 
 	Route::get('/redirectStripe', 'StripePaymentController@redirectStripe');
 	Route::get('/stripeResponse', 'StripePaymentController@stripeResponse');
-
 	
 	Route::get('getList', 'HomeController@getList');
 
@@ -74,10 +82,9 @@ Route::get('/install', function () {
 		Route::get('search-store-map', 'MapController@searchStoreMap');
 		Route::post('save-order', 'OrderController@saveOrder');
 		Route::get('save-order', 'OrderController@saveOrder');
-		Route::get('/withOutLogin', 'OrderController@withOutLogin');
+		Route::get('withOutLogin', 'OrderController@withOutLogin')->name('withOutLogin');
 		Route::get('checkDistance','DistanceController@checkDistance');
 	});
-
 
 Route::group(['middleware' => ['auth']], function(){
 	Route::get('ready-notifaction/{OrderId}', 'PushNotifactionController@readyNotifaction');
@@ -85,7 +92,8 @@ Route::group(['middleware' => ['auth']], function(){
 	Route::get('blank-view', 'HomeController@blankView');
 	Route::get('order-view/{OrderId}', 'OrderController@orderView');
 	Route::post('payment', 'PaymentController@payment');
-	Route::get('payment', 'PaymentController@payment');	
+	Route::get('payment', 'PaymentController@payment');
+	
 });
 
 	Route::prefix('admin')->group(function(){

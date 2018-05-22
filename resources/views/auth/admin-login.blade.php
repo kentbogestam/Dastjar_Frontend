@@ -1,11 +1,16 @@
 @extends('layouts.blank')
 
+@section('head-scripts')
+    <link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" />
+@stop
+
 @section('content')
         <div data-role="header" data-theme="c">
              <div class="logo_header icon_logo">
                 <img src="{{asset('kitchenImages/logo.png')}}">
             </div>
         </div><!-- /header -->
+    <div class="container">
         <form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ route('admin-login') }}">
         {{ csrf_field() }}
             <div role="main" class="ui-content">
@@ -33,7 +38,7 @@
                     <input type="checkbox" name="chck-rememberme" id="chck-rememberme" checked="">
                     <label for="chck-rememberme">Remember me</label>
                 </fieldset> -->
-                <a href="" class="ui-btn ui-btn-b ui-corner-all mc-top-margin-1-5"><input type="button" value="Done" id="dataSave"/></a>
+                <a href="" class="ui-btn ui-btn-b ui-corner-all mc-top-margin-1-5" id="dataSave">Done</a>
                <!--  <a href="#dlg-invalid-credentials" data-rel="popup" data-transition="pop" data-position-to="window" id="btn-submit" class="ui-btn ui-btn-b ui-corner-all mc-top-margin-1-5"><input type="button" value="Done" id="dataSave"/>Submit</a> -->
                 <!-- <p class="mc-top-margin-1-5"><a href="begin-password-reset.html">Can't access your account?</a></p> -->
                 <div data-role="popup" id="dlg-invalid-credentials" data-dismissible="false" style="max-width:400px;">
@@ -45,9 +50,12 @@
                 </div>
             </div><!-- /content -->
         </form>    
+    </div>    
 @endsection
 
 @section('footer-script')
+    <script src="//stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+
     <script type="text/javascript">
         $("#dataSave").click(function(e){
             var flag = false;
@@ -61,7 +69,7 @@
                 alert("Please Enter vailed Email and Password.");    
                 e.preventDefault();
             }
-        })
+        });
 
         function makeRedirection(link){
             window.location.href = link;

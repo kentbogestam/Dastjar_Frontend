@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use App\Exceptions\SocialAuthException;
 use Socialite;
 use App\User;
+use App\Gdpr;
 use Auth;
 use Session;
 use DB;
@@ -65,6 +66,16 @@ class LoginController extends Controller
         $user = User::where(['fac_id' => $userSocial->id])->first();
         if($user){
             Auth::login($user);
+
+            $cookie_name = "gdpr";
+            if(isset($_COOKIE[$cookie_name])) {
+                $user_id = Auth::user()->id;
+                $user_gdpr = Gdpr::firstOrNew(['user_id' => $user_id]);
+                $user_gdpr->gdpr = 1;
+                $user_gdpr->save();
+                setcookie($cookie_name, "", time() - 3600);
+            }
+            
             if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
               $languages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
               $languagesServer = explode('-', $languages[0]);
@@ -82,7 +93,7 @@ class LoginController extends Controller
             if(Session::get('orderData') == null ){
               return redirect()->action('HomeController@index');
             }else{
-              return redirect()->action('OrderController@withOutLogin');
+                return redirect()->route('withOutLogin');
             }
         }else{
             $lang;
@@ -104,17 +115,26 @@ class LoginController extends Controller
                     'language' => $lang,
                 ]);
             Auth::login($user);
-            //return redirect()->action('HomeController@index');
-            return redirect()->action('OrderController@withOutLogin');
+
+            return redirect()->route('withOutLogin');
         }
     }
 
     public function userLogin(Request $request){
         $data = $request->input();
         $user = User::where(['otp' => $data['otp']])->where(['phone_number' => $request->session()->get('userPhoneNumber')])->first();
-        if($user){
-            
+        if($user){            
             Auth::login($user);
+
+            $cookie_name = "gdpr";
+            if(isset($_COOKIE[$cookie_name])) {
+                $user_id = Auth::user()->id;
+                $user_gdpr = Gdpr::firstOrNew(['user_id' => $user_id]);
+                $user_gdpr->gdpr = 1;
+                $user_gdpr->save();
+                setcookie($cookie_name, "", time() - 3600);
+            }
+
             if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
               $languages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
               $languagesServer = explode('-', $languages[0]);
@@ -130,7 +150,7 @@ class LoginController extends Controller
                         'language' => $lang,
                     ]);
             //return redirect()->action('HomeController@index');
-            return redirect()->action('OrderController@withOutLogin');
+            return redirect()->route('withOutLogin');
         }else{
             return redirect()->action('Auth\LoginController@enterOtp')->with('success', 'You have entered wrong otp.');
         }

@@ -36,15 +36,15 @@ return [
     ],
 
     'facebook' => [
-        'client_id' => '1505059276215071',
-        'client_secret' => '8c91580ce59a5e18fb53aa30486d7fdb',
-        'redirect' => env('APP_URL').'/public/login/facebook/callback',
+        'client_id' => '177272922898560',
+        'client_secret' => '88af05a7b4fae416f20da931426c9d14',
+        'redirect' => env('APP_URL').'login/facebook/callback',
     ],
 
     'google' => [
-        'client_id' => '138146471532-vmahv67i4a7uadabaficvl9734g9dlea.apps.googleusercontent.com',
-        'client_secret' => 'h2eoa0iTmIhMxzP1rGO4D-X8',
-        'redirect' => env('APP_URL').'/public/login/google/callback',
+        'client_id' => '749840208808-m5f4l2c2128ur05rv25q7u1chpb9nj9p.apps.googleusercontent.com',
+        'client_secret' => 'RkWiBcFT8KUAANO9_71wY7KW',
+        'redirect' => env('APP_URL').'login/google/callback',
     ],
 
     'stripe' => [

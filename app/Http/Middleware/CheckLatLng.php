@@ -14,9 +14,9 @@ class CheckLatLng
      * @return mixed
      */
     public function handle($request, Closure $next)
-    {   
+    {  
         if($request->session()->get('with_out_login_lat') != null || $request->session()->get('with_login_lat') != null){
-
+//            dd("123");
             return $next($request);
         }else{
             return redirect()->route('home');

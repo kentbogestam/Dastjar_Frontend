@@ -1,7 +1,76 @@
 @extends('layouts.master')
 @section('head-scripts')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
+
+<style>
+	#delete-me-btn{
+		background-color: #d25229;
+    	color: #fff;
+	    border-radius: 10px;
+		width: 100%;
+	}
+
+	.ui-dialog{
+		background-color: #fff !important;
+	}
+
+	.ui-controlgroup, #dialog-confirm + fieldset.ui-controlgroup {
+    	width: 100%;
+	}
+
+	#dialog-confirm{
+		display: none;
+		/* color: #fff; */
+	} 
+
+	.ui-dialog .ui-dialog-buttonpane{
+		text-align: center;
+	}
+
+	.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset{
+		float: none;
+	}
+	
+	#dialog-confirm .ui-icon{
+		float:left; 
+		margin:12px 12px 20px 0;
+		color: #fff;
+	}
+
+	#dialog-confirm .ui-icon-alert{
+		color: #fff;
+	}
+
+	#overlay {
+    	position: fixed;
+    	display: none;
+    	width: 100vw;
+    	height: 100vh;
+		top: 0;
+		left: 0;
+		right: 0;
+    	bottom: 0;
+	    background-color: rgba(0,0,0,0.5);
+	    z-index: 9;
+	}
+
+	.ui-widget-overlay{
+	    opacity: 0.5;		
+	}
+
+	.dialog-no{
+		background: linear-gradient(to bottom, rgba(249,163,34,1) 0%, rgba(229,80,11,1) 100%) !important;
+		color: #fff !important;
+	}
+
+	.dialog-no:hover{
+		background: linear-gradient(to bottom, rgba(249,163,34,1) 0%, rgba(229,80,11,1) 100%);
+		color: #fff;
+	}	
+</style>
 <script src="{{asset('locationJs/currentLocation.js')}}"></script>
 @endsection
+
 @section('content')
 <div class="setting-page" data-role="page" data-theme="c">
 	<div data-role="header" class="header" data-position="fixed">
@@ -52,7 +121,7 @@
 					</li> 
 				</ul>
 			</div>
-
+			
 			<div class="setting-list">
 				<ul data-role="listview"> 
 					<li data-role="collapsible" class="range-sec">
@@ -91,18 +160,19 @@
 					<!-- <li><a href="#">Unit <p class="ui-li-aside">Meter</p></a></li>  -->
 				</ul> 
 			</div>
-
+			
 			<div class="setting-list">
 				<ul data-role="listview"> 
-					<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Range') }}
-						<p class="ui-li-aside">
-							@if(Auth::check())
-								{{Auth::user()->range}} Km
-							@else
-								{{Session::get('rang')}}
-							@endif
-						</p></h2>
-					<p>
+					<li data-role="collapsible" class="range-sec">
+						<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Range') }}
+							<p class="ui-li-aside">
+								@if(Auth::check())
+									{{Auth::user()->range}} Km
+								@else
+									{{Session::get('rang')}}
+								@endif
+							</p>
+						</h2>
 						<div data-role="rangeslider">
 							@if(Auth::check())
 						   		<input type="range" name="range-1b" id="range-1b" min="3" max="10" value="{{Auth::user()->range}}">
@@ -110,16 +180,13 @@
 						   		<input type="range" name="range-1b" id="range-1b" min="3" max="10" value="{{Session::get('rang')}}">
 						   	@endif
 						</div>
-					</p>
 					</li> 
 				</ul> 
 			</div>
-
 		</div>
 	</form>
-
-	{{-- <form method="post" action="contact-us" style="margin-top: -14px"> --}}
-		<div class="setting-list">
+	
+	<div class="setting-list">
 			<ul data-role="listview"> 
 				<li data-role="collapsible" class="range-sec">
 					<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">Contact Us
@@ -127,26 +194,61 @@
 							Contact Us
 						</p>
 					</h2>
-					<p>
-						<label style="color: #000"><h2>Message</h2></label>
+					<div>
+						<label style="color: #000; padding-left: 0px"><h2>Message</h2></label>
+					</div>
 
-						<div data-role="controlgroup">
-							<form method="post" action="{{ url('contact-us') }}" data-ajax="false">
-								{{ csrf_field() }}
-								<textarea type="text" name="message" placeholder="Enter Your Message" style="margin-bottom: 10px; border: 1px solid #777;" required></textarea>
-								<button type="submit" class="btn btn-primary">Send</button>		
-							</form>
-						</div>
-					</p>
+					<div data-role="controlgroup">
+						<form method="post" action="{{ url('contact-us') }}" data-ajax="false">
+							{{ csrf_field() }}
+							<textarea type="text" name="message" placeholder="Enter Your Message" style="margin-bottom: 10px; border: 1px solid #777;" required></textarea>
+							<button type="submit" class="btn btn-success">Send</button>		
+						</form>
+					</div>
 				</li> 
 			</ul> 
-		</div>
-	{{-- </form>	 --}}
+	</div>
+
+
+
 </div>
 @endsection
 
 @section('footer-script')
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>	 
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+
 	<script type="text/javascript">
+		$('#delete-me-form').submit(function(event){
+			event.preventDefault();
+
+
+			$( "#dialog-confirm" ).dialog({
+					resizable: false,
+					modal: true,
+					buttons: [						
+						{
+							text: "No",
+							"class": 'dialog-no',
+							click: function() {
+								$(this).dialog("close");
+							}					
+						},
+						{
+							text: "Yes",
+							"class": 'dialog-yes',
+							click: function() {
+								$(this).dialog("close");
+								$('#delete-me-form').unbind().submit();
+							}
+						}
+		        ]
+				
+			}); 
+	
+		});
+
 		$("#dataSave").click(function(e){
 			console.log('gggg');
 			var flag = true;
@@ -162,5 +264,14 @@
 		function makeRedirection(link){
 			window.location.href = link;
 		}
+
+		$('#delete-me-form2').submit(function(event){
+			event.preventDefault();
+
+			var r = confirm("Are you sure you want to delete your account?");
+			if (r == true) {
+				$(this).unbind().submit();
+			}			
+		});
 	</script>
 @endsection

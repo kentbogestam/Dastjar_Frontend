@@ -1,5 +1,19 @@
 var clickURL = "";
 self.addEventListener('install', function(event) {
+        event.waitUntil(
+          caches.open('anar').then(cache => {
+            return cache.addAll([
+              '/kitchen'
+              // `/cloneAddtohomescreen/index.html?timestamp=${timeStamp}`,
+              // `/cloneAddtohomescreen/styles/main.css?timestamp=${timeStamp}`,
+              // `/cloneAddtohomescreen/scripts/main.min.js?timestamp=${timeStamp}`,
+              // `/cloneAddtohomescreen/scripts/comlink.global.js?timestamp=${timeStamp}`,
+              // `/cloneAddtohomescreen/scripts/messagechanneladapter.global.js?timestamp=${timeStamp}`,
+              // `/cloneAddtohomescreen/sounds/airhorn.mp3?timestamp=${timeStamp}`
+            ])
+            .then(() => self.skipWaiting());
+          })
+        );
   self.skipWaiting();
   console.log('Installed', event);
 });

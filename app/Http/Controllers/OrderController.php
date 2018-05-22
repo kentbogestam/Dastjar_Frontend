@@ -234,13 +234,26 @@ class OrderController extends Controller
                 return view('order.index', compact('order','orderDetails'));
             }
         }else{
-
-
             $todayDate = $request->session()->get('browserTodayDate');
             $currentTime = $request->session()->get('browserTodayTime');
             $todayDay = $request->session()->get('browserTodayDay');
+
             $userDetail = User::whereId(Auth()->id())->first();
-            $companydetails = Store::getListRestaurants($request->session()->get('with_login_lat'),$request->session()->get('with_login_lng'),$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
+
+            
+            if($request->session()->get('with_login_lat') == null){
+                $lat = $request->session()->get('with_out_login_lat');
+            }else{
+                $lat = $request->session()->get('with_login_lat');
+            }
+
+            if($request->session()->get('with_login_lng') == null){
+                $lng = $request->session()->get('with_out_login_lng');
+            }else{
+                $lng = $request->session()->get('with_login_lng');
+            }
+            
+            $companydetails = Store::getListRestaurants($lat,$lng,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
             
             return view('index', compact('companydetails'));
         } 
@@ -271,5 +284,19 @@ class OrderController extends Controller
         }
 
         return $alpha_key . $key;
+    }
+
+    public function gdpr(){
+        return 1;        
+        $gdpr = new Gdpr();
+
+        $user_id = Session::user()->id;
+
+        if($gdpr->where('user_id', '=', $user_id)->exists()){
+           $gdpr_val = $gdpr->where('user_id', '=', $user_id)->first()->gdpr;
+           return $gdpr_val;
+        }else{
+            return 0;
+        }
     }
 }

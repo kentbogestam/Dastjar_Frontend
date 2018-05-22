@@ -99,7 +99,6 @@ class AdminController extends Controller
     }
 
     public function kitchenOrderDetail(){
-
         $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
         $storeName = $storedetails->store_name;
         

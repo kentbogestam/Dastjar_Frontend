@@ -9,7 +9,7 @@ self.addEventListener('install', e => {
   e.waitUntil(
     caches.open('anar').then(cache => {
       return cache.addAll([
-        `/`,
+        `/`
         // `/cloneAddtohomescreen/index.html?timestamp=${timeStamp}`,
         // `/cloneAddtohomescreen/styles/main.css?timestamp=${timeStamp}`,
         // `/cloneAddtohomescreen/scripts/main.min.js?timestamp=${timeStamp}`,

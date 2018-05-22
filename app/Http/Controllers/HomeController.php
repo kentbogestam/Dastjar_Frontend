@@ -7,6 +7,8 @@ use App\Store;
 use App\Product;
 use App\Company;
 use App\DishType;
+use App\Order;
+use App\Gdpr;
 use Session;
 use DB;
 use App\User;
@@ -32,7 +34,9 @@ class HomeController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function getList(Request $request){  
+    public function getList(Request $request){
+       
+      
         $pieces = explode(" ", $request->session()->get('current_date_time'));
         $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
         $currentTime = $pieces[4];
@@ -42,6 +46,7 @@ class HomeController extends Controller
            $userDetail = User::whereId(Auth()->id())->first();
             $lat = $request->session()->get('with_login_lat');
             $lng = $request->session()->get('with_login_lng');
+           //dd($userDetail);
             $companydetails = Store::getListRestaurantsCheck($lat,$lng,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
         }else{
 
@@ -64,10 +69,15 @@ class HomeController extends Controller
     public function saveCurrentLatLong(Request $request){
         $data = $request->input();
         if(Auth::check()){
-            if($data['lat'] != null || $data['lng'] != null){
+            if(!empty($data['lat']) || !empty($data['lng'])){
                 $request->session()->put('with_login_lat', $data['lat']);
                 $request->session()->put('with_login_lng', $data['lng']);
                 $request->session()->put('with_login_address', null);
+                // DB::table('customer')->where('id', Auth::id())->update([
+                //                     'customer_latitude' => $data['lat'],
+                //                     'customer_longitude' => $data['lng'],
+                //                     'address' => NULL,
+                //                 ]);
                 $request->session()->put('updateLocationBySettingAfterLogin', 1);
                 $request->session()->put('setLocationBySettingValueAfterLogin', null);
             }else{
@@ -76,13 +86,18 @@ class HomeController extends Controller
                 $request->session()->put('updateLocationBySettingAfterLogin', 1);
                 $request->session()->put('setLocationBySettingValueAfterLogin', null);
                 $request->session()->put('with_login_address', null);
+                
+                // DB::table('customer')->where('id', Auth::id())->update([
+                //                     'customer_latitude' => 59.303566,
+                //                     'customer_longitude' => 18.0065041,
+                //                     'address' => NULL,
+                //                 ]);
             }
         }else{
             $request->session()->put('with_out_login_lat', $data['lat']);
             $request->session()->put('with_out_login_lng', $data['lng']);
             $request->session()->put('address', null);
             $request->session()->put('setLocationBySettingValue', null);
-
         }
        return response()->json(['status' => 'success', 'response' => true,'data'=>true]);  
     }
@@ -132,6 +147,8 @@ class HomeController extends Controller
                 $lng = $request->session()->get('with_login_lng');
                 $request->session()->put('with_login_lat', $request->session()->get('with_login_lat')); 
             }
+
+            //DB::table('customer')->where('id', Auth::id())->update(['browser' => $data['browserVersion'],]);
 
             if($userDetail->web_version != $versionDetail->version){
                 DB::table('customer')->where('id', Auth::id())->update(['web_version' => $versionDetail->version,]);
@@ -225,7 +242,9 @@ class HomeController extends Controller
 
     public function eatNow(Request $request)
     {
+
         $userDetail = User::whereId(Auth()->id())->first();
+       //dd($userDetail);
         $pieces = explode(" ", $request->session()->get('current_date_time'));
         $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
         $currentTime = $pieces[4];
@@ -233,6 +252,7 @@ class HomeController extends Controller
         $lat = $request->session()->get('with_login_lat');
         $lng = $request->session()->get('with_login_lng');
         $companydetails = Store::getListRestaurants($lat,$lng,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
+        //dd($companydetails);
         return view('eat-now', compact('companydetails'));
     }
 
@@ -252,6 +272,8 @@ class HomeController extends Controller
                 $monthFinal = $monthadd;
             }
             $todayDate = $pieces[2].'-'.$monthFinal.'-'.$pieces[3];
+            //$todayDate = date('d-m-Y', strtotime($request->session()->get('order_date')));
+            //dd($todayDate);
             $currentTime = $pieces[4];
             $todayDay = $pieces[0]; 
         }else{
@@ -333,6 +355,7 @@ class HomeController extends Controller
 
     public function menuList(Request $request, $storeId){
         $userDetail = User::whereId(Auth()->id())->first();
+        //$menuDetails = Product::where('company_id' , $companyId)->with('menuPrice')->get();
         $menuDetails = ProductPriceList::where('store_id',$storeId)->with('menuPrice')->with('storeProduct')->get();
         if(count($menuDetails) !=0 ){
             foreach ($menuDetails as $menuDetail) {
@@ -341,6 +364,7 @@ class HomeController extends Controller
                     $dish_typeId[] = $storeProduct->dish_type;
                 }
             }
+            //dd(array_unique($dish_typeId));
             $menuTypes = DishType::where('company_id' , $companyId)->whereIn('dish_id', array_unique($dish_typeId))->where('dish_activate','1')->get();
             $dish_typeId = null;
             $request->session()->put('storeId', $storeId);
@@ -357,16 +381,30 @@ class HomeController extends Controller
     public function selectOrderDate(){
         return view('select-datetime', compact('')); 
     }
-    
-    public function contact_us(Request $request){        
+	
+	public function contact_us(Request $request){        
         $data = array('msg'=>$request->message);
-        // dd($data);
-        
-        \Mail::send('mails.contact', $data, function($message) {
-           $message->to('info@dastjar.com', 'Dastjar')
-           ->subject('Dastjar Contact Mail');
-           $message->from('info@dastjar.com','Dastjar');
-        });
+
+        $headers = "MIME-Version: 1.0\r\n";
+        $headers .= "Content-type: text/html; charset=iso-8859-1\r\n";   
+        $headers .='X-Mailer: PHP/' . phpversion();
+        $headers .= "From: Anar <admin@dastjar.com> \r\n"; // header of mail content
+
+        mail('info@dastjar.com', 'Dastjar Contact Mail', $request->message, $headers);
+
+        return redirect()->back();
+    }
+
+    public function deleteUser(){
+        $user_id = Auth::user()->id;
+
+        $order = new Order();
+        $gdpr = new Gdpr();
+        $user = new User();
+
+        $order->where('user_id' , '=', $user_id)->delete();
+        $gdpr->where('user_id' , '=', $user_id)->delete();
+        $user->where('id' , '=', $user_id)->delete();
 
         return redirect()->back();
     }

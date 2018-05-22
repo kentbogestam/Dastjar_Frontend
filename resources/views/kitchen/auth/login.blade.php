@@ -6,6 +6,7 @@
                 <img src="{{asset('kitchenImages/logo-img.png')}}">
             </div>
         </div><!-- /header -->
+    <div class="container">
         <form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('kitchen/login') }}">
         {{ csrf_field() }}
             <div role="main" class="ui-content">
@@ -43,7 +44,8 @@
                     </div>
                 </div>
             </div><!-- /content -->
-        </form>    
+        </form>   
+    </div> 
 @endsection
 
 @section('footer-script')
