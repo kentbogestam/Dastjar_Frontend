@@ -3,6 +3,16 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
 
 <style>
+	.msg-lbl{
+		color: #000; 
+		padding-left: 0px !important;
+	}
+
+	.msg-txt{
+		margin-bottom: 10px !important; 
+		border: 1px solid #777 !important;
+	}
+
 	#delete-me-btn{
 		background-color: #d25229;
     	color: #fff;
@@ -189,27 +199,74 @@
 	<div class="setting-list">
 			<ul data-role="listview"> 
 				<li data-role="collapsible" class="range-sec">
+					@if(Auth::check())
+						@if(Auth::user()->language == 'ENG')
+							<?php $lan = "eng" ?>
+						@elseif(Auth::user()->language == 'SWE')
+							<?php $lan = "swe" ?>
+						@endif
+					@else
+						@if(Session::get('browserLanguageWithOutLogin') == 'ENG')
+							<?php $lan = "eng" ?>
+						@elseif(Session::get('browserLanguageWithOutLogin') == 'SWE')
+							<?php $lan = "swe" ?>
+						@endif
+					@endif
+
+					@if($lan == "eng")
 					<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">Contact Us
 						<p class="ui-li-aside">
 							Contact Us
 						</p>
 					</h2>
 					<div>
-						<label style="color: #000; padding-left: 0px"><h2>Message</h2></label>
+						<label class="msg-lbl"><h2>Message</h2></label>
 					</div>
 
 					<div data-role="controlgroup">
 						<form method="post" action="{{ url('contact-us') }}" data-ajax="false">
 							{{ csrf_field() }}
-							<textarea type="text" name="message" placeholder="Enter Your Message" style="margin-bottom: 10px; border: 1px solid #777;" required></textarea>
+							<textarea type="text" name="message" placeholder="Enter Your Message" class="msg-txt" required></textarea>
 							<button type="submit" class="btn btn-success">Send</button>		
 						</form>
 					</div>
+					@elseif($lan == "swe")
+						<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">Kontakta oss
+							<p class="ui-li-aside">
+								Kontakta oss
+							</p>
+						</h2>
+						<div>
+							<label class="msg-lbl"><h2>Meddelande</h2></label>
+						</div>
+	
+						<div data-role="controlgroup">
+							<form method="post" action="{{ url('contact-us') }}" data-ajax="false">
+								{{ csrf_field() }}
+								<textarea type="text" name="message" placeholder="Skriv ditt meddelande och lägg till din email adress för svar" class="msg-txt" required></textarea>
+								<button type="submit" class="btn btn-success">Skicka</button>		
+							</form>
+						</div>
+					@endif
+
 				</li> 
 			</ul> 
 	</div>
 
+	@if(Auth::check())
+	<div class="setting-list">
+		<div> 
+					<form method="post" id="delete-me-form" action="{{ url('delete-me') }}" data-ajax="false">
+						{{ csrf_field() }}
+						<button type="submit" id="delete-me-btn" class="btn btn-danger">Delete Me</button>		
+					</form>
+		</div> 
+	</div>
+	@endif
 
+	<div id="dialog-confirm" title="Delete Account">
+		<p>Are you sure?</p>
+	</div>
 
 </div>
 @endsection
@@ -222,7 +279,6 @@
 	<script type="text/javascript">
 		$('#delete-me-form').submit(function(event){
 			event.preventDefault();
-
 
 			$( "#dialog-confirm" ).dialog({
 					resizable: false,
@@ -250,7 +306,6 @@
 		});
 
 		$("#dataSave").click(function(e){
-			console.log('gggg');
 			var flag = true;
 
 			if(flag){

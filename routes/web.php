@@ -11,15 +11,6 @@
 |
 */
 
-// Route::group(['prefix' => 'dast-jar'], function() {
-// 	Route::get('/', ['uses' => 'HomeController@index']);
-
-// });
-
-// Route::get('/', function () {
-//     return view('index');
-// });
-
 	Auth::routes();
 
 	Route::get('logout', function(){
@@ -39,6 +30,8 @@
 
 	Route::post('/delete-me', 'HomeController@deleteUser')->name('delete-user');
 	
+	Route::get('/order/{id}', 'OrderController@order_detail')->name('order-url');
+
 	Route::get('/login/{social}','Auth\LoginController@socialLogin')->where('social','facebook|google');
 	Route::get('/login/{social}/callback','Auth\LoginController@handelProviderCallback')->where('social','facebook|google');
 	Route::get('/userRegister','Auth\RegisterController@userRegister');

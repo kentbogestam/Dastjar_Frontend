@@ -1,6 +1,7 @@
 
 var lat;
 var lng;
+
 $(document).ready(function($) {
 
 	navigator.geolocation.getCurrentPosition(function(position) { 
@@ -11,6 +12,7 @@ $(document).ready(function($) {
 	   $('#login-popup').show();
 	    
 	});
+
 
 	function getCookie(cname) {
 	    var name = cname + "=";
@@ -27,8 +29,10 @@ $(document).ready(function($) {
 	    }
 	    return "";
 	}
+
 	lat = getCookie("everyMinutelatitude");
 	lng = getCookie("everyMinutelongitude");
+	
 	$.ajax({
         type: "GET",
         url: "checkDistance",

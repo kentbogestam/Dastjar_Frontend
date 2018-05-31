@@ -209,7 +209,7 @@
 				@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
 			</div>
 		</div>
-		<a class="ui-btn-right map-btn user-link" onClick="makeRedirection('{{url('search-store-map')}}')" data-ajax="false"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
+		<a class="ui-btn-right map-btn user-link" href="{{url('search-store-map')}}" data-ajax="false"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
 	</div>
 	@if(count($menuTypes) == '0')
 	<div class="table-content">

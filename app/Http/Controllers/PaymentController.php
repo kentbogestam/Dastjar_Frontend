@@ -27,7 +27,7 @@ class PaymentController extends Controller
 	    	$orderId = $request->session()->get('OrderId');
 	      try {
 	        $token = $request->stripeToken;
-	        Stripe::setApiKey('sk_test_EypGXzv2qqngDIPIkuK6aXNi');
+	        Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
 	        $charge = Charge::create(array(
 	            'amount' => $amount,
 	            'currency' => 'sek',

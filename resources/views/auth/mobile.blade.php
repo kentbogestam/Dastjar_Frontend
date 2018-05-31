@@ -63,8 +63,7 @@
                       $("#folio-invalid").removeClass("hidden");
                       $("#mobile-valid").addClass("hidden");
                       return false;
-                   }
-            
+                   }            
           });
           
         });

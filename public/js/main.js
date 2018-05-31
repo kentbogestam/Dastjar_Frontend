@@ -37,19 +37,15 @@ $(document).ready(function($) {
     jQuery(".sub-menu").hide();
     jQuery(".container").hide();
         
-    if("ontouchstart" in document.documentElement){
-    
+    if("ontouchstart" in document.documentElement){    
         jQuery(".menu-item-has-children").bind('touchstart touchon', function(event){
             event.preventDefault();
             jQuery(this).children(".sub-menu").toggleClass("active").toggle(350);
             return false;
         }).children(".sub-menu").children("li").bind('touchstart touchon', function(event) {
             window.location.href = jQuery(this).children("a").attr("href");
-        });
-
-        
-    }else{
-    
+        });        
+    }else{    
         jQuery(".menu-item-has-children").bind('click', function(event){
             event.preventDefault();
             jQuery(this).children(".sub-menu").toggleClass("active").toggle(350);

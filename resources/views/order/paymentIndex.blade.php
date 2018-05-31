@@ -48,7 +48,7 @@
         {{ csrf_field() }} 
         <script
                 src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                data-key="pk_test_5P1GedJTk0HsWb3AnjYBbz6G"
+				data-key="{{env('STRIPE_PUB_KEY')}}"
                 data-amount=""
                 data-name="Stripe"
                 data-description="DastJar"

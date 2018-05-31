@@ -56,29 +56,26 @@
 					@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
 				</div>
 			</div>
-			<a class="ui-btn-right map-btn user-link" onClick="makeRedirection('{{url('search-map-eatnow')}}')"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
+			<a href="{{url('search-map-eatnow')}}" class="ui-btn-right map-btn user-link" data-ajax="false"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
 		</div>
 	</div>
 	<div class="cat-btn">
 		<div class="ui-grid-a top-btn">
 			<div class="ui-block-a"><a href="" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-active" class="active"><img src="{{asset('images/icons/icon-eat-now-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-now-inactive.png')}}" class="inactive">{{ __('messages.Eat Now') }}</a></div>
-			<div class="ui-block-b"><a onClick="makeRedirection('{{url('selectOrder-date')}}')" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-inactive"><img src="{{asset('images/icons/icon-eat-later-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-later-inactive.png')}}" class="inactive">{{ __('messages.Eat Later') }}</a></div>
+			<div class="ui-block-b"><a href="{{url('selectOrder-date')}}" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-inactive" data-ajax="false"><img src="{{asset('images/icons/icon-eat-later-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-later-inactive.png')}}" class="inactive">{{ __('messages.Eat Later') }}</a></div>
 		</div>
 	</div>
+	
 	<div role="main" data-role="main-content" id="content">
-
 		<div class="cat-list-sec">
 			<input type="hidden" id="browserCurrentTime" name="browserCurrentTime" value="" />
 			<ul data-role="listview" data-inset="true" id="companyDetailContianer">
 
-				
-
-
+		
 			</ul>
 		</div>
-
-
 	</div>	
+
 	<div data-role="footer" id="footer" data-position="fixed">
 		<div class="ui-grid-c inner-footer center">
 		<div class="ui-block-a"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
@@ -105,6 +102,7 @@
 		</div>
 		</div>
 	</div>
+
 	<div id="login-popup" style="display: none;" class="login-popup" data-theme="a">
 	  <div class="inner-popup">
 	        <div id = "cancel-popup" class="cross"><img src="{{asset('images/icons/cross.png')}}"></div>
@@ -113,10 +111,6 @@
 	        </div>
 	  </div>
 	</div>
-
-
-	
-
 @endsection
 
 @section('footer-script')
@@ -322,26 +316,23 @@
 	});
 
 	var d = new Date();
-	console.log(d);
+
 	$("#browserCurrentTime").val(d);
-	console.log(getCookie("latitude"));
-	console.log(getCookie("longitude"));
-	console.log(getCookie("browserVersion"));
 
 	$.get("{{url('checkUserLogin')}}", 
 	    function(returnedData){
 	    	var temp = returnedData["data"];
 	    	if(temp){
 	    		 document.cookie="userId=" + temp;
-	    		localStorage.setItem("userId", temp);
-	    		 console.log('loginId='+localStorage.getItem("userId"));
+   	    		 localStorage.setItem("userId", temp);
+	    		//  console.log('loginId='+localStorage.getItem("userId"));
 	    	}else{
 	    		if(localStorage.getItem("userId")){
 	    			console.log('logoutloginId='+localStorage.getItem("userId"));
 	    			$.get("{{url('userLogin')}}", { usetId : localStorage.getItem("userId")}, 
 	    				function(returnedData){
-	    					console.log(returnedData["data"]);
-	    					location.reload();
+	    					// console.log(returnedData["data"]);
+	    					// location.reload();
 	    				});
 	    		}else{
 	    			console.log('logout');
@@ -588,7 +579,7 @@
             }; 
     }();
     console.log('IphoneVersion='+IphoneVersion);
-	if(getCookie("browser") == 'Safari' && count == 1 && IphoneVersion != 11.3){
+	if(getCookie("browser") == 'Safari' && count == 1){
 		console.log('iphonePopupcount='+getCookie("iphonePopupcount"));
 		document.cookie="iphonePopupcountIncrease=" + 2;
 		var ath = addToHomescreen({

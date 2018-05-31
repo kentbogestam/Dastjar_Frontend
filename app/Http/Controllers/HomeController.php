@@ -148,8 +148,6 @@ class HomeController extends Controller
                 $request->session()->put('with_login_lat', $request->session()->get('with_login_lat')); 
             }
 
-            //DB::table('customer')->where('id', Auth::id())->update(['browser' => $data['browserVersion'],]);
-
             if($userDetail->web_version != $versionDetail->version){
                 DB::table('customer')->where('id', Auth::id())->update(['web_version' => $versionDetail->version,]);
                 Auth::logout();
@@ -242,7 +240,6 @@ class HomeController extends Controller
 
     public function eatNow(Request $request)
     {
-
         $userDetail = User::whereId(Auth()->id())->first();
        //dd($userDetail);
         $pieces = explode(" ", $request->session()->get('current_date_time'));
@@ -272,8 +269,6 @@ class HomeController extends Controller
                 $monthFinal = $monthadd;
             }
             $todayDate = $pieces[2].'-'.$monthFinal.'-'.$pieces[3];
-            //$todayDate = date('d-m-Y', strtotime($request->session()->get('order_date')));
-            //dd($todayDate);
             $currentTime = $pieces[4];
             $todayDay = $pieces[0]; 
         }else{
@@ -355,8 +350,8 @@ class HomeController extends Controller
 
     public function menuList(Request $request, $storeId){
         $userDetail = User::whereId(Auth()->id())->first();
-        //$menuDetails = Product::where('company_id' , $companyId)->with('menuPrice')->get();
         $menuDetails = ProductPriceList::where('store_id',$storeId)->with('menuPrice')->with('storeProduct')->get();
+
         if(count($menuDetails) !=0 ){
             foreach ($menuDetails as $menuDetail) {
                 foreach ($menuDetail->storeProduct as $storeProduct) {
@@ -364,7 +359,7 @@ class HomeController extends Controller
                     $dish_typeId[] = $storeProduct->dish_type;
                 }
             }
-            //dd(array_unique($dish_typeId));
+
             $menuTypes = DishType::where('company_id' , $companyId)->whereIn('dish_id', array_unique($dish_typeId))->where('dish_activate','1')->get();
             $dish_typeId = null;
             $request->session()->put('storeId', $storeId);

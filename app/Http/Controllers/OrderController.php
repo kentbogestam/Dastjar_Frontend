@@ -286,17 +286,13 @@ class OrderController extends Controller
         return $alpha_key . $key;
     }
 
-    public function gdpr(){
-        return 1;        
-        $gdpr = new Gdpr();
+    public function order_detail($id){
+        $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$id)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
 
-        $user_id = Session::user()->id;
+        // dd($order);
 
-        if($gdpr->where('user_id', '=', $user_id)->exists()){
-           $gdpr_val = $gdpr->where('user_id', '=', $user_id)->first()->gdpr;
-           return $gdpr_val;
-        }else{
-            return 0;
-        }
+        $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$id)->get();
+
+        return view('order.order-details', compact('order','orderDetails'));
     }
 }
