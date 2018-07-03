@@ -55,10 +55,11 @@ class RegisterController extends Controller
             if ($validator->fails()) {
                 return redirect()->action('Auth\RegisterController@userRegister')->with('success', 'This Email or Mobile Number already register.');
             }
+            // dd($request->session()->all());
+
             $user = $this->create($request->all());
+
             if ($user) {
-
-
                 // Define recipients
                 //$afterRemoveFirstZeroNumber = substr($user->phone_number, -9);
                 $request->session()->put('userPhoneNumber', $user->phone_number);
@@ -176,18 +177,15 @@ class RegisterController extends Controller
                 curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
                 $result = curl_exec($ch);
                 curl_close($ch); 
-               // print($result);
-                // $json = json_decode($result);
-                // dd($json);
-                //print($result);
+
                 $json = json_decode($result);
+
                 return view('auth.otp');
                 if($json->message == 'Insufficient credit'){
                     return redirect()->action('Auth\LoginController@mobileLogin')->with('success', 'Otp is not sent due to some technical issue.');
                 }else{
                     return view('auth.otp');
                 }
-                // print_r($json->ids);
             }
             return redirect()->action('Auth\RegisterController@userRegister')->with('success', 'Your Number is not register.Please register mobile number');
 

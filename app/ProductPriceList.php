@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class ProductPriceList extends Model
 {
     protected $table = 'product_price_list';
-
+    public $timestamps = false;
+    
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);

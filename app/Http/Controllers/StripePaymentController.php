@@ -11,7 +11,10 @@ class StripePaymentController extends Controller
     }
 
     public function stripeResponse(Request $request){
-    	$data=$request->input();
+        $data=$request->input();
+        
+        dd($data);
+        
         $url = 'https://connect.stripe.com/oauth/token/client_secret=sk_test_EypGXzv2qqngDIPIkuK6aXNi/code='.$data['code'].'/grant_type=authorization_code';
 
     	$curl = curl_init();
@@ -28,7 +31,7 @@ class StripePaymentController extends Controller
         dd($response);
         
      //    curl_close($curl);
-    	return redirect()->away( 'http://localhost/stripePayment/public/stripeResponse?scope='.$data['scope'].'&code='.$data['code'].'');
+    	return redirect()->away(env('APP_URL').'stripeResponse?scope='.$data['scope'].'&code='.$data['code'].'');
     }
 
     public function stripeSecondResponse(Request $request){

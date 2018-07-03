@@ -1,5 +1,23 @@
 @extends('layouts.kitchenSetting')
 
+<style type="text/css">
+	#about_us{
+		background-color: #fff;
+		border-radius: 0.5em;
+	}
+
+	#about_us h2{
+		text-align: left;
+		padding-left: 2em;
+	}
+
+	.about_us_link{
+		list-style: none;
+		text-decoration: none;
+		color: initial;
+	}
+</style>
+
 @section('content')
 <div class="setting-page" data-role="page" data-theme="c">
 	<div data-role="header"  data-position="fixed" data-tap-toggle="false" class="header">
@@ -71,6 +89,10 @@
 				        <input type="radio" name="text_speech" id="radio-choice-v-2e" value="1" @if(Auth::guard('admin')->user()->text_speech == 1) checked="checked" @endif>
 				        <label for="radio-choice-v-2e">On</label>
 				    </fieldset>
+				</li>
+
+				<li id="about_us" class="range-sec">
+					<h2 class="ui-btn"><a href="https://dastjar.com/" target="_blank" class="about_us_link" data-ajax="false">{{  __("messages.About Us") }}</a></h2>
 				</li>
 			</div>
 		</div>

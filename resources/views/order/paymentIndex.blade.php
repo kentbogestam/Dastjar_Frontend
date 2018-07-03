@@ -7,7 +7,7 @@
 				<span>{{ Auth::user()->name}}</span>
 			</div>
 		</div>
-		<a class="ui-btn-right map-btn user-link" href="#left-side-bar"  data-ajax="false"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
+		<a href="{{url('search-map-eatnow')}}" class="ui-btn-right map-btn user-link" data-ajax="false"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
 	</div>
 	<div role="main" data-role="main-content" class="content">
 		<div class="inner-page-container">
@@ -51,7 +51,7 @@
 				data-key="{{env('STRIPE_PUB_KEY')}}"
                 data-amount=""
                 data-name="Stripe"
-                data-description="DastJar"
+                data-description="Dastjar"
                 data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
                 data-locale="auto"
                 data-zip-code="false">

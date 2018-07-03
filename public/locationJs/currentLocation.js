@@ -38,7 +38,6 @@ $(document).ready(function($) {
         url: "checkDistance",
         data: {lat: getCookie("everyMinutelatitude"), lng : getCookie("everyMinutelongitude")},
         success: function( returnedData ) {
-           console.log(returnedData);
         }
     });
 

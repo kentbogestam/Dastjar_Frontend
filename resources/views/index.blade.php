@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('head-scripts')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.5.1/fingerprint2.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.5.1/fingerprint2.min.js"></script>
 
 
     <script src="{{asset('notifactionJs/App42-all-3.1.min.js')}}"></script>
@@ -25,7 +25,7 @@
 	    M= M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
 	    if((tem= ua.match(/version\/(\d+)/i))!= null) M.splice(1, 1, tem[1]);
 
-	    console.log("browserVersion=" + M.join(' '));
+	    //console.log("browserVersion=" + M.join(' '));
 	    var browserVersion = M.join(' ');
 	    var getBrowser = browserVersion.split(" ");
 	    var browser = getBrowser[0];
@@ -40,15 +40,15 @@
 	    }
 	})();
 	</script>
-     <script>
-
+	
+	<script>
 	  $(document).ready(function () {
 	        registerSwjs();
 	  });
 	</script>
 @endsection
 @section('content')
-	<div data-role="header" class="header" id="nav-header"  data-position="fixed"><!--  -->
+	<div data-role="header" class="header" id="nav-header"  data-position="fixed">
 		<div class="nav_fixed">
 			<div class="logo">
 				<div class="inner-logo">
@@ -65,7 +65,7 @@
 			<div class="ui-block-b"><a href="{{url('selectOrder-date')}}" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-inactive" data-ajax="false"><img src="{{asset('images/icons/icon-eat-later-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-later-inactive.png')}}" class="inactive">{{ __('messages.Eat Later') }}</a></div>
 		</div>
 	</div>
-	
+
 	<div role="main" data-role="main-content" id="content">
 		<div class="cat-list-sec">
 			<input type="hidden" id="browserCurrentTime" name="browserCurrentTime" value="" />
@@ -168,7 +168,7 @@
     	
     	//if in future this page will get it, then add this condition in and in below if activePage[0].id == "home" 
     	if (scrolled >= scrollEnd) {
-	        console.log(list);
+	        //console.log(list);
 	        $.mobile.loading("show", {
 	        text: "loading more..",
 	        textVisible: true,
@@ -239,13 +239,13 @@
 
 	function add(){
 		var d = new Date();
-		console.log(d);
+		//console.log(d);
 		$("#browserCurrentTime").val(d);
 		$.get("{{url('lat-long')}}", { lat: getCookie("latitude"), lng : getCookie("longitude"), currentdateTime : d, browserVersion : getCookie("browserVersion")}, 
     	function(returnedData){
 
 	    	var count = 10;
-	    	console.log(returnedData["data"]);
+	    	//console.log(returnedData["data"]);
 	    	var url = "{{url('restro-menu-list/')}}";
 			var temp = returnedData["data"];
 			list = temp;
@@ -335,7 +335,7 @@
 	    					// location.reload();
 	    				});
 	    		}else{
-	    			console.log('logout');
+	    			// console.log('logout');
 	    		}
 	    	}
 	    });
@@ -344,7 +344,7 @@
 	    function(returnedData){
 
 	    	var count = 10;
-	    	console.log(returnedData["data"]);
+	    //	console.log(returnedData["data"]);
 	    	var url = "{{url('restro-menu-list/')}}";
 			var temp = returnedData["data"];
 			list = temp;
@@ -368,7 +368,7 @@
 						
 						for (var j=0;j<temp[i]["products"].length;j++){
 							//console.log(temp[i]["products"][j]);
-							;
+							
 							if(j <= 1){
 								liItem += temp[i]["products"][j]["product_name"];
 							}   
@@ -394,7 +394,6 @@
 				liItem += "</p>";
 				liItem += "</div>";
 			}
-	       // $("#companyDetailContianer").append(liItem);
 		});
 	});
 
@@ -530,7 +529,7 @@
 	    return "";
 	}
 	var count = getCookie("iphonePopupcount") + getCookie("iphonePopupcountIncrease");
-	console.log('count='+count);
+	// console.log('count='+count);
 
 
 	var IphoneVersion;
@@ -578,9 +577,9 @@
              'deviceType': deviceType 
             }; 
     }();
-    console.log('IphoneVersion='+IphoneVersion);
+    //console.log('IphoneVersion='+IphoneVersion);
 	if(getCookie("browser") == 'Safari' && count == 1){
-		console.log('iphonePopupcount='+getCookie("iphonePopupcount"));
+		//console.log('iphonePopupcount='+getCookie("iphonePopupcount"));
 		document.cookie="iphonePopupcountIncrease=" + 2;
 		var ath = addToHomescreen({
 		    debug: 'ios',           // activate debug mode in ios emulation
@@ -594,5 +593,5 @@
 	}
 </script>
 
-<script src="{{asset('locationJs/currentLocation.js')}}"></script>
+<script src="{{asset('locationJs/currentLocation.js?2')}}"></script>
 @endsection

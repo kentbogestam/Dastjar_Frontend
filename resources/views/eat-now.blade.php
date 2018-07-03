@@ -208,9 +208,6 @@ var totalCount = 0;
 
 	 $(function(){
 
-
-	
-
 	$.get("{{url('lat-long')}}", { lat: getCookie("latitude"), lng : getCookie("longitude")}, 
     function(returnedData){
 

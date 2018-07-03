@@ -114,6 +114,7 @@ class OrderController extends Controller
                         ]);
                     $request->session()->put('paymentAmount', $order->order_total);
                     $request->session()->put('OrderId', $order->order_id);
+                    if(isset($companyUserDetail->stripe_user_id))
                     $request->session()->put('stripeAccount', $companyUserDetail->stripe_user_id);
                      return view('order.paymentIndex', compact('order','orderDetails'));
                 }else{
@@ -227,7 +228,9 @@ class OrderController extends Controller
                     ]);
                 $request->session()->put('paymentAmount', $order->order_total);
                 $request->session()->put('OrderId', $order->order_id);
-                $request->session()->put('stripeAccount', $companyUserDetail->stripe_user_id);
+                if(isset($companyUserDetail->stripe_user_id)){
+                    $request->session()->put('stripeAccount', $companyUserDetail->stripe_user_id);
+                }
                 Session::forget('orderData');
                  return view('order.paymentIndex', compact('order','orderDetails'));
             }else{
@@ -286,10 +289,44 @@ class OrderController extends Controller
         return $alpha_key . $key;
     }
 
-    public function order_detail($id){
-        $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$id)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
+    public function order_detail($id, Request $request){
+        $customer = new User();
+        $logged_in=0;
 
-        // dd($order);
+        // dd($request->session()->get('login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d'));
+
+        if(Session::has('login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d')){
+            if($customer->where('id',session()->get('login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d'))->exists()){
+                $logged_in=1; 
+            }
+        }
+
+        if($logged_in == 1){
+            $cust = $customer->where('id',session()->get('login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d'))->first();
+            $customer_id = $cust->id;
+
+            if($cust->phone_number == null){
+                $phone = (explode("-",$request->m));
+                $cust->phone_number_prifix = $phone[0];
+                $cust->phone_number = $phone[1];
+                $cust->save();
+            }
+        }else{
+            $phone = (explode("-",$request->m));
+            $cust = $customer->firstOrNew(['phone_number_prifix' => $phone[0], 'phone_number' => $phone[1]]);
+            $cust->email = $phone[1];
+            $cust->save();
+            $customer_id = $cust->id;            
+        }
+
+            $order =  Order::where('customer_order_id',$id);
+            $order->update(['user_id' => $customer_id]);
+            $order_id = $order->first()->order_id;
+
+            $orderDetail =  new OrderDetail();
+            $orderDetail->where('order_id',$order_id)->update(['user_id' => $customer_id]);
+            
+        $order = Order::select('orders.*','store.store_name','company.currencies')->where('customer_order_id',$id)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
 
         $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$id)->get();
 

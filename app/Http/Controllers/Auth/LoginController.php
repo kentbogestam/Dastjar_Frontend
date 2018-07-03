@@ -108,12 +108,13 @@ class LoginController extends Controller
                 Session::put('applocale', 'en');
               }
             }
-            $user = User::create([
-                    'fac_id' => $userSocial->id,
-                    'name' => $userSocial->name,
-                    'email' => $userSocial->email,
-                    'language' => $lang,
-                ]);
+
+            $user = User::firstOrNew(array('email' => $userSocial->email));
+            $user->fac_id = $userSocial->id;
+            $user->name = $userSocial->name;
+            $user->language = $lang;
+            $user->save();
+
             Auth::login($user);
 
             return redirect()->route('withOutLogin');

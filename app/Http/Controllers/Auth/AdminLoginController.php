@@ -69,7 +69,6 @@ class AdminLoginController extends Controller
         $data = $request->input();
         if($this->guard()->attempt(
             $this->credentials($request), $request->filled('remember'))){
-            
             if(Auth::guard('admin')->user()->language == null){
                 $lang;
                 if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
@@ -105,7 +104,6 @@ class AdminLoginController extends Controller
     }
 
     public function logout(Request $request){
-
         $this->guard()->logout();
         Session::forget('storeId');
         Session::forget('checkStore');

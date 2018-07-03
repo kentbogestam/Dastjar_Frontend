@@ -40,4 +40,9 @@ class Admin extends Authenticatable
     {
         return $this->hasMany('App\Order','user_id')->where('paid', 0);
     }
+
+        public function company()
+    {
+        return $this->hasOne('App\Company','u_id');
+    }
 }

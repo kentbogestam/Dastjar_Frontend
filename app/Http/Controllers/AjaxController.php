@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Gdpr;
+use App\Product;
 use Auth;
 
 class AjaxController extends Controller
@@ -44,5 +45,21 @@ class AjaxController extends Controller
            setcookie($cookie_name, $cookie_value, time() + 3600, "/"); // 86400 = 1 day
            return 1;
         }
+    }
+
+    public function kitchenCrt(Request $request){
+        $product = new Product();
+        $data = ['product_name' => $request->prodName,
+                'small_image' => $request->prodImage,
+                'large_image' => $request->prodImage,
+                'dish_type' => $request->dishType,
+                'product_description' => $request->prodDesc,
+                'preparation_Time' => $request->prepTime,
+                'start_of_publishing' => $request->publish_start_date];
+
+        $product->create($data);
+        // return redirect()->action('AdminController@index')->with('success', 'Order Ready Notifaction Send Successfully.');
+
+        // return redirect()->route('create-menu')->with('success', 'Dish Created Successfully.');
     }
 }

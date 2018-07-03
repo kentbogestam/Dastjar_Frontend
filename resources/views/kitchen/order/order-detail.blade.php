@@ -55,6 +55,14 @@
 					</div>
 					<span>{{ __('messages.Kitchen') }}</span>
 				</a></div>
+				<div class="ui-block-b">
+					<a href = "{{ url('kitchen/catering') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
+					<div class="img-container">
+						<img src="{{asset('kitchenImages/icon-3.png')}}">
+					</div>
+					<span>{{ __('messages.Catering') }}</span>
+					</a>
+				</div>
 			</div>
 			<div class="ui-block-b right-side_menu">
 				<div class="ui-block-a drop_down"><a href = "{{ url('kitchen/kitchen-setting') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
@@ -67,6 +75,12 @@
 						<img src="{{asset('kitchenImages/icon-5.png')}}">
 					</div>
 					<span>{{ __('messages.Admin') }}</span>
+				</a></div>				
+				<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" href="{{ url('kitchen/menu') }}">
+					<div class="img-container">
+						<img src="{{asset('kitchenImages/icon-7.png')}}">
+					</div>
+					<span>{{ __('messages.Menu') }}</span>
 				</a></div>
 				<div class="ui-block-c"><a href = "{{ url('kitchen/kitchen-order-onsite') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">

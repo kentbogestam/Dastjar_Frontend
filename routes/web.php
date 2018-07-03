@@ -11,6 +11,12 @@
 |
 */
 
+
+
+	Route::get('phpinfo', function(){
+		return phpinfo();
+	});
+	
 	Auth::routes();
 
 	Route::get('logout', function(){
@@ -50,6 +56,9 @@
 	Route::get('/stripeResponse', 'StripePaymentController@stripeResponse');
 	
 	Route::get('getList', 'HomeController@getList');
+
+	Route::get('/terms/english', 'HomeController@terms_english');
+	Route::get('/terms/swedish', 'HomeController@terms_swedish');
 
 	//Second Phase
 	Route::get('/', 'HomeController@index');
@@ -124,9 +133,15 @@ Route::group(['middleware' => ['auth']], function(){
 		Route::post('payment', 'AdminController@payment');
 		Route::get('payment', 'AdminController@payment');
 		Route::get('kitchen-orders-new/{lastId}', 'AdminController@kitchenOrdersNew');
-		Route::get('orderSpecificOdrderDetail/{orderId}', 'AdminController@orderSpecificOdrderDetail');
+		Route::get('orderSpecificOdrderDetail/{orderId}', 'AdminController@orderSpecificOrderDetail');
+		Route::get('menu', 'AdminController@kitchenMenu')->name('menu');
+
+		Route::get('create-menu', 'AdminController@kitchenCreateMenu')->name('create-menu');
+		Route::post('create-menu-save', 'AdminController@kitchenCreateMenuPost');
+		Route::get('edit-menu-dish', 'AdminController@kitchenEditDish');		
+		Route::get('delete-menu-dish', 'AdminController@kitchenDeleteDish');	
+		Route::get('createStandardOffer', 'AdminController@createStandardOffer');			
+		Route::post('add-dish-price', 'AdminController@addDishPrice');	
 	});
-
-
 
 

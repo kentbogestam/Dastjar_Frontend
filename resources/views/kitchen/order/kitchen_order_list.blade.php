@@ -47,7 +47,8 @@
 		    </tbody>
 		</table>
 	</div>
-	<div data-role="footer" data-position="fixed" data-tap-toggle="false" class="footer_container">
+
+		<div data-role="footer" data-position="fixed" data-tap-toggle="false" class="footer_container">
 		<div class="ui-grid-a center">
 			<div class="ui-block-a left-side_menu">
 				<div class="ui-block-a block_div "><a  href = "{{ url('kitchen/store') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
@@ -85,6 +86,12 @@
 					</div>
 					<span>{{ __('messages.Admin') }}</span>
 				</a></div>
+				<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" href="{{ url('kitchen/menu') }}">
+					<div class="img-container">
+						<img src="{{asset('kitchenImages/icon-7.png')}}">
+					</div>
+					<span>{{ __('messages.Menu') }}</span>
+				</a></div>
 				<div class="ui-block-c"><a href = "{{ url('kitchen/kitchen-order-onsite') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/icon-4.png')}}">
@@ -94,6 +101,7 @@
 			</div>
 		</div>
 	</div>
+	
 	<!-- <div data-role="popup" id="popupNotifaction" class="ui-content" style="max-width:280px;padding: 15px;">
 	    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
 	<p style="color: #0c780c;line-height: 22px;margin: 0;">{{ __('messages.Order Ready Notification Send Successfully.') }}</p>
@@ -117,8 +125,7 @@
 		var lastOrderId;
 		var imageUrl = "{{asset('kitchenImages/right_sign.png')}}";
 
-		function orderReadyStarted(id) {
-			
+		function orderReadyStarted(id) {			
 			$.get("{{url('kitchen/orderStartedKitchen')}}/"+id,
 			function(returnedData){
 				console.log(returnedData["data"]);

@@ -2,6 +2,11 @@
 
 @section('content')
 <link rel="stylesheet" type="text/css" href="{{asset('kitchenCss/style.css')}}">
+<style>
+    .nav_fixed {
+        padding: 7px 0px;
+    }
+</style>
 
 <div data-role="header" class="header" id="nav-header"  data-position="fixed"><!--  -->
     <div class="nav_fixed">
@@ -23,11 +28,10 @@
 					<p>{{ __('messages.Order Number') }} </p>
 					<p class="order-no">{{$order->customer_order_id}}</p>
 					<p>({{$order->store_name}})</p>
-					<p>
-                        {{-- {{ __('messages.Your order will be ready on') }} {{$order->order_delivery_time}} mins
+					<p>{{ __('messages.Your order will be ready on') }} {{$order->order_delivery_time}} mins
 						@if($order->order_type == 'eat_later')
 						{{$order->deliver_date}}
-						@endif --}}
+						@endif
 					</p>
 				</div>
 			</div>
@@ -53,7 +57,7 @@
 
     <div data-role="footer" id="footer" data-position="fixed">
             <div class="ui-grid-c inner-footer center">
-            <div class="ui-block-a"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
+            <div class="ui-block-a"><a href="{{ url('eat-now') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
                 <div class="img-container">
                     <img src="{{asset('images/icons/select-store_01.png')}}">
                 </div>

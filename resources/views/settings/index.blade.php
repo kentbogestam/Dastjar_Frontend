@@ -13,42 +13,18 @@
 		border: 1px solid #777 !important;
 	}
 
-	#delete-me-btn{
-		background-color: #d25229;
+	#contact-setting-list .ui-controlgroup{
+		display: block !important;
+	}
+
+	.terms{
+	    display: block;
     	color: #fff;
 	    border-radius: 10px;
-		width: 100%;
-	}
-
-	.ui-dialog{
-		background-color: #fff !important;
-	}
-
-	.ui-controlgroup, #dialog-confirm + fieldset.ui-controlgroup {
-    	width: 100%;
-	}
-
-	#dialog-confirm{
-		display: none;
-		/* color: #fff; */
-	} 
-
-	.ui-dialog .ui-dialog-buttonpane{
-		text-align: center;
-	}
-
-	.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset{
-		float: none;
-	}
-	
-	#dialog-confirm .ui-icon{
-		float:left; 
-		margin:12px 12px 20px 0;
-		color: #fff;
-	}
-
-	#dialog-confirm .ui-icon-alert{
-		color: #fff;
+		width: 100%;		
+	    height: 39px; 
+	    line-height: 39px;
+	    padding-left: .83em;
 	}
 
 	#overlay {
@@ -62,21 +38,11 @@
     	bottom: 0;
 	    background-color: rgba(0,0,0,0.5);
 	    z-index: 9;
-	}
-
-	.ui-widget-overlay{
-	    opacity: 0.5;		
-	}
-
-	.dialog-no{
-		background: linear-gradient(to bottom, rgba(249,163,34,1) 0%, rgba(229,80,11,1) 100%) !important;
-		color: #fff !important;
-	}
-
-	.dialog-no:hover{
-		background: linear-gradient(to bottom, rgba(249,163,34,1) 0%, rgba(229,80,11,1) 100%);
-		color: #fff;
 	}	
+
+	#language fieldset{
+		display: block;
+	}
 </style>
 <script src="{{asset('locationJs/currentLocation.js')}}"></script>
 @endsection
@@ -132,7 +98,7 @@
 				</ul>
 			</div>
 			
-			<div class="setting-list">
+			<div id="language" class="setting-list">
 				<ul data-role="listview"> 
 					<li data-role="collapsible" class="range-sec">
 						<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Language') }}
@@ -196,9 +162,11 @@
 		</div>
 	</form>
 	
-	<div class="setting-list">
+	<div id="contact-setting-list" class="setting-list">
 			<ul data-role="listview"> 
 				<li data-role="collapsible" class="range-sec">
+					<?php $lan = "eng" ?>
+
 					@if(Auth::check())
 						@if(Auth::user()->language == 'ENG')
 							<?php $lan = "eng" ?>
@@ -213,60 +181,43 @@
 						@endif
 					@endif
 
-					@if($lan == "eng")
-					<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">Contact Us
+					<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Contact Us') }}
 						<p class="ui-li-aside">
-							Contact Us
+							{{ __('messages.Contact Us') }}
 						</p>
 					</h2>
 					<div>
-						<label class="msg-lbl"><h2>Message</h2></label>
+						<label class="msg-lbl"><h2>{{ __('messages.Message') }}</h2></label>
 					</div>
 
 					<div data-role="controlgroup">
 						<form method="post" action="{{ url('contact-us') }}" data-ajax="false">
 							{{ csrf_field() }}
-							<textarea type="text" name="message" placeholder="Enter Your Message" class="msg-txt" required></textarea>
-							<button type="submit" class="btn btn-success">Send</button>		
+							<textarea type="text" name="message" placeholder="{{ __('messages.Contact Us Placeholder') }}" class="msg-txt" required></textarea>
+							<button type="submit" class="btn btn-success">{{ __('messages.Send') }}</button>		
 						</form>
 					</div>
-					@elseif($lan == "swe")
-						<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">Kontakta oss
-							<p class="ui-li-aside">
-								Kontakta oss
-							</p>
-						</h2>
-						<div>
-							<label class="msg-lbl"><h2>Meddelande</h2></label>
-						</div>
-	
-						<div data-role="controlgroup">
-							<form method="post" action="{{ url('contact-us') }}" data-ajax="false">
-								{{ csrf_field() }}
-								<textarea type="text" name="message" placeholder="Skriv ditt meddelande och lägg till din email adress för svar" class="msg-txt" required></textarea>
-								<button type="submit" class="btn btn-success">Skicka</button>		
-							</form>
-						</div>
-					@endif
+			
 
 				</li> 
 			</ul> 
 	</div>
 
-	@if(Auth::check())
+	@if($lan == "eng")
 	<div class="setting-list">
-		<div> 
-					<form method="post" id="delete-me-form" action="{{ url('delete-me') }}" data-ajax="false">
-						{{ csrf_field() }}
-						<button type="submit" id="delete-me-btn" class="btn btn-danger">Delete Me</button>		
-					</form>
+		<div style="margin-right: 15px; margin-top: 5px; margin-bottom: -2px;"> 
+			<a href="{{ url('terms/english') }}" id="" class="terms btn btn-primary" data-ajax="false">Terms and Conditions
+			</a>		
+		</div> 
+	</div>
+	@elseif($lan == "swe")
+	<div class="setting-list">
+		<div style="margin-right: 15px; margin-top: 5px; margin-bottom: -2px;"> 
+			<a href="{{ url('terms/swedish') }}" id="" class="terms btn btn-primary" data-ajax="false">Villkor
+			</a>		
 		</div> 
 	</div>
 	@endif
-
-	<div id="dialog-confirm" title="Delete Account">
-		<p>Are you sure?</p>
-	</div>
 
 </div>
 @endsection
@@ -277,33 +228,6 @@
 
 
 	<script type="text/javascript">
-		$('#delete-me-form').submit(function(event){
-			event.preventDefault();
-
-			$( "#dialog-confirm" ).dialog({
-					resizable: false,
-					modal: true,
-					buttons: [						
-						{
-							text: "No",
-							"class": 'dialog-no',
-							click: function() {
-								$(this).dialog("close");
-							}					
-						},
-						{
-							text: "Yes",
-							"class": 'dialog-yes',
-							click: function() {
-								$(this).dialog("close");
-								$('#delete-me-form').unbind().submit();
-							}
-						}
-		        ]
-				
-			}); 
-	
-		});
 
 		$("#dataSave").click(function(e){
 			var flag = true;
@@ -319,14 +243,5 @@
 		function makeRedirection(link){
 			window.location.href = link;
 		}
-
-		$('#delete-me-form2').submit(function(event){
-			event.preventDefault();
-
-			var r = confirm("Are you sure you want to delete your account?");
-			if (r == true) {
-				$(this).unbind().submit();
-			}			
-		});
 	</script>
 @endsection

@@ -17,24 +17,29 @@ use App\Store;
 
 class PaymentController extends Controller
 {
-    //
     public function payment(Request $request)
     {
     	if(!empty($request->input())){
     		$amount = $request->session()->get('paymentAmount') * 100;
-    		//dd($amount);
 	    	$stripeAccount = $request->session()->get('stripeAccount');
 	    	$orderId = $request->session()->get('OrderId');
 	      try {
 	        $token = $request->stripeToken;
-	        Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
-	        $charge = Charge::create(array(
+			Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+
+	        $customer = new User();
+			$emailId = $customer->where('id',$request->session()->get('login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d'))->first()->email;		
+
+			$charge = Charge::create(array(
 	            'amount' => $amount,
 	            'currency' => 'sek',
-	            'description' => 'Order charge',
+				'description' => 'Order charge',
+				'destination' => $stripeAccount,
+                'receipt_email' => $emailId,
 	            'source' => $token
-	        ), array('stripe_account' => $stripeAccount));
-	        if($charge->status == "succeeded"){
+	        ));
+			
+			if($charge->status == "succeeded"){
 
 	        	DB::table('orders')->where('order_id', $orderId)->update([
 	                        'online_paid' => 1,
@@ -49,15 +54,12 @@ class PaymentController extends Controller
 	        	$paymentSave->save();
 
 	        	$order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
-		        //dd($order->currencies);
 		        $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
-		        return view('order.index', compact('order','orderDetails'))->with('success', 'Payment Done Successfully');
 
-	        }else{
-
-	        }
-	    } catch (\Exception $ex) {
-	        return $ex->getMessage();
+				return view('order.index', compact('order','orderDetails'))->with('success', 'Payment Done Successfully');
+			}
+		} catch (\Exception $ex) {
+	        return view('blankPage')->with('message', $ex->getMessage());
 	      }
     	}else{
 

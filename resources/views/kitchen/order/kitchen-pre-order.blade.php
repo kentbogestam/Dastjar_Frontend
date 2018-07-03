@@ -1,4 +1,5 @@
 @extends('layouts.blank')
+
 @section('head-scripts')
 <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.5.1/fingerprint2.min.js"></script>
@@ -13,14 +14,14 @@
               App42.setEventBaseUrl("https://analytics.shephertz.com/cloud/1.0/");
               App42.setBaseUrl("https://api.shephertz.com/cloud/1.0/");
 
-              App42.initialize("cc9334430f14aa90c623aaa1dc4fa404d1cfc8194ab2fd144693ade8a9d1e1f2","297b31b7c66e206b39598260e6bab88e701ed4fa891f8995be87f786053e9946");
+              App42.initialize("{{env('APP42_API_KEY')}}","{{env('APP42_API_SECRET')}}");
               App42.enableEventService(true);
               var userName;
               new Fingerprint2().get(function(result, components){
                   userName = "{{Auth::guard('admin')->user()->email}}";
                   console.log("Username : " + userName); //a hash, representing your device fingerprint
                   App42.setLoggedInUser(userName);
-                  getDeviceToken();
+//                  getDeviceToken();
               });
           });
 	</script>
@@ -52,13 +53,38 @@
 		#mobile-num{
 			border: 1px solid #000;
 		}
+
+		#logout_link{
+			display: none;
+		}
+
+		@media(max-width: 480px) {
+			.product_image {
+				height: 38px;
+			}
+			.single-restro-list-sec .ui-listview>li .list-content {
+				padding: 0em !important; 
+			    margin-top: 50px;
+			}
+			.qty-sec {
+				margin-top: -20px;
+			    margin-left: 20px;			
+			}
+			.extra-btn {
+				top: 45px;
+			}
+
+			.top_two-menu .ui-grid-a>.ui-block-a, .top_two-menu .ui-grid-a>.ui-block-b {
+				width: 30%;
+			}
+		}
 	</style>
 @endsection
 @section('content')
 	<div data-role="header"  data-position="fixed" data-tap-toggle="false" class="header">
 		<div class="logo_header">
 			<img src="{{asset('kitchenImages/logo-img.png')}}">
-			<a href = "{{ url('kitchen/logout') }}"  class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">{{ __('messages.Logout') }}
+			<a href = "{{ url('kitchen/logout') }}" id="logout_link" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">{{ __('messages.Logout') }}
 			</a>
 		</div>
 			<h3 class="ui-bar ui-bar-a order_background">
@@ -136,7 +162,7 @@
 												</div>
 												<div class="extra-btn">
 														<label><img src="{{asset('kitchenImages/icon-wait-time.png')}}" width="15px">
-															{{'00:'.date_format(date_create($menuDetail->preparation_Time), 'i')}}</label></label>
+														@if(date_create($menuDetail->preparation_Time) != false){{'00:'.date_format(date_create($menuDetail->preparation_Time), 'i')}}@else{{$menuDetail->preparation_Time}}@endif</label>
 														<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('kitchenImages/icon-add-comments.png')}}" width="18px">{{ __('messages.Add Comments') }}</a></label>
 														<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="product[{{$j}}][prod_desc]" value="" />
 												</div>
@@ -169,7 +195,7 @@
 													<input type="button" onclick="incrementValue('{{$menuDetail->product_id}}')" value="+" class="max" />
 												</div>
 												<div class="extra-btn">
-														<label><img src="{{asset('kitchenImages/icon-wait-time.png')}}" width="15px">{{'00:'.date_format(date_create($menuDetail->preparation_Time), 'i')}}</label>
+														<label><img src="{{asset('kitchenImages/icon-wait-time.png')}}" width="15px">@if(date_create($menuDetail->preparation_Time) != false){{'00:'.date_format(date_create($menuDetail->preparation_Time), 'i')}}@else{{$menuDetail->preparation_Time}}@endif</label>
 														<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('kitchenImages/icon-add-comments.png')}}" width="18px">{{ __('messages.Add Comments') }}</a></label>
 														<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="product[{{$j}}][prod_desc]" value="" />
 												</div>
@@ -457,6 +483,14 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
 	<script type="text/javascript">
+
+		window.addEventListener('load', function() {
+		  window.history.pushState({ noBackExitsApp: true }, '')
+		});
+
+		window.addEventListener('popstate', function(event) {
+		    window.history.pushState({ noBackExitsApp: true }, '')
+		});
 
 		var id ;
 

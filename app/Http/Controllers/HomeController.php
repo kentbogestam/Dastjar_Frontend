@@ -9,12 +9,13 @@ use App\Company;
 use App\DishType;
 use App\Order;
 use App\Gdpr;
+use App\User;
 use Session;
 use DB;
-use App\User;
 use Auth;
 use App\ProductPriceList;
 use App\WebVersion;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -216,6 +217,7 @@ class HomeController extends Controller
 
     public function index()
     {
+//        dd(session()->all());
         if(Auth::check()){
             $versionDetail = WebVersion::orderBy('created_at', 'DESC')->first();
             $userDetail = User::whereId(Auth()->id())->first();
@@ -249,7 +251,7 @@ class HomeController extends Controller
         $lat = $request->session()->get('with_login_lat');
         $lng = $request->session()->get('with_login_lng');
         $companydetails = Store::getListRestaurants($lat,$lng,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
-        //dd($companydetails);
+
         return view('eat-now', compact('companydetails'));
     }
 
@@ -349,26 +351,38 @@ class HomeController extends Controller
     }
 
     public function menuList(Request $request, $storeId){
+        if(!Store::where('store_id' , $storeId)->exists()){
+            return redirect()->route('home');
+        }
+
         $userDetail = User::whereId(Auth()->id())->first();
-        $menuDetails = ProductPriceList::where('store_id',$storeId)->with('menuPrice')->with('storeProduct')->get();
+        $menuDetails = ProductPriceList::where('store_id',$storeId)->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->with('menuPrice')->with('storeProduct')->get();
+        $storedetails = Store::where('store_id' , $storeId)->first();
 
         if(count($menuDetails) !=0 ){
             foreach ($menuDetails as $menuDetail) {
                 foreach ($menuDetail->storeProduct as $storeProduct) {
                     $companyId = $storeProduct->company_id;
                     $dish_typeId[] = $storeProduct->dish_type;
+                    try{
+                        getimagesize($storeProduct->small_image);
+                    } catch (\Exception $ex) {
+                        $storeProduct->small_image = asset('images/placeholder-image.png');
+                    }
                 }
             }
 
-            $menuTypes = DishType::where('company_id' , $companyId)->whereIn('dish_id', array_unique($dish_typeId))->where('dish_activate','1')->get();
-            $dish_typeId = null;
-            $request->session()->put('storeId', $storeId);
-            $companydetails = Company::where('company_id' , $companyId)->first();
-            $storedetails = Store::where('store_id' , $storeId)->first();
-            return view('menulist.index', compact('menuDetails','companydetails','menuTypes','storeId','storedetails'));
-        }else{
-            $storedetails = Store::where('store_id' , $storeId)->first();
+            if(isset($companyId)){
+                $menuTypes = DishType::where('company_id' , $companyId)->whereIn('dish_id', array_unique($dish_typeId))->where('dish_activate','1')->get();
+                $dish_typeId = null;
+                $request->session()->put('storeId', $storeId);
+                $companydetails = Company::where('company_id' , $companyId)->first();
+                return view('menulist.index', compact('menuDetails','companydetails','menuTypes','storeId','storedetails'));
+            }else{
+                return view('menulist.blankMenu', compact('storedetails'));
+            }
 
+        }else{
             return view('menulist.blankMenu', compact('storedetails'));
         }
     }
@@ -393,14 +407,20 @@ class HomeController extends Controller
     public function deleteUser(){
         $user_id = Auth::user()->id;
 
-        $order = new Order();
         $gdpr = new Gdpr();
         $user = new User();
 
-        $order->where('user_id' , '=', $user_id)->delete();
         $gdpr->where('user_id' , '=', $user_id)->delete();
         $user->where('id' , '=', $user_id)->delete();
 
         return redirect()->back();
+    }
+
+    public function terms_english(){
+        return view('terms.terms-english');
+    }
+
+    public function terms_swedish(){
+        return view('terms.terms-swedish');
     }
 }

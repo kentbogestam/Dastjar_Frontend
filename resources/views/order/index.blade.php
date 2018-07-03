@@ -31,8 +31,8 @@
 <script src="{{asset('notifactionJs/newNotifaction/browser.js')}}"></script>
 <script type="text/javascript">
 	'use strict';
-var API_KEY = "cc9334430f14aa90c623aaa1dc4fa404d1cfc8194ab2fd144693ade8a9d1e1f2"
-var SECERT_KEY = "297b31b7c66e206b39598260e6bab88e701ed4fa891f8995be87f786053e9946"
+var API_KEY = "{{env('APP42_API_KEY')}}"
+var SECERT_KEY = "{{env('APP42_API_SECRET')}}"
 var userName = "{{ Auth::user()->email}}";
 if ('serviceWorker' in navigator) {
   var type = jQuery.browser.name;
@@ -97,7 +97,7 @@ function registerDeviceWithApp42(token,type ){
 				<span>{{ Auth::user()->name}}</span>
 			</div>
 		</div>
-		<a class="ui-btn-right map-btn user-link" href="#left-side-bar"  data-ajax="false"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
+		<a href="{{url('search-map-eatnow')}}" class="ui-btn-right map-btn user-link" data-ajax="false"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
 	</div>
 	<div role="main" data-role="main-content" class="content">
 		<div class="inner-page-container">

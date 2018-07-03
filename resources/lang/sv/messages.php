@@ -8,6 +8,7 @@ return [
     'Sent'  => 'Skicka',
     'Orders'  => 'Ordrar', 
     'Settings'  => 'Inställningar', 
+    'Terms' => 'GENERAL TERMS & INTEGRITETSPOLICY',
     'Order id'  => 'Order-ID',
     'Done'  => 'OK',
     'Setting updated successfully.'   => 'Uppdaterat.',
@@ -36,6 +37,7 @@ return [
     'Kitchen'  => 'Kök',      
     'Catering'  => 'Catering',      
     'Admin'  => 'Administration',      
+    'Menu' => 'Meny',
     'Order Onsite'  => 'Beställa på Plats',       
     'Amount'  => 'Antal',           
     'Product'  => 'Produkt',             
@@ -74,4 +76,10 @@ return [
     'Your order will be ready in about' => 'Din beställning kommer att vara klar om',          
     'and get the benefites'  => 'och få fördelarna',
     'Please activate Location Services in your mobile: Settings >Privacy >Location Services' => 'Vänligen sätt på Platstjänster i din mobil: Inställningar >Integritetsskydd >Platstjänster',
+    'About Us' => 'Om Oss',
+    'Send' => 'Skicka',
+    'Contact Us' => 'Kontakta oss',
+    'Message' => 'Meddelande',
+    'Contact Us Placeholder' => 'Skriv ditt meddelande och lägg till din email adress för svar'
+
 ];

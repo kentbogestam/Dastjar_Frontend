@@ -250,7 +250,7 @@
 												
 												<div class="extra-btn">
 														<label><img src="{{asset('images/icons/icon-wait-time.png')}}" width="15px">
-															{{'00:'.date_format(date_create($menuDetail->preparation_Time), 'i')}}</label>
+															@if(date_create($menuDetail->preparation_Time) != false){{'00:'.date_format(date_create($menuDetail->preparation_Time), 'i')}}@else{{$menuDetail->preparation_Time}}@endif</label>
 														<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('images/icons/icon-add-comments.png')}}" width="18px">{{ __('messages.Add Comments') }}</a></label>
 														<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="product[{{$j}}][prod_desc]" value="" />
 												</div>
@@ -286,7 +286,7 @@
 												</div>
 
 												<div class="extra-btn">
-														<label><img src="{{asset('images/icons/icon-wait-time.png')}}" width="15px">{{'00:'.date_format(date_create($menuDetail->preparation_Time), 'i')}}</label>
+														<label><img src="{{asset('images/icons/icon-wait-time.png')}}" width="15px">@if(date_create($menuDetail->preparation_Time) != false){{'00:'.date_format(date_create($menuDetail->preparation_Time), 'i')}}@else{{$menuDetail->preparation_Time}}@endif</label>
 														<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('images/icons/icon-add-comments.png')}}" width="18px">{{ __('messages.Add Comments') }}</a></label>
 														<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="product[{{$j}}][prod_desc]" value="" />
 												</div>
@@ -372,7 +372,7 @@
 					</p>
 					<p>
 						This is a location-based service! It will save your time and serve you best based on your location! To manage to do so, we need your permission to store your login data.
-						This will help us to secure that your orders are delivered to you and no one else
+						This will help us to secure that your orders are delivered to you and no one else.
 					</p>
 				</div>
 			@elseif($lan == "swe")

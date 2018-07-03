@@ -30,7 +30,7 @@
 	<div data-role="footer" data-position="fixed" data-tap-toggle="false" class="footer_container">
 		<div class="ui-grid-a center">
 			<div class="ui-block-a left-side_menu">
-				<div class="ui-block-a active"><a  href = "{{ url('kitchen/store') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
+				<div class="ui-block-a active"><a  href="{{ url('kitchen/store') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/icon-1.png')}}">
 					</div>
@@ -64,6 +64,12 @@
 						<img src="{{asset('kitchenImages/icon-5.png')}}">
 					</div>
 					<span>{{ __('messages.Admin') }}</span>
+				</a></div>
+				<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" href="{{ url('kitchen/menu') }}">
+					<div class="img-container">
+						<img src="{{asset('kitchenImages/icon-7.png')}}">
+					</div>
+					<span>{{ __('messages.Menu') }}</span>
 				</a></div>
 				<div class="ui-block-c"><a href = "{{ url('kitchen/kitchen-order-onsite') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">

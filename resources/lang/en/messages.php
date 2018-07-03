@@ -8,6 +8,7 @@ return [
     'Sent'  => 'Sent',
     'Order'  => 'Order',
     'Settings'  => 'Setting',
+    'Terms' => 'GENERAL TERMS & INTEGRITY POLICY',
     'Order id'  => 'Order id',
     'Done'  => 'Done',
     'Setting updated successfully.'   => 'Setting updated successfully.',
@@ -36,6 +37,7 @@ return [
     'Kitchen'  => 'Kitchen',      
     'Catering'  => 'Catering',      
     'Admin'  => 'Admin',      
+    'Menu'  => 'Menu',      
     'Order Onsite'  => 'Order Onsite',         
     'Amount'  => 'Amount',         
     'Product'  => 'Product',         
@@ -73,5 +75,10 @@ return [
     'Order Deliver Notification Send Successfully' => 'Order Deliver Notification Send Successfully',
     'Your order will be ready in about' => 'Your order will be ready in about',
     'Please activate Location Services in your mobile: Settings >Privacy >Location Services' => 'Please activate Location Services in your mobile: Settings >Privacy >Location Services',
+    'About Us' => 'About Us',
+    'Send' => 'Send',
+    'Contact Us' => 'Contact Us',
+    'Message' => 'Message',
+    'Contact Us Placeholder' => 'Enter your Message and add your email for replay'
 
 ];
