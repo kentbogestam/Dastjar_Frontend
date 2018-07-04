@@ -29,16 +29,39 @@ class PaymentController extends Controller
 
 	        $customer = new User();
 			$emailId = $customer->where('id',$request->session()->get('login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d'))->first()->email;		
+			
+			$orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
+//dd($orderDetails[0]->product_name);
+
+			$description = "";
+
+			foreach ($orderDetails as $key => $value) {
+				# code...
+				$description .= $value->product_quality . " " . $value->product_name . ", ";
+			}
+
+			$vat_total = (12*$amount)/100;
+
+			$description .= "Vat 12%, Vat Total " . $vat_total . "kr";
+
 
 			$charge = Charge::create(array(
 	            'amount' => $amount,
 	            'currency' => 'sek',
-				'description' => 'Order charge',
+				'description' => $description,
 				'destination' => $stripeAccount,
                 'receipt_email' => $emailId,
-	            'source' => $token
+	            'source' => $token,
+					            'metadata' => ['product_name' => $orderDetails[0]->product_name,
+	        					'price' => $orderDetails[0]->price,
+		        				'Quantity' => $orderDetails[0]->product_quality]
 	        ));
 			
+
+
+			
+						//dd($charge->status);
+
 			if($charge->status == "succeeded"){
 
 	        	DB::table('orders')->where('order_id', $orderId)->update([
@@ -54,7 +77,6 @@ class PaymentController extends Controller
 	        	$paymentSave->save();
 
 	        	$order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
-		        $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 
 				return view('order.index', compact('order','orderDetails'))->with('success', 'Payment Done Successfully');
 			}

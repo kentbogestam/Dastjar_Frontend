@@ -233,7 +233,7 @@ class AdminController extends Controller
     }
 
     public function onReadyAjax(Request $request, $orderID){
-        DB::table('order_details')->where('id', $orderID)->update(['order_ready' => 1,]);
+        DB::table('order_details')->where('id', $orderID)->update(['order_ready' => 1]);
         $userOrderId = OrderDetail::where('id' , $orderID)->first();
         $userOrderStatus = OrderDetail::where('order_id' , $userOrderId->order_id)->get();
         $readyOrderStatus = OrderDetail::where('order_id' , $userOrderId->order_id)->where('order_ready' , '1')->get();

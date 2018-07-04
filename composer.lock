@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0fe1c129a0cde5b278d3b03a8e2ccaa6",
+    "content-hash": "c1f6ab2af3ad3e3e3badf6223adb524c",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1849,17 +1849,73 @@
             "time": "2018-01-20T00:28:24+00:00"
         },
         {
-            "name": "stripe/stripe-php",
-            "version": "v6.7.4",
+            "name": "spatie/laravel-stripe-webhooks",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "67fee13fcb344aa865076589888f4afef542dfd7"
+                "url": "https://github.com/spatie/laravel-stripe-webhooks.git",
+                "reference": "f083f034b562674ad17292923c3ef1ad831bcda6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/67fee13fcb344aa865076589888f4afef542dfd7",
-                "reference": "67fee13fcb344aa865076589888f4afef542dfd7",
+                "url": "https://api.github.com/repos/spatie/laravel-stripe-webhooks/zipball/f083f034b562674ad17292923c3ef1ad831bcda6",
+                "reference": "f083f034b562674ad17292923c3ef1ad831bcda6",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "~5.5.0|~5.6.0",
+                "php": "^7.0",
+                "stripe/stripe-php": "^5.2|^6.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "~3.5.0|~3.6.0",
+                "phpunit/phpunit": "^6.4|^7.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Spatie\\StripeWebhooks\\StripeWebhooksServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\StripeWebhooks\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Handle stripe webhooks in a Laravel application",
+            "homepage": "https://github.com/spatie/laravel-stripe-webhooks",
+            "keywords": [
+                "laravel-stripe-webhooks",
+                "spatie"
+            ],
+            "time": "2018-02-17T11:52:18+00:00"
+        },
+        {
+            "name": "stripe/stripe-php",
+            "version": "v6.10.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/stripe/stripe-php.git",
+                "reference": "be46d55c4a67265d6fe3eaf2ff69f6cfffe0034d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/be46d55c4a67265d6fe3eaf2ff69f6cfffe0034d",
+                "reference": "be46d55c4a67265d6fe3eaf2ff69f6cfffe0034d",
                 "shasum": ""
             },
             "require": {
@@ -1901,7 +1957,7 @@
                 "payment processing",
                 "stripe"
             ],
-            "time": "2018-05-30T00:13:55+00:00"
+            "time": "2018-06-28T15:25:46+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",

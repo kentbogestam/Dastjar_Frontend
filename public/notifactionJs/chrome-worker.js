@@ -1,4 +1,4 @@
-var apiKey = "cc9334430f14aa90c623aaa1dc4fa404d1cfc8194ab2fd144693ade8a9d1e1f2"
+var apiKey = "d7406f5acceff248ed2f044f3f4b649f4ea2b6f376ac5b3935c7b6462692e885"
 var CLICK_URL ,title,actionOne,actionTwo;
 var iconURL = "images/logo.png"
 self.addEventListener('install', function(event) {

@@ -10,12 +10,6 @@
 		text-align: left;
 		padding-left: 2em;
 	}
-
-	.about_us_link{
-		list-style: none;
-		text-decoration: none;
-		color: initial;
-	}
 </style>
 
 @section('content')
@@ -92,7 +86,7 @@
 				</li>
 
 				<li id="about_us" class="range-sec">
-					<h2 class="ui-btn"><a href="https://dastjar.com/" target="_blank" class="about_us_link" data-ajax="false">{{  __("messages.About Us") }}</a></h2>
+					<h2 class="ui-btn">{{  __("messages.About Us") }}</h2>
 				</li>
 			</div>
 		</div>
@@ -106,15 +100,6 @@
 		$("#dataSave").click(function(e){
 			console.log('gggg');
 			var flag = true;
-			// var x = $('form input[type="radio"]').each(function(){
-	  //       // Do your magic here
-	  //       	var checkVal = parseInt($(this).val());
-	  //       	console.log(checkVal);
-	  //       	if(checkVal > 0){
-	  //       		flag = true;
-	  //       		return flag;
-	  //       	}
-			// });
 
 			if(flag){
 				$("#form").submit();
@@ -122,6 +107,10 @@
 				alert("Please fill some value");	
 				e.preventDefault();
 			}
+		});
+
+		$('#about_us').click(function(){
+			window.open("https://dastjar.com/");
 		});
 	</script>
 

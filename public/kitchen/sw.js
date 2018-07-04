@@ -37,7 +37,7 @@ self.addEventListener('push', function(event) {
         var idD = regID.substring(regID.indexOf("d/")+1);
           regID =  idD.substring(idD.indexOf("/")+1);
        
- var URL = FETCH_ENDPOINT +btoa(regID)+ "/CHROME"+"?apiKey=cc9334430f14aa90c623aaa1dc4fa404d1cfc8194ab2fd144693ade8a9d1e1f2";
+ var URL = FETCH_ENDPOINT +btoa(regID)+ "/CHROME"+"?apiKey=d7406f5acceff248ed2f044f3f4b649f4ea2b6f376ac5b3935c7b6462692e885";
  console.log(URL);
         return fetch(URL).then(function(response) {
  
@@ -57,7 +57,7 @@ self.addEventListener('push', function(event) {
           title = messagePayload.alert;
           console.log(clickURL);
   self.registration.showNotification(title, { 
-   icon: " http://localhost/dast-jar-frontend/public/images/dastjar.png"
+   icon: " http://localhost/anar/public/images/dastjar.png"
  })
  
  }
