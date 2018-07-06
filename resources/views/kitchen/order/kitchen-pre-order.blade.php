@@ -472,7 +472,7 @@
 				   <option value="260">Zambia - 260</option>
 				</select>
 
-			<input id="mobile-num" type="text" name="mobileNo" placeholder="Enter Your Number" required/>
+			<input id="mobile-num" type="number" name="mobileNo" placeholder="Enter Your Number" required/>
 			{{-- <button type="submit" class="mobile-num-submit" style="display:none">Submit</button>
 		</form> --}}
 	</div>

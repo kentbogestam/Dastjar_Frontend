@@ -416,11 +416,30 @@ class HomeController extends Controller
         return redirect()->back();
     }
 
-    public function terms_english(){
-        return view('terms.terms-english');
+    public function terms(){
+        if(Auth::check()){
+            if(Auth::user()->language == 'ENG'){
+                $lan = "eng";
+            }else{
+                $lan = "swe";            
+            }
+        }else{
+            if(Session::get('browserLanguageWithOutLogin') == 'ENG'){
+                $lan = "eng";
+            }
+            else{
+                $lan = "swe";
+            }
+        }
+
+        if($lan == "eng"){
+            return view('terms.terms-english');
+        }else{
+            return view('terms.terms-swedish');
+        }
     }
 
-    public function terms_swedish(){
-        return view('terms.terms-swedish');
+    public function test(){
+        return view('test');
     }
 }

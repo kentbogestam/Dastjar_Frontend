@@ -38,9 +38,13 @@ class PushNotifactionController extends Controller
     }
 
     public function readyNotifaction(Request $request, $orderID){
-        $orderDetail = Order::where('customer_order_id', $orderID)->first();
-        $companydetails = Store::where('store_id', $orderDetail->store_id)->first();
-    	return view('order.alert-ready',compact('orderID','companydetails'));
+        if(Order::where('customer_order_id', $orderID)->exists()){
+            $orderDetail = Order::where('customer_order_id', $orderID)->first();
+            $companydetails = Store::where('store_id', $orderDetail->store_id)->first();
+            return view('order.alert-ready',compact('orderID','companydetails'));            
+        }else{
+            return redirect('home');
+        }
     }
 
     public function orderDeliver(Request $request, $orderID){

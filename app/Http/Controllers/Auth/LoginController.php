@@ -87,9 +87,13 @@ class LoginController extends Controller
                 Session::put('applocale', 'en');
               }
             }
-            DB::table('customer')->where('fac_id', $userSocial->id)->update([
-                        'language' => $lang,
-                    ]);
+
+            if(DB::table('customer')->where('fac_id', $userSocial->id)->exists()){
+              DB::table('customer')->where('fac_id', $userSocial->id)->update([
+                          'language' => $lang,
+                      ]);              
+            }
+            
             if(Session::get('orderData') == null ){
               return redirect()->action('HomeController@index');
             }else{

@@ -37,7 +37,7 @@ self.addEventListener('push', function(event) {
         var idD = regID.substring(regID.indexOf("d/")+1);
           regID =  idD.substring(idD.indexOf("/")+1);
        
- var URL = FETCH_ENDPOINT +btoa(regID)+ "/CHROME"+"?apiKey=d7406f5acceff248ed2f044f3f4b649f4ea2b6f376ac5b3935c7b6462692e885";
+ var URL = FETCH_ENDPOINT +btoa(regID)+ "/CHROME"+"?apiKey=501d285f67364ede754437ca8e8da7de913e2ba973fb99e20f89f918866a7a17";
  console.log(URL);
         return fetch(URL).then(function(response) {
  

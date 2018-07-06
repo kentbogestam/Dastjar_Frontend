@@ -156,14 +156,6 @@
 
 @section('content')
 
-@if(!isset($product))
-<?php $product = new stdClass(); ?>
-@endif
-
-@if(!isset($product_price_list))
-<?php $product_price_list = new stdClass(); ?>
-@endif
-
 <div data-role="header" data-position="fixed" data-tap-toggle="false" class="header">
 		<div class="logo_header">
 		<img src="{{asset('kitchenImages/logo-img.png')}}">
@@ -192,8 +184,17 @@
 	<div class="container">
 		<br />
 
-		{{-- <form class="create-menu-form" method="post" action="{{ url('kitchen/create-menu') }}" data-ajax="false"> --}}
+@if(!isset($product))
+		<?php $product = new stdClass(); ?>
 		<form class="create-menu-form" method="post" action="{{ url('kitchen/create-menu-save') }}" enctype="multipart/form-data" data-ajax="false">
+@else
+		<form class="create-menu-form" method="post" action="{{ url('kitchen/create-menu-update') }}" enctype="multipart/form-data" data-ajax="false">
+@endif
+
+@if(!isset($product_price_list))
+	<?php $product_price_list = new stdClass(); ?>
+@endif
+
 		<div class="row">
 			<div class="col-10 dish_name_col">
 				<a href="{{ url('kitchen/menu') }}" class="menu_back_btn" data-ajax="false"><span class="fa fa-chevron-left"></span>Back</a>

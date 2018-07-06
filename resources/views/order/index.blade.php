@@ -22,9 +22,7 @@
 	      });
 	  });
 </script> -->
-<!-- <script src="{{asset('notifactionJs/newNotifaction/App42.js')}}"></script>
-<script src="{{asset('notifactionJs/newNotifactionnewNotifaction/jQuery.js')}}"></script>
-<script src="{{asset('notifactionJs/newNotifaction/browser.js')}}"></script>
+<!-- 
 <script src="{{asset('notifactionJs/serviceWorker.js')}}"></script> -->
 <script src="{{asset('notifactionJs/newNotifaction/App42.js')}}"></script>
 <script src="{{asset('notifactionJs/newNotifaction/jQuery.js')}}"></script>
@@ -53,6 +51,8 @@ if ('serviceWorker' in navigator) {
                     var idD = regID.substring(regID.indexOf("v1/")+ 1);
                     regID = sub.endpoint.replace(/ /g,'')
                 }
+
+
                 registerDeviceWithApp42(regID,type.toUpperCase())   
           }).catch(function(e) {
             // Handle Exception here
@@ -74,6 +74,7 @@ if ('serviceWorker' in navigator) {
     console.log('Service Worker registration failed: ');
   });
 }
+
 function registerDeviceWithApp42(token,type ){
     var pushNotificationService  = new App42Push();
     App42.initialize(API_KEY, SECERT_KEY);

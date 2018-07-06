@@ -80,6 +80,7 @@ return [
     'Send' => 'Skicka',
     'Contact Us' => 'Kontakta oss',
     'Message' => 'Meddelande',
-    'Contact Us Placeholder' => 'Skriv ditt meddelande och lägg till din email adress för svar'
+    'Contact Us Placeholder' => 'Skriv ditt meddelande och lägg till din email adress för svar',
+    'Terms and Conditions' => 'Villkor'
 
 ];

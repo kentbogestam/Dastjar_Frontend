@@ -79,6 +79,7 @@ return [
     'Send' => 'Send',
     'Contact Us' => 'Contact Us',
     'Message' => 'Message',
-    'Contact Us Placeholder' => 'Enter your Message and add your email for replay'
+    'Contact Us Placeholder' => 'Enter your Message and add your email for replay',
+    'Terms and Conditions' => 'Terms and Conditions'    
 
 ];

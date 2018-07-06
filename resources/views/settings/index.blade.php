@@ -165,21 +165,6 @@
 	<div id="contact-setting-list" class="setting-list">
 			<ul data-role="listview"> 
 				<li data-role="collapsible" class="range-sec">
-					<?php $lan = "eng" ?>
-
-					@if(Auth::check())
-						@if(Auth::user()->language == 'ENG')
-							<?php $lan = "eng" ?>
-						@elseif(Auth::user()->language == 'SWE')
-							<?php $lan = "swe" ?>
-						@endif
-					@else
-						@if(Session::get('browserLanguageWithOutLogin') == 'ENG')
-							<?php $lan = "eng" ?>
-						@elseif(Session::get('browserLanguageWithOutLogin') == 'SWE')
-							<?php $lan = "swe" ?>
-						@endif
-					@endif
 
 					<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Contact Us') }}
 						<p class="ui-li-aside">
@@ -203,21 +188,12 @@
 			</ul> 
 	</div>
 
-	@if($lan == "eng")
 	<div class="setting-list">
 		<div style="margin-right: 15px; margin-top: 5px; margin-bottom: -2px;"> 
-			<a href="{{ url('terms/english') }}" id="" class="terms btn btn-primary" data-ajax="false">Terms and Conditions
+			<a href="{{ url('terms') }}" id="" class="terms btn btn-primary" data-ajax="false">{{ __('messages.Terms and Conditions') }}
 			</a>		
 		</div> 
 	</div>
-	@elseif($lan == "swe")
-	<div class="setting-list">
-		<div style="margin-right: 15px; margin-top: 5px; margin-bottom: -2px;"> 
-			<a href="{{ url('terms/swedish') }}" id="" class="terms btn btn-primary" data-ajax="false">Villkor
-			</a>		
-		</div> 
-	</div>
-	@endif
 
 </div>
 @endsection

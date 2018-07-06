@@ -31,7 +31,6 @@ class PaymentController extends Controller
 			$emailId = $customer->where('id',$request->session()->get('login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d'))->first()->email;		
 			
 			$orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
-//dd($orderDetails[0]->product_name);
 
 			$description = "";
 
@@ -40,30 +39,20 @@ class PaymentController extends Controller
 				$description .= $value->product_quality . " " . $value->product_name . ", ";
 			}
 
-			$vat_total = (12*$amount)/100;
+			$vat_total = (12*$amount)/10000;
 
 			$description .= "Vat 12%, Vat Total " . $vat_total . "kr";
-
 
 			$charge = Charge::create(array(
 	            'amount' => $amount,
 	            'currency' => 'sek',
 				'description' => $description,
-				'destination' => $stripeAccount,
+//				'destination' => $stripeAccount,
                 'receipt_email' => $emailId,
-	            'source' => $token,
-					            'metadata' => ['product_name' => $orderDetails[0]->product_name,
-	        					'price' => $orderDetails[0]->price,
-		        				'Quantity' => $orderDetails[0]->product_quality]
-	        ));
-			
-
-
-			
-						//dd($charge->status);
+	            'source' => $token
+				), array("stripe_account" => $stripeAccount));
 
 			if($charge->status == "succeeded"){
-
 	        	DB::table('orders')->where('order_id', $orderId)->update([
 	                        'online_paid' => 1,
 	                    ]);

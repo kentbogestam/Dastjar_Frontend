@@ -50,7 +50,7 @@ self.addEventListener('message', function(event) {
 
 function parseJSON(jsonOBJECT,i,messagePayload, onDone){
 	title = 'Anar';
-	CLICK_URL = "https://anar.dastjar.com/";
+	CLICK_URL = "http://localhost/anar/public/";
 	actionOne = null;
 	actionTwo = null;
 	var actions = new Array();

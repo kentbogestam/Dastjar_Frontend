@@ -109,13 +109,18 @@ class OrderController extends Controller
                 if($storeDetail->online_payment == 1){
                     $companyDetail = Company::where('company_id', $productTime->company_id)->first();
                     $companyUserDetail = Admin::where('u_id', $companyDetail->u_id)->first();
+
+
                     DB::table('orders')->where('order_id', $orderId)->update([
                             'online_paid' => 2,
                         ]);
                     $request->session()->put('paymentAmount', $order->order_total);
                     $request->session()->put('OrderId', $order->order_id);
+                                      //  dd($companyUserDetail->toArray());
+
                     if(isset($companyUserDetail->stripe_user_id))
                     $request->session()->put('stripeAccount', $companyUserDetail->stripe_user_id);
+
                      return view('order.paymentIndex', compact('order','orderDetails'));
                 }else{
                     return view('order.index', compact('order','orderDetails'));
@@ -328,7 +333,9 @@ class OrderController extends Controller
             
         $order = Order::select('orders.*','store.store_name','company.currencies')->where('customer_order_id',$id)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
 
-        $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$id)->get();
+        $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$order->order_id)->get();
+
+     //   dd($orderDetails);
 
         return view('order.order-details', compact('order','orderDetails'));
     }

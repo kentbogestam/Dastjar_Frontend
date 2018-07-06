@@ -3,6 +3,7 @@
 @section('head-scripts') 
 
 @endsection
+
 @section('content')
 
 <div data-role="header" data-position="fixed" data-tap-toggle="false" class="header">
