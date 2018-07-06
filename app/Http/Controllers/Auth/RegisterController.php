@@ -52,10 +52,18 @@ class RegisterController extends Controller
         if(!empty($request->input())){
 
             $validator = $this->validator($request->all());
+
             if ($validator->fails()) {
-                return redirect()->action('Auth\RegisterController@userRegister')->with('success', 'This Email or Mobile Number already register.');
+                if(isset($validator->errors()->toArray()['email']) && isset($validator->errors()->toArray()['phone_number'])){
+                    $message = 'This Email or Mobile Number already register.';
+                }elseif(isset($validator->errors()->toArray()['email'])){
+                    $message = $validator->errors()->toArray()['email'][0];                    
+                }else{
+                    $message = $validator->errors()->toArray()['phone_number'][0];
+                }
+
+                return redirect()->action('Auth\RegisterController@userRegister')->with('success', $message);
             }
-            // dd($request->session()->all());
 
             $user = $this->create($request->all());
 

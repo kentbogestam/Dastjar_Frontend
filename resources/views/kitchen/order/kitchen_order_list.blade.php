@@ -127,7 +127,7 @@
 		var imageUrl = "{{asset('kitchenImages/right_sign.png')}}";
 
 		function orderReadyStarted(id) {			
-			$.get("{{url('kitchen/orderStartedKitchen')}}/"+id,
+			$.get("{{url('api/v1/kitchen/orderStartedKitchen')}}/"+id,
 			function(returnedData){
 				console.log(returnedData["data"]);
 				$('body').find('#'+id).attr('src',imageUrl);
@@ -138,7 +138,7 @@
 
 		function onReady(id) {
 			
-			$.get("{{url('kitchen/onReadyAjax')}}/"+id,
+			$.get("{{url('api/v1/kitchen/onReadyAjax')}}/"+id,
 			function(returnedData){
 				console.log(returnedData["data"]);
 				$('body').find('#'+id+'ready').parents("tr").remove();
@@ -498,7 +498,7 @@ console.log('lastOrderId'+lastOrderId);
 
 		function updateSpeak(id){
 			//console.log('ssssssssssssssssssssssssssssssssssssssssssssssssssssss');
-			var url = '{{url('kitchen/updateTextspeach')}}'+'/'+id;
+			var url = '{{url('api/v1/kitchen/updateTextspeach')}}'+'/'+id;
 			//console.log('urlurl'+url);
 			$.ajax({
 	            url: url, //This is the current doc

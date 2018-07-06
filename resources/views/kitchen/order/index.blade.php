@@ -131,7 +131,7 @@
 	var url = "{{url('kitchen/order-ready')}}";
 	var urldeliver = "{{url('kitchen/order-deliver')}}";
 	$(function(){
-		$.get("{{url('kitchen/order-detail')}}",
+		$.get("{{url('api/v1/kitchen/order-detail')}}",
 		function(returnedData){
 			console.log(returnedData["data"]);
 			var count = 18;
@@ -207,7 +207,7 @@
 
 	function getList(orderId){
 		var liItem = "";
-		$.get("{{url('kitchen/orderSpecificOdrderDetail')}}/"+orderId,
+		$.get("{{url('api/v1/kitchen/orderSpecificOdrderDetail')}}/"+orderId,
 		function(returnedData){
 			//console.log(returnedData["data"]);
 			var temp = returnedData["data"];
@@ -230,7 +230,7 @@
 	}
 
 	var ajaxCall = function(){
-		$.get("{{url('kitchen/order-detail')}}",
+		$.get("{{url('api/v1/kitchen/order-detail')}}",
 		function(returnedData){
 			//console.log(returnedData["data"]);
 			var count = 18;

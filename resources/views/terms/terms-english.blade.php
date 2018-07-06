@@ -67,6 +67,12 @@
 		background: linear-gradient(to bottom, rgba(249,163,34,1) 0%, rgba(229,80,11,1) 100%);
 		color: #fff;
 	}
+
+	.anar-logo {
+	    max-width: 95px; 
+/*    	margin-top: 5px;
+*/    	margin-bottom: 2px;
+	}
 	</style>
 @endsection
 
@@ -97,7 +103,10 @@
 			<div data-role="navbar"> 
 				<ul> 
 			<li><a href="{{url('user-setting')}}" data-ajax="false" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
-			 <li><a data-ajax="false" class="ui-btn-active">{{ __('messages.Terms') }}</a></li>
+			 <li><a data-ajax="false" class="ui-btn-active">					
+			 	<img src="{{asset('images/logo.png')}}" class="anar-logo">
+				</a>
+			</li>
 			  <li class="done-btn" id="dataSave"></li> </ul>
 			</div><!-- /navbar -->
 		</div>
@@ -106,6 +115,10 @@
 
 <BODY LANG="sv-SE" TEXT="#000000" LINK="#0563c1" DIR="LTR">
 <DIV TYPE=HEADER>
+		<p style="text-align: center;     font-size: 25px;
+    font-weight: bold;">
+		{{ __('messages.Terms') }}
+	</p>
 	<BR>
 </DIV>
 

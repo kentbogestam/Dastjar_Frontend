@@ -90,7 +90,7 @@
 		var totallength = 0;
 
 		$(function(){
-			$.get("{{url('kitchen/catering-orders')}}",
+			$.get("{{url('api/v1/kitchen/catering-orders')}}",
 			function(returnedData){
 				console.log(returnedData["data"]);
 				var count = 18;
@@ -135,7 +135,7 @@
 		});
 
 		var ajaxCall = function(){
-			$.get("{{url('kitchen/catering-orders')}}",
+			$.get("{{url('api/v1/kitchen/catering-orders')}}",
 			function(returnedData){
 				//console.log(returnedData["data"]);
 				var count = 18;
