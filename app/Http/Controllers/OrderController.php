@@ -18,10 +18,8 @@ use Session;
 
 class OrderController extends Controller
 {
-    //
     public function saveOrder(Request $request){
-    	//$request->session()->forget('order_date');
-    	//dd($request->session()->get('order_date') != null);
+
         if(Auth::check()){
 
             if(!empty($request->input())){
@@ -298,8 +296,6 @@ class OrderController extends Controller
         $customer = new User();
         $logged_in=0;
 
-        // dd($request->session()->get('login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d'));
-
         if(Session::has('login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d')){
             if($customer->where('id',session()->get('login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d'))->exists()){
                 $logged_in=1; 
@@ -334,8 +330,6 @@ class OrderController extends Controller
         $order = Order::select('orders.*','store.store_name','company.currencies')->where('customer_order_id',$id)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
 
         $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$order->order_id)->get();
-
-     //   dd($orderDetails);
 
         return view('order.order-details', compact('order','orderDetails'));
     }

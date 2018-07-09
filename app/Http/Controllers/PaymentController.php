@@ -43,14 +43,24 @@ class PaymentController extends Controller
 
 			$description .= "Vat 12%, Vat Total " . $vat_total . "kr";
 
-			$charge = Charge::create(array(
-	            'amount' => $amount,
-	            'currency' => 'sek',
-				'description' => $description,
-//				'destination' => $stripeAccount,
-                'receipt_email' => $emailId,
-	            'source' => $token
+			if (filter_var($emailId, FILTER_VALIDATE_EMAIL)) {
+				$charge = Charge::create(array(
+		            'amount' => $amount,
+		            'currency' => 'sek',
+					'description' => $description,
+	//				'destination' => $stripeAccount,
+	                'receipt_email' => $emailId,
+		            'source' => $token
 				), array("stripe_account" => $stripeAccount));
+			} else {
+				$charge = Charge::create(array(
+		            'amount' => $amount,
+		            'currency' => 'sek',
+					'description' => $description,
+	//				'destination' => $stripeAccount,
+		            'source' => $token
+				), array("stripe_account" => $stripeAccount));
+			}
 
 			if($charge->status == "succeeded"){
 	        	DB::table('orders')->where('order_id', $orderId)->update([

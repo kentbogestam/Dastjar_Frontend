@@ -1,12 +1,12 @@
 @extends('layouts.kitchenSetting')
 
 <style type="text/css">
-	#about_us{
+	.btn_blk{
 		background-color: #fff;
 		border-radius: 0.5em;
 	}
 
-	#about_us h2{
+	.btn_blk h2{
 		text-align: left;
 		padding-left: 2em;
 	}
@@ -85,8 +85,12 @@
 				    </fieldset>
 				</li>
 
-				<li id="about_us" class="range-sec">
+				<li id="about_us" class="range-sec btn_blk">
 					<h2 class="ui-btn">{{  __("messages.About Us") }}</h2>
+				</li>
+
+				<li id="admin" class="range-sec btn_blk">
+					<h2 class="ui-btn">{{  __("messages.Admin") }}</h2>
 				</li>
 			</div>
 		</div>
@@ -98,7 +102,6 @@
 @section('footer-script')
 	<script type="text/javascript">
 		$("#dataSave").click(function(e){
-			console.log('gggg');
 			var flag = true;
 
 			if(flag){
@@ -111,6 +114,10 @@
 
 		$('#about_us').click(function(){
 			window.open("https://dastjar.com/");
+		});
+
+		$('#admin').click(function(){
+			window.open("https://admin.dastjar.com/admin/");
 		});
 	</script>
 

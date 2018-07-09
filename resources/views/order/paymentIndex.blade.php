@@ -11,22 +11,7 @@
 	</div>
 	<div role="main" data-role="main-content" class="content">
 		<div class="inner-page-container">
-			<!-- <div class="wait-bg-img">
-				<div class="text-content">
-					<p>{{ __('messages.Thanks for your order') }} </p>
-					<p>{{ __('messages.Order Number') }} </p>
-					<p class="large-text">{{$order->customer_order_id}}</p>
-					<p>({{$order->store_name}})</p>
-					<p>{{ __('messages.Your order will be ready on') }}
-						@if($order->order_type == 'eat_later')
-						{{$order->deliver_date}}
-						{{date_format(date_create($order->deliver_time), 'G:i')}} 
-						@else
-						{{date_format(date_create($order->order_delivery_time), 'i')}} mins
-						@endif
-					</p>
-				</div>
-			</div> -->
+			
 			<div class="table-content">
 				<h2>{{ __('messages.ORDER DETAILS') }}</h2>
 				<table data-role="table" id="table-custom-2" data-mode="" class="ui-body-d ui-shadow table-stripe ui-responsive">
@@ -35,7 +20,11 @@
 							<td>{{$orderDetail->product_name}}	</td><td>{{$orderDetail->product_quality}} x {{$orderDetail->price}}</td><td>{{$order->currencies}} {{$orderDetail->product_quality*$orderDetail->price}}</td>
 						</tr>	
 					@endforeach
-				<tr class="last-row">	<td> </td><td>         </td><td>  TOTAL:-    {{$order->currencies}} {{$order->order_total}}</td></tr>
+				<tr class="last-row">	
+					<td> </td>
+					<td> </td>
+					<td>  TOTAL:-    {{$order->currencies}} {{$order->order_total}}</td>
+				</tr>
 				</tr>
 				</table>
 			</div>

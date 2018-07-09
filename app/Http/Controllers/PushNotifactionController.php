@@ -51,15 +51,26 @@ class PushNotifactionController extends Controller
     	$message = 'orderDeliver';
 
         $OrderId = Order::where('customer_order_id' , $orderID)->first();
+
+        if($OrderId->user_id != 0){
         if($OrderId->user_type == 'customer'){
             $adminDetail = User::where('id' , $OrderId->user_id)->first();
+
+            if(!isset($adminDetail->phone_number_prifix) || !isset($adminDetail->phone_number)){
+                DB::table('orders')->where('customer_order_id', $orderID)->update([
+                            'paid' => 1,
+                        ]);
+                return redirect()->action('AdminController@index');
+            }
             //$afterRemoveFirstZeroNumber = substr($adminDetail->phone_number, -9);
             $recipients = ['+'.$adminDetail->phone_number_prifix.$adminDetail->phone_number];
         }else{
             $adminDetail = Admin::where('id' , $OrderId->user_id)->first();
             $recipients = ['+'.$adminDetail->mobile_phone];
         }
+
         $pieces = explode(" ", $adminDetail->browser);
+        
         if($pieces[0] == 'Safari'){
             //dd($recipients);
             $url = "https://gatewayapi.com/rest/mtsms";
@@ -86,10 +97,11 @@ class PushNotifactionController extends Controller
         }else{
             $this->sendNotifaction($orderID , $message);
         }
+        }
+
 		DB::table('orders')->where('customer_order_id', $orderID)->update([
                             'paid' => 1,
                         ]);
-    	// return redirect()->action('AdminController@index')->with('success', \Lang::get('messages.Order Deliver Notification Send Successfully'));
 
         return redirect()->action('AdminController@index');
     }

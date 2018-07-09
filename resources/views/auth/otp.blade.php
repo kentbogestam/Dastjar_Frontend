@@ -24,7 +24,7 @@
                     </div>
                     <div class="social-sec">
                         <div class="ui-grid-solo">
-                         <input id="otp" type="text" class="form-control" name="otp" value="{{ old('otp') }}" required autofocus placeholder="Enter the code you received on SMS*">
+                         <input id="otp" type="number" class="form-control" name="otp" value="{{ old('otp') }}" required autofocus placeholder="Enter the code you received on SMS*">
                         </div>
                     </div>
                     <div class="ui-grid-solo">

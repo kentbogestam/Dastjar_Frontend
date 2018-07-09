@@ -1,9 +1,9 @@
-.left-side_menu{
-    width: 45% !important;
+/*.left-side_menu{
+    width: 50% !important;
 }
 
 .right-side_menu{
-    width: 55% !important;
+    width: 50% !important;
 }
 
 .right-side_menu .ui-block-a{
@@ -17,10 +17,14 @@
 .right-side_menu .ui-block-c{
     width: 30% !important;
 }
-
+*/
 @media only screen and (max-width: 768px) {
     .left-side_menu span{
         display: none;
+    }
+
+    .right-side_menu{
+        padding-right: 25px;
     }
     
     .right-side_menu span{

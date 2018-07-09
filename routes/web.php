@@ -50,6 +50,8 @@
 	Route::get('/enterOtp','Auth\LoginController@enterOtp');
 	Route::get('/userLogin','Auth\LoginController@userSessionLogin');
 
+	Route::get('/test','HomeController@test');
+
    //This is for testing stripe payment
 
 	Route::get('/redirectStripe', 'StripePaymentController@redirectStripe');
@@ -57,13 +59,13 @@
 	
 	Route::get('getList', 'HomeController@getList');
 
-	Route::get('/terms/english', 'HomeController@terms_english');
-	Route::get('/terms/swedish', 'HomeController@terms_swedish');
+	Route::get('/terms', 'HomeController@terms');
 
 	//Second Phase
 	Route::get('/', 'HomeController@index');
 	Route::get('lat-long', 'HomeController@userLatLong');
 	Route::get('checkUserLogin', 'HomeController@checkUserLogin');
+	
 	Route::group(['middleware' => ['latlng']], function(){
 		Route::get('search-map-eatnow', 'MapController@searchMapEatnow');
 		Route::get('eat-now', 'HomeController@index');
@@ -105,20 +107,15 @@ Route::group(['middleware' => ['auth']], function(){
 
 
 	Route::group(['prefix' => 'kitchen'], function(){
+		Route::get('checkStoreFirst', 'AdminController@checkStoreFirst');
 		Route::post('store', 'AdminController@index');
 		Route::get('store', 'AdminController@index');
-		Route::get('checkStoreFirst', 'AdminController@checkStoreFirst');
 		Route::get('logout', 'Auth\AdminLoginController@logout');
-		Route::get('order-detail', 'AdminController@orderDetail');
 		Route::get('kitchen-detail', 'AdminController@kitchenOrderDetail');
-		Route::get('kitchen-orders', 'AdminController@kitchenOrders');
 		Route::get('catering', 'AdminController@cateringDetails');
-		Route::get('catering-orders', 'AdminController@cateringOrders');
 		Route::get('kitchen-order-onsite', 'AdminController@kitchenPreOrder');
 		Route::get('order-started/{OrderId}', 'AdminController@orderStarted');
-		Route::get('orderStartedKitchen/{OrderId}', 'AdminController@orderStartedKitchen');
 		Route::get('order-readyKitchen/{OrderId}', 'AdminController@orderReadyKitchen');
-		Route::get('onReadyAjax/{OrderId}', 'AdminController@onReadyAjax');
 		Route::post('kitchen-order-save','AdminController@kitchenOrderSave');
 		Route::get('kitchen-order-save','AdminController@kitchenOrderSave');
 		Route::get('selectOrder-dateKitchen', 'AdminController@selectOrderDateKitchen');
@@ -129,15 +126,16 @@ Route::group(['middleware' => ['auth']], function(){
 		Route::get('order-deliver/{OrderId}', 'PushNotifactionController@orderDeliver');
 		Route::get('kitchen-setting', 'AdminController@kitchenSetting');
 		Route::post('save-kitchenSetting', 'AdminController@saveKitchenSetting');
-		Route::get('updateTextspeach/{id}','AdminController@updateTextspeach');
 		Route::post('payment', 'AdminController@payment');
 		Route::get('payment', 'AdminController@payment');
-		Route::get('kitchen-orders-new/{lastId}', 'AdminController@kitchenOrdersNew');
-		Route::get('orderSpecificOdrderDetail/{orderId}', 'AdminController@orderSpecificOrderDetail');
 		Route::get('menu', 'AdminController@kitchenMenu')->name('menu');
-
+		Route::get('kitchen-orders', 'AdminController@kitchenOrders');
+		Route::get('kitchen-orders-new/{lastId}', 'AdminController@kitchenOrdersNew');
 		Route::get('create-menu', 'AdminController@kitchenCreateMenu')->name('create-menu');
+
 		Route::post('create-menu-save', 'AdminController@kitchenCreateMenuPost');
+		Route::post('create-menu-update', 'AdminController@kitchenUpdateMenuPost');
+
 		Route::get('edit-menu-dish', 'AdminController@kitchenEditDish');		
 		Route::get('delete-menu-dish', 'AdminController@kitchenDeleteDish');	
 		Route::get('createStandardOffer', 'AdminController@createStandardOffer');			

@@ -58,6 +58,10 @@
 			display: none;
 		}
 
+		.ui-widget.ui-widget-content{
+			z-index: 9999;
+		}
+
 		@media(max-width: 480px) {
 			.product_image {
 				height: 38px;
@@ -88,7 +92,7 @@
 			</a>
 		</div>
 			<h3 class="ui-bar ui-bar-a order_background">
-				<a href="{{ URL::previous() }}" data-ajax="false" class="text-left ui-link ui-btn back_btn"><img src="{{asset('kitchenImages/backarrow.png')}}" width="11px"></a>
+				<a href="{{ url('kitchen/store') }}" data-ajax="false" class="text-left ui-link ui-btn back_btn"><img src="{{asset('kitchenImages/backarrow.png')}}" width="11px"></a>
 
 				{{$storedetails->store_name}}
 			</h3>
@@ -100,18 +104,7 @@
 					</div>
 					<span>{{ __('messages.Orders') }}<span class="order_number">{{count(Auth::guard('admin')->user()->kitchenPaidOrderList)}}</span></span>
 				</a></div>
-				<!-- <div class="ui-block-b"><a onClick="makeRedirection('{{url('kitchen/selectOrder-dateKitchen')}}')" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/eat-icon.png')}}">
-					</div>
-					<span>Eat Later</span>
-				</a></div>
-				<div class="ui-block-c"><a onClick="makeRedirection('{{url('kitchen/kitchen-order-onsite')}}')" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/eat-icon.png')}}">
-					</div>
-					<span>Eat Now</span>
-				</a></div> -->
+				
 			</div>
 		</div>
 	</div>
@@ -254,8 +247,6 @@
 	</form>
 	
 
-
-
 	<div data-role="footer" class="footer_container" data-position="fixed" data-tap-toggle="false">
 		<div class="ui-grid-a inner-footer center">
 		<div class="ui-block-a"><a id="menudataSave" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
@@ -268,7 +259,6 @@
 	</div>
 
 	<div id="dialog-confirm" title="Mobile Number">
-		{{-- <form id="mobile-num-form"> --}}
 				<label for="select-native-5">Country Phone Number Prefix</label>
 				<select name="phone_number_prifix" id="select-native-5">
 					<option class="text_field_new" selected="" value="US">United States - 1</option>
@@ -473,8 +463,7 @@
 				</select>
 
 			<input id="mobile-num" type="number" name="mobileNo" placeholder="Enter Your Number" required/>
-			{{-- <button type="submit" class="mobile-num-submit" style="display:none">Submit</button>
-		</form> --}}
+
 	</div>
 @endsection
 
@@ -508,7 +497,6 @@
 							text: "Submit",
 							"class": 'dialog-yes',
 							click: function() {
-								// $('.mobile-num-submit').trigger("click");
 								validateMobileNum();
 							}
 						}

@@ -112,16 +112,6 @@ class AdminController extends Controller
             return view('kitchen.order.index', compact('storeName'));    
     }
 
-    public function orderDetail(){
-        $reCompanyId = Session::get('storeId');
-
-        $orderDetailscustomer = Order::select('orders.*','customer.name as name')->where(['store_id' => $reCompanyId])->where('user_type','=','customer')->where('check_deliveryDate',Carbon::now()->toDateString())->where('orders.paid', '0')->whereNotIn('orders.online_paid', [2])->join('customer','orders.user_id','=','customer.id');
-        $orderDetails = Order::select('orders.*','user.fname as name')->where('orders.store_id', '=' ,$reCompanyId)->where('user_type','=','admin')->where('check_deliveryDate',Carbon::now()->toDateString())->where('orders.paid', '0')->whereNotIn('orders.online_paid', [2])->join('user','orders.user_id','=','user.id');
-        $results = $orderDetailscustomer->union($orderDetails)->get();
-
-        return response()->json(['status' => 'success', 'response' => true,'data'=>$results]);
-    }
-
     public function kitchenOrderDetail(){
         $store = Store::where('store_id' , Session::get('storeId'));
 
@@ -135,35 +125,12 @@ class AdminController extends Controller
        return view('kitchen.order.kitchen_order_list', compact('storeName'));
     }
 
-    public function kitchenOrders(){
-        $reCompanyId = Session::get('storeId');
-
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
-
-        $text_speech = Auth::guard('admin')->user()->text_speech;
-        return response()->json(['status' => 'success', 'user' => $text_speech,'data'=>$kitchenorderDetails]);
-    }
-
-    public function kitchenOrdersNew($id){
-        $reCompanyId = Session::get('storeId');
-
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->where('order_details.id', '>', $id)->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
-        
-        //$user = Admin::where(['u_id' => '32130ad3-e08c-5fc5-b863-1336a3ba4bde'])->first();
-        $text_speech = Auth::guard('admin')->user()->text_speech;
-        return response()->json(['status' => 'success', 'user' => $text_speech,'data'=>$kitchenorderDetails]);
-    }
 
     public function orderStarted(Request $request, $orderID){
         DB::table('order_details')->where('id', $orderID)->update([
                             'order_started' => 1,
                         ]);
         return redirect()->action('AdminController@kitchenOrderDetail')->with('success', 'Order Started Successfully.');
-    }
-
-    public function orderStartedKitchen(Request $request, $orderID){
-        DB::table('order_details')->where('id', $orderID)->update(['order_started' => 1]);
-        return response()->json(['status' => 'success', 'data'=>true]);
     }
 
     public function orderReadyKitchen(Request $request, $orderID){
@@ -227,62 +194,9 @@ class AdminController extends Controller
                     $result = $this->sendNotifaction($OrderId->customer_order_id , $message);
                 }
             }
-            return redirect()->action('AdminController@kitchenOrderDetail')->with('success', 'Order Ready Nofifaction Send Successfully.');
+            return redirect()->action('AdminController@kitchenOrderDetail')->with('success', 'Order Ready Notification Send Successfully.');
         }
         return redirect()->action('AdminController@kitchenOrderDetail')->with('success', 'Order Ready Successfully.');
-    }
-
-    public function onReadyAjax(Request $request, $orderID){
-        DB::table('order_details')->where('id', $orderID)->update(['order_ready' => 1]);
-        $userOrderId = OrderDetail::where('id' , $orderID)->first();
-        $userOrderStatus = OrderDetail::where('order_id' , $userOrderId->order_id)->get();
-        $readyOrderStatus = OrderDetail::where('order_id' , $userOrderId->order_id)->where('order_ready' , '1')->get();
-        if(count($userOrderStatus) == count($readyOrderStatus)){
-
-            $OrderId = Order::where('order_id' , $userOrderId->order_id)->first();
-            DB::table('orders')->where('order_id', $userOrderId->order_id)->update([
-                            'order_ready' => 1,
-                        ]);
-
-            $message = 'orderReady';
-            if($OrderId->user_type == 'customer'){
-                $adminDetail = User::where('id' , $OrderId->user_id)->first();
-                //$afterRemoveFirstZeroNumber = substr($adminDetail->phone_number, -9);
-                $recipients = ['+'.$adminDetail->phone_number_prifix.$adminDetail->phone_number];
-            }else{
-                $adminDetail = Admin::where('id' , $OrderId->user_id)->first();
-                $recipients = ['+'.$adminDetail->mobile_phone];
-            }
-            $pieces = explode(" ", $adminDetail->browser);
-            if($pieces[0] == 'Safari'){
-               // dd($recipients);
-                $url = "https://gatewayapi.com/rest/mtsms";
-                $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
-                $message = "Your order ready please click on link \n ".env('APP_URL').'ready-notifaction/'.$OrderId->customer_order_id;
-                $json = [
-                    'sender' => 'Dastjar',
-                    'message' => ''.$message.'',
-                    'recipients' => [],
-                ];
-                foreach ($recipients as $msisdn) {
-                    $json['recipients'][] = ['msisdn' => $msisdn];}
-
-                $ch = curl_init();
-                curl_setopt($ch,CURLOPT_URL, $url);
-                curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
-                curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
-                curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
-                curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
-                $result = curl_exec($ch);
-                curl_close($ch);   
-            }else{
-                $result = $this->sendNotifaction($OrderId->customer_order_id , $message);
-            }
-            return response()->json(['status' => 'success', 'data'=>'Order Ready Nofifaction Send Successfully.']);
-        }
-        //return redirect()->action('AdminController@kitchenOrderDetail')->with('success', 'Order Ready Successfully.');
-        //return view('kitchen.order.kitchen_order_list'); 
-        return response()->json(['status' => 'ready', 'data'=>'Order Ready Successfully.']);
     }
     
     public function cateringDetails(){
@@ -299,22 +213,16 @@ class AdminController extends Controller
         return view('kitchen.order.catering', compact('storeName')); 
     }
 
-    public function cateringOrders(){
-        $reCompanyId = Session::get('storeId');
-
-        $cateringorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('order_details.delivery_date','>', Carbon::now()->toDateString())->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->orderBy('order_details.delivery_date','ASC')->get();
-
-
-        return response()->json(['status' => 'success', 'response' => true,'data'=>$cateringorderDetails]);
-    }
-
     public function kitchenPreOrder(Request $request){
         $menuTypes = null;
         $request->session()->forget('order_date');
         
         if(Session::get('storeId')){
             $menuDetails = ProductPriceList::where('store_id',Session::get('storeId'))->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())
-            ->with('menuPrice')->with('storeProduct')->get();
+            ->with('menuPrice')->with('storeProduct')
+            ->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')
+            ->orderBy('product.rank', 'ASC')
+            ->get();
 
             if($menuDetails){
                 $helper = new Helper();
@@ -353,6 +261,24 @@ class AdminController extends Controller
         }
     }
 
+    
+    public function kitchenOrders(){
+        $reCompanyId = Session::get('storeId');
+
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
+
+        $text_speech = Auth::guard('admin')->user()->text_speech;
+        return response()->json(['status' => 'success', 'user' => $text_speech,'data'=>$kitchenorderDetails]);
+    }
+
+    public function kitchenOrdersNew($id){
+        $reCompanyId = Session::get('storeId');
+
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->where('order_details.id', '>', $id)->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
+        
+        $text_speech = Auth::guard('admin')->user()->text_speech;
+        return response()->json(['status' => 'success', 'user' => $text_speech,'data'=>$kitchenorderDetails]);
+    }
 
     public function kitchenOrderSave(Request $request){
         if(!empty($request->input())){
@@ -491,13 +417,17 @@ class AdminController extends Controller
 
                 $menuTypes = DishType::where('company_id' , $companyId)->whereIn('dish_id', array_unique($dish_typeId))->where('dish_activate','1')->where('dish_lang','ENG')->get();
                 $dish_typeId = null;
-                //$request->session()->put('storeId'.Auth()->id(), $storeId);
             }
 
 
             $companydetails = Company::where('company_id' , Auth::guard('admin')->user()->company_id)->first();
-            if(count($companydetails) == 0){
-                $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
+
+            if(Company::where('company_id' , Auth::guard('admin')->user()->company_id)->exists()){
+                if(count($companydetails->toArray()) == 0){
+                    $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
+                }
+            }else{
+                    $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();                
             }
 
             $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
@@ -594,6 +524,7 @@ class AdminController extends Controller
             $userDetail = Admin::whereId($order->user_id)->first();
         }
 
+
         $userName =$userDetail->email;
 
         if($message == 'orderDeliver'){
@@ -605,26 +536,26 @@ class AdminController extends Controller
             $message = "{'alert': " ."'". $messageDelever."'" . ",'_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': " ."'". $messageDelever."'" . ",'type':'openUrl','content':" ."'". $url."'" . "}}";
         }
         
-        App42API::initialize(env('APP42_API_KEY'),env('APP42_API_SECRET'));
-        Log::useDailyFiles(storage_path().'/logs/pushNotifaction');
-        Log::info('Before pushNotifaction time : '.Carbon::now()); 
-        $pushNotificationService = App42API::buildPushNotificationService(); 
-        $pushNotification = $pushNotificationService->sendPushMessageToUser($userName,$message);
-        Log::info('After pushNotifaction time : '.Carbon::now()); 
 
+
+        try{
+            App42API::initialize(env('APP42_API_KEY'),env('APP42_API_SECRET'));
+            Log::useDailyFiles(storage_path().'/logs/pushNotifaction');
+            Log::info('Before pushNotifaction time : '.Carbon::now()); 
+
+            $pushNotificationService = App42API::buildPushNotificationService(); 
+
+            $pushNotification = $pushNotificationService->sendPushMessageToUser($userName,$message);
+            Log::info('After pushNotifaction time : '.Carbon::now()); 
+            //                                 echo "string"; die();
+
+            // return "123";
+        }catch(\Exception $e){
+            return $e->getMessage();
+        }
+
+        // echo "456"; die();
         return $pushNotification;
-    }
-
-    public function updateTextspeach($id){
-        DB::table('order_details')->where('id', $id)->update([
-                    'is_speak' => 1,
-                ]);
-         return response()->json(['status' => 'success', 'response' => true,'data'=>$id]);
-    }
-
-    public function orderSpecificOrderDetail($orderId){
-         $orderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.order_id' => $orderId])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
-        return response()->json(['status' => 'success', 'data'=>$orderDetails]);
     }
 
     public function kitchenMenu(){
@@ -637,7 +568,9 @@ class AdminController extends Controller
 
             $allData = [];
 
-            $prods = $products->where('u_id', Auth::user()->u_id)->where('s_activ', '!=' , 2)->get()->groupBy('dish_type');
+            $prods = $products->where('u_id', Auth::user()->u_id)->where('s_activ', '!=' , 2)
+            ->orderBy('rank', 'ASC')
+            ->get()->groupBy('dish_type');
             $prodprices = $productPriceList->where('store_id', Session::get('storeId'))->get()->groupBy('product_id');
         
             foreach($prods as $k=>$r){
@@ -648,6 +581,7 @@ class AdminController extends Controller
 
                         $sloganLangId = $productOfferSloganLangList->where('product_id',$data['product_id'])->first()->offer_slogan_lang_list;
                         $sloganSubLangId = $productOfferSubSloganLangList->where('product_id',$data['product_id'])->first()->offer_sub_slogan_lang_list;
+
 
                         $prodName = $langText->where('id',$sloganLangId)->first()->text;
                         $prodDesc = $langText->where('id',$sloganSubLangId)->first()->text;
@@ -744,7 +678,6 @@ class AdminController extends Controller
         $company_id = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
 
         $basePath = app_path();
-        define('BASEPATH', $basePath);
         define('FUNCTION_DIR', 'function/');
         //define('TIME_ZONE','Asia/Calcutta');
         define('UPLOAD_DIR', public_path() . '/upload/images/');
@@ -752,8 +685,8 @@ class AdminController extends Controller
         /////////// upload image dirctory/////////
         define('_UPLOAD_IMAGE_', public_path() . '/upload/images/');
         define('IMAGE_AMAZON_PATH', 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/');
-        define('IMAGE_DIR_PATH', $basePath . '/lib/bin/cumbari_s3.sh ');
-        define('IMAGE_DIR_PATH_DELETE', $basePath . '/lib/bin/cumbari_s3del.sh ');  
+        define('IMAGE_DIR_PATH', 'usr/local/bin/cumbari_s3.sh ');
+        define('IMAGE_DIR_PATH_DELETE', 'usr/local/bin/cumbari_s3del.sh ');  
         
         $CategoryIconName = "cat_icon_" . md5(time());
         $info = pathinfo($_FILES["prodImage"]["name"]);
@@ -772,6 +705,8 @@ class AdminController extends Controller
                         $fileThumbnail = $path . $cat_filename;
                         $resizer = new Resizer();
 
+                   //     move_uploaded_file($fileOriginal,$fileThumbnail);
+
                         try{
                             $resizer->createFileThumbnail($fileOriginal, $fileThumbnail, $size, $frontUpload = 0, $crop, $errorMsg);
                 		} catch (\Exception $ex) {
@@ -787,7 +722,7 @@ class AdminController extends Controller
                     $small_image = null;                
             }
 
-        $product = Product::firstOrNew(['product_id' => $product_id]);
+        $product = new Product();
         $product->u_id = Auth::user()->u_id;
         $product->product_name = $request->prodName;
 
@@ -823,6 +758,7 @@ class AdminController extends Controller
         $product->product_info_page = "";
         $product->start_of_publishing = Carbon::now();
         $product->company_id = $company_id;
+        $product->rank = $product->count()+1;
         $product->save();
 
         $sloganSubLangId = $helper->uuid();
@@ -884,6 +820,147 @@ class AdminController extends Controller
         $productKeyword->save();
 
         $product_price_list = ProductPriceList::firstOrNew(['product_id' => $product_id]);
+        $product_price_list->store_id = $store_id;
+        $product_price_list->text = "Price:" . $request->prodPrice . $request->currency;
+        $product_price_list->price = $request->prodPrice;
+        $product_price_list->lang = $request->dishLang;
+        $product_price_list->publishing_start_date = $publish_start_date;
+        $product_price_list->publishing_end_date = $publish_end_date;
+        $product_price_list->save();
+
+        return redirect()->route('menu')->with('success', $message);
+    }
+
+
+ public function kitchenUpdateMenuPost(Request $request){
+        $helper = new Helper();
+
+        if(isset($request->product_id)){
+            $product_id = $request->product_id;
+            $store_id = $request->store_id;
+            $message = "Dish Updated Successfully.";
+        }else{
+            $product_id = $helper->uuid();
+            $store_id = Session::get('storeId');
+            $message = "Dish Created Successfully.";
+        }
+
+        $util = new Util(env('APP42_API_KEY'),env('APP42_API_SECRET'));
+
+        $publish_start_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_start_date);
+        // $publish_start_date = $util->getUTCFormattedTimestamps($request->publish_start_date);
+
+        $publish_end_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_end_date);
+        // $publish_end_date = $util->getUTCFormattedTimestamps($request->publish_end_date);
+
+        $employer = new Employer();
+        $company_id = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
+
+        $basePath = app_path();
+        define('FUNCTION_DIR', 'function/');
+        //define('TIME_ZONE','Asia/Calcutta');
+        define('UPLOAD_DIR', public_path() . '/upload/images/');
+
+        /////////// upload image dirctory/////////
+        define('_UPLOAD_IMAGE_', public_path() . '/upload/images/');
+        define('IMAGE_AMAZON_PATH', 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/');
+        define('IMAGE_DIR_PATH', 'usr/local/bin/cumbari_s3.sh ');
+        define('IMAGE_DIR_PATH_DELETE', 'usr/local/bin/cumbari_s3del.sh ');  
+        
+        $CategoryIconName = "cat_icon_" . md5(time());
+        $info = pathinfo($_FILES["prodImage"]["name"]);
+
+        // Opload images related to
+            if (!empty($_FILES["prodImage"]["name"])) {
+                if (strtolower($info['extension']) == "png" || strtolower($info['extension']) == "jpg") {
+                    if ($_FILES["prodImage"]["error"] > 0) {
+                        $error.=$_FILES["prodImage"]["error"] . "<br />";
+                    } else {
+                        $cat_filename = $CategoryIconName . "." . strtolower($info['extension']);
+                        $fileOriginal = $_FILES['prodImage']['tmp_name'];
+                        $crop = '5';
+                        $size = 'iphone4_cat';
+                        $path = UPLOAD_DIR . "category/";
+                        $fileThumbnail = $path . $cat_filename;
+                        $resizer = new Resizer();
+
+                   //     move_uploaded_file($fileOriginal,$fileThumbnail);
+
+                        try{
+                            $resizer->createFileThumbnail($fileOriginal, $fileThumbnail, $size, 
+                                $frontUpload = 0, $crop, $errorMsg);
+                        } catch (\Exception $ex) {
+                            echo $ex->getMessage();
+                        }
+
+                        $small_image = $cat_filename;
+                    }
+                } else {
+                    $small_image = null;                
+                }
+            } else {
+                    $small_image = null;                
+            }
+
+        $product = Product::where(['product_id' => $product_id])->first();
+        $product->product_name = $request->prodName;
+
+        if($small_image != null){
+            /////////////////////////// upload smallimages into server///////////////////
+            $file1 = _UPLOAD_IMAGE_ . 'category/' . $small_image;
+            $dir1 = "category";
+            $command = IMAGE_DIR_PATH . $file1 . " " . $dir1;
+            $isCLI = system($command);
+        
+            /////////////////////////// upload largeimages into server///////////////////
+            $file2 = _UPLOAD_IMAGE_ . 'coupon/' . $small_image;
+            $dir2 = "coupon";
+            $command2 = IMAGE_DIR_PATH . $file2 . " " . $dir2;
+            system($command2);
+               
+            $catImg = IMAGE_AMAZON_PATH . 'category/' . $small_image;
+            $copImg = IMAGE_AMAZON_PATH . 'coupon/' . $small_image;
+
+            $product->small_image = $catImg;
+            $product->large_image = $copImg;
+        }
+
+        $minutes = $request->prepTime;
+        $hours = intdiv($minutes, 60).':'. ($minutes % 60).':00';
+
+        $product->lang = $request->dishLang;
+        $product->dish_type = $request->dishType;
+        $product->product_description = $request->prodDesc;
+        $product->preparation_Time = $hours;
+        $product->category = "7099ead0-8d47-102e-9bd4-12313b062day";
+        $product->product_number = "";
+        $product->product_info_page = "";
+        $product->start_of_publishing = Carbon::now();
+        $product->company_id = $company_id;
+        $product->save();
+
+        $sloganSubLangId = ProductOfferSubSloganLangList::where('product_id',$product_id)->first()->offer_sub_slogan_lang_list;
+
+        /*** insert product description in lang_text table */
+        $langText = LangText::where('id',$sloganSubLangId)->first();
+        $langText->lang = $request->dishLang;
+        $langText->text = $request->prodDesc;
+        $langText->save();
+
+        $sloganLangId = ProductOfferSloganLangList::where('product_id',$product_id)->first()->offer_slogan_lang_list;
+
+        /*** insert product name in lang_text table */
+        $langText = LangText::where('id',$sloganLangId)->first();
+        $langText->lang = $request->dishLang;
+        $langText->text = $request->prodName;
+        $langText->save();
+
+        /*** insert product language in lang_text table */
+        $langText = LangText::where('text',$product_id)->first();
+        $langText->lang = $request->dishLang;
+        $langText->save();
+
+        $product_price_list = ProductPriceList::where(['product_id' => $product_id])->first();
         $product_price_list->store_id = $store_id;
         $product_price_list->text = "Price:" . $request->prodPrice . $request->currency;
         $product_price_list->price = $request->prodPrice;
@@ -1024,7 +1101,7 @@ class AdminController extends Controller
             $orderId = $request->session()->get('OrderId');
           try {
             $token = $request->stripeToken;
-            Stripe::setApiKey('sk_test_EypGXzv2qqngDIPIkuK6aXNi');
+            Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
             $charge = Charge::create(array(
                 'amount' => $amount,
                 'currency' => 'sek',

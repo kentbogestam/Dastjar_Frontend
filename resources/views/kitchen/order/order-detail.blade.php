@@ -70,12 +70,7 @@
 						<img src="{{asset('kitchenImages/icon-6.png')}}">
 					</div>
 				</a></div>
-				<div class="ui-block-b middle-menu"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" target="_blank" href="https://admin.dastjar.com/admin/">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-5.png')}}">
-					</div>
-					<span>{{ __('messages.Admin') }}</span>
-				</a></div>				
+								
 				<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" href="{{ url('kitchen/menu') }}">
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/icon-7.png')}}">

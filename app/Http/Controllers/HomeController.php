@@ -217,7 +217,6 @@ class HomeController extends Controller
 
     public function index()
     {
-//        dd(session()->all());
         if(Auth::check()){
             $versionDetail = WebVersion::orderBy('created_at', 'DESC')->first();
             $userDetail = User::whereId(Auth()->id())->first();
@@ -243,7 +242,6 @@ class HomeController extends Controller
     public function eatNow(Request $request)
     {
         $userDetail = User::whereId(Auth()->id())->first();
-       //dd($userDetail);
         $pieces = explode(" ", $request->session()->get('current_date_time'));
         $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
         $currentTime = $pieces[4];
@@ -356,7 +354,10 @@ class HomeController extends Controller
         }
 
         $userDetail = User::whereId(Auth()->id())->first();
-        $menuDetails = ProductPriceList::where('store_id',$storeId)->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->with('menuPrice')->with('storeProduct')->get();
+        $menuDetails = ProductPriceList::where('store_id',$storeId)->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->with('menuPrice')->with('storeProduct')
+            ->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')
+           ->orderBy('product.rank', 'ASC')
+            ->get();
         $storedetails = Store::where('store_id' , $storeId)->first();
 
         if(count($menuDetails) !=0 ){

@@ -155,6 +155,11 @@
     		background: #a72626;
 		}
 
+		.dish_type{
+			padding-left: 25px;
+			padding-right: 25px;
+		}
+
 		/*** accordian ***/
 		.group { zoom: 1 }
 		#sortable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
@@ -211,19 +216,20 @@
 		<hr />
 
 		<a href="#demo_{{$key}}" class="partial-circle" data-toggle="collapse">
-				<p style="">
+				<p class="dish_type">
 					{{ $menuTypes[$key] }}
 				</p>
 		</a>	
 
 			<br/><br/>
-		<div id="demo_{{$key}}" class="collapse collapse_block sortable">	
+
+		<div id="demo_{{$key}}" data-id="{{$key}}" class="collapse collapse_block sortable">	
 
 		@foreach($row as $key2 => $row2)	
-		<div class="" style="padding: 20px">			
+		<div class="card" style="padding: 20px" data-id="{{$row2['product_id']}}">			
 		@if($key2 != 0)
-		<hr />
-		@endif		
+<!-- 		<hr /> 
+ -->		@endif		
 		<div class="row">
 			<div class="col-sm-2">
 			<img src="{{$row2['small_image']}}" class="prod_img"/>
@@ -295,39 +301,6 @@
 
 	</div>
 
-<!--	
-	<div id="accordion">
-		<div class="group">
-			<h3>Section 1</h3>
-			<div>
-				<p>Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.</p>
-			</div>
-		</div>
-		<div class="group">
-			<h3>Section 2</h3>
-			<div>
-				<p>Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet purus. Vivamus hendrerit, dolor at aliquet laoreet, mauris turpis porttitor velit, faucibus interdum tellus libero ac justo. Vivamus non quam. In suscipit faucibus urna. </p>
-			</div>
-		</div>
-		<div class="group">
-			<h3>Section 3</h3>
-			<div>
-				<p>Nam enim risus, molestie et, porta ac, aliquam ac, risus. Quisque lobortis. Phasellus pellentesque purus in massa. Aenean in pede. Phasellus ac libero ac tellus pellentesque semper. Sed ac felis. Sed commodo, magna quis lacinia ornare, quam ante aliquam nisi, eu iaculis leo purus venenatis dui. </p>
-				<ul>
-					<li>List item one</li>
-					<li>List item two</li>
-					<li>List item three</li>
-				</ul>
-			</div>
-		</div>
-		<div class="group">
-			<h3>Section 4</h3>
-			<div>
-				<p>Cras dictum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia mauris vel est. </p><p>Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. </p>
-			</div>
-		</div>
-	</div>
--->
 
 	<div data-role="footer" data-position="fixed" data-tap-toggle="false" class="footer_container">
 		<div class="ui-grid-a center">
@@ -363,13 +336,6 @@
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/icon-6.png')}}">
 					</div>
-				</a></div>
-				
-				<div class="ui-block-b middle-menu" title="{{ __('messages.Admin') }}"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" target="_blank" href="https://admin.dastjar.com/admin/">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-5.png')}}">
-					</div>
-					<span>{{ __('messages.Admin') }}</span>
 				</a></div>
 
 				<div class="ui-block-b block_div active" title="{{ __('messages.Menu') }}"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
@@ -414,7 +380,6 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.5.10/js/ripples.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.5.10/js/material.min.js"></script>
-<script type="text/javascript" src="//rawgit.com/FezVrasta/bootstrap-material-design/master/dist/js/material.min.js"></script>
 <script type="text/javascript" src="//momentjs.com/downloads/moment-with-locales.min.js"></script>
 <script type="text/javascript" src="{{ asset('js/bootstrap-material-datetimepicker.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
@@ -485,7 +450,21 @@
 	}
 
 	$(document).ready(function(){
-		// $(".sortable").sortable();
+		 $(".sortable").sortable({
+			stop: function(event, ui) {
+				index =  ui.item.index();
+				product_id = ui.item.attr("data-id");
+				dish_type = event.target.id.replace("demo_","");				
+
+				$.post("{{ url('api/v1/kitchen/update-product-rank') }}", 
+					{dish_type: dish_type,
+					product_id: product_id,
+					index: index+1},
+					function(data, status){
+		        	console.log("Data: " + data['data'] + "\nStatus: " + status);
+			    });
+			}
+		 });
 	});
 	</script>
 

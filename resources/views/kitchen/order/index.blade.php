@@ -78,13 +78,6 @@
 						<img src="{{asset('kitchenImages/icon-6.png')}}">
 					</div>
 				</a></div>
-				
-				<div class="ui-block-b middle-menu"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" target="_blank" href="https://admin.dastjar.com/admin/">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-5.png')}}">
-					</div>
-					<span>{{ __('messages.Admin') }}</span>
-				</a></div>
 
 				<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" href="{{ url('kitchen/menu') }}">
 					<div class="img-container">
@@ -128,10 +121,12 @@
 	var list = Array();
 	var totalCount = 0;
 	var totallength = 0;
+	var storeId = "{{Session::get('storeId')}}";
 	var url = "{{url('kitchen/order-ready')}}";
 	var urldeliver = "{{url('kitchen/order-deliver')}}";
+
 	$(function(){
-		$.get("{{url('api/v1/kitchen/order-detail')}}",
+		$.get("{{url('api/v1/kitchen/order-detail')}}/" + storeId,
 		function(returnedData){
 			console.log(returnedData["data"]);
 			var count = 18;
@@ -157,10 +152,15 @@
 	          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
 	          		var orderIdSpecific = temp[i]["order_id"] ;
 	          		liItem += "<tr>";
-	          		liItem += "<th>"
-	          		liItem += "<a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>"
-	          		liItem += temp[i]["customer_order_id"] 
+	          		liItem += "<th>";
+	          		liItem += "<a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>";
+	          		liItem += temp[i]["customer_order_id"]; 
 	          		liItem += "</a></th>";
+
+	          		if (temp[i]["name"] == null){
+	          			temp[i]["name"] = "";
+	          		}
+
 	          		liItem += "<td>"+temp[i]["name"]+"</td>";
 	          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
 	          		liItem += "<td>"
@@ -230,7 +230,7 @@
 	}
 
 	var ajaxCall = function(){
-		$.get("{{url('api/v1/kitchen/order-detail')}}",
+		$.get("{{url('api/v1/kitchen/order-detail')}}/" + storeId,
 		function(returnedData){
 			//console.log(returnedData["data"]);
 			var count = 18;

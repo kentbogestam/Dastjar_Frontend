@@ -24,7 +24,7 @@
                     </div>
                     <div class="social-sec">
                         <div class="ui-grid-solo">
-                         <input id="mobileNo" type="text" class="form-control" name="mobileNo" min="0" max="100" value="" required autofocus placeholder="Enter Mobile No.*">
+                         <input id="mobileNo" type="number" class="form-control" name="mobileNo" min="0" max="100" value="" required autofocus placeholder="Enter Mobile No.*">
                         </div>
                     </div>
                     <div class="ui-grid-solo">
@@ -43,8 +43,8 @@
     <script type="text/javascript">
         $(document).ready(function(){
           
-          $("#mobileNo").on("blur", function(){
-                var mobNum = $(this).val();
+          $(".mobile_otp_btn").on("click", function(){
+                var mobNum = $('#mobileNo').val();
                 var filter = /^\d*(?:\.\d{1,2})?$/;
 
                   if (filter.test(mobNum)) {

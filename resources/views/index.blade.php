@@ -8,8 +8,8 @@
     <script src="{{asset('notifactionJs/serviceWorker.js')}}"></script>
     <script src="{{asset('browserShortcutJs/comlink.global.js')}}"></script>
     <script src="{{asset('browserShortcutJs/messagechanneladapter.global.js')}}"></script>
-
     <script src="{{asset('addToHomeIphoneJs/addtohomescreen.js')}}"></script>
+    
     <script type="text/javascript">
 	  navigator.sayswho= (function(){
 	    var ua= navigator.userAgent, tem, 
@@ -212,8 +212,6 @@
 				liItem += "<p>";
 				
 				for (var j=0;j<list[i]["products"].length;j++){
-					//console.log(list[i]["products"][j]);
-					;
 					if(j <= 1){
 						liItem += list[i]["products"][j]["product_name"];
 					}   
@@ -267,8 +265,6 @@
 						liItem += "<p>";
 						
 						for (var j=0;j<temp[i]["products"].length;j++){
-							//console.log(temp[i]["products"][j]);
-							;
 							if(j <= 1){
 								liItem += temp[i]["products"][j]["product_name"];
 							}   
@@ -325,7 +321,6 @@
 	    	if(temp){
 	    		 document.cookie="userId=" + temp;
    	    		 localStorage.setItem("userId", temp);
-	    		//  console.log('loginId='+localStorage.getItem("userId"));
 	    	}else{
 	    		if(localStorage.getItem("userId")){
 	    			console.log('logoutloginId='+localStorage.getItem("userId"));
