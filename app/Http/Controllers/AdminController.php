@@ -150,20 +150,26 @@ class AdminController extends Controller
                             'order_ready' => 1,
                         ]);
 
-                             // dd($OrderId->toArray());
-
             $message = 'orderReady';
 
             if($OrderId->user_id != 0){
+                $recipients = [];                
                 if($OrderId->user_type == 'customer'){
                     $adminDetail = User::where('id' , $OrderId->user_id)->first();
-                    $recipients = ['+'.$adminDetail->phone_number_prifix.$adminDetail->phone_number];
+                    if(isset($adminDetail->phone_number_prifix) && isset($adminDetail->phone_number)){
+                        $recipients = ['+'.$adminDetail->phone_number_prifix.$adminDetail->phone_number];
+                    }
                 }else{
                     $adminDetail = Admin::where('id' , $OrderId->user_id)->first();
                     $recipients = ['+'.$adminDetail->mobile_phone];
                 }                
 
-                $pieces = explode(" ", $adminDetail->browser);
+                if(isset($adminDetail->browser)){
+                    $pieces = explode(" ", $adminDetail->browser);
+                }else{
+                    $pieces[0] = '';                              
+                }
+
             }else{
                 $pieces[0] = '';               
             }
@@ -524,8 +530,11 @@ class AdminController extends Controller
             $userDetail = Admin::whereId($order->user_id)->first();
         }
 
+        if(!isset($userDetail->email)){
+            return "Notification Send Successfully";
+        }
 
-        $userName =$userDetail->email;
+        $userName = $userDetail->email;
 
         if($message == 'orderDeliver'){
             $url = env('APP_URL').'deliver-notifaction';
@@ -535,8 +544,6 @@ class AdminController extends Controller
             $messageDelever = "Your Order ". $orderID . " Ready";
             $message = "{'alert': " ."'". $messageDelever."'" . ",'_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': " ."'". $messageDelever."'" . ",'type':'openUrl','content':" ."'". $url."'" . "}}";
         }
-        
-
 
         try{
             App42API::initialize(env('APP42_API_KEY'),env('APP42_API_SECRET'));
@@ -547,14 +554,12 @@ class AdminController extends Controller
 
             $pushNotification = $pushNotificationService->sendPushMessageToUser($userName,$message);
             Log::info('After pushNotifaction time : '.Carbon::now()); 
-            //                                 echo "string"; die();
 
             // return "123";
         }catch(\Exception $e){
             return $e->getMessage();
         }
 
-        // echo "456"; die();
         return $pushNotification;
     }
 
@@ -581,7 +586,6 @@ class AdminController extends Controller
 
                         $sloganLangId = $productOfferSloganLangList->where('product_id',$data['product_id'])->first()->offer_slogan_lang_list;
                         $sloganSubLangId = $productOfferSubSloganLangList->where('product_id',$data['product_id'])->first()->offer_sub_slogan_lang_list;
-
 
                         $prodName = $langText->where('id',$sloganLangId)->first()->text;
                         $prodDesc = $langText->where('id',$sloganSubLangId)->first()->text;
@@ -656,15 +660,14 @@ class AdminController extends Controller
     public function kitchenCreateMenuPost(Request $request){
         $helper = new Helper();
 
-        if(isset($request->product_id)){
-            $product_id = $request->product_id;
-            $store_id = $request->store_id;
-            $message = "Dish Updated Successfully.";
-        }else{
+        $product_id = $helper->uuid();
+
+        while(Product::where('product_id',$product_id)->exists()){
             $product_id = $helper->uuid();
-            $store_id = Session::get('storeId');
-            $message = "Dish Created Successfully.";
         }
+   
+        $store_id = Session::get('storeId');
+        $message = "Dish Created Successfully.";
 
         $util = new Util(env('APP42_API_KEY'),env('APP42_API_SECRET'));
 
@@ -685,15 +688,16 @@ class AdminController extends Controller
         /////////// upload image dirctory/////////
         define('_UPLOAD_IMAGE_', public_path() . '/upload/images/');
         define('IMAGE_AMAZON_PATH', 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/');
-        define('IMAGE_DIR_PATH', 'usr/local/bin/cumbari_s3.sh ');
-        define('IMAGE_DIR_PATH_DELETE', 'usr/local/bin/cumbari_s3del.sh ');  
+        define('IMAGE_DIR_PATH', $basePath . '/lib/bin/cumbari_s3.sh ');
+        define('IMAGE_DIR_PATH_DELETE', $basePath . '/lib/bin/cumbari_s3del.sh ');  
         
         $CategoryIconName = "cat_icon_" . md5(time());
         $info = pathinfo($_FILES["prodImage"]["name"]);
 
         // Opload images related to
             if (!empty($_FILES["prodImage"]["name"])) {
-                if (strtolower($info['extension']) == "png" || strtolower($info['extension']) == "jpg") {
+                $file_extension = strtolower($info['extension']);
+                if ($file_extension == "png" || $file_extension == "jpg" || $file_extension == "jpeg") { 
                     if ($_FILES["prodImage"]["error"] > 0) {
                         $error.=$_FILES["prodImage"]["error"] . "<br />";
                     } else {
@@ -705,13 +709,13 @@ class AdminController extends Controller
                         $fileThumbnail = $path . $cat_filename;
                         $resizer = new Resizer();
 
-                   //     move_uploaded_file($fileOriginal,$fileThumbnail);
+                        move_uploaded_file($fileOriginal,$fileThumbnail);
 
-                        try{
-                            $resizer->createFileThumbnail($fileOriginal, $fileThumbnail, $size, $frontUpload = 0, $crop, $errorMsg);
-                		} catch (\Exception $ex) {
-                            echo $ex->getMessage();
-                        }
+                  //       try{
+                  //           $resizer->createFileThumbnail($fileOriginal, $fileThumbnail, $size, $frontUpload = 0, $crop, $errorMsg);
+                		// } catch (\Exception $ex) {
+                  //           echo $ex->getMessage();
+                  //       }
 
                         $small_image = $cat_filename;
                     }
@@ -723,6 +727,7 @@ class AdminController extends Controller
             }
 
         $product = new Product();
+        $product->product_id = $product_id;        
         $product->u_id = Auth::user()->u_id;
         $product->product_name = $request->prodName;
 
@@ -835,15 +840,9 @@ class AdminController extends Controller
  public function kitchenUpdateMenuPost(Request $request){
         $helper = new Helper();
 
-        if(isset($request->product_id)){
-            $product_id = $request->product_id;
-            $store_id = $request->store_id;
-            $message = "Dish Updated Successfully.";
-        }else{
-            $product_id = $helper->uuid();
-            $store_id = Session::get('storeId');
-            $message = "Dish Created Successfully.";
-        }
+        $product_id = $request->product_id;
+        $store_id = $request->store_id;
+        $message = "Dish Updated Successfully.";
 
         $util = new Util(env('APP42_API_KEY'),env('APP42_API_SECRET'));
 
@@ -864,15 +863,16 @@ class AdminController extends Controller
         /////////// upload image dirctory/////////
         define('_UPLOAD_IMAGE_', public_path() . '/upload/images/');
         define('IMAGE_AMAZON_PATH', 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/');
-        define('IMAGE_DIR_PATH', 'usr/local/bin/cumbari_s3.sh ');
-        define('IMAGE_DIR_PATH_DELETE', 'usr/local/bin/cumbari_s3del.sh ');  
+        define('IMAGE_DIR_PATH', $basePath . '/lib/bin/cumbari_s3.sh ');
+        define('IMAGE_DIR_PATH_DELETE', $basePath . '/lib/bin/cumbari_s3del.sh ');  
         
         $CategoryIconName = "cat_icon_" . md5(time());
         $info = pathinfo($_FILES["prodImage"]["name"]);
 
         // Opload images related to
             if (!empty($_FILES["prodImage"]["name"])) {
-                if (strtolower($info['extension']) == "png" || strtolower($info['extension']) == "jpg") {
+                $file_extension = strtolower($info['extension']);
+                if ($file_extension == "png" || $file_extension == "jpg" || $file_extension == "jpeg") { 
                     if ($_FILES["prodImage"]["error"] > 0) {
                         $error.=$_FILES["prodImage"]["error"] . "<br />";
                     } else {
@@ -884,14 +884,14 @@ class AdminController extends Controller
                         $fileThumbnail = $path . $cat_filename;
                         $resizer = new Resizer();
 
-                   //     move_uploaded_file($fileOriginal,$fileThumbnail);
+                        move_uploaded_file($fileOriginal,$fileThumbnail);
 
-                        try{
-                            $resizer->createFileThumbnail($fileOriginal, $fileThumbnail, $size, 
-                                $frontUpload = 0, $crop, $errorMsg);
-                        } catch (\Exception $ex) {
-                            echo $ex->getMessage();
-                        }
+                        // try{
+                        //     $resizer->createFileThumbnail($fileOriginal, $fileThumbnail, $size, 
+                        //         $frontUpload = 0, $crop, $errorMsg);
+                        // } catch (\Exception $ex) {
+                        //     echo $ex->getMessage();
+                        // }
 
                         $small_image = $cat_filename;
                     }
@@ -978,6 +978,14 @@ class AdminController extends Controller
         $price_id = $request->price_id;
 
         $product = Product::where('product_id','=',$productid)->first();
+
+        try{
+                getimagesize($product->small_image);
+                $product->small_image = $product->small_image;
+            }catch(\Exception $ex){
+                $product->small_image = null;
+        }
+
         $product_price_list = ProductPriceList::where('id','=',$price_id)->first();
 
         $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
@@ -1199,5 +1207,61 @@ class AdminController extends Controller
         }
     }
 
+    public function orderStartedKitchen(Request $request, $orderID){
+        DB::table('order_details')->where('id', $orderID)->update(['order_started' => 1]);
+        return response()->json(['status' => 'success', 'data'=>true]);
+    }
+
+    public function onReadyAjax(Request $request, $orderID){
+        dd(DB::table('order_details')->where('id', $orderID)->first());
+        DB::table('order_details')->where('id', $orderID)->update(['order_ready' => 1]);
+        $userOrderId = OrderDetail::where('id' , $orderID)->first();
+        $userOrderStatus = OrderDetail::where('order_id' , $userOrderId->order_id)->get();
+        $readyOrderStatus = OrderDetail::where('order_id' , $userOrderId->order_id)->where('order_ready' , '1')->get();
+
+        if(count($userOrderStatus) == count($readyOrderStatus)){
+            $OrderId = Order::where('order_id' , $userOrderId->order_id)->first();
+            DB::table('orders')->where('order_id', $userOrderId->order_id)->update([
+                            'order_ready' => 1,
+                        ]);
+
+            $message = 'orderReady';
+            if($OrderId->user_type == 'customer'){
+                $adminDetail = User::where('id' , $OrderId->user_id)->first();
+                $recipients = ['+'.$adminDetail->phone_number_prifix.$adminDetail->phone_number];
+            }else{
+                $adminDetail = Admin::where('id' , $OrderId->user_id)->first();
+                $recipients = ['+'.$adminDetail->mobile_phone];
+            }
+            $pieces = explode(" ", $adminDetail->browser);
+            if($pieces[0] == 'Safari'){
+               // dd($recipients);
+                $url = "https://gatewayapi.com/rest/mtsms";
+                $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
+                $message = "Your order ready please click on link \n ".env('APP_URL').'ready-notifaction/'.$OrderId->customer_order_id;
+                $json = [
+                    'sender' => 'Dastjar',
+                    'message' => ''.$message.'',
+                    'recipients' => [],
+                ];
+                foreach ($recipients as $msisdn) {
+                    $json['recipients'][] = ['msisdn' => $msisdn];}
+
+                $ch = curl_init();
+                curl_setopt($ch,CURLOPT_URL, $url);
+                curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+                curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
+                curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
+                curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+                $result = curl_exec($ch);
+                curl_close($ch);   
+            }else{
+                    $result = $this->sendNotifaction($OrderId->customer_order_id , $message); 
+            }
+            return response()->json(['status' => 'success', 'data'=>'Order Ready Nofifaction Send Successfully.']);
+        }
+
+        return response()->json(['status' => 'ready', 'data'=>'Order Ready Successfully.']);
+    }
       
 }

@@ -53,23 +53,24 @@ class PushNotifactionController extends Controller
         $OrderId = Order::where('customer_order_id' , $orderID)->first();
 
         if($OrderId->user_id != 0){
+            $recipients = [];
         if($OrderId->user_type == 'customer'){
             $adminDetail = User::where('id' , $OrderId->user_id)->first();
 
-            if(!isset($adminDetail->phone_number_prifix) || !isset($adminDetail->phone_number)){
-                DB::table('orders')->where('customer_order_id', $orderID)->update([
-                            'paid' => 1,
-                        ]);
-                return redirect()->action('AdminController@index');
-            }
             //$afterRemoveFirstZeroNumber = substr($adminDetail->phone_number, -9);
-            $recipients = ['+'.$adminDetail->phone_number_prifix.$adminDetail->phone_number];
+            if(isset($adminDetail->phone_number_prifix) && isset($adminDetail->phone_number)){
+                $recipients = ['+'.$adminDetail->phone_number_prifix.$adminDetail->phone_number];   
+            }
         }else{
             $adminDetail = Admin::where('id' , $OrderId->user_id)->first();
             $recipients = ['+'.$adminDetail->mobile_phone];
         }
 
-        $pieces = explode(" ", $adminDetail->browser);
+                if(isset($adminDetail->browser)){
+                    $pieces = explode(" ", $adminDetail->browser);
+                }else{
+                    $pieces[0] = '';                              
+                }
         
         if($pieces[0] == 'Safari'){
             //dd($recipients);
@@ -116,11 +117,14 @@ class PushNotifactionController extends Controller
     	$order = Order::select('*')->where('customer_order_id',$orderID)->first();
     	if($order->user_type == 'customer'){
     		$userDetail = User::whereId($order->user_id)->first();
-    		$userName =$userDetail->email;
     	}else{
     		$userDetail = Admin::whereId($order->user_id)->first();
-    		$userName =$userDetail->email;
     	}
+
+            if(!isset($userDetail->email)){
+                return "Notification Send Successfully";
+            }
+            $userName = $userDetail->email;
 	
     	if($message == 'orderDeliver'){
 

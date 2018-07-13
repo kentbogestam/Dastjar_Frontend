@@ -27,8 +27,6 @@ Route::group(['middleware' => ['api']], function () {
 Route::group(['middleware' => ['api']], function () { 
 	Route::group(['prefix' => 'v1/kitchen'], function () { 
 		Route::get('order-detail/{storeId}', 'Api\v1\KitchenController@orderDetail');
-		Route::get('orderStartedKitchen/{OrderId}', 'Api\v1\KitchenController@orderStartedKitchen');
-		Route::get('onReadyAjax/{OrderId}', 'Api\v1\KitchenController@onReadyAjax');
 		Route::get('updateTextspeach/{id}','Api\v1\KitchenController@updateTextspeach');
 		Route::get('orderSpecificOdrderDetail/{orderId}', 'Api\v1\KitchenController@orderSpecificOrderDetail');
 		Route::get('catering-orders/{storeId}', 'Api\v1\KitchenController@cateringOrders');						

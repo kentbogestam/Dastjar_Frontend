@@ -25,6 +25,7 @@ class OrderController extends Controller
             if(!empty($request->input())){
 
                 $data = $request->input();
+
                 $i = 0;
                 $total_price = 0;
                 $max_time = "00:00:00";
@@ -68,7 +69,7 @@ class OrderController extends Controller
                             $orders = Order::select('*')->whereUserId(Auth::id())->orderBy('order_id', 'DESC')->first();
                             $orderId = $orders->order_id;
                             $i = $i+1;
-                        }else{}
+                        }
 
                         $i = 1;
                         if($max_time < $productTime->preparation_Time){
@@ -114,7 +115,6 @@ class OrderController extends Controller
                         ]);
                     $request->session()->put('paymentAmount', $order->order_total);
                     $request->session()->put('OrderId', $order->order_id);
-                                      //  dd($companyUserDetail->toArray());
 
                     if(isset($companyUserDetail->stripe_user_id))
                     $request->session()->put('stripeAccount', $companyUserDetail->stripe_user_id);
@@ -295,6 +295,7 @@ class OrderController extends Controller
     public function order_detail($id, Request $request){
         $customer = new User();
         $logged_in=0;
+        $k=0;
 
         if(Session::has('login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d')){
             if($customer->where('id',session()->get('login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d'))->exists()){
@@ -314,9 +315,26 @@ class OrderController extends Controller
             }
         }else{
             $phone = (explode("-",$request->m));
-            $cust = $customer->firstOrNew(['phone_number_prifix' => $phone[0], 'phone_number' => $phone[1]]);
-            $cust->email = $phone[1];
-            $cust->save();
+
+            if($customer->where('phone_number_prifix', $phone[0])
+                ->where('phone_number', $phone[1])->exists()){
+                    $cust = $customer->where('phone_number_prifix', $phone[0])
+                    ->where('phone_number', $phone[1])->first();
+            }else if($customer->where('email', $phone[1])
+                ->where('phone_number', $phone[1])->exists()){
+                    $cust = $customer->where('email', $phone[1])
+                    ->where('phone_number', $phone[1])->first();
+            }
+            else{
+                $cust = new User();
+                $cust->phone_number_prifix = $phone[0];
+                $cust->phone_number = $phone[1];                
+                $cust->email = $phone[1];
+                $cust->save();
+
+                $k=1;
+            }
+
             $customer_id = $cust->id;            
         }
 
@@ -331,6 +349,6 @@ class OrderController extends Controller
 
         $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$order->order_id)->get();
 
-        return view('order.order-details', compact('order','orderDetails'));
+        return view('order.order-details', compact('order','orderDetails','k'));
     }
 }

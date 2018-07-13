@@ -35,5 +35,7 @@ self.addEventListener('fetch', event => {
 });
 
 function fetchFromNetworkAndCache(e) {
-  if (e.request.cache === 'only-if-cached' && e.request.mode !== 'same-origin') return;
+  if (e.request.cache === 'only-if-cached' && e.request.mode !== 'same-origin'){
+   return;
+  }
 }

@@ -105,7 +105,7 @@
 
 	<div id="login-popup" style="display: none;" class="login-popup" data-theme="a">
 	  <div class="inner-popup">
-	        <div id = "cancel-popup" class="cross"><img src="{{asset('images/icons/cross.png')}}"></div>
+	        <div id="cancel-popup" class="cross"><img src="{{asset('images/icons/cross.png')}}"></div>
 	        <div class="pop-body">
 	           <p>{{ __('messages.Please activate Location Services in your mobile: Settings >Privacy >Location Services') }}</p>
 	        </div>
@@ -115,12 +115,37 @@
 
 @section('footer-script')
 
+<?php
+dd("{{Session::get('with_out_login_lat')}}");
+	if(Auth::check()){
+			if(Session::get('with_login_address') != null){
+				?>
+	<script type="text/javascript">
+				lat = "{{Session::get('with_login_lat')}}";
+				lng = "{{Session::get('with_login_lng')}}";
+	</script>				
+				<?php
+			}
+		}
+		else{
+			if(Session::get('address') != null){
+				?>
+		<script type="text/javascript">
+				lat = "{{Session::get('with_out_login_lat')}}";
+				lng = "{{Session::get('with_out_login_lng')}}";
+		</script>
+				<?php
+			}
+		}
+?>
+
 <script type="text/javascript">
 
 	$("#cancel-popup").click(function () {
       $('#login-popup').hide();
       var extraclass = document.body;
 	  extraclass.classList.add("disableClass");
+	  window.location.replace("{{url('select-location')}}");
     });
 
 	$(".ordersec").click(function(){
@@ -207,7 +232,7 @@
 				
 				liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
 				liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+list[i]['store_id']+" data-ajax='false'>";
-				liItem += "<img src="+"'"+list[i]["store_image"]+"'"+">";
+				liItem += "<img src="+"'"+temp[i]["store_image"]+ "' onerror='this.src=\""+"{{url('images/placeholder-image.png')}}\""+"'" +">";
 				liItem += "<h2>"+list[i]["store_name"]+"</h2>";
 				liItem += "<p>";
 				
@@ -260,7 +285,7 @@
 
 						liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
 						liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+temp[i]['store_id']+" data-ajax='false'>";
-						liItem += "<img src="+"'"+temp[i]["store_image"]+"'"+">";
+						liItem += "<img src="+"'"+temp[i]["store_image"]+ "' onerror='this.src=\""+"{{url('images/placeholder-image.png')}}\""+"'" +">";
 						liItem += "<h2>"+temp[i]["store_name"]+"</h2>";
 						liItem += "<p>";
 						
@@ -295,20 +320,25 @@
 	}
 
 
+
 	$(function(){
 		var extraclass = document.body;
-		extraclass.classList.add("disableClass");
+		// extraclass.classList.add("disableClass");
 		navigator.geolocation.getCurrentPosition(function(position) { 
 	    document.cookie="latitude=" + position.coords.latitude;
 	    document.cookie="longitude=" + position.coords.longitude;
 	    var extraclass = document.body;
-			extraclass.classList.remove('disableClass');
-			//location.reload ();
-			add();
+		extraclass.classList.remove('disableClass');
+		//location.reload ();
+		add();
 	},function(error){
-	   $('.login-inner-section a').attr('href','javascript:void(0)');
-	   $('#login-popup').show();
-	    
+		if (typeof lat === "undefined" || lat == "") {
+		   $('.login-inner-section a').attr('href','javascript:void(0)');
+		   $('#login-popup').show();	    			
+		}else{
+		    document.cookie="latitude=" + lat;
+		    document.cookie="longitude=" + lng;			
+		} 
 	});
 
 	var d = new Date();
@@ -357,7 +387,7 @@
 					if(checkTime(temp[i]["store_open_close_day_time"])){
 						liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
 						liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+temp[i]['store_id']+" data-ajax='false'>";
-						liItem += "<img src="+"'"+temp[i]["store_image"]+"'"+">";
+						liItem += "<img src="+"'"+temp[i]["store_image"]+ "' onerror='this.src=\""+"{{url('images/placeholder-image.png')}}\""+"'" +">";
 						liItem += "<h2>"+temp[i]["store_name"]+"</h2>";
 						liItem += "<p>";
 						

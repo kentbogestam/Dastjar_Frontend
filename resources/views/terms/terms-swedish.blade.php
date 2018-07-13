@@ -1,6 +1,24 @@
 @extends('layouts.master')
 @section('head-scripts')
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>Kvittens</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice 4.1.3  (Unix)">
+	<META NAME="AUTHOR" CONTENT="Alireza Heidarian">
+	<META NAME="CREATED" CONTENT="20180629;16040000">
+	<META NAME="CHANGEDBY" CONTENT="Alireza Heidarian">
+	<META NAME="CHANGED" CONTENT="20180629;16140000">
+	<META NAME="AppVersion" CONTENT="16.0000">
+	<META NAME="DocSecurity" CONTENT="0">
+	<META NAME="HyperlinksChanged" CONTENT="false">
+	<META NAME="LinksUpToDate" CONTENT="false">
+	<META NAME="ScaleCrop" CONTENT="false">
+	<META NAME="ShareDoc" CONTENT="false">
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
+
 	<style type="text/css">
+		html { overflow-y: scroll; }
+
 		.top-container{
 			padding-left: 50px; 
     		padding-right: 50px; 
@@ -75,27 +93,6 @@
 @endsection
 
 @section('content')
-<HEAD>
-	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
-	<TITLE>Kvittens</TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice 4.1.3  (Unix)">
-	<META NAME="AUTHOR" CONTENT="Alireza Heidarian">
-	<META NAME="CREATED" CONTENT="20180629;16040000">
-	<META NAME="CHANGEDBY" CONTENT="Alireza Heidarian">
-	<META NAME="CHANGED" CONTENT="20180629;16140000">
-	<META NAME="AppVersion" CONTENT="16.0000">
-	<META NAME="DocSecurity" CONTENT="0">
-	<META NAME="HyperlinksChanged" CONTENT="false">
-	<META NAME="LinksUpToDate" CONTENT="false">
-	<META NAME="ScaleCrop" CONTENT="false">
-	<META NAME="ShareDoc" CONTENT="false">
-
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
-
-	<STYLE TYPE="text/css">
-	</STYLE>
-</HEAD>
-
 	<div data-role="header" class="header" data-position="fixed">
 		<div class="nav_fixed">
 			<div data-role="navbar"> 
@@ -109,7 +106,6 @@
 		</div>
 	</div>
 
-<BODY LANG="sv-SE" TEXT="#000000" LINK="#0563c1" DIR="LTR">
 <DIV TYPE=HEADER>
 		<p style="text-align: center;     font-size: 25px;
     font-weight: bold;">

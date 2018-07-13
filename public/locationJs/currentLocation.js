@@ -8,9 +8,13 @@ $(document).ready(function($) {
 	    document.cookie="everyMinutelatitude=" + position.coords.latitude;
 	    document.cookie="everyMinutelongitude=" + position.coords.longitude;
 	},function(error){
-	   $('.login-inner-section a').attr('href','javascript:void(0)');
-	   $('#login-popup').show();
-	    
+		if (typeof lat === "undefined") {
+		   $('.login-inner-section a').attr('href','javascript:void(0)');
+		   $('#login-popup').show();	    			
+		}else{
+		    document.cookie="latitude=" + lat;
+		    document.cookie="longitude=" + lng;			
+		} 			    
 	});
 
 

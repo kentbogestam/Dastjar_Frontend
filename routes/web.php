@@ -57,25 +57,25 @@
 	Route::get('/redirectStripe', 'StripePaymentController@redirectStripe');
 	Route::get('/stripeResponse', 'StripePaymentController@stripeResponse');
 	
-	Route::get('getList', 'HomeController@getList');
-
 	Route::get('/terms', 'HomeController@terms');
 
 	//Second Phase
 	Route::get('/', 'HomeController@index');
 	Route::get('lat-long', 'HomeController@userLatLong');
 	Route::get('checkUserLogin', 'HomeController@checkUserLogin');
-	
-	Route::group(['middleware' => ['latlng']], function(){
-		Route::get('search-map-eatnow', 'MapController@searchMapEatnow');
-		Route::get('eat-now', 'HomeController@index');
+
 		Route::get('user-setting', 'CustomerController@index');
 		Route::get('select-location', 'CustomerController@selectLocation');
 		Route::post('save-location', 'CustomerController@saveLocation');
 		Route::get('save-location', 'CustomerController@saveLocation');
+		Route::post('save-setting', 'CustomerController@saveSetting');
+		Route::get('search-store-map', 'MapController@searchStoreMap');
+	
+	Route::group(['middleware' => ['latlng']], function(){
+		Route::get('search-map-eatnow', 'MapController@searchMapEatnow');
+		Route::get('eat-now', 'HomeController@index');
 		Route::resource('customer', 'CustomerController');
 		Route::get('saveCurrentlat-long', 'HomeController@saveCurrentLatLong');
-		Route::post('save-setting', 'CustomerController@saveSetting');
 		Route::get('selectOrder-date', 'HomeController@selectOrderDate');
 		Route::post('eat-later', 'HomeController@eatLater');
 		Route::get('eat-later', 'HomeController@eatLater');
@@ -83,7 +83,6 @@
 		Route::get('search-map-eatlater', 'MapController@searchMapEatlater');
 		Route::get('eat-later-map', 'HomeController@eatLaterMap');
 		Route::get('restro-menu-list/{storeID}', 'HomeController@menuList');
-		Route::get('search-store-map', 'MapController@searchStoreMap');
 		Route::post('save-order', 'OrderController@saveOrder');
 		Route::get('save-order', 'OrderController@saveOrder');
 		Route::get('withOutLogin', 'OrderController@withOutLogin')->name('withOutLogin');
@@ -111,10 +110,12 @@ Route::group(['middleware' => ['auth']], function(){
 		Route::post('store', 'AdminController@index');
 		Route::get('store', 'AdminController@index');
 		Route::get('logout', 'Auth\AdminLoginController@logout');
+		Route::get('onReadyAjax/{OrderId}', 'AdminController@onReadyAjax');		
 		Route::get('kitchen-detail', 'AdminController@kitchenOrderDetail');
 		Route::get('catering', 'AdminController@cateringDetails');
 		Route::get('kitchen-order-onsite', 'AdminController@kitchenPreOrder');
 		Route::get('order-started/{OrderId}', 'AdminController@orderStarted');
+		Route::get('orderStartedKitchen/{OrderId}', 'AdminController@orderStartedKitchen');		
 		Route::get('order-readyKitchen/{OrderId}', 'AdminController@orderReadyKitchen');
 		Route::post('kitchen-order-save','AdminController@kitchenOrderSave');
 		Route::get('kitchen-order-save','AdminController@kitchenOrderSave');

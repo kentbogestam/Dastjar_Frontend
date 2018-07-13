@@ -258,6 +258,11 @@
 	          		liItem += "<a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>"
 	          		liItem += temp[i]["customer_order_id"]
 	          		liItem += "</a></th>";
+
+	          		if (temp[i]["name"] == null){
+	          			temp[i]["name"] = "";
+	          		}
+	          		
 	          		liItem += "<td>"+temp[i]["name"]+"</td>";
 	          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
 	          		liItem += "<td>"

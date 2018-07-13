@@ -24,7 +24,7 @@
                     </div>
                     <div class="social-sec">
                         <div class="ui-grid-solo">
-                         <input id="mobileNo" type="number" class="form-control" name="mobileNo" min="0" max="100" value="" required autofocus placeholder="Enter Mobile No.*">
+                         <input id="mobileNo" type="tel" class="form-control" name="mobileNo" min="0" max="100" value="" required autofocus placeholder="Enter Mobile No.*">
                         </div>
                     </div>
                     <div class="ui-grid-solo">

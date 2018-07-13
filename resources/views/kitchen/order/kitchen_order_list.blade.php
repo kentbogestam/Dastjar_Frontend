@@ -121,9 +121,8 @@
 		var lastOrderId;
 		var imageUrl = "{{asset('kitchenImages/right_sign.png')}}";
 
-		function orderReadyStarted(id) {	
-		// alert("{{url('api/v1/kitchen/orderStartedKitchen')}}/"+id);		
-			$.get("{{url('api/v1/kitchen/orderStartedKitchen')}}/"+id,
+		function orderReadyStarted(id) {			
+			$.get("{{url('kitchen/orderStartedKitchen')}}/"+id,
 			function(returnedData){
 				console.log(returnedData["data"]);
 				$('body').find('#'+id).attr('src',imageUrl);
@@ -132,9 +131,11 @@
 			});
 		}
 
-		function onReady(id) {
-			
-			$.get("{{url('api/v1/kitchen/onReadyAjax')}}/"+id,
+		function onReady(id) {		
+			$('body').find('#'+id+'ready').attr('src',imageUrl);
+			$('body').find('#'+id+'ready').parent("a").attr('onclick',' ');
+
+			$.get("{{url('kitchen/order-readyKitchen')}}/"+id,
 			function(returnedData){
 				console.log(returnedData["data"]);
 				$('body').find('#'+id+'ready').parents("tr").remove();
@@ -144,6 +145,7 @@
 					$("#popupNotifaction").popup("open");	
 				}
 			});
+	
 		}
 
 		$(function(){
@@ -219,7 +221,7 @@
 			          		if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 0){
 			          			ids = temp[i]['id'];
 				          		liItem += "<td>"
-				          		liItem += "<a data-ajax='false' >"
+				          		liItem += "<a data-ajax='false' href='javascript:void(0)' >"
 				          		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 				          		liItem +="</a></td>";
 				          		}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
@@ -312,7 +314,7 @@ console.log('lastOrderId'+lastOrderId);
 			          		if(temp[i]["order_started"] == 0){
 				          		ids = temp[i]['id'];
 				          		liItem += "<td >"
-				          		liItem += "<a data-ajax='false' href='#'  onclick=orderReadyStarted("+ids+")>"
+				          		liItem += "<a data-ajax='false' href='javascript:void(0)'  onclick=orderReadyStarted("+ids+")>"
 				          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 				          		liItem +="</a></td>";
 			          		}else{
@@ -325,7 +327,7 @@ console.log('lastOrderId'+lastOrderId);
 			          		if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 0){
 				          		ids = temp[i]['id'];
 				          		liItem += "<td>"
-				          		liItem += "<a data-ajax='false' >"
+				          		liItem += "<a data-ajax='false' href='javascript:void(0)' >"
 				          		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 				          		liItem +="</a></td>";
 				          		}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
@@ -494,7 +496,7 @@ console.log('lastOrderId'+lastOrderId);
 
 		function updateSpeak(id){
 			//console.log('ssssssssssssssssssssssssssssssssssssssssssssssssssssss');
-			var url = '{{url('api/v1/kitchen/updateTextspeach')}}'+'/'+id;
+			var url = '{{url('kitchen/updateTextspeach')}}'+'/'+id;
 			//console.log('urlurl'+url);
 			$.ajax({
 	            url: url, //This is the current doc

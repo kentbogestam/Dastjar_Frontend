@@ -59,7 +59,12 @@
 		}
 
 		.ui-widget.ui-widget-content{
+			top: 100px;
 			z-index: 9999;
+		}
+
+		.single-restro-list-sec .ui-listview>li .qty-sec{
+			max-height: 32px;
 		}
 
 		@media(max-width: 480px) {
@@ -574,6 +579,7 @@
 		            document.getElementById(id).value = value;
 		    }
 		}
+
 		function decrementValue(id)
 		{
 		    var value = parseInt(document.getElementById(id).value, 10);

@@ -1,48 +1,48 @@
 @extends('layouts.master')
 @section('content')
 <div class="" data-role="page" data-theme="c">
-    <div data-role="header" class="header" data-position="fixed">
-        <div class="nav_fixed">
-            <div data-role="navbar"> 
-                <ul> 
-            <li><a href="{{url('user-setting')}}" data-ajax="false" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
-             <li><a data-ajax="false" class="ui-btn-active">{{ __('messages.Location') }}</a></li>
-              <li class="done-btn" id="dataSave">  <input type="button" value="{{ __('messages.Done') }}" /></li>  </ul>
+	<div data-role="header" class="header" data-position="fixed">
+		<div class="nav_fixed">
+			<div data-role="navbar"> 
+				<ul> 
+			<li><a href="{{url('user-setting')}}" data-ajax="false" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
+			 <li><a data-ajax="false" class="ui-btn-active">{{ __('messages.Location') }}</a></li>
+			  <li class="done-btn" id="dataSave">  <input type="button" value="{{ __('messages.Done') }}" /></li>  </ul>
               
                 <a href="#" class="location_icon" id="locationSave">
                    <img src="{{asset('images/icons/location.png')}}">
                    <p>{{ __('messages.Current Position') }}</p> 
                       </a>
             </div><!-- /navbar -->
-        </div>
-    </div>
-    <form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('save-location') }}">
-    {{ csrf_field() }}
-        <div role="main" data-role="main-content" class="content map-container">
-            
-            <div class="map-input">
+		</div>
+	</div>
+	<form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('save-location') }}">
+	{{ csrf_field() }}
+		<div role="main" data-role="main-content" class="content map-container">
+			
+			<div class="map-input">
                 @if(Auth::check())
-                    <input type="text" name="street_address" id="pac-input" class="" placeholder="{{ __('messages.Enter a Location') }}*" value="{{ Session::get('with_login_address')}}" required placeholder="Address*">
+				    <input type="text" name="street_address" id="pac-input" class="" placeholder="{{ __('messages.Enter a Location') }}*" value="{{ Session::get('with_login_address')}}" required placeholder="Address*">
                 @else
                     <input type="text" name="street_address" id="pac-input" class="" placeholder="{{ __('messages.Enter a Location') }}*" value="{{ Session::get('address')}}" required placeholder="Address*">
                 @endif
-            </div>
+			</div>
             <div id="map" style="height: 665px;">
             </div>
-        </div>
-    </form>
+		</div>
+	</form>
 </div>
 @endsection
 
 @section('footer-script')
-    
+	
         
-    <script type="text/javascript">
+	<script type="text/javascript">
 
-        $(function(){
-            
-            //document.getElementById("dataSave").disabled = true;    
-        });
+		$(function(){
+			
+			//document.getElementById("dataSave").disabled = true;    
+		});
 
         $(function(){     
 
@@ -62,15 +62,15 @@
         });
 
 
-        function initMap() {
+		function initMap() {
             @if(Auth::check())
-                @if(Session::get('with_login_lat')!=null && Session::get('with_login_lng')!=null)
+                @if(isset({{Session::get('with_login_lat')}}) && isset({{Session::get('with_login_lng')}}))
                     var location  = {lat: {{Session::get('with_login_lat')}} , lng: {{ Session::get('with_login_lng')}} };
                 @else    
                     var location  = {lat: 60.1282 , lng: 18.6435};
                 @endif    
             @else
-                @if(Session::get('with_out_login_lat')!=null && Session::get('with_out_login_lng')!=null)
+                @if(isset({{Session::get('with_out_login_lat')}}) && isset({{Session::get('with_out_login_lng')}}))
                     var location  = {lat: {{Session::get('with_out_login_lat')}} , lng: {{ Session::get('with_out_login_lng')}} };
                 @else    
                     var location  = {lat: 60.1282 , lng: 18.6435};
@@ -189,27 +189,27 @@
 
 
 
-        $("#dataSave").click(function(e){
+		$("#dataSave").click(function(e){
 
-            var flag = true;
-            // var x = $('form input[type="radio"]').each(function(){
-      //       // Do your magic here
-      //        var checkVal = parseInt($(this).val());
-      //        console.log(checkVal);
-      //        if(checkVal > 0){
-      //            flag = true;
-      //            return flag;
-      //        }
-            // });
+			var flag = true;
+			// var x = $('form input[type="radio"]').each(function(){
+	  //       // Do your magic here
+	  //       	var checkVal = parseInt($(this).val());
+	  //       	console.log(checkVal);
+	  //       	if(checkVal > 0){
+	  //       		flag = true;
+	  //       		return flag;
+	  //       	}
+			// });
 
-            if(flag){
-                $("#form").submit();
-            } else{
-                alert("Please fill some value");    
-                e.preventDefault();
-            }
-        })
-    </script>
+			if(flag){
+				$("#form").submit();
+			} else{
+				alert("Please fill some value");	
+				e.preventDefault();
+			}
+		})
+	</script>
 
     <script type="text/javascript">
         $("#locationSave").click(function(e){

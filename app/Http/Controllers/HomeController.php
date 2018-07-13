@@ -35,30 +35,6 @@ class HomeController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function getList(Request $request){
-       
-      
-        $pieces = explode(" ", $request->session()->get('current_date_time'));
-        $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
-        $currentTime = $pieces[4];
-        $todayDay = $pieces[0];
-        if(Auth::check()){
-
-           $userDetail = User::whereId(Auth()->id())->first();
-            $lat = $request->session()->get('with_login_lat');
-            $lng = $request->session()->get('with_login_lng');
-           //dd($userDetail);
-            $companydetails = Store::getListRestaurantsCheck($lat,$lng,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
-        }else{
-
-             $lat = $request->session()->get('with_out_login_lat');
-            $lng = $request->session()->get('with_out_login_lng');
-            $rang = $request->session()->get('rang');
-             $companydetails = Store::getListRestaurantsCheck($lat,$lng, $rang,'1','3',$todayDate,$currentTime,$todayDay);
-        }
-        dd($companydetails);  
-    }
-
     public function checkUserLogin(){
         if(Auth::check()){
             $userDetail = User::whereId(Auth()->id())->first();

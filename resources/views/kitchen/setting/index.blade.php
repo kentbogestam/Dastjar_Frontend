@@ -117,7 +117,7 @@
 		});
 
 		$('#admin').click(function(){
-			window.open("https://admin.dastjar.com/admin/");
+			window.open("https://admin-dev.dastjar.com/");
 		});
 	</script>
 

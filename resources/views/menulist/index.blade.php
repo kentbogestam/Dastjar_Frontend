@@ -330,7 +330,7 @@
 			</a></div>
 			<div class="ui-block-b">
 				<a href="javascript:void(0)" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container" id = "menudataSave">
+					<div class="img-container" id="menudataSave">
 						<img src="{{asset('images/icons/select-store_03.png')}}">
 					</div>
 					<input type="button" value="{{ __('messages.Send') }}" id="dataSave"/>
@@ -410,22 +410,23 @@
 
 		$(".extra-btn a").click(function(){
 			id=$(this).attr('id');
+			comment = $('#orderDetail'+id).val();
+			$('textarea#textarea-1').val(comment);			
 		});
 		
 	$('#submitId').click(function(){ 
-		
 		var text = $('textarea#textarea-1').val();
 		$('#orderDetail'+id).val(text);
-		$('#transitionExample').popup( "close" );
-		document.getElementById("textarea-1").value = "";
-});
+		$('#transitionExample').popup("close");
+		$('#textarea-1').val("");					
+	});
 
 	$("#menudataSave").click(function(e){
 			var d = new Date();
 			//console.log(d);
 			$("#browserCurrentTime").val(d);
-		var flag = false;
-		var x = $('form input[type="text"]').each(function(){
+			var flag = false;
+			var x = $('form input[type="text"]').each(function(){
         // Do your magic here
         	var checkVal = parseInt($(this).val());
         	console.log(checkVal);

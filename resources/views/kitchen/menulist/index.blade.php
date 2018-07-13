@@ -217,6 +217,11 @@
 
 		<a href="#demo_{{$key}}" class="partial-circle" data-toggle="collapse">
 				<p class="dish_type">
+					<?php
+						if(strlen($menuTypes[$key]) > 15){
+							$menuTypes[$key] = substr_replace($menuTypes[$key],"",12) . "...";
+						}
+					?>
 					{{ $menuTypes[$key] }}
 				</p>
 		</a>	
@@ -227,9 +232,6 @@
 
 		@foreach($row as $key2 => $row2)	
 		<div class="card" style="padding: 20px" data-id="{{$row2['product_id']}}">			
-		@if($key2 != 0)
-<!-- 		<hr /> 
- -->		@endif		
 		<div class="row">
 			<div class="col-sm-2">
 			<img src="{{$row2['small_image']}}" class="prod_img"/>
@@ -449,7 +451,64 @@
         	$('#myModal').modal('show');
 	}
 
+	var lastDishId;
+
 	$(document).ready(function(){
+		/*
+		var ajaxCall = function(){
+			$.get("{{url('kitchen/kitchen-orders-new')}}/"+lastOrderId,
+			function(returnedData){
+
+			var key = returnedData['key'];
+			var row = returnedData['row'];
+
+			var htmlData = "";
+			
+			htmlData += "<hr />";
+			htmlData += '<a href="#demo_' + key + '" class="partial-circle" data-toggle="collapse">';
+			htmlData += '<p class="dish_type">';
+			htmlData += returnedData['dishName'];
+			htmlData += '</p></a><br/><br/>';
+
+			htmlData += '<div id="demo_' + key + '" data-id="' + key + '" class="collapse collapse_block sortable">';	
+
+		    $(row).each(function(key2, row2){
+
+			htmlData += '<div class="card" style="padding: 20px" data-id="' + row2['product_id'] + '">';		
+			htmlData += '<div class="row"><div class="col-sm-2">';
+			htmlData += '<img src="' + row2['small_image'] + '" class="prod_img"/>';
+			htmlData += '</div><div class="col-sm-10"><div>';
+
+
+			htmlData += '<h3 style="display: inline">' + row2['product_name'] + '</h3>';
+			htmlData += '<a href="javascript:void(0)" onClick="add_dish_price('{{$row2['product_id'].'\',\''.Session::get('storeId')}}')" class="btn waves-effect add-price-btn" data-ajax="false">Add Future Price</a>';
+					
+			htmlData += '</div><div><p>' + row2["product_description"] + '</p></div>';
+
+		    $(row2['prices']).each(function(key3, row3){
+
+			htmlData +=	'<div class="menu_icons">';
+			htmlData +=	'<span style="margin-right: 10px; color: rgba(199,7,17,1)">SEK ' + $row3['price'] + '</span>';		
+
+				if(row3['publishing_start_date'] != "0000-00-00 00:00:00" && row3['publishing_start_date'] != null  && $row3['publishing_start_date'] != ""){
+					htmlData +=	'<span class="fa fa-calendar"></span><span>{{' ' . date("M j, Y - H:i", strtotime($row3['publishing_start_date'])) . ' - ' . date("M j, Y - H:i", strtotime($row3['publishing_end_date']))}}</span>';
+				}else{
+					htmlData +=	'<span class=""></span><span></span>';
+				}
+				
+				htmlData +=	'<a href="javascript:void(0)" onClick="delete_dish('{{url('kitchen/delete-menu-dish?product_id='.$row2['product_id'].'&price_id='.$row3['price_id'])}}')" data-ajax="false"><span class="fa fa-trash" style="float: right; margin-left: 15px"></span></a>';
+
+				htmlData +=	'<a href="{{url('kitchen/edit-menu-dish?product_id='.$row2['product_id'].'&store_id='.Session::get('storeId').'&price_id='.$row3['price_id'])}}" data-ajax="false"><span class="fa fa-edit" style="float: right"></span></a>';
+
+				htmlData +=	'</div>';
+			}
+				htmlData +=	'</div></div></div>';
+			}
+				htmlData +=	'</div><br/>';
+			});
+		}
+		*/
+
 		 $(".sortable").sortable({
 			stop: function(event, ui) {
 				index =  ui.item.index();

@@ -198,14 +198,15 @@
 		<div class="row">
 			<div class="col-10 dish_name_col">
 				<a href="{{ url('kitchen/menu') }}" class="menu_back_btn" data-ajax="false"><span class="fa fa-chevron-left"></span>Back</a>
-				<input type="text" name="prodName" placeholder="Dish Name" class="dish_name" value="{{ $product->product_name or "" }}" required/>
+				<input type="text" name="prodName" placeholder="Dish Name" class="dish_name" value="{{ $product->product_name or "" }}" maxlength="24" title="The name of your product. 
+Due to the size of the text only 19 characters may be displayed, so try to shorten down your message." required/>
 			</div>
 			<div class="col-2 menu_image_col">
 				<label class="upload_menu" for="fileupload">
 					<img src="{{ $product->small_image or  "" }}" id="blah"/>
 					<span class="fa fa-camera camera_icon"></span>
 					<p class="upload_img_txt">Upload Menu Image</p>
-					<input type="file" name="prodImage" id="fileupload"  onchange="readURL(this);" style="" @if(!isset($product->small_image)){{"required"}}@endif/>
+					<input type="file" name="prodImage" id="fileupload" onerror="alert('Image missing')" onchange="readURL(this);" style="" @if(!isset($product->small_image)){{"required"}}@endif/>
 				</label>
 			</div>
 		</div>
@@ -246,7 +247,7 @@
 
 		<div class="row">
 			<div class="col-12">
-				<input type="text" name="prodDesc" placeholder="Description" value="{{ $product->product_description or "" }}" required/>
+				<input type="text" name="prodDesc" placeholder="Description" value="{{ $product->product_description or "" }}" maxlength="50" title="Describes the offer itself on max two lines below the title in the list view.  Max 50 characters will fit into the 2 lines." required/>
 			</div>
 		</div>
 
@@ -426,6 +427,7 @@
 
 			$.material.init();
 		});
+
 
 	$(document).on("scrollstop", function (e) {
     	var activePage = $.mobile.pageContainer.pagecontainer("getActivePage"),
