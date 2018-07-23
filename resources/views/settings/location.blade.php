@@ -26,6 +26,12 @@
                 @else
                     <input type="text" name="street_address" id="pac-input" class="" placeholder="{{ __('messages.Enter a Location') }}*" value="{{ Session::get('address')}}" required placeholder="Address*">
                 @endif
+
+                @if(isset($_GET['k']))
+                    <input type="hidden" name="redirect_to_home" value="1">
+                @else               
+                    <input type="hidden" name="redirect_to_home" value="0">
+                @endif
             </div>
             <div id="map" style="height: 665px;">
             </div>

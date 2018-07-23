@@ -81,6 +81,9 @@ return [
     'Contact Us' => 'Kontakta oss',
     'Message' => 'Meddelande',
     'Contact Us Placeholder' => 'Skriv ditt meddelande och lägg till din email adress för svar',
-    'Terms and Conditions' => 'Villkor'
+    'Terms and Conditions' => 'Villkor',
+    'Extra Preparation Time' => 'Extra beredningstid',
+    'Support' => 'Support',
+    'Thank you for contacting us.' => 'Thank you for contacting us.'
 
 ];

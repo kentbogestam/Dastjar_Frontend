@@ -14,9 +14,24 @@
 					<p>{{ __('messages.Order Number') }} </p>
 					<p class="order-no">{{$order->customer_order_id}}</p>
 					<p>({{$order->store_name}})</p>
-					<p>{{ __('messages.Your order will be ready on') }} {{$order->order_delivery_time}} mins
+					<p>
+						<?php
+							$time = $order->order_delivery_time;
+							$time2 = $storeDetail->extra_prep_time;
+							$secs = strtotime($time2)-strtotime("00:00:00");
+							$result = date("H:i:s",strtotime($time)+$secs);
+						?>
+
 						@if($order->order_type == 'eat_later')
+						{{ __('messages.Your order will be ready on') }}
 						{{$order->deliver_date}}
+						{{date_format(date_create($order->deliver_time), 'G:i')}} 
+						@else
+						{{ __('messages.Your order will be ready in about') }}
+							@if(date_format(date_create($result), 'H')!="00")
+							{{date_format(date_create($result), 'H')}} hours 						
+							@endif
+						{{date_format(date_create($result), 'i')}} mins
 						@endif
 					</p>
 				</div>

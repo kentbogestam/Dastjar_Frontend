@@ -3,10 +3,10 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Helper extends Model
 {
-    //
     public static function getLocation($address)
     {
         $address = str_replace(' ', '+', $address);
@@ -73,5 +73,20 @@ class Helper extends Model
             return true;
         }
         return false;
+    }
+
+    //this function convert string to UTC time zone
+    function convertTimeToUTCzone($str, $userTimezone, $format = 'Y-m-d H:i:s'){
+            
+        $new_str = new \DateTime($str, new \DateTimeZone(  $userTimezone  ) );
+        $new_str->setTimeZone(new \DateTimeZone('UTC'));
+        return $new_str->format( $format);
+    }
+
+    function logs($str = ""){
+            $myfile = fopen(public_path() . "/upload/images/log" . Carbon::now()->format('Ymd') . ".txt", "a") or die("Unable to open file!");
+            $txt = Carbon::now() . " - " . $str . "  \n";
+            fwrite($myfile, $txt);
+            fclose($myfile);
     }
 }

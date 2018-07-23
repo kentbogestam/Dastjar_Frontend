@@ -153,6 +153,7 @@
 			function(returnedData){
 				console.log(returnedData["data"]);
 				textSpeach = returnedData["user"];
+				extra_prep_time = returnedData["extra_prep_time"];
 				var count = 18;
 				
 				var temp = returnedData["data"];
@@ -176,7 +177,7 @@
 				      	lastOrderId = temp[i]["id"];
 				      	(function (i) {
 						    setTimeout(function () {
-			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
+			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"],extra_prep_time);
 			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
 			          		liItem += "<tr>";
 			          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
@@ -261,6 +262,7 @@ console.log('lastOrderId'+lastOrderId);
 				var count = 18;
 				var temp = returnedData["data"];
 				textSpeach = returnedData["user"];
+				extra_prep_time = returnedData["extra_prep_time"];
 				totallength = temp.length;
 	          	list = temp;
 	          	console.log(temp.length);
@@ -283,7 +285,7 @@ console.log('lastOrderId'+lastOrderId);
 				      	(function (i) {
 						    setTimeout(function () {
 						    	console.log('iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'+i);
-			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
+			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time",extra_prep_time]);
 			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
 			          		liItem += "<tr>";
 			          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
@@ -509,35 +511,37 @@ console.log('lastOrderId'+lastOrderId);
 
 
 
-		function addTimes (startTime, endTime) {
-		  var times = [ 0, 0, 0 ]
-		  var max = times.length
+		function addTimes (startTime, endTime, extra_prep_time) {
+		  var times = [ 0, 0, 0 ];
+		  var max = times.length;
 
 		  var a = (startTime || '').split(':')
 		  var b = (endTime || '').split(':')
+		  var c = (extra_prep_time || '').split(':')
 
 		  // normalize time values
 		  for (var i = 0; i < max; i++) {
 		    a[i] = isNaN(parseInt(a[i])) ? 0 : parseInt(a[i])
 		    b[i] = isNaN(parseInt(b[i])) ? 0 : parseInt(b[i])
+		    c[i] = isNaN(parseInt(c[i])) ? 0 : parseInt(c[i])
 		  }
 
 		  // store time values
 		  for (var i = 0; i < max; i++) {
-		    times[i] = a[i] + b[i]
+		    times[i] = a[i] + b[i] + c[i]
 		  }
 
 		  var hours = times[0]
 		  var minutes = times[1]
 		  var seconds = times[2]
 
-		  if (seconds > 60) {
+		  if (seconds > 59) {
 		    var m = (seconds / 60) << 0
 		    minutes += m
 		    seconds -= 60 * m
 		  }
 
-		  if (minutes > 60) {
+		  if (minutes > 59) {
 		    var h = (minutes / 60) << 0
 		    hours += h
 		    minutes -= 60 * h

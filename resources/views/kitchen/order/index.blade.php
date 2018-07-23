@@ -131,6 +131,7 @@
 			console.log(returnedData["data"]);
 			var count = 18;
 			var temp = returnedData["data"];
+			extra_prep_time = returnedData["extra_prep_time"];
           	list = temp;
           	//console.log(temp.length);
           	var liItem = "";
@@ -148,7 +149,7 @@
 	          		if(i>=totallength){
 			      		break;
 			      	}
-	          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
+	          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"],extra_prep_time);
 	          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
 	          		var orderIdSpecific = temp[i]["order_id"] ;
 	          		liItem += "<tr>";
@@ -235,6 +236,7 @@
 			//console.log(returnedData["data"]);
 			var count = 18;
 			var temp = returnedData["data"];
+			extra_prep_time = returnedData["extra_prep_time"];
           	list = temp;
           	console.log(temp.length);
           	var liItem = "";
@@ -250,7 +252,7 @@
 	          		if(i>totallength){
 			      		break;
 			      	}
-	          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
+	          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"],extra_prep_time);
 	          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
 	          		var orderIdSpecific = temp[i]["order_id"] ;
 	          		liItem += "<tr>";
@@ -410,35 +412,37 @@
       $("#orderDetailContianer").append(liItem);	
 	}
 
-	function addTimes (startTime, endTime) {
+	function addTimes (startTime, endTime, extra_prep_time) {
 	  var times = [ 0, 0, 0 ]
 	  var max = times.length
 
 	  var a = (startTime || '').split(':')
 	  var b = (endTime || '').split(':')
+	  var c = (extra_prep_time || '').split(':')
 
 	  // normalize time values
 	  for (var i = 0; i < max; i++) {
 	    a[i] = isNaN(parseInt(a[i])) ? 0 : parseInt(a[i])
 	    b[i] = isNaN(parseInt(b[i])) ? 0 : parseInt(b[i])
+	    c[i] = isNaN(parseInt(c[i])) ? 0 : parseInt(c[i])
 	  }
 
 	  // store time values
 	  for (var i = 0; i < max; i++) {
-	    times[i] = a[i] + b[i]
+	    times[i] = a[i] + b[i] + c[i]
 	  }
 
 	  var hours = times[0]
 	  var minutes = times[1]
 	  var seconds = times[2]
 
-	  if (seconds > 60) {
+	  if (seconds > 59) {
 	    var m = (seconds / 60) << 0
 	    minutes += m
 	    seconds -= 60 * m
 	  }
 
-	  if (minutes > 60) {
+	  if (minutes > 59) {
 	    var h = (minutes / 60) << 0
 	    hours += h
 	    minutes -= 60 * h

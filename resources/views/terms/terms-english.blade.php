@@ -1,24 +1,25 @@
 @extends('layouts.master')
 @section('head-scripts')
-	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
-	<TITLE>Kvittens</TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice 4.1.3  (Unix)">
-	<META NAME="AUTHOR" CONTENT="Alireza Heidarian">
-	<META NAME="CREATED" CONTENT="20180629;16220000">
-	<META NAME="CHANGEDBY" CONTENT="Alireza Heidarian">
-	<META NAME="CHANGED" CONTENT="20180629;16430000">
-	<META NAME="AppVersion" CONTENT="16.0000">
-	<META NAME="DocSecurity" CONTENT="0">
-	<META NAME="HyperlinksChanged" CONTENT="false">
-	<META NAME="LinksUpToDate" CONTENT="false">
-	<META NAME="ScaleCrop" CONTENT="false">
-	<META NAME="ShareDoc" CONTENT="false">
+	<meta HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<title>Kvittens</title>
+	<!-- <meta NAME="GENERATOR" CONTENT="OpenOffice 4.1.3  (Unix)">
+	<meta NAME="AUTHOR" CONTENT="Alireza Heidarian">
+	<meta NAME="CREATED" CONTENT="20180629;16220000">
+	<meta NAME="CHANGEDBY" CONTENT="Alireza Heidarian">
+	<meta NAME="CHANGED" CONTENT="20180629;16430000">
+	<meta NAME="AppVersion" CONTENT="16.0000">
+	<meta NAME="DocSecurity" CONTENT="0">
+	<meta NAME="HyperlinksChanged" CONTENT="false">
+	<meta NAME="LinksUpToDate" CONTENT="false">
+	<meta NAME="ScaleCrop" CONTENT="false">
+	<meta NAME="ShareDoc" CONTENT="false"> -->
 
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
 
 	<style type="text/css">
 	html { overflow-y: scroll; }
-
+/*	body { position: absolute; }
+*/
 		.top-container{
 			padding-left: 50px; 
     		padding-right: 50px; 

@@ -12,6 +12,7 @@
 	<link href="//fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+	<script type="text/javascript" src="//momentjs.com/downloads/moment-with-locales.min.js"></script>
 
 	<style>
 		.menu_txt{
@@ -170,6 +171,10 @@
 @stop
 
 @section('content')
+<?php
+//dd(session()->all());
+?>
+
 <div data-role="header" data-position="fixed" data-tap-toggle="false" class="header">
 		<div class="logo_header">
 		<img src="{{asset('kitchenImages/logo-img.png')}}">
@@ -249,7 +254,21 @@
 				<div class="menu_icons">
 					<span style="margin-right: 10px; color: rgba(199,7,17,1)">SEK {{$row3['price']}}</span>		
 					<?php if($row3['publishing_start_date'] != "0000-00-00 00:00:00" && $row3['publishing_start_date'] != null  && $row3['publishing_start_date'] != ""){ ?>
-						<span class="fa fa-calendar"></span><span>{{' ' . date("M j, Y - H:i", strtotime($row3['publishing_start_date'])) . ' - ' . date("M j, Y - H:i", strtotime($row3['publishing_end_date']))}}</span>
+						<span class="fa fa-calendar"></span><span>
+
+					<script type="text/javascript">
+						dStart = "{{date('Y-m-d H:i:s', strtotime($row3['publishing_start_date']))}}";
+						dStart = moment.utc(dStart).toDate();
+						dStart = moment(dStart).local().format('MMMM DD, Y HH:mm');
+
+						dEnd = "{{date('Y-m-d H:i:s', strtotime($row3['publishing_end_date']))}}";
+						dEnd = moment.utc(dEnd).toDate();				
+						dEnd = moment(dEnd).local().format('MMMM DD, Y HH:mm');
+
+						document.write(" " + dStart + " - " + dEnd);
+					</script>
+
+						</span>
 					<?php }else{ ?>
 						<span class=""></span><span></span>
 					<?php } ?>
@@ -285,8 +304,10 @@
 				  	<input type="hidden" id="selected_prod_product_id" name="product_id"/>
 				  	<input type="hidden" id="selected_prod_store_id" name="store_id"/>	  
 					<input type="number" name="price" placeholder="Price ({{$currency}})"/>
-					<input type="text" id="date-start" name="publishing_start_date" placeholder="Publishing Start Date"/>
-					<input type="text" id="date-end" name="publishing_end_date" placeholder="Publishing End Date"/>						  
+					<input type="text" id="date-start" name="" placeholder="Publishing Start Date"/>
+					<input type="text" id="date-start-utc" name="publishing_start_date" placeholder="Publishing Start Date"/>
+					<input type="text" id="date-end" name="" placeholder="Publishing End Date"/>
+					<input type="text" id="date-end-utc" name="publishing_end_date" placeholder="Publishing End Date"/>						  
 					{{ csrf_field() }}
 			</div>
 			
@@ -382,7 +403,6 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.5.10/js/ripples.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.5.10/js/material.min.js"></script>
-<script type="text/javascript" src="//momentjs.com/downloads/moment-with-locales.min.js"></script>
 <script type="text/javascript" src="{{ asset('js/bootstrap-material-datetimepicker.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
@@ -399,11 +419,15 @@
 			}).on('change', function(e, date)
 			{
 				$('#date-end').bootstrapMaterialDatePicker('setMinDate', date);
+				$('#date-start-utc').val(moment.utc(date).format('DD/MM/YYYY HH:mm'));				
 			});
 
 			$('#date-end').bootstrapMaterialDatePicker
 			({
 				weekStart: 0, format: 'DD/MM/YYYY - HH:mm',  shortTime : true, clearButton: true
+			}).on('change', function(e2, date2)
+			{
+				$('#date-end-utc').val(moment.utc(date2).format('DD/MM/YYYY HH:mm'));
 			});
 
 			$.material.init();

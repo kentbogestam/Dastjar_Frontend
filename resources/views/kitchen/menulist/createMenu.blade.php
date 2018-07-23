@@ -211,6 +211,8 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 			</div>
 		</div>
 
+		<input type="hidden" name="timezoneOffset" class="timezoneOffset">
+
 		<div class="row">
 			<div class="col-12">
 				<select id="dishLang" name="dishLang" required>
@@ -267,14 +269,16 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 
 		<div class="row">
 			<div class="col-12">
-				<input type="text" id="date-start" name="publish_start_date" placeholder="Publishing Start Date" value="<?php if(isset($product_price_list->publishing_start_date)){if($product_price_list->publishing_start_date != "0000-00-00 00:00:00"){echo date("d/m/Y H:i", strtotime($product_price_list->publishing_start_date));}} ?>" required/>
+				<input type="text" id="date-start" name="" placeholder="Publishing Start Date" value="" required/>
+				<input type="hidden" id="date-start-utc" name="publish_start_date">
 				<span class="fa fa-calendar cal_icon"></span>
 			</div>
 		</div>
 
 		<div class="row">
 			<div class="col-12">
-				<input type="text" id="date-end" name="publish_end_date" placeholder="Publishing End Date" value="<?php if(isset($product_price_list->publishing_end_date)){if($product_price_list->publishing_start_date != "0000-00-00 00:00:00"){echo date("d/m/Y H:i", strtotime($product_price_list->publishing_end_date));}} ?>" required/>
+				<input type="text" id="date-end" name="" placeholder="Publishing End Date" value="" required/>
+				<input type="hidden" id="date-end-utc" name="publish_end_date">				
 				<span class="fa fa-calendar cal_icon"></span>
 			</div>
 		</div>
@@ -402,6 +406,25 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 
 
 		$(document).ready(function(){
+			<?php if(isset($product_price_list->publishing_start_date)){if($product_price_list->publishing_start_date != "0000-00-00 00:00:00"){
+				?>
+				dStart = "{{date('Y-m-d H:i:s', strtotime($product_price_list->publishing_start_date))}}";
+				dStart = moment.utc(dStart).toDate();
+				dStart = moment(dStart).local().format("DD/MM/YY HH:mm");
+				$('#date-start').val(dStart);
+				<?php
+			}} ?>
+
+			<?php if(isset($product_price_list->publishing_end_date)){if($product_price_list->publishing_start_date != "0000-00-00 00:00:00"){
+				?>
+				dEnd = "{{date('Y-m-d H:i:s', strtotime($product_price_list->publishing_end_date))}}";
+				dEnd = moment.utc(dEnd).toDate();
+				dEnd = moment(dEnd).local().format("DD/MM/YY HH:mm");
+				$('#date-end').val(dEnd);
+				<?php
+			}} ?>
+			
+
 			<?php
 				if(isset($product->small_image)){
 			?>
@@ -418,11 +441,15 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 			}).on('change', function(e, date)
 			{
 				$('#date-end').bootstrapMaterialDatePicker('setMinDate', date);
+				$('#date-start-utc').val(moment.utc(date).format('DD/MM/YYYY HH:mm'));
 			});
 
 			$('#date-end').bootstrapMaterialDatePicker
 			({
 				weekStart: 0, format: 'DD/MM/YYYY HH:mm',  shortTime : true, clearButton: true
+			}).on('change', function(e2, date2)
+			{
+				$('#date-end-utc').val(moment.utc(date2).format('DD/MM/YYYY HH:mm'));
 			});
 
 			$.material.init();

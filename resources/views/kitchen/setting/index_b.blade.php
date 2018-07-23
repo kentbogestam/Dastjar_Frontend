@@ -10,7 +10,7 @@
 		text-align: left;
 		padding-left: 2em;
 	}
-	
+
 	.msg-lbl{
 		color: #000; 
 		padding-left: 0px !important;
@@ -24,7 +24,7 @@
 	#contact-setting-list .ui-controlgroup{
 		display: block !important;
 	}
-	
+
 	#form{
 		margin-bottom: 0px;
 	}
@@ -32,7 +32,7 @@
 
 @section('content')
 <div class="setting-page" data-role="page" data-theme="c">
-	<div data-role="header"  data-position="fixed" data-tap-toggle="false" class="header">
+	<!--<div data-role="header"  data-position="fixed" data-tap-toggle="false" class="header">
 		<div class="logo_header">
 			<img src="{{asset('kitchenImages/logo-img.png')}}">
 			<a href = "{{ url('kitchen/logout') }}"  class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">{{ __('messages.Logout') }}
@@ -57,9 +57,9 @@
 				</div>
 			</div>
 		</div>
-	</div>
+	</div> -->
 
-		<div role="main" data-role="main-content" class="content">
+		<div role="main" data-role="main-content" class="content" style="">
 			@if ($message = Session::get('success'))
 				<div class="table-content sucess_msg">
 					<img src="{{asset('images/icons/Yes_Check_Circle.png')}}">
@@ -72,9 +72,11 @@
 			        @endif
 			    </div>
 			@endif
+
 			<div class="setting-list">
+
 				<form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('kitchen/save-kitchenSetting') }}">
-				{{ csrf_field() }}
+					{{ csrf_field() }}
 				<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.Language") }} <span>
 					@if(Auth::guard('admin')->user()->language == 'ENG')
 					English
@@ -117,9 +119,45 @@
 					<h2 class="ui-btn">Extra Preparation Time</h2>
 				</li>
 
-				<li data-role="collapsible" class="range-sec">
+				<li id="about_us" class="range-sec btn_blk">
+					<h2 class="ui-btn">{{  __("messages.About Us") }}</h2>
+				</li>
 
-					<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Support') }}
+				<li id="admin" class="range-sec btn_blk">
+					<h2 class="ui-btn">{{  __("messages.Admin") }}</h2>
+				</li>
+
+				<li id="prep_time" class="range-sec btn_blk">
+					<h2 class="ui-btn">Extra Preparation Time</h2>
+				</li>
+
+				<li id="" class="range-sec btn_blk">
+					<h2 class="ui-btn">{{  __("messages.About Us") }}</h2>
+				</li>
+
+				<li id="" class="range-sec btn_blk">
+					<h2 class="ui-btn">{{  __("messages.Admin") }}</h2>
+				</li>
+
+				<li id="" class="range-sec btn_blk">
+					<h2 class="ui-btn">Extra Preparation Time</h2>
+				</li>				
+
+				<li id="" class="range-sec btn_blk">
+					<h2 class="ui-btn">{{  __("messages.About Us") }}</h2>
+				</li>
+
+				<li id="" class="range-sec btn_blk">
+					<h2 class="ui-btn">{{  __("messages.Admin") }}</h2>
+				</li>
+
+				<li id="" class="range-sec btn_blk">
+					<h2 class="ui-btn">Extra Preparation Time</h2>
+				</li>
+
+				<li data-role="collapsible" class="range-sec collapsible_li">
+
+					<h2 class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Support') }}
 						<p class="ui-li-aside">
 							
 						</p>
@@ -135,7 +173,10 @@
 							<button type="submit" class="btn btn-success">{{ __('messages.Send') }}</button>		
 						</form>
 					</div>
-				</li>
+			
+
+					</li> 
+
 			</div>
 		</div>
 </div>
@@ -164,18 +205,56 @@
 		});
 
 		$('#prep_time').click(function(){
-			location.replace("{{url('kitchen/extra-prep-time')}}");
-		});
-		
-		
-		$(document).on("collapsibleexpand ", "[data-role=collapsible]", function () {
-			// $('.setting-page').animate({scrollTop:$(document).height()}, 'slow');
-		});
-		
+			$('html, body').animate({scrollTop:$(document).height()}, 'slow');
 
-		$('#msg').on("focus", function () {
-			$('.setting-page').animate({scrollTop:$(document).height()}, 'slow');
+		  // $(window).scrollTop($(document).height());
+	  	// 		alert($(document).height());
+			// location.replace("{{url('kitchen/extra-prep-time')}}");
 		});
+
+		$('#a').click(function(e){
+			// $("#form").unbind("submit");
+			// $('#support-form').submit();
+			// e.preventDefault();
+		});
+
+		$('.btn-success2').click(function(){
+		//	alert("123");
+		    // window.scrollTo(0,0);
+		    $("body").scrollTop(0);
+
+    		// window.scrollTop = 100;
+		});
+
+		$('#msg2').on('focus', function() {
+			// alert("123");
+
+    		$('.content').scrollTop = $(this).offset().top;
+    		return false;
+
+   // 		document.body.scrollTop = $(document).height();
+   //  		document.body.scrollTop = $(this).offset().top;
+		});
+
+		$(document).on("collapsibleexpand ", "[data-role=collapsible]", function () {
+			alert($(document).height());
+setTimeout(
+  function() 
+  {
+	  			alert($(document).height());
+
+	  //						alert("123");
+	  // window.scrollTop = 100;
+	  $(window).scrollTop(100);
+
+
+    		document.body.scrollTop = $(document).height();
+  }, 5000);
+
+	//		  var position = $(this).offset().top;
+		//	  $.mobile.silentScroll(100);
+			});
+
 	</script>
 
 @endsection

@@ -2,7 +2,6 @@
 @section('head-scripts')
     <script src="//cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.5.1/fingerprint2.min.js"></script>
 
-
     <script src="{{asset('notifactionJs/App42-all-3.1.min.js')}}"></script>
     <script src="{{asset('notifactionJs/SiteTwo.js')}}"></script>
     <script src="{{asset('notifactionJs/serviceWorker.js')}}"></script>
@@ -107,7 +106,7 @@
 	  <div class="inner-popup">
 	        <div id="cancel-popup" class="cross"><img src="{{asset('images/icons/cross.png')}}"></div>
 	        <div class="pop-body">
-	           <p>{{ __('messages.Please activate Location Services in your mobile: Settings >Privacy >Location Services') }}</p>
+	           <p>{{ __('messages.Please activate Location Services in your mobile') }}</p>
 	        </div>
 	  </div>
 	</div>
@@ -116,13 +115,12 @@
 @section('footer-script')
 
 <?php
-dd("{{Session::get('with_out_login_lat')}}");
 	if(Auth::check()){
 			if(Session::get('with_login_address') != null){
 				?>
 	<script type="text/javascript">
-				lat = "{{Session::get('with_login_lat')}}";
-				lng = "{{Session::get('with_login_lng')}}";
+				loc_lat = "{{Session::get('with_login_lat')}}";
+				loc_lng = "{{Session::get('with_login_lng')}}";
 	</script>				
 				<?php
 			}
@@ -131,8 +129,8 @@ dd("{{Session::get('with_out_login_lat')}}");
 			if(Session::get('address') != null){
 				?>
 		<script type="text/javascript">
-				lat = "{{Session::get('with_out_login_lat')}}";
-				lng = "{{Session::get('with_out_login_lng')}}";
+				loc_lat = "{{Session::get('with_out_login_lat')}}";
+				loc_lng = "{{Session::get('with_out_login_lng')}}";
 		</script>
 				<?php
 			}
@@ -145,7 +143,7 @@ dd("{{Session::get('with_out_login_lat')}}");
       $('#login-popup').hide();
       var extraclass = document.body;
 	  extraclass.classList.add("disableClass");
-	  window.location.replace("{{url('select-location')}}");
+	  window.location.replace("{{url('select-location?k=home')}}");
     });
 
 	$(".ordersec").click(function(){
@@ -332,12 +330,13 @@ dd("{{Session::get('with_out_login_lat')}}");
 		//location.reload ();
 		add();
 	},function(error){
-		if (typeof lat === "undefined" || lat == "") {
+		if (typeof loc_lat === "undefined" || loc_lat == "") {
 		   $('.login-inner-section a').attr('href','javascript:void(0)');
 		   $('#login-popup').show();	    			
 		}else{
-		    document.cookie="latitude=" + lat;
-		    document.cookie="longitude=" + lng;			
+		    document.cookie="latitude=" + loc_lat;
+		    document.cookie="longitude=" + loc_lng;		
+			add();
 		} 
 	});
 
@@ -488,8 +487,6 @@ dd("{{Session::get('with_out_login_lat')}}");
 		var currentTime = dd[4];
 		var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 		var todayDay = days[d.getDay()];
-		// console.log(currentTime);
-		// console.log('todayDay'+todayDay);
 		var time = $time;
 		var day = time.split(' :: ')
 		var checkday = time.split(',')
@@ -553,9 +550,8 @@ dd("{{Session::get('with_out_login_lat')}}");
 	    }
 	    return "";
 	}
-	var count = getCookie("iphonePopupcount") + getCookie("iphonePopupcountIncrease");
-	// console.log('count='+count);
 
+	var count = getCookie("iphonePopupcount") + getCookie("iphonePopupcountIncrease");
 
 	var IphoneVersion;
     var deviceDetection = function () { 
@@ -603,8 +599,8 @@ dd("{{Session::get('with_out_login_lat')}}");
             }; 
     }();
     //console.log('IphoneVersion='+IphoneVersion);
+
 	if(getCookie("browser") == 'Safari' && count == 1){
-		//console.log('iphonePopupcount='+getCookie("iphonePopupcount"));
 		document.cookie="iphonePopupcountIncrease=" + 2;
 		var ath = addToHomescreen({
 		    debug: 'ios',           // activate debug mode in ios emulation

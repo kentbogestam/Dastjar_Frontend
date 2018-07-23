@@ -133,9 +133,11 @@ class AdminController extends Controller
         return redirect()->action('AdminController@kitchenOrderDetail')->with('success', 'Order Started Successfully.');
     }
 
-    public function orderReadyKitchen(Request $request, $orderID){
-
-
+    public function orderReadyKitchen(Request $request, $orderID)
+    {
+        $helper = new Helper();        
+        try{
+              $helper->logs("Ready Step 1: order id = " . $orderID);       
         DB::table('order_details')->where('id', $orderID)->update([
                             'order_ready' => 1,
                         ]);
@@ -151,15 +153,18 @@ class AdminController extends Controller
                         ]);
 
             $message = 'orderReady';
+              $helper->logs("Step 2: order table updated = " . $orderID . " And user id=" . $OrderId->user_id);       
 
-            if($OrderId->user_id != 0){
+            if($OrderId->user_id != 0)
+            {
                 $recipients = [];                
                 if($OrderId->user_type == 'customer'){
                     $adminDetail = User::where('id' , $OrderId->user_id)->first();
                     if(isset($adminDetail->phone_number_prifix) && isset($adminDetail->phone_number)){
                         $recipients = ['+'.$adminDetail->phone_number_prifix.$adminDetail->phone_number];
                     }
-                }else{
+                }
+                else{
                     $adminDetail = Admin::where('id' , $OrderId->user_id)->first();
                     $recipients = ['+'.$adminDetail->mobile_phone];
                 }                
@@ -170,15 +175,18 @@ class AdminController extends Controller
                     $pieces[0] = '';                              
                 }
 
-            }else{
+            }
+            else
+            {
                 $pieces[0] = '';               
             }
 
+            $helper->logs("Step 3: recipient calculation = " . $orderID . " And browser=" .$pieces[0]);  
 
             if($pieces[0] == 'Safari'){
                 $url = "https://gatewayapi.com/rest/mtsms";
                 $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
-                $message = "Your Order Ready Please click on Link \n ".env('APP_URL').'ready-notifaction/'.$OrderId->customer_order_id;
+                $message = "Your Order Ready Please click on Link \n ".env('APP_URL').'ready-notification/'.$OrderId->customer_order_id;
                 $json = [
                     'sender' => 'Dastjar',
                     'message' => ''.$message.'',
@@ -195,14 +203,25 @@ class AdminController extends Controller
                 curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
                 $result = curl_exec($ch);
                 curl_close($ch);   
-            }else{
+                   $helper->logs("Step 4: IOS notification sent = " . $orderID . " And Result=" .$result);
+            }
+            else
+            {
                 if($OrderId->user_id != 0){
                     $result = $this->sendNotifaction($OrderId->customer_order_id , $message);
+                     $helper->logs("Step 5: Android notification sent = " . $orderID . " And Result=" .$result);
                 }
             }
+
+           
+
             return redirect()->action('AdminController@kitchenOrderDetail')->with('success', 'Order Ready Notification Send Successfully.');
         }
         return redirect()->action('AdminController@kitchenOrderDetail')->with('success', 'Order Ready Successfully.');
+    }
+        catch(\Exception $ex){
+            $helper->logs("Step 6: Exception = " .$ex->getMessage());            
+        }
     }
     
     public function cateringDetails(){
@@ -227,7 +246,7 @@ class AdminController extends Controller
             $menuDetails = ProductPriceList::where('store_id',Session::get('storeId'))->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())
             ->with('menuPrice')->with('storeProduct')
             ->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')
-            ->orderBy('product.rank', 'ASC')
+            ->orderBy('product.product_rank', 'ASC')
             ->get();
 
             if($menuDetails){
@@ -273,17 +292,21 @@ class AdminController extends Controller
 
         $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
 
+        $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;
+
         $text_speech = Auth::guard('admin')->user()->text_speech;
-        return response()->json(['status' => 'success', 'user' => $text_speech,'data'=>$kitchenorderDetails]);
+        return response()->json(['status' => 'success', 'user' => $text_speech, 'extra_prep_time' => $extra_prep_time, 'data'=>$kitchenorderDetails]);
     }
 
     public function kitchenOrdersNew($id){
         $reCompanyId = Session::get('storeId');
 
         $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->where('order_details.id', '>', $id)->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
+
+        $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;
         
         $text_speech = Auth::guard('admin')->user()->text_speech;
-        return response()->json(['status' => 'success', 'user' => $text_speech,'data'=>$kitchenorderDetails]);
+        return response()->json(['status' => 'success', 'user' => $text_speech, 'extra_prep_time' => $extra_prep_time,'data'=>$kitchenorderDetails]);
     }
 
     public function kitchenOrderSave(Request $request){
@@ -408,7 +431,7 @@ class AdminController extends Controller
                     $result = curl_exec($ch);
                     curl_close($ch); 
 
-                return view('kitchen.order.order-detail', compact('order','orderDetails'));
+                return view('kitchen.order.order-detail', compact('order','orderDetails','storeDetail'));
         }else{
             $menuTypes = null;
             $menuDetails = ProductPriceList::where('store_id',Session::get('storeId'))->with('menuPrice')->with('storeProduct')->get();
@@ -508,7 +531,6 @@ class AdminController extends Controller
     }
 
     public function saveKitchenSetting(Request $request){
-        //dd($request->input());
         $data = $request->input();
         if($data['radio-choice-v-2'] == 'ENG'){
             Session::put('applocale', 'en');
@@ -523,6 +545,9 @@ class AdminController extends Controller
     }
 
     public function sendNotifaction($orderID, $message){
+        $helper = new Helper();                
+        $helper->logs("App42 Step1: " . $orderID);
+
         $order = Order::select('*')->where('customer_order_id',$orderID)->first();
         if($order->user_type == 'customer'){
             $userDetail = User::whereId($order->user_id)->first();
@@ -537,28 +562,31 @@ class AdminController extends Controller
         $userName = $userDetail->email;
 
         if($message == 'orderDeliver'){
-            $url = env('APP_URL').'deliver-notifaction';
+            $url = env('APP_URL').'deliver-notification';
             $message = "{'alert': 'Your Order Deliver.','_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': 'Your Order Deliver.','type':'openUrl','content':" ."'". $url."'" . "}}";
         }else{
-            $url = env('APP_URL').'ready-notifaction/'.$orderID;
+            $url = env('APP_URL').'ready-notification/'.$orderID;
             $messageDelever = "Your Order ". $orderID . " Ready";
             $message = "{'alert': " ."'". $messageDelever."'" . ",'_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': " ."'". $messageDelever."'" . ",'type':'openUrl','content':" ."'". $url."'" . "}}";
         }
 
         try{
+            $helper->logs("App42 Step2: Username- " . $userName);
             App42API::initialize(env('APP42_API_KEY'),env('APP42_API_SECRET'));
             Log::useDailyFiles(storage_path().'/logs/pushNotifaction');
-            Log::info('Before pushNotifaction time : '.Carbon::now()); 
+            Log::info('Before pushNotification time : '.Carbon::now()); 
 
             $pushNotificationService = App42API::buildPushNotificationService(); 
-
+    
             $pushNotification = $pushNotificationService->sendPushMessageToUser($userName,$message);
-            Log::info('After pushNotifaction time : '.Carbon::now()); 
+            $helper->logs("App42 Step3: " . $pushNotification);
 
-            // return "123";
+            Log::info('After pushNotification time : '.Carbon::now()); 
         }catch(\Exception $e){
+            $helper->logs("App42 Exception: " . $e->getMessage());            
             return $e->getMessage();
         }
+
 
         return $pushNotification;
     }
@@ -574,7 +602,7 @@ class AdminController extends Controller
             $allData = [];
 
             $prods = $products->where('u_id', Auth::user()->u_id)->where('s_activ', '!=' , 2)
-            ->orderBy('rank', 'ASC')
+            ->orderBy('product_rank', 'ASC')
             ->get()->groupBy('dish_type');
             $prodprices = $productPriceList->where('store_id', Session::get('storeId'))->get()->groupBy('product_id');
         
@@ -616,7 +644,6 @@ class AdminController extends Controller
                         }
                     }
                 }
-                // dd($allData);
             }
 
             $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
@@ -671,9 +698,34 @@ class AdminController extends Controller
 
         $util = new Util(env('APP42_API_KEY'),env('APP42_API_SECRET'));
 
-        $publish_start_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_start_date);
-        // $publish_start_date = $util->getUTCFormattedTimestamps($request->publish_start_date);
+//         $publish_start_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_start_date);
+//         $date = date_format($date,"Y-m-d H:i:s");
+// // echo $date; die();
+// $now = Carbon::now(-5);
 
+// dd($now->timezone);
+
+// $the_date = strtotime($date);
+// // echo(date_default_timezone_get() . "<br />");
+// // echo(date("Y-d-mTG:i:sz",$the_date) . "<br />");
+// // echo(date_default_timezone_set("UTC") . "<br />");
+// echo $helper->convertTimeToUTCzone($date, "Europe/Athens", "d/m/Y H:i:s");
+// //echo(date("Y-d-mTG:i:sz", $the_date) . "<br />");
+// die();
+
+
+                // dd($publish_start_date->tz('utc'));
+//         $the_date = $publish_start_date->getTimestamp();
+// print_r($publish_start_date); 
+// echo "<br />";
+// echo(date("Y-m-dTG:i:sz",$the_date) . "<br />");
+// echo(date_default_timezone_set("UTC") . "<br />");
+// echo(date("Y-m-dTG:i:sz", $publish_start_date->getTimestamp()) . "<br />");
+// die();
+        // $publish_start_date = date("Y-m-dTG:i:sz", $publish_start_date->getTimestamp());
+        // $publish_start_date = $util->getUTCFormattedTimestamps($publish_start_date->getTimestamp());
+
+        $publish_start_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_start_date);
         $publish_end_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_end_date);
         // $publish_end_date = $util->getUTCFormattedTimestamps($request->publish_end_date);
 
@@ -697,7 +749,7 @@ class AdminController extends Controller
         // Opload images related to
             if (!empty($_FILES["prodImage"]["name"])) {
                 $file_extension = strtolower($info['extension']);
-                if ($file_extension == "png" || $file_extension == "jpg" || $file_extension == "jpeg") { 
+                if ($file_extension == "png" || $file_extension == "jpg" || $file_extension == "jpeg" || $file_extension == "gif") { 
                     if ($_FILES["prodImage"]["error"] > 0) {
                         $error.=$_FILES["prodImage"]["error"] . "<br />";
                     } else {
@@ -763,7 +815,6 @@ class AdminController extends Controller
         $product->product_info_page = "";
         $product->start_of_publishing = Carbon::now();
         $product->company_id = $company_id;
-        $product->rank = $product->count()+1;
         $product->save();
 
         $sloganSubLangId = $helper->uuid();
@@ -846,12 +897,6 @@ class AdminController extends Controller
 
         $util = new Util(env('APP42_API_KEY'),env('APP42_API_SECRET'));
 
-        $publish_start_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_start_date);
-        // $publish_start_date = $util->getUTCFormattedTimestamps($request->publish_start_date);
-
-        $publish_end_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_end_date);
-        // $publish_end_date = $util->getUTCFormattedTimestamps($request->publish_end_date);
-
         $employer = new Employer();
         $company_id = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
 
@@ -872,7 +917,7 @@ class AdminController extends Controller
         // Opload images related to
             if (!empty($_FILES["prodImage"]["name"])) {
                 $file_extension = strtolower($info['extension']);
-                if ($file_extension == "png" || $file_extension == "jpg" || $file_extension == "jpeg") { 
+                if ($file_extension == "png" || $file_extension == "jpg" || $file_extension == "jpeg" || $file_extension == "gif") { 
                     if ($_FILES["prodImage"]["error"] > 0) {
                         $error.=$_FILES["prodImage"]["error"] . "<br />";
                     } else {
@@ -965,8 +1010,14 @@ class AdminController extends Controller
         $product_price_list->text = "Price:" . $request->prodPrice . $request->currency;
         $product_price_list->price = $request->prodPrice;
         $product_price_list->lang = $request->dishLang;
-        $product_price_list->publishing_start_date = $publish_start_date;
-        $product_price_list->publishing_end_date = $publish_end_date;
+        if($request->publish_start_date!=null){
+            $publish_start_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_start_date);
+            $product_price_list->publishing_start_date = $publish_start_date;
+        }
+        if($request->publish_end_date!=null){
+            $publish_end_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_end_date);       
+            $product_price_list->publishing_end_date = $publish_end_date;
+        }
         $product_price_list->save();
 
         return redirect()->route('menu')->with('success', $message);
@@ -1071,7 +1122,6 @@ class AdminController extends Controller
     public function addDishPrice(Request $request){
         $publishing_start_date = \DateTime::createFromFormat('d/m/Y - H:i', $request->publishing_start_date);
         $publishing_end_date = \DateTime::createFromFormat('d/m/Y - H:i', $request->publishing_end_date);
-        // dd($publishing_start_date);
 
         $product_price_list = new ProductPriceList();
 
@@ -1188,10 +1238,7 @@ class AdminController extends Controller
                 curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
                 $result = curl_exec($ch);
                 curl_close($ch); 
-               // print($result);
-                // $json = json_decode($result);
-                // dd($json);
-                //print($result);
+               
                 $json = json_decode($result);
                 return view('auth.otp');
                 if($json->message == 'Insufficient credit'){
@@ -1238,7 +1285,7 @@ class AdminController extends Controller
                // dd($recipients);
                 $url = "https://gatewayapi.com/rest/mtsms";
                 $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
-                $message = "Your order ready please click on link \n ".env('APP_URL').'ready-notifaction/'.$OrderId->customer_order_id;
+                $message = "Your order ready please click on link \n ".env('APP_URL').'ready-notification/'.$OrderId->customer_order_id;
                 $json = [
                     'sender' => 'Dastjar',
                     'message' => ''.$message.'',
@@ -1258,10 +1305,52 @@ class AdminController extends Controller
             }else{
                     $result = $this->sendNotifaction($OrderId->customer_order_id , $message); 
             }
-            return response()->json(['status' => 'success', 'data'=>'Order Ready Nofifaction Send Successfully.']);
+            return response()->json(['status' => 'success', 'data'=>'Order Ready Notification Send Successfully.']);
         }
 
         return response()->json(['status' => 'ready', 'data'=>'Order Ready Successfully.']);
     }
       
+    public function extraPrepTime(){
+        $storeId = Session::get('storeId');
+
+        $store = new Store();
+        
+        if($store->where('store_id', $storeId)->first()->extra_prep_time == null){
+            $prep_time = 0;
+        }else{
+            $prep_time = $store->where('store_id', $storeId)->first()->extra_prep_time;
+            $hour = explode(':', $prep_time)[0];
+            $minute = explode(':', $prep_time)[1];
+            $prep_time = ($hour*60) + $minute;
+        }
+
+        return view('kitchen.setting.prep-time')->with("prep_time", $prep_time);
+    }
+
+    public function addExtraTime(Request $request){
+        $storeId = Session::get('storeId');
+
+        $minutes = $request->extra_prep_time;
+        $hours = intdiv($minutes, 60).':'. ($minutes % 60).':00';
+
+        $store = new Store();
+        $store->where('store_id', $storeId)->update(['extra_prep_time' => $hours]);
+
+        return response()->json(['status' => 'success', 'data'=>'Preperation Time Added Successfully.']);        
+    }
+
+    public function support(Request $request){
+        $data = array('msg'=>$request->message);
+
+        $headers = "MIME-Version: 1.0\r\n";
+        $headers .= "Content-type: text/html; charset=iso-8859-1\r\n";   
+        $headers .='X-Mailer: PHP/' . phpversion();
+        $headers .= "From: Anar <admin@dastjar.com> \r\n"; // header of mail content
+
+        mail('support@dastjar.com', 'Dastjar Support Mail', $request->message, $headers);
+
+        return redirect()->back()->with('success', 'Thank you for contacting us.');
+    }
+
 }

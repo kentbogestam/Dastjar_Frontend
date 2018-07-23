@@ -10,6 +10,7 @@ use DB;
 use App\Order;
 use App\OrderDetail;
 use App\Product;
+use App\Store;
 use Carbon\Carbon;
 use Auth;
 use App\User;
@@ -29,10 +30,12 @@ class KitchenController extends Controller
         $orderDetailscustomer = Order::select('orders.*','customer.name as name')->where(['store_id' => $reCompanyId])->where('user_type','=','customer')->where('check_deliveryDate',Carbon::now()->toDateString())->where('orders.paid', '0')->whereNotIn('orders.online_paid', [2])->leftJoin('customer','orders.user_id','=','customer.id');
 
         $orderDetails = Order::select('orders.*','user.fname as name')->where('orders.store_id', '=' ,$reCompanyId)->where('user_type','=','admin')->where('check_deliveryDate',Carbon::now()->toDateString())->where('orders.paid', '0')->whereNotIn('orders.online_paid', [2])->leftJoin('user','orders.user_id','=','user.id');
+
+        $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;
         
         $results = $orderDetailscustomer->union($orderDetails)->get();
 
-        return response()->json(['status' => 'success', 'response' => true,'data'=>$results]);
+        return response()->json(['status' => 'success', 'response' => true, 'extra_prep_time' => $extra_prep_time, 'data'=>$results]);
     }
     
     public function updateTextspeach($id){
@@ -74,11 +77,11 @@ class KitchenController extends Controller
         }
 */
 
-            $product->where('dish_type',$request->dish_type)->where('rank',$request->index)->update(['rank' => $request->index+1]);
+            $product->where('dish_type',$request->dish_type)->where('product_rank',$request->index)->update(['product_rank' => $request->index+1]);
 
-            $product->where('product_id',$request->product_id)->update(['rank' => $request->index]);
+            $product->where('product_id',$request->product_id)->update(['product_rank' => $request->index]);
 
-            $product->where('dish_type',$request->dish_type)->where('rank',1)->where('product_id','>',$request->product_id)->update(['rank' => $request->index+1]);
+            $product->where('dish_type',$request->dish_type)->where('product_rank',1)->where('product_id','>',$request->product_id)->update(['product_rank' => $request->index+1]);
         
         return response()->json(['status' => 'success', 'response' => true,'data'=>"Rank Updated"]);
     }

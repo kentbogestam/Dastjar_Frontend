@@ -252,15 +252,27 @@
 		}
 
 		function orderCreateTime(time){
-			var date = new Date(time);
+			var date = convertUTCDateToLocalDate(new Date(time));
+			// var date = new Date(time + " UTC");
+
 			var dd = date.toString();
 			var ddd = dd.split(" ");
 			var ddddd = ddd[4].split(":");
 			var dddd = ddd[0]+" "+ddd[1]+" "+ddd[2]+" "+ddd[3]+" "+ddddd[0]+":"+ddddd[1];
+
 			return dddd;
 		}
 
+		function convertUTCDateToLocalDate(date) {
+		    var newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
 
+		    var offset = date.getTimezoneOffset() / 60;
+		    var hours = date.getHours();
+
+		    newDate.setHours(hours - offset);
+
+		    return newDate;   
+		}
 
 		function addTimes (startTime, endTime) {
 		  var times = [ 0, 0, 0 ]

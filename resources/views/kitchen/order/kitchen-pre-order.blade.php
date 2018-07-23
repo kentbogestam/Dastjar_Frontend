@@ -59,7 +59,6 @@
 		}
 
 		.ui-widget.ui-widget-content{
-			top: 100px;
 			z-index: 9999;
 		}
 
@@ -68,6 +67,10 @@
 		}
 
 		@media(max-width: 480px) {
+			.ui-widget.ui-widget-content{
+				top: 100px !important;
+			}
+
 			.product_image {
 				height: 38px;
 			}
@@ -160,7 +163,18 @@
 												</div>
 												<div class="extra-btn">
 														<label><img src="{{asset('kitchenImages/icon-wait-time.png')}}" width="15px">
-														@if(date_create($menuDetail->preparation_Time) != false){{'00:'.date_format(date_create($menuDetail->preparation_Time), 'i')}}@else{{$menuDetail->preparation_Time}}@endif</label>
+															<?php
+																$time = $menuDetail->preparation_Time;
+																$time2 = $storedetails->extra_prep_time;
+																$secs = strtotime($time2)-strtotime("00:00:00");
+																$result = date("H:i:s",strtotime($time)+$secs);
+															?>
+															@if(date_create($result) != false)
+															{{date_format(date_create($result), 'H').':'.date_format(date_create($result), 'i')}}
+															@else
+																{{$result}}
+															@endif
+														</label>
 														<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('kitchenImages/icon-add-comments.png')}}" width="18px">{{ __('messages.Add Comments') }}</a></label>
 														<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="product[{{$j}}][prod_desc]" value="" />
 												</div>
@@ -193,7 +207,19 @@
 													<input type="button" onclick="incrementValue('{{$menuDetail->product_id}}')" value="+" class="max" />
 												</div>
 												<div class="extra-btn">
-														<label><img src="{{asset('kitchenImages/icon-wait-time.png')}}" width="15px">@if(date_create($menuDetail->preparation_Time) != false){{'00:'.date_format(date_create($menuDetail->preparation_Time), 'i')}}@else{{$menuDetail->preparation_Time}}@endif</label>
+														<label><img src="{{asset('kitchenImages/icon-wait-time.png')}}" width="15px">
+															<?php
+																$time = $menuDetail->preparation_Time;
+																$time2 = $storedetails->extra_prep_time;
+																$secs = strtotime($time2)-strtotime("00:00:00");
+																$result = date("H:i:s",strtotime($time)+$secs);
+															?>
+															@if(date_create($result) != false)
+															{{date_format(date_create($result), 'H').':'.date_format(date_create($result), 'i')}}
+															@else
+																{{$result}}
+															@endif
+														</label>
 														<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('kitchenImages/icon-add-comments.png')}}" width="18px">{{ __('messages.Add Comments') }}</a></label>
 														<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="product[{{$j}}][prod_desc]" value="" />
 												</div>
@@ -245,14 +271,14 @@
 			<div class="pop-body">
 				
 				<textarea name="textarea-1" id="textarea-1" placeholder="{{ __('messages.Add Comments') }}"></textarea>
-				<a id="submitId" href="" data-ajax="false" class="submit-btn ui-btn ui-btn-right ui-corner-all ui-shadow ui-btn-a">{{ __('messages.Submit') }}</a>
+				<a id="submitId" href="javascript:void(0)" data-rel="back" data-ajax="false" class="submit-btn ui-btn ui-btn-right ui-corner-all ui-shadow ui-btn-a">{{ __('messages.Submit') }}</a>
 			</div>
 		</div>
 
 	</form>
 	
 
-	<div data-role="footer" class="footer_container" data-position="fixed" data-tap-toggle="false">
+	<div data-role="footer" class="footer_container" style="position: fixed; bottom: -2px" data-position="fixed" data-tap-toggle="false">
 		<div class="ui-grid-a inner-footer center">
 		<div class="ui-block-a"><a id="menudataSave" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 				<div class="img-container">
@@ -538,13 +564,13 @@
 
 		$(".extra-btn a").click(function(){
 			id=$(this).attr('id');
+            comment = $('#orderDetail'+id).val();
+			$('textarea#textarea-1').val(comment);					
 		});
 		
-		$('#submitId').click(function(){ 
-		
+		$('#submitId').click(function(){ 		
 			var text = $('textarea#textarea-1').val();
 			$('#orderDetail'+id).val(text);
-			$('#transitionExample').popup( "close" );
 			document.getElementById("textarea-1").value = "";
 		});
 
@@ -579,7 +605,6 @@
 		            document.getElementById(id).value = value;
 		    }
 		}
-
 		function decrementValue(id)
 		{
 		    var value = parseInt(document.getElementById(id).value, 10);

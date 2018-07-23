@@ -21,7 +21,7 @@ use App\Admin;
 use DB;
 use App\Store;
 use App\OrderDetail;
-
+use App\Helper;
 
 
 class PushNotifactionController extends Controller
@@ -32,7 +32,7 @@ class PushNotifactionController extends Controller
 		DB::table('orders')->where('customer_order_id', $orderID)->update([
                             'ready_notifaction' => 1,
                         ]);
-    	return redirect()->action('AdminController@index')->with('success', 'Order Ready Notifaction Send Successfully.');
+    	return redirect()->action('AdminController@index')->with('success', 'Order Ready Notification Send Successfully.');
 		//dd($jsonResponse);
         //return view('order.alert-ready',compact('orderID'));
     }
@@ -40,14 +40,24 @@ class PushNotifactionController extends Controller
     public function readyNotifaction(Request $request, $orderID){
         if(Order::where('customer_order_id', $orderID)->exists()){
             $orderDetail = Order::where('customer_order_id', $orderID)->first();
+
+            if(!User::where('id', $orderDetail->user_id)->exists()){
+                return redirect('home');
+            }
+
+            $user = User::where('id', $orderDetail->user_id)->first();
             $companydetails = Store::where('store_id', $orderDetail->store_id)->first();
-            return view('order.alert-ready',compact('orderID','companydetails'));            
+            return view('order.alert-ready',compact('orderID','companydetails','user'));            
         }else{
             return redirect('home');
         }
     }
 
     public function orderDeliver(Request $request, $orderID){
+        $helper = new Helper();
+        try {
+        $helper->logs("Step 1: order id = " . $orderID);       
+
     	$message = 'orderDeliver';
 
         $OrderId = Order::where('customer_order_id' , $orderID)->first();
@@ -72,12 +82,14 @@ class PushNotifactionController extends Controller
                     $pieces[0] = '';                              
                 }
         
+           $helper->logs("Step 2: recipient calculation = " . $orderID . " And browser=" .$pieces[0]);  
+
         if($pieces[0] == 'Safari'){
             //dd($recipients);
             $url = "https://gatewayapi.com/rest/mtsms";
             $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
 
-            $message = "Your order deliver please click on link \n".env('APP_URL').'deliver-notifaction/'.$orderID;
+            $message = "Your order deliver please click on link \n".env('APP_URL').'deliver-notification/'.$orderID;
 
             $json = [
                 'sender' => 'Dastjar',
@@ -95,22 +107,39 @@ class PushNotifactionController extends Controller
             curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
             $result = curl_exec($ch);
             curl_close($ch);   
+            $helper->logs("Step 3: IOS notification sent = " . $orderID . " And Result=" .$result);
         }else{
-            $this->sendNotifaction($orderID , $message);
+            $result = $this->sendNotifaction($orderID , $message);
+            $helper->logs("Step 4: Android notification sent = " . $orderID . " And Result=" .$result);
+
         }
         }
 
 		DB::table('orders')->where('customer_order_id', $orderID)->update([
                             'paid' => 1,
                         ]);
-
+        $helper->logs("Step 5: order table updated = " . $orderID . " And user id=" . $OrderId->user_id);       
         return redirect()->action('AdminController@index');
+        } catch (Exception $e) {
+            $helper->logs("Step 6: Exception = " .$ex->getMessage());            
+        }
+
     }
 
     public function deliverNotifaction(Request $request, $orderID){
-        $orderDetail = Order::where('customer_order_id', $orderID)->first();
-        $companydetails = Store::where('store_id', $orderDetail->store_id)->first();
-    	return view('order.alert-deliver',compact('orderID','companydetails'));
+        if(Order::where('customer_order_id', $orderID)->exists()){
+            $orderDetail = Order::where('customer_order_id', $orderID)->first();
+
+             if(!User::where('id', $orderDetail->user_id)->exists()){
+                return redirect('home');
+            }
+
+            $user = User::where('id', $orderDetail->user_id)->first();
+            $companydetails = Store::where('store_id', $orderDetail->store_id)->first();
+    	   return view('order.alert-deliver',compact('orderID','companydetails','user'));
+        }else{
+            return redirect('home');
+        }
     }
 
     public function sendNotifaction($orderID, $message){
@@ -128,19 +157,19 @@ class PushNotifactionController extends Controller
 	
     	if($message == 'orderDeliver'){
 
-    		$url = env('APP_URL').'deliver-notifaction/'.$orderID;
-    		//$url = env('APP_URL').'/public/deliver-notifaction/'.$orderID;
+    		$url = env('APP_URL').'deliver-notification/'.$orderID;
+    		//$url = env('APP_URL').'/public/deliver-notification/'.$orderID;
             $messageDelever = "Your Order ". $orderID . " Deliver";
             $message = "{'alert': " ."'". $messageDelever."'" . ",'_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': " ."'". $messageDelever."'" . ",'type':'openUrl','content':" ."'". $url."'" . "}}";
 
     		//$message = "{'alert':'Your Order Deliver.','badge':1,'sound':'default','Url':" ."'". $url."'" . "}";
     	}else{
-    		$url = env('APP_URL').'ready-notifaction/'.$orderID;
+    		$url = env('APP_URL').'ready-notification/'.$orderID;
             $message = "{'alert': 'Your Order Deliver.','_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': 'Your Order Deliver.','type':'openUrl','content':" ."'". $url."'" . "}}";
     		//$message = "{'alert':'Your Order Ready.','badge':1,'sound':'default','Url':" ."'". $url."'" . "}";
     	}
     	//dd(Config::get('app.php.varname'));
-    	//dd(env('APP_URL').'/ready-notifaction/'.$orderID);
+    	//dd(env('APP_URL').'/ready-notification/'.$orderID);
     	//dd($request->url());
     	App42API::initialize(env('APP42_API_KEY'),env('APP42_API_SECRET')); 
 		$pushNotificationService = App42API::buildPushNotificationService();

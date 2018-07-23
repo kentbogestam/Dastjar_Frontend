@@ -79,8 +79,12 @@ class CustomerController extends Controller
                 }
             }
         }
-        return redirect('customer')->with('success', 'Location updated successfully.');
-        //return view('settings.index', compact(''));
+
+        if($data['redirect_to_home'] == 1){
+            return redirect('home')->with('success', 'Location updated successfully.');
+        }else{
+            return redirect('customer')->with('success', 'Location updated successfully.');
+        }
     }
 
     /**

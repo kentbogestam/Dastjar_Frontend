@@ -104,6 +104,7 @@ class OrderController extends Controller
                 $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 
                 $storeDetail = Store::where('store_id', $data['storeID'])->first();
+
                 //If store support ontine payment then if condition run.
                 if($storeDetail->online_payment == 1){
                     $companyDetail = Company::where('company_id', $productTime->company_id)->first();
@@ -119,13 +120,12 @@ class OrderController extends Controller
                     if(isset($companyUserDetail->stripe_user_id))
                     $request->session()->put('stripeAccount', $companyUserDetail->stripe_user_id);
 
-                     return view('order.paymentIndex', compact('order','orderDetails'));
+                    return view('order.paymentIndex', compact('order','orderDetails'));
                 }else{
-                    return view('order.index', compact('order','orderDetails'));
+                    $user = User::where('id',$order->user_id)->first();      
+                    return view('order.index', compact('order','orderDetails','storeDetail','user'));
                 }
             }else{
-
-
                 $todayDate = $request->session()->get('browserTodayDate');
                 $currentTime = $request->session()->get('browserTodayTime');
                 $todayDay = $request->session()->get('browserTodayDay');
@@ -237,7 +237,8 @@ class OrderController extends Controller
                 Session::forget('orderData');
                  return view('order.paymentIndex', compact('order','orderDetails'));
             }else{
-                return view('order.index', compact('order','orderDetails'));
+                $user = User::where('id',$order->user_id)->first();                      
+                return view('order.index', compact('order','orderDetails','storeDetail','user'));
             }
         }else{
             $todayDate = $request->session()->get('browserTodayDate');
@@ -258,6 +259,11 @@ class OrderController extends Controller
             }else{
                 $lng = $request->session()->get('with_login_lng');
             }
+
+            $todayDate = Carbon::now()->format('d-m-Y');
+
+            // // dd($userDetail);
+            // dd("lat: " .$lat . ", lng: " . $lng . ", userDetail-range: " . $userDetail->range . ",todayDate: " . $todayDate . ",currentTime: " . $currentTime . ",todayDay: " . $todayDay);
             
             $companydetails = Store::getListRestaurants($lat,$lng,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
             
@@ -267,9 +273,13 @@ class OrderController extends Controller
 
     public function orderView($orderId){
         $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
-        //dd($order->currencies);
+
+        $storeDetail = Store::where('store_id', $order->store_id)->first();
+        $user = User::where('id',$order->user_id)->first();
+
         $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
-        return view('order.index', compact('order','orderDetails'));
+
+        return view('order.index', compact('order','orderDetails','storeDetail','user'));
     }
 
     public function random_num($size) {
@@ -293,6 +303,10 @@ class OrderController extends Controller
     }
 
     public function order_detail($id, Request $request){
+        if(!Order::where('customer_order_id',$id)->exists()){
+            return redirect()->route('page_404');
+        }
+
         $customer = new User();
         $logged_in=0;
         $k=0;
@@ -303,19 +317,19 @@ class OrderController extends Controller
             }
         }
 
+        $phone = (explode("-",$request->m));
+
         if($logged_in == 1){
             $cust = $customer->where('id',session()->get('login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d'))->first();
-            $customer_id = $cust->id;
 
-            if($cust->phone_number == null){
-                $phone = (explode("-",$request->m));
+            if(!$customer->where('phone_number_prifix', $phone[0])
+                ->where('phone_number', $phone[1])->exists() && $cust->phone_number == null){
                 $cust->phone_number_prifix = $phone[0];
                 $cust->phone_number = $phone[1];
                 $cust->save();
             }
-        }else{
-            $phone = (explode("-",$request->m));
 
+        }else{
             if($customer->where('phone_number_prifix', $phone[0])
                 ->where('phone_number', $phone[1])->exists()){
                     $cust = $customer->where('phone_number_prifix', $phone[0])
@@ -329,14 +343,17 @@ class OrderController extends Controller
                 $cust = new User();
                 $cust->phone_number_prifix = $phone[0];
                 $cust->phone_number = $phone[1];                
-                $cust->email = $phone[1];
+                $cust->email = $phone[0].$phone[1];
+                $cust->language = "ENG";
                 $cust->save();
 
                 $k=1;
             }
 
-            $customer_id = $cust->id;            
         }
+
+            $customer_id = $cust->id;            
+            $username = $cust->email;            
 
             $order =  Order::where('customer_order_id',$id);
             $order->update(['user_id' => $customer_id]);
@@ -347,8 +364,39 @@ class OrderController extends Controller
             
         $order = Order::select('orders.*','store.store_name','company.currencies')->where('customer_order_id',$id)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
 
+        $storeDetail = Store::where('store_id', $order->store_id)->first();
+
         $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$order->order_id)->get();
 
-        return view('order.order-details', compact('order','orderDetails','k'));
+        return view('order.order-details', compact('order','orderDetails','storeDetail','username','k'));
+    }
+
+    public function cancelOrder(Request $request, $order_number){
+        return view('order.order-cancel')->with('order_number',$order_number);
+    }    
+
+    public function cancelOrderPost(Request $request){
+        $message = '<html><body>';
+        $message .= '<p style="color:#1275ff;">Order Number: ' . $request->order_number . '</p>';
+        $message .= '<p style="color:#080;font-size:18px;">Mobile Number: ' . $request->mobile_number . '</p>';
+        $message .= '</body></html>';
+
+        $headers = "MIME-Version: 1.0\r\n";
+        $headers .= "Content-type: text/html; charset=iso-8859-1\r\n";   
+        $headers .='X-Mailer: PHP/' . phpversion();
+        $headers .= "From: Anar <admin@dastjar.com> \r\n"; // header of mail content
+
+        $email = Auth::user()->email;
+
+        mail($email, 'Order Canceled', $message, $headers);
+        Session::flash('order_number', $request->order_number);
+
+        return redirect()->route('cancel-order', $request->order_number);
+    }
+
+    public function updateBrowser(Request $request){
+        $cust = User::where('email',$request->email)->first();
+        $cust->browser = "Safari ";
+        $cust->save();
     }
 }

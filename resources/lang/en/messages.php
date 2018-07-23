@@ -80,6 +80,9 @@ return [
     'Contact Us' => 'Contact Us',
     'Message' => 'Message',
     'Contact Us Placeholder' => 'Enter your Message and add your email for replay',
-    'Terms and Conditions' => 'Terms and Conditions'    
+    'Terms and Conditions' => 'Terms and Conditions',
+    'Extra Preparation Time' => 'Extra Preparation Time',
+    'Support' => 'Support',
+    'Thank you for contacting us.' => 'Thank you for contacting us.'   
 
 ];

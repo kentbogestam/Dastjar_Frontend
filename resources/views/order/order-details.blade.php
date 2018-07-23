@@ -1,15 +1,15 @@
 @extends('layouts.master')
 
 @section('head-scripts')
-<!-- @if($k == 1)
- --><!-- <script src="{{asset('locationJs/currentLocation.js')}}"></script>
+
+<!-- <script src="{{asset('locationJs/currentLocation.js')}}"></script>
  -->
 <?php 
-if(Auth::check()){
-    $username = Auth::user()->email;
-}else{
-    $username = explode("-",$_GET['m'].split("-"))[1];
-}
+// if(Auth::check()){
+//     $username = Auth::user()->email;
+// }else{
+    // $username = explode("-",$_GET['m'])[1];
+//}
 ?>
 <script src="{{asset('notifactionJs/newNotifaction/App42.js')}}"></script>
 <script src="{{asset('notifactionJs/newNotifaction/jQuery.js')}}"></script>
@@ -19,15 +19,22 @@ if(Auth::check()){
 var API_KEY = "{{env('APP42_API_KEY')}}"
 var SECERT_KEY = "{{env('APP42_API_SECRET')}}"
 
-var $userName = <?php echo $username; ?>;
+var userName = <?php echo "'" . $username . "'"; ?>;
+var type = jQuery.browser.name;
+
+    if(type=="Safari"){
+                $.post("{{url('update-browser')}}", {_token: "{{ csrf_token() }}", email: userName}, 
+                    function(data, status){
+                    console.log("Data: " + data + "\nStatus: " + status);
+                });
+    }
 
 if ('serviceWorker' in navigator) {
-  var type = jQuery.browser.name;
-  var jsAddress = "{{asset('notifactionJs/chrome-worker.js')}}"
+  var jsAddress = "{{asset('notifactionJs/chrome-worker.js')}}";
   if(type== "Firefox"){
       jsAddress = "{{asset('notifactionJs/firefox-worker.js')}}";
-  }
-  
+  }  
+
   navigator.serviceWorker.register(jsAddress).then(function(reg) {
      reg.pushManager.getSubscription().then(function(sub) {  
     var regID ;
@@ -60,6 +67,7 @@ if ('serviceWorker' in navigator) {
         }
         registerDeviceWithApp42(regID,type.toUpperCase())   
       }
+
     });
   })
    .catch(function(err) {
@@ -73,16 +81,15 @@ function registerDeviceWithApp42(token,type ){
     pushNotificationService.storeDeviceToken(userName,token,type,{  
         success: function(object) 
         {  
-            window.close();
+            // window.close();
         },
         error: function(error) {  
-            window.close();
+            // window.close();
         }  
     });  
 }
 </script>
-<!-- @endif
- -->
+
  @endsection      
 
 @section('content')
@@ -110,10 +117,25 @@ function registerDeviceWithApp42(token,type ){
 					<p>{{ __('messages.Order Number') }} </p>
 					<p class="order-no">{{$order->customer_order_id}}</p>
 					<p>({{$order->store_name}})</p>
-					<p>{{ __('messages.Your order will be ready on') }} {{$order->order_delivery_time}} mins
-						@if($order->order_type == 'eat_later')
-						{{$order->deliver_date}}
-						@endif
+					<p>
+                        <?php
+                            $time = $order->order_delivery_time;
+                            $time2 = $storeDetail->extra_prep_time;
+                            $secs = strtotime($time2)-strtotime("00:00:00");
+                            $result = date("H:i:s",strtotime($time)+$secs);
+                        ?>
+                        
+                        @if($order->order_type == 'eat_later')
+                        {{ __('messages.Your order will be ready on') }}
+                        {{$order->deliver_date}}
+                        {{date_format(date_create($order->deliver_time), 'G:i')}} 
+                        @else
+                        {{ __('messages.Your order will be ready in about') }}
+                            @if(date_format(date_create($result), 'H')!="00")
+                            {{date_format(date_create($result), 'H')}} hours                        
+                            @endif
+                        {{date_format(date_create($result), 'i')}} mins
+                        @endif
 					</p>
 				</div>
 			</div>

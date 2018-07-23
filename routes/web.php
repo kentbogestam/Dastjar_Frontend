@@ -49,6 +49,10 @@
 	Route::get('/sentOtp','Auth\RegisterController@sentOtp');
 	Route::get('/enterOtp','Auth\LoginController@enterOtp');
 	Route::get('/userLogin','Auth\LoginController@userSessionLogin');
+	Route::post('/update-browser','OrderController@updateBrowser');
+
+	Route::get('ready-notification/{OrderId}', 'PushNotifactionController@readyNotifaction');
+	Route::get('deliver-notification/{OrderId}', 'PushNotifactionController@deliverNotifaction');
 
 	Route::get('/test','HomeController@test');
 
@@ -70,6 +74,7 @@
 		Route::get('save-location', 'CustomerController@saveLocation');
 		Route::post('save-setting', 'CustomerController@saveSetting');
 		Route::get('search-store-map', 'MapController@searchStoreMap');
+		Route::get('404', 'HomeController@page_404')->name('page_404');
 	
 	Route::group(['middleware' => ['latlng']], function(){
 		Route::get('search-map-eatnow', 'MapController@searchMapEatnow');
@@ -89,15 +94,14 @@
 		Route::get('checkDistance','DistanceController@checkDistance');
 	});
 
-Route::group(['middleware' => ['auth']], function(){
-	Route::get('ready-notifaction/{OrderId}', 'PushNotifactionController@readyNotifaction');
-	Route::get('deliver-notifaction/{OrderId}', 'PushNotifactionController@deliverNotifaction');
-	Route::get('blank-view', 'HomeController@blankView');
-	Route::get('order-view/{OrderId}', 'OrderController@orderView');
-	Route::post('payment', 'PaymentController@payment');
-	Route::get('payment', 'PaymentController@payment');
-	
-});
+	Route::group(['middleware' => ['auth']], function(){
+		Route::get('blank-view', 'HomeController@blankView');
+		Route::get('order-view/{OrderId}', 'OrderController@orderView');
+		Route::post('payment', 'PaymentController@payment');
+		Route::get('payment', 'PaymentController@payment');
+		Route::post('cancel-order', 'OrderController@cancelOrderPost');		
+		Route::get('cancel-order/{order_number}', 'OrderController@cancelOrder')->name('cancel-order');		
+	});
 
 	Route::prefix('admin')->group(function(){
 		Route::get('login','Auth\AdminLoginController@showLoginForm');
@@ -126,6 +130,10 @@ Route::group(['middleware' => ['auth']], function(){
 		Route::get('order-ready/{OrderId}', 'PushNotifactionController@orderReady');
 		Route::get('order-deliver/{OrderId}', 'PushNotifactionController@orderDeliver');
 		Route::get('kitchen-setting', 'AdminController@kitchenSetting');
+		Route::get('extra-prep-time', 'AdminController@extraPrepTime');
+		Route::post('add-extra-time', 'AdminController@addExtraTime');
+		Route::post('support', 'AdminController@support');
+
 		Route::post('save-kitchenSetting', 'AdminController@saveKitchenSetting');
 		Route::post('payment', 'AdminController@payment');
 		Route::get('payment', 'AdminController@payment');

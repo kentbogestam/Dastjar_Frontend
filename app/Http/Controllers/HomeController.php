@@ -35,6 +35,28 @@ class HomeController extends Controller
      * @return \Illuminate\Http\Response
      */
 
+    public function getList(Request $request){
+        $pieces = explode(" ", $request->session()->get('current_date_time'));
+        $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
+        $currentTime = $pieces[4];
+        $todayDay = $pieces[0];
+        if(Auth::check()){
+
+           $userDetail = User::whereId(Auth()->id())->first();
+            $lat = $request->session()->get('with_login_lat');
+            $lng = $request->session()->get('with_login_lng');
+           //dd($userDetail);
+            $companydetails = Store::getListRestaurantsCheck($lat,$lng,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
+        }else{
+
+             $lat = $request->session()->get('with_out_login_lat');
+            $lng = $request->session()->get('with_out_login_lng');
+            $rang = $request->session()->get('rang');
+             $companydetails = Store::getListRestaurantsCheck($lat,$lng, $rang,'1','3',$todayDate,$currentTime,$todayDay);
+        }
+        dd($companydetails);  
+    }
+
     public function checkUserLogin(){
         if(Auth::check()){
             $userDetail = User::whereId(Auth()->id())->first();
@@ -215,6 +237,10 @@ class HomeController extends Controller
       return view('blankPage');    
     }
 
+    public function page_404(){
+        return view('404');    
+    }
+
     public function eatNow(Request $request)
     {
         $userDetail = User::whereId(Auth()->id())->first();
@@ -332,7 +358,7 @@ class HomeController extends Controller
         $userDetail = User::whereId(Auth()->id())->first();
         $menuDetails = ProductPriceList::where('store_id',$storeId)->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->with('menuPrice')->with('storeProduct')
             ->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')
-           ->orderBy('product.rank', 'ASC')
+           ->orderBy('product.product_rank', 'ASC')
             ->get();
         $storedetails = Store::where('store_id' , $storeId)->first();
 

@@ -77,7 +77,11 @@ class PaymentController extends Controller
 
 	        	$order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
 
-				return view('order.index', compact('order','orderDetails'))->with('success', 'Payment Done Successfully');
+		        $storeId = $order->store_id;
+		        $storeDetail = Store::where('store_id' , $storeId)->first();
+		        $user = User::where('id',$order->user_id)->first();
+
+				return view('order.index', compact('order','orderDetails','storeDetail','user'))->with('success', 'Payment Done Successfully');
 			}
 		} catch (\Exception $ex) {
 	        return view('blankPage')->with('message', $ex->getMessage());

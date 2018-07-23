@@ -189,8 +189,15 @@
 	</div>
 
 	<div class="setting-list">
+		<div style="margin-right: 15px; margin-top: 5px;"> 
+			<a href="https://dastjar.com/?page_id=71" target="_blank" id="" class="terms btn btn-primary" data-ajax="false">{{ __('messages.About Us') }}
+			</a>		
+		</div> 
+	</div>
+
+	<div class="setting-list">
 		<div style="margin-right: 15px; margin-top: 5px; margin-bottom: -2px;"> 
-			<a href="{{ url('terms') }}" id="" class="terms btn btn-primary" data-ajax="false">{{ __('messages.Terms and Conditions') }}
+			<a href="{{ url('terms') }}?id={{uniqid()}}" id="" class="terms btn btn-primary" data-ajax="false">{{ __('messages.Terms and Conditions') }}
 			</a>		
 		</div> 
 	</div>

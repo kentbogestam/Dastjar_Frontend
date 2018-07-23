@@ -244,13 +244,28 @@
 												<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />
 												<div class="qty-sec">
 													<input type="button" onclick="decrementValue('{{$menuDetail->product_id}}')" value="-"  class="min" />
-													<input type="text" readonly name="product[{{$j}}][prod_quant]" maxlength="2" max="10" size="1" value = 0 id="{{$menuDetail->product_id}}" />
+													<input type="text" readonly name="product[{{$j}}][prod_quant]" maxlength="2" size="1" value="0" id="{{$menuDetail->product_id}}" />
 													<input type="button" onclick="incrementValue('{{$menuDetail->product_id}}')" value="+" class="max" />
 												</div>
 												
 												<div class="extra-btn">
 														<label><img src="{{asset('images/icons/icon-wait-time.png')}}" width="15px">
-															@if(date_create($menuDetail->preparation_Time) != false){{'00:'.date_format(date_create($menuDetail->preparation_Time), 'i')}}@else{{$menuDetail->preparation_Time}}@endif</label>
+															<?php
+																$time = $menuDetail->preparation_Time;
+																if(isset($storedetails->extra_prep_time)){
+																$time2 = $storedetails->extra_prep_time;
+																}else{
+																$time2 = "00:00:00";
+																}
+																$secs = strtotime($time2)-strtotime("00:00:00");
+																$result = date("H:i:s",strtotime($time)+$secs);
+															?>
+															@if(date_create($result) != false)
+															{{date_format(date_create($result), 'H').':'.date_format(date_create($result), 'i')}}
+															@else
+																{{$result}}
+															@endif
+														</label>
 														<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('images/icons/icon-add-comments.png')}}" width="18px">{{ __('messages.Add Comments') }}</a></label>
 														<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="product[{{$j}}][prod_desc]" value="" />
 												</div>
@@ -281,12 +296,28 @@
 												<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />
 												<div class="qty-sec">
 													<input type="button" onclick="decrementValue('{{$menuDetail->product_id}}')" value="-"  class="min" />
-													<input type="text" name="product[{{$j}}][prod_quant]" value="0" maxlength="2" max="10" readonly size="1" id="{{$menuDetail->product_id}}" />
+													<input type="text" name="product[{{$j}}][prod_quant]" value="0" maxlength="2" readonly size="1" id="{{$menuDetail->product_id}}" />
 													<input type="button" onclick="incrementValue('{{$menuDetail->product_id}}')" value="+" class="max" />
 												</div>
 
 												<div class="extra-btn">
-														<label><img src="{{asset('images/icons/icon-wait-time.png')}}" width="15px">@if(date_create($menuDetail->preparation_Time) != false){{'00:'.date_format(date_create($menuDetail->preparation_Time), 'i')}}@else{{$menuDetail->preparation_Time}}@endif</label>
+														<label><img src="{{asset('images/icons/icon-wait-time.png')}}" width="15px">
+															<?php
+																$time = $menuDetail->preparation_Time;
+																if(isset($storedetails->extra_prep_time)){
+																$time2 = $storedetails->extra_prep_time;
+																}else{
+																$time2 = "00:00:00";
+																}
+																$secs = strtotime($time2)-strtotime("00:00:00");
+																$result = date("H:i:s",strtotime($time)+$secs);
+															?>
+															@if(date_create($result) != false)
+															{{date_format(date_create($result), 'H').':'.date_format(date_create($result), 'i')}}
+															@else
+																{{$result}}
+															@endif
+														</label>
 														<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('images/icons/icon-add-comments.png')}}" width="18px">{{ __('messages.Add Comments') }}</a></label>
 														<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="product[{{$j}}][prod_desc]" value="" />
 												</div>
