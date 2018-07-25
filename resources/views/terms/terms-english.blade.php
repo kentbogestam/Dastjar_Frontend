@@ -1,7 +1,54 @@
-@extends('layouts.master')
-@section('head-scripts')
-	<meta HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+<!DOCTYPE html>
+<head>
+    	<script>
+                (function(document,navigator,standalone) {
+                    // prevents links from apps from oppening in mobile safari
+                    // this javascript must be the first script in your <head>
+                    if ((standalone in navigator) && navigator[standalone]) {
+                        var curnode, location=document.location, stop=/^(a|html)$/i;
+                        document.addEventListener('click', function(e) {
+                            curnode=e.target;
+                            while (!(stop).test(curnode.nodeName)) {
+                                curnode=curnode.parentNode;
+                            }
+                            // Condidions to do this only on links to your own app
+                            // if you want all links, use if('href' in curnode) instead.
+                            if('href' in curnode && ( curnode.href.indexOf('http') || ~curnode.href.indexOf(location.host) ) ) {
+                                e.preventDefault();
+                                location.href = curnode.href;
+                            }
+                        },false);
+                    }
+                })(document,window.navigator,'standalone');
+            </script>
+            
 	<title>Kvittens</title>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="icon" href="{{asset('images/l-logo.png')}}">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+        
+    <meta name="mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-capable" content="yes" /> 
+
+	<link rel="manifest" href="{{asset('manifest.json')}}">
+		
+ 	<link rel = "stylesheet" href ="{{asset('css/jquery.mobile.min.css')}}">
+ 	<link rel="stylesheet" href="{{asset('css/jquery.mobile.icons.min.css')}}">
+<!--  	<link rel="stylesheet" href="{{asset('css/main-style.css')}}" >
+ --> 	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+	<link href="//fonts.googleapis.com/css?family=Aclonica" rel="stylesheet">
+
+	<link rel="apple-touch-icon-precomposed" href="{{asset('addToHomeIphoneImage/icon-152x152.png')}}">
+	<link rel="stylesheet" type="text/css" href="{{asset('addToHomeIphoneCss/addtohomescreen.css')}}">
+ 	<script src = "{{asset('js/device.detect.js')}}"></script>
+ 	<script src = "{{asset('js/jquery.min.js')}}"></script>
+	<script src = "{{asset('js/jquery.mobile.min.js')}}"></script>
+	<script src = "{{asset('js/main.js')}}"></script>
+	<link rel="stylesheet" href="{{asset('css/jquery.datetimepicker.min.css')}}" >
+	
+	<meta HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
 	<!-- <meta NAME="GENERATOR" CONTENT="OpenOffice 4.1.3  (Unix)">
 	<meta NAME="AUTHOR" CONTENT="Alireza Heidarian">
 	<meta NAME="CREATED" CONTENT="20180629;16220000">
@@ -17,13 +64,54 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
 
 	<style type="text/css">
-	html { overflow-y: scroll; }
-/*	body { position: absolute; }
+/*	html { overflow-y: scroll; }
 */
+
+	body { 
+/*		position: absolute; 
+*/	
+	padding: 20px;
+}
+
+* {
+    font-family: "ProximaNova-Regular";
+}
+	.header{
+		    background: rgba(255,255,255,1);
+		    background: -moz-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 9%, rgba(194,194,187,1) 100%);
+		    background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(255,255,255,1)), color-stop(9%, rgba(255,255,255,1)), color-stop(100%, rgba(194,194,187,1)));
+		    background: -webkit-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 9%, rgba(194,194,187,1) 100%);
+		    background: -o-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 9%, rgba(194,194,187,1) 100%);
+		    background: -ms-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 9%, rgba(194,194,187,1) 100%);
+		    background: linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 9%, rgba(194,194,187,1) 100%);
+		    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#c2c2bb', GradientType=0 );
+	        border-bottom: 0px;
+	}
+
+/*[data-role = "header"] .ui-navbar a {
+	float: left;
+    margin: 0;
+    padding: 0;
+}
+
+[data-role = "header"] .ui-navbar li{
+    margin: 1.2em 1em;
+    margin: 1.2em 1em;
+    display: inline-block;
+    width: -webkit-fill-available;
+    width: -moz-available;
+}*/
+
+[data-role = "page"] {
+	padding-left: 50px;
+    max-width: calc(100%-150px);
+}
 		.top-container{
 			padding-left: 50px; 
-    		padding-right: 50px; 
+    		padding-right: 120px; 
 		}
+		
+.text-left{text-align: left;}
 
 	#delete-me-btn{
 /*		background-color: #d25229;
@@ -52,7 +140,6 @@
 
 	#dialog-confirm{
 		display: none;
-		/* color: #fff; */
 	} 
 
 	.ui-dialog .ui-dialog-buttonpane{
@@ -92,16 +179,22 @@
 /*    	margin-top: 5px;
 */    	margin-bottom: 2px;
 	}
+
+		@media only screen and (max-width: 600px) {
+		.top-container {
+		    padding-left: 30px;
+		}
+	}
+
 	</style>
-@endsection
+</head> 
 
-@section('content')
-
+<body>
 	<div data-role="header" class="header" data-position="fixed">
 		<div class="nav_fixed">
 			<div data-role="navbar"> 
 				<ul> 
-			<li><a href="{{url('user-setting')}}" data-ajax="false" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
+			<li><a href="{{url('user-setting')}}" data-ajax="false" class="text-left" style="margin-top: 10px"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
 			 <li><a data-ajax="false" class="ui-btn-active">					
 			 	<img src="{{asset('images/logo.png')}}" class="anar-logo">
 				</a>
@@ -111,13 +204,15 @@
 		</div>
 	</div>
 
-<DIV TYPE=HEADER>
+<div class="top-container">
+
+<div TYPE=HEADER>
 		<p style="text-align: center;     font-size: 25px;
     font-weight: bold;">
 		{{ __('messages.Terms') }}
 	</p>
 	<BR>
-</DIV>
+</div>
 
 <H1 CLASS="western"><SPAN LANG="en">Terms &amp; Conditions</SPAN></H1>
 <P CLASS="western" STYLE="margin-bottom: 0cm; background: #ffffff; border: none; padding: 0cm; line-height: 100%; text-decoration: none">
@@ -593,9 +688,8 @@ services will work as promised.</SPAN></FONT></FONT></FONT></FONT></P>
 	</div>
 </DIV>
 
-@endsection
+</div>
 
-@section('footer-script')
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>	 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 	<script type="text/javascript">
@@ -627,7 +721,7 @@ services will work as promised.</SPAN></FONT></FONT></FONT></FONT></P>
 	
 		});
 </script>
-
-@endsection		
+</body>
+</html>
 
 

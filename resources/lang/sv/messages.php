@@ -75,7 +75,7 @@ return [
     'Order Deliver Notification Send Successfully' => 'Beställ leveransmeddelande skickas framgångsrikt',
     'Your order will be ready in about' => 'Din beställning kommer att vara klar om',          
     'and get the benefites'  => 'och få fördelarna',
-    'Please activate Location Services in your mobile: Settings >Privacy >Location Services' => 'Vänligen sätt på Platstjänster i din mobil: Inställningar >Integritetsskydd >Platstjänster',
+    'Please activate Location Services in your mobile' => 'Vänligen sätt på Platstjänster i din mobil',
     'About Us' => 'Om Oss',
     'Send' => 'Skicka',
     'Contact Us' => 'Kontakta oss',

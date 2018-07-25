@@ -11,6 +11,8 @@ use App\User;
 use Auth;
 use DB;
 use Session;
+use App\Helper;
+
 
 class AdminLoginController extends Controller
 {
@@ -94,6 +96,7 @@ class AdminLoginController extends Controller
             }
 
         }
+
         DB::table('user')->where('id', Auth::guard('admin')->id())->update([
                             'browser' => $data['browser'],
                         ]);

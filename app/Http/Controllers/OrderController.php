@@ -97,6 +97,8 @@ class OrderController extends Controller
                             'order_total' => $total_price,
                         ]);
 
+                User::where('id',Auth::id())->update(['browser' => $data['browser']]);
+
                 $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
 
                 $request->session()->put('currentOrderId', $order->order_id);
@@ -130,7 +132,14 @@ class OrderController extends Controller
                 $currentTime = $request->session()->get('browserTodayTime');
                 $todayDay = $request->session()->get('browserTodayDay');
                 $userDetail = User::whereId(Auth()->id())->first();
-                $companydetails = Store::getListRestaurants($request->session()->get('with_login_lat'),$request->session()->get('with_login_lng'),$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
+
+                if(!isset($userDetail->range)){
+                  $range = 10;
+                }else{
+                    $range = $userDetail->range;
+                }
+
+                $companydetails = Store::getListRestaurants($request->session()->get('with_login_lat'),$request->session()->get('with_login_lng'),$range,'1','3',$todayDate,$currentTime,$todayDay);
                 
                 return view('index', compact('companydetails'));
             } 
@@ -215,6 +224,8 @@ class OrderController extends Controller
                         'order_total' => $total_price,
                     ]);
 
+            User::where('id',Auth::id())->update(['browser' => $data['browser']]);
+
             $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
 
             $request->session()->put('currentOrderId', $order->order_id);
@@ -262,10 +273,16 @@ class OrderController extends Controller
 
             $todayDate = Carbon::now()->format('d-m-Y');
 
-            // // dd($userDetail);
+            // dd($userDetail);
             // dd("lat: " .$lat . ", lng: " . $lng . ", userDetail-range: " . $userDetail->range . ",todayDate: " . $todayDate . ",currentTime: " . $currentTime . ",todayDay: " . $todayDay);
+
+            if(!isset($userDetail->range)){
+                $range = 10;
+            }else{
+                $range = $userDetail->range;
+            }
             
-            $companydetails = Store::getListRestaurants($lat,$lng,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
+            $companydetails = Store::getListRestaurants($lat,$lng,$range,'1','3',$todayDate,$currentTime,$todayDay);
             
             return view('index', compact('companydetails'));
         } 
@@ -396,7 +413,7 @@ class OrderController extends Controller
 
     public function updateBrowser(Request $request){
         $cust = User::where('email',$request->email)->first();
-        $cust->browser = "Safari ";
+        $cust->browser = $request->browser . " ";
         $cust->save();
     }
 }

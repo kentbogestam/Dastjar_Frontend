@@ -22,12 +22,10 @@ var SECERT_KEY = "{{env('APP42_API_SECRET')}}"
 var userName = <?php echo "'" . $username . "'"; ?>;
 var type = jQuery.browser.name;
 
-    if(type=="Safari"){
-                $.post("{{url('update-browser')}}", {_token: "{{ csrf_token() }}", email: userName}, 
-                    function(data, status){
-                    console.log("Data: " + data + "\nStatus: " + status);
-                });
-    }
+    $.post("{{url('update-browser')}}", {_token: "{{ csrf_token() }}", email: userName, browser: type}, 
+        function(data, status){
+        console.log("Data: " + data + "\nStatus: " + status);
+    });
 
 if ('serviceWorker' in navigator) {
   var jsAddress = "{{asset('notifactionJs/chrome-worker.js')}}";
@@ -45,12 +43,15 @@ if ('serviceWorker' in navigator) {
                 if(type=="Chrome"){
                     var idD = regID.substring(regID.indexOf("d/")+1);
                     regID =  idD.substring(idD.indexOf("/")+1);
-                }else if(type=="Firefox"){
+                }else if(type=="Firefox" || type=="Safari"){
                     var idD = regID.substring(regID.indexOf("v1/")+ 1);
                     regID = sub.endpoint.replace(/ /g,'');
                 }
 
-
+            $.post("{{url('store-device-token')}}", {_token: "{{ csrf_token() }}", email: "{{ Auth::user()->email}}", deviceToken: regID}, 
+                        function(data, status){
+                        console.log(data);
+            });
                 registerDeviceWithApp42(regID,type.toUpperCase())   
           }).catch(function(e) {
             // Handle Exception here
@@ -61,10 +62,14 @@ if ('serviceWorker' in navigator) {
         if(type=="Chrome"){
             var idD = regID.substring(regID.indexOf("d/")+1);
             regID =  idD.substring(idD.indexOf("/")+1);
-        }else if(type=="Firefox"){
+        }else if(type=="Firefox" || type=="Safari"){
             var idD = regID.substring(regID.indexOf("v1/")+ 1);
-            regID = sub.endpoint.replace(/ /g,'')
+            regID = sub.endpoint.replace(/ /g,'');
         }
+            $.post("{{url('store-device-token')}}", {_token: "{{ csrf_token() }}", email: "{{ Auth::user()->email}}", deviceToken: regID}, 
+                        function(data, status){
+                        console.log(data);
+            });
         registerDeviceWithApp42(regID,type.toUpperCase())   
       }
 

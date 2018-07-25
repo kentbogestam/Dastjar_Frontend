@@ -14,6 +14,7 @@ use App\Order;
 use App\OrderDetail;
 use App\User;
 use App\Store;
+use App\Helper;
 
 class PaymentController extends Controller
 {
@@ -80,6 +81,9 @@ class PaymentController extends Controller
 		        $storeId = $order->store_id;
 		        $storeDetail = Store::where('store_id' , $storeId)->first();
 		        $user = User::where('id',$order->user_id)->first();
+
+        		$helper = new Helper();
+        		$helper->logs($order->user_id . " - browser");
 
 				return view('order.index', compact('order','orderDetails','storeDetail','user'))->with('success', 'Payment Done Successfully');
 			}

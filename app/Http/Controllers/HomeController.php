@@ -16,6 +16,7 @@ use Auth;
 use App\ProductPriceList;
 use App\WebVersion;
 use Carbon\Carbon;
+use App\App42\App42API;
 
 class HomeController extends Controller
 {
@@ -408,10 +409,30 @@ class HomeController extends Controller
     }
 
     public function deleteUser(){
+        if(!Auth::check()){
+            return redirect()->back();
+        }
+        
         $user_id = Auth::user()->id;
 
         $gdpr = new Gdpr();
         $user = new User();
+
+        $userName = $user->where('id' , '=', $user_id)->first()->email;  
+        $deviceToken = $user->where('id' , '=', $user_id)->first()->device_token;  
+ 
+        if($deviceToken != null){
+            try{
+                App42API::initialize(env('APP42_API_KEY'),env('APP42_API_SECRET'));   
+                $pushNotificationService = App42API::buildPushNotificationService();   
+                $tokens = explode(",", $deviceToken);
+                foreach ($tokens as $key => $value) {
+                    $response = $pushNotificationService->deleteDeviceToken($userName, $value);  
+                }
+            }catch(\Exception $ex){
+                //Handle exception
+            }
+        }
 
         $gdpr->where('user_id' , '=', $user_id)->delete();
         $user->where('id' , '=', $user_id)->delete();

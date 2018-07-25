@@ -9,6 +9,7 @@ use Auth;
 use App\Helper;
 use Session;
 use Cache;
+use App\App42\App42API;
 
 class CustomerController extends Controller
 {
@@ -87,69 +88,37 @@ class CustomerController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+
+    public function storeDeviceToken(Request $request){
+        $helper = new Helper();
+
+        if(User::where('email',$request->email)->first()->device_token == null){
+            $cust = User::where('email',$request->email)->first(); 
+            $cust->device_token = $request->deviceToken;
+            $cust->save();
+            $response = "device id doesnt exist";
+            $helper->logs($request->email . " " . $request->deviceToken);
+        }else if(User::where('email',$request->email)->whereRaw("find_in_set('$request->deviceToken',device_token)")->doesntExist()){
+            $cust = User::where('email',$request->email)->first(); 
+            $cust->device_token =  $cust->device_token.",".$request->deviceToken;
+            $cust->save();
+            $response = "device id doesnt exist";
+            $helper->logs($request->email . " " . $request->deviceToken);            
+        }else{
+            $response = "device id " . $request->deviceToken . " exist";
+            $helper->logs($request->email . " " . $response);
+        }
+
+
+        return response()->json(['status' => 'success', 'response' => $response,'data'=>true]);        
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+    public function unSubscribe(){
+        $userName = "mayank@imaginei.in";  
+        $deviceToken = User::where('email',$userName)->first()->device_token;  
+        App42API::initialize(env('APP42_API_KEY'),env('APP42_API_SECRET'));   
+        $pushNotificationService = App42API::buildPushNotificationService();   
+        $response = $pushNotificationService->deleteDeviceToken($userName, $deviceToken);  
+        print_r("Response is : ".$response->toString());     
     }
 }

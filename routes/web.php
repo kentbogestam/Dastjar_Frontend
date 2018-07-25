@@ -28,6 +28,7 @@
 		Route::get('/admin', 'AdminController@checkStore')->name('admin');
 	});
 
+	Route::get('', 'HomeController@index');
 	Route::get('/home', 'HomeController@index')->name('home');
 
 	Route::post('contact-us', 'HomeController@contact_us');
@@ -73,6 +74,10 @@
 		Route::post('save-location', 'CustomerController@saveLocation');
 		Route::get('save-location', 'CustomerController@saveLocation');
 		Route::post('save-setting', 'CustomerController@saveSetting');
+		Route::post('store-device-token', 'CustomerController@storeDeviceToken');	
+		Route::get('unSubscribe', 'CustomerController@unSubscribe');
+
+
 		Route::get('search-store-map', 'MapController@searchStoreMap');
 		Route::get('404', 'HomeController@page_404')->name('page_404');
 	

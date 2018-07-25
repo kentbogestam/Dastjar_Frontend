@@ -20,7 +20,7 @@ var FETCH_ENDPOINT = "https://api.shephertz.com/cloud/1.0/storage/getAllNoticati
         var idD = regID.substring(regID.indexOf("d/")+1);
        	regID =  idD.substring(idD.indexOf("/")+1);
 		var encodedString = btoa(regID);	
-		FETCH_ENDPOINT = FETCH_ENDPOINT +encodedString+"/CHROME"+"?apiKey="+apiKey+"&";
+		FETCH_ENDPOINT = FETCH_ENDPOINT +encodedString+"/SAFARI"+"?apiKey="+apiKey+"&";
 		return fetch(FETCH_ENDPOINT).then(function(response) {
 		    return response.json().then(function(json) {
 			var jsonOBJECT = json.app42.response.notification.messages

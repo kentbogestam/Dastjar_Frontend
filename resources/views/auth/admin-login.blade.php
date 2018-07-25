@@ -66,7 +66,7 @@
             if(flag){
                 $("#form").submit();
             } else{
-                alert("Please Enter vailed Email and Password.");    
+                alert("Please Enter valid Email and Password.");    
                 e.preventDefault();
             }
         });
@@ -91,6 +91,7 @@
         if((tem= ua.match(/version\/(\d+)/i))!= null) M.splice(1, 1, tem[1]);
 
         document.getElementById('browser').value = M.join(' ');
+        
     })();
     </script>
 @endsection

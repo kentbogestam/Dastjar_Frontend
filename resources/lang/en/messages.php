@@ -74,7 +74,7 @@ return [
     'Order Ready Successfully.' => 'Order Ready Successfully.',
     'Order Deliver Notification Send Successfully' => 'Order Deliver Notification Send Successfully',
     'Your order will be ready in about' => 'Your order will be ready in about',
-    'Please activate Location Services in your mobile: Settings >Privacy >Location Services' => 'Please activate Location Services in your mobile: Settings >Privacy >Location Services',
+    'Please activate Location Services in your mobile' => 'Please activate Location Services in your mobile',
     'About Us' => 'About Us',
     'Send' => 'Send',
     'Contact Us' => 'Contact Us',

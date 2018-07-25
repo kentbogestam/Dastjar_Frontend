@@ -268,13 +268,7 @@ var totalCount = 0;
         	liItem += "</div>";
           }
           	//console.log(liItem);
-
-          
-
-          $("#companyDetailContianer").append(liItem);	
-
-          
-
+          $("#companyDetailContianer").append(liItem);	         
 		});
 	});
 
