@@ -21,12 +21,43 @@
 		border: 1px solid #777 !important;
 	}
 
+	#msg{
+		height: 200px !important;
+		  resize: none;
+
+	}
+
 	#contact-setting-list .ui-controlgroup{
 		display: block !important;
 	}
 	
 	#form{
 		margin-bottom: 0px;
+	}
+
+	#range-sec-controlgroup{
+	/*	width: 100%;*/
+	}
+/*	#msg{height: 300px;}
+*/
+/*	#msg:focus {
+color:red;
+/*height: 300px;
+*
+/*
+textarea.ui-input-text{
+  height: auto !important
+ }
+*/
+/*	html,body{ -webkit-overflow-scrolling : touch !important; overflow: auto !important; height: 100% !important; }
+*/
+/*	textarea.ui-input-text.ui-textinput-autogrow {
+    	overflow: auto !important;
+	}
+*/
+	textarea {
+	    height: auto !important;
+	    width: 100%
 	}
 </style>
 
@@ -117,7 +148,7 @@
 					<h2 class="ui-btn">Extra Preparation Time</h2>
 				</li>
 
-				<li data-role="collapsible" class="range-sec">
+				<li data-role="collapsible" id="range-sec-controlgroup" class="range-sec">
 
 					<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Support') }}
 						<p class="ui-li-aside">
@@ -128,10 +159,11 @@
 						<label class="msg-lbl"><h2>{{ __('messages.Message') }}</h2></label>
 					</div>
 
-					<div data-role="controlgroup">
+					<div id="msg-controlgroup">
 						<form id="support-form" method="post" action="{{ url('kitchen/support') }}" data-ajax="false">
 							{{ csrf_field() }}
-							<textarea type="text" id="msg" name="message" placeholder="{{ __('messages.Contact Us Placeholder') }}" class="msg-txt" required></textarea>
+							<textarea maxlength="50" id="msg" name="message" placeholder="{{ __('messages.Contact Us Placeholder') }}"  class="msg-txt"  data-ajax="false" required>
+								</textarea>
 							<button type="submit" class="btn btn-success">{{ __('messages.Send') }}</button>		
 						</form>
 					</div>
@@ -143,6 +175,8 @@
 @endsection
 
 @section('footer-script')
+<script src="https://code.jquery.com/jquery-migrate-1.3.0.js"></script>
+
 	<script type="text/javascript">
 		$("#dataSave").click(function(e){
 			var flag = true;
@@ -166,16 +200,21 @@
 		$('#prep_time').click(function(){
 			location.replace("{{url('kitchen/extra-prep-time')}}");
 		});
-		
-		
-		$(document).on("collapsibleexpand ", "[data-role=collapsible]", function () {
-			// $('.setting-page').animate({scrollTop:$(document).height()}, 'slow');
-		});
-		
 
-		$('#msg').on("focus", function () {
-			$('.setting-page').animate({scrollTop:$(document).height()}, 'slow');
+		$(document).ready(function(){
+   				$('#msg').on("focus", function () {
+				   $('.setting-page').animate({scrollTop:$(document).height()}, 'slow');
+				});	
+
+			$("textarea").removeClass('ui-input-text');
+			$.mobile.silentScroll(0);
+
 		});
+
+$(document).bind("mobileinit", function () {
+    $.mobile.ajaxEnabled = false;
+});
+
 	</script>
 
 @endsection

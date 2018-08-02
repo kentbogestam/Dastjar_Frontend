@@ -696,7 +696,9 @@ services will work as promised.</SPAN></FONT></FONT></FONT></FONT></P>
 		$('#delete-me-form').submit(function(event){
 			event.preventDefault();
 
-			$( "#dialog-confirm" ).dialog({
+			$('body').css({'overflow':'hidden'});
+
+			$("#dialog-confirm").dialog({
 					resizable: false,
 					modal: true,
 					buttons: [						
@@ -720,6 +722,13 @@ services will work as promised.</SPAN></FONT></FONT></FONT></FONT></P>
 			}); 
 	
 		});
+
+  	    $('#dialog-confirm').on('dialogclose', function(event) {
+			$('body').css({'overflow-y':'auto'});
+		});
+
+		
+
 </script>
 </body>
 </html>

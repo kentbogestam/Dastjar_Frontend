@@ -182,8 +182,7 @@ class RenderProcess
 	
 	public static function displayStopThumbnailsCreating() {
 		
-		/*
-		
+		/*		
 		// 1 ... link was displayed
 		// 0 ... display the link "Stop ThumbnailsCreation
 		

@@ -21,11 +21,9 @@ function getDeviceToken() {
 
                 registerDeviceWithApp42(deviceToken,jQuery.browser.name.toUpperCase())   
 
-        // return deviceToken;
-
+            // return deviceToken;
             //    storeDeviceToken(deviceToken);
-            // localStorage.setItem("_App42_DeviceId",regID)
-
+            // localStorage.setItem("_App42_DeviceId",regID);
             });
         }).catch(function(error) {
             console.log('Service Worker error :^(', error);
@@ -33,9 +31,6 @@ function getDeviceToken() {
     }
 }
 
-if(jQuery.browser.name == "Safari"){
-    getDeviceToken();
-}
 
 // function storeDeviceToken(deviceToken) {
 //     console.log("storeDeviceToken");

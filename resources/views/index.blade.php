@@ -321,8 +321,8 @@
 
 	$(function(){
 		var extraclass = document.body;
-		// extraclass.classList.add("disableClass");
-		navigator.geolocation.getCurrentPosition(function(position) { 
+	// extraclass.classList.add("disableClass");
+	navigator.geolocation.getCurrentPosition(function(position) { 
 	    document.cookie="latitude=" + position.coords.latitude;
 	    document.cookie="longitude=" + position.coords.longitude;
 	    var extraclass = document.body;
@@ -368,7 +368,7 @@
 	    function(returnedData){
 
 	    	var count = 10;
-	    //	console.log(returnedData["data"]);
+	    	console.log("lat: " + getCookie("latitude"));
 	    	var url = "{{url('restro-menu-list/')}}";
 			var temp = returnedData["data"];
 			list = temp;

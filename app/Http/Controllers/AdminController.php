@@ -698,36 +698,8 @@ class AdminController extends Controller
 
         $util = new Util(env('APP42_API_KEY'),env('APP42_API_SECRET'));
 
-//         $publish_start_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_start_date);
-//         $date = date_format($date,"Y-m-d H:i:s");
-// // echo $date; die();
-// $now = Carbon::now(-5);
-
-// dd($now->timezone);
-
-// $the_date = strtotime($date);
-// // echo(date_default_timezone_get() . "<br />");
-// // echo(date("Y-d-mTG:i:sz",$the_date) . "<br />");
-// // echo(date_default_timezone_set("UTC") . "<br />");
-// echo $helper->convertTimeToUTCzone($date, "Europe/Athens", "d/m/Y H:i:s");
-// //echo(date("Y-d-mTG:i:sz", $the_date) . "<br />");
-// die();
-
-
-                // dd($publish_start_date->tz('utc'));
-//         $the_date = $publish_start_date->getTimestamp();
-// print_r($publish_start_date); 
-// echo "<br />";
-// echo(date("Y-m-dTG:i:sz",$the_date) . "<br />");
-// echo(date_default_timezone_set("UTC") . "<br />");
-// echo(date("Y-m-dTG:i:sz", $publish_start_date->getTimestamp()) . "<br />");
-// die();
-        // $publish_start_date = date("Y-m-dTG:i:sz", $publish_start_date->getTimestamp());
-        // $publish_start_date = $util->getUTCFormattedTimestamps($publish_start_date->getTimestamp());
-
         $publish_start_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_start_date);
         $publish_end_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_end_date);
-        // $publish_end_date = $util->getUTCFormattedTimestamps($request->publish_end_date);
 
         $employer = new Employer();
         $company_id = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
@@ -741,15 +713,20 @@ class AdminController extends Controller
         define('_UPLOAD_IMAGE_', public_path() . '/upload/images/');
         define('IMAGE_AMAZON_PATH', 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/');
         define('IMAGE_DIR_PATH', $basePath . '/lib/bin/cumbari_s3.sh ');
-        define('IMAGE_DIR_PATH_DELETE', $basePath . '/lib/bin/cumbari_s3del.sh ');  
+        define('IMAGE_DIR_PATH_DELETE', $basePath . '/lib/bin/cumbari_s3del.sh '); 
+
+        // file_get_contents(IMAGE_DIR_PATH);
+        // die(); 
         
         $CategoryIconName = "cat_icon_" . md5(time());
         $info = pathinfo($_FILES["prodImage"]["name"]);
+        $small_image = null;                
+        $error = "";
 
         // Opload images related to
             if (!empty($_FILES["prodImage"]["name"])) {
                 $file_extension = strtolower($info['extension']);
-                if ($file_extension == "png" || $file_extension == "jpg" || $file_extension == "jpeg" || $file_extension == "gif") { 
+                if ($file_extension == "png" || $file_extension == "jpg" || $file_extension == "jpeg" || $file_extension == "gif" || $file_extension == "bmp") { 
                     if ($_FILES["prodImage"]["error"] > 0) {
                         $error.=$_FILES["prodImage"]["error"] . "<br />";
                     } else {
@@ -761,22 +738,20 @@ class AdminController extends Controller
                         $fileThumbnail = $path . $cat_filename;
                         $resizer = new Resizer();
 
-                        move_uploaded_file($fileOriginal,$fileThumbnail);
+                         move_uploaded_file($fileOriginal,$fileThumbnail);
 
                   //       try{
                   //           $resizer->createFileThumbnail($fileOriginal, $fileThumbnail, $size, $frontUpload = 0, $crop, $errorMsg);
                 		// } catch (\Exception $ex) {
                   //           echo $ex->getMessage();
+                  //           // die();
                   //       }
 
                         $small_image = $cat_filename;
                     }
-                } else {
-                    $small_image = null;                
                 }
-            } else {
-                    $small_image = null;                
             }
+
 
         $product = new Product();
         $product->product_id = $product_id;        
@@ -788,8 +763,10 @@ class AdminController extends Controller
             $file1 = _UPLOAD_IMAGE_ . 'category/' . $small_image;
             $dir1 = "category";
             $command = IMAGE_DIR_PATH . $file1 . " " . $dir1;
-            $isCLI = system($command);
-        
+
+            $isCLI = exec($command);
+                                             // dd($isCLI);
+
             /////////////////////////// upload largeimages into server///////////////////
             $file2 = _UPLOAD_IMAGE_ . 'coupon/' . $small_image;
             $dir2 = "coupon";
@@ -800,8 +777,10 @@ class AdminController extends Controller
             $copImg = IMAGE_AMAZON_PATH . 'coupon/' . $small_image;
 
             $product->small_image = $catImg;
-            $product->large_image = $copImg;
+            $product->large_image = $catImg;
         }
+
+        // dd($product->small_image);
 
         $minutes = $request->prepTime;
         $hours = intdiv($minutes, 60).':'. ($minutes % 60).':00';
@@ -913,11 +892,13 @@ class AdminController extends Controller
         
         $CategoryIconName = "cat_icon_" . md5(time());
         $info = pathinfo($_FILES["prodImage"]["name"]);
+        $small_image = null;                        
+        $error = "";
 
         // Opload images related to
             if (!empty($_FILES["prodImage"]["name"])) {
                 $file_extension = strtolower($info['extension']);
-                if ($file_extension == "png" || $file_extension == "jpg" || $file_extension == "jpeg" || $file_extension == "gif") { 
+                if ($file_extension == "png" || $file_extension == "jpg" || $file_extension == "jpeg" || $file_extension == "gif" || $file_extension == "bmp") { 
                     if ($_FILES["prodImage"]["error"] > 0) {
                         $error.=$_FILES["prodImage"]["error"] . "<br />";
                     } else {
@@ -929,22 +910,19 @@ class AdminController extends Controller
                         $fileThumbnail = $path . $cat_filename;
                         $resizer = new Resizer();
 
-                        move_uploaded_file($fileOriginal,$fileThumbnail);
+                       // move_uploaded_file($fileOriginal,$fileThumbnail);
 
-                        // try{
-                        //     $resizer->createFileThumbnail($fileOriginal, $fileThumbnail, $size, 
-                        //         $frontUpload = 0, $crop, $errorMsg);
-                        // } catch (\Exception $ex) {
-                        //     echo $ex->getMessage();
-                        // }
+                        try{
+                            $resizer->createFileThumbnail($fileOriginal, $fileThumbnail, $size, 
+                                $frontUpload = 0, $crop, $errorMsg);
+                        } catch (\Exception $ex) {
+                            echo $ex->getMessage();
+                            die();
+                        }
 
                         $small_image = $cat_filename;
                     }
-                } else {
-                    $small_image = null;                
                 }
-            } else {
-                    $small_image = null;                
             }
 
         $product = Product::where(['product_id' => $product_id])->first();
@@ -1120,8 +1098,11 @@ class AdminController extends Controller
     }
 
     public function addDishPrice(Request $request){
-        $publishing_start_date = \DateTime::createFromFormat('d/m/Y - H:i', $request->publishing_start_date);
-        $publishing_end_date = \DateTime::createFromFormat('d/m/Y - H:i', $request->publishing_end_date);
+        // dd($request->publishing_start_date);
+        $publishing_start_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_start_date);
+
+        // dd($publishing_start_date);
+        $publishing_end_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_end_date);
 
         $product_price_list = new ProductPriceList();
 

@@ -166,10 +166,7 @@
 			<ul data-role="listview"> 
 				<li data-role="collapsible" class="range-sec">
 
-					<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Contact Us') }}
-						<p class="ui-li-aside">
-							{{ __('messages.Contact Us') }}
-						</p>
+					<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Contact Us') }}						
 					</h2>
 					<div>
 						<label class="msg-lbl"><h2>{{ __('messages.Message') }}</h2></label>

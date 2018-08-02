@@ -1,11 +1,11 @@
 @extends('layouts.master')
 @section('content')
-	<div data-role="header" class="header" id="nav-header"  data-position="fixed"><!--  -->
+	<div data-role="header" class="header" id="nav-header"  data-position="fixed">
 		<div class="nav_fixed">
 			<div class="logo">
 				<div class="inner-logo">
 					<img src="{{asset('images/logo.png')}}">
-					<span>{{ Auth::user()->name}}</span>
+					@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
 				</div>
 			</div>
 			<a class="ui-btn-right map-btn user-link" href="{{url('search-map-eatnow')}}" data-ajax="false"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
@@ -207,6 +207,26 @@ var totalCount = 0;
 
 
 	 $(function(){
+	 			var extraclass = document.body;
+	// extraclass.classList.add("disableClass");
+	navigator.geolocation.getCurrentPosition(function(position) { 
+	    document.cookie="latitude=" + position.coords.latitude;
+	    document.cookie="longitude=" + position.coords.longitude;
+	    var extraclass = document.body;
+		extraclass.classList.remove('disableClass');
+		//location.reload ();
+		add();
+	},function(error){
+		if (typeof loc_lat === "undefined" || loc_lat == "") {
+		   $('.login-inner-section a').attr('href','javascript:void(0)');
+		   $('#login-popup').show();	    			
+		}else{
+		    document.cookie="latitude=" + loc_lat;
+		    document.cookie="longitude=" + loc_lng;		
+			add();
+		} 
+	});
+
 
 	$.get("{{url('lat-long')}}", { lat: getCookie("latitude"), lng : getCookie("longitude")}, 
     function(returnedData){

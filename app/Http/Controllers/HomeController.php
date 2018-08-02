@@ -46,7 +46,6 @@ class HomeController extends Controller
            $userDetail = User::whereId(Auth()->id())->first();
             $lat = $request->session()->get('with_login_lat');
             $lng = $request->session()->get('with_login_lng');
-           //dd($userDetail);
             $companydetails = Store::getListRestaurantsCheck($lat,$lng,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
         }else{
 
@@ -55,7 +54,8 @@ class HomeController extends Controller
             $rang = $request->session()->get('rang');
              $companydetails = Store::getListRestaurantsCheck($lat,$lng, $rang,'1','3',$todayDate,$currentTime,$todayDay);
         }
-        dd($companydetails);  
+
+        return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails]);
     }
 
     public function checkUserLogin(){

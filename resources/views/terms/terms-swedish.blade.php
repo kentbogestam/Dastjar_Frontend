@@ -650,6 +650,10 @@ fungerar som utlovat.</SPAN></FONT></FONT></FONT></P>
 			}); 
 	
 		});
+
+		$('#dialog-confirm').on('dialogclose', function(event) {
+			$('body').css({'overflow-y':'auto'});
+		});
 </script>
 
 </body>

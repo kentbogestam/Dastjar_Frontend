@@ -66,6 +66,11 @@
 			max-height: 32px;
 		}
 
+		.edit_comment{
+			display: none;
+			color: #59a8d4;
+		}
+
 		@media(max-width: 480px) {
 			.ui-widget.ui-widget-content{
 				top: 100px !important;
@@ -175,7 +180,7 @@
 																{{$result}}
 															@endif
 														</label>
-														<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('kitchenImages/icon-add-comments.png')}}" width="18px">{{ __('messages.Add Comments') }}</a></label>
+														<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('kitchenImages/icon-add-comments.png')}}" width="18px"><span class="add_comment">{{ __('messages.Add Comments') }}</span><span class="edit_comment">{{ __('messages.Edit Comments') }}</span></a></label>
 														<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="product[{{$j}}][prod_desc]" value="" />
 												</div>
 											</li>
@@ -220,7 +225,7 @@
 																{{$result}}
 															@endif
 														</label>
-														<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('kitchenImages/icon-add-comments.png')}}" width="18px">{{ __('messages.Add Comments') }}</a></label>
+														<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('kitchenImages/icon-add-comments.png')}}" width="18px"><span class="add_comment">{{ __('messages.Add Comments') }}</span><span class="edit_comment">{{ __('messages.Edit Comments') }}</span></a></label>
 														<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="product[{{$j}}][prod_desc]" value="" />
 												</div>
 											</li>
@@ -571,6 +576,15 @@
 		$('#submitId').click(function(){ 		
 			var text = $('textarea#textarea-1').val();
 			$('#orderDetail'+id).val(text);
+
+			if(text.trim()!=""){
+				$('#orderDetail'+id).parent().find('.add_comment').hide();
+				$('#orderDetail'+id).parent().find('.edit_comment').show();
+			}else{			
+				$('#orderDetail'+id).parent().find('.edit_comment').hide();
+				$('#orderDetail'+id).parent().find('.add_comment').show();
+			}
+
 			document.getElementById("textarea-1").value = "";
 		});
 

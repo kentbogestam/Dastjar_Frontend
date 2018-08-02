@@ -17,7 +17,7 @@
 		return phpinfo();
 	});
 	
-	Auth::routes();
+	// Auth::routes();
 
 	Route::get('logout', function(){
 		\Auth::logout();
@@ -28,8 +28,8 @@
 		Route::get('/admin', 'AdminController@checkStore')->name('admin');
 	});
 
-	Route::get('', 'HomeController@index');
-	Route::get('/home', 'HomeController@index')->name('home');
+	// Route::get('', 'HomeController@index');
+	 Route::get('/home', 'HomeController@index')->name('home');
 
 	Route::post('contact-us', 'HomeController@contact_us');
 	Route::post('gdpr', 'AjaxController@gdpr');

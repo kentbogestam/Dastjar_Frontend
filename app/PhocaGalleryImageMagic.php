@@ -115,7 +115,7 @@ class PhocaGalleryImageMagic
 					$thumbnailSmall 	= preg_match("/small-/i", $fileOut);
 					$thumbnailThumb 	= preg_match("/thumb-/i", $fileOut);
 					
-					$path				= BASEPATH;
+					$path				= public_path();
 					$fileName 			= '';
 					
 					// Which Watermark will be used
@@ -204,6 +204,7 @@ class PhocaGalleryImageMagic
 			// Resampling
 			// in file
 			
+
 			// Watemark
 			if ($fileWatermark != '') {
 				if (!function_exists('ImageCreateFromPNG')) {
@@ -215,7 +216,6 @@ class PhocaGalleryImageMagic
 			}
 			// End Watermark - - - - - - - - - - - - - - - - - - 
 			
-
 	        switch($type) {
 	            case IMAGETYPE_JPEG:
 					if (!function_exists('ImageCreateFromJPEG')) {
@@ -238,6 +238,13 @@ class PhocaGalleryImageMagic
 					}
 					$image1 = ImageCreateFromGIF($fileIn);
 					break;
+	            case IMAGETYPE_BMP :
+					if (!function_exists('ImageCreateFromBMP')) {
+						$errorMsg = 'ErrorNoBMPFunction';
+						return false;
+					}
+					$image1 = ImageCreateFromBMP($fileIn);
+					break;					
 	            case IMAGETYPE_WBMP:
 					if (!function_exists('ImageCreateFromWBMP')) {
 						$errorMsg = 'ErrorNoWBMPFunction';

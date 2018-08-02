@@ -206,7 +206,7 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 					<img src="{{ $product->small_image or  "" }}" id="blah"/>
 					<span class="fa fa-camera camera_icon"></span>
 					<p class="upload_img_txt">Upload Menu Image</p>
-					<input type="file" name="prodImage" id="fileupload" onerror="alert('Image missing')" onchange="readURL(this);" style="" @if(!isset($product->small_image)){{"required"}}@endif/>
+					<input type="file" name="prodImage" id="fileupload" onerror="alert('Image missing')" onchange="readURL(this);"/>
 				</label>
 			</div>
 		</div>
@@ -386,43 +386,67 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 <script type="text/javascript">
 	var list = Array();
 	var tempCount = 18;
+	var fileExt = "";
+	var fileSize=0;
 
     function readURL(input) {
         if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-				$('.camera_icon').hide();
-				$('.upload_img_txt').hide();
-                $('#blah').attr('src', e.target.result);
-				$('#blah').show();
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
+	        	var reader = new FileReader();
+	            reader.onload = function (e) {
+					$('.camera_icon').hide();
+					$('.upload_img_txt').hide();
+	                $('#blah').attr('src', e.target.result);
+					$('#blah').show();					
+	            }
+	            fileSize = input.files[0].size;
+	            fileExt = input.files[0].name.split('.').pop().toLowerCase();
+	            reader.readAsDataURL(input.files[0]);	
+	    }
     }
 
-   $("#fileupload").change(function(){
-        readURL(this);
-    });
 
+    $('.create-menu-form').submit(function(e){
+        if(fileSize>6000000){
+				alert("Image size should be smaller than 6MB");          	
+				return false;
+		}else if(fileExt!="" && fileExt!="png" && fileExt!="jpg" && fileExt!="jpeg"){
+				alert("Only PNG, JPG and JPEG images are allowed");
+				return false;
+		}
+    });
 
 		$(document).ready(function(){
 			<?php if(isset($product_price_list->publishing_start_date)){if($product_price_list->publishing_start_date != "0000-00-00 00:00:00"){
 				?>
 				dStart = "{{date('Y-m-d H:i:s', strtotime($product_price_list->publishing_start_date))}}";
 				dStart = moment.utc(dStart).toDate();
-				dStart = moment(dStart).local().format("DD/MM/YY HH:mm");
+				dStart = moment(dStart).local().format("DD/MM/YYYY HH:mm");	
 				$('#date-start').val(dStart);
 				<?php
-			}} ?>
+			}}else{ ?>
+				$('#date-start').val("{{date('d/m/Y 00:00')}}");
+				dStart = "{{date('Y-m-d 00:00:00')}}";	
+				dStart = moment(dStart).toDate();
+				dStart = moment.utc(dStart).format("DD/MM/YYYY HH:mm");
+				$('#date-start-utc').val(dStart);
+			<?php }
+			?>
 
 			<?php if(isset($product_price_list->publishing_end_date)){if($product_price_list->publishing_start_date != "0000-00-00 00:00:00"){
 				?>
 				dEnd = "{{date('Y-m-d H:i:s', strtotime($product_price_list->publishing_end_date))}}";
 				dEnd = moment.utc(dEnd).toDate();
-				dEnd = moment(dEnd).local().format("DD/MM/YY HH:mm");
-				$('#date-end').val(dEnd);
+				dEnd = moment(dEnd).local().format("DD/MM/YYYY HH:mm");	
+				$('#date-end').val(dEnd);	
 				<?php
-			}} ?>
+			}} else{ ?>
+				$('#date-end').val("{{date('d/m/Y 23:59')}}");
+				dEnd = "{{date('Y-m-d 23:59:00')}}";
+				dEnd = moment(dEnd).toDate();
+				dEnd = moment.utc(dEnd).format("DD/MM/YYYY HH:mm");
+				$('#date-end-utc').val(dEnd);
+			<?php }
+			?>
 			
 
 			<?php
@@ -437,7 +461,7 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 
 			$('#date-start').bootstrapMaterialDatePicker
 			({
-				weekStart: 0, format: 'DD/MM/YYYY HH:mm', shortTime : true, clearButton: true
+				weekStart: 0, format: 'DD/MM/YYYY HH:mm', clearButton: true
 			}).on('change', function(e, date)
 			{
 				$('#date-end').bootstrapMaterialDatePicker('setMinDate', date);
@@ -446,7 +470,7 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 
 			$('#date-end').bootstrapMaterialDatePicker
 			({
-				weekStart: 0, format: 'DD/MM/YYYY HH:mm',  shortTime : true, clearButton: true
+				weekStart: 0, format: 'DD/MM/YYYY HH:mm', clearButton: true
 			}).on('change', function(e2, date2)
 			{
 				$('#date-end-utc').val(moment.utc(date2).format('DD/MM/YYYY HH:mm'));

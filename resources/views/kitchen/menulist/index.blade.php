@@ -305,9 +305,9 @@
 				  	<input type="hidden" id="selected_prod_store_id" name="store_id"/>	  
 					<input type="number" name="price" placeholder="Price ({{$currency}})"/>
 					<input type="text" id="date-start" name="" placeholder="Publishing Start Date"/>
-					<input type="text" id="date-start-utc" name="publishing_start_date" placeholder="Publishing Start Date"/>
+					<input type="hidden" id="date-start-utc" name="publishing_start_date"/>
 					<input type="text" id="date-end" name="" placeholder="Publishing End Date"/>
-					<input type="text" id="date-end-utc" name="publishing_end_date" placeholder="Publishing End Date"/>						  
+					<input type="hidden" id="date-end-utc" name="publishing_end_date"/>						  
 					{{ csrf_field() }}
 			</div>
 			
@@ -415,16 +415,16 @@
 
 			$('#date-start').bootstrapMaterialDatePicker
 			({
-				weekStart: 0, format: 'DD/MM/YYYY - HH:mm',  shortTime : true, clearButton: true
+				weekStart: 0, format: 'DD/MM/YYYY - HH:mm', clearButton: true
 			}).on('change', function(e, date)
 			{
 				$('#date-end').bootstrapMaterialDatePicker('setMinDate', date);
-				$('#date-start-utc').val(moment.utc(date).format('DD/MM/YYYY HH:mm'));				
+				$('#date-start-utc').val(moment.utc(date).format('DD/MM/YYYY HH:mm'));								
 			});
 
 			$('#date-end').bootstrapMaterialDatePicker
 			({
-				weekStart: 0, format: 'DD/MM/YYYY - HH:mm',  shortTime : true, clearButton: true
+				weekStart: 0, format: 'DD/MM/YYYY - HH:mm', clearButton: true
 			}).on('change', function(e2, date2)
 			{
 				$('#date-end-utc').val(moment.utc(date2).format('DD/MM/YYYY HH:mm'));

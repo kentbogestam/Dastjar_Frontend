@@ -251,8 +251,6 @@ var SECERT_KEY = "{{env('APP42_API_SECRET')}}";
 
 var userName = "{{ Auth::user()->email}}";
 if ('serviceWorker' in navigator) {
-	alert(userName);
-
   var type = jQuery.browser.name;
   var jsAddress = "{{asset('notifactionJs/chrome-worker.js')}}";
 
