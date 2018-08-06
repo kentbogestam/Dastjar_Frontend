@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use App\Country;
 use DB;
+use Session;
 
 class RegisterController extends Controller
 {
@@ -195,7 +196,10 @@ class RegisterController extends Controller
                     return view('auth.otp');
                 }
             }
-            return redirect()->action('Auth\RegisterController@userRegister')->with('success', 'Your Number is not register.Please register mobile number');
+
+            Session::flash('_old_input.phone_number',$number);
+
+            return redirect()->action('Auth\RegisterController@userRegister')->with('success', 'Your Number is not register. Please register mobile number');
 
         }else{
             return view('auth.otp');

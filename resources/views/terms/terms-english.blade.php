@@ -703,11 +703,11 @@ services will work as promised.</SPAN></FONT></FONT></FONT></FONT></P>
 			$('body').css({'overflow':'hidden'});
 
 			// Disable scrolling.
-			// document.ontouchmove = function (e) {
-			//   e.preventDefault();
-			// }
+			document.ontouchmove = function (e) {
+			  e.preventDefault();
+			}
 
-			//     document.body.addEventListener('touchmove', preventDefault, { passive: false });
+			    // document.body.addEventListener('touchmove', preventDefault, { passive: false });
 
 			$("#dialog-confirm").dialog({
 					resizable: false,
@@ -741,7 +741,7 @@ services will work as promised.</SPAN></FONT></FONT></FONT></FONT></P>
 			  return true;
 			}
 
-		    document.body.removeEventListener('touchmove', preventDefault, { passive: false });
+		    // document.body.removeEventListener('touchmove', preventDefault, { passive: false });
 
 		});
 

@@ -157,6 +157,8 @@ class LoginController extends Controller
             //return redirect()->action('HomeController@index');
             return redirect()->route('withOutLogin');
         }else{
+
+            Session::flash('userPhoneNumber',$request->session()->get('userPhoneNumber'));
             return redirect()->action('Auth\LoginController@enterOtp')->with('success', 'You have entered wrong otp.');
         }
     }

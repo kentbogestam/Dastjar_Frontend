@@ -243,9 +243,6 @@ $(document).ready(function(){
 				var curDate = new Date().getTime();
 				var selDate = new Date($('#date-value1-23').val()).getTime();
 
-				console.log(curDate);
-				console.log(selDate);
-
 				if(timeHH == 00 && timeMM == 00){
 					$('.error_time').show();
 					console.log(timeHH);
