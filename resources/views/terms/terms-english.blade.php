@@ -102,6 +102,10 @@
     width: -moz-available;
 }*/
 
+	#back_arw{
+		width: 20px;
+	}
+
 [data-role = "page"] {
 	padding-left: 50px;
     max-width: calc(100%-150px);
@@ -194,7 +198,7 @@
 		<div class="nav_fixed">
 			<div data-role="navbar"> 
 				<ul> 
-			<li><a href="{{url('user-setting')}}" data-ajax="false" class="text-left" style="margin-top: 10px"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
+			<li><a href="{{url('user-setting')}}" data-ajax="false" id="back_arw" class="text-left" style="margin-top: 10px"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
 			 <li><a data-ajax="false" class="ui-btn-active">					
 			 	<img src="{{asset('images/logo.png')}}" class="anar-logo">
 				</a>
@@ -698,6 +702,13 @@ services will work as promised.</SPAN></FONT></FONT></FONT></FONT></P>
 
 			$('body').css({'overflow':'hidden'});
 
+			// Disable scrolling.
+			// document.ontouchmove = function (e) {
+			//   e.preventDefault();
+			// }
+
+			//     document.body.addEventListener('touchmove', preventDefault, { passive: false });
+
 			$("#dialog-confirm").dialog({
 					resizable: false,
 					modal: true,
@@ -725,6 +736,13 @@ services will work as promised.</SPAN></FONT></FONT></FONT></FONT></P>
 
   	    $('#dialog-confirm').on('dialogclose', function(event) {
 			$('body').css({'overflow-y':'auto'});
+			// Enable scrolling.
+			document.ontouchmove = function (e) {
+			  return true;
+			}
+
+		    document.body.removeEventListener('touchmove', preventDefault, { passive: false });
+
 		});
 
 		

@@ -102,6 +102,10 @@
     width: -moz-available;
 }*/
 
+	#back_arw{
+		width: 20px;
+	}
+
 [data-role = "page"] {
 	padding-left: 50px;
     max-width: calc(100%-150px);
@@ -191,7 +195,7 @@
 		<div class="nav_fixed">
 			<div data-role="navbar"> 
 				<ul> 
-			<li><a href="{{url('user-setting')}}" data-ajax="false" class="text-left" style="margin-top: 10px"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
+			<li><a href="{{url('user-setting')}}" data-ajax="false" id="back_arw" class="text-left" style="margin-top: 10px"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
 			 <li><a data-ajax="false" class="ui-btn-active">					
 			 	<img src="{{asset('images/logo.png')}}" class="anar-logo">
 				</a>

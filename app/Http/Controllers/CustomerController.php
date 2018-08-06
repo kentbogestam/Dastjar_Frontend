@@ -109,16 +109,6 @@ class CustomerController extends Controller
             $helper->logs($request->email . " " . $response);
         }
 
-
         return response()->json(['status' => 'success', 'response' => $response,'data'=>true]);        
-    }
-
-    public function unSubscribe(){
-        $userName = "mayank@imaginei.in";  
-        $deviceToken = User::where('email',$userName)->first()->device_token;  
-        App42API::initialize(env('APP42_API_KEY'),env('APP42_API_SECRET'));   
-        $pushNotificationService = App42API::buildPushNotificationService();   
-        $response = $pushNotificationService->deleteDeviceToken($userName, $deviceToken);  
-        print_r("Response is : ".$response->toString());     
     }
 }

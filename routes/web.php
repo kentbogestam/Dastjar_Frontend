@@ -16,6 +16,10 @@
 	Route::get('phpinfo', function(){
 		return phpinfo();
 	});
+
+	Route::get('apple-date', function(){
+		return view('apple-date');
+	});
 	
 	// Auth::routes();
 
@@ -75,8 +79,6 @@
 		Route::get('save-location', 'CustomerController@saveLocation');
 		Route::post('save-setting', 'CustomerController@saveSetting');
 		Route::post('store-device-token', 'CustomerController@storeDeviceToken');	
-		Route::get('unSubscribe', 'CustomerController@unSubscribe');
-
 
 		Route::get('search-store-map', 'MapController@searchStoreMap');
 		Route::get('404', 'HomeController@page_404')->name('page_404');

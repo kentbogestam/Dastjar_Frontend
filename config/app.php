@@ -229,6 +229,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
         'AWS' => Aws\Laravel\AwsFacade::class,
+        'Helper' => App\Helper::class,
 
     ],
 

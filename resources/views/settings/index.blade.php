@@ -40,6 +40,10 @@
 	    z-index: 9;
 	}	
 
+	#back_arw{
+		width: 20px;
+	}
+
 	#language fieldset{
 		display: block;
 	}
@@ -53,7 +57,7 @@
 		<div class="nav_fixed">
 			<div data-role="navbar"> 
 				<ul> 
-			<li><a href="{{url('eat-now')}}" data-ajax="false" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
+			<li><a href="{{url('eat-now')}}" data-ajax="false" id="back_arw" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
 			 <li><a data-ajax="false" class="ui-btn-active">{{ __('messages.Settings') }}</a></li>
 
 			  <li class="done-btn" id="dataSave">  <input type="button" value="{{ __('messages.Done') }}" /></li> </ul>

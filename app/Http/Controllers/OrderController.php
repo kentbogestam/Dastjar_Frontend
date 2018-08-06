@@ -33,6 +33,7 @@ class OrderController extends Controller
                 $orderDate;
                 $orderTime;
                 $checkOrderDate;
+                
                 if($request->session()->get('order_date') != null){
                     $pieces = explode(" ", $request->session()->get('order_date'));
                     $date=date_create($pieces[3]."-".$pieces[1]."-".$pieces[2]);

@@ -1,7 +1,36 @@
 @extends('layouts.master')
+
 @section('head-scripts')
-<script src="{{asset('locationJs/currentLocation.js')}}"></script>
+	<style type="text/css">
+		#overlay {
+    		position: fixed;
+    		display: none;
+    		width: 100vw;
+    		height: 100vh;
+		    top: 0;
+		    left: 0;
+		    right: 0;
+    		bottom: 0;
+	    	background-color: rgba(0,0,0,0.5);
+	    	z-index: 999;
+		}
+
+		#loading-img{
+			display: none;
+			position: absolute;
+			top: 50vh;
+			left: 50vw;
+			-moz-transform: translate(-50%);
+			-webkit-transform: translate(-50%);
+			-o-transform: translate(-50%);
+			-ms-transform: translate(-50%);
+			transform: translate(-50%);
+			z-index: 99999;
+		}
+	</style>
+	<script src="{{asset('locationJs/currentLocation.js')}}"></script>
 @endsection
+
 @section('content')
 	<div data-role="header" class="header" id="nav-header"  data-position="fixed"><!--  -->
 		<div class="nav_fixed">
@@ -32,7 +61,7 @@
 	</div>	
 	<div data-role="footer" id="footer" data-position="fixed">
 		<div class="ui-grid-c inner-footer center">
-		<div class="ui-block-a"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
+		<div class="ui-block-a"><a href="javascript:void(0)" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 			<div class="img-container">
 				<img src="{{asset('images/icons/select-store_01.png')}}">
 			</div>
@@ -50,6 +79,11 @@
 		</a></div>
 		</div>
 	</div>
+
+	<img src="{{ asset('images/loading.gif') }}" id="loading-img" />
+
+	  <div id="overlay" onclick="off()">
+	  </div>
 @endsection
 
 @section('footer-script')
@@ -60,8 +94,8 @@
 	    $("#order-popup").toggleClass("hide-popup");
 	 });
 
-var list = Array();
-var totalCount = 0;
+	var list = Array();
+	var totalCount = 0;
 
 	function makeRedirection(link){
 		window.location.href = link;
@@ -70,7 +104,7 @@ var totalCount = 0;
 
 	$(document).on("scrollstop", function (e) {
 		var tempCount = 10;
-    var activePage = $.mobile.pageContainer.pagecontainer("getActivePage"),
+    	var activePage = $.mobile.pageContainer.pagecontainer("getActivePage"),
         screenHeight = $.mobile.getScreenHeight(),
         contentHeight = $(".ui-content", activePage).outerHeight(),
         header = $(".ui-header", activePage).outerHeight() - 1,
@@ -155,8 +189,13 @@ var totalCount = 0;
 
 
 	 $(function(){
+	 	$("#overlay").show();
+    	$("#loading-img").show();
+
 	$.get("{{url('eat-later-data')}}",
     function(returnedData){
+			$("#loading-img").hide();
+    		$("#overlay").hide();
 
     	var count = 10;
     	console.log(returnedData["data"]);
@@ -302,8 +341,8 @@ var totalCount = 0;
 			var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 			var todayDay = days[d.getDay()];
 	 	}
-		// console.log(currentTime);
-		// console.log('todayDay'+todayDay);
+
+
 		var time = $time;
 		var day = time.split(' :: ')
 		var checkday = time.split(',')
@@ -311,6 +350,15 @@ var totalCount = 0;
 			var timeSplit = day[1].split(' to ');
 			var openTime = timeSplit[0];
 			var closeTime = timeSplit[1];
+
+			// alert(openTime);
+			// alert(closeTime);
+			console.log('currentTime '+currentTime);
+			console.log('openTime ' + openTime);
+			console.log('closeTime ' + closeTime);
+			console.log('todayDay '+todayDay);
+			console.log('$time '+$time);
+
 			if(openTime <= currentTime && closeTime >= currentTime){
 				return true;
 			}else{

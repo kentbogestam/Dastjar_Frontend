@@ -1,4 +1,35 @@
 @extends('layouts.master')
+
+@section('head-scripts')
+	<style type="text/css">
+		#overlay {
+    		position: fixed;
+    		display: none;
+    		width: 100vw;
+    		height: 100vh;
+		    top: 0;
+		    left: 0;
+		    right: 0;
+    		bottom: 0;
+	    	background-color: rgba(0,0,0,0.5);
+	    	z-index: 999;
+		}
+
+		#loading-img{
+			display: none;
+			position: absolute;
+			top: 50vh;
+			left: 50vw;
+			-moz-transform: translate(-50%);
+			-webkit-transform: translate(-50%);
+			-o-transform: translate(-50%);
+			-ms-transform: translate(-50%);
+			transform: translate(-50%);
+			z-index: 99999;
+		}
+	</style>
+@stop
+
 @section('content')
 	<div data-role="header" class="header" id="nav-header"  data-position="fixed">
 		<div class="nav_fixed">
@@ -32,7 +63,7 @@
 	</div>	
 	<div data-role="footer" id="footer" data-position="fixed">
 		<div class="ui-grid-c inner-footer center">
-		<div class="ui-block-a"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
+		<div class="ui-block-a"><a href="javascript:void(0)" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 			<div class="img-container">
 				<img src="{{asset('images/icons/select-store_01.png')}}">
 			</div>
@@ -89,11 +120,54 @@
 		</ul>
 	</div>
 
-	
+	<img src="{{ asset('images/loading.gif') }}" id="loading-img" />
+
+	  <div id="overlay" onclick="off()">
+	  </div>
 
 @endsection
 
 @section('footer-script')
+
+<?php
+	$helper = new Helper();
+	$helper->logs("1 " . Session::get('with_login_lat') . " 2 " . Session::get('with_login_lng') . " 3 " . Session::get('with_out_login_lat') . " 4 " . Session::get('with_out_login_lng') . " 5 " . Session::get('address'));
+
+	if(Auth::check()){
+			if(Session::get('with_login_address') != null){
+				?>
+	<script type="text/javascript">
+				loc_lat = "{{Session::get('with_login_lat')}}";
+				loc_lng = "{{Session::get('with_login_lng')}}";
+	</script>				
+				<?php
+			}else if(Session::get('address') != null){
+				?>
+		<script type="text/javascript">
+				loc_lat = "{{Session::get('with_out_login_lat')}}";
+				loc_lng = "{{Session::get('with_out_login_lng')}}";
+		</script>
+				<?php
+			}else{
+				?>
+				<script type="text/javascript">
+					loc_lat = "";
+					loc_lng = "";
+				</script>
+			<?php
+			}
+		}
+		else{
+			if(Session::get('address') != null){
+				?>
+		<script type="text/javascript">
+				loc_lat = "{{Session::get('with_out_login_lat')}}";
+				loc_lng = "{{Session::get('with_out_login_lng')}}";
+		</script>
+				<?php
+			}
+		}
+?>
 
 <script type="text/javascript">
 
@@ -157,15 +231,16 @@ var totalCount = 0;
 	            	var url = "{{url('restro-menu-list/')}}";
 	            	var limit = 0;
 	            	var countCheck = 1;
- if(totalCount > 10){
- 	limit = 10;
- 	totalCount -= 10;
- } else if(totalCount<=0){
- 	return;
- } else{
- 	limit = totalCount;
- 	totalCount -= totalCount;
- }
+
+					 if(totalCount > 10){
+					 	limit = 10;
+					 	totalCount -= 10;
+					 } else if(totalCount<=0){
+					 	return;
+					 } else{
+					 	limit = totalCount;
+					 	totalCount -= totalCount;
+					 }
 
 
 	          for (var i=len;i<len + 10;i++){
@@ -207,15 +282,17 @@ var totalCount = 0;
 
 
 	 $(function(){
-	 			var extraclass = document.body;
-	// extraclass.classList.add("disableClass");
-	navigator.geolocation.getCurrentPosition(function(position) { 
+	 	    $("#overlay").show();
+    		$("#loading-img").show();
+
+	 	var extraclass = document.body;
+		extraclass.classList.add("disableClass");
+		navigator.geolocation.getCurrentPosition(function(position) { 
 	    document.cookie="latitude=" + position.coords.latitude;
 	    document.cookie="longitude=" + position.coords.longitude;
 	    var extraclass = document.body;
 		extraclass.classList.remove('disableClass');
 		//location.reload ();
-		add();
 	},function(error){
 		if (typeof loc_lat === "undefined" || loc_lat == "") {
 		   $('.login-inner-section a').attr('href','javascript:void(0)');
@@ -223,13 +300,14 @@ var totalCount = 0;
 		}else{
 		    document.cookie="latitude=" + loc_lat;
 		    document.cookie="longitude=" + loc_lng;		
-			add();
 		} 
 	});
 
 
 	$.get("{{url('lat-long')}}", { lat: getCookie("latitude"), lng : getCookie("longitude")}, 
     function(returnedData){
+    		$("#loading-img").hide();
+    		$("#overlay").hide();
 
     	var count = 10;
 

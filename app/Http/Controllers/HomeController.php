@@ -17,6 +17,8 @@ use App\ProductPriceList;
 use App\WebVersion;
 use Carbon\Carbon;
 use App\App42\App42API;
+use Artisan;
+use Helper;
 
 class HomeController extends Controller
 {
@@ -42,14 +44,19 @@ class HomeController extends Controller
         $currentTime = $pieces[4];
         $todayDay = $pieces[0];
         if(Auth::check()){
-
            $userDetail = User::whereId(Auth()->id())->first();
-            $lat = $request->session()->get('with_login_lat');
-            $lng = $request->session()->get('with_login_lng');
+            
+            if(Session::get('with_login_address') != null){
+                $lat = $request->session()->get('with_login_lat');
+                $lng = $request->session()->get('with_login_lng');
+            }else{
+                $lat = $request->session()->get('with_out_login_lat');
+                $lng = $request->session()->get('with_out_login_lng');
+            }
+
             $companydetails = Store::getListRestaurantsCheck($lat,$lng,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
         }else{
-
-             $lat = $request->session()->get('with_out_login_lat');
+            $lat = $request->session()->get('with_out_login_lat');
             $lng = $request->session()->get('with_out_login_lng');
             $rang = $request->session()->get('rang');
              $companydetails = Store::getListRestaurantsCheck($lat,$lng, $rang,'1','3',$todayDate,$currentTime,$todayDay);
@@ -104,6 +111,9 @@ class HomeController extends Controller
 
     public function userLatLong(Request $request){ 
         $request->session()->forget('order_date');
+
+        $helper = new Helper();
+
         if(Auth::check()){
 
             $request->session()->forget('current_date_time');
@@ -129,23 +139,47 @@ class HomeController extends Controller
             }
 
             if($request->session()->get('updateThreeHundrMeterAfterLogin') == null && $request->session()->get('updateLocationBySettingAfterLogin') == null){
+                                   
+
+                if(empty($data['lat'])){
+                    if(Session::get('with_login_address') != null){
+                        $data['lat'] = $request->session()->get('with_login_lat');
+                        $data['lng'] = $request->session()->get('with_login_lng');
+                    }else if(Session::get('with_out_login_lat') != null){
+                        $data['lat'] = $request->session()->get('with_out_login_lat');
+                        $data['lng'] = $request->session()->get('with_out_login_lng');
+                    }
+                }
+
                     $request->session()->put('with_login_lat', $data['lat']);
                     $request->session()->put('with_login_lng', $data['lng']);
-                    $request->session()->put('with_login_lat', $data['lat']);
+
                     $lat =  $data['lat'];
                     $lng =  $data['lng'];   
+
+                    $helper->logs("method 1 " . $data['lat'] . " ".Session::get('with_login_address'));
             }else if($request->session()->get('updateThreeHundrMeterAfterLogin') == 1 && $request->session()->get('updateLocationBySettingAfterLogin') == null){
                 $lat = $request->session()->get('with_login_lat');
                 $lng = $request->session()->get('with_login_lng');
                 $request->session()->put('with_login_lat', $request->session()->get('with_login_lat'));
+                                    $helper->logs("method 2");
             }else if($request->session()->get('updateThreeHundrMeterAfterLogin') == null && $request->session()->get('updateLocationBySettingAfterLogin') == 1){
-                $lat = $request->session()->get('with_login_lat');
-                $lng = $request->session()->get('with_login_lng');
+
+                    if(Session::get('with_login_address') != null){
+                        $lat = $request->session()->get('with_login_lat');
+                        $lng = $request->session()->get('with_login_lng');
+                    }else{
+                        $lat = $request->session()->get('with_out_login_lat');
+                        $lng = $request->session()->get('with_out_login_lng');
+                    }
+
                 $request->session()->put('with_login_lat', $request->session()->get('with_login_lat'));
+                $helper->logs("method 3 " . $lat . " " . $lng);
             }else{
                 $lat = $request->session()->get('with_login_lat');
                 $lng = $request->session()->get('with_login_lng');
                 $request->session()->put('with_login_lat', $request->session()->get('with_login_lat')); 
+                                    $helper->logs("method 4");
             }
 
             if($userDetail->web_version != $versionDetail->version){
@@ -153,15 +187,25 @@ class HomeController extends Controller
                 Auth::logout();
                 return redirect()->action('HomeController@versionUpdate');
             }
+
             $request->session()->put('browserTodayDate', $todayDate);
             $request->session()->put('browserTodayTime', $currentTime);
             $request->session()->put('browserTodayDay', $todayDay);
 
             $request->session()->forget('order_date');
             $currentUser = User::whereId(Auth()->id())->first();
-            $companydetails = Store::getListRestaurants($lat,$lng,$currentUser->range,'1','3',$todayDate,$currentTime,$todayDay);
 
-            
+            $companydetails = "";
+
+            try{
+                $companydetails = Store::getListRestaurants($lat,$lng,$currentUser->range,'1','3',$todayDate,$currentTime,$todayDay);
+                 $helper->logs("getListRestaurants " . $lat . " " . $lng . " " . $currentUser->range . " " .$todayDate . " " . $currentTime . " " . $todayDay);
+                 $helper->logs("getListRestaurants2 " . substr((string)$companydetails,0,50));
+            }catch(\Exception $ex){
+                  $helper->logs("getListRestaurants " . $ex->getMessage());
+            }
+                           
+
             return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails]);
             
         } else{
@@ -216,6 +260,8 @@ class HomeController extends Controller
 
     public function index()
     {
+        Artisan::call('view:clear');
+
         if(Auth::check()){
             $versionDetail = WebVersion::orderBy('created_at', 'DESC')->first();
             $userDetail = User::whereId(Auth()->id())->first();
@@ -249,8 +295,15 @@ class HomeController extends Controller
         $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
         $currentTime = $pieces[4];
         $todayDay = $pieces[0];
-        $lat = $request->session()->get('with_login_lat');
-        $lng = $request->session()->get('with_login_lng');
+
+                if(Session::get('with_login_address') != null){
+                    $lat = $request->session()->get('with_login_lat');
+                    $lng = $request->session()->get('with_login_lng');
+                }else{
+                    $lat = $request->session()->get('with_out_login_lat');
+                    $lng = $request->session()->get('with_out_login_lng');
+                }
+
         $companydetails = Store::getListRestaurants($lat,$lng,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
 
         return view('eat-now', compact('companydetails'));
@@ -282,8 +335,15 @@ class HomeController extends Controller
         }
         if(Auth::check()){
             $userDetail = User::whereId(Auth()->id())->first();
-            $lat = $request->session()->get('with_login_lat');
-            $lng = $request->session()->get('with_login_lng');
+      
+                if(Session::get('with_login_address') != null){
+                    $lat = $request->session()->get('with_login_lat');
+                    $lng = $request->session()->get('with_login_lng');
+                }else{
+                    $lat = $request->session()->get('with_out_login_lat');
+                    $lng = $request->session()->get('with_out_login_lng');
+                }
+
             $companydetails = Store::getListRestaurants($lat,$lng,$userDetail->range,'2','3',$todayDate,$currentTime,$todayDay);
         }else{
             $lat = $request->session()->get('with_out_login_lat');
@@ -301,12 +361,10 @@ class HomeController extends Controller
     }
 
     public function eatLater(Request $request){
-
         $pieces = explode(" ", $request->session()->get('current_date_time'));
         $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
         $currentTime = $pieces[4];
         $todayDay = $pieces[0];
-
 
         if(!empty($request->input())) {
 
@@ -316,8 +374,15 @@ class HomeController extends Controller
         } else {
             if(Auth::check()){
                 $userDetail = User::whereId(Auth()->id())->first();
-                $lat = $request->session()->get('with_login_lat');
-                $lng = $request->session()->get('with_login_lng');
+
+                if(Session::get('with_login_address') != null){
+                    $lat = $request->session()->get('with_login_lat');
+                    $lng = $request->session()->get('with_login_lng');
+                }else{
+                    $lat = $request->session()->get('with_out_login_lat');
+                    $lng = $request->session()->get('with_out_login_lng');
+                }
+
                 $companydetails = Store::getListRestaurants($lat,$lng,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
             }else{
                 $lat = $request->session()->get('with_out_login_lat');
@@ -342,8 +407,15 @@ class HomeController extends Controller
         $todayDay = $pieces[0];
         if(Auth::check()){
             $userDetail = User::whereId(Auth()->id())->first();
-            $lat = $request->session()->get('with_login_lat');
-            $lng = $request->session()->get('with_login_lng');
+
+            if(Session::get('with_login_address') != null){
+                $lat = $request->session()->get('with_login_lat');
+                $lng = $request->session()->get('with_login_lng');
+            }else{
+                $lat = $request->session()->get('with_out_login_lat');
+                $lng = $request->session()->get('with_out_login_lng');
+            }
+
             $companydetails = Store::getListRestaurants($lat,$lng,$userDetail->range,'2','3',$todayDate,$currentTime,$todayDay);
         }else{
             $companydetails = Store::getListRestaurants($request->session()->get('with_out_login_lat'),$request->session()->get('with_out_login_lng'),$request->session()->get('rang'),'2','3',$todayDate,$currentTime,$todayDay);

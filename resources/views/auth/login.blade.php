@@ -64,25 +64,8 @@
 
         $(function(){     
 
-// Check for Geolocation API permissions  
-navigator.geolocation.getCurrentPosition(function(position) { 
-    console.log("latitude=" + position.coords.latitude);
-    console.log("longitude=" + position.coords.longitude);
-    document.cookie="latitude=" + position.coords.latitude;
-    document.cookie="longitude=" + position.coords.longitude;
-    
-},function(error){
-//   $('.login-inner-section a').attr('href','javascript:void(0)');
-  // $('#login-popup').show();
-    
-});
 
-        });
-
-        $("#cancel-popup").click(function () {
-          $('#login-popup').hide();
-        });
-    
+        });    
 </script>
 <script type="text/javascript">
   navigator.sayswho= (function(){

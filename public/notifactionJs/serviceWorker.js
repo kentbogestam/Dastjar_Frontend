@@ -52,10 +52,17 @@ function getDeviceToken() {
 
 function registerSwjs(){
     if ('serviceWorker' in navigator) {
+
+        var displayMode;
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+          displayMode = "standalone";
+        }else{
+          displayMode = "web";
+        }
+
         console.log('Service Worker is supported');
  
-        navigator.serviceWorker.register('sw.js').then(function() {
-      
+        navigator.serviceWorker.register('sw.js?displayMode='+displayMode).then(function() { 
             return navigator.serviceWorker.ready;
         }).then(function(reg) {
             console.log('Service Worker is ready :^)', reg);
