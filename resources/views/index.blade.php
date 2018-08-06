@@ -399,8 +399,8 @@
 	if (navigator.geolocation) {
 		getPos();
 	}else{
-		$('.login-inner-section a').attr('href','javascript:void(0)');
-		$('#login-popup').show();	
+		// $('.login-inner-section a').attr('href','javascript:void(0)');
+		// $('#login-popup').show();	
 	}
 
 	var d = new Date();

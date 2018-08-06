@@ -13,14 +13,12 @@ use Session;
 
 class MapController extends Controller
 {
-    //
-
     public function searchMapEatnow(Request $request){
         if(Auth::check()){
             if(Session::get('with_login_address') != null){
                 $loc_lat = Session::get('with_login_lat');
                 $loc_lng = Session::get('with_login_lng');
-            }else if(Session::get('address') != null){
+            }else{
                 $loc_lat = Session::get('with_out_login_lat');
                 $loc_lng = Session::get('with_out_login_lng');
             }
@@ -60,17 +58,11 @@ class MapController extends Controller
                         }
                     }
                 }
-                //echo($restaurantLatLng['store_open_close_day_time']);
                 $i++;
             }
             $latLngList = json_encode($latLng);
             return view('map.index', compact('latLngList'));
         }else{
-            if(Session::get('address') != null){
-                $loc_lat = Session::get('with_out_login_lat');
-                $loc_lng = Session::get('with_out_login_lng');
-            }
-
             $pieces = explode(" ", $request->session()->get('current_date_time'));
             $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
             $currentTime = $pieces[4];
@@ -109,10 +101,9 @@ class MapController extends Controller
                         }
                     }
                 }
-                //echo($restaurantLatLng['store_open_close_day_time']);
                 $i++;
             }
-            //dd($latLng);
+
             $latLngList = json_encode($latLng);
             return view('map.index', compact('latLngList'));
         }
@@ -147,7 +138,7 @@ class MapController extends Controller
             if(Session::get('with_login_address') != null){
                 $loc_lat = Session::get('with_login_lat');
                 $loc_lng = Session::get('with_login_lng');
-            }else if(Session::get('address') != null){
+            }else{
                 $loc_lat = Session::get('with_out_login_lat');
                 $loc_lng = Session::get('with_out_login_lng');
             }
@@ -183,7 +174,6 @@ class MapController extends Controller
                         }
                     }
                 }
-                //echo($restaurantLatLng['store_open_close_day_time']);
                 $i++;
             }
         }else{
@@ -221,7 +211,6 @@ class MapController extends Controller
                         }
                     }
                 }
-                //echo($restaurantLatLng['store_open_close_day_time']);
                 $i++;
             }
         }
@@ -229,14 +218,14 @@ class MapController extends Controller
         return view('map.eatlater_map', compact('latLngList'));
     }
 
-    public function searchStoreMap(Request $request){
-       
+    public function searchStoreMap(Request $request){       
         $latLng = [];
+
         if(Auth::check()){
              if(Session::get('with_login_address') != null){
                 $loc_lat = Session::get('with_login_lat');
                 $loc_lng = Session::get('with_login_lng');
-            }else if(Session::get('address') != null){
+            }else{
                 $loc_lat = Session::get('with_out_login_lat');
                 $loc_lng = Session::get('with_out_login_lng');
             }

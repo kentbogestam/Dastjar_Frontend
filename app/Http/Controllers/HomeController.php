@@ -367,7 +367,6 @@ class HomeController extends Controller
         $todayDay = $pieces[0];
 
         if(!empty($request->input())) {
-
             $data = $request->input();
             $request->session()->put('order_date', $data['dateorder']);
             return view('eat_later', compact(''));
