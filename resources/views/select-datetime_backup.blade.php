@@ -19,6 +19,112 @@
 <script src="{{asset('locationJs/currentLocation.js')}}"></script>
 
 <script type="text/javascript">
+	var now = new Date();
+	var yearVal = now.getFullYear();
+  	var monthVal = now.getMonth()+1;
+  	var dayVal = now.getDate();
+  	var hourVal = 00;
+  	var minuteVal = 00;
+
+
+function openDate() {
+	var days = { };
+	var years = { };
+	var months = { 1: 'Jan', 2: 'Feb', 3: 'Mar', 4: 'Apr', 5: 'May', 6: 'Jun', 7: 'Jul', 8: 'Aug', 9: 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Dec' };
+	
+	for( var i = 1; i < 32; i += 1 ) {
+		days[i] = i;
+	}
+
+	for(i = now.getFullYear(); i < now.getFullYear()+20; i += 1) {
+		years[i] = i;
+	}
+
+
+
+	SpinningWheel.addSlot(years, 'right', yearVal);
+	SpinningWheel.addSlot(months, '', monthVal);
+	SpinningWheel.addSlot(days, 'right', dayVal);
+	
+	SpinningWheel.setCancelAction(cancel);
+	SpinningWheel.setDoneAction(openTimePicker);
+	
+	SpinningWheel.open();
+	$("#sw-cancel").hide();
+
+}
+
+function openTime() {
+	$("#sw-cancel").show();
+
+	var minutes = {00:00,  01: 01, 02: 02, 03: 03, 04: 04, 05:05, 06:06, 07:07, 08:08, 09:09, 10: 10, 11: 11, 12: 12, 13:13, 14:14, 15: 15, 16: 16, 17: 17, 18: 18, 19: 19, 20:20, 21: 21, 22: 22, 23: 23, 24: 24, 25: 25, 26: 26, 27: 27, 28: 28, 29: 29, 30:30, 31: 31, 32: 32, 33: 33, 34: 34, 35: 35, 36: 36, 37: 37, 38: 38, 39: 39, 40:40, 41: 41, 42: 42, 43: 43, 44: 44, 45: 45, 46: 46, 47: 47, 48: 48, 49: 49, 50:50, 51: 51, 52: 52, 53: 53, 54: 54, 55: 55, 56: 56, 57: 57, 58: 58, 59: 59, 60:60 };
+
+	var hours = { 00:00, 01: 01, 02: 02, 03: 03, 04: 04, 05: 05, 06: 06, 07: 07, 
+		08: 08, 09: 09, 10: 10, 11: 11, 12: 12 };
+	
+
+	SpinningWheel.addSlot(hours, 'right', hourVal);
+	SpinningWheel.addSlot(minutes, '', minuteVal);
+	
+	SpinningWheel.setCancelAction(cancel);
+	SpinningWheel.setDoneAction(done);
+	
+	SpinningWheel.open();
+}
+
+function openOneSlot() {
+	SpinningWheel.addSlot({1: 'Ichi', 2: 'Ni', 3: 'San', 4: 'Shi', 5: 'Go'});
+	
+	SpinningWheel.setCancelAction(cancel);
+	SpinningWheel.setDoneAction(done);
+	
+	SpinningWheel.open();
+}
+
+function openTimePicker() {
+	var results = SpinningWheel.getSelectedValues();
+
+	yearVal=results.keys[0];
+	monthVal=results.keys[1];
+	dayVal=results.keys[2];
+
+	SpinningWheel.removeAllSlot();
+	SpinningWheel.close();
+
+	openTime();
+}
+
+function done() {
+	var results = SpinningWheel.getSelectedValues();
+
+	hourVal=results.keys[0];
+	minuteVal=results.keys[1];
+
+			if(hourVal == 00 && minuteVal == 00){
+				$('.error_time').show();
+				console.log(timeHH);
+			}else{
+				$('.error_time').hide();
+				var selDate = new Date(yearVal+"-"+monthVal+"-"+dayVal+" "+hourVal+":"+minuteVal);
+                $('#date-value1-2').text(selDate);
+                $('#date-value1-23').val(selDate);				
+				// $("#form").submit();
+			}
+
+}
+
+function cancel() {
+	var results = SpinningWheel.getSelectedValues();
+
+	hourVal=results.keys[0];
+	minuteVal=results.keys[1];
+
+	SpinningWheel.removeAllSlot();
+	SpinningWheel.close();
+	openDate();
+}
+
+
 window.addEventListener('load', function(){ setTimeout(function(){ window.scrollTo(0,0); }, 100); }, true);
 
 $(document).ready(function(){
@@ -26,25 +132,11 @@ $(document).ready(function(){
 	    M= ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
 	    if(M[1]=="Safari"){
 	    	$(".date_block").show();
-	    	  var today = new Date();
-			  // Set month and day to string to add leading 0
-			  var day = new String(today.getDate());
-			  var mon = new String(today.getMonth()+1); //January is 0!
-			  var yr = today.getFullYear();
-
-			    if(day.length < 2) { day = "0" + day; }
-			    if(mon.length < 2) { mon = "0" + mon; }
-
-			    var date = new String( yr + '-' + mon + '-' + day );
-	    	alert(date);
-
-	    	$("#bdaytime").disabled = false; 
-			$("#bdaytime").setAttribute('min', date);
-
 	    }else{
 	    	$("#demo1-2").show();
 	    }
 });
+
 </script>
 @endsection
 @section('content')
@@ -128,12 +220,6 @@ $(document).ready(function(){
 		date.setMonth(date.getMonth()+1);
 		date.setDate(date.getDate());
 		date.setHours(00, 00, 00);
-
-		var startDate = new Date();
-		startDate.setMonth(startDate.getMonth()+1);
-		startDate.setDate(startDate.getDate());
-		startDate.setHours(00, 00, 00);
-
 		var curr_date = date.getDate();
 		var curr_month = date.getMonth();
 		var curr_year = date.getFullYear();
@@ -147,7 +233,7 @@ $(document).ready(function(){
 
 	   $('#demo1-2').datetimepicker({
             date: date,
-            // startDate: startDate,
+            startDate: date,
             viewMode: 'YMDHM',
             onDateChange: function(){
                 $('#date-text1-2').text(this.getText());
@@ -165,6 +251,7 @@ $(document).ready(function(){
                 $('#date-value1-2').text(dateVal+" GMT+05:30 (India Standard Time)");
                 $('#date-value1-23').val(this.getValue());
             }
+
         });
 
 	   $("#ss").click(function(e){

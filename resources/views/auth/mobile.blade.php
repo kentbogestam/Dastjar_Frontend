@@ -1,4 +1,5 @@
 @extends('layouts.app')
+
 @section('content')
 <div class="login-page" data-role="page" data-theme="c">
     <div role="main" data-role="main-content" class="content">
@@ -23,8 +24,12 @@
                         <img src="{{asset('images/l-logo.png')}}">
                     </div>
                     <div class="social-sec">
-                        <div class="ui-grid-solo">
-                         <input id="mobileNo" type="tel" class="form-control" name="mobileNo" min="0" max="100" value="" required autofocus placeholder="Enter Mobile No.*">
+                        <div class="ui-grid-solo">                          
+                         <input id="mobileNo" type="tel" class="form-control" name="mobileNo" min="0" max="100" value="<?php
+                          if(isset($_GET['m'])){
+                            echo $_GET['m'];
+                          }
+                          ?>" required autofocus placeholder="Enter Mobile No.*">
                         </div>
                     </div>
                     <div class="ui-grid-solo">
@@ -39,10 +44,11 @@
     </div>
 </div>
 @endsection
+
 @section('footer-script')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript">
-        $(document).ready(function(){
-          
+        $(document).ready(function(){          
           $(".mobile_otp_btn").on("click", function(){
                 var mobNum = $('#mobileNo').val();
                 var filter = /^\d*(?:\.\d{1,2})?$/;
@@ -66,6 +72,6 @@
                    }            
           });
           
-        });
+       });
     </script>
 @endsection

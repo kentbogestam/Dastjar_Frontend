@@ -157,8 +157,12 @@ class LoginController extends Controller
             //return redirect()->action('HomeController@index');
             return redirect()->route('withOutLogin');
         }else{
-
+          if ($request->session()->get('userPhoneNumber')) {
             Session::flash('userPhoneNumber',$request->session()->get('userPhoneNumber'));
+          }else if(isset($request->userPhoneNumber)){
+            Session::flash('userPhoneNumber',$request->userPhoneNumber);
+          }
+            
             return redirect()->action('Auth\LoginController@enterOtp')->with('success', 'You have entered wrong otp.');
         }
     }
@@ -176,7 +180,7 @@ class LoginController extends Controller
         return view('auth.mobile'); 
     }
 
-    public function enterOtp(){
+    public function enterOtp(Request $request){
         return view('auth.otp');
     }
 }

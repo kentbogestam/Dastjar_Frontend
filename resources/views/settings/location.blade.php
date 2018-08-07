@@ -1,11 +1,25 @@
 @extends('layouts.master')
+@section('head-scripts')
+<style>
+    #back_arw{
+        width: 20px;
+    }
+</style>
+@endsection
+
 @section('content')
 <div class="" data-role="page" data-theme="c">
     <div data-role="header" class="header" data-position="fixed">
         <div class="nav_fixed">
             <div data-role="navbar"> 
                 <ul> 
-            <li><a href="{{url('user-setting')}}" data-ajax="false" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
+            <li>
+                @if(isset($_GET['k']))
+                    <a href="{{url('')}}" data-ajax="false" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a>
+                @else
+                    <a href="{{url('user-setting')}}" data-ajax="false" id="back_arw" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a>
+                @endif
+            </li>
              <li><a data-ajax="false" class="ui-btn-active">{{ __('messages.Location') }}</a></li>
               <li class="done-btn" id="dataSave">  <input type="button" value="{{ __('messages.Done') }}" /></li>  </ul>
               

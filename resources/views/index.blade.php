@@ -26,6 +26,34 @@
 			transform: translate(-50%);
 			z-index: 99999;
 		}
+
+		.popup-close1 {
+			width: 30px;
+			height: 26px;
+			padding-top: 4px;
+			display: inline-block;
+			position: absolute;
+			top: 5px;
+			right: 5px;
+			-webkit-transition: ease 0.25s all;
+			transition: ease 0.25s all;
+			-webkit-transform: translate(50%, -50%);
+			transform: translate(50%, -50%);
+			border-radius: 100% !important;
+			background: #7ebe12;
+			font-family: Arial, Sans-Serif;
+			font-size: 20px;
+			text-align: center;
+			line-height: 0.8;
+			color: #fff;
+			cursor: pointer;
+			padding-left: 0px;
+			z-index: 999;
+		}
+
+		.popup-close1:hover {
+			text-decoration: none;
+		}
 	</style>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.5.1/fingerprint2.min.js"></script>
@@ -132,7 +160,7 @@
 
 	<div id="login-popup" style="display: none;" class="login-popup" data-theme="a">
 	  <div class="inner-popup">
-	        <div id="cancel-popup" class="cross"><img src="{{asset('images/icons/cross.png')}}"></div>
+	        <div id="cancel-popup" class="cross"><span class="popup-close1">x</span></div>
 	        <div class="pop-body">
 	           <p>{{ __('messages.Please activate Location Services in your mobile') }}</p>
 	        </div>
@@ -489,21 +517,28 @@
 		    var extraclass = document.body;
 			extraclass.classList.remove('disableClass');
 			//location.reload ();
+			$.get("{{url('writeLogs')}}",{'log':'location 1'});
 			add();
 		},function(error){
 			loc_flag=2;
 			if (typeof loc_lat === "undefined" || loc_lat == "") {
 	    		$("#loading-img").hide();
 	    		$("#overlay").hide();
-			   $('.login-inner-section a').attr('href','javascript:void(0)');
-			   $('#login-popup').show();	    			
+			    $('.login-inner-section a').attr('href','javascript:void(0)');
+ 			    $('#login-popup').show();	
+				$.get("{{url('writeLogs')}}",{'log':'location 2'});
 			}else{
 			    document.cookie="latitude=" + loc_lat;
 			    document.cookie="longitude=" + loc_lng;		
+				$.get("{{url('writeLogs')}}",{'log':'location 3'});
 				add();
 			} 
 		},{maximumAge:0,timeout:5000});
 	}
+
+	$('#login-popup').bind('beforeShow', function() {
+      alert('beforeShow');
+    }); 
 
 </script>
 

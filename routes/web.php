@@ -42,6 +42,7 @@
 	Route::post('/delete-me', 'HomeController@deleteUser')->name('delete-user');
 	
 	Route::get('/order/{id}', 'OrderController@order_detail')->name('order-url');
+	Route::get('/writeLogs', 'HomeController@write_logs');
 
 	Route::get('/login/{social}','Auth\LoginController@socialLogin')->where('social','facebook|google');
 	Route::get('/login/{social}/callback','Auth\LoginController@handelProviderCallback')->where('social','facebook|google');

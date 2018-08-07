@@ -534,6 +534,13 @@ class HomeController extends Controller
         }
     }
 
+    public function write_logs(Request $request){
+        $helper = new Helper();
+        $helper->logs($request->log);
+
+        return response()->json(['status' => 'success', 'response' => true,'data'=>'Logs written successfully']);
+    }
+
     public function test(){
         return view('test');
     }

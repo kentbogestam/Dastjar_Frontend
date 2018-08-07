@@ -25,7 +25,7 @@
 
                     <div>
                       OTP sent on <strong>{{Session::get('userPhoneNumber')}}</strong>                
-                      <small><a href="javascript:history.back()">Wrong mobile number?</a>
+                      <small><a href="javascript:void(0)" onclick="goToLogin()">Wrong mobile number?</a>
                       </small>
                       <br/><br/>
                     </div>
@@ -36,6 +36,7 @@
 
                     <div class="social-sec">
                         <div class="ui-grid-solo">
+                         <input type="hidden" name="userPhoneNumber" value="{{Session::get('userPhoneNumber')}}">
                          <input id="otp" type="tel" class="form-control" name="otp" value="{{ old('otp') }}" required autofocus placeholder="Enter the code you received on SMS*">
                         </div>
                     </div>
@@ -65,12 +66,17 @@ function timer()
   {
      clearInterval(counter);
      //counter ended, do something here
+     window.location.href = "{{url('mobileLogin')}}@if(Session::get('userPhoneNumber')!=null)?m={{Session::get('userPhoneNumber')}}@endif";
      return;
   }
 
   //Do code for showing the number of seconds here
   // alert(count);
   $("#timer").html(count + " secs"); // watch for spelling  
+}
+
+function goToLogin(){
+       window.location.href = "{{url('mobileLogin')}}@if(Session::get('userPhoneNumber')!=null)?m={{Session::get('userPhoneNumber')}}@endif";
 }
 
 </script>

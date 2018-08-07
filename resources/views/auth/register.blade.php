@@ -234,7 +234,7 @@
                         </select>
                     <div class="ui-grid-solo">
                         <div class="ui-block-a"> 
-                            <input id="phone_number" type="text" class="form-control " name="phone_number" min=0 max=999999999999 value="{{ old('phone_number') }}" placeholder="Phone No">
+                            <input id="phone_number" type="tel" class="form-control " name="phone_number" min=0 max=999999999999 value="{{ old('phone_number') }}" placeholder="Phone No">
                         </div>
                     </div>
                     <div class="ui-grid-solo reg_btn">
