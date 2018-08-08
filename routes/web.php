@@ -112,6 +112,7 @@
 	});
 
 	Route::prefix('admin')->group(function(){
+		Route::get('/','Auth\AdminLoginController@showLoginForm');
 		Route::get('login','Auth\AdminLoginController@showLoginForm');
 		Route::post('login','Auth\AdminLoginController@login')->name('admin-login');
 	});
