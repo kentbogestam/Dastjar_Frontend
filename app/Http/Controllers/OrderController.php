@@ -126,7 +126,9 @@ class OrderController extends Controller
                     return view('order.paymentIndex', compact('order','orderDetails'));
                 }else{
                     $user = User::where('id',$order->user_id)->first();      
-                    return view('order.index', compact('order','orderDetails','storeDetail','user'));
+                    // return view('order.index', compact('order','orderDetails','storeDetail','user'));
+
+                    return redirect()->route('order-view', $orderId);
                 }
             }else{
                 $todayDate = $request->session()->get('browserTodayDate');
@@ -404,9 +406,12 @@ class OrderController extends Controller
         $headers .='X-Mailer: PHP/' . phpversion();
         $headers .= "From: Anar <admin@dastjar.com> \r\n"; // header of mail content
 
-        $email = Auth::user()->email;
+        $userID = Store::where('store_id',$request->store_id)->first()->u_id;
+        $email = Admin::where('u_id',$userID)->first()->email;
 
         mail($email, 'Order Canceled', $message, $headers);
+        $order = new Order();
+        $order->where('order_id',$request->order_id)->update(['cancel'=>2]);
         Session::flash('order_number', $request->order_number);
 
         return redirect()->route('cancel-order', $request->order_number);

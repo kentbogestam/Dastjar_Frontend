@@ -365,8 +365,8 @@
 				<span>{{ __('messages.Restaurant') }}</span>
 			</a></div>
 			<div class="ui-block-b">
-				<a href="javascript:void(0)" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container" id="menudataSave">
+				<a href="#" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" id="menudataSave" data-ajax="false">
+					<div class="img-container">
 						<img src="{{asset('images/icons/select-store_03.png')}}">
 					</div>
 					<input type="button" value="{{ __('messages.Send') }}" id="dataSave"/>

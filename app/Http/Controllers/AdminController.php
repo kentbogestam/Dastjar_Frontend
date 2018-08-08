@@ -1334,4 +1334,25 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Thank you for contacting us.');
     }
 
+    public function removeOrder(Request $request){
+        $order = new Order();
+        $order->where('order_id',$request->order_id)->update(['cancel'=>1]);
+        $order_number = $order->where('order_id',$request->order_id)->first()->customer_order_id;
+
+        $message = '<html><body>';
+        $message .= '<p style="">Your order ' . $order_number . ' has been canceled according to your request.</p>';
+        $message .= '</body></html>';
+
+        $headers = "MIME-Version: 1.0\r\n";
+        $headers .= "Content-type: text/html; charset=iso-8859-1\r\n";   
+        $headers .='X-Mailer: PHP/' . phpversion();
+        $headers .= "From: Anar <admin@dastjar.com> \r\n"; // header of mail content
+
+        $email = User::where('id',$request->user_id)->first()->email;
+
+        mail($email, 'Order Canceled', $message, $headers);
+
+        return response()->json(['status' => 'success', 'data'=>'Order Cancelled Successfully.']);        
+    }
+
 }

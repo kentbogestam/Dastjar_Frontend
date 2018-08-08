@@ -25,7 +25,7 @@
 
                     <div>
                       OTP sent on <strong>{{Session::get('userPhoneNumber')}}</strong>                
-                      <small><a href="javascript:void(0)" onclick="goToLogin()">Wrong mobile number?</a>
+                      <small><a href="#" onclick="goToLogin()">Wrong mobile number?</a>
                       </small>
                       <br/><br/>
                     </div>

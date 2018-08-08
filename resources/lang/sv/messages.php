@@ -85,6 +85,7 @@ return [
     'Terms and Conditions' => 'Villkor',
     'Extra Preparation Time' => 'Extra beredningstid',
     'Support' => 'Support',
-    'Thank you for contacting us.' => 'Thank you for contacting us.'
-
+    'Thank you for contacting us.' => 'Thank you for contacting us.',
+    'Remove' => 'Avlägsna',
+    'Payment Done Successfully' => 'Payment Done Successfully'
 ];

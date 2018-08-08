@@ -104,7 +104,7 @@
 
 	Route::group(['middleware' => ['auth']], function(){
 		Route::get('blank-view', 'HomeController@blankView');
-		Route::get('order-view/{OrderId}', 'OrderController@orderView');
+		Route::get('order-view/{OrderId}', 'OrderController@orderView')->name('order-view');
 		Route::post('payment', 'PaymentController@payment');
 		Route::get('payment', 'PaymentController@payment');
 		Route::post('cancel-order', 'OrderController@cancelOrderPost');		
@@ -157,6 +157,8 @@
 		Route::get('delete-menu-dish', 'AdminController@kitchenDeleteDish');	
 		Route::get('createStandardOffer', 'AdminController@createStandardOffer');			
 		Route::post('add-dish-price', 'AdminController@addDishPrice');	
+		Route::post('remove-order', 'AdminController@removeOrder');	
+		
 	});
 
 

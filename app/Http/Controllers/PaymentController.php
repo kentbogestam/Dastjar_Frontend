@@ -85,7 +85,10 @@ class PaymentController extends Controller
         		$helper = new Helper();
         		$helper->logs($order->user_id . " - browser");
 
-				return view('order.index', compact('order','orderDetails','storeDetail','user'))->with('success', 'Payment Done Successfully');
+                Session::flash('success', 'Payment Done Successfully');
+
+				// return view('order.index', compact('order','orderDetails','storeDetail','user'))->with('success', 'Payment Done Successfully');
+                return redirect()->route('order-view', $orderId);
 			}
 		} catch (\Exception $ex) {
 	        return view('blankPage')->with('message', $ex->getMessage());

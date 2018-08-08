@@ -84,6 +84,7 @@ return [
     'Terms and Conditions' => 'Terms and Conditions',
     'Extra Preparation Time' => 'Extra Preparation Time',
     'Support' => 'Support',
-    'Thank you for contacting us.' => 'Thank you for contacting us.'   
-
+    'Thank you for contacting us.' => 'Thank you for contacting us.',
+    'Remove' => 'Remove',
+    'Payment Done Successfully' => 'Payment Done Successfully'
 ];

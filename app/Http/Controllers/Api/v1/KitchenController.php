@@ -27,13 +27,15 @@ class KitchenController extends Controller
     }
 
    public function orderDetail($reCompanyId){
-        $orderDetailscustomer = Order::select('orders.*','customer.name as name')->where(['store_id' => $reCompanyId])->where('user_type','=','customer')->where('check_deliveryDate',Carbon::now()->toDateString())->where('orders.paid', '0')->whereNotIn('orders.online_paid', [2])->leftJoin('customer','orders.user_id','=','customer.id');
+        $orderDetailscustomer = Order::select('orders.*','customer.name as name')->where(['store_id' => $reCompanyId])->where('user_type','=','customer')->where('check_deliveryDate',Carbon::now()->toDateString())->where('orders.paid', '0')->whereNotIn('orders.online_paid', [2])->where('orders.cancel','!=', 1)->leftJoin('customer','orders.user_id','=','customer.id');
 
-        $orderDetails = Order::select('orders.*','user.fname as name')->where('orders.store_id', '=' ,$reCompanyId)->where('user_type','=','admin')->where('check_deliveryDate',Carbon::now()->toDateString())->where('orders.paid', '0')->whereNotIn('orders.online_paid', [2])->leftJoin('user','orders.user_id','=','user.id');
+        // $orderDetails = Order::select('orders.*','user.fname as name')->where('orders.store_id', '=' ,$reCompanyId)->where('user_type','=','admin')->where('check_deliveryDate',Carbon::now()->toDateString())->where('orders.paid', '0')->whereNotIn('orders.online_paid', [2])->where('orders.cancel', '!=', 1)->leftJoin('user','orders.user_id','=','user.id');
 
         $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;
         
-        $results = $orderDetailscustomer->union($orderDetails)->get();
+        // $results = $orderDetailscustomer->union($orderDetails)->get();
+
+        $results = $orderDetailscustomer->get();
 
         return response()->json(['status' => 'success', 'response' => true, 'extra_prep_time' => $extra_prep_time, 'data'=>$results]);
     }
@@ -51,7 +53,7 @@ class KitchenController extends Controller
     }
 
     public function cateringOrders($reCompanyId){
-        $cateringorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('order_details.delivery_date','>', Carbon::now()->toDateString())->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->orderBy('order_details.delivery_date','ASC')->get();
+        $cateringorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.user_id','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.customer_order_id','orders.online_paid','orders.cancel')->where(['order_details.store_id' => $reCompanyId])->where('order_details.delivery_date','>', Carbon::now()->toDateString())->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->where('orders.cancel', '!=', 1)->orderBy('order_details.delivery_date','ASC')->get();
     
         return response()->json(['status' => 'success', 'response' => true,'data'=>$cateringorderDetails]);
     }

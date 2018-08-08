@@ -457,6 +457,7 @@ function registerDeviceWithApp42(token,type ){
 			@endif
 
 			<input type="hidden" name="order_id" value="{{$order->order_id}}">
+			<input type="hidden" name="store_id" value="{{$order->store_id}}">
 			<input type="hidden" name="order_number" value="{{$order->customer_order_id}}">
 
 			<div class="mob_num" style="">
