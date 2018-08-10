@@ -11,12 +11,9 @@
 
 		.date_block{
 			display: none;
-		}
-
-		
+		}		
 	</style>
 
-<script src="{{asset('locationJs/currentLocation.js')}}"></script>
 
 <script type="text/javascript">
 	var now = new Date();

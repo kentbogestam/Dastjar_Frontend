@@ -86,5 +86,6 @@ return [
     'Support' => 'Support',
     'Thank you for contacting us.' => 'Thank you for contacting us.',
     'Remove' => 'Remove',
-    'Payment Done Successfully' => 'Payment Done Successfully'
+    'Payment Done Successfully' => 'Payment Done Successfully',
+    'Others' => 'Others'
 ];

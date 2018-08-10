@@ -149,7 +149,7 @@ class OrderController extends Controller
         }else{
           $data = $request->input();
           Session::put('orderData', $data);
-          return view('auth.login', compact(''));
+          return redirect()->route('customer-login');
         }
     }
 
@@ -252,7 +252,7 @@ class OrderController extends Controller
                  return view('order.paymentIndex', compact('order','orderDetails'));
             }else{
                 $user = User::where('id',$order->user_id)->first();                      
-                return view('order.index', compact('order','orderDetails','storeDetail','user'));
+                return redirect()->route('order-view', $orderId);
             }
         }else{
             $todayDate = $request->session()->get('browserTodayDate');
@@ -406,8 +406,13 @@ class OrderController extends Controller
         $headers .='X-Mailer: PHP/' . phpversion();
         $headers .= "From: Anar <admin@dastjar.com> \r\n"; // header of mail content
 
-        $userID = Store::where('store_id',$request->store_id)->first()->u_id;
-        $email = Admin::where('u_id',$userID)->first()->email;
+        $email = Store::where('store_id',$request->store_id)->first()->email;
+
+        $user = User::where('id',Auth::user()->id)->first();
+
+        if($user->phone_number == null){
+            $user->update(['phone_number_prifix'=>$request->phone_number_prifix,'phone_number'=>$request->mobile_number]);
+        }
 
         mail($email, 'Order Canceled', $message, $headers);
         $order = new Order();

@@ -9,7 +9,6 @@ use App\User;
 
 class DistanceController extends Controller
 {
-    //
     public function checkDistance(Request $request){
     	$data = $request->input();
     	$lat =  $data['lat'];

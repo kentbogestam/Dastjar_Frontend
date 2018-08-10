@@ -26,6 +26,7 @@ class MapController extends Controller
             $userDetail = User::whereId(Auth()->id())->first();
             $pieces = explode(" ", $request->session()->get('current_date_time'));
             $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
+
             $currentTime = $pieces[4];
             $todayDay = $pieces[0];
 
@@ -64,6 +65,7 @@ class MapController extends Controller
             return view('map.index', compact('latLngList'));
         }else{
             $pieces = explode(" ", $request->session()->get('current_date_time'));
+
             $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
             $currentTime = $pieces[4];
             $todayDay = $pieces[0];
@@ -235,9 +237,9 @@ class MapController extends Controller
         }else{
             array_push($latLng,[floatval($request->session()->get('with_out_login_lat')), floatval($request->session()->get('with_out_login_lng'))]);
         }
-        $storeDetails = Store::where('store_id',$request->session()->get('storeId'))->first();
+
         $storedetails = Store::where('store_id' , $request->session()->get('storeId'))->first();
-        array_push($latLng,[$storeDetails->latitude, $storeDetails->longitude]);
+        array_push($latLng,[$storedetails->latitude, $storedetails->longitude]);
         $latLngList = json_encode($latLng);
         return view('map.single_res_map', compact('latLngList','storedetails'));
     }

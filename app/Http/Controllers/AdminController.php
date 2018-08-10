@@ -1339,18 +1339,33 @@ class AdminController extends Controller
         $order->where('order_id',$request->order_id)->update(['cancel'=>1]);
         $order_number = $order->where('order_id',$request->order_id)->first()->customer_order_id;
 
-        $message = '<html><body>';
-        $message .= '<p style="">Your order ' . $order_number . ' has been canceled according to your request.</p>';
-        $message .= '</body></html>';
+        $message = 'Your order ' . $order_number . ' has been cancelled according to your request';
 
-        $headers = "MIME-Version: 1.0\r\n";
-        $headers .= "Content-type: text/html; charset=iso-8859-1\r\n";   
-        $headers .='X-Mailer: PHP/' . phpversion();
-        $headers .= "From: Anar <admin@dastjar.com> \r\n"; // header of mail content
+        $phone_number_prifix = User::where('id',$request->user_id)->first()->phone_number_prifix;
+        $phone_number = User::where('id',$request->user_id)->first()->phone_number;
 
-        $email = User::where('id',$request->user_id)->first()->email;
+        $url = "https://gatewayapi.com/rest/mtsms";
+        $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
 
-        mail($email, 'Order Canceled', $message, $headers);
+        $json = [
+                'sender' => 'Dastjar',
+                'message' => ''.$message.'',
+                'recipients' => [],
+                ];
+
+        $recipients = ['+'.$phone_number_prifix.$phone_number];
+
+        foreach ($recipients as $msisdn) {
+                    $json['recipients'][] = ['msisdn' => $msisdn];}
+
+                $ch = curl_init();
+                curl_setopt($ch,CURLOPT_URL, $url);
+                curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+                curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
+                curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
+                curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+                $result = curl_exec($ch);
+                curl_close($ch);   
 
         return response()->json(['status' => 'success', 'data'=>'Order Cancelled Successfully.']);        
     }

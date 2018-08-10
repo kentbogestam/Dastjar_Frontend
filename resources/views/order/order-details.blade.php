@@ -2,8 +2,6 @@
 
 @section('head-scripts')
 
-<!-- <script src="{{asset('locationJs/currentLocation.js')}}"></script>
- -->
 <?php 
 // if(Auth::check()){
 //     $username = Auth::user()->email;

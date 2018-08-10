@@ -156,13 +156,10 @@ class HomeController extends Controller
 
                     $lat =  $data['lat'];
                     $lng =  $data['lng'];   
-
-                    $helper->logs("method 1 " . $data['lat'] . " ".Session::get('with_login_address'));
             }else if($request->session()->get('updateThreeHundrMeterAfterLogin') == 1 && $request->session()->get('updateLocationBySettingAfterLogin') == null){
                 $lat = $request->session()->get('with_login_lat');
                 $lng = $request->session()->get('with_login_lng');
                 $request->session()->put('with_login_lat', $request->session()->get('with_login_lat'));
-                                    $helper->logs("method 2");
             }else if($request->session()->get('updateThreeHundrMeterAfterLogin') == null && $request->session()->get('updateLocationBySettingAfterLogin') == 1){
 
                     if(Session::get('with_login_address') != null){
@@ -174,12 +171,10 @@ class HomeController extends Controller
                     }
 
                 $request->session()->put('with_login_lat', $request->session()->get('with_login_lat'));
-                $helper->logs("method 3 " . $lat . " " . $lng);
             }else{
                 $lat = $request->session()->get('with_login_lat');
                 $lng = $request->session()->get('with_login_lng');
                 $request->session()->put('with_login_lat', $request->session()->get('with_login_lat')); 
-                                    $helper->logs("method 4");
             }
 
             if($userDetail->web_version != $versionDetail->version){
@@ -199,8 +194,6 @@ class HomeController extends Controller
 
             try{
                 $companydetails = Store::getListRestaurants($lat,$lng,$currentUser->range,'1','3',$todayDate,$currentTime,$todayDay);
-                 $helper->logs("getListRestaurants " . $lat . " " . $lng . " " . $currentUser->range . " " .$todayDate . " " . $currentTime . " " . $todayDay);
-                 $helper->logs("getListRestaurants2 " . substr((string)$companydetails,0,50));
             }catch(\Exception $ex){
                   $helper->logs("getListRestaurants " . $ex->getMessage());
             }
@@ -432,7 +425,9 @@ class HomeController extends Controller
             ->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')
            ->orderBy('product.product_rank', 'ASC')
             ->get();
+
         $storedetails = Store::where('store_id' , $storeId)->first();
+        $request->session()->put('storeId', $storeId);
 
         if(count($menuDetails) !=0 ){
             foreach ($menuDetails as $menuDetail) {
@@ -450,7 +445,6 @@ class HomeController extends Controller
             if(isset($companyId)){
                 $menuTypes = DishType::where('company_id' , $companyId)->whereIn('dish_id', array_unique($dish_typeId))->where('dish_activate','1')->get();
                 $dish_typeId = null;
-                $request->session()->put('storeId', $storeId);
                 $companydetails = Company::where('company_id' , $companyId)->first();
                 return view('menulist.index', compact('menuDetails','companydetails','menuTypes','storeId','storedetails'));
             }else{

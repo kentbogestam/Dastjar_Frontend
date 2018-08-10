@@ -9,11 +9,11 @@ $(document).ready(function($) {
 	    document.cookie="everyMinutelongitude=" + position.coords.longitude;
 	},function(error){
 		if (typeof lat === "undefined") {
-		   $('.login-inner-section a').attr('href','javascript:void(0)');
-		   $('#login-popup').show();	    			
+		   // $('.login-inner-section a').attr('href','javascript:void(0)');
+		   // $('#login-popup').show();	    			
 		}else{
-		    document.cookie="latitude=" + lat;
-		    document.cookie="longitude=" + lng;			
+		    // document.cookie="latitude=" + lat;
+		    // document.cookie="longitude=" + lng;			
 		} 			    
 	});
 

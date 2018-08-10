@@ -141,7 +141,7 @@
 				loc_lng = "{{Session::get('with_login_lng')}}";
 	</script>				
 				<?php
-			}else if(Session::get('address') != null){
+			}else if(Session::get('with_out_login_lat') != null){
 				?>
 		<script type="text/javascript">
 				loc_lat = "{{Session::get('with_out_login_lat')}}";
@@ -158,7 +158,7 @@
 			}
 		}
 		else{
-			if(Session::get('address') != null){
+			if(Session::get('with_out_login_lat') != null){
 				?>
 		<script type="text/javascript">
 				loc_lat = "{{Session::get('with_out_login_lat')}}";
@@ -173,6 +173,8 @@
 
 var list = Array();
 var totalCount = 0;
+
+	$.get("{{url('writeLogs')}}",{'log':'eat now page'});
 
 	function getCookie(cname) {
 	    var name = cname + "=";
@@ -198,33 +200,33 @@ var totalCount = 0;
 
 	$(document).on("scrollstop", function (e) {
 		var tempCount = 10;
-    var activePage = $.mobile.pageContainer.pagecontainer("getActivePage"),
-        screenHeight = $.mobile.getScreenHeight(),
-        contentHeight = $(".ui-content", activePage).outerHeight(),
-        header = $(".ui-header", activePage).outerHeight() - 1,
-        scrolled = $(window).scrollTop(),
-        footer = $(".ui-footer", activePage).outerHeight() - 1,
-        scrollEnd = contentHeight - screenHeight + header + footer;
+	    var activePage = $.mobile.pageContainer.pagecontainer("getActivePage"),
+	        screenHeight = $.mobile.getScreenHeight(),
+	        contentHeight = $(".ui-content", activePage).outerHeight(),
+	        header = $(".ui-header", activePage).outerHeight() - 1,
+	        scrolled = $(window).scrollTop(),
+	        footer = $(".ui-footer", activePage).outerHeight() - 1,
+	        scrollEnd = contentHeight - screenHeight + header + footer;
 
-    	$(".ui-btn-left", activePage).text("Scrolled: " + scrolled);
-    	//$(".ui-btn-right", activePage).text("ScrollEnd: " + scrollEnd);
+	    	$(".ui-btn-left", activePage).text("Scrolled: " + scrolled);
+	    	//$(".ui-btn-right", activePage).text("ScrollEnd: " + scrollEnd);
 
-    	
-    	//if in future this page will get it, then add this condition in and in below if activePage[0].id == "home" 
-    	if (scrolled >= scrollEnd) {
-        console.log(list);
-        $.mobile.loading("show", {
-        text: "loading more..",
-        textVisible: true,
-        theme: "b"
-    	});
-    	setTimeout(function () {
-         addMore(tempCount);
-         tempCount += 10;
-         $.mobile.loading("hide");
-     },500);
-    	}
-});
+	    	
+	    	//if in future this page will get it, then add this condition in and in below if activePage[0].id == "home" 
+	    	if (scrolled >= scrollEnd) {
+	        console.log(list);
+	        $.mobile.loading("show", {
+	        text: "loading more..",
+	        textVisible: true,
+	        theme: "b"
+	    	});
+	    	setTimeout(function () {
+	         addMore(tempCount);
+	         tempCount += 10;
+	         $.mobile.loading("hide");
+	     },500);
+	    	}
+	});
 
 	function  addMore(len){
 		var liItem = "";
@@ -250,14 +252,12 @@ var totalCount = 0;
 	          	}
 
 	          	liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
-	          	liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+list[i]['store_id']+">";
+	          	liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+list[i]['store_id']+" data-ajax='false'>";
 	          	liItem += "<img src="+"'"+list[i]["store_image"]+"'"+">";
 	          	liItem += "<h2>"+list[i]["store_name"]+"</h2>";
 	          	liItem += "<p>";
 	          	
-	          	for (var j=0;j<list[i]["products"].length;j++){
-	          		//console.log(list[i]["products"][j]);
-	          		;
+	          	for (var j=0;j<list[i]["products"].length;j++){	          		
 	          		if(j <= 1){
 	          			liItem += list[i]["products"][j]["product_name"];
 	          		}   
@@ -287,7 +287,8 @@ var totalCount = 0;
 
 	 	var extraclass = document.body;
 		extraclass.classList.add("disableClass");
-		navigator.geolocation.getCurrentPosition(function(position) { 
+	
+	navigator.geolocation.getCurrentPosition(function(position) { 
 	    document.cookie="latitude=" + position.coords.latitude;
 	    document.cookie="longitude=" + position.coords.longitude;
 	    var extraclass = document.body;
@@ -297,6 +298,7 @@ var totalCount = 0;
 		if (typeof loc_lat === "undefined" || loc_lat == "") {
 		   $('.login-inner-section a').attr('href','javascript:void(0)');
 		   $('#login-popup').show();	    			
+			$.get("{{url('writeLogs')}}",{'log':'eat now location 1'});
 		}else{
 		    document.cookie="latitude=" + loc_lat;
 		    document.cookie="longitude=" + loc_lng;		
@@ -332,14 +334,12 @@ var totalCount = 0;
 	          	//console.log(temp[i]["store_id"]);
 
 	          	liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
-	          	liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+temp[i]['store_id']+">";
+	          	liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+temp[i]['store_id']+" data-ajax='false'>";
 	          	liItem += "<img src="+"'"+temp[i]["store_image"]+"'"+">";
 	          	liItem += "<h2>"+temp[i]["store_name"]+"</h2>";
 	          	liItem += "<p>";
 	          	
 	          	for (var j=0;j<temp[i]["products"].length;j++){
-	          		//console.log(temp[i]["products"][j]);
-	          		;
 	          		if(j <= 1){
 	          			liItem += temp[i]["products"][j]["product_name"];
 	          		}   

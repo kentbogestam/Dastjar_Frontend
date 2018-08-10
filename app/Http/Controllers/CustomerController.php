@@ -73,6 +73,9 @@ class CustomerController extends Controller
                     $request->session()->put('updateLocationBySettingAfterLogin', 1);
                     $request->session()->put('setLocationBySettingValueAfterLogin', 1);
                 }else{
+                    $helper = new Helper();
+                    $helper->logs("set location " . $address['latitude'] . " " . $address['longitude']);
+
                     $request->session()->put('with_out_login_lat', $address['latitude']);
                     $request->session()->put('with_out_login_lng', $address['longitude']);
                     $request->session()->put('address', $address['street_address']);

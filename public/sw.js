@@ -13,7 +13,7 @@ self.addEventListener('install', e => {
     var paths = [];
 
       if (displayMode == "standalone") {
-        paths = [                   `/`
+        paths = [                  // `/`
                 // `/cloneAddtohomescreen/index.html?timestamp=${timeStamp}`,
                 // `/cloneAddtohomescreen/styles/main.css?timestamp=${timeStamp}`,
                 // `/cloneAddtohomescreen/scripts/main.min.js?timestamp=${timeStamp}`,

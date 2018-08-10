@@ -11,12 +11,18 @@
 
 		.date_block{
 			display: none;
+			margin-top: 20px;
+			height: 100px;
 		}
 
-		
+		.error_apple_time {
+		    color: red;
+		    font-size: 14px;
+		    text-align: center;
+		    margin-top: 15px;
+		    display: none;
+		}		
 	</style>
-
-<script src="{{asset('locationJs/currentLocation.js')}}"></script>
 
 <script type="text/javascript">
 window.addEventListener('load', function(){ setTimeout(function(){ window.scrollTo(0,0); }, 100); }, true);
@@ -24,6 +30,7 @@ window.addEventListener('load', function(){ setTimeout(function(){ window.scroll
 $(document).ready(function(){
 	var ua= navigator.userAgent, tem, 
 	    M= ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+
 	    if(M[1]=="Safari"){
 	    	$(".date_block").show();
 	    	  var today = new Date();
@@ -32,14 +39,23 @@ $(document).ready(function(){
 			  var mon = new String(today.getMonth()+1); //January is 0!
 			  var yr = today.getFullYear();
 
+			  var hors = new String(today.getHours()); //returns 0-23
+			  var mintes = new String(today.getMinutes()); //returns 0-59
+ 			  var secnds = new String(today.getSeconds()); //returns 0-59
+
 			    if(day.length < 2) { day = "0" + day; }
 			    if(mon.length < 2) { mon = "0" + mon; }
+			    if(hors.length < 2) { hors = "0" + hors; }
+			    if(mintes.length < 2) { mintes = "0" + mintes; }
+			    if(secnds.length < 2) { secnds = "0" + secnds; }
 
-			    var date = new String( yr + '-' + mon + '-' + day );
-	    	alert(date);
+			    var appleDate = new String( yr + '-' + mon + '-' + day + 'T');
+			    var appleDateTime = new String( yr + '-' + mon + '-' + day + 'T' + hors   + ':' + mintes + ':' + secnds);
 
-	    	$("#bdaytime").disabled = false; 
-			$("#bdaytime").setAttribute('min', date);
+	  //   	$("#bdaytime").disabled = false; 
+			$("#bdaytime").attr("min", appleDateTime);
+			$("#bdaytime").val(appleDate+"00:00:00");
+ 			// $("#bdaytime").setNow();
 
 	    }else{
 	    	$("#demo1-2").show();
@@ -70,7 +86,8 @@ $(document).ready(function(){
 
 					<div class="date_block">
 					  Date and Time:
-					  <input type="datetime-local" id="bdaytime" name="bdaytime" value="{{strtotime('now')}}">
+					  <input type="datetime-local" id="bdaytime" name="bdaytime" value="" min="">
+					  <p class='error_apple_time'>Date and Time is not valid. </p>
 					</div>
 
 		    		<div class="show-date-time">
@@ -125,29 +142,29 @@ $(document).ready(function(){
 
 
 		var date = new Date();
-		date.setMonth(date.getMonth()+1);
+		date.setMonth(date.getMonth());
 		date.setDate(date.getDate());
 		date.setHours(00, 00, 00);
 
 		var startDate = new Date();
-		startDate.setMonth(startDate.getMonth()+1);
+		startDate.setMonth(startDate.getMonth());
 		startDate.setDate(startDate.getDate());
 		startDate.setHours(00, 00, 00);
 
 		var curr_date = date.getDate();
-		var curr_month = date.getMonth();
+		var curr_month = date.getMonth()+1;
 		var curr_year = date.getFullYear();
 		var hours = date.getHours(); //returns 0-23
 		var minutes = date.getMinutes(); //returns 0-59
 		var seconds = date.getSeconds(); //returns 0-59
 
         dateVal=$.format.date(curr_year+"-"+curr_month+"-"+curr_date+" "+hours+":"+minutes+":"+seconds, "E MMM dd yyyy HH:mm:ss");
-        $('#date-value1-2').html(dateVal+" GMT+05:30 (India Standard Time)");
+        $('#date-value1-2').html(dateVal+" GMT+05:30 (Indian Standard Time)");
         $('#date-value1-23').val(date);
 
 	   $('#demo1-2').datetimepicker({
             date: date,
-            // startDate: startDate,
+            startDate: startDate,
             viewMode: 'YMDHM',
             onDateChange: function(){
                 $('#date-text1-2').text(this.getText());
@@ -162,10 +179,20 @@ $(document).ready(function(){
 				seconds = dateNew.getSeconds(); //returns 0-59
                 dateVal=$.format.date(curr_year+"-"+curr_month+"-"+curr_date+" "+hours+":"+minutes+":"+seconds, "E MMM dd yyyy HH:mm:ss");
 
-                $('#date-value1-2').text(dateVal+" GMT+05:30 (India Standard Time)");
+                $('#date-value1-2').text(dateVal+" GMT+05:30 (Indian Standard Time)");
                 $('#date-value1-23').val(this.getValue());
             }
         });
+
+	   $("#bdaytime").on('change', function(){
+				dateVal = new Date($("#bdaytime").val());
+
+				if(dateVal<new Date()){
+				    $('.error_apple_time').show();
+				}else{
+	 			    $('.error_apple_time').hide();
+				}
+	   });
 
 	   $("#ss").click(function(e){
 	   		if($("#demo1-2").css('display') == 'block'){
@@ -194,9 +221,15 @@ $(document).ready(function(){
 				}
 	   		}else{
 				dateVal = new Date($("#bdaytime").val());
-                $('#date-value1-2').text(dateVal);
-                $('#date-value1-23').val(dateVal);
-				$("#form").submit();
+
+				if(dateVal<new Date()){
+				    $('.error_apple_time').show();
+				}else{
+	 			    $('.error_apple_time').hide();
+	                $('#date-value1-2').text(dateVal);
+	                $('#date-value1-23').val(dateVal);
+					$("#form").submit();
+				}
 	   		}
 		});
 

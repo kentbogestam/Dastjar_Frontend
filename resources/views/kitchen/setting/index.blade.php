@@ -30,6 +30,12 @@
 	#contact-setting-list .ui-controlgroup{
 		display: block !important;
 	}
+
+	.others_tabs li{
+     	background-color: #420800;
+    	color: white;
+    	border-radius: 0.5em !important;
+	}
 	
 	#form{
 		margin-bottom: 0px;
@@ -136,20 +142,11 @@ textarea.ui-input-text{
 				</li>
 				</form>
 
-				<li id="about_us" class="range-sec btn_blk">
-					<h2 class="ui-btn">{{  __("messages.About Us") }}</h2>
-				</li>
-
-				<li id="admin" class="range-sec btn_blk">
-					<h2 class="ui-btn">{{  __("messages.Admin") }}</h2>
-				</li>
-
 				<li id="prep_time" class="range-sec btn_blk">
 					<h2 class="ui-btn">Extra Preparation Time</h2>
 				</li>
 
 				<li data-role="collapsible" id="range-sec-controlgroup" class="range-sec">
-
 					<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Support') }}
 						<p class="ui-li-aside">
 							
@@ -168,6 +165,20 @@ textarea.ui-input-text{
 						</form>
 					</div>
 				</li>
+
+				<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.Others") }} <span>
+					</span></h2>
+				    <ul data-role="controlgroup" class="others_tabs">
+						 <li id="about_us" class="range-sec btn_blk">
+							<h2 class="ui-btn">{{  __("messages.About Us") }}</h2>
+						</li>
+
+						<li id="admin" class="range-sec btn_blk">
+							<h2 class="ui-btn">{{  __("messages.Admin") }}</h2>
+						</li>
+				    </ul>
+				</li>
+				
 			</div>
 		</div>
 </div>

@@ -48,7 +48,6 @@
 		display: block;
 	}
 </style>
-<script src="{{asset('locationJs/currentLocation.js')}}"></script>
 @endsection
 
 @section('content')

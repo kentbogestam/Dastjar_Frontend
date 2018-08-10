@@ -11,8 +11,6 @@
 |
 */
 
-
-
 	Route::get('phpinfo', function(){
 		return phpinfo();
 	});
@@ -50,7 +48,7 @@
 	Route::post('/userRegisterSave','Auth\RegisterController@userDetailSave');
 	Route::get('/userRegisterSave','Auth\RegisterController@userDetailSave');
 	Route::post('/userLogin','Auth\LoginController@userLogin');
-	Route::get('/mobileLogin','Auth\LoginController@mobileLogin');
+	Route::get('/mobileLogin','Auth\LoginController@mobileLogin')->name('customer-login');
 	Route::post('/sentOtp','Auth\RegisterController@sentOtp');
 	Route::get('/sentOtp','Auth\RegisterController@sentOtp');
 	Route::get('/enterOtp','Auth\LoginController@enterOtp');
@@ -81,6 +79,8 @@
 		Route::post('save-setting', 'CustomerController@saveSetting');
 		Route::post('store-device-token', 'CustomerController@storeDeviceToken');	
 
+		Route::get('restro-menu-list/{storeID}', 'HomeController@menuList');
+
 		Route::get('search-store-map', 'MapController@searchStoreMap');
 		Route::get('404', 'HomeController@page_404')->name('page_404');
 	
@@ -95,7 +95,6 @@
 		Route::get('eat-later-data', 'HomeController@eatLaterData');
 		Route::get('search-map-eatlater', 'MapController@searchMapEatlater');
 		Route::get('eat-later-map', 'HomeController@eatLaterMap');
-		Route::get('restro-menu-list/{storeID}', 'HomeController@menuList');
 		Route::post('save-order', 'OrderController@saveOrder');
 		Route::get('save-order', 'OrderController@saveOrder');
 		Route::get('withOutLogin', 'OrderController@withOutLogin')->name('withOutLogin');
@@ -112,7 +111,6 @@
 	});
 
 	Route::prefix('admin')->group(function(){
-		Route::get('/','Auth\AdminLoginController@showLoginForm');
 		Route::get('login','Auth\AdminLoginController@showLoginForm');
 		Route::post('login','Auth\AdminLoginController@login')->name('admin-login');
 	});

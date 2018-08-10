@@ -156,8 +156,8 @@
 			if(checkTime(temp[i]["store_open_close_day_time"])){
 
 				liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
-				liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+list[i]['store_id']+" data-ajax='false' >";
-				liItem += "<img src="+"'"+list[i]["store_image"]+"'"+">";
+				liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+list[i]['store_id']+" data-ajax='false'>";
+				liItem += "<img src="+"'"+temp[i]["store_image"]+ "' onerror='this.src=\""+"{{url('images/placeholder-image.png')}}\""+"'" +">";
 				liItem += "<h2>"+list[i]["store_name"]+"</h2>";
 				liItem += "<p>";
 				
@@ -203,9 +203,8 @@
 
           var temp = returnedData["data"];
           list = temp;
-          //console.log(temp);
-           //console.log(temp.length);
           var liItem = "";
+          
 	          if(temp.length != 0){
 	          	totalCount = temp.length;
 
@@ -216,19 +215,14 @@
 	          	totalCount -= 10;
 
 	          for (var i=0;i<count;i++){
-	          	//console.log(temp[i]["store_id"]);
 	          	if(checkTime(temp[i]["store_open_close_day_time"])){
-
-
 		          	liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
-		          	liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+temp[i]['store_id']+" data-ajax='false' >";
-		          	liItem += "<img src="+"'"+temp[i]["store_image"]+"'"+">";
+		          	liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+temp[i]['store_id']+" data-ajax='false'>";
+          			liItem += "<img src="+"'"+temp[i]["store_image"]+ "' onerror='this.src=\""+"{{url('images/placeholder-image.png')}}\""+"'" +">";
 		          	liItem += "<h2>"+temp[i]["store_name"]+"</h2>";
 		          	liItem += "<p>";
 		          	
 		          	for (var j=0;j<temp[i]["products"].length;j++){
-		          		//console.log(temp[i]["products"][j]);
-		          		;
 		          		if(j <= 1){
 		          			liItem += temp[i]["products"][j]["product_name"];
 		          		}   
@@ -351,8 +345,6 @@
 			var openTime = timeSplit[0];
 			var closeTime = timeSplit[1];
 
-			// alert(openTime);
-			// alert(closeTime);
 			console.log('currentTime '+currentTime);
 			console.log('openTime ' + openTime);
 			console.log('closeTime ' + closeTime);

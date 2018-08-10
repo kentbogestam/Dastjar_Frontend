@@ -388,16 +388,16 @@
 				</div>
 
 			@if(Auth::check())
-				@if(Auth::user()->language == 'ENG')
-					<?php $lan = "eng" ?>
-				@elseif(Auth::user()->language == 'SWE')
-					<?php $lan = "swe" ?>
+				@if(Auth::user()->language == 'SWE')
+					<?php $lan = "swe"; ?>
+				@else
+					<?php $lan = "eng"; ?>
 				@endif
 			@else
-				@if(Session::get('browserLanguageWithOutLogin') == 'ENG')
-					<?php $lan = "eng" ?>
-				@elseif(Session::get('browserLanguageWithOutLogin') == 'SWE')
-					<?php $lan = "swe" ?>
+				@if(Session::get('browserLanguageWithOutLogin') == 'SWE')
+					<?php $lan = "swe"; ?>
+				@else
+					<?php $lan = "eng"; ?>
 				@endif
 			@endif
 
