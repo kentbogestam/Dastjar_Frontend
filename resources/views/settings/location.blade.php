@@ -91,7 +91,7 @@
                 @endif    
             @else
                 @if(Session::get('with_out_login_lat')!=null && Session::get('with_out_login_lng')!=null)
-                    var location  = {lat: {{Session::get('with_out_login_lat')}} , lng: {{ Session::get('with_out_login_lng')}} };
+                    var location  = {lat: {{Session::get('with_out_login_lat')}} , lng: {{Session::get('with_out_login_lng')}} };
                 @else    
                     var location  = {lat: 60.1282 , lng: 18.6435};
                 @endif    

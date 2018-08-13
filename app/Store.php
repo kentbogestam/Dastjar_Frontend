@@ -3,8 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
 use DB;
+use Session;
 
 class Store extends Model
 {
@@ -111,6 +111,20 @@ class Store extends Model
     {
         if($radius == null){
             $radius = 10;
+        }
+
+        if (Session::get('timezone')!=null) {
+            $datetime = $todayDate . " " . $currentTime;
+            $tz_from = Session::get('timezone');
+            $tz_to = 'UTC';
+
+            $dt = new \DateTime($datetime, new \DateTimeZone($tz_from));
+            $dt->setTimeZone(new \DateTimeZone($tz_to));
+
+            $datePieces = explode(" ", $dt->format('D d-m-Y H:i:s'));
+            $todayDay = $datePieces['0'];
+            $todayDate = $datePieces['1'];
+            $currentTime = $datePieces['2']; 
         }
 
     	$circle_radius = 6378.10;

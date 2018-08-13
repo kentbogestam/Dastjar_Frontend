@@ -23,8 +23,8 @@
 
 	#msg{
 		height: 200px !important;
-		  resize: none;
-
+/*		  resize: none;
+*/
 	}
 
 	#contact-setting-list .ui-controlgroup{
@@ -159,7 +159,7 @@ textarea.ui-input-text{
 					<div id="msg-controlgroup">
 						<form id="support-form" method="post" action="{{ url('kitchen/support') }}" data-ajax="false">
 							{{ csrf_field() }}
-							<textarea maxlength="50" id="msg" name="message" placeholder="{{ __('messages.Contact Us Placeholder') }}"  class="msg-txt"  data-ajax="false" required>
+							<textarea id="msg" name="message" placeholder="{{ __('messages.Contact Us Placeholder') }}"  class="msg-txt"  data-ajax="false" required>
 								</textarea>
 							<button type="submit" class="btn btn-success">{{ __('messages.Send') }}</button>		
 						</form>
@@ -217,13 +217,13 @@ textarea.ui-input-text{
 				   $('.setting-page').animate({scrollTop:$(document).height()}, 'slow');
 				});	
 
-			$("textarea").removeClass('ui-input-text');
-			$.mobile.silentScroll(0);
+			// $("textarea").removeClass('ui-input-text');
+			// $.mobile.silentScroll(0);
 
 		});
 
 $(document).bind("mobileinit", function () {
-    $.mobile.ajaxEnabled = false;
+    // $.mobile.ajaxEnabled = false;
 });
 
 	</script>

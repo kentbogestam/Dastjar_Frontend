@@ -1106,8 +1106,6 @@ class AdminController extends Controller
 
         $product_price_list = new ProductPriceList();
 
-        // dd($publishing_start_date);
-
         if($product_price_list->where('product_id', $request->product_id)->where('publishing_start_date','<=',$publishing_start_date)->where('publishing_end_date','>=',$publishing_start_date)->exists() || $product_price_list->where('product_id', $request->product_id)->where('publishing_start_date','<=',$publishing_end_date)->where('publishing_end_date','>=',$publishing_end_date)->exists()){
             return back()->with('error','Invalid date');
         }
@@ -1370,12 +1368,6 @@ class AdminController extends Controller
                 curl_close($ch);   
 
         return response()->json(['status' => 'success', 'data'=>'Order Cancelled Successfully.']);        
-    }
-
-    public function getDates(){
-        $product_price_list = new ProductPriceList();
-        dd($product_price_list->where('product_id', '0093170c-91ff-c18f-7e65-8fde17826111')->get()->toArray());
-
     }
 
 }

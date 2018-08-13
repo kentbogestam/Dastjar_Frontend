@@ -20,11 +20,6 @@
 			position: absolute;
 			top: 50vh;
 			left: 50vw;
-			-moz-transform: translate(-50%);
-			-webkit-transform: translate(-50%);
-			-o-transform: translate(-50%);
-			-ms-transform: translate(-50%);
-			transform: translate(-50%);
 			z-index: 99999;
 		}
 	</style>
@@ -45,7 +40,7 @@
 	</div>
 	<div class="cat-btn">
 		<div class="ui-grid-a top-btn">
-			<div class="ui-block-a"><a href="{{url('eat-now')}}" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-inactive" class="active"><img src="{{asset('images/icons/icon-eat-now-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-now-inactive.png')}}" class="inactive">{{ __('messages.Eat Now') }}</a></div>
+			<div class="ui-block-a"><a href="{{url('eat-now')}}" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-inactive active" data-ajax="false"><img src="{{asset('images/icons/icon-eat-now-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-now-inactive.png')}}" class="inactive">{{ __('messages.Eat Now') }}</a></div>
 			<div class="ui-block-b"><a href="{{url('selectOrder-date')}}" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-active" data-ajax="false"><img src="{{asset('images/icons/icon-eat-later-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-later-inactive.png')}}" class="inactive">{{ __('messages.Eat Later') }}</a></div>
 		</div>
 	</div>
@@ -80,7 +75,7 @@
 		</div>
 	</div>
 
-	<img src="{{ asset('images/loading.gif') }}" id="loading-img" />
+	<div id="loading-img" class="ui-loader ui-corner-all ui-body-a ui-loader-default"><span class="ui-icon-loading"></span><h1>loading</h1></div>
 
 	  <div id="overlay" onclick="off()">
 	  </div>
@@ -191,6 +186,17 @@
 	 $(function(){
 	 	$("#overlay").show();
     	$("#loading-img").show();
+
+    	$(".icon-eat-inactive").click(function(){
+    		eatActive = $(".icon-eat-active");
+    		eatInactive = $(".icon-eat-inactive");
+
+    		eatActive.removeClass('icon-eat-active');
+    		eatActive.addClass('icon-eat-inactive');
+
+    		eatInactive.removeClass('icon-eat-inactive');
+    		eatInactive.addClass('icon-eat-active');
+    	});
 
 	$.get("{{url('eat-later-data')}}",
     function(returnedData){

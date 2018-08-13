@@ -430,7 +430,7 @@
 		</div>
 	  </div>
 
-	<img src="{{ asset('images/loading.gif') }}" id="loading-img" />
+	<div id="loading-img" class="ui-loader ui-corner-all ui-body-a ui-loader-default"><span class="ui-icon-loading"></span><h1>loading</h1></div>
 
 	  <div id="overlay" onclick="off()">
 	  </div>

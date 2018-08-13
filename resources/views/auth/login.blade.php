@@ -40,16 +40,7 @@
                 </div> -->
     </div>
 </div>
-<!--
-<div id="login-popup" style="display: none;" class="login-popup" data-theme="a">
-  <div class="inner-popup">
-        <div id = "cancel-popup" class="cross"><img src="{{asset('images/icons/cross.png')}}"></div>
-        <div class="pop-body">
-           <p>{{ __('messages.Please activate Location Services in your mobile') }}</p>
-        </div>
-  </div>
-</div>
--->
+
 @endsection
 @section('footer-script')
 

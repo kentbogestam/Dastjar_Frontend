@@ -176,6 +176,10 @@ class LoginController extends Controller
       }
     }
 
+    public function login(){
+        return view('auth.login');       
+    }
+
     public function mobileLogin(){
         return view('auth.mobile'); 
     }

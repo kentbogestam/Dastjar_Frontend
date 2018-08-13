@@ -6,6 +6,7 @@ let version = '0.6.2';
 
 self.addEventListener('install', e => {
   let timeStamp = Date.now();
+  var app = "anar";
   e.waitUntil(
     caches.open('anar').then(cache => {
     const displayMode = new URL(location).searchParams.get('displayMode');

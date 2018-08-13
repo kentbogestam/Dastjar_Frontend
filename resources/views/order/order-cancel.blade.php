@@ -222,7 +222,11 @@
 	</div>
 	<div role="main" data-role="main-content" class="content" style="text-align: center;">
 		<div class="inner-page-container" style="margin-top: 100px; margin-bottom:100px; color: #7ebe12; font-size: 25px;">
-			Cancel Request For Order Number {{$order_number}} Has Been Placed
+			@if(Session::get('order_already_cancelled') == 1)
+				Order Number {{$order_number}} Has Been Already Cancelled
+			@else
+				Cancel Request For Order Number {{$order_number}} Has Been Placed
+			@endif
 		</div>
 		<div>
 			<a href="{{url('')}}" style="color:#1275ff" data-ajax="false">Go To Home</a>

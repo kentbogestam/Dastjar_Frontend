@@ -20,12 +20,12 @@
 			position: absolute;
 			top: 50vh;
 			left: 50vw;
-			-moz-transform: translate(-50%);
+/*			-moz-transform: translate(-50%);
 			-webkit-transform: translate(-50%);
 			-o-transform: translate(-50%);
 			-ms-transform: translate(-50%);
 			transform: translate(-50%);
-			z-index: 99999;
+*/			z-index: 99999;
 		}
 	</style>
 @stop
@@ -52,9 +52,6 @@
 
 		<div class="cat-list-sec">
 			<ul data-role="listview" data-inset="true" id="companyDetailContianer">
-
-				
-
 
 			</ul>
 		</div>
@@ -120,7 +117,7 @@
 		</ul>
 	</div>
 
-	<img src="{{ asset('images/loading.gif') }}" id="loading-img" />
+	<div id="loading-img" class="ui-loader ui-corner-all ui-body-a ui-loader-default"><span class="ui-icon-loading"></span><h1>loading</h1></div>
 
 	  <div id="overlay" onclick="off()">
 	  </div>
@@ -169,10 +166,15 @@
 		}
 ?>
 
+	<script type="text/javascript" src="//momentjs.com/downloads/moment-with-locales.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.21/moment-timezone-with-data.min.js"></script>
+	
 <script type="text/javascript">
+	var list = Array();
+	var totalCount = 0;
 
-var list = Array();
-var totalCount = 0;
+	var tz = moment.tz.guess();
+	$.get("{{url('set-timezone')}}",{'tz':tz});
 
 	$.get("{{url('writeLogs')}}",{'log':'eat now page'});
 
@@ -285,9 +287,21 @@ var totalCount = 0;
 	 	    $("#overlay").show();
     		$("#loading-img").show();
 
+    	$(".icon-eat-inactive").click(function(){
+    		eatActive = $(".icon-eat-active");
+    		eatInactive = $(".icon-eat-inactive");
+
+    		eatActive.removeClass('icon-eat-active');
+    		eatActive.addClass('icon-eat-inactive');
+
+    		eatInactive.removeClass('icon-eat-inactive');
+    		eatInactive.addClass('icon-eat-active');
+    	});
+
 	 	var extraclass = document.body;
 		extraclass.classList.add("disableClass");
 	
+	if (typeof loc_lat === "undefined" || loc_lat == "") {			
 	navigator.geolocation.getCurrentPosition(function(position) { 
 	    document.cookie="latitude=" + position.coords.latitude;
 	    document.cookie="longitude=" + position.coords.longitude;
@@ -304,6 +318,12 @@ var totalCount = 0;
 		    document.cookie="longitude=" + loc_lng;		
 		} 
 	});
+			}else{
+				loc_flag=3;
+			    document.cookie="latitude=" + loc_lat;
+			    document.cookie="longitude=" + loc_lng;	
+				add();			    
+		}
 
 
 	$.get("{{url('lat-long')}}", { lat: getCookie("latitude"), lng : getCookie("longitude")}, 

@@ -396,6 +396,15 @@ class OrderController extends Controller
     }    
 
     public function cancelOrderPost(Request $request){
+        $order = new Order();
+
+        if($order->where('order_id',$request->order_id)->first()->cancel == 1){
+            Session::flash('order_already_cancelled', 1);            
+            return redirect()->route('cancel-order', $request->order_number);
+        }
+
+        Session::flash('order_already_cancelled', 0);            
+
         $message = '<html><body>';
         $message .= '<p style="color:#1275ff;">Order Number: ' . $request->order_number . '</p>';
         $message .= '<p style="color:#080;font-size:18px;">Mobile Number: ' . $request->mobile_number . '</p>';
@@ -415,9 +424,7 @@ class OrderController extends Controller
         }
 
         mail($email, 'Order Canceled', $message, $headers);
-        $order = new Order();
         $order->where('order_id',$request->order_id)->update(['cancel'=>2]);
-        Session::flash('order_number', $request->order_number);
 
         return redirect()->route('cancel-order', $request->order_number);
     }

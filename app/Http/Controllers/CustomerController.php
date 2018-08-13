@@ -114,4 +114,9 @@ class CustomerController extends Controller
 
         return response()->json(['status' => 'success', 'response' => $response,'data'=>true]);        
     }
+
+    public function setTimezone(Request $request){
+        Session::put('timezone',$request->tz);
+        return response()->json(['status' => 'success', 'response' => 'timezone is ' . $request->tz,'data'=>true]);        
+    }
 }

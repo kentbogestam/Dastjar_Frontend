@@ -713,6 +713,11 @@ function registerDeviceWithApp42(token,type ){
 @section('footer-script')
 
 <script type="text/javascript">
+	$(document).ready(function(){
+		$("#select-native-5").val('91');
+		$("#select-native-5-button").find("span").html($( "#select-native-5 option:selected" ).text());
+	});
+
 	 $(".ordersec").click(function(){
 	    $("#order-popup").toggleClass("hide-popup");
 	 });

@@ -19,11 +19,6 @@
 			position: absolute;
 			top: 50vh;
 			left: 50vw;
-			-moz-transform: translate(-50%);
-			-webkit-transform: translate(-50%);
-			-o-transform: translate(-50%);
-			-ms-transform: translate(-50%);
-			transform: translate(-50%);
 			z-index: 99999;
 		}
 
@@ -116,7 +111,7 @@
 	</div>
 	<div class="cat-btn">
 		<div class="ui-grid-a top-btn">
-			<div class="ui-block-a"><a href="" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-active" class="active"><img src="{{asset('images/icons/icon-eat-now-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-now-inactive.png')}}" class="inactive">{{ __('messages.Eat Now') }}</a></div>
+			<div class="ui-block-a"><a href="#" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-active" class="active"><img src="{{asset('images/icons/icon-eat-now-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-now-inactive.png')}}" class="inactive">{{ __('messages.Eat Now') }}</a></div>
 			<div class="ui-block-b"><a href="{{url('selectOrder-date')}}" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-inactive" data-ajax="false"><img src="{{asset('images/icons/icon-eat-later-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-later-inactive.png')}}" class="inactive">{{ __('messages.Eat Later') }}</a></div>
 		</div>
 	</div>
@@ -167,13 +162,15 @@
 	  </div>
 	</div>
 
-	<img src="{{ asset('images/loading.gif') }}" id="loading-img" />
+	<div id="loading-img" class="ui-loader ui-corner-all ui-body-a ui-loader-default"><span class="ui-icon-loading"></span><h1>loading</h1></div>
 
 	  <div id="overlay" onclick="off()">
 	  </div>
 @endsection
 
 @section('footer-script')
+	<script type="text/javascript" src="//momentjs.com/downloads/moment-with-locales.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.21/moment-timezone-with-data.min.js"></script>
 
 <script type="text/javascript">
 	var loc_lat;
@@ -224,6 +221,9 @@
 
 
 <script type="text/javascript">
+	var tz = moment.tz.guess();
+	$.get("{{url('set-timezone')}}",{'tz':tz});
+
 	$.get("{{url('writeLogs')}}",{'log':'index page'});
 
 	$("#cancel-popup").click(function () {
@@ -239,6 +239,9 @@
 
 	var list = Array();
 	var totalCount = 0;
+
+	var curDate = new Date();
+	curTimezoneOffset = curDate.getTimezoneOffset();
 
 	function getCookie(cname) {
 	    var name = cname + "=";
@@ -416,6 +419,17 @@
     	$("#overlay").show();
     	$("#loading-img").show();
 
+    	$(".icon-eat-inactive").click(function(){
+    		eatActive = $(".icon-eat-active");
+    		eatInactive = $(".icon-eat-inactive");
+
+    		eatActive.removeClass('icon-eat-active');
+    		eatActive.addClass('icon-eat-inactive');
+
+    		eatInactive.removeClass('icon-eat-inactive');
+    		eatInactive.addClass('icon-eat-active');
+    	});
+
 		var extraclass = document.body;
 
 	setInterval(getPosAgain,3000);
@@ -507,6 +521,7 @@
 	}
 
 	function getPos(){
+		if (typeof loc_lat === "undefined" || loc_lat == "") {		
 		navigator.geolocation.getCurrentPosition(function(position) { 
 			loc_flag=1;
 		    document.cookie="latitude=" + position.coords.latitude;
@@ -545,6 +560,13 @@
 				add();
 			} 
 		},{maximumAge:0,timeout:5000});
+		}else{
+				loc_flag=5;
+			    document.cookie="latitude=" + loc_lat;
+			    document.cookie="longitude=" + loc_lng;	
+				$.get("{{url('writeLogs')}}",{'log':'location 5'});
+				add();			    
+		}
 	} 
 
 </script>

@@ -15,9 +15,7 @@
 		return phpinfo();
 	});
 
-	Route::get('apple-date', function(){
-		return view('apple-date');
-	});
+	Route::get('apple-date',  'AdminController@getDates');
 	
 	// Auth::routes();
 
@@ -48,12 +46,15 @@
 	Route::post('/userRegisterSave','Auth\RegisterController@userDetailSave');
 	Route::get('/userRegisterSave','Auth\RegisterController@userDetailSave');
 	Route::post('/userLogin','Auth\LoginController@userLogin');
-	Route::get('/mobileLogin','Auth\LoginController@mobileLogin')->name('customer-login');
+	Route::get('/login','Auth\LoginController@login')->name('login');
+	Route::get('/login','Auth\LoginController@login')->name('customer-login');
+	Route::get('/mobileLogin','Auth\LoginController@mobileLogin');
 	Route::post('/sentOtp','Auth\RegisterController@sentOtp');
 	Route::get('/sentOtp','Auth\RegisterController@sentOtp');
 	Route::get('/enterOtp','Auth\LoginController@enterOtp');
 	Route::get('/userLogin','Auth\LoginController@userSessionLogin');
 	Route::post('/update-browser','OrderController@updateBrowser');
+	Route::get('/set-timezone','CustomerController@setTimezone');
 
 	Route::get('ready-notification/{OrderId}', 'PushNotifactionController@readyNotifaction');
 	Route::get('deliver-notification/{OrderId}', 'PushNotifactionController@deliverNotifaction');
