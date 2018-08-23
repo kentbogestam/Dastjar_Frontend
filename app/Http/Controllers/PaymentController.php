@@ -14,28 +14,56 @@ use App\Order;
 use App\OrderDetail;
 use App\User;
 use App\Store;
+use App\Helper;
 
 class PaymentController extends Controller
 {
-    //
     public function payment(Request $request)
     {
     	if(!empty($request->input())){
     		$amount = $request->session()->get('paymentAmount') * 100;
-    		//dd($amount);
 	    	$stripeAccount = $request->session()->get('stripeAccount');
 	    	$orderId = $request->session()->get('OrderId');
 	      try {
 	        $token = $request->stripeToken;
-	        Stripe::setApiKey('sk_test_EypGXzv2qqngDIPIkuK6aXNi');
-	        $charge = Charge::create(array(
-	            'amount' => $amount,
-	            'currency' => 'sek',
-	            'description' => 'Order charge',
-	            'source' => $token
-	        ), array('stripe_account' => $stripeAccount));
-	        if($charge->status == "succeeded"){
+			Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
 
+	        $customer = new User();
+			$emailId = $customer->where('id',$request->session()->get('login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d'))->first()->email;		
+			
+			$orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
+
+			$description = "";
+
+			foreach ($orderDetails as $key => $value) {
+				# code...
+				$description .= $value->product_quality . " " . $value->product_name . ", ";
+			}
+
+			$vat_total = (12*$amount)/10000;
+
+			$description .= "Vat 12%, Vat Total " . $vat_total . "kr";
+
+			if (filter_var($emailId, FILTER_VALIDATE_EMAIL)) {
+				$charge = Charge::create(array(
+		            'amount' => $amount,
+		            'currency' => 'sek',
+					'description' => $description,
+	//				'destination' => $stripeAccount,
+	                'receipt_email' => $emailId,
+		            'source' => $token
+				), array("stripe_account" => $stripeAccount));
+			} else {
+				$charge = Charge::create(array(
+		            'amount' => $amount,
+		            'currency' => 'sek',
+					'description' => $description,
+	//				'destination' => $stripeAccount,
+		            'source' => $token
+				), array("stripe_account" => $stripeAccount));
+			}
+
+			if($charge->status == "succeeded"){
 	        	DB::table('orders')->where('order_id', $orderId)->update([
 	                        'online_paid' => 1,
 	                    ]);
@@ -49,15 +77,21 @@ class PaymentController extends Controller
 	        	$paymentSave->save();
 
 	        	$order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
-		        //dd($order->currencies);
-		        $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
-		        return view('order.index', compact('order','orderDetails'))->with('success', 'Payment Done Successfully');
 
-	        }else{
+		        $storeId = $order->store_id;
+		        $storeDetail = Store::where('store_id' , $storeId)->first();
+		        $user = User::where('id',$order->user_id)->first();
 
-	        }
-	    } catch (\Exception $ex) {
-	        return $ex->getMessage();
+        		$helper = new Helper();
+        		$helper->logs($order->user_id . " - browser");
+
+                Session::flash('success', 'Payment Done Successfully');
+
+				// return view('order.index', compact('order','orderDetails','storeDetail','user'))->with('success', 'Payment Done Successfully');
+                return redirect()->route('order-view', $orderId);
+			}
+		} catch (\Exception $ex) {
+	        return view('blankPage')->with('message', $ex->getMessage());
 	      }
     	}else{
 

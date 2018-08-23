@@ -6,7 +6,7 @@
 			<div class="inner-logo">
 				<span class="rest-title">{{$companydetails->store_name}}</span>
 				<!-- <img src="{{asset('images/logo.png')}}"> -->
-				<span>{{ Auth::user()->name}}</span>
+				<span>{{ $user->name}}</span>
 			</div>
 		</div>
 		<a class="ui-btn-right map-btn user-link" href="#left-side-bar"  data-ajax="false"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
@@ -37,7 +37,7 @@
 			</div>
 			<span>{{ __('messages.Send') }}</span>
 		</a></div>
-		@if(count(Auth::user()->paidOrderList) == 0)
+		@if(count($user->paidOrderList) == 0)
 		<div class="ui-block-c"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 			<div class="img-container">
 				<img src="{{asset('images/icons/select-store_05.png')}}">
@@ -51,11 +51,11 @@
 		       		<!-- <img src="images/icons/select-store_05.png"> -->
 		        	<img src="{{asset('images/icons/select-store_05-active.png')}}">
 		        </div>
-	        	<span>{{ __('messages.Order') }}<span class="order-number">{{count(Auth::user()->paidOrderList)}}</span></span>
+	        	<span>{{ __('messages.Order') }}<span class="order-number">{{count($user->paidOrderList)}}</span></span>
 	        </a>
 	        <div id="order-popup" data-theme="a">
 		      <ul data-role="listview">
-		      	@foreach(Auth::user()->paidOrderList as $order)
+		      	@foreach($user->paidOrderList as $order)
 					<li>
 						<a href="{{ url('order-view/'.$order->order_id) }}" data-ajax="false">{{ __('messages.Order id') }} - {{$order->customer_order_id}}</a>
 					</li>

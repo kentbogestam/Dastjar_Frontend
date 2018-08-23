@@ -7,12 +7,15 @@ use Illuminate\Http\Request;
 class StripePaymentController extends Controller
 {
     public function redirectStripe(){
-    	return redirect()->away('https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_BsQwDxmv6Nde3fzblaLT8KiuPh7q02px&scope=read_write');
+    	return redirect()->away('https://connect.stripe.com/oauth/authorize?response_type=code&client_id=' . env('STRIPE_CLIENT_ID') . '&scope=read_write');
     }
 
     public function stripeResponse(Request $request){
-    	$data=$request->input();
-        $url = 'https://connect.stripe.com/oauth/token/client_secret=sk_test_EypGXzv2qqngDIPIkuK6aXNi/code='.$data['code'].'/grant_type=authorization_code';
+        $data=$request->input();
+        
+        dd($data);
+        
+        $url = 'https://connect.stripe.com/oauth/token/client_secret=' . env('STRIPE_SECRET_KEY') . '/code='.$data['code'].'/grant_type=authorization_code';
 
     	$curl = curl_init();
  
@@ -28,7 +31,7 @@ class StripePaymentController extends Controller
         dd($response);
         
      //    curl_close($curl);
-    	return redirect()->away( 'http://localhost/stripePayment/public/stripeResponse?scope='.$data['scope'].'&code='.$data['code'].'');
+    	return redirect()->away(env('APP_URL').'stripeResponse?scope='.$data['scope'].'&code='.$data['code'].'');
     }
 
     public function stripeSecondResponse(Request $request){

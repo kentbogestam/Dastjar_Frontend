@@ -1,16 +1,22 @@
 
 var lat;
 var lng;
+
 $(document).ready(function($) {
 
 	navigator.geolocation.getCurrentPosition(function(position) { 
 	    document.cookie="everyMinutelatitude=" + position.coords.latitude;
 	    document.cookie="everyMinutelongitude=" + position.coords.longitude;
 	},function(error){
-	   $('.login-inner-section a').attr('href','javascript:void(0)');
-	   $('#login-popup').show();
-	    
+		if (typeof lat === "undefined") {
+		   // $('.login-inner-section a').attr('href','javascript:void(0)');
+		   // $('#login-popup').show();	    			
+		}else{
+		    // document.cookie="latitude=" + lat;
+		    // document.cookie="longitude=" + lng;			
+		} 			    
 	});
+
 
 	function getCookie(cname) {
 	    var name = cname + "=";
@@ -27,14 +33,15 @@ $(document).ready(function($) {
 	    }
 	    return "";
 	}
+
 	lat = getCookie("everyMinutelatitude");
 	lng = getCookie("everyMinutelongitude");
+	
 	$.ajax({
         type: "GET",
         url: "checkDistance",
         data: {lat: getCookie("everyMinutelatitude"), lng : getCookie("everyMinutelongitude")},
         success: function( returnedData ) {
-           console.log(returnedData);
         }
     });
 

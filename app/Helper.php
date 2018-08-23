@@ -3,10 +3,10 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Helper extends Model
 {
-    //
     public static function getLocation($address)
     {
         $address = str_replace(' ', '+', $address);
@@ -49,5 +49,44 @@ class Helper extends Model
             }
         }
         return $result;
+    }
+
+    /* This is a general function which we are using to generate 36 Char unique id. */
+    function uuid()
+    {
+        $chars = md5(uniqid(mt_rand(), true));
+        $uuid  = substr($chars,0,8) . '-';
+        $uuid .= substr($chars,8,4) . '-';
+        $uuid .= substr($chars,12,4) . '-';
+        $uuid .= substr($chars,16,4) . '-';
+        $uuid .= substr($chars,20,12);
+        return $uuid;
+    }
+
+    function is_image($path)
+    {
+        $a = getimagesize($path);
+        $image_type = $a[2];
+        
+        if(in_array($image_type , array(IMAGETYPE_GIF , IMAGETYPE_JPEG ,IMAGETYPE_PNG , IMAGETYPE_BMP)))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    //this function convert string to UTC time zone
+    function convertTimeToUTCzone($str, $userTimezone, $format = 'Y-m-d H:i:s'){
+            
+        $new_str = new \DateTime($str, new \DateTimeZone(  $userTimezone  ) );
+        $new_str->setTimeZone(new \DateTimeZone('UTC'));
+        return $new_str->format( $format);
+    }
+
+    function logs($str = ""){
+            $myfile = fopen(public_path() . "/upload/images/log" . Carbon::now()->format('Ymd') . ".txt", "a") or die("Unable to open file!");
+            $txt = Carbon::now() . " - " . $str . "  \n";
+            fwrite($myfile, $txt);
+            fclose($myfile);
     }
 }

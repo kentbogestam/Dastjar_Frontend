@@ -1,15 +1,65 @@
 @extends('layouts.master')
 @section('head-scripts')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.5.1/fingerprint2.min.js"></script>
+	<style type="text/css">
+		#overlay {
+    		position: fixed;
+    		display: none;
+    		width: 100vw;
+    		height: 100vh;
+		    top: 0;
+		    left: 0;
+		    right: 0;
+    		bottom: 0;
+	    	background-color: rgba(0,0,0,0.5);
+	    	z-index: 999;
+		}
 
+		#loading-img{
+			display: none;
+			position: absolute;
+			top: 50vh;
+			left: 50vw;
+			z-index: 99999;
+		}
+
+		.popup-close1 {
+			width: 30px;
+			height: 26px;
+			padding-top: 4px;
+			display: inline-block;
+			position: absolute;
+			top: 5px;
+			right: 5px;
+			-webkit-transition: ease 0.25s all;
+			transition: ease 0.25s all;
+			-webkit-transform: translate(50%, -50%);
+			transform: translate(50%, -50%);
+			border-radius: 100% !important;
+			background: #7ebe12;
+			font-family: Arial, Sans-Serif;
+			font-size: 20px;
+			text-align: center;
+			line-height: 0.8;
+			color: #fff;
+			cursor: pointer;
+			padding-left: 0px;
+			z-index: 999;
+		}
+
+		.popup-close1:hover {
+			text-decoration: none;
+		}
+	</style>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.5.1/fingerprint2.min.js"></script>
 
     <script src="{{asset('notifactionJs/App42-all-3.1.min.js')}}"></script>
     <script src="{{asset('notifactionJs/SiteTwo.js')}}"></script>
     <script src="{{asset('notifactionJs/serviceWorker.js')}}"></script>
     <script src="{{asset('browserShortcutJs/comlink.global.js')}}"></script>
     <script src="{{asset('browserShortcutJs/messagechanneladapter.global.js')}}"></script>
-
     <script src="{{asset('addToHomeIphoneJs/addtohomescreen.js')}}"></script>
+    
     <script type="text/javascript">
 	  navigator.sayswho= (function(){
 	    var ua= navigator.userAgent, tem, 
@@ -25,7 +75,7 @@
 	    M= M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
 	    if((tem= ua.match(/version\/(\d+)/i))!= null) M.splice(1, 1, tem[1]);
 
-	    console.log("browserVersion=" + M.join(' '));
+	    //console.log("browserVersion=" + M.join(' '));
 	    var browserVersion = M.join(' ');
 	    var getBrowser = browserVersion.split(" ");
 	    var browser = getBrowser[0];
@@ -40,15 +90,15 @@
 	    }
 	})();
 	</script>
-     <script>
-
+	
+	<script>
 	  $(document).ready(function () {
 	        registerSwjs();
 	  });
 	</script>
 @endsection
 @section('content')
-	<div data-role="header" class="header" id="nav-header"  data-position="fixed"><!--  -->
+	<div data-role="header" class="header" id="nav-header"  data-position="fixed">
 		<div class="nav_fixed">
 			<div class="logo">
 				<div class="inner-logo">
@@ -56,32 +106,29 @@
 					@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
 				</div>
 			</div>
-			<a class="ui-btn-right map-btn user-link" onClick="makeRedirection('{{url('search-map-eatnow')}}')"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
+			<a href="{{url('search-map-eatnow')}}" class="ui-btn-right map-btn user-link" data-ajax="false"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
 		</div>
 	</div>
 	<div class="cat-btn">
 		<div class="ui-grid-a top-btn">
-			<div class="ui-block-a"><a href="" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-active" class="active"><img src="{{asset('images/icons/icon-eat-now-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-now-inactive.png')}}" class="inactive">{{ __('messages.Eat Now') }}</a></div>
-			<div class="ui-block-b"><a onClick="makeRedirection('{{url('selectOrder-date')}}')" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-inactive"><img src="{{asset('images/icons/icon-eat-later-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-later-inactive.png')}}" class="inactive">{{ __('messages.Eat Later') }}</a></div>
+			<div class="ui-block-a"><a href="#" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-active" class="active"><img src="{{asset('images/icons/icon-eat-now-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-now-inactive.png')}}" class="inactive">{{ __('messages.Eat Now') }}</a></div>
+			<div class="ui-block-b"><a href="{{url('selectOrder-date')}}" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-inactive" data-ajax="false"><img src="{{asset('images/icons/icon-eat-later-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-later-inactive.png')}}" class="inactive">{{ __('messages.Eat Later') }}</a></div>
 		</div>
 	</div>
-	<div role="main" data-role="main-content" id="content">
 
+	<div role="main" data-role="main-content" id="content">
 		<div class="cat-list-sec">
 			<input type="hidden" id="browserCurrentTime" name="browserCurrentTime" value="" />
 			<ul data-role="listview" data-inset="true" id="companyDetailContianer">
 
-				
-
-
+		
 			</ul>
 		</div>
-
-
 	</div>	
+
 	<div data-role="footer" id="footer" data-position="fixed">
 		<div class="ui-grid-c inner-footer center">
-		<div class="ui-block-a"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
+		<div class="ui-block-a"><a href="javascript:void(0)" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
 			<div class="img-container">
 				<img src="{{asset('images/icons/select-store_01.png')}}">
 			</div>
@@ -105,28 +152,85 @@
 		</div>
 		</div>
 	</div>
+
 	<div id="login-popup" style="display: none;" class="login-popup" data-theme="a">
 	  <div class="inner-popup">
-	        <div id = "cancel-popup" class="cross"><img src="{{asset('images/icons/cross.png')}}"></div>
+	        <div id="cancel-popup" class="cross"><span class="popup-close1">x</span></div>
 	        <div class="pop-body">
-	           <p>Please allow browser location.</p>
+	           <p>{{ __('messages.Please activate Location Services in your mobile') }}</p>
 	        </div>
 	  </div>
 	</div>
 
+	<div id="loading-img" class="ui-loader ui-corner-all ui-body-a ui-loader-default"><span class="ui-icon-loading"></span><h1>loading</h1></div>
 
-	
-
+	  <div id="overlay" onclick="off()">
+	  </div>
 @endsection
 
 @section('footer-script')
+	<script type="text/javascript" src="//momentjs.com/downloads/moment-with-locales.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.21/moment-timezone-with-data.min.js"></script>
 
 <script type="text/javascript">
+	var loc_lat;
+	var loc_lng;
+	var loc_flag=0;
+	var resExist=0;
+</script>
+
+<?php
+	$helper = new Helper();
+	$helper->logs("1 " . Session::get('with_login_lat') . " 2 " . Session::get('with_login_lng') . " 3 " . Session::get('with_out_login_lat') . " 4 " . Session::get('with_out_login_lng') . " 5 " . Session::get('address'));
+
+	if(Auth::check()){
+			if(Session::get('with_login_address') != null){
+				?>
+	<script type="text/javascript">
+				loc_lat = "{{Session::get('with_login_lat')}}";
+				loc_lng = "{{Session::get('with_login_lng')}}";
+	</script>				
+				<?php
+			}else if(Session::get('with_out_login_lat') != null){
+				?>
+		<script type="text/javascript">
+				loc_lat = "{{Session::get('with_out_login_lat')}}";
+				loc_lng = "{{Session::get('with_out_login_lng')}}";
+		</script>
+				<?php
+			}else{
+				?>
+		<script type="text/javascript">
+				loc_lat = "";
+				loc_lng = "";
+		</script>
+				<?php
+			}
+		}
+		else{
+			if(Session::get('with_out_login_lat') != null){
+				?>
+		<script type="text/javascript">
+				loc_lat = "{{Session::get('with_out_login_lat')}}";
+				loc_lng = "{{Session::get('with_out_login_lng')}}";
+		</script>
+				<?php
+			}
+		}
+?>
+
+
+<script type="text/javascript">
+	var tz = moment.tz.guess();
+	$.get("{{url('set-timezone')}}",{'tz':tz});
+
+	$.get("{{url('writeLogs')}}",{'log':'index page'});
 
 	$("#cancel-popup").click(function () {
       $('#login-popup').hide();
       var extraclass = document.body;
 	  extraclass.classList.add("disableClass");
+	  window.location.replace("{{url('select-location?k=home')}}");
     });
 
 	$(".ordersec").click(function(){
@@ -135,6 +239,9 @@
 
 	var list = Array();
 	var totalCount = 0;
+
+	var curDate = new Date();
+	curTimezoneOffset = curDate.getTimezoneOffset();
 
 	function getCookie(cname) {
 	    var name = cname + "=";
@@ -170,11 +277,10 @@
 
     	$(".ui-btn-left", activePage).text("Scrolled: " + scrolled);
     	//$(".ui-btn-right", activePage).text("ScrollEnd: " + scrollEnd);
-
     	
     	//if in future this page will get it, then add this condition in and in below if activePage[0].id == "home" 
     	if (scrolled >= scrollEnd) {
-	        console.log(list);
+	        //console.log(list);
 	        $.mobile.loading("show", {
 	        text: "loading more..",
 	        textVisible: true,
@@ -213,13 +319,11 @@
 				
 				liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
 				liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+list[i]['store_id']+" data-ajax='false'>";
-				liItem += "<img src="+"'"+list[i]["store_image"]+"'"+">";
+				liItem += "<img src="+"'"+temp[i]["store_image"]+ "' onerror='this.src=\""+"{{url('images/placeholder-image.png')}}\""+"'" +">";
 				liItem += "<h2>"+list[i]["store_name"]+"</h2>";
 				liItem += "<p>";
 				
 				for (var j=0;j<list[i]["products"].length;j++){
-					//console.log(list[i]["products"][j]);
-					;
 					if(j <= 1){
 						liItem += list[i]["products"][j]["product_name"];
 					}   
@@ -245,226 +349,124 @@
 
 	function add(){
 		var d = new Date();
-		console.log(d);
+		//console.log(d);
 		$("#browserCurrentTime").val(d);
-		$.get("{{url('lat-long')}}", { lat: getCookie("latitude"), lng : getCookie("longitude"), currentdateTime : d, browserVersion : getCookie("browserVersion")}, 
-    	function(returnedData){
+		if(resExist==0){
+			resExist=1;
+			$.get("{{url('lat-long')}}", { lat: getCookie("latitude"), lng : getCookie("longitude"), currentdateTime : d, browserVersion : getCookie("browserVersion")}, 
+		    	function(returnedData){
+		    		loc_flag=4;
+		    		$('#login-popup').hide();
+	    			$("#loading-img").hide();
+		    		$("#overlay").hide();
 
-	    	var count = 10;
-	    	console.log(returnedData["data"]);
-	    	var url = "{{url('restro-menu-list/')}}";
-			var temp = returnedData["data"];
-			list = temp;
-			var liItem = "";
-			if(temp.length != 0){
-				totalCount = temp.length;
-				if(temp.length < count){
-					count = temp.length
-				}
-				totalCount -= 10;
+			    	var count = 10;
+			    	//console.log(returnedData["data"]);
+			    	var url = "{{url('restro-menu-list/')}}";
+					var temp = returnedData["data"];
+					list = temp;
+					var liItem = "";
+					if(temp.length != 0){
+						totalCount = temp.length;
+						if(temp.length < count){
+							count = temp.length
+						}
+						totalCount -= 10;
 
-				for (var i=0;i<count;i++){
-					if(checkTime(temp[i]["store_open_close_day_time"])){
+						for (var i=0;i<count;i++){
+							if(checkTime(temp[i]["store_open_close_day_time"])){
 
-						liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
-						liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+temp[i]['store_id']+" data-ajax='false'>";
-						liItem += "<img src="+"'"+temp[i]["store_image"]+"'"+">";
-						liItem += "<h2>"+temp[i]["store_name"]+"</h2>";
-						liItem += "<p>";
-						
-						for (var j=0;j<temp[i]["products"].length;j++){
-							//console.log(temp[i]["products"][j]);
-							;
-							if(j <= 1){
-								liItem += temp[i]["products"][j]["product_name"];
-							}   
-							if(temp[i]["products"].length > 1 && j <= 1){
-								liItem += ",&nbsp;";
+								liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
+								liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+temp[i]['store_id']+" data-ajax='false'>";
+								liItem += "<img src="+"'"+temp[i]["store_image"]+ "' onerror='this.src=\""+"{{url('images/placeholder-image.png')}}\""+"'" +">";
+								liItem += "<h2>"+temp[i]["store_name"]+"</h2>";
+								liItem += "<p>";
+								
+								for (var j=0;j<temp[i]["products"].length;j++){
+									if(j <= 1){
+										liItem += temp[i]["products"][j]["product_name"];
+									}   
+									if(temp[i]["products"].length > 1 && j <= 1){
+										liItem += ",&nbsp;";
+									}
+								}
+
+								if(temp[i]["products"].length > 1){
+									liItem += "&nbsp;&more";
+								} 
+								liItem += "</p>";
+								liItem += "<div class='ui-li-count ui-body-inherit'>";
+								liItem += "<span>"+temp[i]["distance"].toFixed(2)+ "&nbsp;Km" + "</span>";
+
+								liItem += "</div></a></li>";
 							}
 						}
-
-						if(temp[i]["products"].length > 1){
-							liItem += "&nbsp;&more";
-						} 
+					}else{
+						liItem += "<div class='table-content'>";
+						liItem += "<p>";
+						liItem += '';
 						liItem += "</p>";
-						liItem += "<div class='ui-li-count ui-body-inherit'>";
-						liItem += "<span>"+temp[i]["distance"].toFixed(2)+ "&nbsp;Km" + "</span>";
-
-						liItem += "</div></a></li>";
+						liItem += "</div>";
 					}
-				}
-			}else{
-				liItem += "<div class='table-content'>";
-				liItem += "<p>";
-				liItem += '';
-				liItem += "</p>";
-				liItem += "</div>";
-			}
-	  		$("#companyDetailContianer").append(liItem);
-		});	
+			  		$("#companyDetailContianer").append(liItem);
+				});
+		}
 	}
 
 
+
 	$(function(){
+    	$("#overlay").show();
+    	$("#loading-img").show();
+
+    	$(".icon-eat-inactive").click(function(){
+    		eatActive = $(".icon-eat-active");
+    		eatInactive = $(".icon-eat-inactive");
+
+    		eatActive.removeClass('icon-eat-active');
+    		eatActive.addClass('icon-eat-inactive');
+
+    		eatInactive.removeClass('icon-eat-inactive');
+    		eatInactive.addClass('icon-eat-active');
+    	});
+
 		var extraclass = document.body;
-		extraclass.classList.add("disableClass");
-		navigator.geolocation.getCurrentPosition(function(position) { 
-	    document.cookie="latitude=" + position.coords.latitude;
-	    document.cookie="longitude=" + position.coords.longitude;
-	    var extraclass = document.body;
-			extraclass.classList.remove('disableClass');
-			//location.reload ();
-			add();
-	},function(error){
-	   $('.login-inner-section a').attr('href','javascript:void(0)');
-	   $('#login-popup').show();
-	    
-	});
+
+	setInterval(getPosAgain,3000);
+
+	function getPosAgain(){
+		if(loc_flag==0){
+			getPos();
+		}
+	}
+
+	getPos();
 
 	var d = new Date();
-	console.log(d);
+
 	$("#browserCurrentTime").val(d);
-	console.log(getCookie("latitude"));
-	console.log(getCookie("longitude"));
-	console.log(getCookie("browserVersion"));
 
 	$.get("{{url('checkUserLogin')}}", 
 	    function(returnedData){
 	    	var temp = returnedData["data"];
 	    	if(temp){
 	    		 document.cookie="userId=" + temp;
-	    		localStorage.setItem("userId", temp);
-	    		 console.log('loginId='+localStorage.getItem("userId"));
+   	    		 localStorage.setItem("userId", temp);
 	    	}else{
 	    		if(localStorage.getItem("userId")){
 	    			console.log('logoutloginId='+localStorage.getItem("userId"));
 	    			$.get("{{url('userLogin')}}", { usetId : localStorage.getItem("userId")}, 
 	    				function(returnedData){
-	    					console.log(returnedData["data"]);
-	    					location.reload();
+	    					// console.log(returnedData["data"]);
+	    					// location.reload();
 	    				});
 	    		}else{
-	    			console.log('logout');
+	    			// console.log('logout');
 	    		}
 	    	}
 	    });
 
-	$.get("{{url('lat-long')}}", { lat: getCookie("latitude"), lng : getCookie("longitude"), currentdateTime : d, browserVersion : getCookie("browserVersion")}, 
-	    function(returnedData){
-
-	    	var count = 10;
-	    	console.log(returnedData["data"]);
-	    	var url = "{{url('restro-menu-list/')}}";
-			var temp = returnedData["data"];
-			list = temp;
-			var liItem = "";
-			if(temp.length != 0){
-				totalCount = temp.length;
-
-				if(temp.length < count){
-					count = temp.length
-				}
-
-				totalCount -= 10;
-
-				for (var i=0;i<count;i++){
-					if(checkTime(temp[i]["store_open_close_day_time"])){
-						liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
-						liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+temp[i]['store_id']+" data-ajax='false'>";
-						liItem += "<img src="+"'"+temp[i]["store_image"]+"'"+">";
-						liItem += "<h2>"+temp[i]["store_name"]+"</h2>";
-						liItem += "<p>";
-						
-						for (var j=0;j<temp[i]["products"].length;j++){
-							//console.log(temp[i]["products"][j]);
-							;
-							if(j <= 1){
-								liItem += temp[i]["products"][j]["product_name"];
-							}   
-							if(temp[i]["products"].length > 1 && j <= 1){
-								liItem += ",&nbsp;";
-							}
-						}
-
-						if(temp[i]["products"].length > 1){
-							liItem += "&nbsp;&more";
-						} 
-						liItem += "</p>";
-						liItem += "<div class='ui-li-count ui-body-inherit'>";
-						liItem += "<span>"+temp[i]["distance"].toFixed(2)+ "&nbsp;Km" + "</span>";
-
-						liItem += "</div></a></li>";
-					}
-				}
-			}else{
-				liItem += "<div class='table-content'>";
-				liItem += "<p>";
-				liItem += '';
-				liItem += "</p>";
-				liItem += "</div>";
-			}
-	       // $("#companyDetailContianer").append(liItem);
-		});
 	});
-
-	// function checkTime($time){
-	// 	var d = new Date();
-	// 	var currentTime1 = d.toLocaleTimeString();
-	//         var currentTime2  = currentTime1.split(',');
-	// 	var currentTime3  =  currentTime2[0].split(' '); 
-	// 	var currentTime4  =  (currentTime3[0]).trim();
-	// 	var currentTime  =  (currentTime4.replace(':', '')).replace(':', '');
-	// 	var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-	// 	var todayDay = days[d.getDay()];
-	// 	// console.log(currentTime);
-	// 	// console.log('todayDay'+todayDay);
-	// 	var time = $time;
-	// 	var day = time.split(' :: ')
-	// 	var checkday = time.split(',');
-	// 	if(day[0] == 'All'){
-	// 		var timeSplit = day[1].split(' to ');
-	// 		var openTime = (timeSplit[0].replace(':', '')).replace(':', '');
-	// 		var closeTime = ((timeSplit[1].replace(':', '')).replace(':', '')).trim();
-	// 		var diff = closeTime - currentTime;
-	// 		if(openTime < currentTime && diff > 1){
-	// 			return true;
-	// 		}else{
-	// 			return false;
-	// 		}
-	// 	}else{
-	// 		if(day.length == 2){
-	// 			if(day[0] == todayDay){
-	// 				var timeSplit = day[1].split(' to ');	
- //                   		        var openTime = (timeSplit[0].replace(':', '')).replace(':', '');
- //                       		        var closeTime = ((timeSplit[1].replace(':', '')).replace(':', '')).trim();
- //                		        var diff = closeTime - currentTime;
-	// 				if(openTime < currentTime && diff > 1){
-	// 					return true;
-	// 				}else{
-	// 					return false;
-	// 				}
-	// 			}else{
-	// 				return false;
-	// 			}
-	// 		}else{
-	// 			for(i=0;i<checkday.length;i++){
-	// 				var getDay = checkday[i].split(' :: ');
-	// 				if(getDay[0] == todayDay){
-	// 					var timeSplit = getDay[1].split(' to ');
- //                       			        var openTime = (timeSplit[0].replace(':', '')).replace(':', '');
- //                        			var closeTime = ((timeSplit[1].replace(':', '')).replace(':', '')).trim();
-	// 		                        var diff = closeTime - currentTime;
-	// 					if(openTime < currentTime && diff  > 1){
-	// 						return true;
-	// 					}else{
-	// 						return false;
-	// 					}
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// 	return false;
-	// }
 
 
 	function checkTime($time){
@@ -473,8 +475,6 @@
 		var currentTime = dd[4];
 		var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 		var todayDay = days[d.getDay()];
-		// console.log(currentTime);
-		// console.log('todayDay'+todayDay);
 		var time = $time;
 		var day = time.split(' :: ')
 		var checkday = time.split(',')
@@ -520,6 +520,55 @@
 		return false;
 	}
 
+	function getPos(){
+		if (typeof loc_lat === "undefined" || loc_lat == "") {		
+		navigator.geolocation.getCurrentPosition(function(position) { 
+			loc_flag=1;
+		    document.cookie="latitude=" + position.coords.latitude;
+		    document.cookie="longitude=" + position.coords.longitude;
+
+		    loc_lat = position.coords.latitude;
+		    loc_lng = position.coords.longitude;
+
+		    var extraclass = document.body;
+			extraclass.classList.remove('disableClass');
+			//location.reload ();
+			$.get("{{url('writeLogs')}}",{'log':'location 1'});
+			add();
+		},function(error){
+				$.get("{{url('writeLogs')}}",{'log':'cookie ' + getCookie("latitude")});
+
+			if (typeof loc_lat === "undefined" || loc_lat == "") {
+				if (!getCookie("latitude")){
+		    		$("#loading-img").hide();
+		    		$("#overlay").hide();
+				    $('.login-inner-section a').attr('href','javascript:void(0)');
+	 			    $('#login-popup').show();	
+					$.get("{{url('writeLogs')}}",{'log':'location 2 ' + error + ' ' + loc_lat});
+				} else {
+					loc_flag=2;
+				    document.cookie="latitude=" + getCookie("latitude");
+				    document.cookie="longitude=" + getCookie("longitude");		
+					$.get("{{url('writeLogs')}}",{'log':'location 3'});
+					add();					
+				}
+			}else{
+				loc_flag=3;
+			    document.cookie="latitude=" + loc_lat;
+			    document.cookie="longitude=" + loc_lng;		
+				$.get("{{url('writeLogs')}}",{'log':'location 4'});
+				add();
+			} 
+		},{maximumAge:0,timeout:5000});
+		}else{
+				loc_flag=5;
+			    document.cookie="latitude=" + loc_lat;
+			    document.cookie="longitude=" + loc_lng;	
+				$.get("{{url('writeLogs')}}",{'log':'location 5'});
+				add();			    
+		}
+	} 
+
 </script>
 
 <script type="text/javascript">
@@ -538,9 +587,8 @@
 	    }
 	    return "";
 	}
-	var count = getCookie("iphonePopupcount") + getCookie("iphonePopupcountIncrease");
-	console.log('count='+count);
 
+	var count = getCookie("iphonePopupcount") + getCookie("iphonePopupcountIncrease");
 
 	var IphoneVersion;
     var deviceDetection = function () { 
@@ -587,9 +635,9 @@
              'deviceType': deviceType 
             }; 
     }();
-    console.log('IphoneVersion='+IphoneVersion);
-	if(getCookie("browser") == 'Safari' && count == 1 && IphoneVersion != 11.3){
-		console.log('iphonePopupcount='+getCookie("iphonePopupcount"));
+    //console.log('IphoneVersion='+IphoneVersion);
+
+	if(getCookie("browser") == 'Safari' && count == 1){
 		document.cookie="iphonePopupcountIncrease=" + 2;
 		var ath = addToHomescreen({
 		    debug: 'ios',           // activate debug mode in ios emulation
@@ -603,5 +651,5 @@
 	}
 </script>
 
-<script src="{{asset('locationJs/currentLocation.js')}}"></script>
+<script src="{{asset('locationJs/currentLocation.js?2')}}"></script>
 @endsection

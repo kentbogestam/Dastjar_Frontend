@@ -3,6 +3,7 @@
 @section('head-scripts') 
 
 @endsection
+
 @section('content')
 
 <div data-role="header" data-position="fixed" data-tap-toggle="false" class="header">
@@ -47,7 +48,8 @@
 		    </tbody>
 		</table>
 	</div>
-	<div data-role="footer" data-position="fixed" data-tap-toggle="false" class="footer_container">
+
+		<div data-role="footer" data-position="fixed" data-tap-toggle="false" class="footer_container">
 		<div class="ui-grid-a center">
 			<div class="ui-block-a left-side_menu">
 				<div class="ui-block-a block_div "><a  href = "{{ url('kitchen/store') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
@@ -79,11 +81,12 @@
 						<img src="{{asset('kitchenImages/icon-6.png')}}">
 					</div>
 				</a></div>
-				<div class="ui-block-b middle-menu"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" target="_blank" href="https://admin.dastjar.com/admin/">
+				
+				<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" href="{{ url('kitchen/menu') }}">
 					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-5.png')}}">
+						<img src="{{asset('kitchenImages/icon-7.png')}}">
 					</div>
-					<span>{{ __('messages.Admin') }}</span>
+					<span>{{ __('messages.Menu') }}</span>
 				</a></div>
 				<div class="ui-block-c"><a href = "{{ url('kitchen/kitchen-order-onsite') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">
@@ -94,14 +97,15 @@
 			</div>
 		</div>
 	</div>
-	<div data-role="popup" id="popupNotifaction" class="ui-content" style="max-width:280px;padding: 15px;">
+	
+	<!-- <div data-role="popup" id="popupNotifaction" class="ui-content" style="max-width:280px;padding: 15px;">
 	    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
 	<p style="color: #0c780c;line-height: 22px;margin: 0;">{{ __('messages.Order Ready Notification Send Successfully.') }}</p>
-	</div>
-	<div data-role="popup" id="popupCloseRight" class="ui-content" style="max-width:280px; padding: 15px;">
+	</div> -->
+	<!-- <div data-role="popup" id="popupCloseRight" class="ui-content" style="max-width:280px; padding: 15px;">
 	    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
 	<p style="color: #0c780c;line-height: 22px;margin: 0;">{{ __('messages.Order Ready Successfully.') }}</p>
-	</div>
+	</div> -->
 
 @endsection
 
@@ -117,8 +121,7 @@
 		var lastOrderId;
 		var imageUrl = "{{asset('kitchenImages/right_sign.png')}}";
 
-		function orderReadyStarted(id) {
-			
+		function orderReadyStarted(id) {			
 			$.get("{{url('kitchen/orderStartedKitchen')}}/"+id,
 			function(returnedData){
 				console.log(returnedData["data"]);
@@ -128,9 +131,11 @@
 			});
 		}
 
-		function onReady(id) {
-			
-			$.get("{{url('kitchen/onReadyAjax')}}/"+id,
+		function onReady(id) {		
+			$('body').find('#'+id+'ready').attr('src',imageUrl);
+			$('body').find('#'+id+'ready').parent("a").attr('onclick',' ');
+
+			$.get("{{url('kitchen/order-readyKitchen')}}/"+id,
 			function(returnedData){
 				console.log(returnedData["data"]);
 				$('body').find('#'+id+'ready').parents("tr").remove();
@@ -140,6 +145,7 @@
 					$("#popupNotifaction").popup("open");	
 				}
 			});
+	
 		}
 
 		$(function(){
@@ -147,6 +153,7 @@
 			function(returnedData){
 				console.log(returnedData["data"]);
 				textSpeach = returnedData["user"];
+				extra_prep_time = returnedData["extra_prep_time"];
 				var count = 18;
 				
 				var temp = returnedData["data"];
@@ -170,7 +177,7 @@
 				      	lastOrderId = temp[i]["id"];
 				      	(function (i) {
 						    setTimeout(function () {
-			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
+			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"],extra_prep_time);
 			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
 			          		liItem += "<tr>";
 			          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
@@ -215,7 +222,7 @@
 			          		if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 0){
 			          			ids = temp[i]['id'];
 				          		liItem += "<td>"
-				          		liItem += "<a data-ajax='false' >"
+				          		liItem += "<a data-ajax='false' href='javascript:void(0)' >"
 				          		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 				          		liItem +="</a></td>";
 				          		}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
@@ -255,6 +262,7 @@ console.log('lastOrderId'+lastOrderId);
 				var count = 18;
 				var temp = returnedData["data"];
 				textSpeach = returnedData["user"];
+				extra_prep_time = returnedData["extra_prep_time"];
 				totallength = temp.length;
 	          	list = temp;
 	          	console.log(temp.length);
@@ -277,7 +285,7 @@ console.log('lastOrderId'+lastOrderId);
 				      	(function (i) {
 						    setTimeout(function () {
 						    	console.log('iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'+i);
-			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
+			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time",extra_prep_time]);
 			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
 			          		liItem += "<tr>";
 			          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
@@ -308,7 +316,7 @@ console.log('lastOrderId'+lastOrderId);
 			          		if(temp[i]["order_started"] == 0){
 				          		ids = temp[i]['id'];
 				          		liItem += "<td >"
-				          		liItem += "<a data-ajax='false' href='#'  onclick=orderReadyStarted("+ids+")>"
+				          		liItem += "<a data-ajax='false' href='javascript:void(0)'  onclick=orderReadyStarted("+ids+")>"
 				          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 				          		liItem +="</a></td>";
 			          		}else{
@@ -321,7 +329,7 @@ console.log('lastOrderId'+lastOrderId);
 			          		if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 0){
 				          		ids = temp[i]['id'];
 				          		liItem += "<td>"
-				          		liItem += "<a data-ajax='false' >"
+				          		liItem += "<a data-ajax='false' href='javascript:void(0)' >"
 				          		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 				          		liItem +="</a></td>";
 				          		}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
@@ -503,35 +511,37 @@ console.log('lastOrderId'+lastOrderId);
 
 
 
-		function addTimes (startTime, endTime) {
-		  var times = [ 0, 0, 0 ]
-		  var max = times.length
+		function addTimes (startTime, endTime, extra_prep_time) {
+		  var times = [ 0, 0, 0 ];
+		  var max = times.length;
 
 		  var a = (startTime || '').split(':')
 		  var b = (endTime || '').split(':')
+		  var c = (extra_prep_time || '').split(':')
 
 		  // normalize time values
 		  for (var i = 0; i < max; i++) {
 		    a[i] = isNaN(parseInt(a[i])) ? 0 : parseInt(a[i])
 		    b[i] = isNaN(parseInt(b[i])) ? 0 : parseInt(b[i])
+		    c[i] = isNaN(parseInt(c[i])) ? 0 : parseInt(c[i])
 		  }
 
 		  // store time values
 		  for (var i = 0; i < max; i++) {
-		    times[i] = a[i] + b[i]
+		    times[i] = a[i] + b[i] + c[i]
 		  }
 
 		  var hours = times[0]
 		  var minutes = times[1]
 		  var seconds = times[2]
 
-		  if (seconds > 60) {
+		  if (seconds > 59) {
 		    var m = (seconds / 60) << 0
 		    minutes += m
 		    seconds -= 60 * m
 		  }
 
-		  if (minutes > 60) {
+		  if (minutes > 59) {
 		    var h = (minutes / 60) << 0
 		    hours += h
 		    minutes -= 60 * h

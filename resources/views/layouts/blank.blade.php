@@ -2,6 +2,7 @@
 <html lang="{{ app()->getLocale() }}">
 <head>
     @include('includes.kitchenHead')
+    @yield('style')
 </head>
 <body>
 	<div data-role="page">

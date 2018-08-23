@@ -2,9 +2,9 @@
   "name": "GCM Notifications",
   "description": "Chrome platform app.",
   "manifest_version": 2,
-  "version": "0.1",
+  "version": "1.1",
   "permissions": ["gcm", "storage", "notifications"],
-  "gcm_sender_id": "826006507359",
+  "gcm_sender_id": "680932954484",
 
   "name": "anar",
   "short_name": "anar",
@@ -35,7 +35,7 @@
         "type": "image/png",
         "sizes": "512x512"
       }],
-	  "start_url": "/anar/public/?homescreen=1",
+	  "start_url": "/?homescreen=1",
 	  "scope": "/",
 	  "display": "standalone",
 	  "background_color": "#2196F3",

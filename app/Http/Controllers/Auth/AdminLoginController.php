@@ -11,6 +11,8 @@ use App\User;
 use Auth;
 use DB;
 use Session;
+use App\Helper;
+
 
 class AdminLoginController extends Controller
 {
@@ -69,7 +71,6 @@ class AdminLoginController extends Controller
         $data = $request->input();
         if($this->guard()->attempt(
             $this->credentials($request), $request->filled('remember'))){
-            
             if(Auth::guard('admin')->user()->language == null){
                 $lang;
                 if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
@@ -95,6 +96,7 @@ class AdminLoginController extends Controller
             }
 
         }
+
         DB::table('user')->where('id', Auth::guard('admin')->id())->update([
                             'browser' => $data['browser'],
                         ]);
@@ -105,7 +107,6 @@ class AdminLoginController extends Controller
     }
 
     public function logout(Request $request){
-
         $this->guard()->logout();
         Session::forget('storeId');
         Session::forget('checkStore');

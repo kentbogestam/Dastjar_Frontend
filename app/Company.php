@@ -24,4 +24,9 @@ class Company extends Model
     	return $this->hasMany('App\Product','company_id','company_id');
     }
 
+    public function user()
+    {
+        return $this->belongsTo('App\User','employer');
+    }
+
 }

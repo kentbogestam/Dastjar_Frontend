@@ -1,5 +1,19 @@
 var clickURL = "";
 self.addEventListener('install', function(event) {
+        event.waitUntil(
+          caches.open('anar').then(cache => {
+            return cache.addAll([
+              '/kitchen'
+              // `/cloneAddtohomescreen/index.html?timestamp=${timeStamp}`,
+              // `/cloneAddtohomescreen/styles/main.css?timestamp=${timeStamp}`,
+              // `/cloneAddtohomescreen/scripts/main.min.js?timestamp=${timeStamp}`,
+              // `/cloneAddtohomescreen/scripts/comlink.global.js?timestamp=${timeStamp}`,
+              // `/cloneAddtohomescreen/scripts/messagechanneladapter.global.js?timestamp=${timeStamp}`,
+              // `/cloneAddtohomescreen/sounds/airhorn.mp3?timestamp=${timeStamp}`
+            ])
+            .then(() => self.skipWaiting());
+          })
+        );
   self.skipWaiting();
   console.log('Installed', event);
 });
@@ -23,7 +37,7 @@ self.addEventListener('push', function(event) {
         var idD = regID.substring(regID.indexOf("d/")+1);
           regID =  idD.substring(idD.indexOf("/")+1);
        
- var URL = FETCH_ENDPOINT +btoa(regID)+ "/CHROME"+"?apiKey=cc9334430f14aa90c623aaa1dc4fa404d1cfc8194ab2fd144693ade8a9d1e1f2";
+ var URL = FETCH_ENDPOINT +btoa(regID)+ "/CHROME"+"?apiKey=501d285f67364ede754437ca8e8da7de913e2ba973fb99e20f89f918866a7a17";
  console.log(URL);
         return fetch(URL).then(function(response) {
  
@@ -43,7 +57,7 @@ self.addEventListener('push', function(event) {
           title = messagePayload.alert;
           console.log(clickURL);
   self.registration.showNotification(title, { 
-   icon: " http://localhost/dast-jar-frontend/public/images/dastjar.png"
+   icon: " http://localhost/anar/public/images/dastjar.png"
  })
  
  }

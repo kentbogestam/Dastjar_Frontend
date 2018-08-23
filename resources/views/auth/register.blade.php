@@ -234,11 +234,11 @@
                         </select>
                     <div class="ui-grid-solo">
                         <div class="ui-block-a"> 
-                            <input id="phone_number" type="text" class="form-control " name="phone_number" min=0 max=999999999999 value="{{ old('phone_number') }}" placeholder="Phone No">
+                            <input id="phone_number" type="tel" class="form-control " name="phone_number" min=0 max=999999999999 value="{{ old('phone_number') }}" placeholder="Phone No">
                         </div>
                     </div>
                     <div class="ui-grid-solo reg_btn">
-                        <button type="button" class="" placeholder="Register">
+                        <button type="button" class="reg_button" placeholder="Register">
                             Register
                         </button>
                     </div>
@@ -255,8 +255,8 @@
  <script type="text/javascript">
      $(document).ready(function(){
        
-       $("#phone_number").on("blur", function(){
-             var mobNum = $(this).val();
+       $(".reg_button").on("click", function(){
+             var mobNum = $("#phone_number").val();
              var filter = /^\d*(?:\.\d{1,2})?$/;
 
                if (filter.test(mobNum)) {

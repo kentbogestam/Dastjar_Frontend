@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use App\Country;
 use DB;
+use Session;
 
 class RegisterController extends Controller
 {
@@ -52,13 +53,22 @@ class RegisterController extends Controller
         if(!empty($request->input())){
 
             $validator = $this->validator($request->all());
+
             if ($validator->fails()) {
-                return redirect()->action('Auth\RegisterController@userRegister')->with('success', 'This Email or Mobile Number already register.');
+                if(isset($validator->errors()->toArray()['email']) && isset($validator->errors()->toArray()['phone_number'])){
+                    $message = 'This Email or Mobile Number already register.';
+                }elseif(isset($validator->errors()->toArray()['email'])){
+                    $message = $validator->errors()->toArray()['email'][0];                    
+                }else{
+                    $message = $validator->errors()->toArray()['phone_number'][0];
+                }
+
+                return redirect()->action('Auth\RegisterController@userRegister')->with('success', $message);
             }
+
             $user = $this->create($request->all());
+
             if ($user) {
-
-
                 // Define recipients
                 //$afterRemoveFirstZeroNumber = substr($user->phone_number, -9);
                 $request->session()->put('userPhoneNumber', $user->phone_number);
@@ -176,20 +186,20 @@ class RegisterController extends Controller
                 curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
                 $result = curl_exec($ch);
                 curl_close($ch); 
-               // print($result);
-                // $json = json_decode($result);
-                // dd($json);
-                //print($result);
+
                 $json = json_decode($result);
+
                 return view('auth.otp');
                 if($json->message == 'Insufficient credit'){
                     return redirect()->action('Auth\LoginController@mobileLogin')->with('success', 'Otp is not sent due to some technical issue.');
                 }else{
                     return view('auth.otp');
                 }
-                // print_r($json->ids);
             }
-            return redirect()->action('Auth\RegisterController@userRegister')->with('success', 'Your Number is not register.Please register mobile number');
+
+            Session::flash('_old_input.phone_number',$number);
+
+            return redirect()->action('Auth\RegisterController@userRegister')->with('success', 'Your Number is not register. Please register mobile number');
 
         }else{
             return view('auth.otp');

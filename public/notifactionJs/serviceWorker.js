@@ -1,32 +1,36 @@
 
 // 'use strict';
-// function getDeviceToken() {
-//     var deviceToken;
-//     if ('serviceWorker' in navigator) {
-//         console.log('Service Worker is supported');
+function getDeviceToken() {
+    var deviceToken;
+    if ('serviceWorker' in navigator) {
+        console.log('Service Worker is supported');
  
-//         navigator.serviceWorker.register('sw.js').then(function() {
-	  
-//             return navigator.serviceWorker.ready;
-//         }).then(function(reg) {
-//             console.log('Service Worker is ready :^)', reg);
-//             reg.pushManager.subscribe({
-//                 userVisibleOnly: true
-//             }).then(function(sub) {
-//                 console.log('Endpoint:', sub.endpoint);
+        navigator.serviceWorker.register('sw.js').then(function() {	  
+            return navigator.serviceWorker.ready;
+        }).then(function(reg) {
+            console.log('Service Worker is ready :^)', reg);
+            reg.pushManager.subscribe({
+                userVisibleOnly: true
+            }).then(function(sub) {
+                console.log('Endpoint:', sub.endpoint);
 	 
-//                 deviceToken = sub.endpoint
-//                 var idD = deviceToken.substring(deviceToken.indexOf("d/")+1);
-//                 deviceToken =  idD.substring(idD.indexOf("/")+1);
-//                 console.log("DEVICE TOKEN : "+deviceToken)
-//                 storeDeviceToken(deviceToken);
-//             // localStorage.setItem("_App42_DeviceId",regID)
-//             });
-//         }).catch(function(error) {
-//             console.log('Service Worker error :^(', error);
-//         });
-//     }
-// }
+                deviceToken = sub.endpoint
+                var idD = deviceToken.substring(deviceToken.indexOf("d/")+1);
+                deviceToken =  idD.substring(idD.indexOf("/")+1);
+                console.log("DEVICE TOKEN : "+deviceToken);
+
+                registerDeviceWithApp42(deviceToken,jQuery.browser.name.toUpperCase())   
+
+            // return deviceToken;
+            //    storeDeviceToken(deviceToken);
+            // localStorage.setItem("_App42_DeviceId",regID);
+            });
+        }).catch(function(error) {
+            console.log('Service Worker error :^(', error);
+        });
+    }
+}
+
 
 // function storeDeviceToken(deviceToken) {
 //     console.log("storeDeviceToken");
@@ -48,10 +52,17 @@
 
 function registerSwjs(){
     if ('serviceWorker' in navigator) {
+
+        var displayMode;
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+          displayMode = "standalone";
+        }else{
+          displayMode = "web";
+        }
+
         console.log('Service Worker is supported');
  
-        navigator.serviceWorker.register('sw.js').then(function() {
-      
+        navigator.serviceWorker.register('sw.js?displayMode='+displayMode).then(function() { 
             return navigator.serviceWorker.ready;
         }).then(function(reg) {
             console.log('Service Worker is ready :^)', reg);

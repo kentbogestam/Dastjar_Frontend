@@ -15,7 +15,7 @@
 	      App42.setEventBaseUrl("https://analytics.shephertz.com/cloud/1.0/");
 	      App42.setBaseUrl("https://api.shephertz.com/cloud/1.0/");
 
-	      App42.initialize("cc9334430f14aa90c623aaa1dc4fa404d1cfc8194ab2fd144693ade8a9d1e1f2","297b31b7c66e206b39598260e6bab88e701ed4fa891f8995be87f786053e9946");
+	      App42.initialize("{{env('APP42_API_KEY')}}","{{env('APP42_API_SECRET')}}");
 	      App42.enableEventService(true);
 	      var userName;
 	      new Fingerprint2().get(function(result, components){
@@ -29,7 +29,59 @@
 @endsection
 
 @section('content')
+<div data-role="header" class="header" id="nav-header"  data-position="fixed">
+	<div class="nav_fixed">
+		<div class="logo">
+			<div class="inner-logo">
+				<img src="{{asset('images/logo.png')}}">
+				@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
+			</div>
+		</div>
+		<a href="{{url('search-map-eatnow')}}" class="ui-btn-right map-btn user-link" data-ajax="false"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
+	</div>
+</div>
 
+	<div style="margin-top: 50px;">
+		@if(isset($message))
+			<p style="text-align: center">{{ $message }}</p>
+		@endif
+	</div>
+
+	<div data-role="footer" id="footer" data-position="fixed">
+		<div class="ui-grid-c inner-footer center">
+		<div class="ui-block-a"><a href="{{ url('eat-now') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
+			<div class="img-container">
+				<img src="{{asset('images/icons/select-store_01.png')}}">
+			</div>
+			<span>{{ __('messages.Restaurant') }}</span>
+		</a></div>
+		<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
+			<div class="img-container">
+				<img src="{{asset('images/icons/select-store_03.png')}}">
+			</div>
+			<span>{{ __('messages.Send') }}</span>
+		</a></div>
+		@include('orderQuantity')
+		
+
+		<div class="ui-block-d">
+			<a href = "{{url('user-setting')}}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
+				<div class="img-container">
+					<img src="{{asset('images/icons/select-store_07.png')}}">
+				</div>
+			</a>
+		</div>
+		</div>
+	</div>
+
+	<div id="login-popup" style="display: none;" class="login-popup" data-theme="a">
+	  <div class="inner-popup">
+	        <div id = "cancel-popup" class="cross"><img src="{{asset('images/icons/cross.png')}}"></div>
+	        <div class="pop-body">
+	           <p>{{ __('messages.Please activate Location Services in your mobile') }}</p>
+	        </div>
+	  </div>
+	</div>
 @endsection
 
 

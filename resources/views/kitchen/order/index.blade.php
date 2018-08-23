@@ -78,12 +78,14 @@
 						<img src="{{asset('kitchenImages/icon-6.png')}}">
 					</div>
 				</a></div>
-				<div class="ui-block-b middle-menu"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" target="_blank" href="https://admin.dastjar.com/admin/">
+
+				<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" href="{{ url('kitchen/menu') }}">
 					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-5.png')}}">
+						<img src="{{asset('kitchenImages/icon-7.png')}}">
 					</div>
-					<span>{{ __('messages.Admin') }}</span>
+					<span>{{ __('messages.Menu') }}</span>
 				</a></div>
+
 				<div class="ui-block-c"><a href = "{{ url('kitchen/kitchen-order-onsite') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/icon-4.png')}}">
@@ -119,14 +121,17 @@
 	var list = Array();
 	var totalCount = 0;
 	var totallength = 0;
+	var storeId = "{{Session::get('storeId')}}";
 	var url = "{{url('kitchen/order-ready')}}";
 	var urldeliver = "{{url('kitchen/order-deliver')}}";
+
 	$(function(){
-		$.get("{{url('kitchen/order-detail')}}",
+		$.get("{{url('api/v1/kitchen/order-detail')}}/" + storeId,
 		function(returnedData){
 			console.log(returnedData["data"]);
 			var count = 18;
 			var temp = returnedData["data"];
+			extra_prep_time = returnedData["extra_prep_time"];
           	list = temp;
           	//console.log(temp.length);
           	var liItem = "";
@@ -144,14 +149,19 @@
 	          		if(i>=totallength){
 			      		break;
 			      	}
-	          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
+	          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"],extra_prep_time);
 	          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
 	          		var orderIdSpecific = temp[i]["order_id"] ;
 	          		liItem += "<tr>";
-	          		liItem += "<th>"
-	          		liItem += "<a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>"
-	          		liItem += temp[i]["customer_order_id"] 
+	          		liItem += "<th>";
+	          		liItem += "<a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>";
+	          		liItem += temp[i]["customer_order_id"]; 
 	          		liItem += "</a></th>";
+
+	          		if (temp[i]["name"] == null){
+	          			temp[i]["name"] = "";
+	          		}
+
 	          		liItem += "<td>"+temp[i]["name"]+"</td>";
 	          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
 	          		liItem += "<td>"
@@ -198,7 +208,7 @@
 
 	function getList(orderId){
 		var liItem = "";
-		$.get("{{url('kitchen/orderSpecificOdrderDetail')}}/"+orderId,
+		$.get("{{url('api/v1/kitchen/orderSpecificOdrderDetail')}}/"+orderId,
 		function(returnedData){
 			//console.log(returnedData["data"]);
 			var temp = returnedData["data"];
@@ -221,11 +231,12 @@
 	}
 
 	var ajaxCall = function(){
-		$.get("{{url('kitchen/order-detail')}}",
+		$.get("{{url('api/v1/kitchen/order-detail')}}/" + storeId,
 		function(returnedData){
 			//console.log(returnedData["data"]);
 			var count = 18;
 			var temp = returnedData["data"];
+			extra_prep_time = returnedData["extra_prep_time"];
           	list = temp;
           	console.log(temp.length);
           	var liItem = "";
@@ -241,7 +252,7 @@
 	          		if(i>totallength){
 			      		break;
 			      	}
-	          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
+	          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"],extra_prep_time);
 	          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
 	          		var orderIdSpecific = temp[i]["order_id"] ;
 	          		liItem += "<tr>";
@@ -249,6 +260,11 @@
 	          		liItem += "<a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>"
 	          		liItem += temp[i]["customer_order_id"]
 	          		liItem += "</a></th>";
+
+	          		if (temp[i]["name"] == null){
+	          			temp[i]["name"] = "";
+	          		}
+	          		
 	          		liItem += "<td>"+temp[i]["name"]+"</td>";
 	          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
 	          		liItem += "<td>"
@@ -396,35 +412,37 @@
       $("#orderDetailContianer").append(liItem);	
 	}
 
-	function addTimes (startTime, endTime) {
+	function addTimes (startTime, endTime, extra_prep_time) {
 	  var times = [ 0, 0, 0 ]
 	  var max = times.length
 
 	  var a = (startTime || '').split(':')
 	  var b = (endTime || '').split(':')
+	  var c = (extra_prep_time || '').split(':')
 
 	  // normalize time values
 	  for (var i = 0; i < max; i++) {
 	    a[i] = isNaN(parseInt(a[i])) ? 0 : parseInt(a[i])
 	    b[i] = isNaN(parseInt(b[i])) ? 0 : parseInt(b[i])
+	    c[i] = isNaN(parseInt(c[i])) ? 0 : parseInt(c[i])
 	  }
 
 	  // store time values
 	  for (var i = 0; i < max; i++) {
-	    times[i] = a[i] + b[i]
+	    times[i] = a[i] + b[i] + c[i]
 	  }
 
 	  var hours = times[0]
 	  var minutes = times[1]
 	  var seconds = times[2]
 
-	  if (seconds > 60) {
+	  if (seconds > 59) {
 	    var m = (seconds / 60) << 0
 	    minutes += m
 	    seconds -= 60 * m
 	  }
 
-	  if (minutes > 60) {
+	  if (minutes > 59) {
 	    var h = (minutes / 60) << 0
 	    hours += h
 	    minutes -= 60 * h

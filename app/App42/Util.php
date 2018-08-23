@@ -190,6 +190,7 @@ class Util {
         
         return date("Y-m-d\TH:i:s") . substr((string) microtime(), 1, 4) . "Z";
     }
+    
      public static function getUTCFormattedTimestamps($date) {
            date_default_timezone_set("UTC");
           return date("Y-m-d\TH:i:s", strtotime($date)) . substr((string) microtime(), 1, 4) . "Z";

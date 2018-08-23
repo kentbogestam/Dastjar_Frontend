@@ -9,6 +9,7 @@ use Auth;
 use App\Helper;
 use Session;
 use Cache;
+use App\App42\App42API;
 
 class CustomerController extends Controller
 {
@@ -72,6 +73,9 @@ class CustomerController extends Controller
                     $request->session()->put('updateLocationBySettingAfterLogin', 1);
                     $request->session()->put('setLocationBySettingValueAfterLogin', 1);
                 }else{
+                    $helper = new Helper();
+                    $helper->logs("set location " . $address['latitude'] . " " . $address['longitude']);
+
                     $request->session()->put('with_out_login_lat', $address['latitude']);
                     $request->session()->put('with_out_login_lng', $address['longitude']);
                     $request->session()->put('address', $address['street_address']);
@@ -79,73 +83,40 @@ class CustomerController extends Controller
                 }
             }
         }
-        return redirect('customer')->with('success', 'Location updated successfully.');
-        //return view('settings.index', compact(''));
+
+        if($data['redirect_to_home'] == 1){
+            return redirect('home')->with('success', 'Location updated successfully.');
+        }else{
+            return redirect('customer')->with('success', 'Location updated successfully.');
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+
+    public function storeDeviceToken(Request $request){
+        $helper = new Helper();
+
+        if(User::where('email',$request->email)->first()->device_token == null){
+            $cust = User::where('email',$request->email)->first(); 
+            $cust->device_token = $request->deviceToken;
+            $cust->save();
+            $response = "device id doesnt exist";
+            $helper->logs($request->email . " " . $request->deviceToken);
+        }else if(User::where('email',$request->email)->whereRaw("find_in_set('$request->deviceToken',device_token)")->doesntExist()){
+            $cust = User::where('email',$request->email)->first(); 
+            $cust->device_token =  $cust->device_token.",".$request->deviceToken;
+            $cust->save();
+            $response = "device id doesnt exist";
+            $helper->logs($request->email . " " . $request->deviceToken);            
+        }else{
+            $response = "device id " . $request->deviceToken . " exist";
+            $helper->logs($request->email . " " . $response);
+        }
+
+        return response()->json(['status' => 'success', 'response' => $response,'data'=>true]);        
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+    public function setTimezone(Request $request){
+        Session::put('timezone',$request->tz);
+        return response()->json(['status' => 'success', 'response' => 'timezone is ' . $request->tz,'data'=>true]);        
     }
 }

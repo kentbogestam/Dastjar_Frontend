@@ -3,13 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
 use DB;
+use Session;
 
 class Store extends Model
 {
-    //
 	protected $table = 'store';
+    public $timestamps = false;
 
     public function __construct(array $attributes = [])
     {
@@ -22,6 +22,10 @@ class Store extends Model
 //This function use for testing purpose
 
     public static function getListRestaurantsCheck($latitude,$longitude,$radius,$companytype1,$companytype2,$todayDate,$currentTime,$todayDay){
+        if($radius == null){
+            $radius = 10;
+        }
+        
         $circle_radius = 6378.10;
         $max_distance = $radius;
 
@@ -77,12 +81,14 @@ class Store extends Model
 
             $results = $latLngList->union($latLngList1)->get();
 
-        //dd($todayDay);
         return $results;
     }
 
     public static function getRestaurantsList($latitude,$longitude,$radius,$companytype1,$companytype2)
     {
+        if($radius == null){
+            $radius = 10;
+        }
   
         $circle_radius = 6378.10;
         $max_distance = $radius;
@@ -103,6 +109,24 @@ class Store extends Model
 
     public static function getListRestaurants($latitude,$longitude,$radius,$companytype1,$companytype2,$todayDate,$currentTime,$todayDay)
     {
+        if($radius == null){
+            $radius = 10;
+        }
+
+        if (Session::get('timezone')!=null) {
+            $datetime = $todayDate . " " . $currentTime;
+            $tz_from = Session::get('timezone');
+            $tz_to = 'UTC';
+
+            $dt = new \DateTime($datetime, new \DateTimeZone($tz_from));
+            $dt->setTimeZone(new \DateTimeZone($tz_to));
+
+            $datePieces = explode(" ", $dt->format('D d-m-Y H:i:s'));
+            $todayDay = $datePieces['0'];
+            $todayDate = $datePieces['1'];
+            $currentTime = $datePieces['2']; 
+        }
+
     	$circle_radius = 6378.10;
 		$max_distance = $radius;
 		$unit = 6378.10;

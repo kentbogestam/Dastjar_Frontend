@@ -13,7 +13,7 @@
               App42.setEventBaseUrl("https://analytics.shephertz.com/cloud/1.0/");
               App42.setBaseUrl("https://api.shephertz.com/cloud/1.0/");
 
-              App42.initialize("cc9334430f14aa90c623aaa1dc4fa404d1cfc8194ab2fd144693ade8a9d1e1f2","297b31b7c66e206b39598260e6bab88e701ed4fa891f8995be87f786053e9946");
+              App42.initialize("{{env('APP42_API_KEY')}}","{{env('APP42_API_SECRET')}}");
               App42.enableEventService(true);
               var userName;
               new Fingerprint2().get(function(result, components){

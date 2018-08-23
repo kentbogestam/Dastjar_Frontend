@@ -1,19 +1,50 @@
 @extends('layouts.master')
+
+@section('head-scripts')
+	<style type="text/css">
+		#overlay {
+    		position: fixed;
+    		display: none;
+    		width: 100vw;
+    		height: 100vh;
+		    top: 0;
+		    left: 0;
+		    right: 0;
+    		bottom: 0;
+	    	background-color: rgba(0,0,0,0.5);
+	    	z-index: 999;
+		}
+
+		#loading-img{
+			display: none;
+			position: absolute;
+			top: 50vh;
+			left: 50vw;
+/*			-moz-transform: translate(-50%);
+			-webkit-transform: translate(-50%);
+			-o-transform: translate(-50%);
+			-ms-transform: translate(-50%);
+			transform: translate(-50%);
+*/			z-index: 99999;
+		}
+	</style>
+@stop
+
 @section('content')
-	<div data-role="header" class="header" id="nav-header"  data-position="fixed"><!--  -->
+	<div data-role="header" class="header" id="nav-header"  data-position="fixed">
 		<div class="nav_fixed">
 			<div class="logo">
 				<div class="inner-logo">
 					<img src="{{asset('images/logo.png')}}">
-					<span>{{ Auth::user()->name}}</span>
+					@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
 				</div>
 			</div>
-			<a class="ui-btn-right map-btn user-link" onClick="makeRedirection('{{url('search-map-eatnow')}}')"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
+			<a class="ui-btn-right map-btn user-link" href="{{url('search-map-eatnow')}}" data-ajax="false"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
 		</div>
 		<div class="cat-btn">
 			<div class="ui-grid-a top-btn">
 				<div class="ui-block-a"><a href="" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-active" class="active"><img src="{{asset('images/icons/icon-eat-now-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-now-inactive.png')}}" class="inactive">{{ __('messages.Eat Now') }}</a></div>
-				<div class="ui-block-b"><a onClick="makeRedirection('{{url('selectOrder-date')}}')" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-inactive"><img src="{{asset('images/icons/icon-eat-later-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-later-inactive.png')}}" class="inactive">{{ __('messages.Eat Later') }}</a></div>
+				<div class="ui-block-b"><a href="{{url('selectOrder-date')}}" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-inactive" data-ajax="false"><img src="{{asset('images/icons/icon-eat-later-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-later-inactive.png')}}" class="inactive">{{ __('messages.Eat Later') }}</a></div>
 			</div>
 		</div>
 	</div>
@@ -22,9 +53,6 @@
 		<div class="cat-list-sec">
 			<ul data-role="listview" data-inset="true" id="companyDetailContianer">
 
-				
-
-
 			</ul>
 		</div>
 
@@ -32,7 +60,7 @@
 	</div>	
 	<div data-role="footer" id="footer" data-position="fixed">
 		<div class="ui-grid-c inner-footer center">
-		<div class="ui-block-a"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
+		<div class="ui-block-a"><a href="javascript:void(0)" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 			<div class="img-container">
 				<img src="{{asset('images/icons/select-store_01.png')}}">
 			</div>
@@ -89,16 +117,66 @@
 		</ul>
 	</div>
 
-	
+	<div id="loading-img" class="ui-loader ui-corner-all ui-body-a ui-loader-default"><span class="ui-icon-loading"></span><h1>loading</h1></div>
+
+	  <div id="overlay" onclick="off()">
+	  </div>
 
 @endsection
 
 @section('footer-script')
 
-<script type="text/javascript">
+<?php
+	$helper = new Helper();
+	$helper->logs("1 " . Session::get('with_login_lat') . " 2 " . Session::get('with_login_lng') . " 3 " . Session::get('with_out_login_lat') . " 4 " . Session::get('with_out_login_lng') . " 5 " . Session::get('address'));
 
-var list = Array();
-var totalCount = 0;
+	if(Auth::check()){
+			if(Session::get('with_login_address') != null){
+				?>
+	<script type="text/javascript">
+				loc_lat = "{{Session::get('with_login_lat')}}";
+				loc_lng = "{{Session::get('with_login_lng')}}";
+	</script>				
+				<?php
+			}else if(Session::get('with_out_login_lat') != null){
+				?>
+		<script type="text/javascript">
+				loc_lat = "{{Session::get('with_out_login_lat')}}";
+				loc_lng = "{{Session::get('with_out_login_lng')}}";
+		</script>
+				<?php
+			}else{
+				?>
+				<script type="text/javascript">
+					loc_lat = "";
+					loc_lng = "";
+				</script>
+			<?php
+			}
+		}
+		else{
+			if(Session::get('with_out_login_lat') != null){
+				?>
+		<script type="text/javascript">
+				loc_lat = "{{Session::get('with_out_login_lat')}}";
+				loc_lng = "{{Session::get('with_out_login_lng')}}";
+		</script>
+				<?php
+			}
+		}
+?>
+
+	<script type="text/javascript" src="//momentjs.com/downloads/moment-with-locales.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.21/moment-timezone-with-data.min.js"></script>
+	
+<script type="text/javascript">
+	var list = Array();
+	var totalCount = 0;
+
+	var tz = moment.tz.guess();
+	$.get("{{url('set-timezone')}}",{'tz':tz});
+
+	$.get("{{url('writeLogs')}}",{'log':'eat now page'});
 
 	function getCookie(cname) {
 	    var name = cname + "=";
@@ -124,48 +202,49 @@ var totalCount = 0;
 
 	$(document).on("scrollstop", function (e) {
 		var tempCount = 10;
-    var activePage = $.mobile.pageContainer.pagecontainer("getActivePage"),
-        screenHeight = $.mobile.getScreenHeight(),
-        contentHeight = $(".ui-content", activePage).outerHeight(),
-        header = $(".ui-header", activePage).outerHeight() - 1,
-        scrolled = $(window).scrollTop(),
-        footer = $(".ui-footer", activePage).outerHeight() - 1,
-        scrollEnd = contentHeight - screenHeight + header + footer;
+	    var activePage = $.mobile.pageContainer.pagecontainer("getActivePage"),
+	        screenHeight = $.mobile.getScreenHeight(),
+	        contentHeight = $(".ui-content", activePage).outerHeight(),
+	        header = $(".ui-header", activePage).outerHeight() - 1,
+	        scrolled = $(window).scrollTop(),
+	        footer = $(".ui-footer", activePage).outerHeight() - 1,
+	        scrollEnd = contentHeight - screenHeight + header + footer;
 
-    	$(".ui-btn-left", activePage).text("Scrolled: " + scrolled);
-    	//$(".ui-btn-right", activePage).text("ScrollEnd: " + scrollEnd);
+	    	$(".ui-btn-left", activePage).text("Scrolled: " + scrolled);
+	    	//$(".ui-btn-right", activePage).text("ScrollEnd: " + scrollEnd);
 
-    	
-    	//if in future this page will get it, then add this condition in and in below if activePage[0].id == "home" 
-    	if (scrolled >= scrollEnd) {
-        console.log(list);
-        $.mobile.loading("show", {
-        text: "loading more..",
-        textVisible: true,
-        theme: "b"
-    	});
-    	setTimeout(function () {
-         addMore(tempCount);
-         tempCount += 10;
-         $.mobile.loading("hide");
-     },500);
-    	}
-});
+	    	
+	    	//if in future this page will get it, then add this condition in and in below if activePage[0].id == "home" 
+	    	if (scrolled >= scrollEnd) {
+	        console.log(list);
+	        $.mobile.loading("show", {
+	        text: "loading more..",
+	        textVisible: true,
+	        theme: "b"
+	    	});
+	    	setTimeout(function () {
+	         addMore(tempCount);
+	         tempCount += 10;
+	         $.mobile.loading("hide");
+	     },500);
+	    	}
+	});
 
 	function  addMore(len){
 		var liItem = "";
 	            	var url = "{{url('restro-menu-list/')}}";
 	            	var limit = 0;
 	            	var countCheck = 1;
- if(totalCount > 10){
- 	limit = 10;
- 	totalCount -= 10;
- } else if(totalCount<=0){
- 	return;
- } else{
- 	limit = totalCount;
- 	totalCount -= totalCount;
- }
+
+					 if(totalCount > 10){
+					 	limit = 10;
+					 	totalCount -= 10;
+					 } else if(totalCount<=0){
+					 	return;
+					 } else{
+					 	limit = totalCount;
+					 	totalCount -= totalCount;
+					 }
 
 
 	          for (var i=len;i<len + 10;i++){
@@ -175,14 +254,12 @@ var totalCount = 0;
 	          	}
 
 	          	liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
-	          	liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+list[i]['store_id']+">";
+	          	liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+list[i]['store_id']+" data-ajax='false'>";
 	          	liItem += "<img src="+"'"+list[i]["store_image"]+"'"+">";
 	          	liItem += "<h2>"+list[i]["store_name"]+"</h2>";
 	          	liItem += "<p>";
 	          	
-	          	for (var j=0;j<list[i]["products"].length;j++){
-	          		//console.log(list[i]["products"][j]);
-	          		;
+	          	for (var j=0;j<list[i]["products"].length;j++){	          		
 	          		if(j <= 1){
 	          			liItem += list[i]["products"][j]["product_name"];
 	          		}   
@@ -207,12 +284,52 @@ var totalCount = 0;
 
 
 	 $(function(){
+	 	    $("#overlay").show();
+    		$("#loading-img").show();
 
+    	$(".icon-eat-inactive").click(function(){
+    		eatActive = $(".icon-eat-active");
+    		eatInactive = $(".icon-eat-inactive");
 
+    		eatActive.removeClass('icon-eat-active');
+    		eatActive.addClass('icon-eat-inactive');
+
+    		eatInactive.removeClass('icon-eat-inactive');
+    		eatInactive.addClass('icon-eat-active');
+    	});
+
+	 	var extraclass = document.body;
+		extraclass.classList.add("disableClass");
 	
+	if (typeof loc_lat === "undefined" || loc_lat == "") {			
+	navigator.geolocation.getCurrentPosition(function(position) { 
+	    document.cookie="latitude=" + position.coords.latitude;
+	    document.cookie="longitude=" + position.coords.longitude;
+	    var extraclass = document.body;
+		extraclass.classList.remove('disableClass');
+		//location.reload ();
+	},function(error){
+		if (typeof loc_lat === "undefined" || loc_lat == "") {
+		   $('.login-inner-section a').attr('href','javascript:void(0)');
+		   $('#login-popup').show();	    			
+			$.get("{{url('writeLogs')}}",{'log':'eat now location 1'});
+		}else{
+		    document.cookie="latitude=" + loc_lat;
+		    document.cookie="longitude=" + loc_lng;		
+		} 
+	});
+			}else{
+				loc_flag=3;
+			    document.cookie="latitude=" + loc_lat;
+			    document.cookie="longitude=" + loc_lng;	
+				add();			    
+		}
+
 
 	$.get("{{url('lat-long')}}", { lat: getCookie("latitude"), lng : getCookie("longitude")}, 
     function(returnedData){
+    		$("#loading-img").hide();
+    		$("#overlay").hide();
 
     	var count = 10;
 
@@ -237,14 +354,12 @@ var totalCount = 0;
 	          	//console.log(temp[i]["store_id"]);
 
 	          	liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
-	          	liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+temp[i]['store_id']+">";
+	          	liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+temp[i]['store_id']+" data-ajax='false'>";
 	          	liItem += "<img src="+"'"+temp[i]["store_image"]+"'"+">";
 	          	liItem += "<h2>"+temp[i]["store_name"]+"</h2>";
 	          	liItem += "<p>";
 	          	
 	          	for (var j=0;j<temp[i]["products"].length;j++){
-	          		//console.log(temp[i]["products"][j]);
-	          		;
 	          		if(j <= 1){
 	          			liItem += temp[i]["products"][j]["product_name"];
 	          		}   
@@ -271,13 +386,7 @@ var totalCount = 0;
         	liItem += "</div>";
           }
           	//console.log(liItem);
-
-          
-
-          $("#companyDetailContianer").append(liItem);	
-
-          
-
+          $("#companyDetailContianer").append(liItem);	         
 		});
 	});
 

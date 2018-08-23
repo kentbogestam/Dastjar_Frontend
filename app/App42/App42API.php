@@ -140,11 +140,11 @@ class App42API {
         return $userService;
     }
 	/**
-//	 * Builds the instance of StorageService.
-//	 *
-//	 * @return StorageService - StorageService Object
-//	 * @see StorageService
-//	 */
+	 * Builds the instance of StorageService.
+	 *
+	 * @return StorageService - StorageService Object
+	 * @see StorageService
+	 */
 	public static function buildStorageService() {
 		$storageService = new StorageService(self::$apiKey, self::$secretKey);
 		return $storageService;

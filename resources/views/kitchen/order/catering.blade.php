@@ -1,5 +1,106 @@
 @extends('layouts.blank')
 
+@section('style')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+<style type="text/css">
+	.grey{
+		color: #515151;
+	}
+
+	.red{
+		color: #a90810;		
+	}
+
+	.red:hover{
+		cursor: pointer;
+	}
+
+	.ready_notification{
+		display: none;
+	}
+
+	#delete_user_block{
+		    display: inline-block;
+		    position: absolute;
+		    bottom: 10px;
+		    left: 50%;
+		    margin-left: -55px;
+	}
+
+	.ui-dialog{
+		background-color: #fff !important;
+	}
+
+	.ui-controlgroup, #dialog-confirm + fieldset.ui-controlgroup {
+    	width: 100%;
+	}
+
+	#dialog-confirm{
+		display: none;
+	} 
+
+	.ui-dialog .ui-dialog-buttonpane{
+		text-align: center;
+	}
+
+	.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset{
+		float: none;
+	}
+	
+	#dialog-confirm .ui-icon{
+		float:left; 
+		margin:12px 12px 20px 0;
+		color: #fff;
+	}
+
+	#dialog-confirm .ui-icon-alert{
+		color: #fff;
+	}
+
+	.ui-widget-overlay{
+	    opacity: 0.5 !important;		
+	}
+
+	.dialog-no{
+		background: linear-gradient(to bottom, rgba(249,163,34,1) 0%, rgba(229,80,11,1) 100%) !important;
+		color: #fff !important;
+	}
+
+	.dialog-no:hover{
+		background: linear-gradient(to bottom, rgba(249,163,34,1) 0%, rgba(229,80,11,1) 100%);
+		color: #fff;
+	}
+
+	#overlay {
+    		position: fixed;
+    		display: none;
+    		width: 100vw;
+    		height: 100vh;
+		    top: 0;
+		    left: 0;
+		    right: 0;
+    		bottom: 0;
+	    	background-color: rgba(0,0,0,0.5);
+	    	z-index: 999;
+	}
+
+	#loading-img{
+			display: none;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			-moz-transform: translate(-50%);
+			-webkit-transform: translate(-50%);
+			-o-transform: translate(-50%);
+			-ms-transform: translate(-50%);
+			transform: translate(-50%);
+			z-index: 99999;
+	}
+</style>
+@stop
+
 @section('content')
 
 <div data-role="header" data-position="fixed" data-tap-toggle="false" class="header">
@@ -11,6 +112,13 @@
 		<h3 class="ui-bar ui-bar-a order_background">{{ __('messages.Catering') }} <span>{{$storeName}}</span></h3>
 	</div>
 	<div role="main" class="ui-content">
+		<div class="ready_notification">
+			<div class="table-content sucess_msg">
+				<img src="{{asset('images/icons/Yes_Check_Circle.png')}}">
+				Order Cancelled Successfully.
+		    </div>
+		</div>
+
 		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow table-stripe ui-responsive table_size" >
 		 	<thead>
 		 		<tr class="ui-bar-d">
@@ -20,6 +128,7 @@
 			    	<th data-priority="1">{{ __('messages.Comments') }}</th> 
 			    	<th data-priority="5">{{ __('messages.Date and Time') }}</th>
 			     	<th data-priority="1">{{ __('messages.Pick up Time') }}</th>
+			     	<th data-priority="1">{{ __('messages.Remove') }}</th>
 		      	</tr>
 		    </thead>
 		    <tbody id="orderDetailContianer">
@@ -30,7 +139,7 @@
 	<div data-role="footer" data-position="fixed" data-tap-toggle="false" class="footer_container">
 		<div class="ui-grid-a center">
 			<div class="ui-block-a left-side_menu">
-				<div class="ui-block-a active"><a  href = "{{ url('kitchen/store') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
+				<div class="ui-block-a active"><a  href="{{ url('kitchen/store') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">
 						<img src="{{asset('kitchenImages/icon-1.png')}}">
 					</div>
@@ -59,11 +168,12 @@
 						<img src="{{asset('kitchenImages/icon-6.png')}}">
 					</div>
 				</a></div>
-				<div class="ui-block-b middle-menu"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" target="_blank" href="https://admin.dastjar.com/admin/">
+				
+				<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" href="{{ url('kitchen/menu') }}">
 					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-5.png')}}">
+						<img src="{{asset('kitchenImages/icon-7.png')}}">
 					</div>
-					<span>{{ __('messages.Admin') }}</span>
+					<span>{{ __('messages.Menu') }}</span>
 				</a></div>
 				<div class="ui-block-c"><a href = "{{ url('kitchen/kitchen-order-onsite') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">
@@ -75,16 +185,74 @@
 		</div>
 	</div>
 
+	<div id="dialog-confirm" title="Delete Account">
+			<p>Do you really want to delete this order.<br/><br/>Yes / No</p>
+	</div>
+
+		<img src="{{ asset('images/loading.gif') }}" id="loading-img" />
+
+	  <div id="overlay" onclick="off()">
+	  </div>
 @endsection
 
 @section('footer-script')
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>	 
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
 	<script type="text/javascript">
 		var list = Array();
 		var totalCount = 0;
 		var totallength = 0;
+		var storeId = "{{Session::get('storeId')}}";
+
+		function removeOrder(orderID,user_id){
+				$("#dialog-confirm").dialog({
+					resizable: false,
+					modal: true,
+					buttons: [						
+						{
+							text: "No",
+							"class": 'dialog-no',
+							click: function() {
+								$(this).dialog("close");
+							}					
+						},
+						{
+							text: "Yes",
+							"class": 'dialog-yes',
+							click: function() {
+								$(this).dialog("close");
+								$('#overlay').css("display", "block");
+								$('#loading-img').css("display", "block");
+
+								$.post("{{url('kitchen/remove-order')}}",
+									{"_token":"{{ csrf_token() }}","order_id":orderID,"user_id":user_id},
+									function(returnedData){
+										$(".order_id_"+orderID).remove();
+										$('#loading-img').css("display", "none");
+										$('#overlay').css("display", "none");
+										$('.ready_notification').show();
+										
+										setTimeout(
+											function(){ 
+												$('.ready_notification').hide();
+										}, 3000);
+									}
+								);
+							}
+						}
+		        ]
+				
+			}); 
+
+				
+
+			}
 
 		$(function(){
-			$.get("{{url('kitchen/catering-orders')}}",
+			
+
+			$.get("{{url('api/v1/kitchen/catering-orders')}}/" + storeId,
 			function(returnedData){
 				console.log(returnedData["data"]);
 				var count = 18;
@@ -108,7 +276,7 @@
 		          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
 		          		var orderCreate = orderCreateTime(temp[i]["created_at"]);
 		          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
-		          		liItem += "<tr>";
+		          		liItem += "<tr class='order_id_"+temp[i]["order_id"]+"'>";
 		          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 		          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
 		          		liItem += "<td>"+temp[i]["product_name"]+"</td>";
@@ -119,6 +287,12 @@
 		          		}
 		          		liItem += "<td>"+orderCreate+"</td>";
 		          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
+		          		if(temp[i]["cancel"]==2){
+   			          		liItem += "<td>"+"<span class='fa fa-times-circle fa-2x red' onclick='removeOrder("+temp[i]["order_id"]+","
+   			          		+temp[i]["user_id"]+")'>"+"</span>"+"</td>";	
+		          		}else{
+			          		liItem += "<td>"+"<span class='fa fa-times-circle fa-2x grey'>"+"</span>"+"</td>";					          			
+		          		}
 		          		liItem += "</tr>";
 		          	}
 	          	}else{
@@ -129,7 +303,7 @@
 		});
 
 		var ajaxCall = function(){
-			$.get("{{url('kitchen/catering-orders')}}",
+			$.get("{{url('api/v1/kitchen/catering-orders')}}/" + storeId,
 			function(returnedData){
 				//console.log(returnedData["data"]);
 				var count = 18;
@@ -152,7 +326,7 @@
 		          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
 		          		var orderCreate = orderCreateTime(temp[i]["created_at"]);
 		          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
-		          		liItem += "<tr>";
+		          		liItem += "<tr class='order_id_"+temp[i]["order_id"]+"'>";
 		          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 		          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
 		          		liItem += "<td>"+temp[i]["product_name"]+"</td>";
@@ -163,6 +337,12 @@
 		          		}
 		          		liItem += "<td>"+orderCreate+"</td>";
 		          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
+		          		if(temp[i]["cancel"]==2){
+   			          		liItem += "<td>"+"<span class='fa fa-times-circle fa-2x red' onclick='removeOrder("+temp[i]["order_id"]+","
+   			          			+temp[i]["user_id"]+")'>"+"</span>"+"</td>";	
+		          		}else{
+			          		liItem += "<td>"+"<span class='fa fa-times-circle fa-2x grey'>"+"</span>"+"</td>";					          			
+		          		}
 		          		liItem += "</tr>";
 		          	}
 	          	}else{
@@ -250,15 +430,27 @@
 		}
 
 		function orderCreateTime(time){
-			var date = new Date();
+			var date = convertUTCDateToLocalDate(new Date(time));
+			// var date = new Date(time + " UTC");
+
 			var dd = date.toString();
 			var ddd = dd.split(" ");
 			var ddddd = ddd[4].split(":");
 			var dddd = ddd[0]+" "+ddd[1]+" "+ddd[2]+" "+ddd[3]+" "+ddddd[0]+":"+ddddd[1];
+
 			return dddd;
 		}
 
+		function convertUTCDateToLocalDate(date) {
+		    var newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
 
+		    var offset = date.getTimezoneOffset() / 60;
+		    var hours = date.getHours();
+
+		    newDate.setHours(hours - offset);
+
+		    return newDate;   
+		}
 
 		function addTimes (startTime, endTime) {
 		  var times = [ 0, 0, 0 ]

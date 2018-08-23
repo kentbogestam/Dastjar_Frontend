@@ -1,5 +1,72 @@
 @extends('layouts.kitchenSetting')
 
+<style type="text/css">
+	.btn_blk{
+		background-color: #fff;
+		border-radius: 0.5em;
+	}
+
+	.btn_blk h2{
+		text-align: left;
+		padding-left: 2em;
+	}
+	
+	.msg-lbl{
+		color: #000; 
+		padding-left: 0px !important;
+	}
+
+	.msg-txt{
+		margin-bottom: 10px !important; 
+		border: 1px solid #777 !important;
+	}
+
+	#msg{
+		height: 200px !important;
+/*		  resize: none;
+*/
+	}
+
+	#contact-setting-list .ui-controlgroup{
+		display: block !important;
+	}
+
+	.others_tabs li{
+     	background-color: #420800;
+    	color: white;
+    	border-radius: 0.5em !important;
+	}
+	
+	#form{
+		margin-bottom: 0px;
+	}
+
+	#range-sec-controlgroup{
+	/*	width: 100%;*/
+	}
+/*	#msg{height: 300px;}
+*/
+/*	#msg:focus {
+color:red;
+/*height: 300px;
+*
+/*
+textarea.ui-input-text{
+  height: auto !important
+ }
+*/
+/*	html,body{ -webkit-overflow-scrolling : touch !important; overflow: auto !important; height: 100% !important; }
+*/
+/*	textarea.ui-input-text.ui-textinput-autogrow {
+    	overflow: auto !important;
+	}
+*/
+	textarea {
+	    height: auto !important;
+	    width: 100%
+	}
+</style>
+
 @section('content')
 <div class="setting-page" data-role="page" data-theme="c">
 	<div data-role="header"  data-position="fixed" data-tap-toggle="false" class="header">
@@ -28,8 +95,7 @@
 			</div>
 		</div>
 	</div>
-	<form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('kitchen/save-kitchenSetting') }}">
-		{{ csrf_field() }}
+
 		<div role="main" data-role="main-content" class="content">
 			@if ($message = Session::get('success'))
 				<div class="table-content sucess_msg">
@@ -44,6 +110,8 @@
 			    </div>
 			@endif
 			<div class="setting-list">
+				<form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('kitchen/save-kitchenSetting') }}">
+				{{ csrf_field() }}
 				<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.Language") }} <span>
 					@if(Auth::guard('admin')->user()->language == 'ENG')
 					English
@@ -72,27 +140,57 @@
 				        <label for="radio-choice-v-2e">On</label>
 				    </fieldset>
 				</li>
+				</form>
+
+				<li id="prep_time" class="range-sec btn_blk">
+					<h2 class="ui-btn">Extra Preparation Time</h2>
+				</li>
+
+				<li data-role="collapsible" id="range-sec-controlgroup" class="range-sec">
+					<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Support') }}
+						<p class="ui-li-aside">
+							
+						</p>
+					</h2>
+					<div>
+						<label class="msg-lbl"><h2>{{ __('messages.Message') }}</h2></label>
+					</div>
+
+					<div id="msg-controlgroup">
+						<form id="support-form" method="post" action="{{ url('kitchen/support') }}" data-ajax="false">
+							{{ csrf_field() }}
+							<textarea id="msg" name="message" placeholder="{{ __('messages.Contact Us Placeholder') }}"  class="msg-txt"  data-ajax="false" required>
+								</textarea>
+							<button type="submit" class="btn btn-success">{{ __('messages.Send') }}</button>		
+						</form>
+					</div>
+				</li>
+
+				<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.Others") }} <span>
+					</span></h2>
+				    <ul data-role="controlgroup" class="others_tabs">
+						 <li id="about_us" class="range-sec btn_blk">
+							<h2 class="ui-btn">{{  __("messages.About Us") }}</h2>
+						</li>
+
+						<li id="admin" class="range-sec btn_blk">
+							<h2 class="ui-btn">{{  __("messages.Admin") }}</h2>
+						</li>
+				    </ul>
+				</li>
+				
 			</div>
 		</div>
-	</form>
 </div>
 
 @endsection
 
 @section('footer-script')
+<script src="https://code.jquery.com/jquery-migrate-1.3.0.js"></script>
+
 	<script type="text/javascript">
 		$("#dataSave").click(function(e){
-			console.log('gggg');
 			var flag = true;
-			// var x = $('form input[type="radio"]').each(function(){
-	  //       // Do your magic here
-	  //       	var checkVal = parseInt($(this).val());
-	  //       	console.log(checkVal);
-	  //       	if(checkVal > 0){
-	  //       		flag = true;
-	  //       		return flag;
-	  //       	}
-			// });
 
 			if(flag){
 				$("#form").submit();
@@ -101,6 +199,33 @@
 				e.preventDefault();
 			}
 		});
+
+		$('#about_us').click(function(){
+			window.open("https://dastjar.com/?page_id=71");
+		});
+
+		$('#admin').click(function(){
+			window.open("https://admin-dev.dastjar.com/");
+		});
+
+		$('#prep_time').click(function(){
+			location.replace("{{url('kitchen/extra-prep-time')}}");
+		});
+
+		$(document).ready(function(){
+   				$('#msg').on("focus", function () {
+				   $('.setting-page').animate({scrollTop:$(document).height()}, 'slow');
+				});	
+
+			// $("textarea").removeClass('ui-input-text');
+			// $.mobile.silentScroll(0);
+
+		});
+
+$(document).bind("mobileinit", function () {
+    // $.mobile.ajaxEnabled = false;
+});
+
 	</script>
 
 @endsection

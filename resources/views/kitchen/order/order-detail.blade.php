@@ -14,9 +14,24 @@
 					<p>{{ __('messages.Order Number') }} </p>
 					<p class="order-no">{{$order->customer_order_id}}</p>
 					<p>({{$order->store_name}})</p>
-					<p>{{ __('messages.Your order will be ready on') }} {{$order->order_delivery_time}} mins
+					<p>
+						<?php
+							$time = $order->order_delivery_time;
+							$time2 = $storeDetail->extra_prep_time;
+							$secs = strtotime($time2)-strtotime("00:00:00");
+							$result = date("H:i:s",strtotime($time)+$secs);
+						?>
+
 						@if($order->order_type == 'eat_later')
+						{{ __('messages.Your order will be ready on') }}
 						{{$order->deliver_date}}
+						{{date_format(date_create($order->deliver_time), 'G:i')}} 
+						@else
+						{{ __('messages.Your order will be ready in about') }}
+							@if(date_format(date_create($result), 'H')!="00")
+							{{date_format(date_create($result), 'H')}} hours 						
+							@endif
+						{{date_format(date_create($result), 'i')}} mins
 						@endif
 					</p>
 				</div>
@@ -55,6 +70,14 @@
 					</div>
 					<span>{{ __('messages.Kitchen') }}</span>
 				</a></div>
+				<div class="ui-block-b">
+					<a href = "{{ url('kitchen/catering') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
+					<div class="img-container">
+						<img src="{{asset('kitchenImages/icon-3.png')}}">
+					</div>
+					<span>{{ __('messages.Catering') }}</span>
+					</a>
+				</div>
 			</div>
 			<div class="ui-block-b right-side_menu">
 				<div class="ui-block-a drop_down"><a href = "{{ url('kitchen/kitchen-setting') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
@@ -62,11 +85,12 @@
 						<img src="{{asset('kitchenImages/icon-6.png')}}">
 					</div>
 				</a></div>
-				<div class="ui-block-b middle-menu"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" target="_blank" href="https://admin.dastjar.com/admin/">
+								
+				<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" href="{{ url('kitchen/menu') }}">
 					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-5.png')}}">
+						<img src="{{asset('kitchenImages/icon-7.png')}}">
 					</div>
-					<span>{{ __('messages.Admin') }}</span>
+					<span>{{ __('messages.Menu') }}</span>
 				</a></div>
 				<div class="ui-block-c"><a href = "{{ url('kitchen/kitchen-order-onsite') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 					<div class="img-container">
