@@ -459,9 +459,11 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 				}
 			?>
 
+			var dateToday = new Date();
+
 			$('#date-start').bootstrapMaterialDatePicker
 			({
-				weekStart: 0, format: 'DD/MM/YYYY HH:mm', clearButton: true
+				weekStart: 0, format: 'DD/MM/YYYY HH:mm', minDate: dateToday, clearButton: true
 			}).on('change', function(e, date)
 			{
 				$('#date-end').bootstrapMaterialDatePicker('setMinDate', date);
@@ -470,7 +472,7 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 
 			$('#date-end').bootstrapMaterialDatePicker
 			({
-				weekStart: 0, format: 'DD/MM/YYYY HH:mm', clearButton: true
+				weekStart: 0, format: 'DD/MM/YYYY HH:mm', minDate: dateToday, clearButton: true
 			}).on('change', function(e2, date2)
 			{
 				$('#date-end-utc').val(moment.utc(date2).format('DD/MM/YYYY HH:mm'));

@@ -48,6 +48,9 @@
 	Route::post('/userLogin','Auth\LoginController@userLogin');
 	Route::get('/login','Auth\LoginController@login')->name('login');
 	Route::get('/login','Auth\LoginController@login')->name('customer-login');
+
+	Route::get('/go-to-login','HomeController@goToLogin');
+
 	Route::get('/mobileLogin','Auth\LoginController@mobileLogin');
 	Route::post('/sentOtp','Auth\RegisterController@sentOtp');
 	Route::get('/sentOtp','Auth\RegisterController@sentOtp');
@@ -158,7 +161,8 @@
 		Route::get('createStandardOffer', 'AdminController@createStandardOffer');			
 		Route::post('add-dish-price', 'AdminController@addDishPrice');	
 		Route::post('remove-order', 'AdminController@removeOrder');	
-		
+		Route::get('kitchen-menu-new/{dishId}/{storeId}', 'AdminController@kitchenMenuNew');			
+
 	});
 
 

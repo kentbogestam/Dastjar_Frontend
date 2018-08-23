@@ -106,35 +106,27 @@
 					<li data-role="collapsible" class="range-sec">
 						<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Language') }}
 						<p class="ui-li-aside">
-							@if(Auth::check())
-								@if(Auth::user()->language == 'ENG')
+							@if(App::getLocale() == "en")
 								English
-								@elseif(Auth::user()->language == 'SWE')
-								Swedish
-								@endif
 							@else
-								@if(Session::get('browserLanguageWithOutLogin') == 'ENG')
-								English
-								@elseif(Session::get('browserLanguageWithOutLogin') == 'SWE')
 								Swedish
-								@endif
 							@endif
 						</p></h2>
-						@if(Auth::check())
-						    <fieldset data-role="controlgroup">
-						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2a" value="ENG" @if(Auth::user()->language == 'ENG') checked="checked" @else checked="checked" @endif>
+<!-- 						@if(Auth::check())
+ -->						 <fieldset data-role="controlgroup">
+						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2a" value="ENG" @if(App::getLocale() == 'en') checked="checked" @else checked="checked" @endif>
 						        <label for="radio-choice-v-2a">English</label>
-						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2b" value="SWE" @if(Auth::user()->language == 'SWE') checked="checked" @endif>
+						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2b" value="SWE" @if(App::getLocale() == 'sw') checked="checked" @endif>
 						        <label for="radio-choice-v-2b">Swedish</label>
 						    </fieldset>
-						@else
+<!-- 						@else
 							<fieldset data-role="controlgroup">
-						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2a" value="ENG" @if(Session::get('browserLanguageWithOutLogin') == 'ENG') checked="checked" @else checked="checked" @endif>
+						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2a" value="ENG" @if(App::getLocale() == 'en') checked="checked" @else checked="checked" @endif>
 						        <label for="radio-choice-v-2a">English</label>
-						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2b" value="SWE" @if(Session::get('browserLanguageWithOutLogin') == 'SWE') checked="checked" @endif>
+						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2b" value="SWE" @if(App::getLocale() == 'sw') checked="checked" @endif>
 						        <label for="radio-choice-v-2b">Swedish</label>
 						    </fieldset>
-						@endif
+						@endif -->
 					</li>	
 					<!-- <li><a href="#">Unit <p class="ui-li-aside">Meter</p></a></li>  -->
 				</ul> 

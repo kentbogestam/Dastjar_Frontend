@@ -184,9 +184,30 @@
 			</div>
 		</div>
 	</div>
+	<?php 
+		$lan = "eng";
+	?>
+
+							@if(Auth::check())
+								@if(Auth::user()->language != 'ENG')
+								<?php 
+									$lan = "swe";
+								?>
+								@endif
+							@else
+								@if(Session::get('browserLanguageWithOutLogin') != 'ENG')
+								<?php 
+									$lan = "swe";
+								?>
+								@endif
+							@endif
 
 	<div id="dialog-confirm" title="Delete Account">
+		@if($lan == "eng")
 			<p>Do you really want to delete this order.<br/><br/>Yes / No</p>
+		@else
+			<p>Vill du verkligen ta bort denna beställning.<br/><br/>Ja / Nej</p>	
+		@endif	
 	</div>
 
 		<img src="{{ asset('images/loading.gif') }}" id="loading-img" />

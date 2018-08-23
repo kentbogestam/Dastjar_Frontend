@@ -196,11 +196,6 @@
 			position: absolute;
 			top: 50%;
 			left: 50%;
-			-moz-transform: translate(-50%);
-			-webkit-transform: translate(-50%);
-			-o-transform: translate(-50%);
-			-ms-transform: translate(-50%);
-			transform: translate(-50%);
 			z-index: 99999;
 		}
 	</style>

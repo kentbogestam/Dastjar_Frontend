@@ -432,7 +432,7 @@
 
 		var extraclass = document.body;
 
-	setInterval(getPosAgain,3000);
+	setTimeout(getPosAgain,3000);
 
 	function getPosAgain(){
 		if(loc_flag==0){

@@ -40,8 +40,10 @@
 				data-key="{{env('STRIPE_PUB_KEY')}}"
                 data-amount=""
                 data-name="Stripe"
+                data-email="{{Auth::user()->email}}"
                 data-description="Dastjar"
                 data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+                data-token="true"
                 data-locale="auto"
                 data-zip-code="false">
         </script>

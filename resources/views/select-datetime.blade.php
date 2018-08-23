@@ -260,6 +260,22 @@ $(document).ready(function(){
 		});
 
 
+	   $(document).ready(function(){
+	   		$("td:contains('"+curr_date+"')").addClass("today selected");
+
+	   	    $("td.day.today").parent().prevAll().andSelf().find("td.oday").css({"pointer-events":"none"});
+
+	   	    $('.prevm').click(function(){
+		   	    $("td.day").parent().prevAll().andSelf().find("td.oday").css({"pointer-events":"auto"});	   	    	
+		   	    $("td.day.today").parent().prevAll().andSelf().find("td.oday").css({"pointer-events":"none"});
+	   	    });
+
+	   	    $('.nextm').click(function(){
+		   	    $("td.day").parent().prevAll().andSelf().find("td.oday").css({"pointer-events":"auto"});	   	    	
+		   	    $("td.day.today").parent().prevAll().andSelf().find("td.oday").css({"pointer-events":"none"});
+	   	    });
+	   });
+
 	  $('.perfect-datetimepicker').append("<p class='error_time'>Please enter PickUp time in 24 hours format. </p>"+"<p class='error_time2'>Date and Time is not valid. </p>");
 	// var lar_r =   $('.tt tbody').find('tr:first')
 	// var bb = $(lar_r).append('<td class=""></td>');

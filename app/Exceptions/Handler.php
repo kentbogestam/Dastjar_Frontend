@@ -48,7 +48,7 @@ class Handler extends ExceptionHandler
     {
         if ($exception instanceof TokenMismatchException){
             // Catch it here and do what you want. For example...
-            return redirect()->route('login')->with('error', 'Your session has expired');
+            return redirect()->route('customer-login')->with('error', 'Your session has expired');
         }elseif($exception instanceof NotFoundHttpException)
         {
             return response()->view('errors.404', [], 404);

@@ -143,7 +143,7 @@ textarea.ui-input-text{
 				</form>
 
 				<li id="prep_time" class="range-sec btn_blk">
-					<h2 class="ui-btn">Extra Preparation Time</h2>
+					<h2 class="ui-btn">{{ __('messages.Extra Preparation Time') }}</h2>
 				</li>
 
 				<li data-role="collapsible" id="range-sec-controlgroup" class="range-sec">

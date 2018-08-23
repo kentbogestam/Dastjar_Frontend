@@ -506,19 +506,10 @@ class HomeController extends Controller
     }
 
     public function terms(){
-        if(Auth::check()){
-            if(Auth::user()->language == 'ENG'){
+        if(\App::getLocale() == "en"){
                 $lan = "eng";
-            }else{
-                $lan = "swe";            
-            }
         }else{
-            if(Session::get('browserLanguageWithOutLogin') == 'ENG'){
-                $lan = "eng";
-            }
-            else{
                 $lan = "swe";
-            }
         }
 
         if($lan == "eng"){
@@ -537,5 +528,9 @@ class HomeController extends Controller
 
     public function test(){
         return view('test');
+    }
+
+    public function goToLogin(){
+        return redirect()->route('customer-login')->with('error', 'Your session has expired');
     }
 }
