@@ -1,0 +1,33 @@
+/*.left-side_menu{
+    width: 50% !important;
+}
+
+.right-side_menu{
+    width: 50% !important;
+}
+
+.right-side_menu .ui-block-a{
+    width: 20% !important;
+}
+
+.right-side_menu .ui-block-b{
+    width: 25% !important;
+}
+
+.right-side_menu .ui-block-c{
+    width: 30% !important;
+}
+*/
+@media only screen and (max-width: 768px) {
+    .left-side_menu span{
+        display: none;
+    }
+
+    .right-side_menu{
+        padding-right: 25px;
+    }
+    
+    .right-side_menu span{
+        display: none;
+    }
+}
