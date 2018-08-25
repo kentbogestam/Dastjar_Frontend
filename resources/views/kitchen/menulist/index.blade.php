@@ -529,7 +529,7 @@
 
 
 			htmlData += '<h3 style="display: inline">' + row2['product_name'] + '</h3>';
-			htmlData += '<a href="javascript:void(0)" onClick="add_dish_price('+row2['product_id']+','+'{{Session::get('storeId')}})" class="btn waves-effect add-price-btn" data-ajax="false">Add Future Price</a>';
+			htmlData += '<a href="javascript:void(0)" onClick="add_dish_price(\''+row2['product_id']+','+'{{Session::get('storeId')}}\')" class="btn waves-effect add-price-btn" data-ajax="false">Add Future Price</a>';
 					
 			htmlData += '</div><div><p>' + row2["product_description"] + '</p></div>';
 
@@ -612,7 +612,7 @@
 
 
 			htmlData += '<h3 style="display: inline">' + row2['product_name'] + '</h3>';
-			htmlData += '<a href="javascript:void(0)" onClick="add_dish_price('+row2['product_id']+','+'{{Session::get('storeId')}})" class="btn waves-effect add-price-btn" data-ajax="false">Add Future Price</a>';
+			htmlData += '<a href="javascript:void(0)" onClick="add_dish_price(\''+row2['product_id']+','+'{{Session::get('storeId')}}\')" class="btn waves-effect add-price-btn" data-ajax="false">Add Future Price</a>';
 					
 			htmlData += '</div><div><p>' + row2["product_description"] + '</p></div>';
 
