@@ -552,9 +552,11 @@
 					htmlData +=	'<span class=""></span><span></span>';
 				}
 				
-				htmlData +=	'<a href="javascript:void(0)" onClick="delete_dish({{url('kitchen/delete-menu-dish')}}'+'?product_id='+row2['product_id']+'&price_id='+row3['price_id']+')" data-ajax="false"><span class="fa fa-trash" style="float: right; margin-left: 15px"></span></a>';
+				delete_dish_url = "{{url('kitchen/delete-menu-dish')}}"+"?product_id="+row2['product_id']+"&price_id="+row3['price_id'];
 
-				htmlData +=	'<a href="delete_dish({{url('kitchen/edit-menu-dish')}}'+'?product_id='+row2['product_id']+'&store_id='+'{{Session::get('storeId')}}'+'&price_id='+row3['price_id']+')" data-ajax="false"><span class="fa fa-edit" style="float: right"></span></a>';
+				htmlData +=	'<a href="javascript:void(0)" onClick="delete_dish(\''+delete_dish_url+'\')" data-ajax="false"><span class="fa fa-trash" style="float: right; margin-left: 15px"></span></a>';
+
+				htmlData +=	'<a href="{{url('kitchen/edit-menu-dish')}}'+'?product_id='+row2['product_id']+'&store_id='+'{{Session::get('storeId')}}'+'&price_id='+row3['price_id']+'" data-ajax="false"><span class="fa fa-edit" style="float: right"></span></a>';
 
 				htmlData +=	'</div>';
 			});
@@ -584,7 +586,7 @@
 					ajaxCall(dish_id);
 					return false;
 				}
-				
+
 				console.log(dish_id);
 
 				$.each(returnedData['data']['allData'],function(k,v){
@@ -633,9 +635,9 @@
 					htmlData +=	'<span class=""></span><span></span>';
 				}
 				
-				htmlData +=	'<a href="javascript:void(0)" onClick="delete_dish({{url('kitchen/delete-menu-dish')}}'+'?product_id='+row2['product_id']+'&price_id='+row3['price_id']+')" data-ajax="false"><span class="fa fa-trash" style="float: right; margin-left: 15px"></span></a>';
+				htmlData +=	'<a href="javascript:void(0)" onClick="delete_dish(\'{{url('kitchen/delete-menu-dish')}}'+'?product_id='+row2['product_id']+'&price_id='+row3['price_id']+'\')" data-ajax="false"><span class="fa fa-trash" style="float: right; margin-left: 15px"></span></a>';
 
-				htmlData +=	'<a href="delete_dish({{url('kitchen/edit-menu-dish')}}'+'?product_id='+row2['product_id']+'&store_id='+'{{Session::get('storeId')}}'+'&price_id='+row3['price_id']+')" data-ajax="false"><span class="fa fa-edit" style="float: right"></span></a>';
+				htmlData +=	'<a href="{{url('kitchen/edit-menu-dish')}}'+'?product_id='+row2['product_id']+'&store_id='+'{{Session::get('storeId')}}'+'&price_id='+row3['price_id']+'" data-ajax="false"><span class="fa fa-edit" style="float: right"></span></a>';
 
 				htmlData +=	'</div>';
 			});
