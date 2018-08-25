@@ -478,6 +478,7 @@
 	}
 
 	var lastDishId;
+	var storeId = "{{Session::get('storeId')}}";
 
 	$(document).ready(function(){
 		$.get("{{url('kitchen/kitchen-menu-new')}}/{{$dishId}}/{{Session::get('storeId')}}",
@@ -529,7 +530,7 @@
 
 
 			htmlData += '<h3 style="display: inline">' + row2['product_name'] + '</h3>';
-			htmlData += '<a href="javascript:void(0)" onClick="add_dish_price(\''+row2['product_id']+','+'{{Session::get('storeId')}}\')" class="btn waves-effect add-price-btn" data-ajax="false">Add Future Price</a>';
+			htmlData += '<a href="javascript:void(0)" onClick="add_dish_price(\''+row2['product_id']+'\',\''+storeId+'\')" class="btn waves-effect add-price-btn" data-ajax="false">Add Future Price</a>';
 					
 			htmlData += '</div><div><p>' + row2["product_description"] + '</p></div>';
 
@@ -556,7 +557,7 @@
 
 				htmlData +=	'<a href="javascript:void(0)" onClick="delete_dish(\''+delete_dish_url+'\')" data-ajax="false"><span class="fa fa-trash" style="float: right; margin-left: 15px"></span></a>';
 
-				htmlData +=	'<a href="{{url('kitchen/edit-menu-dish')}}'+'?product_id='+row2['product_id']+'&store_id='+'{{Session::get('storeId')}}'+'&price_id='+row3['price_id']+'" data-ajax="false"><span class="fa fa-edit" style="float: right"></span></a>';
+				htmlData +=	'<a href="{{url('kitchen/edit-menu-dish')}}'+'?product_id='+row2['product_id']+'&store_id='+"{{Session::get('storeId')}}"+'&price_id='+row3['price_id']+'" data-ajax="false"><span class="fa fa-edit" style="float: right"></span></a>';
 
 				htmlData +=	'</div>';
 			});
@@ -612,7 +613,7 @@
 
 
 			htmlData += '<h3 style="display: inline">' + row2['product_name'] + '</h3>';
-			htmlData += '<a href="javascript:void(0)" onClick="add_dish_price(\''+row2['product_id']+','+'{{Session::get('storeId')}}\')" class="btn waves-effect add-price-btn" data-ajax="false">Add Future Price</a>';
+			htmlData += '<a href="javascript:void(0)" onClick="add_dish_price(\''+row2['product_id']+'\',\''+storeId+'\')" class="btn waves-effect add-price-btn" data-ajax="false">Add Future Price</a>';
 					
 			htmlData += '</div><div><p>' + row2["product_description"] + '</p></div>';
 
