@@ -224,7 +224,7 @@
 	var tz = moment.tz.guess();
 	$.get("{{url('set-timezone')}}",{'tz':tz});
 
-	$.get("{{url('writeLogs')}}",{'log':'index page'});
+	// $.get("{{url('writeLogs')}}",{'log':'index page'});
 
 	$("#cancel-popup").click(function () {
       $('#login-popup').hide();
@@ -242,23 +242,6 @@
 
 	var curDate = new Date();
 	curTimezoneOffset = curDate.getTimezoneOffset();
-
-	function getCookie(cname) {
-	    var name = cname + "=";
-	    var decodedCookie = decodeURIComponent(document.cookie);
-	    var ca = decodedCookie.split(';');
-	    for(var i = 0; i <ca.length; i++) {
-	        var c = ca[i];
-	        while (c.charAt(0) == ' ') {
-	            c = c.substring(1);
-	        }
-	        if (c.indexOf(name) == 0) {
-	            return c.substring(name.length, c.length);
-	        }
-	    }
-	    return "";
-	}
-
 
 	function makeRedirection(link){
 		window.location.href = link;
@@ -375,6 +358,8 @@
 
 						for (var i=0;i<count;i++){
 							if(checkTime(temp[i]["store_open_close_day_time"])){
+
+								console.log(temp[i]);
 
 								liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
 								liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+temp[i]['store_id']+" data-ajax='false'>";
@@ -617,6 +602,12 @@
         osVersion = osVersion[0]; 
         osVersion = osVersion.replace(/_/g, '.'); 
         osVersion = osVersion.replace('OS ', ''); 
+
+		document.cookie="osVersion=" + osVersion;		
+
+	    if(osVersion >= 10){
+	    	$('.footer').css({'padding-top':'10px', 'padding-bottom':'10px'});
+	    }			
 
     } else if ( /iPad/i.test(device) ) { 
         deviceType = 'tablet'; 

@@ -178,22 +178,6 @@
 
 	$.get("{{url('writeLogs')}}",{'log':'eat now page'});
 
-	function getCookie(cname) {
-	    var name = cname + "=";
-	    var decodedCookie = decodeURIComponent(document.cookie);
-	    var ca = decodedCookie.split(';');
-	    for(var i = 0; i <ca.length; i++) {
-	        var c = ca[i];
-	        while (c.charAt(0) == ' ') {
-	            c = c.substring(1);
-	        }
-	        if (c.indexOf(name) == 0) {
-	            return c.substring(name.length, c.length);
-	        }
-	    }
-	    return "";
-	}
-
 
 	function makeRedirection(link){
 		window.location.href = link;
@@ -390,6 +374,43 @@
 		});
 	});
 
+
 </script>
+
+<script type="text/javascript">
+	  navigator.sayswho= (function(){
+	    var ua= navigator.userAgent, tem, 
+	    M= ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+	    if(/trident/i.test(M[1])){
+	        tem=  /\brv[ :]+(\d+)/g.exec(ua) || [];
+	        return 'IE '+(tem[1] || '');
+	    }
+	    
+	    M= M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
+	    if((tem= ua.match(/version\/(\d+)/i))!= null) M.splice(1, 1, tem[1]);
+
+	    //console.log("browserVersion=" + M.join(' '));
+	    var browserVersion = M.join(' ');
+	    var getBrowser = browserVersion.split(" ");
+	    var browser = getBrowser[0];
+	    document.cookie="browser=" + browser;
+	    document.cookie="browserVersion=" + M.join(' ');
+
+	    device = (navigator.userAgent).match(/Android|iPhone|iPad|iPod/i); 
+
+	    if (/iPhone/i.test(device) ) { 
+	        deviceType = 'phone'; 
+	        osVersion = (navigator.userAgent).match(/OS\s+([\d\_]+)/i); 
+	        osVersion = osVersion[0]; 
+	        osVersion = osVersion.replace(/_/g, '.'); 
+	        osVersion = osVersion.replace('OS ', ''); 
+			document.cookie="osVersion=" + osVersion;		
+
+		    if(osVersion >= 10){
+		    	$('.footer').css({'padding-top':'10px', 'padding-bottom':'10px'});
+		    }			
+	    } 
+	})();
+	</script>
 
 @endsection

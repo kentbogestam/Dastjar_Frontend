@@ -114,9 +114,6 @@ class Store extends Model
             $radius = 10;
         }
 
-        // echo $companytype1 . " " . $companytype2;
-        // die();
-
         if (Session::get('timezone')!=null) {
             $datetime = $todayDate . " " . $currentTime;
             $tz_from = Session::get('timezone');
