@@ -27,6 +27,16 @@ class ProductPriceList extends Model
     	return $this->hasMany('App\Product','product_id','product_id')->where('s_activ', 0);
     }
 
+    public function menuType()
+    {
+        return $this->hasMany('App\DishType','u_id','u_id');
+    }
+
+    public function store()
+    {
+        return $this->belongsTo('App\Store','store_id','store_id');
+    }
+
     protected $fillable = ['product_id', 'store_id', 'text', 'lang'];
     
 }

@@ -337,7 +337,7 @@ class HomeController extends Controller
                     $lng = $request->session()->get('with_out_login_lng');
                 }
 
-            $companydetails = Store::getListRestaurants($lat,$lng,$userDetail->range,'2','3',$todayDate,$currentTime,$todayDay);
+            $companydetails = Store::getEatLaterListRestaurants($lat,$lng,$userDetail->range,'2','3',$todayDate,$currentTime,$todayDay);
         }else{
             $lat = $request->session()->get('with_out_login_lat');
             $lng = $request->session()->get('with_out_login_lng');
@@ -347,7 +347,7 @@ class HomeController extends Controller
                 $rang = '7';
                 $request->session()->put('rang', $rang);
             } 
-            $companydetails = Store::getListRestaurants($lat,$lng,$rang,'2','3',$todayDate,$currentTime,$todayDay);
+            $companydetails = Store::getEatLaterListRestaurants($lat,$lng,$rang,'2','3',$todayDate,$currentTime,$todayDay);
         }
         
         return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails]); 
@@ -375,7 +375,7 @@ class HomeController extends Controller
                     $lng = $request->session()->get('with_out_login_lng');
                 }
 
-                $companydetails = Store::getListRestaurants($lat,$lng,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
+                $companydetails = Store::getEatLaterListRestaurants($lat,$lng,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
             }else{
                 $lat = $request->session()->get('with_out_login_lat');
                 $lng = $request->session()->get('with_out_login_lng');
@@ -385,7 +385,7 @@ class HomeController extends Controller
                     $rang = '7';
                     $request->session()->put('rang', $rang);
                 } 
-                $companydetails = Store::getListRestaurants($lat,$lng,$rang,'1','3',$todayDate,$currentTime,$todayDay);
+                $companydetails = Store::getEatLaterListRestaurants($lat,$lng,$rang,'1','3',$todayDate,$currentTime,$todayDay);
             }
             
             return view('index', compact('companydetails'));
@@ -408,9 +408,9 @@ class HomeController extends Controller
                 $lng = $request->session()->get('with_out_login_lng');
             }
 
-            $companydetails = Store::getListRestaurants($lat,$lng,$userDetail->range,'2','3',$todayDate,$currentTime,$todayDay);
+            $companydetails = Store::getEatLaterListRestaurants($lat,$lng,$userDetail->range,'2','3',$todayDate,$currentTime,$todayDay);
         }else{
-            $companydetails = Store::getListRestaurants($request->session()->get('with_out_login_lat'),$request->session()->get('with_out_login_lng'),$request->session()->get('rang'),'2','3',$todayDate,$currentTime,$todayDay);
+            $companydetails = Store::getEatLaterListRestaurants($request->session()->get('with_out_login_lat'),$request->session()->get('with_out_login_lng'),$request->session()->get('rang'),'2','3',$todayDate,$currentTime,$todayDay);
         }
         return view('eat_later', compact('companydetails'));
     }
@@ -425,6 +425,8 @@ class HomeController extends Controller
             ->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')
            ->orderBy('product.product_rank', 'ASC')
             ->get();
+
+            // dd($menuDetails->toArray());
 
         $storedetails = Store::where('store_id' , $storeId)->first();
         $request->session()->put('storeId', $storeId);

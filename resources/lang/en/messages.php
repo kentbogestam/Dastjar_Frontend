@@ -17,7 +17,7 @@ return [
     'Language'   => 'Language',
     'Range'   => 'Range',
     'Go'   => 'Go',
-    'Menu is not available.'   => 'Menu is not available.',
+    'Menu is not available in your selected language.'   => 'Menu is not available in your selected language.',
     'Add Comments'   => 'Add Comments',
     'Edit Comments'   => 'Edit Comments',
     'Cancel'   => 'Cancel',

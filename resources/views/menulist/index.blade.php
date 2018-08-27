@@ -213,7 +213,7 @@
 	</div>
 	@if(count($menuTypes) == '0')
 	<div class="table-content">
-		<p>{{ __('messages.Menu is not available in your selected language.') }} </p>
+		<p>{{ __('messages.Menu is not available.') }}1 </p>
 	</div>
 	@endif
 	<form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('save-order') }}">

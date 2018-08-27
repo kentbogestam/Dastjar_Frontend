@@ -621,7 +621,6 @@ class AdminController extends Controller
                 ->get()->groupBy('dish_type');
 
             $prodprices = ProductPriceList::where('store_id', Session::get('storeId'))->get()->groupBy('product_id');
-            // dd($prodprices->toArray());
 
             $productOfferSloganLangList = new ProductOfferSloganLangList();
             $productOfferSubSloganLangList = new ProductOfferSubSloganLangList();
