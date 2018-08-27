@@ -599,6 +599,8 @@ class AdminController extends Controller
             $employer = new Employer();
             $companyId = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
 
+            $allData = [];
+
             $menuTypes = DishType::where('company_id', $companyId)
                 ->where('dish_id','>',0)
                 ->orderBy('dish_id', 'ASC')->first();
