@@ -128,7 +128,7 @@
 
 <?php
 	$helper = new Helper();
-	$helper->logs("1 " . Session::get('with_login_lat') . " 2 " . Session::get('with_login_lng') . " 3 " . Session::get('with_out_login_lat') . " 4 " . Session::get('with_out_login_lng') . " 5 " . Session::get('address'));
+	// $helper->logs("1 " . Session::get('with_login_lat') . " 2 " . Session::get('with_login_lng') . " 3 " . Session::get('with_out_login_lat') . " 4 " . Session::get('with_out_login_lng') . " 5 " . Session::get('address'));
 
 	if(Auth::check()){
 			if(Session::get('with_login_address') != null){
@@ -176,7 +176,7 @@
 	var tz = moment.tz.guess();
 	$.get("{{url('set-timezone')}}",{'tz':tz});
 
-	$.get("{{url('writeLogs')}}",{'log':'eat now page'});
+	// $.get("{{url('writeLogs')}}",{'log':'eat now page'});
 
 
 	function makeRedirection(link){
@@ -296,7 +296,7 @@
 		if (typeof loc_lat === "undefined" || loc_lat == "") {
 		   $('.login-inner-section a').attr('href','javascript:void(0)');
 		   $('#login-popup').show();	    			
-			$.get("{{url('writeLogs')}}",{'log':'eat now location 1'});
+			// $.get("{{url('writeLogs')}}",{'log':'eat now location 1'});
 		}else{
 		    document.cookie="latitude=" + loc_lat;
 		    document.cookie="longitude=" + loc_lng;		

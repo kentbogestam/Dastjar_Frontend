@@ -181,7 +181,7 @@
 
 <?php
 	$helper = new Helper();
-	$helper->logs("1 " . Session::get('with_login_lat') . " 2 " . Session::get('with_login_lng') . " 3 " . Session::get('with_out_login_lat') . " 4 " . Session::get('with_out_login_lng') . " 5 " . Session::get('address'));
+	// $helper->logs("1 " . Session::get('with_login_lat') . " 2 " . Session::get('with_login_lng') . " 3 " . Session::get('with_out_login_lat') . " 4 " . Session::get('with_out_login_lng') . " 5 " . Session::get('address'));
 
 	if(Auth::check()){
 			if(Session::get('with_login_address') != null){
@@ -518,10 +518,10 @@
 		    var extraclass = document.body;
 			extraclass.classList.remove('disableClass');
 			//location.reload ();
-			$.get("{{url('writeLogs')}}",{'log':'location 1'});
+			// $.get("{{url('writeLogs')}}",{'log':'location 1'});
 			add();
 		},function(error){
-				$.get("{{url('writeLogs')}}",{'log':'cookie ' + getCookie("latitude")});
+				// $.get("{{url('writeLogs')}}",{'log':'cookie ' + getCookie("latitude")});
 
 			if (typeof loc_lat === "undefined" || loc_lat == "") {
 				if (!getCookie("latitude")){
@@ -529,19 +529,19 @@
 		    		$("#overlay").hide();
 				    $('.login-inner-section a').attr('href','javascript:void(0)');
 	 			    $('#login-popup').show();	
-					$.get("{{url('writeLogs')}}",{'log':'location 2 ' + error + ' ' + loc_lat});
+					// $.get("{{url('writeLogs')}}",{'log':'location 2 ' + error + ' ' + loc_lat});
 				} else {
 					loc_flag=2;
 				    document.cookie="latitude=" + getCookie("latitude");
 				    document.cookie="longitude=" + getCookie("longitude");		
-					$.get("{{url('writeLogs')}}",{'log':'location 3'});
+					// $.get("{{url('writeLogs')}}",{'log':'location 3'});
 					add();					
 				}
 			}else{
 				loc_flag=3;
 			    document.cookie="latitude=" + loc_lat;
 			    document.cookie="longitude=" + loc_lng;		
-				$.get("{{url('writeLogs')}}",{'log':'location 4'});
+				// $.get("{{url('writeLogs')}}",{'log':'location 4'});
 				add();
 			} 
 		},{maximumAge:0,timeout:5000});
@@ -549,7 +549,7 @@
 				loc_flag=5;
 			    document.cookie="latitude=" + loc_lat;
 			    document.cookie="longitude=" + loc_lng;	
-				$.get("{{url('writeLogs')}}",{'log':'location 5'});
+				// $.get("{{url('writeLogs')}}",{'log':'location 5'});
 				add();			    
 		}
 	} 
