@@ -382,21 +382,7 @@
 					<h2>GDPR</h2>                   
 				</div>
 
-			@if(Auth::check())
-				@if(Auth::user()->language == 'SWE')
-					<?php $lan = "swe"; ?>
-				@else
-					<?php $lan = "eng"; ?>
-				@endif
-			@else
-				@if(Session::get('browserLanguageWithOutLogin') == 'SWE')
-					<?php $lan = "swe"; ?>
-				@else
-					<?php $lan = "eng"; ?>
-				@endif
-			@endif
-
-			@if($lan == "eng")
+			@if(App::getLocale() == "en")
 				<div>
 					<p>
 						We protect your personal data in accordance with EU's GDPR (General Data Protection Regulations).
@@ -406,7 +392,7 @@
 						This will help us to secure that your orders are delivered to you and no one else.
 					</p>
 				</div>
-			@elseif($lan == "swe")
+			@elseif(App::getLocale() == "sv")
 				<div>
 					<p>
 						Vi skyddar dina personliga uppgifter i enighet med EUs GDPR (General Data Protection Regulations).
@@ -585,6 +571,7 @@
             tem= ua.match(/\b(OPR|Edge)\/(\d+)/);
             if(tem!= null) return tem.slice(1).join(' ').replace('OPR', 'Opera');
         }
+    
         M= M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
         if((tem= ua.match(/version\/(\d+)/i))!= null) M.splice(1, 1, tem[1]);
 

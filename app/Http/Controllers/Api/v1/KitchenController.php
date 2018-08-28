@@ -14,6 +14,10 @@ use App\Store;
 use Carbon\Carbon;
 use Auth;
 use App\User;
+use App\ProductPriceList;
+use App\ProductOfferSloganLangList;
+use App\ProductOfferSubSloganLangList;
+use App\LangText;
 
 class KitchenController extends Controller
 {
@@ -87,4 +91,5 @@ class KitchenController extends Controller
         
         return response()->json(['status' => 'success', 'response' => true,'data'=>"Rank Updated"]);
     }
+
 }

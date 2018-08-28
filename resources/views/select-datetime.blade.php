@@ -279,6 +279,8 @@ $(document).ready(function(){
 	  $('.perfect-datetimepicker').append("<p class='error_time'>Please enter PickUp time in 24 hours format. </p>"+"<p class='error_time2'>Date and Time is not valid. </p>");
 	// var lar_r =   $('.tt tbody').find('tr:first')
 	// var bb = $(lar_r).append('<td class=""></td>');
+
+
 	</script>
 	<style type="text/css">
 		.error_time{color: red; font-size: 14px; text-align: center;margin-top: 15px; display: none;}
