@@ -112,21 +112,21 @@
 								Swedish
 							@endif
 						</p></h2>
-<!-- 						@if(Auth::check())
- -->						 <fieldset data-role="controlgroup">
+						@if(Auth::check())
+						 <fieldset data-role="controlgroup">
 						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2a" value="ENG" @if(App::getLocale() == 'en') checked="checked" @else checked="checked" @endif>
 						        <label for="radio-choice-v-2a">English</label>
 						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2b" value="SWE" @if(App::getLocale() == 'sw') checked="checked" @endif>
 						        <label for="radio-choice-v-2b">Swedish</label>
 						    </fieldset>
-<!-- 						@else
+						@else
 							<fieldset data-role="controlgroup">
 						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2a" value="ENG" @if(App::getLocale() == 'en') checked="checked" @else checked="checked" @endif>
 						        <label for="radio-choice-v-2a">English</label>
 						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2b" value="SWE" @if(App::getLocale() == 'sw') checked="checked" @endif>
 						        <label for="radio-choice-v-2b">Swedish</label>
 						    </fieldset>
-						@endif -->
+						@endif
 					</li>	
 					<!-- <li><a href="#">Unit <p class="ui-li-aside">Meter</p></a></li>  -->
 				</ul> 
