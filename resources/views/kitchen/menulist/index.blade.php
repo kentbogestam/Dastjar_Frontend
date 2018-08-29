@@ -217,18 +217,17 @@
 		<p class="menu_txt">MENU</p>
 		<a href="{{ url('kitchen/create-menu') }}" class="fa fa-plus-circle fa-4x add_menu_btn" data-ajax="false"></a>
 
-		@foreach($allData as $key => $row)	
-
- 		<hr />
+		@foreach($allData as $key => $row)		
+		<hr />
 
 		<a href="#demo_{{$key}}" class="partial-circle" data-toggle="collapse">
 				<p class="dish_type">
 					<?php
-						if(strlen($dishName) > 15){
-							$dishName = substr_replace($dishName,"",12) . "...";
+						if(strlen($menuTypes[$key]) > 15){
+							$menuTypes[$key] = substr_replace($menuTypes[$key],"",12) . "...";
 						}
 					?>
-					{{ $dishName }}
+					{{ $menuTypes[$key] }}
 				</p>
 		</a>	
 
@@ -284,10 +283,9 @@
 		@endforeach
 
 		</div>
-		<br/> 
-		<span class="menu_data"></span>
+		<br/>
 
-		@endforeach 
+		@endforeach
 
 	<!-- The Modal -->
 	<div class="modal fade" id="myModal">
@@ -305,10 +303,10 @@
 			<div class="modal-body">
 				  	<input type="hidden" id="selected_prod_product_id" name="product_id"/>
 				  	<input type="hidden" id="selected_prod_store_id" name="store_id"/>	  
-					<input type="number" name="price" placeholder="Price ({{$currency}})" autocomplete="off" required/>
-					<input type="text" id="date-start" name="" placeholder="Publishing Start Date" required/>
+					<input type="number" name="price" placeholder="Price ({{$currency}})"/>
+					<input type="text" id="date-start" name="" placeholder="Publishing Start Date"/>
 					<input type="hidden" id="date-start-utc" name="publishing_start_date"/>
-					<input type="text" id="date-end" name="" placeholder="Publishing End Date" required/>
+					<input type="text" id="date-end" name="" placeholder="Publishing End Date"/>
 					<input type="hidden" id="date-end-utc" name="publishing_end_date"/>						  
 					{{ csrf_field() }}
 			</div>
@@ -414,21 +412,19 @@
 
 		$(document).ready(function(){
 			$('close').removeClass('ui-btn').removeClass('ui-shadow').removeClass('ui-corner-all');
-			
-			var dateToday = new Date();
 
 			$('#date-start').bootstrapMaterialDatePicker
 			({
-				weekStart: 0, format: 'DD/MM/YYYY - HH:mm', minDate: dateToday, clearButton: true
+				weekStart: 0, format: 'DD/MM/YYYY - HH:mm', clearButton: true
 			}).on('change', function(e, date)
 			{
 				$('#date-end').bootstrapMaterialDatePicker('setMinDate', date);
-				$('#date-start-utc').val(moment.utc(date).format('DD/MM/YYYY HH:mm'));	
+				$('#date-start-utc').val(moment.utc(date).format('DD/MM/YYYY HH:mm'));								
 			});
 
 			$('#date-end').bootstrapMaterialDatePicker
 			({
-				weekStart: 0, format: 'DD/MM/YYYY - HH:mm', minDate: dateToday, clearButton: true
+				weekStart: 0, format: 'DD/MM/YYYY - HH:mm', clearButton: true
 			}).on('change', function(e2, date2)
 			{
 				$('#date-end-utc').val(moment.utc(date2).format('DD/MM/YYYY HH:mm'));
@@ -447,6 +443,8 @@
         scrollEnd = contentHeight - screenHeight + header + footer;
 
     	$(".ui-btn-left", activePage).text("Scrolled: " + scrolled);
+    	//$(".ui-btn-right", activePage).text("ScrollEnd: " + scrollEnd);
+
     	
     	//if in future this page will get it, then add this condition in and in below if activePage[0].id == "home" 
     	if (scrolled >= scrollEnd) {
@@ -478,179 +476,8 @@
 	}
 
 	var lastDishId;
-	var storeId = "{{Session::get('storeId')}}";
 
 	$(document).ready(function(){
-		$.get("{{url('kitchen/kitchen-menu-new')}}/{{$dishId}}/{{Session::get('storeId')}}",
-			function(returnedData){
-				// console.log(returnedData['data']);
-
-				if("{{$menuTypes}}"==null){
-					return false;
-				}
-
-				if(returnedData['data']==null){
-					return false;	
-				}
-
-				var row = [];
-
-				var dish_id = returnedData['data']['dishId'];
-				var dish_name = returnedData['data']['dishName'];
-
-				console.log(dish_id);
-
-				$.each(returnedData['data']['allData'],function(k,v){
-					row = v;
-				});
-				console.log(row);
-
-
-				if(dish_name.length > 15){
-					dish_name = dish_name.substring(0,12) + "...";
-				}
-
-			var htmlData = "";
-			
-			htmlData += "<hr />";
-			htmlData += '<a href="#demo_' + dish_id + '" class="partial-circle" data-toggle="collapse">';
-			htmlData += '<p class="dish_type">';
-			htmlData += dish_name;
-			htmlData += '</p></a><br/><br/>';
-
-			htmlData += '<div id="demo_' + dish_id + '" data-id="' + dish_id + '" class="collapse collapse_block sortable">';	
-		    $(row).each(function(key2, row2){
-		    	console.log(key2);
-		    	console.log(row2);
-
-			htmlData += '<div class="card" style="padding: 20px" data-id="' + row2['product_id'] + '">';		
-			htmlData += '<div class="row"><div class="col-sm-2">';
-			htmlData += '<img src="' + row2['small_image'] + '" class="prod_img"/>';
-			htmlData += '</div><div class="col-sm-10"><div>';
-
-
-			htmlData += '<h3 style="display: inline">' + row2['product_name'] + '</h3>';
-			htmlData += '<a href="javascript:void(0)" onClick="add_dish_price(\''+row2['product_id']+'\',\''+storeId+'\')" class="btn waves-effect add-price-btn" data-ajax="false">Add Future Price</a>';
-					
-			htmlData += '</div><div><p>' + row2["product_description"] + '</p></div>';
-
-		    $(row2['prices']).each(function(key3, row3){
-
-			htmlData +=	'<div class="menu_icons">';
-			htmlData +=	'<span style="margin-right: 10px; color: rgba(199,7,17,1)">SEK ' + row3['price'] + '</span>';		
-
-				if(row3['publishing_start_date'] != "" && row3['publishing_end_date'] != ""){
-						dStart = row3['publishing_start_date'];
-						dStart = moment.utc(dStart).toDate();
-						dStart = moment(dStart).local().format('MMMM DD, Y HH:mm');
-
-						dEnd = row3['publishing_end_date'];
-						dEnd = moment.utc(dEnd).toDate();				
-						dEnd = moment(dEnd).local().format('MMMM DD, Y HH:mm');
-
-					htmlData +=	'<span class=""> ' + dStart + ' - ' + dEnd + '</span><span></span>';
-				}else{
-					htmlData +=	'<span class=""></span><span></span>';
-				}
-				
-				delete_dish_url = "{{url('kitchen/delete-menu-dish')}}"+"?product_id="+row2['product_id']+"&price_id="+row3['price_id'];
-
-				htmlData +=	'<a href="javascript:void(0)" onClick="delete_dish(\''+delete_dish_url+'\')" data-ajax="false"><span class="fa fa-trash" style="float: right; margin-left: 15px"></span></a>';
-
-				htmlData +=	'<a href="{{url('kitchen/edit-menu-dish')}}'+'?product_id='+row2['product_id']+'&store_id='+"{{Session::get('storeId')}}"+'&price_id='+row3['price_id']+'" data-ajax="false"><span class="fa fa-edit" style="float: right"></span></a>';
-
-				htmlData +=	'</div>';
-			});
-				htmlData +=	'</div></div></div>';
-			});
-				htmlData +=	'</div><br/><span class="menu_data"></span>';
-				$(htmlData).insertAfter($('.menu_data').last());
-
-				ajaxCall(dish_id);
-			});
-		
-		var ajaxCall = function(lastDishId){
-			$.get("{{url('kitchen/kitchen-menu-new')}}/"+lastDishId+"/{{Session::get('storeId')}}",
-			function(returnedData){
-
-				if(returnedData['data']==null){
-					return false;	
-				}
-
-				var row = [];
-				// console.log(lastDishId);
-
-				var dish_id = returnedData['data']['dishId'];
-				var dish_name = returnedData['data']['dishName'];
-
-				if(returnedData['data']['allData'].length==0){
-					ajaxCall(dish_id);
-					return false;
-				}
-
-				console.log(dish_id);
-
-				$.each(returnedData['data']['allData'],function(k,v){
-					row = v;
-				});
-
-			var htmlData = "";
-			
-			htmlData += "<hr />";
-			htmlData += '<a href="#demo_' + dish_id + '" class="partial-circle" data-toggle="collapse">';
-			htmlData += '<p class="dish_type">';
-			htmlData += dish_name;
-			htmlData += '</p></a><br/><br/>';
-
-			htmlData += '<div id="demo_' + dish_id + '" data-id="' + dish_id + '" class="collapse collapse_block sortable">';	
-
-		    $(row).each(function(key2, row2){
-
-			htmlData += '<div class="card" style="padding: 20px" data-id="' + row2['product_id'] + '">';		
-			htmlData += '<div class="row"><div class="col-sm-2">';
-			htmlData += '<img src="' + row2['small_image'] + '" class="prod_img"/>';
-			htmlData += '</div><div class="col-sm-10"><div>';
-
-
-			htmlData += '<h3 style="display: inline">' + row2['product_name'] + '</h3>';
-			htmlData += '<a href="javascript:void(0)" onClick="add_dish_price(\''+row2['product_id']+'\',\''+storeId+'\')" class="btn waves-effect add-price-btn" data-ajax="false">Add Future Price</a>';
-					
-			htmlData += '</div><div><p>' + row2["product_description"] + '</p></div>';
-
-		    $(row2['prices']).each(function(key3, row3){
-
-			htmlData +=	'<div class="menu_icons">';
-			htmlData +=	'<span style="margin-right: 10px; color: rgba(199,7,17,1)">SEK ' + row3['price'] + '</span>';		
-
-				if(row3['publishing_start_date'] != "" && row3['publishing_end_date'] != ""){
-						dStart = row3['publishing_start_date'];
-						dStart = moment.utc(dStart).toDate();
-						dStart = moment(dStart).local().format('MMMM DD, Y HH:mm');
-
-						dEnd = row3['publishing_end_date'];
-						dEnd = moment.utc(dEnd).toDate();				
-						dEnd = moment(dEnd).local().format('MMMM DD, Y HH:mm');
-
-					htmlData +=	'<span class=""> ' + dStart + ' - ' + dEnd + '</span><span></span>';
-				}else{
-					htmlData +=	'<span class=""></span><span></span>';
-				}
-				
-				htmlData +=	'<a href="javascript:void(0)" onClick="delete_dish(\'{{url('kitchen/delete-menu-dish')}}'+'?product_id='+row2['product_id']+'&price_id='+row3['price_id']+'\')" data-ajax="false"><span class="fa fa-trash" style="float: right; margin-left: 15px"></span></a>';
-
-				htmlData +=	'<a href="{{url('kitchen/edit-menu-dish')}}'+'?product_id='+row2['product_id']+'&store_id='+'{{Session::get('storeId')}}'+'&price_id='+row3['price_id']+'" data-ajax="false"><span class="fa fa-edit" style="float: right"></span></a>';
-
-				htmlData +=	'</div>';
-			});
-				htmlData +=	'</div></div></div>';
-			});
-				htmlData +=	'</div><br/><span class="menu_data"></span>';
-				$(htmlData).insertAfter($('.menu_data').last());
-
-				ajaxCall(dish_id);
-			});
-		}
-		
 	
 		 $(".sortable").sortable({
 			stop: function(event, ui) {

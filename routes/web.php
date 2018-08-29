@@ -82,6 +82,7 @@
 		Route::get('save-location', 'CustomerController@saveLocation');
 		Route::post('save-setting', 'CustomerController@saveSetting');
 		Route::post('store-device-token', 'CustomerController@storeDeviceToken');	
+		Route::post('store-device-token-order-view', 'CustomerController@storeDeviceTokenOrderView');	
 
 		Route::get('restro-menu-list/{storeID}', 'HomeController@menuList');
 

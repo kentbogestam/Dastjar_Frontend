@@ -135,6 +135,29 @@ class CustomerController extends Controller
         return response()->json(['status' => 'success', 'response' => $response,'data'=>true]);        
     }
 
+    public function storeDeviceTokenOrderView(Request $request){
+        $helper = new Helper();
+
+        if(User::where('email',$request->email)->first()->device_token == null){
+            $cust = User::where('email',$request->email)->first(); 
+            $cust->device_token = $request->deviceToken;
+            $cust->save();
+            $response = "device id doesnt exist";
+            $helper->logs($request->email . " " . $request->deviceToken);
+        }else if(User::where('email',$request->email)->whereRaw("find_in_set('$request->deviceToken',device_token)")->doesntExist()){
+            $cust = User::where('email',$request->email)->first(); 
+            $cust->device_token =  $cust->device_token.",".$request->deviceToken;
+            $cust->save();
+            $response = "device id doesnt exist";
+            $helper->logs($request->email . " " . $request->deviceToken);            
+        }else{
+            $response = "device id " . $request->deviceToken . " exist";
+            $helper->logs($request->email . " " . $response);
+        }
+
+        return response()->json(['status' => 'success', 'response' => $response,'data'=>true]);        
+    }
+
     public function setTimezone(Request $request){
         Session::put('timezone',$request->tz);
         return response()->json(['status' => 'success', 'response' => 'timezone is ' . $request->tz,'data'=>true]);        

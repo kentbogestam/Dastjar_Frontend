@@ -593,40 +593,20 @@ class AdminController extends Controller
 
     public function kitchenMenu(){
         if(Session::get('storeId')){
-            $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
-            $storeName = $storedetails->store_name;
-
-            $employer = new Employer();
-            $companyId = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
-
-            $allData = [];
-
-            $menuTypes = DishType::where('company_id', $companyId)
-                ->where('dish_id','>',0)
-                ->orderBy('dish_id', 'ASC')->first();
-
-            $dishName = $menuTypes->dish_name;
-            $dishId = $menuTypes->dish_id;
-
-            $companydetails = new Company();
-            $currency = $companydetails->where('company_id' , '=', $companyId)->first()->currencies;
-
-            if($menuTypes == null){
-                return view('kitchen.menulist.index', compact('menuTypes','storeName', 'currency', 'allData', 'dishName', 'dishId'));
-            }
-
-            $prods = Product::where('u_id', Auth::user()->u_id)
-                ->where('s_activ', '!=' , 2)->where('dish_type',$dishId)
-                ->orderBy('product_rank', 'ASC')
-                ->get()->groupBy('dish_type');
-
-            $prodprices = ProductPriceList::where('store_id', Session::get('storeId'))->get()->groupBy('product_id');
-
+            $products = new Product();
+            $productPriceList = new ProductPriceList();
             $productOfferSloganLangList = new ProductOfferSloganLangList();
             $productOfferSubSloganLangList = new ProductOfferSubSloganLangList();
             $langText = new LangText();
+
+            $allData = [];
+
+            $prods = $products->where('u_id', Auth::user()->u_id)->where('s_activ', '!=' , 2)
+            ->orderBy('product_rank', 'ASC')
+            ->get()->groupBy('dish_type');
+            $prodprices = $productPriceList->where('store_id', Session::get('storeId'))->get()->groupBy('product_id');
         
-             foreach($prods as $k=>$r){
+            foreach($prods as $k=>$r){
                 foreach($r as $k2=>$r2){
                     if(isset($prodprices[$r2->product_id])){
                         $data = [];
@@ -666,7 +646,18 @@ class AdminController extends Controller
                 }
             }
 
-            return view('kitchen.menulist.index', compact('menuTypes','storeName', 'currency', 'allData', 'dishName', 'dishId'));
+            $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
+            $storeName = $storedetails->store_name;
+
+            $employer = new Employer();
+            $companyId = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
+
+            $menuTypes = DishType::where('company_id', $companyId)->pluck('dish_name','dish_id');
+
+            $companydetails = new Company();
+            $currency = $companydetails->where('company_id' , '=', $companyId)->first()->currencies;
+
+            return view('kitchen.menulist.index', compact('menuTypes','storeName', 'currency', 'allData'));
         }
     }
 
@@ -1402,6 +1393,7 @@ class AdminController extends Controller
             $menuTypes = DishType::where('company_id', $companyId)
                 ->where('dish_id','>',$dish_id)
                 ->orderBy('dish_id', 'ASC')->first();
+
             if($menuTypes == null){
                 $data = null;
                 return response()->json(['status' => 'success', 'response' => true,'data'=>$data]);
@@ -1411,14 +1403,19 @@ class AdminController extends Controller
             $dishId = $menuTypes->dish_id;
 
             $prods = $products->where('u_id', Auth::user()->u_id)
-                ->where('s_activ', '!=' , 2)->where('dish_type',$dishId)
-                ->orderBy('product_rank', 'ASC')
+                ->join('product_price_list', 'product_price_list.product_id','=','product.product_id')
+                ->join('product_offer_slogan_lang_list','product_offer_slogan_lang_list.product_id','=','product.product_id')
+                ->join('product_offer_sub_slogan_lang_list','product_offer_sub_slogan_lang_list.product_id','=','product.product_id')
+                ->join('lang_text as prod_name','prod_name.id','=','product_offer_slogan_lang_list.offer_slogan_lang_list')
+                ->join('lang_text as prod_desc','prod_desc.id','=','product_offer_sub_slogan_lang_list.offer_sub_slogan_lang_list')
+                ->where('store_id', Session::get('storeId'))
+                ->where('s_activ', '!=' , 2)
+                ->where('dish_type',$dishId)
+                ->orderBy('product_rank', 'ASC')                
                 ->get()->groupBy('dish_type');
             // dd($prods->toArray());
 
-            $prodprices = $productPriceList->where('store_id', Session::get('storeId'))->get()->groupBy('product_id');
-            // dd($prodprices->toArray());
-        
+        /*
              foreach($prods as $k=>$r){
                 foreach($r as $k2=>$r2){
                     if(isset($prodprices[$r2->product_id])){
@@ -1458,7 +1455,38 @@ class AdminController extends Controller
                     }
                 }
                 break;
+            }*/
+
+            foreach($prods as $k2=>$r2){
+                foreach($r2 as $k=>$r){
+                    if(isset($r->product_id)){
+                        $data = [];
+                        $data['product_id'] = $r->product_id;
+                        $data['product_name'] = $r->product_name;
+                        $data['product_description'] = $r->product_description;
+
+                        $data['small_image'] = $r->small_image;
+                        $data['publishing_start_date'] = $r->publishing_start_date;
+                        $data['publishing_end_date'] = $r->publishing_end_date;
+
+                        $prices = [];
+
+                        $prices['price_id'] = $r->id;
+                        $prices['price'] = $r->price;
+                        $prices['publishing_start_date'] = $r->publishing_start_date;
+                        $prices['publishing_end_date'] = $r->publishing_end_date;
+
+                        $data['prices'][] = $prices;
+                                            // dd($r->dish_type);
+
+                        if(!empty($r->dish_type)){
+                            $allData[$r->product_id][] = $data;
+                        }
+                    }
+                }
             }
+                // dd($allData);
+
 
             $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
             $storeName = $storedetails->store_name;

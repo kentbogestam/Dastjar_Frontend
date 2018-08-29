@@ -296,7 +296,7 @@ if ('serviceWorker' in navigator) {
                 }
 
 
-        	$.post("{{url('store-device-token')}}", {_token: "{{ csrf_token() }}", email: "{{ Auth::user()->email}}", deviceToken: regID}, 
+        	$.post("{{url('store-device-token-order-view')}}", {_token: "{{ csrf_token() }}", email: "{{ Auth::user()->email}}", deviceToken: regID}, 
                         function(data, status){
                         console.log(data);
             });
