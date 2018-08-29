@@ -202,6 +202,9 @@
 @stop
 
 @section('content')
+	<?php
+		$placeholder = url('images/placeholder-image.png');
+	?>
 	<div data-role="header" class="header"  data-position="fixed" data-tap-toggle="false">
 		<div class="logo">
 			<div class="inner-logo">
@@ -231,9 +234,9 @@
 							@foreach($menuDetails as $productDetail)
 								@foreach($productDetail->storeProduct as $menuDetail)
 									@if($menuType->dish_id == $menuDetail->dish_type)
-										<ul data-role="listview" data-inset="true" >
-											<li>
-													<img src="{{$menuDetail->small_image}}">
+								<ul data-role="listview" data-inset="true" >
+									<li>
+										<img src="{{$menuDetail->small_image}}" onerror="this.src='{{$placeholder}}'">
 													<div class="list-content">
 														<h2>{{$menuDetail->product_name}}</h2>
 													<div class="fulldiscription"><p>{{$menuDetail->product_description}}</p></div>
@@ -285,7 +288,7 @@
 									@if($menuType->dish_id == $menuDetail->dish_type)
 										<ul data-role="listview" data-inset="true" >
 											<li>
-													<img src="{{$menuDetail->small_image}}">
+													<img src="{{$menuDetail->small_image}}" onerror="this.src='{{$placeholder}}'">
 													<div class="list-content">
 														<h2>{{$menuDetail->product_name}}</h2>
 													<div class="fulldiscription"><p>{{$menuDetail->product_description}}</p></div>

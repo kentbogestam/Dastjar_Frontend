@@ -95,22 +95,42 @@ class CustomerController extends Controller
     public function storeDeviceToken(Request $request){
         $helper = new Helper();
 
-        if(User::where('email',$request->email)->first()->device_token == null){
-            $cust = User::where('email',$request->email)->first(); 
-            $cust->device_token = $request->deviceToken;
-            $cust->save();
-            $response = "device id doesnt exist";
-            $helper->logs($request->email . " " . $request->deviceToken);
-        }else if(User::where('email',$request->email)->whereRaw("find_in_set('$request->deviceToken',device_token)")->doesntExist()){
-            $cust = User::where('email',$request->email)->first(); 
-            $cust->device_token =  $cust->device_token.",".$request->deviceToken;
-            $cust->save();
-            $response = "device id doesnt exist";
-            $helper->logs($request->email . " " . $request->deviceToken);            
-        }else{
-            $response = "device id " . $request->deviceToken . " exist";
-            $helper->logs($request->email . " " . $response);
+        $phone = explode("-", $request->phone);
+
+        if(Auth::check()){
+            $email = Auth::user()->email;
+        }elseif(count($phone)==2){
+            if(User::where('phone_number_prifix', $phone[0])
+                    ->where('phone_number', $phone[1])->exists()){
+                        $helper->logs($phone[1]);
+
+                $email = User::where('phone_number_prifix', $phone[0])
+                    ->where('phone_number', $phone[1])->first()->email;
+            }
         }
+
+        if(isset($email)){
+           if(User::where('email',$email)->first()->device_token == null){
+                $cust = User::where('email',$email)->first(); 
+                $cust->device_token = $request->deviceToken;
+                $cust->save();
+                $response = "device id doesnt exist";
+                $helper->logs($email . " " . $request->deviceToken);
+            }else if(User::where('email',$email)->whereRaw("find_in_set('$request->deviceToken',device_token)")->doesntExist()){
+                $cust = User::where('email',$email)->first(); 
+                $cust->device_token =  $cust->device_token.",".$request->deviceToken;
+                $cust->save();
+                $response = "device id doesnt exist";
+                $helper->logs($email . " " . $request->deviceToken);            
+            }else{
+                $response = "device id " . $request->deviceToken . " exist";
+                $helper->logs($response);
+            } 
+        }else{
+            $response = "Email not exists";
+            $helper->logs($response);
+        }
+        
 
         return response()->json(['status' => 'success', 'response' => $response,'data'=>true]);        
     }

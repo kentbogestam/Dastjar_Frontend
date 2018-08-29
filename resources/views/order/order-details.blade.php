@@ -46,10 +46,13 @@ if ('serviceWorker' in navigator) {
                     regID = sub.endpoint.replace(/ /g,'');
                 }
 
-            $.post("{{url('store-device-token')}}", {_token: "{{ csrf_token() }}", email: "{{ Auth::user()->email}}", deviceToken: regID}, 
+        @if(isset($_GET['m']))
+            $.post("{{url('store-device-token')}}", {_token: "{{ csrf_token() }}", email: "{{$_GET['m']}}", deviceToken: regID}, 
                         function(data, status){
                         console.log(data);
             });
+        @endif    
+
                 registerDeviceWithApp42(regID,type.toUpperCase())   
           }).catch(function(e) {
             // Handle Exception here
@@ -64,10 +67,12 @@ if ('serviceWorker' in navigator) {
             var idD = regID.substring(regID.indexOf("v1/")+ 1);
             regID = sub.endpoint.replace(/ /g,'');
         }
-            $.post("{{url('store-device-token')}}", {_token: "{{ csrf_token() }}", email: "{{ Auth::user()->email}}", deviceToken: regID}, 
+        @if(isset($_GET['m']))
+            $.post("{{url('store-device-token')}}", {_token: "{{ csrf_token() }}", phone: "{{$_GET['m']}}", deviceToken: regID}, 
                         function(data, status){
                         console.log(data);
             });
+        @endif
         registerDeviceWithApp42(regID,type.toUpperCase())   
       }
 

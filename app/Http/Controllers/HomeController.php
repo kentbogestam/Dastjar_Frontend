@@ -436,11 +436,7 @@ class HomeController extends Controller
                 foreach ($menuDetail->storeProduct as $storeProduct) {
                     $companyId = $storeProduct->company_id;
                     $dish_typeId[] = $storeProduct->dish_type;
-                    try{
-                        getimagesize($storeProduct->small_image);
-                    } catch (\Exception $ex) {
-                        $storeProduct->small_image = asset('images/placeholder-image.png');
-                    }
+                    
                 }
             }
 
