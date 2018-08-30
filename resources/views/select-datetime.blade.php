@@ -261,7 +261,7 @@ $(document).ready(function(){
 
 
 	   $(document).ready(function(){
-	   		$("td:contains('"+curr_date+"')").addClass("today selected");
+	   		$("td.day:contains('"+curr_date+"')").addClass("today selected");
 
 	   	    $("td.day.today").parent().prevAll().andSelf().find("td.oday").css({"pointer-events":"none"});
 
