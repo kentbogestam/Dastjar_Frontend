@@ -303,10 +303,10 @@
 			<div class="modal-body">
 				  	<input type="hidden" id="selected_prod_product_id" name="product_id"/>
 				  	<input type="hidden" id="selected_prod_store_id" name="store_id"/>	  
-					<input type="number" name="price" placeholder="Price ({{$currency}})"/>
-					<input type="text" id="date-start" name="" placeholder="Publishing Start Date"/>
+					<input type="number" name="price" placeholder="Price ({{$currency}})" required/>
+					<input type="text" id="date-start" name="" placeholder="Publishing Start Date" required/>
 					<input type="hidden" id="date-start-utc" name="publishing_start_date"/>
-					<input type="text" id="date-end" name="" placeholder="Publishing End Date"/>
+					<input type="text" id="date-end" name="" placeholder="Publishing End Date" required/>
 					<input type="hidden" id="date-end-utc" name="publishing_end_date"/>						  
 					{{ csrf_field() }}
 			</div>
