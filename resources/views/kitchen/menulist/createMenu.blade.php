@@ -462,6 +462,7 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 			?>
 
 			var dateToday = new Date();
+			dKStart = dStart;
 
 			$('#date-start').bootstrapMaterialDatePicker
 			({
@@ -470,7 +471,10 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 			{
 				if(new Date(date)>new Date(dKEnd)){
 					alert("Publishing start date must be smaller than publishing end date");
+					$('#date-start').val("{{date('d/m/Y 00:00')}}");
+					return false;
 				}
+				dKStart = date;
 				$('#date-end').bootstrapMaterialDatePicker('setMinDate', date);
 				$('#date-start-utc').val(moment.utc(date).format('DD/MM/YYYY HH:mm'));
 			});
