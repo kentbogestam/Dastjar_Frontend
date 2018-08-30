@@ -436,6 +436,7 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 				?>
 				dEnd = "{{date('Y-m-d H:i:s', strtotime($product_price_list->publishing_end_date))}}";
 				dEnd = moment.utc(dEnd).toDate();
+				dKEnd = moment(dEnd).local().format("YYYY-MM-DD HH:mm");					
 				dEnd = moment(dEnd).local().format("DD/MM/YYYY HH:mm");	
 				$('#date-end').val(dEnd);	
 				<?php
@@ -443,6 +444,7 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 				$('#date-end').val("{{date('d/m/Y 23:59')}}");
 				dEnd = "{{date('Y-m-d 23:59:00')}}";
 				dEnd = moment(dEnd).toDate();
+				dKEnd = moment(dEnd).local().format("YYYY-MM-DD HH:mm");											
 				dEnd = moment.utc(dEnd).format("DD/MM/YYYY HH:mm");
 				$('#date-end-utc').val(dEnd);
 			<?php }
@@ -466,6 +468,9 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 				weekStart: 0, format: 'DD/MM/YYYY HH:mm', minDate: dateToday, clearButton: true
 			}).on('change', function(e, date)
 			{
+				if(new Date(date)>new Date(dKEnd)){
+					alert("Publishing start date must be smaller than publishing end date");
+				}
 				$('#date-end').bootstrapMaterialDatePicker('setMinDate', date);
 				$('#date-start-utc').val(moment.utc(date).format('DD/MM/YYYY HH:mm'));
 			});
@@ -475,6 +480,8 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 				weekStart: 0, format: 'DD/MM/YYYY HH:mm', minDate: dateToday, clearButton: true
 			}).on('change', function(e2, date2)
 			{
+				dKEnd = date2;
+				$('#date-start').bootstrapMaterialDatePicker('setMaxDate', date2);
 				$('#date-end-utc').val(moment.utc(date2).format('DD/MM/YYYY HH:mm'));
 			});
 

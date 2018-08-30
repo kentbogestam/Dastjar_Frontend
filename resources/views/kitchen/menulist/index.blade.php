@@ -413,20 +413,31 @@
 		$(document).ready(function(){
 			$('close').removeClass('ui-btn').removeClass('ui-shadow').removeClass('ui-corner-all');
 
+			var dateToday = new Date();
+			dKEnd = null;
+
 			$('#date-start').bootstrapMaterialDatePicker
 			({
-				weekStart: 0, format: 'DD/MM/YYYY - HH:mm', clearButton: true
+				weekStart: 0, format: 'DD/MM/YYYY - HH:mm', minDate: dateToday, clearButton: true
 			}).on('change', function(e, date)
 			{
+				if(dKEnd!=null){
+					if(new Date(date)>new Date(dKEnd)){
+						alert("Publishing start date must be smaller than publishing end date");
+					}					
+				}
+
 				$('#date-end').bootstrapMaterialDatePicker('setMinDate', date);
 				$('#date-start-utc').val(moment.utc(date).format('DD/MM/YYYY HH:mm'));								
 			});
 
 			$('#date-end').bootstrapMaterialDatePicker
 			({
-				weekStart: 0, format: 'DD/MM/YYYY - HH:mm', clearButton: true
+				weekStart: 0, format: 'DD/MM/YYYY - HH:mm', minDate: dateToday, clearButton: true
 			}).on('change', function(e2, date2)
 			{
+				dKEnd = date2;
+				$('#date-start').bootstrapMaterialDatePicker('setMaxDate', date2);
 				$('#date-end-utc').val(moment.utc(date2).format('DD/MM/YYYY HH:mm'));
 			});
 
