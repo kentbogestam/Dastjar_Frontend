@@ -298,12 +298,12 @@
 			  <button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 
-			<form id="" method="post" action="{{ url('kitchen/add-dish-price') }}" data-ajax="false">
+			<form id="add-dish-price-frm" method="post" action="{{ url('kitchen/add-dish-price') }}" data-ajax="false">
 			<!-- Modal body -->
 			<div class="modal-body">
 				  	<input type="hidden" id="selected_prod_product_id" name="product_id"/>
 				  	<input type="hidden" id="selected_prod_store_id" name="store_id"/>	  
-					<input type="number" name="price" placeholder="Price ({{$currency}})" required/>
+					<input type="number" name="price" placeholder="Price ({{$currency}})" autocomplete="off" required/>
 					<input type="text" id="date-start" name="" placeholder="Publishing Start Date" required/>
 					<input type="hidden" id="date-start-utc" name="publishing_start_date"/>
 					<input type="text" id="date-end" name="" placeholder="Publishing End Date" required/>
@@ -411,6 +411,17 @@
 	var tempCount = 18;
 
 		$(document).ready(function(){
+
+	$('#add-dish-price-frm').submit(function(e){     
+    	dkS = moment($("#date-start").val(),'DD/MM/YYYY HH:mm').toDate();
+    	dkE = moment($("#date-end").val(),'DD/MM/YYYY HH:mm').toDate();
+
+		if(dkS>dkE){
+			alert("Publishing start date must be smaller than publishing end date");
+			return false;
+		}
+    });
+
 			$('close').removeClass('ui-btn').removeClass('ui-shadow').removeClass('ui-corner-all');
 
 			var dateToday = new Date();
@@ -421,12 +432,6 @@
 				weekStart: 0, format: 'DD/MM/YYYY - HH:mm', minDate: dateToday, clearButton: true
 			}).on('change', function(e, date)
 			{
-				if(dKEnd!=null){
-					if(new Date(date)>new Date(dKEnd)){
-						alert("Publishing start date must be smaller than publishing end date");
-					}					
-				}
-
 				$('#date-end').bootstrapMaterialDatePicker('setMinDate', date);
 				$('#date-start-utc').val(moment.utc(date).format('DD/MM/YYYY HH:mm'));								
 			});
@@ -437,7 +442,6 @@
 			}).on('change', function(e2, date2)
 			{
 				dKEnd = date2;
-				$('#date-start').bootstrapMaterialDatePicker('setMaxDate', date2);
 				$('#date-end-utc').val(moment.utc(date2).format('DD/MM/YYYY HH:mm'));
 			});
 

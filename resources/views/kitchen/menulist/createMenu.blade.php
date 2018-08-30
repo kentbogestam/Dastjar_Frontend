@@ -404,14 +404,19 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 	    }
     }
 
+    $('.create-menu-form').submit(function(e){     
+    	dkS = moment($("#date-start").val(),'DD/MM/YYYY HH:mm').toDate();
+    	dkE = moment($("#date-end").val(),'DD/MM/YYYY HH:mm').toDate();
 
-    $('.create-menu-form').submit(function(e){
         if(fileSize>6000000){
 				alert("Image size should be smaller than 6MB");          	
 				return false;
 		}else if(fileExt!="" && fileExt!="png" && fileExt!="jpg" && fileExt!="jpeg"){
 				alert("Only PNG, JPG and JPEG images are allowed");
 				return false;
+		}else if(dkS>dkE){
+			alert("Publishing start date must be smaller than publishing end date");
+			return false;
 		}
     });
 
@@ -469,11 +474,6 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 				weekStart: 0, format: 'DD/MM/YYYY HH:mm', minDate: dateToday, clearButton: true
 			}).on('change', function(e, date)
 			{
-				if(new Date(date)>new Date(dKEnd)){
-					alert("Publishing start date must be smaller than publishing end date");
-					$('#date-start').val("{{date('d/m/Y 00:00')}}");
-					return false;
-				}
 				dKStart = date;
 				$('#date-end').bootstrapMaterialDatePicker('setMinDate', date);
 				$('#date-start-utc').val(moment.utc(date).format('DD/MM/YYYY HH:mm'));
@@ -485,7 +485,6 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 			}).on('change', function(e2, date2)
 			{
 				dKEnd = date2;
-				$('#date-start').bootstrapMaterialDatePicker('setMaxDate', date2);
 				$('#date-end-utc').val(moment.utc(date2).format('DD/MM/YYYY HH:mm'));
 			});
 
