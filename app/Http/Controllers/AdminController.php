@@ -601,7 +601,7 @@ class AdminController extends Controller
 
             $allData = [];
 
-            $prods = $products->where('u_id', Auth::user()->u_id)->where('s_activ', '!=' , 2)
+            $prods = $products->join('dish_type','dish_type.dish_id','=','product.dish_type')->where('product.u_id', Auth::user()->u_id)->where('s_activ', '!=' , 2)->where('dish_activate',1)
             ->orderBy('product_rank', 'ASC')
             ->get()->groupBy('dish_type');
             $prodprices = $productPriceList->where('store_id', Session::get('storeId'))->get()->groupBy('product_id');
