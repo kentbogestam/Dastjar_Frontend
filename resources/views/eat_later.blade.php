@@ -394,7 +394,7 @@
 		}
 		return false;
 	}
-
+console.log('dharmveer test');
 </script>
 
 @endsection
