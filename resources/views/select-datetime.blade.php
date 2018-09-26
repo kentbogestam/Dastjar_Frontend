@@ -166,7 +166,7 @@ $(document).ready(function(){
         $('#date-value1-2').html(dateVal+" GMT+05:30 (Indian Standard Time)");
         $('#date-value1-23').val(date);
 	
-	console.log("t1 "+dateVal+" GMT+05:30 (Indian Standard Time)" +" "+date )
+	     console.log("t1 "+dateVal+" GMT+05:30 (Indian Standard Time)" +" "+date )
 
 	   $('#demo1-2').datetimepicker({
             date: date,
