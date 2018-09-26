@@ -165,6 +165,8 @@ $(document).ready(function(){
         dateVal=$.format.date(curr_year+"-"+curr_month+"-"+curr_date+" "+hours+":"+minutes+":"+seconds, "E MMM dd yyyy HH:mm:ss");
         $('#date-value1-2').html(dateVal+" GMT+05:30 (Indian Standard Time)");
         $('#date-value1-23').val(date);
+	
+	console.log("t1 "+dateVal+" GMT+05:30 (Indian Standard Time)" +" "+date )
 
 	   $('#demo1-2').datetimepicker({
             date: date,
@@ -185,6 +187,8 @@ $(document).ready(function(){
 
                 $('#date-value1-2').text(dateVal+" GMT+05:30 (Indian Standard Time)");
                 $('#date-value1-23').val(this.getValue());
+		
+		console.log("t2 "+dateVal+" GMT+05:30 (Indian Standard Time)" +" "+this.getValue() )
             }
         });
 
@@ -254,6 +258,7 @@ $(document).ready(function(){
 
 	 			    $('.error_apple_time').hide();
 	                $('#date-value1-23').val(utcdate);
+			console.log("date-value1-23 "+utcdate )
 					$("#form").submit();
 				}
 	   		}
