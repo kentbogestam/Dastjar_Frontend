@@ -178,6 +178,15 @@ $(document).ready(function(){
 			curr_date= '0'+curr_date;
 		}
 		
+		if(hours < 10)
+		{
+			hours ='0'+hours;
+		}
+		if(minutes < 10)
+		{
+			minutes ='0'+minutes;
+		}
+		
         var input_date = curr_year+"-"+curr_month+"-"+curr_date+" "+hours+":"+minutes+":"+seconds;
         dateVal=$.format.date(input_date, "E MMM dd yyyy HH:mm:ss");
         $('#date-value1-2').html(startDate);
@@ -208,7 +217,14 @@ $(document).ready(function(){
 				{
 					curr_date= '0'+curr_date;
 				}
-		
+				if(hours < 10)
+				{
+					hours ='0'+hours;
+				}
+				if(minutes < 10)
+				{
+					minutes ='0'+minutes;
+				}
 					var input_date = curr_year+"-"+curr_month+"-"+curr_date+" "+hours+":"+minutes+":"+seconds;
 					dateVal=$.format.date(input_date, "E MMM dd yyyy HH:mm:ss");
 					$('#date-value1-2').html(dateNew);
@@ -305,10 +321,80 @@ $(document).ready(function(){
 	   	    });
 	   });
 
-	  $('.perfect-datetimepicker').append("<p class='error_time'>Please enter PickUp time in 24 hours format. </p>"+"<p class='error_time2'>Date and Time is not valid. </p>");
+	  $('.perfect-datetimepicker').append("<p class='error_time'>Please enter PickUp time in 24 hours format(2 hours in advance from current time). </p>"+"<p class='error_time2'>Date and Time is not valid. </p>");
 	// var lar_r =   $('.tt tbody').find('tr:first')
 	// var bb = $(lar_r).append('<td class=""></td>');
-
+    function validateDate()
+	{
+		//default date should be
+		var date = new Date();
+		date.setHours(date.getHours()+2);
+        var orderTime_H =date.getHours() ;
+		
+		var orderTime_M =date.getMinutes() ;
+		
+		
+		
+		var H = $('#timeH').val();
+		var M = $('#timeM').val();
+		
+	    SetTimeInMinute = parseInt(M)+parseInt(H)*60;
+		OrderTimeInMinute = orderTime_M+orderTime_H*60;
+		var chkflag = 0;
+		if(SetTimeInMinute >= OrderTimeInMinute)
+		{ 
+		  chkflag = 1;
+		}
+		if(orderTime_H < 10)
+		{
+			orderTime_H ='0'+orderTime_H;
+		}
+		if(orderTime_M < 10)
+		{
+			orderTime_M ='0'+orderTime_M;
+		}
+		
+		curr_date = date.getDate();
+		curr_month = date.getMonth()+1;
+		curr_year = date.getFullYear();
+		hours = date.getHours(); //returns 0-23
+		minutes = date.getMinutes(); //returns 0-59
+		seconds = date.getSeconds(); //returns 0-59
+		
+		if(curr_month < '10')
+		{
+			curr_month= '0'+curr_month;
+		}
+		
+		if(curr_date < '10')
+		{
+			curr_date= '0'+curr_date;
+		}
+		
+		if(hours < 10)
+		{
+			hours ='0'+hours;
+		}
+		if(minutes < 10)
+		{
+			minutes ='0'+minutes;
+		}
+		
+		var input_date = curr_year+"-"+curr_month+"-"+curr_date+" "+hours+":"+minutes+":"+seconds;
+					
+				if(chkflag == 0)
+				{
+				   $('.error_time').show();
+				   $('#timeH').val(orderTime_H);
+				   $('#timeM').val(orderTime_M);
+				   $('#date-value1-2').html(date);
+				   $('#date-value1-23').val(input_date);
+				}
+				else
+				{
+					$('.error_time').hide();
+				}
+	}
 	</script>
 	<style type="text/css">
 		.error_time{color: red; font-size: 14px; text-align: center;margin-top: 15px; display: none;}
