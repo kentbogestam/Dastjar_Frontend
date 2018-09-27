@@ -146,14 +146,19 @@ $(document).ready(function(){
 		var tz = moment.tz.guess();
 
 		var date = new Date();
-		date.setMonth(date.getMonth());
-		date.setDate(date.getDate());
-		date.setHours(00, 00, 00);
+		//date.setDate(date.getDate());
+		//date.setMonth(date.getMonth());
+		//date.setDate(date.getDate());
+		//date.setHours(00, 00, 00);
+		
+		date.setHours(date.getHours()+2);
 
 		var startDate = new Date();
-		startDate.setMonth(startDate.getMonth());
-		startDate.setDate(startDate.getDate());
-		startDate.setHours(00, 00, 00);
+		//startDate.setDate(startDate.getDate());
+		//startDate.setMonth(startDate.getMonth());
+		//startDate.setDate(startDate.getDate());
+		//startDate.setHours(00, 00, 00);
+		startDate.setHours(startDate.getHours()+2);
 
 		var curr_date = date.getDate();
 		var curr_month = date.getMonth()+1;
@@ -162,11 +167,21 @@ $(document).ready(function(){
 		var minutes = date.getMinutes(); //returns 0-59
 		var seconds = date.getSeconds(); //returns 0-59
 
-        dateVal=$.format.date(curr_year+"-"+curr_month+"-"+curr_date+" "+hours+":"+minutes+":"+seconds, "E MMM dd yyyy HH:mm:ss");
-        $('#date-value1-2').html(dateVal+" GMT+05:30 (Indian Standard Time)");
-        $('#date-value1-23').val(date);
-	
-	     console.log("t1 "+dateVal+" GMT+05:30 (Indian Standard Time)" +" "+date )
+		
+		if(curr_month < '10')
+		{
+			curr_month= '0'+curr_month;
+		}
+		
+		if(curr_date < '10')
+		{
+			curr_date= '0'+curr_date;
+		}
+		
+        var input_date = curr_year+"-"+curr_month+"-"+curr_date+" "+hours+":"+minutes+":"+seconds;
+        dateVal=$.format.date(input_date, "E MMM dd yyyy HH:mm:ss");
+        $('#date-value1-2').html(startDate);
+        $('#date-value1-23').val(input_date);
 
 	   $('#demo1-2').datetimepicker({
             date: date,
@@ -183,12 +198,22 @@ $(document).ready(function(){
 				hours = dateNew.getHours(); //returns 0-23
 				minutes = dateNew.getMinutes(); //returns 0-59
 				seconds = dateNew.getSeconds(); //returns 0-59
-                dateVal=$.format.date(curr_year+"-"+curr_month+"-"+curr_date+" "+hours+":"+minutes+":"+seconds, "E MMM dd yyyy HH:mm:ss");
-
-                $('#date-value1-2').text(dateVal+" GMT+05:30 (Indian Standard Time)");
-                $('#date-value1-23').val(this.getValue());
+				
+				if(curr_month < '10')
+				{
+					curr_month= '0'+curr_month;
+				}
+				
+				if(curr_date < '10')
+				{
+					curr_date= '0'+curr_date;
+				}
 		
-		console.log("t2 "+dateVal+" GMT+05:30 (Indian Standard Time)" +" "+this.getValue() )
+					var input_date = curr_year+"-"+curr_month+"-"+curr_date+" "+hours+":"+minutes+":"+seconds;
+					dateVal=$.format.date(input_date, "E MMM dd yyyy HH:mm:ss");
+					$('#date-value1-2').html(dateNew);
+					$('#date-value1-23').val(input_date);
+				     //$('#date-value1-23').val(this.getValue());
             }
         });
 
@@ -204,7 +229,7 @@ $(document).ready(function(){
 				seconds = dateVal.getSeconds(); //returns 0-59
                 dateVal=$.format.date(curr_year+"-"+curr_month+"-"+curr_date+" "+hours+":"+minutes+":"+seconds, "E MMM dd yyyy HH:mm:ss");
 
-                $('#date-value1-2').text(dateVal+" GMT+05:30 (Indian Standard Time)");
+                $('#date-value1-2').text(dateVal);
 
 				if(dateVal<new Date()){
 				    $('.error_apple_time').show();
@@ -213,7 +238,7 @@ $(document).ready(function(){
 				}
 	   });
 
-	   $("#ss").click(function(e){
+	   $("#ss").click(function(e){		  
 	   		if($("#demo1-2").css('display') == 'block'){
 	   			var timeHH = $('#timeH').val();
 				var timeMM = $('#timeM').val();
@@ -258,7 +283,6 @@ $(document).ready(function(){
 
 	 			    $('.error_apple_time').hide();
 	                $('#date-value1-23').val(utcdate);
-			console.log("date-value1-23 "+utcdate )
 					$("#form").submit();
 				}
 	   		}
@@ -284,7 +308,6 @@ $(document).ready(function(){
 	  $('.perfect-datetimepicker').append("<p class='error_time'>Please enter PickUp time in 24 hours format. </p>"+"<p class='error_time2'>Date and Time is not valid. </p>");
 	// var lar_r =   $('.tt tbody').find('tr:first')
 	// var bb = $(lar_r).append('<td class=""></td>');
-
 
 	</script>
 	<style type="text/css">
