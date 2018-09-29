@@ -151,14 +151,14 @@ $(document).ready(function(){
 		//date.setDate(date.getDate());
 		//date.setHours(00, 00, 00);
 		
-		date.setHours(date.getHours()+2);
+		date.setHours(date.getHours());
 
 		var startDate = new Date();
 		//startDate.setDate(startDate.getDate());
 		//startDate.setMonth(startDate.getMonth());
 		//startDate.setDate(startDate.getDate());
 		//startDate.setHours(00, 00, 00);
-		startDate.setHours(startDate.getHours()+2);
+		startDate.setHours(startDate.getHours());
 
 		var curr_date = date.getDate();
 		var curr_month = date.getMonth()+1;
@@ -328,7 +328,7 @@ $(document).ready(function(){
 	{
 		//default date should be
 		var date = new Date();
-		date.setHours(date.getHours()+2);
+		date.setHours(date.getHours());
         var orderTime_H =date.getHours() ;
 		
 		var orderTime_M =date.getMinutes() ;
