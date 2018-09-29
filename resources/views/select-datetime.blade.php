@@ -30,8 +30,7 @@ window.addEventListener('load', function(){ setTimeout(function(){ window.scroll
 $(document).ready(function(){
 	var ua= navigator.userAgent, tem, 
 	    M= ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
-
-	    if(M[1]=="Safari"){
+	    if(M[1]=="Safari" && 0){ // hide the permanaently
 	    	$(".date_block").show();
 	    	  var today = new Date();
 			  // Set month and day to string to add leading 0
@@ -54,7 +53,7 @@ $(document).ready(function(){
 
 	  //   	$("#bdaytime").disabled = false; 
 			$("#bdaytime").attr("min", appleDateTime);
-			$("#bdaytime").val(appleDate+"00:00:00");
+			$("#bdaytime").val(today);
  			// $("#bdaytime").setNow();
 
 	    }else{
@@ -168,16 +167,15 @@ $(document).ready(function(){
 		var seconds = date.getSeconds(); //returns 0-59
 
 		
-		if(curr_month < '10')
+		if(curr_month < 10)
 		{
 			curr_month= '0'+curr_month;
 		}
 		
-		if(curr_date < '10')
+		if(curr_date < 10)
 		{
 			curr_date= '0'+curr_date;
 		}
-		
 		if(hours < 10)
 		{
 			hours ='0'+hours;
@@ -186,9 +184,13 @@ $(document).ready(function(){
 		{
 			minutes ='0'+minutes;
 		}
+		if(seconds < 10)
+		{
+			seconds ='0'+seconds;
+		}
 		
         var input_date = curr_year+"-"+curr_month+"-"+curr_date+" "+hours+":"+minutes+":"+seconds;
-        dateVal=$.format.date(input_date, "E MMM dd yyyy HH:mm:ss");
+        //dateVal=$.format.date(input_date, "E MMM dd yyyy HH:mm:ss");
         $('#date-value1-2').html(startDate);
         $('#date-value1-23').val(input_date);
 
@@ -209,12 +211,11 @@ $(document).ready(function(){
 				minutes = dateNew.getMinutes(); //returns 0-59
 				seconds = dateNew.getSeconds(); //returns 0-59
 				
-				if(curr_month < '10')
+				if(curr_month < 10)
 				{
 					curr_month= '0'+curr_month;
 				}
-				
-				if(curr_date < '10')
+				if(curr_date < 10)
 				{
 					curr_date= '0'+curr_date;
 				}
@@ -225,6 +226,10 @@ $(document).ready(function(){
 				if(minutes < 10)
 				{
 					minutes ='0'+minutes;
+				}
+				if(seconds < 10)
+				{
+					seconds ='0'+seconds;
 				}
 					var input_date = curr_year+"-"+curr_month+"-"+curr_date+" "+hours+":"+minutes+":"+seconds;
 					dateVal=$.format.date(input_date, "E MMM dd yyyy HH:mm:ss");
@@ -244,11 +249,33 @@ $(document).ready(function(){
 				hours = dateVal.getHours(); //returns 0-23
 				minutes = dateVal.getMinutes(); //returns 0-59
 				seconds = dateVal.getSeconds(); //returns 0-59
-                dateVal=$.format.date(curr_year+"-"+curr_month+"-"+curr_date+" "+hours+":"+minutes+":"+seconds, "E MMM dd yyyy HH:mm:ss");
+				
+				if(curr_month < 10)
+				{
+					curr_month= '0'+curr_month;
+				}
+				if(curr_date < 10)
+				{
+					curr_date= '0'+curr_date;
+				}
+				if(hours < 10)
+				{
+					hours ='0'+hours;
+				}
+				if(minutes < 10)
+				{
+					minutes ='0'+minutes;
+				}
+				if(seconds < 10)
+				{
+					seconds ='0'+seconds;
+				}
+				var input_date =  curr_year+"-"+curr_month+"-"+curr_date+" "+hours+":"+minutes+":"+seconds;
+                //dateVal=$.format.date(input_date, "E MMM dd yyyy HH:mm:ss");
 
-                $('#date-value1-2').text(dateVal);
+                $('#date-value1-2').text(input_date);
 
-				if(dateVal<new Date()){
+				if(dateVal < new Date()){
 				    $('.error_apple_time').show();
 				}else{
 	 			    $('.error_apple_time').hide();
@@ -349,16 +376,14 @@ $(document).ready(function(){
 		seconds = date.getSeconds(); //returns 0-59
 		
 		//convert in correct format
-		if(curr_month < '10')
+		if(curr_month < 10)
 		{
 			curr_month= '0'+curr_month;
 		}
-		
-		if(curr_date < '10')
+		if(curr_date < 10)
 		{
 			curr_date= '0'+curr_date;
 		}
-		
 		if(hours < 10)
 		{
 			hours ='0'+hours;
@@ -366,6 +391,10 @@ $(document).ready(function(){
 		if(minutes < 10)
 		{
 			minutes ='0'+minutes;
+		}
+		if(seconds < 10)
+		{
+			seconds ='0'+seconds;
 		}
 		
 	    SetTimeInMinute = parseInt(M)+parseInt(H)*60;
@@ -418,7 +447,6 @@ $(document).ready(function(){
 	</script>
 	<style type="text/css">
 		.error_time{color: red; font-size: 14px; text-align: center;margin-top: 15px; display: none;}
-		.error_time2{color: red; font-size: 14px; text-align: center;margin-top: 15px; display: none;}
 	</style>
 
 @endsection
