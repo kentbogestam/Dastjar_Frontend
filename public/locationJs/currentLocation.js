@@ -1,24 +1,47 @@
 
 var lat;
 var lng;
-
 $(document).ready(function($) {
-lat = getCookie("everyMinutelatitude");
-lng = getCookie("everyMinutelongitude");
-console.log('get location lat=' +lat+' long ='+lng)
-navigator.geolocation.getCurrentPosition(function(position) { 
-	    document.cookie="everyMinutelatitude=" + position.coords.latitude;
-	    document.cookie="everyMinutelongitude=" + position.coords.longitude;
-	},function(error){
-		if (typeof lat === "undefined") {
-		   // $('.login-inner-section a').attr('href','javascript:void(0)');
-		   // $('#login-popup').show();	    			
-		}else{
-		    // document.cookie="latitude=" + lat;
-		    // document.cookie="longitude=" + lng;			
-		} 
-		console.log('location error :'+error)			    
-	});
+var options = {
+  enableHighAccuracy: true,
+  timeout: 5000,
+  maximumAge: 0
+};
+//get location
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, showError,options);
+    } else { 
+	document.cookie="showError=Geolocation is not supported by this browser.";
+    }
+}
+//get postion
+function showPosition(position) {
+	document.cookie="everyMinutelatitude=" + position.coords.latitude;
+	document.cookie="everyMinutelongitude=" + position.coords.longitude;
+	document.cookie="showError=''";
+}
+//error throw position
+function showError(error) {
+	var error = '';
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+           error = "User denied the request for Geolocation."
+            break;
+        case error.POSITION_UNAVAILABLE:
+           error = "Location information is unavailable."
+            break;
+        case error.TIMEOUT:
+            error = "The request to get user location timed out."
+            break;
+        case error.UNKNOWN_ERROR:
+            error = "An unknown error occurred."
+            break;
+    }
+	
+	document.cookie="showError=" + error;
+}
+//get cookie
 function getCookie(cname) {
 	    var name = cname + "=";
 	    var decodedCookie = decodeURIComponent(document.cookie);
@@ -34,16 +57,46 @@ function getCookie(cname) {
 	    }
 	    return "";
 	}
-
-	lat = getCookie("everyMinutelatitude");
-	lng = getCookie("everyMinutelongitude");
-	
+//set geo location data
+function setLocation(latt,lngg)
+{
 	$.ajax({
-        type: "GET",
-        url: "checkDistance",
-        data: {lat: getCookie("everyMinutelatitude"), lng : getCookie("everyMinutelongitude")},
-        success: function( returnedData ) {
-        }
-    });
+			type: "GET",
+			url: "checkDistance",
+			data: {lat: latt, lng : lngg},
+			success: function( returnedData ) {
+				//tidy up
+			}
+		});
+	}
+//check empty
+function isEmpty(e) {
+  switch (e) {
+    case "":
+    case 0:
+    case "0":
+    case null:
+    case false:
+    case typeof this == "undefined":
+      return true;
+    default:
+      return false;
+  }
+}
 
+	
+var showErrorThorw = getCookie("showError");
+var lat       =  getCookie("everyMinutelatitude");
+var lng       = getCookie("everyMinutelongitude");
+
+console.log('error=> '+showErrorThorw +' lat=>  '+lat+ ' lng=> '+lng)
+//if no error
+if(isEmpty(showErrorThorw))
+{
+	console.log('get the geo location')
+	// geo get loaction
+	getLocation();
+	// geo set location 
+	setLocation(lat,lng);
+}
 });
