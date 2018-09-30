@@ -9,17 +9,24 @@ var options = {
 };
 //get location
 function getLocation() {
-    if (navigator.geolocation) {
+    if (navigator.geolocation) 
+	{
         navigator.geolocation.getCurrentPosition(showPosition, showError,options);
-    } else { 
-	document.cookie="showError=Geolocation is not supported by this browser.";
+    } 
+	else 
+	{ 
+	   setMyCookie('showError','Geolocation is not supported by this browser.', 7);
+	   console.log('NOT SUPPORT');
     }
 }
 //get postion
 function showPosition(position) {
-	document.cookie="everyMinutelatitude=" + position.coords.latitude;
-	document.cookie="everyMinutelongitude=" + position.coords.longitude;
-	document.cookie="showError=''";
+	setMyCookie('everyMinutelatitude', position.coords.latitude, 7);
+	setMyCookie('everyMinutelongitude', position.coords.longitude, 7);
+	setMyCookie('showError','', 0);
+   // geo set location 
+	checkDistance(position.coords.latitude,position.coords.longitude);
+	console.log('ACCEPTTED');
 }
 //error throw position
 function showError(error) {
@@ -38,11 +45,11 @@ function showError(error) {
             error = "An unknown error occurred."
             break;
     }
-	
-	document.cookie="showError=" + error;
+	console.log('DENIED');
+	setMyCookie('showError',error, 7);
 }
 //get cookie
-function getCookie(cname) {
+function getMyCookie(cname) {
 	    var name = cname + "=";
 	    var decodedCookie = decodeURIComponent(document.cookie);
 	    var ca = decodedCookie.split(';');
@@ -57,8 +64,15 @@ function getCookie(cname) {
 	    }
 	    return "";
 	}
+//set the cooke
+function setMyCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
 //set geo location data
-function setLocation(latt,lngg)
+function checkDistance(latt,lngg)
 {
 	$.ajax({
 			type: "GET",
@@ -85,9 +99,9 @@ function isEmpty(e) {
 }
 
 	
-var showErrorThorw = getCookie("showError");
-var lat       =  getCookie("everyMinutelatitude");
-var lng       = getCookie("everyMinutelongitude");
+var showErrorThorw = getMyCookie("showError");
+var lat            =  getMyCookie("everyMinutelatitude");
+var lng            = getMyCookie("everyMinutelongitude");
 
 console.log('error=> '+showErrorThorw +' lat=>  '+lat+ ' lng=> '+lng)
 //if no error
@@ -98,8 +112,12 @@ if(isEmpty(showErrorThorw))
 		console.log('get the geo location')
 		// geo get loaction
 		getLocation();
+	}
+	if(!isEmpty(lat) && !isEmpty(lng))
+	{
+		console.log('checkDistance')
 		// geo set location 
-		setLocation(lat,lng);
+		checkDistance(lat,lng);
 	}
 }
 });
