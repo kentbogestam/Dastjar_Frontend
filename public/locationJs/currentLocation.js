@@ -93,10 +93,13 @@ console.log('error=> '+showErrorThorw +' lat=>  '+lat+ ' lng=> '+lng)
 //if no error
 if(isEmpty(showErrorThorw))
 {
-	console.log('get the geo location')
-	// geo get loaction
-	getLocation();
-	// geo set location 
-	setLocation(lat,lng);
+	if(isEmpty(lat) || isEmpty(lng))
+	{
+		console.log('get the geo location')
+		// geo get loaction
+		getLocation();
+		// geo set location 
+		setLocation(lat,lng);
+	}
 }
 });
