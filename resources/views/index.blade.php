@@ -219,12 +219,12 @@
 		}
 ?>
 <script type="text/javascript">
-				var setTimezone = "{{url('set-timezone')}}";
-				var replace_url = "{{url('select-location?k=home')}}";
-				var checkloginUrl = "{{url('checkUserLogin')}}"; 
-				var latLongUrl = "{{url('lat-long')}}"; 
-				var userLoginUrl = "{{url('userLogin')}}"; 
-				var restrolinkUrl  = "{{url('restro-menu-list/')}}";
+	var setTimezone = "{{url('set-timezone')}}";
+	var replace_url = "{{url('select-location?k=home')}}";
+	var checkloginUrl = "{{url('checkUserLogin')}}"; 
+	var latLongUrl = "{{url('lat-long')}}"; 
+	var userLoginUrl = "{{url('userLogin')}}"; 
+	var restrolinkUrl  = "{{url('restro-menu-list/')}}";
 </script>
 <script src="{{asset('locationJs/index.js')}}"></script>
 <!--<script src="{{asset('locationJs/currentLocation.js?2')}}"></script>-->
