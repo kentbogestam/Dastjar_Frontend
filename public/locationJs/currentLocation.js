@@ -5,7 +5,7 @@ var lng;
 $(document).ready(function($) {
 lat = getCookie("everyMinutelatitude");
 lng = getCookie("everyMinutelongitude");
-consle.log('get location lat=' +lat+' long ='+lng)
+console.log('get location lat=' +lat+' long ='+lng)
 navigator.geolocation.getCurrentPosition(function(position) { 
 	    document.cookie="everyMinutelatitude=" + position.coords.latitude;
 	    document.cookie="everyMinutelongitude=" + position.coords.longitude;
