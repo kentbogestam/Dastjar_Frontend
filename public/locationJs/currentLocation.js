@@ -3,8 +3,10 @@ var lat;
 var lng;
 
 $(document).ready(function($) {
-
-	navigator.geolocation.getCurrentPosition(function(position) { 
+lat = getCookie("everyMinutelatitude");
+lng = getCookie("everyMinutelongitude");
+consle.log('get location lat=' +lat+' long ='+lng)
+navigator.geolocation.getCurrentPosition(function(position) { 
 	    document.cookie="everyMinutelatitude=" + position.coords.latitude;
 	    document.cookie="everyMinutelongitude=" + position.coords.longitude;
 	},function(error){
@@ -14,11 +16,10 @@ $(document).ready(function($) {
 		}else{
 		    // document.cookie="latitude=" + lat;
 		    // document.cookie="longitude=" + lng;			
-		} 			    
+		} 
+		console.log('location error :'+error)			    
 	});
-
-
-	function getCookie(cname) {
+function getCookie(cname) {
 	    var name = cname + "=";
 	    var decodedCookie = decodeURIComponent(document.cookie);
 	    var ca = decodedCookie.split(';');
