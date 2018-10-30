@@ -506,8 +506,11 @@
 	}
 
 	function getPos(){
+
+		  
 		if (typeof loc_lat === "undefined" || loc_lat == "") {		
 		navigator.geolocation.getCurrentPosition(function(position) { 
+
 			loc_flag=1;
 		    document.cookie="latitude=" + position.coords.latitude;
 		    document.cookie="longitude=" + position.coords.longitude;
