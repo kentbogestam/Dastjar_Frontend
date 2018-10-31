@@ -1,5 +1,7 @@
  var getUrl = window.location;
- var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
+ //var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
+
+ var baseurl =getUrl .protocol + "//" + getUrl.host ;
  
 setInterval(function(){getCurrentCoordinates()},3000); // Check the position afer 20 min and reset the longitude and latitude
 
