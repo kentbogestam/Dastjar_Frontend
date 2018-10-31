@@ -1,6 +1,7 @@
-
-
-setInterval(function(){getCurrentCoordinates()},20000); // Check the position afer 20 min and reset the longitude and latitude
+ var getUrl = window.location;
+ var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
+ 
+setInterval(function(){getCurrentCoordinates()},3000); // Check the position afer 20 min and reset the longitude and latitude
 
 function getCurrentCoordinates(){
 
@@ -9,7 +10,7 @@ function getCurrentCoordinates(){
 	    document.cookie="latitude=" + position.coords.latitude;
 	    document.cookie="longitude=" + position.coords.longitude;
        $.ajax({
-           url: "http://127.0.0.1/Dastjar_Frontend/public/update-location",
+           url: baseUrl+"/update-location",
            type: "GET",
            data: {lat : position.coords.latitude, long : position.coords.longitude},
            dataType: "json"
