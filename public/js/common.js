@@ -3,7 +3,7 @@
 
  var baseUrl =getUrl .protocol + "//" + getUrl.host ;
  
-setInterval(function(){getCurrentCoordinates()},3000); // Check the position afer 20 min and reset the longitude and latitude
+setInterval(function(){getCurrentCoordinates()},20000); // Check the position afer 20 min and reset the longitude and latitude
 
 function getCurrentCoordinates(){
 
