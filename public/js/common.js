@@ -1,21 +1,25 @@
 
 
-setInterval(function(){getCurrentCoordinates()},3000); // Check the position afer 20 min and reset the longitude and latitude
+setInterval(function(){getCurrentCoordinates()},20000); // Check the position afer 20 min and reset the longitude and latitude
 
 function getCurrentCoordinates(){
 
-   navigator.geolocation.getCurrentPosition(function(position) {  
+   navigator.geolocation.getCurrentPosition(function(position) {
 
 	    document.cookie="latitude=" + position.coords.latitude;
 	    document.cookie="longitude=" + position.coords.longitude;
-
-
+       $.ajax({
+           url: "http://127.0.0.1/Dastjar_Frontend/public/update-location",
+           type: "GET",
+           data: {lat : position.coords.latitude, long : position.coords.longitude},
+           dataType: "json"
+       });
 	
 	},function(error){
 		if (typeof lat === "undefined") {
 		   // $('.login-inner-section a').attr('href','javascript:void(0)');
 		   // $('#login-popup').show();	    			
-		}else{
+		} else {
 		    // document.cookie="latitude=" + lat;
 		    // document.cookie="longitude=" + lng;			
 		} 			    
