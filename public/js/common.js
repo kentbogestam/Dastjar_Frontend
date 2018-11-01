@@ -1,9 +1,8 @@
  var getUrl = window.location;
- //var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
-
- var baseUrl =getUrl .protocol + "//" + getUrl.host ;
+ var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1]; //for local testing
+ //var baseUrl =getUrl .protocol + "//" + getUrl.host ; // for live testing
  
-setInterval(function(){getCurrentCoordinates()},20000); // Check the position afer 20 min and reset the longitude and latitude
+setInterval(function(){getCurrentCoordinates()},40000); // Check the position afer 20 min and reset the longitude and latitude
 
 function getCurrentCoordinates(){
 
@@ -12,9 +11,8 @@ function getCurrentCoordinates(){
 	    document.cookie="latitude=" + position.coords.latitude;
 	    document.cookie="longitude=" + position.coords.longitude;
        $.ajax({
-          // url: baseUrl+"/public/update-location", // for local host testing
-           url: baseUrl+"/update-location", // for live testing
-
+           url: baseUrl+"/public/update-location", // for local host testing
+          // url: baseUrl+"/update-location", // for live testing
            type: "GET",
            data: {lat : position.coords.latitude, long : position.coords.longitude},
            dataType: "json"
@@ -47,3 +45,78 @@ function getCookie(cname) {
 	    }
 	    return "";
 }
+
+
+// function used for select-datetime.blade.php
+ $("#bdaytime").on('change', function(){
+				dateVal = moment($("#bdaytime").val()).local();
+				dateVal = new Date(dateVal);
+
+				curr_date = dateVal.getDate();
+				curr_month = dateVal.getMonth()+1;
+				curr_year = dateVal.getFullYear();
+				hours = dateVal.getHours(); //returns 0-23
+				minutes = dateVal.getMinutes(); //returns 0-59
+				seconds = dateVal.getSeconds(); //returns 0-59
+                dateVal=$.format.date(curr_year+"-"+curr_month+"-"+curr_date+" "+hours+":"+minutes+":"+seconds, "E MMM dd yyyy HH:mm:ss");
+
+                $('#date-value1-2').text(dateVal+" GMT+05:30 (Indian Standard Time)");
+
+				if(dateVal<new Date()){
+				    $('.error_apple_time').show();
+				}else{
+	 			    $('.error_apple_time').hide();
+				}
+	   });
+
+	   $("#ss").click(function(e){
+	   		if($("#demo1-2").css('display') == 'block'){
+	   			var timeHH = $('#timeH').val();
+				var timeMM = $('#timeM').val();
+
+				var curDate = new Date().getTime();
+				var selDate = new Date($('#date-value1-23').val()).getTime();
+
+				hdate = moment(selDate).toDate();
+				utcdate = moment.utc(hdate);
+
+				if(timeHH == 00 && timeMM == 00){
+					$('.error_time').show();
+					console.log(timeHH);
+				}else if(selDate<curDate){
+					$('.error_time2').show();
+					console.log(timeHH);
+				}
+				else if(timeHH == 00 && timeMM != 00){
+					$('#date-value1-23').val(utcdate);					
+					$('.error_time').hide();
+					$("#form").submit();
+				}else if(timeHH != 00 && timeMM == 00){
+					$('#date-value1-23').val(utcdate);					
+					$('.error_time').hide();
+					$("#form").submit();
+				}else{
+					$('#date-value1-23').val(utcdate);					
+					$('.error_time').hide();
+					$("#form").submit();
+				}
+	   		}else{
+				dateVal = new Date($("#bdaytime").val());
+
+				if(dateVal<new Date()){
+				    $('.error_apple_time').show();
+				}else{
+					$('#date-value1-23').val(moment.utc($('#date-value1-23').val()).format('DD/MM/YYYY HH:mm'));				
+
+					selDate = dateVal.getTime();
+					hdate = moment(selDate).toDate();
+					utcdate = moment.utc(hdate);
+
+	 			    $('.error_apple_time').hide();
+	                $('#date-value1-23').val(utcdate);
+					$("#form").submit();
+				}
+	   		}
+		});
+
+// End function used for select-datetime.blade.php
