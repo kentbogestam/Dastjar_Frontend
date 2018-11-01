@@ -23,8 +23,9 @@
 		    display: none;
 		}		
 	</style>
-
+<script type="text/javascript" src="{{asset('js/jstz.main.js')}}"></script>
 <script type="text/javascript">
+
 window.addEventListener('load', function(){ setTimeout(function(){ window.scrollTo(0,0); }, 100); }, true);
 
 $(document).ready(function(){
@@ -145,12 +146,13 @@ $(document).ready(function(){
 		 });
 
 		var tz = moment.tz.guess();
-
+//alert(moment().format("Z"));
 		var date = new Date();
 		date.setMonth(date.getMonth());
 		date.setDate(date.getDate());
-		date.setHours(00, 00, 00);
-
+        date.setHours(00, 00, 00);
+		
+	
 		var startDate = new Date();
 		startDate.setMonth(startDate.getMonth());
 		startDate.setDate(startDate.getDate());
@@ -159,9 +161,13 @@ $(document).ready(function(){
 		var curr_date = date.getDate();
 		var curr_month = date.getMonth()+1;
 		var curr_year = date.getFullYear();
-		var hours = date.getHours(); //returns 0-23
-		var minutes = date.getMinutes(); //returns 0-59
-		var seconds = date.getSeconds(); //returns 0-59
+
+	    var d = new Date();
+		var hours = d.getHours(); //returns 0-23
+		var minutes = d.getMinutes(); //returns 0-59
+		var seconds = d.getSeconds(); //returns 0-59
+
+		alert("ff"+hours+minutes+seconds)
 
         dateVal=$.format.date(curr_year+"-"+curr_month+"-"+curr_date+" "+hours+":"+minutes+":"+seconds, "E MMM dd yyyy HH:mm:ss");
         $('#date-value1-2').html(dateVal+" GMT+05:30 (Indian Standard Time)");
@@ -189,79 +195,14 @@ $(document).ready(function(){
             }
         });
 
-	   $("#bdaytime").on('change', function(){
-				dateVal = moment($("#bdaytime").val()).local();
-				dateVal = new Date(dateVal);
-
-				curr_date = dateVal.getDate();
-				curr_month = dateVal.getMonth()+1;
-				curr_year = dateVal.getFullYear();
-				hours = dateVal.getHours(); //returns 0-23
-				minutes = dateVal.getMinutes(); //returns 0-59
-				seconds = dateVal.getSeconds(); //returns 0-59
-                dateVal=$.format.date(curr_year+"-"+curr_month+"-"+curr_date+" "+hours+":"+minutes+":"+seconds, "E MMM dd yyyy HH:mm:ss");
-
-                $('#date-value1-2').text(dateVal+" GMT+05:30 (Indian Standard Time)");
-
-				if(dateVal<new Date()){
-				    $('.error_apple_time').show();
-				}else{
-	 			    $('.error_apple_time').hide();
-				}
-	   });
-
-	   $("#ss").click(function(e){
-	   		if($("#demo1-2").css('display') == 'block'){
-	   			var timeHH = $('#timeH').val();
-				var timeMM = $('#timeM').val();
-
-				var curDate = new Date().getTime();
-				var selDate = new Date($('#date-value1-23').val()).getTime();
-
-				hdate = moment(selDate).toDate();
-				utcdate = moment.utc(hdate);
-
-				if(timeHH == 00 && timeMM == 00){
-					$('.error_time').show();
-					console.log(timeHH);
-				}else if(selDate<curDate){
-					$('.error_time2').show();
-					console.log(timeHH);
-				}
-				else if(timeHH == 00 && timeMM != 00){
-					$('#date-value1-23').val(utcdate);					
-					$('.error_time').hide();
-					$("#form").submit();
-				}else if(timeHH != 00 && timeMM == 00){
-					$('#date-value1-23').val(utcdate);					
-					$('.error_time').hide();
-					$("#form").submit();
-				}else{
-					$('#date-value1-23').val(utcdate);					
-					$('.error_time').hide();
-					$("#form").submit();
-				}
-	   		}else{
-				dateVal = new Date($("#bdaytime").val());
-
-				if(dateVal<new Date()){
-				    $('.error_apple_time').show();
-				}else{
-					$('#date-value1-23').val(moment.utc($('#date-value1-23').val()).format('DD/MM/YYYY HH:mm'));				
-
-					selDate = dateVal.getTime();
-					hdate = moment(selDate).toDate();
-					utcdate = moment.utc(hdate);
-
-	 			    $('.error_apple_time').hide();
-	                $('#date-value1-23').val(utcdate);
-					$("#form").submit();
-				}
-	   		}
-		});
-
-
 	   $(document).ready(function(){
+	   	 timezone = jstz.determine()
+      //  alert(timezone.name())	;
+
+        var d = new Date();
+    var n = d.getTimezoneOffset();
+
+    alert("timezone offset"+n)
 	   		$("td.day:contains('"+curr_date+"')").addClass("today selected");
 
 	   	    $("td.day.today").parent().prevAll().andSelf().find("td.oday").css({"pointer-events":"none"});
