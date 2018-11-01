@@ -167,7 +167,6 @@ $(document).ready(function(){
 		var minutes = d.getMinutes(); //returns 0-59
 		var seconds = d.getSeconds(); //returns 0-59
 
-		alert("ff"+hours+minutes+seconds)
 
         dateVal=$.format.date(curr_year+"-"+curr_month+"-"+curr_date+" "+hours+":"+minutes+":"+seconds, "E MMM dd yyyy HH:mm:ss");
         $('#date-value1-2').html(dateVal+" GMT+05:30 (Indian Standard Time)");
@@ -200,7 +199,7 @@ $(document).ready(function(){
       //  alert(timezone.name())	;
 
         var d = new Date();
-    var n = d.getTimezoneOffset();
+        var n = d.getTimezoneOffset();
 
     alert("timezone offset"+n)
 	   		$("td.day:contains('"+curr_date+"')").addClass("today selected");
