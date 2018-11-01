@@ -1,6 +1,6 @@
  var getUrl = window.location;
- var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1]; //for local testing
- //var baseUrl =getUrl .protocol + "//" + getUrl.host ; // for live testing
+// var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1]; //for local testing
+ var baseUrl =getUrl .protocol + "//" + getUrl.host ; // for live testing
  
 setInterval(function(){getCurrentCoordinates()},40000); // Check the position afer 20 min and reset the longitude and latitude
 
@@ -11,8 +11,8 @@ function getCurrentCoordinates(){
 	    document.cookie="latitude=" + position.coords.latitude;
 	    document.cookie="longitude=" + position.coords.longitude;
        $.ajax({
-          url: baseUrl+"/public/update-location", // for local host testing
-          //url: baseUrl+"/update-location", // for live testing
+          //url: baseUrl+"/public/update-location", // for local host testing
+          url: baseUrl+"/update-location", // for live testing
            type: "GET",
            data: {lat : position.coords.latitude, long : position.coords.longitude},
            dataType: "json"
