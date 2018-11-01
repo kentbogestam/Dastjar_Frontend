@@ -12,7 +12,9 @@ function getCurrentCoordinates(){
 	    document.cookie="latitude=" + position.coords.latitude;
 	    document.cookie="longitude=" + position.coords.longitude;
        $.ajax({
-           url: baseUrl+"/update-location",
+          // url: baseUrl+"/public/update-location", // for local host testing
+           url: baseUrl+"/update-location", // for live testing
+
            type: "GET",
            data: {lat : position.coords.latitude, long : position.coords.longitude},
            dataType: "json"
