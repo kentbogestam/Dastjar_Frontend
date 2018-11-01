@@ -536,7 +536,15 @@ class HomeController extends Controller
     public function updateLocation(Request $request){
         $lat  = $request->input('lat');
         $long = $request->input('long');
-        $request->session()->put('with_out_login_lat', $lat);
-        $request->session()->put('with_out_login_lng', $long);
+
+        if(Auth::check()){
+                
+            $request->session()->put('with_login_lat', $lat);
+            $request->session()->put('with_login_lng', $long);
+        }else{
+             $request->session()->put('with_out_login_lat', $lat);
+              $request->session()->put('with_out_login_lng', $long);
+        }
+       
     }
 }
