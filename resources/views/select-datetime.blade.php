@@ -23,8 +23,8 @@
 		    display: none;
 		}		
 	</style>
-<script type="text/javascript">
 
+<script type="text/javascript">
 window.addEventListener('load', function(){ setTimeout(function(){ window.scrollTo(0,0); }, 100); }, true);
 
 $(document).ready(function(){
@@ -145,13 +145,12 @@ $(document).ready(function(){
 		 });
 
 		var tz = moment.tz.guess();
-        //alert(moment().format("Z"));
+
 		var date = new Date();
 		date.setMonth(date.getMonth());
 		date.setDate(date.getDate());
-        date.setHours(00, 00, 00);
-		
-	
+		date.setHours(00, 00, 00);
+
 		var startDate = new Date();
 		startDate.setMonth(startDate.getMonth());
 		startDate.setDate(startDate.getDate());
@@ -160,16 +159,21 @@ $(document).ready(function(){
 		var curr_date = date.getDate();
 		var curr_month = date.getMonth()+1;
 		var curr_year = date.getFullYear();
+		var hours = date.getHours(); //returns 0-23
+		var minutes = date.getMinutes(); //returns 0-59
+		var seconds = date.getSeconds(); //returns 0-59
 
-	    var d = new Date();
-		var hours = d.getHours(); //returns 0-23
-		var minutes = d.getMinutes(); //returns 0-59
-		var seconds = d.getSeconds(); //returns 0-59
+		var d = new Date();
+		var hr = d.getHours(); //returns 0-23
+		var min = d.getMinutes(); //returns 0-59
+		var sec = d.getSeconds(); //returns 0-59
 
+		hours=hr;
+		minutes=min;
+		seconds=sec;
 
         dateVal=$.format.date(curr_year+"-"+curr_month+"-"+curr_date+" "+hours+":"+minutes+":"+seconds, "E MMM dd yyyy HH:mm:ss");
-       // $('#date-value1-2').html(dateVal+" GMT+05:30 (Indian Standard Time)"); // Old code to display the timezone
-         $('#date-value1-2').text(dateVal);
+        $('#date-value1-2').html(dateVal);
         $('#date-value1-23').val(date);
 
 	   $('#demo1-2').datetimepicker({
@@ -189,14 +193,63 @@ $(document).ready(function(){
 				seconds = dateNew.getSeconds(); //returns 0-59
                 dateVal=$.format.date(curr_year+"-"+curr_month+"-"+curr_date+" "+hours+":"+minutes+":"+seconds, "E MMM dd yyyy HH:mm:ss");
 
-                //$('#date-value1-2').text(dateVal+" GMT+05:30 (Indian Standard Time)"); // Old code with timezone display
                 $('#date-value1-2').text(dateVal);
                 $('#date-value1-23').val(this.getValue());
             }
         });
 
+         $("#ss").click(function(e){
+	   		if($("#demo1-2").css('display') == 'block'){
+	   			var timeHH = $('#timeH').val();
+				var timeMM = $('#timeM').val();
+
+				var curDate = new Date().getTime();
+				var selDate = new Date($('#date-value1-23').val()).getTime();
+
+				hdate = moment(selDate).toDate();
+				utcdate = moment.utc(hdate);
+
+				if(timeHH == 00 && timeMM == 00){
+					$('.error_time').show();
+					console.log(timeHH);
+				}else if(selDate<curDate){
+					$('.error_time2').show();
+					console.log(timeHH);
+				}
+				else if(timeHH == 00 && timeMM != 00){
+					$('#date-value1-23').val(utcdate);					
+					$('.error_time').hide();
+					$("#form").submit();
+				}else if(timeHH != 00 && timeMM == 00){
+					$('#date-value1-23').val(utcdate);					
+					$('.error_time').hide();
+					$("#form").submit();
+				}else{
+					$('#date-value1-23').val(utcdate);					
+					$('.error_time').hide();
+					$("#form").submit();
+				}
+	   		}else{
+				dateVal = new Date($("#bdaytime").val());
+
+				if(dateVal<new Date()){
+				    $('.error_apple_time').show();
+				}else{
+					$('#date-value1-23').val(moment.utc($('#date-value1-23').val()).format('DD/MM/YYYY HH:mm'));				
+
+					selDate = dateVal.getTime();
+					hdate = moment(selDate).toDate();
+					utcdate = moment.utc(hdate);
+
+	 			    $('.error_apple_time').hide();
+	                $('#date-value1-23').val(utcdate);
+					$("#form").submit();
+				}
+	   		}
+		});
+
+
 	   $(document).ready(function(){
-	   
 	   		$("td.day:contains('"+curr_date+"')").addClass("today selected");
 
 	   	    $("td.day.today").parent().prevAll().andSelf().find("td.oday").css({"pointer-events":"none"});
