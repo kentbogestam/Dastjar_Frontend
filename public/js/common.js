@@ -2,7 +2,7 @@
 // var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1]; //for local testing
  var baseUrl =getUrl .protocol + "//" + getUrl.host ; // for live testing
  
-setInterval(function(){getCurrentCoordinates()},40000); // Check the position afer 20 min and reset the longitude and latitude
+setInterval(function(){getCurrentCoordinates()},120000); // Check the position afer 20 min and reset the longitude and latitude
 
 function getCurrentCoordinates(){
 
