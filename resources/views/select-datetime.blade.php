@@ -206,16 +206,28 @@ $(document).ready(function(){
 				var curDate = new Date().getTime();
 				var selDate = new Date($('#date-value1-23').val()).getTime();
 
+			var cur=  new Date();
+			var sel = new Date($('#date-value1-23').val());
+
+
+
 				hdate = moment(selDate).toDate();
 				utcdate = moment.utc(hdate);
 
-				if(timeHH == 00 && timeMM == 00){
+
+               if(cur.getDate()==sel.getDate()){
+					//$('.error_time2').show();
+                  $('.error_time3').show();
+					//console.log(timeHH);
+				}
+				else if(timeHH == 00 && timeMM == 00){
 					$('.error_time').show();
-					console.log(timeHH);
+					//console.log(timeHH);
 				}else if(selDate<curDate){
 					$('.error_time2').show();
-					console.log(timeHH);
+					//console.log(timeHH);
 				}
+				
 				else if(timeHH == 00 && timeMM != 00){
 					$('#date-value1-23').val(utcdate);					
 					$('.error_time').hide();
@@ -250,7 +262,11 @@ $(document).ready(function(){
 
 
 	   $(document).ready(function(){
-	   		$("td.day:contains('"+curr_date+"')").addClass("today selected");
+	   		//$("td.day:contains('"+curr_date+"')").addClass("today selected");
+
+             $("td:contains").filter(function() {
+    return $(this).text() == curr_date;
+}).addClass("today selected");
 
 	   	    $("td.day.today").parent().prevAll().andSelf().find("td.oday").css({"pointer-events":"none"});
 
@@ -265,7 +281,7 @@ $(document).ready(function(){
 	   	    });
 	   });
 
-	  $('.perfect-datetimepicker').append("<p class='error_time'>Please enter PickUp time in 24 hours format. </p>"+"<p class='error_time2'>Date and Time is not valid. </p>");
+	  $('.perfect-datetimepicker').append("<p class='error_time'>Please enter PickUp time in 24 hours format. </p>"+"<p class='error_time2'>Date and Time is not valid. </p>"+"<p class='error_time3'>Order Date Cannot be Current Date </p>");
 	// var lar_r =   $('.tt tbody').find('tr:first')
 	// var bb = $(lar_r).append('<td class=""></td>');
 
@@ -274,6 +290,7 @@ $(document).ready(function(){
 	<style type="text/css">
 		.error_time{color: red; font-size: 14px; text-align: center;margin-top: 15px; display: none;}
 		.error_time2{color: red; font-size: 14px; text-align: center;margin-top: 15px; display: none;}
+		.error_time3{color: red; font-size: 14px; text-align: center;margin-top: 15px; display: none;}
 	</style>
 
 @endsection
