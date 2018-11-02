@@ -88,7 +88,7 @@ $(document).ready(function(){
 					<div class="date_block">
 					  Date and Time:
 					  <input type="datetime-local" id="bdaytime" name="bdaytime" value="" min="">
-					  <span>Please click on date to change date</span>
+					  <span>Please click on the date above o change the date</span>
 					  <p class='error_apple_time'>Date and Time is not valid. </p>
 					</div>
 
