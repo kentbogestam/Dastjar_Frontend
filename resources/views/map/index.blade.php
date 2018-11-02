@@ -15,8 +15,6 @@
 		<div id="map" class="map_container"></div>
 	</div>
 
-
-
 	<div data-role="footer" class="footer" data-position="fixed">
 		<div class="ui-grid-c inner-footer center">
 		<div class="ui-block-a"><a href = "{{ url('eat-now') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
@@ -118,7 +116,6 @@
 	        // Automatically center the map fitting all markers on the screen
 	        map.fitBounds(bounds);
 	    }
-
 	    // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
 	    var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
 	        this.setZoom(14);
