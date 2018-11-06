@@ -76,7 +76,6 @@
 
         });
 
-
         function initMap() {
             @if(Auth::check())
                 @if(Session::get('with_login_lat')!=null && Session::get('with_login_lng')!=null)
