@@ -94,9 +94,6 @@ function getCookie(cname) {
 				}
 	   });
 
-	  
-	   
-
 // End function used for select-datetime.blade.php
 
 
