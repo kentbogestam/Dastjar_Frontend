@@ -13,12 +13,9 @@ $(document).ready(function() {
     	var date1 = getCookie("setLocationTime");
     	var date2=getDateTimeStamp("D"); 
 
-    	var minutes =getDiffTimeStamp(date1,date2)
-      alert(minutes);
-
+    	var minutes =getDiffTimeStamp(date1,date2);
+    
     	 if (minutes > 1){
-
-        alert("hello");
 
              getCurrentCoordinates();
              unsetLocationCookieTime();
@@ -32,13 +29,11 @@ $(document).ready(function() {
 
 function getCurrentCoordinates(){
 
-  alert("setting current coordinates");
-
    navigator.geolocation.getCurrentPosition(function(position) {
 
 	    document.cookie="latitude=" + position.coords.latitude;
 	    document.cookie="longitude=" + position.coords.longitude;
-
+      console.log("in getCurrentCoordinates and updating current location ");
       console.log(position.coords.latitude+"-------"+position.coords.longitude);
        $.ajax({
           //url: baseUrl+"/public/update-location", // for local host testing
