@@ -9,6 +9,7 @@ var options = {
 };
 //get location
 function getLocation() {
+
     if (navigator.geolocation) 
 	{
         navigator.geolocation.getCurrentPosition(showPosition, showError,options);
@@ -74,12 +75,13 @@ function setMyCookie(cname, cvalue, exdays) {
 //set geo location data
 function checkDistance(latt,lngg)
 {
+	
 	$.ajax({
 			type: "GET",
 			url: "checkDistance",
 			data: {lat: latt, lng : lngg},
 			success: function( returnedData ) {
-				//tidy up
+				alert("in success of alert Distance Executed Distance check parameter");
 			}
 		});
 	}
