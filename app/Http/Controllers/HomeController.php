@@ -541,9 +541,15 @@ class HomeController extends Controller
                 
             $request->session()->put('with_login_lat', $lat);
             $request->session()->put('with_login_lng', $long);
+            $request->session()->put('with_login_address', null);
+            $request->session()->put('updateLocationBySettingAfterLogin', 1);
+            $request->session()->put('setLocationBySettingValueAfterLogin', null);
+            
         }else{
-             $request->session()->put('with_out_login_lat', $lat);
+              $request->session()->put('with_out_login_lat', $lat);
               $request->session()->put('with_out_login_lng', $long);
+              $request->session()->put('address', null);
+              $request->session()->put('setLocationBySettingValue', null);
         }
        
     }
