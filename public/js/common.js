@@ -1,5 +1,5 @@
  var getUrl = window.location;
-// var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1]; //for local testing
+//var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1]; //for local testing
  var baseUrl =getUrl .protocol + "//" + getUrl.host ; // for live testing
  
 setInterval(function(){getCurrentCoordinates()},120000); // Check the position afer 20 min and reset the longitude and latitude
@@ -14,8 +14,11 @@ $(document).ready(function() {
     	var date2=getDateTimeStamp("D"); 
 
     	var minutes =getDiffTimeStamp(date1,date2)
+      alert(minutes);
 
     	 if (minutes > 1){
+
+        alert("hello");
 
              getCurrentCoordinates();
              unsetLocationCookieTime();
@@ -29,10 +32,14 @@ $(document).ready(function() {
 
 function getCurrentCoordinates(){
 
+  alert("setting current coordinates");
+
    navigator.geolocation.getCurrentPosition(function(position) {
 
 	    document.cookie="latitude=" + position.coords.latitude;
 	    document.cookie="longitude=" + position.coords.longitude;
+
+      console.log(position.coords.latitude+"-------"+position.coords.longitude);
        $.ajax({
           //url: baseUrl+"/public/update-location", // for local host testing
           url: baseUrl+"/update-location", // for live testing
@@ -170,7 +177,6 @@ function unsetLocationCookieTime(){
 // Moved function click to file resource/views/location.blade.php
  function dataSave(){
 
-        
             var flag = true;
 
             if(flag){
@@ -192,6 +198,7 @@ function unsetLocationCookieTime(){
 
 
  function locationSave(url){
+
              unsetLocationCookieTime();
             // Check for Geolocation API permissions  
             navigator.geolocation.getCurrentPosition(function(position) {
