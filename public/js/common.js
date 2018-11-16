@@ -2,7 +2,7 @@
 // var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1]; //for local testing
  var baseUrl =getUrl .protocol + "//" + getUrl.host ; // for live testing
  
-setInterval(function(){alert("updating current location after 20 min");getCurrentCoordinates();},1200000); // Check the position afer 20 min and reset the longitude and latitude
+setInterval(function(){console.log("updating current location after 20 min");getCurrentCoordinates();},1200000); // Check the position afer 20 min and reset the longitude and latitude
 
 $(document).ready(function() {
 
@@ -77,7 +77,7 @@ function checkTimeAfterLocationSet(){
       var minutes =getDiffTimeStamp(date1,date2);
     
        if (minutes > 3){
-          alert("updating currenting location after user set the location");
+          console.log("updating currenting location after user set the location");
              getCurrentCoordinates();
              unsetLocationCookieTime();
              return true;
