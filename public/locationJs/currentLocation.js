@@ -9,7 +9,7 @@ var options = {
   maximumAge: 0
 };
 
-setInterval(function(){getLocation()},3000);
+setInterval(function(){getLocation()},120000);
 
 //get location
 function getLocation() {
@@ -20,7 +20,7 @@ function getLocation() {
         var flag=checkTimeAfterLocationSet();
 
         if(flag==false){
-        // alert("Setting location as per distance paramater");
+         //alert("Setting location as per distance paramater");
          setDistanceParmeter();
          
        }else{
