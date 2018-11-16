@@ -1,8 +1,8 @@
  var getUrl = window.location;
- //var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1]; //for local testing
+// var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1]; //for local testing
  var baseUrl =getUrl .protocol + "//" + getUrl.host ; // for live testing
  
-setInterval(function(){getCurrentCoordinates()},120000); // Check the position afer 20 min and reset the longitude and latitude
+setInterval(function(){alert("updating current location after 20 min");getCurrentCoordinates();},120000); // Check the position afer 20 min and reset the longitude and latitude
 
 $(document).ready(function() {
 
@@ -33,8 +33,6 @@ function getCurrentCoordinates(){
 
    if(flag==false){
    navigator.geolocation.getCurrentPosition(function(position) {
-
-      alert("current postion after 20 min executed");
 
 	    document.cookie="latitude=" + position.coords.latitude;
 	    document.cookie="longitude=" + position.coords.longitude;
@@ -78,8 +76,8 @@ function checkTimeAfterLocationSet(){
 
       var minutes =getDiffTimeStamp(date1,date2);
     
-       if (minutes > 1){
-
+       if (minutes > 3){
+          alert("updating currenting location after user set the location");
              getCurrentCoordinates();
              unsetLocationCookieTime();
              return true;
