@@ -9,7 +9,7 @@ var options = {
   maximumAge: 0
 };
 
-setInterval(function(){getLocation()},120000);
+setInterval(function(){getLocation()},10000);
 
 //get location
 function getLocation() {
