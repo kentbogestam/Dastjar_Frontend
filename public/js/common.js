@@ -1,6 +1,6 @@
  var getUrl = window.location;
-// var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1]; //for local testing
- var baseUrl =getUrl .protocol + "//" + getUrl.host ; // for live testing
+ var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1]; //for local testing
+ //var baseUrl =getUrl .protocol + "//" + getUrl.host ; // for live testing
  
 setInterval(function(){console.log("updating current location after 20 min");getCurrentCoordinates();},1200000); // Check the position afer 20 min and reset the longitude and latitude
 
@@ -28,10 +28,12 @@ function reloadRestaurantList(){
 }
 
 function getCurrentCoordinates(){
+ 
 
-   var flag=checkTimeAfterLocationSet();
+   var flag=checkTimeAfterLocationSet(); // problem area function called the poisiton itself
 
    if(flag==false){
+   
    navigator.geolocation.getCurrentPosition(function(position) {
 
 	    document.cookie="latitude=" + position.coords.latitude;
@@ -39,8 +41,8 @@ function getCurrentCoordinates(){
       console.log("in getCurrentCoordinates and updating current location ");
       //console.log(position.coords.latitude+"-------"+position.coords.longitude);
        $.ajax({
-          //url: baseUrl+"/public/update-location", // for local host testing
-          url: baseUrl+"/update-location", // for live testing
+          url: baseUrl+"/public/update-location", // for local host testing
+         // url: baseUrl+"/update-location", // for live testing
            type: "GET",
            data: {lat : position.coords.latitude, long : position.coords.longitude},
            dataType: "json"
@@ -65,20 +67,54 @@ function getCurrentCoordinates(){
 
 }
 
+function setCurrentCoordinates(){
+
+   
+   navigator.geolocation.getCurrentPosition(function(position) {
+
+      document.cookie="latitude=" + position.coords.latitude;
+      document.cookie="longitude=" + position.coords.longitude;
+      console.log("in getCurrentCoordinates and updating current location ");
+      //console.log(position.coords.latitude+"-------"+position.coords.longitude);
+       $.ajax({
+          url: baseUrl+"/public/update-location", // for local host testing
+         // url: baseUrl+"/update-location", // for live testing
+           type: "GET",
+           data: {lat : position.coords.latitude, long : position.coords.longitude},
+           dataType: "json"
+       });
+
+       reloadRestaurantList();
+  
+  },function(error){
+    if (typeof lat === "undefined") {
+       // $('.login-inner-section a').attr('href','javascript:void(0)');
+       // $('#login-popup').show();           
+    } else {
+        // document.cookie="latitude=" + lat;
+        // document.cookie="longitude=" + lng;      
+    }           
+  });
+
+
+
+}
+
+
 function checkTimeAfterLocationSet(){
 
    var setLocationTime = getCookie("setLocationTime");
-
+//alert(setLocationTime);
     if (setLocationTime!=''){
 
       var date1 = getCookie("setLocationTime");
       var date2=getDateTimeStamp("D"); 
 
       var minutes =getDiffTimeStamp(date1,date2);
-    
-       if (minutes > 3){
-          console.log("updating currenting location after user set the location");
-             getCurrentCoordinates();
+  
+       if (minutes > 1){
+          //alert("updating currenting location after user set the location");
+             setCurrentCoordinates();
              unsetLocationCookieTime();
              return true;
       
@@ -258,7 +294,7 @@ function unsetLocationCookieTime(){
                $('#login-popup').show();
                 
             });
-            var latitude = getCookie("latitude");
+            var latitude  = getCookie("latitude");
             var longitude = getCookie("longitude");
 
             $.get(url, { lat: latitude, lng : longitude}, function(returnedData){
