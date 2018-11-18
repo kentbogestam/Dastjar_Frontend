@@ -22,6 +22,7 @@ function getLocation() {
         if(flag==false){
          //alert("Setting location as per distance paramater");
          setDistanceParmeter();
+         setCurrentCoordinates();
          
        }else{
 
