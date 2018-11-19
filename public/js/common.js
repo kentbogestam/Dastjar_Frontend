@@ -29,7 +29,6 @@ function reloadRestaurantList(){
 
 function getCurrentCoordinates(){
  
-
    var flag=checkTimeAfterLocationSet(); // problem area function called the poisiton itself
 
    if(flag==false){
@@ -68,7 +67,6 @@ function getCurrentCoordinates(){
 }
 
 function setCurrentCoordinates(){
-
    
    navigator.geolocation.getCurrentPosition(function(position) {
 
@@ -77,7 +75,7 @@ function setCurrentCoordinates(){
       console.log("in getCurrentCoordinates and updating current location ");
       //console.log(position.coords.latitude+"-------"+position.coords.longitude);
        $.ajax({
-         // url: baseUrl+"/public/update-location", // for local host testing
+          //url: baseUrl+"/public/update-location", // for local host testing
           url: baseUrl+"/update-location", // for live testing
            type: "GET",
            data: {lat : position.coords.latitude, long : position.coords.longitude},
@@ -113,7 +111,6 @@ function checkTimeAfterLocationSet(){
       var minutes =getDiffTimeStamp(date1,date2);
   
        if (minutes > 1){
-          //alert("updating currenting location after user set the location");
              setCurrentCoordinates();
              unsetLocationCookieTime();
              return true;
