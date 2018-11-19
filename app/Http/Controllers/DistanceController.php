@@ -17,11 +17,14 @@ class DistanceController extends Controller
 
     	if($data['lat'] != null){
     		if(Auth::check()){
-    			if($request->session()->get('setLocationBySettingValueAfterLogin') == null){
-					
+
+    			//if($request->session()->get('setLocationBySettingValueAfterLogin') == null){
                      	$request->session()->put('with_login_lat', $lat);
                     	$request->session()->put('with_login_lng', $lng);
+                         $request->session()->put('setLocationBySettingValueAfterLogin', null);
                 		$request->session()->put('with_login_address', null);
+
+                      
 
 					/*old code commented by saurabh date 15-11-2018
 
@@ -33,14 +36,17 @@ class DistanceController extends Controller
 		    			
 
 					} End old code commented by saurabh date 15-11-2018 */				
-    			}
+    			//}
     		}else{
-    			if($request->session()->get('setLocationBySettingValue') == null){
+    			//if($request->session()->get('setLocationBySettingValue') == null){
 
 
                         $request->session()->put('with_out_login_lat', $data['lat']);
 		                $request->session()->put('with_out_login_lng', $data['lng']);
+                        $request->session()->put('setLocationBySettingValue', null);
 		                $request->session()->put('address', null);
+
+                         
 
                     /*old code commented by saurabh date 15-11-2018
 
@@ -53,9 +59,10 @@ class DistanceController extends Controller
 		                $request->session()->put('address', null);
 
                     } End old code commented by saurabh date 15-11-2018 */	
-                }
+                //}
     		}
     	}
+     
     	return response()->json(['status' => 'success', 'response' => true,'data'=>true]);
     }
 
