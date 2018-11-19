@@ -111,7 +111,7 @@ function checkTimeAfterLocationSet(){
       var minutes =getDiffTimeStamp(date1,date2);
   
        if (minutes > 1){
-             setCurrentCoordinates();
+             //setCurrentCoordinates();
              unsetLocationCookieTime();
              return true;
       
