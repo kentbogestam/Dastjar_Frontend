@@ -306,3 +306,11 @@ function unsetLocationCookieTime(){
             window.location.href = link;
      }
 // End of Moved function click to file resource/views/location.blade.php
+
+function checkFormsubmit(e){
+
+ var code = (e.keyCode ? e.keyCode : e.which);
+  if(code == 13) { //Enter keycode
+      setLocationCookieTime();
+  }
+}
