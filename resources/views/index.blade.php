@@ -184,23 +184,30 @@
 	// $helper->logs("1 " . Session::get('with_login_lat') . " 2 " . Session::get('with_login_lng') . " 3 " . Session::get('with_out_login_lat') . " 4 " . Session::get('with_out_login_lng') . " 5 " . Session::get('address'));
 
 	if(Auth::check()){
-			if(Session::get('with_login_address') != null){
+			//if(Session::get('with_login_address') != null){
+              if(Session::get('with_login_lat') != null){
+		
 				?>
                 <script type="text/javascript">
                     loc_lat = "{{Session::get('with_login_lat')}}";
                     loc_lng = "{{Session::get('with_login_lng')}}";
+                   
                 </script>
 				<?php
 			}else if(Session::get('with_out_login_lat') != null){
+
 				?>
                 <script type="text/javascript">
+                	
                     loc_lat = "{{Session::get('with_out_login_lat')}}";
                     loc_lng = "{{Session::get('with_out_login_lng')}}";
+                   
                 </script>
 				<?php
 			}else{
 				?>
                 <script type="text/javascript">
+                	
                     loc_lat = "";
                     loc_lng = "";
                 </script>
@@ -209,7 +216,7 @@
 		}
 		else{
 			if(Session::get('with_out_login_lat') != null){
-				?>
+		?>
 		<script type="text/javascript">
 				loc_lat = "{{Session::get('with_out_login_lat')}}";
 				loc_lng = "{{Session::get('with_out_login_lng')}}";
@@ -508,11 +515,12 @@
 	function getPos(){
 
 		  
-		if (typeof loc_lat === "undefined" || loc_lat == "") {		
+		if (typeof loc_lat === "undefined" || loc_lat == "") {	
+		alert("in if of getpos")	;
 		navigator.geolocation.getCurrentPosition(function(position) { 
 
 			loc_flag=1;
-		    document.cookie="latitude=" + position.coords.latitude;
+		    document.cookie="latitude="  + position.coords.latitude;
 		    document.cookie="longitude=" + position.coords.longitude;
 
 		    loc_lat = position.coords.latitude;
