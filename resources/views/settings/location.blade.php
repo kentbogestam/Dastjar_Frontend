@@ -36,15 +36,15 @@
             
             <div class="map-input">
                 @if(Auth::check())
-                    <input type="text" name="street_address" id="pac-input" class="" placeholder="{{ __('messages.Enter a Location') }}*" value="{{ Session::get('with_login_address')}}" required placeholder="Address*">
+                    <input type="text" name="street_address" id="pac-input" class="" placeholder="{{ __('messages.Enter a Location') }}*" value="{{ Session::get('with_login_address')}}" required placeholder="Address*" onKeyPress="checkFormsubmit(event)"/>
                 @else
-                    <input type="text" name="street_address" id="pac-input" class="" placeholder="{{ __('messages.Enter a Location') }}*" value="{{ Session::get('address')}}" required placeholder="Address*">
+                    <input type="text" name="street_address" id="pac-input" class="" placeholder="{{ __('messages.Enter a Location') }}*" value="{{ Session::get('address')}}" required placeholder="Address*" onKeyPress="checkFormsubmit(event)"/>
                 @endif
 
                 @if(isset($_GET['k']))
-                    <input type="hidden" name="redirect_to_home" value="1">
+                    <input type="hidden" name="redirect_to_home" value="1"/>
                 @else               
-                    <input type="hidden" name="redirect_to_home" value="0">
+                    <input type="hidden" name="redirect_to_home" value="0"/>
                 @endif
             </div>
             <div id="map" style="height: 665px;">
@@ -59,8 +59,7 @@
         
     <script type="text/javascript">
 
-        $(function(){     
-
+        $(function(){       
             // Check for Geolocation API permissions  
             navigator.geolocation.getCurrentPosition(function(position) { 
                 console.log("latitude=" + position.coords.latitude);
@@ -85,7 +84,7 @@
                 @endif    
             @else
                 @if(Session::get('with_out_login_lat')!=null && Session::get('with_out_login_lng')!=null)
-                    var location  = {lat: {{Session::get('with_out_login_lat')}} , lng: {{Session::get('with_out_login_lng')}}  };
+                    var location  = {lat: {{Session::get('with_out_login_lat')}} , lng: {{Session::get('with_out_login_lng')}} };
                 @else    
                     var location  = {lat: 60.1282 , lng: 18.6435};
                 @endif    
@@ -194,10 +193,10 @@
                         (place.address_components[2] && place.address_components[2].short_name || '')
                     ].join(' ');
                 document.getElementById("dataSave").disabled = false;    
-
+                
                 }
                  
-
+ 
                 infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
                 infowindow.open(map, marker);
             });
