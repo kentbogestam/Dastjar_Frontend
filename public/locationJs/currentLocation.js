@@ -85,23 +85,19 @@ function setDistanceParmeter(){
 	  var lat2 =  getCookie("everyMinutelatitude");
 	  var lon2 =  getCookie("everyMinutelongitude");
 
-    //alert("lat1="+lat1+"/"+"lon1="+lon1+"/"+"lat2="+lat2+"/"+"lon2="+lon2);
       var distance = distanceLatLon(lat1, lon1, lat2, lon2, "K");
 
       distance = distance*1000;
 
 	  if(distance >300){
-	  	document.cookie="latitude="  + '';
-	  	document.cookie="longitude=" + '';
+
+	  	 document.cookie="latitude="  + '';
+	     document.cookie="longitude=" + '';
 	  	
          document.cookie="latitude="  + lat2;
          document.cookie="longitude=" + lon2;
 
-	  	//setMyCookie("latitude",lat2,7);
-	  //	setMyCookie("longitude",lon2,7);
-//alert(getCookie("latitude")); alert(getCookie("longitude"));
 		   checkDistance(lat2,lon2);
-
 
       }
 
