@@ -131,7 +131,8 @@
 	// $helper->logs("1 " . Session::get('with_login_lat') . " 2 " . Session::get('with_login_lng') . " 3 " . Session::get('with_out_login_lat') . " 4 " . Session::get('with_out_login_lng') . " 5 " . Session::get('address'));
 
 	if(Auth::check()){
-			if(Session::get('with_login_address') != null){
+			//if(Session::get('with_login_address') != null){
+		  if(Session::get('with_login_lat') != null){
 				?>
 	<script type="text/javascript">
 				loc_lat = "{{Session::get('with_login_lat')}}";

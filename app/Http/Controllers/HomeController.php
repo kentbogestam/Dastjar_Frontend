@@ -531,4 +531,26 @@ class HomeController extends Controller
     public function goToLogin(){
         return redirect()->route('customer-login')->with('error', 'Your session has expired');
     }
+
+
+    public function updateLocation(Request $request){
+        $lat  = $request->input('lat');
+        $long = $request->input('long');
+
+        if(Auth::check()){
+                
+            $request->session()->put('with_login_lat', $lat);
+            $request->session()->put('with_login_lng', $long);
+            $request->session()->put('with_login_address', null);
+            $request->session()->put('updateLocationBySettingAfterLogin', 1);
+            $request->session()->put('setLocationBySettingValueAfterLogin', null);
+            
+        }else{
+              $request->session()->put('with_out_login_lat', $lat);
+              $request->session()->put('with_out_login_lng', $long);
+              $request->session()->put('address', null);
+              $request->session()->put('setLocationBySettingValue', null);
+        }
+       
+    }
 }

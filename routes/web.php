@@ -75,6 +75,7 @@
 	Route::get('/', 'HomeController@index');
 	Route::get('lat-long', 'HomeController@userLatLong');
 	Route::get('checkUserLogin', 'HomeController@checkUserLogin');
+	Route::get('update-location', 'HomeController@updateLocation');
 
 		Route::get('user-setting', 'CustomerController@index');
 		Route::get('select-location', 'CustomerController@selectLocation');

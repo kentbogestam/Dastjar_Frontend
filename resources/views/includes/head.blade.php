@@ -47,6 +47,7 @@
  	<script src = "{{asset('js/jquery.min.js')}}"></script>
 	<script src = "{{asset('js/jquery.mobile.min.js')}}"></script>
 	<script src = "{{asset('js/main.js')}}"></script>
+    <script src = "{{asset('js/common.js')}}"></script>
 	<link rel="stylesheet" href="{{asset('css/jquery.datetimepicker.min.css')}}" >
 	
 	@yield('head-scripts')

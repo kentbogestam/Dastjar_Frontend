@@ -21,9 +21,9 @@
                 @endif
             </li>
              <li><a data-ajax="false" class="ui-btn-active">{{ __('messages.Location') }}</a></li>
-              <li class="done-btn" id="dataSave">  <input type="button" value="{{ __('messages.Done') }}" /></li>  </ul>
+              <li class="done-btn" id="dataSave" onclick="dataSave();">  <input type="button" value="{{ __('messages.Done') }}" /></li>  </ul>
               
-                <a href="#" class="location_icon" id="locationSave">
+                <a href="#" class="location_icon" id="locationSave" onclick=locationSave("{{url('saveCurrentlat-long/')}}")>
                    <img src="{{asset('images/icons/location.png')}}">
                    <p>{{ __('messages.Current Position') }}</p> 
                       </a>
@@ -36,15 +36,15 @@
             
             <div class="map-input">
                 @if(Auth::check())
-                    <input type="text" name="street_address" id="pac-input" class="" placeholder="{{ __('messages.Enter a Location') }}*" value="{{ Session::get('with_login_address')}}" required placeholder="Address*">
+                    <input type="text" name="street_address" id="pac-input" class="" placeholder="{{ __('messages.Enter a Location') }}*" value="{{ Session::get('with_login_address')}}" required placeholder="Address*" onKeyPress="checkFormsubmit(event)"/>
                 @else
-                    <input type="text" name="street_address" id="pac-input" class="" placeholder="{{ __('messages.Enter a Location') }}*" value="{{ Session::get('address')}}" required placeholder="Address*">
+                    <input type="text" name="street_address" id="pac-input" class="" placeholder="{{ __('messages.Enter a Location') }}*" value="{{ Session::get('address')}}" required placeholder="Address*" onKeyPress="checkFormsubmit(event)"/>
                 @endif
 
                 @if(isset($_GET['k']))
-                    <input type="hidden" name="redirect_to_home" value="1">
+                    <input type="hidden" name="redirect_to_home" value="1"/>
                 @else               
-                    <input type="hidden" name="redirect_to_home" value="0">
+                    <input type="hidden" name="redirect_to_home" value="0"/>
                 @endif
             </div>
             <div id="map" style="height: 665px;">
@@ -59,13 +59,7 @@
         
     <script type="text/javascript">
 
-        $(function(){
-            
-            //document.getElementById("dataSave").disabled = true;    
-        });
-
-        $(function(){     
-
+        $(function(){       
             // Check for Geolocation API permissions  
             navigator.geolocation.getCurrentPosition(function(position) { 
                 console.log("latitude=" + position.coords.latitude);
@@ -80,7 +74,6 @@
             });
 
         });
-
 
         function initMap() {
             @if(Auth::check())
@@ -162,10 +155,12 @@
 
 
             autocomplete.addListener('place_changed', function() {
+            
                 infowindow.close();
                 marker.setVisible(false);
                 var place = autocomplete.getPlace();
                 if (!place.geometry) {
+                    setLocationCookieTime(); // code add by saurabh to set the location set start time
                     // User entered the name of a Place that was not suggested and
                     // pressed the Enter key, or the Place Details request failed.
                     window.alert("No details available for input: '" + place.name + "'");
@@ -198,84 +193,16 @@
                         (place.address_components[2] && place.address_components[2].short_name || '')
                     ].join(' ');
                 document.getElementById("dataSave").disabled = false;    
-
+                
                 }
-
+                 
+ 
                 infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
                 infowindow.open(map, marker);
             });
         }
-    
 
-
-
-        $("#dataSave").click(function(e){
-
-            var flag = true;
-            // var x = $('form input[type="radio"]').each(function(){
-      //       // Do your magic here
-      //        var checkVal = parseInt($(this).val());
-      //        console.log(checkVal);
-      //        if(checkVal > 0){
-      //            flag = true;
-      //            return flag;
-      //        }
-            // });
-
-            if(flag){
-                $("#form").submit();
-            } else{
-                alert("Please fill some value");    
-                e.preventDefault();
-            }
-        })
     </script>
-
-    <script type="text/javascript">
-        $("#locationSave").click(function(e){
-            console.log('gggg');
-            // Check for Geolocation API permissions  
-            navigator.geolocation.getCurrentPosition(function(position) {
-
-                console.log("latitude=" + position.coords.latitude);
-                console.log("longitude=" + position.coords.longitude);
-                document.cookie="latitude=" + position.coords.latitude;
-                document.cookie="longitude=" + position.coords.longitude;
-                
-            },function(error){
-               $('.login-inner-section a').attr('href','javascript:void(0)');
-               $('#login-popup').show();
-                
-            });
-            var latitude = getCookie("latitude");
-            var longitude = getCookie("longitude");
-            $.get("{{url('saveCurrentlat-long')}}", { lat: latitude, lng : longitude}, function(returnedData){
-                console.log(returnedData["data"]);
-                location.reload();
-            });
-            console.log(latitude);
-            console.log(longitude);
-        });
-
-        function makeRedirection(link){
-            window.location.href = link;
-        }
-
-        function getCookie(cname) {
-            var name = cname + "=";
-            var decodedCookie = decodeURIComponent(document.cookie);
-            var ca = decodedCookie.split(';');
-            for(var i = 0; i <ca.length; i++) {
-                var c = ca[i];
-                while (c.charAt(0) == ' ') {
-                    c = c.substring(1);
-                }
-                if (c.indexOf(name) == 0) {
-                    return c.substring(name.length, c.length);
-                }
-            }
-            return "";
-        }
-    </script>
+        
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyByLiizP2XW9JUAiD92x57u7lFvU3pS630&libraries=places&callback=initMap" async defer></script>
 @endsection
