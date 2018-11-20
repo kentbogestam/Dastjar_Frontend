@@ -516,7 +516,6 @@
 
 		  
 		if (typeof loc_lat === "undefined" || loc_lat == "") {	
-		alert("in if of getpos")	;
 		navigator.geolocation.getCurrentPosition(function(position) { 
 
 			loc_flag=1;
