@@ -155,21 +155,34 @@
 				liItem += "<img src="+"'"+temp[i]["store_image"]+ "' onerror='this.src=\""+"{{url('images/placeholder-image.png')}}\""+"'" +">";
 				liItem += "<h2>"+list[i]["store_name"]+"</h2>";
 				liItem += "<p>";
-				
-				for (var j=0;j<list[i]["products"].length;j++){
-					console.log(list[i]["products"][j]);
-					;
-					if(j <= 1){
-						liItem += list[i]["products"][j]["product_name"];
-					}   
-					if(list[i]["products"].length > 1 && j <= 1){
-						liItem += ",&nbsp;";
-					}
-				}
+			
+			// Code added to display tagline of restaurant	
+			if(temp[i]["tagline"]){
+             
+              liItem += temp[i]["tagline"];
 
-				if(list[i]["products"].length > 1){
-					liItem += "&nbsp;&more";
-				} 
+			}else{
+
+				//liItem += "&nbsp;&more";
+			}
+
+			// End of code added to dispaly tagline of restaurant
+			// old Code commented by saurabh to display the tag line			
+			/*for (var j=0;j<temp[i]["products"].length;j++){
+				if(j <= 1){
+					liItem += temp[i]["products"][j]["product_name"];
+				}   
+				if(temp[i]["products"].length > 1 && j <= 1){
+					liItem += ",&nbsp;";
+				}
+			}
+
+			if(temp[i]["products"].length > 1){
+				liItem += "&nbsp;&more";
+			} */
+
+			// End Old Code commented by saurabh to display the tag line	
+
 			liItem += "</p>";
 				liItem += "<div class='ui-li-count ui-body-inherit'>";
 				liItem += "<span>"+list[i]["distance"].toFixed(2)+ "&nbsp;Km" + "</span>";
