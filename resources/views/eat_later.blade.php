@@ -167,6 +167,7 @@
 			}
 
 			// End of code added to dispaly tagline of restaurant
+			
 			// old Code commented by saurabh to display the tag line			
 			/*for (var j=0;j<temp[i]["products"].length;j++){
 				if(j <= 1){
