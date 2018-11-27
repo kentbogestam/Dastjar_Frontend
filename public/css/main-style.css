@@ -178,7 +178,7 @@ color: #365622}
     border:none; /*position: relative;*/width: 100%;
 }
 [data-role="footer"]{
-    height: 4em;/* position: fixed;*/
+    height: 4em; position: fixed!important;
 }
 [data-role="header"]{height: 3.5em;}
 
