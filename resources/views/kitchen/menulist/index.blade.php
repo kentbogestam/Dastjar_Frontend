@@ -1,18 +1,17 @@
 @extends('layouts.blank')
 
 @section('style')
-	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-	<link rel="stylesheet"
-	href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.5.10/css/bootstrap-material-design.min.css"/>
-	<link rel="stylesheet"
-	href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.5.10/css/ripples.min.css"/>
+	<link href="{{asset('css/kitchen/bootstrap.min.css')}}" rel="stylesheet" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+	<link href="{{asset('css/kitchen/bootstrap-material-design.min.css')}}" rel="stylesheet">
+	<link href="{{asset('css/kitchen/ripples.min.css')}}" rel="stylesheet">
 	<link rel="stylesheet" href="{{ asset('css/bootstrap-material-datetimepicker.css') }}" />
+	<link rel="stylesheet" href="{{ asset('css/kitchen/jquery-ui.css') }}" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 	<link href='//fonts.googleapis.com/css?family=Roboto:400,500' rel='stylesheet' type='text/css'>
 	<link href="//fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
-	<script type="text/javascript" src="//momentjs.com/downloads/moment-with-locales.min.js"></script>
+	<link rel="stylesheet" href="{{ asset('kitchenJs/moment-with-locales.min.js') }}" />
+	<!--<script type="text/javascript" src="//momentjs.com/downloads/moment-with-locales.min.js"></script>-->
 
 	<style>
 		.menu_txt{
