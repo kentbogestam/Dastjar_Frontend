@@ -51,12 +51,13 @@
 @endsection
 
 @section('content')
+adasd
 <div class="setting-page" data-role="page" data-theme="c">
 	<div data-role="header" class="header" data-position="fixed">
 		<div class="nav_fixed">
 			<div data-role="navbar"> 
 				<ul> 
-			<li><a href="{{url('eat-now')}}" data-ajax="false" id="back_arw" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
+			<li><a href="{{Session::get('route_url')}}" data-ajax="false" id="back_arw" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
 			 <li><a data-ajax="false" class="ui-btn-active">{{ __('messages.Settings') }}</a></li>
 
 			  <li class="done-btn" id="dataSave">  <input type="button" value="{{ __('messages.Done') }}" /></li> </ul>
@@ -114,16 +115,16 @@
 						</p></h2>
 						@if(Auth::check())
 						 <fieldset data-role="controlgroup">
-						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2a" value="ENG" @if(App::getLocale() == 'en') checked="checked" @else checked="checked" @endif>
+						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2a" value="ENG" @if(Session::get('applocale') == 'en') checked="checked" @else checked="checked" @endif>
 						        <label for="radio-choice-v-2a">English</label>
-						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2b" value="SWE" @if(App::getLocale() == 'sw') checked="checked" @endif>
+						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2b" value="SWE" @if(Session::get('applocale') == 'sv') checked="checked" @endif>
 						        <label for="radio-choice-v-2b">Swedish</label>
 						    </fieldset>
 						@else
 							<fieldset data-role="controlgroup">
-						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2a" value="ENG" @if(App::getLocale() == 'en') checked="checked" @else checked="checked" @endif>
+						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2a" value="ENG" @if(Session::get('applocale') == 'en') checked="checked" @else checked="checked" @endif>
 						        <label for="radio-choice-v-2a">English</label>
-						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2b" value="SWE" @if(App::getLocale() == 'sw') checked="checked" @endif>
+						        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2b" value="SWE" @if(Session::get('applocale') == 'sv') checked="checked" @endif>
 						        <label for="radio-choice-v-2b">Swedish</label>
 						    </fieldset>
 						@endif
@@ -206,7 +207,6 @@
 
 		$("#dataSave").click(function(e){
 			var flag = true;
-
 			if(flag){
 				$("#form").submit();
 			} else{

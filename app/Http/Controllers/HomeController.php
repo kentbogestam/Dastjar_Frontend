@@ -251,9 +251,12 @@ class HomeController extends Controller
     }
 
 
-    public function index()
+    public function index(Request $request)
     {
         Artisan::call('view:clear');
+       
+          $request->session()->put('route_url', url('/').'/eat-now'); // code added by saurabh to update correct url for eat-later and eat-now
+
 
         if(Auth::check()){
             $versionDetail = WebVersion::orderBy('created_at', 'DESC')->first();
@@ -303,6 +306,7 @@ class HomeController extends Controller
     }
 
     public function eatLaterData(Request $request){
+
         if($request->session()->get('order_date')){
             $pieces = explode(" ", $request->session()->get('order_date'));
             $month = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -359,6 +363,8 @@ class HomeController extends Controller
         $currentTime = $pieces[4];
         $todayDay = $pieces[0];
 
+         $request->session()->put('route_url', url('/').'/eat-later'); // code added by saurabh to update correct url for eat-later and eat-now
+
         if(!empty($request->input())) {
             $data = $request->input();
             $request->session()->put('order_date', $data['dateorder']);
@@ -387,8 +393,8 @@ class HomeController extends Controller
                 } 
                 $companydetails = Store::getEatLaterListRestaurants($lat,$lng,$rang,'1','3',$todayDate,$currentTime,$todayDay);
             }
-            
-            return view('index', compact('companydetails'));
+             return view('eat_later', compact(''));
+            //return view('index', compact('companydetails')); //commeted by saurabh to stop the redirection of et later
         }
     }
 
