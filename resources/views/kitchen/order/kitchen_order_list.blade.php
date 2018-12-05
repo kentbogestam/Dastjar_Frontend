@@ -197,6 +197,10 @@
 				          			liItem += "<td>"+''+"</td>";
 				          		}
 			          		}else{
+			          			// Default 'text to speech' if 'text to speech' is off
+			          			test("{{ __('messages.kitchenTextToSpeechDefault') }}");
+			          			updateSpeak(temp[i]['id']);
+
 			          			if(temp[i]["product_description"] != null){
 				          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
 				          		}else{
@@ -305,6 +309,10 @@ console.log('lastOrderId'+lastOrderId);
 				          			liItem += "<td>"+''+"</td>";
 				          		}
 			          		}else{
+			          			// Default 'text to speech' if 'text to speech' is off
+			          			test("{{ __('messages.kitchenTextToSpeechDefault') }}");
+			          			updateSpeak(temp[i]['id']);
+
 			          			if(temp[i]["product_description"] != null){
 				          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
 				          		}else{
@@ -448,6 +456,10 @@ console.log('lastOrderId'+lastOrderId);
 		          			liItem += "<td>"+''+"</td>";
 		          		}
 	          		}else{
+	          			// Default 'text to speech' if 'text to speech' is off
+	          			test("{{ __('messages.kitchenTextToSpeechDefault') }}");
+			          	updateSpeak(temp[i]['id']);
+
 	          			if(list[i]["product_description"] != null){
 		          			liItem += "<td>"+list[i]["product_description"]+"</td>";
 		          		}else{
