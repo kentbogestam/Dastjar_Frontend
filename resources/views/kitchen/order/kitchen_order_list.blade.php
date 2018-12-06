@@ -121,13 +121,15 @@
 		var lastOrderId;
 		var imageUrl = "{{asset('kitchenImages/right_sign.png')}}";
 
-		function orderReadyStarted(id) {			
+		function orderReadyStarted(id, This) {
+			$This = $(This);			
 			$.get("{{url('kitchen/orderStartedKitchen')}}/"+id,
 			function(returnedData){
 				console.log(returnedData["data"]);
 				$('body').find('#'+id).attr('src',imageUrl);
 				$('body').find('#'+id).parent("a").attr('onclick',' ');
 				$('body').find('#'+id+'ready').parent("a").attr('onclick','onReady('+id+')');
+				$This.closest('tr').removeClass('not-started');
 			});
 		}
 
@@ -179,7 +181,8 @@
 						    setTimeout(function () {
 			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"],extra_prep_time);
 			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
-			          		liItem += "<tr>";
+			          		var clsStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
+			          		liItem += "<tr class='"+clsStatus+"'>";
 			          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 			          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
 			          		liItem += "<td>"+temp[i]["product_name"]+
@@ -212,7 +215,7 @@
 			          		if(temp[i]["order_started"] == 0){
 			          			ids = temp[i]['id'];
 				          		liItem += "<td >"
-				          		liItem += "<a data-ajax='false' href='#'  onclick=orderReadyStarted("+ids+")>"
+				          		liItem += "<a data-ajax='false' href='#'  onclick='orderReadyStarted("+ids+", this)'>"
 				          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 				          		liItem +="</a></td>";
 				          		
@@ -324,7 +327,7 @@ console.log('lastOrderId'+lastOrderId);
 			          		if(temp[i]["order_started"] == 0){
 				          		ids = temp[i]['id'];
 				          		liItem += "<td >"
-				          		liItem += "<a data-ajax='false' href='javascript:void(0)'  onclick=orderReadyStarted("+ids+")>"
+				          		liItem += "<a data-ajax='false' href='javascript:void(0)'  onclick='orderReadyStarted("+ids+", this)'>"
 				          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 				          		liItem +="</a></td>";
 			          		}else{
@@ -470,7 +473,7 @@ console.log('lastOrderId'+lastOrderId);
 		      		if(list[i]["order_started"] == 0){
 		      			ids = list[i]['id'];
 		          		liItem += "<td >"
-		          		liItem += "<a data-ajax='false' href='#'  onclick=orderReadyStarted("+ids+")>"
+		          		liItem += "<a data-ajax='false' href='#'  onclick='orderReadyStarted("+ids+", this)'>"
 		          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 		          		liItem +="</a></td>";
 		      		}else{
