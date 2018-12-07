@@ -106,6 +106,7 @@
 		</a></div>
 		</div>
 	</div>
+	@include('includes.fixedfooter')
 	<!-- pop-up -->
 	<div data-role="popup" id="order-popup" class="ui-content" data-theme="a" >
 		<ul data-role="listview">
