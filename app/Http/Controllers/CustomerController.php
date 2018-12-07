@@ -54,6 +54,7 @@ class CustomerController extends Controller
     }
 
     public function saveLocation(Request $request){
+       
         if(!empty($request->input())){
 
             $data = $request->input();
