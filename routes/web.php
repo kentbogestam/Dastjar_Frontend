@@ -164,6 +164,7 @@
 		Route::post('add-dish-price', 'AdminController@addDishPrice');	
 		Route::post('remove-order', 'AdminController@removeOrder');	
 		Route::get('kitchen-menu-new/{dishId}/{storeId}', 'AdminController@kitchenMenuNew');			
+		Route::post('update-order-detail-status', 'AdminController@updateOrderDetailStatus');
 
 	});
 

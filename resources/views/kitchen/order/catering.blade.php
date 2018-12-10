@@ -98,6 +98,10 @@
 			transform: translate(-50%);
 			z-index: 99999;
 	}
+
+	#orderDetailContianer tr.new th, #orderDetailContianer tr.new td {
+		background-color: #EBF8A4 !important;
+	}
 </style>
 @stop
 
@@ -264,11 +268,24 @@
 						}
 		        ]
 				
-			}); 
+			});
+		}
 
-				
+		// If order is new then it update the order status
+		function updateOrderDetailStatus(This, id) {
+			$this = $(This);
 
+			if($this.hasClass('new'))
+			{
+				$.post("{{url('kitchen/update-order-detail-status')}}",
+					{"_token": "{{ csrf_token() }}", "id": id},
+					function(returnedData){
+						$this.removeClass('new');
+						$this.removeAttr('onclick');
+					}
+				);
 			}
+		}
 
 		$(function(){
 			
@@ -297,7 +314,17 @@
 		          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
 		          		var orderCreate = orderCreateTime(temp[i]["created_at"]);
 		          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
-		          		liItem += "<tr class='order_id_"+temp[i]["order_id"]+"'>";
+		          		
+		          		// Add new class on tr if order added recently
+		          		if(temp[i]['is_new'])
+		          		{
+		          			liItem += "<tr class='order_id_"+temp[i]["order_id"]+" new' onclick='updateOrderDetailStatus(this, "+temp[i]['id']+")'>";
+		          		}
+		          		else
+		          		{
+		          			liItem += "<tr class='order_id_"+temp[i]["order_id"]+"'>";
+		          		}
+		          		
 		          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 		          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
 		          		liItem += "<td>"+temp[i]["product_name"]+"</td>";
@@ -347,7 +374,18 @@
 		          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
 		          		var orderCreate = orderCreateTime(temp[i]["created_at"]);
 		          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
-		          		liItem += "<tr class='order_id_"+temp[i]["order_id"]+"'>";
+		          		var isNew = temp[i]['is_new'] ? ' new' : '';
+
+		          		// Add new class on tr if order added recently
+		          		if(temp[i]['is_new'])
+		          		{
+		          			liItem += "<tr class='order_id_"+temp[i]["order_id"]+" new' onclick='updateOrderDetailStatus(this, "+temp[i]['id']+")'>";
+		          		}
+		          		else
+		          		{
+		          			liItem += "<tr class='order_id_"+temp[i]["order_id"]+"'>";
+		          		}
+		          		
 		          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 		          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
 		          		liItem += "<td>"+temp[i]["product_name"]+"</td>";

@@ -1372,6 +1372,20 @@ class AdminController extends Controller
         return response()->json(['status' => 'success', 'data'=>'Order Cancelled Successfully.']);        
     }
 
+    /**
+     * [updateOrderDetailStatus function to update order status if order is new]
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    function updateOrderDetailStatus(Request $request) {
+        $orderDetail = OrderDetail::where('id', $request->id)
+            ->update(['is_new' => 0]);
+
+        if($orderDetail) {
+            return response()->json(['status' => 'success', 'data'=>'Updated Successfully.']);        
+        }
+    }
+
     public function getDates(){
         $product_price_list = new ProductPriceList();
         dd($product_price_list->where('product_id', '0093170c-91ff-c18f-7e65-8fde17826111')->get()->toArray());
