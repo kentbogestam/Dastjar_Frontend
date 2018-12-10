@@ -263,7 +263,6 @@ function getTimeZone(url){
 	  window.location.replace(url);
  }
 
-
 function checkTime($time){
 
 		var d = new Date();
