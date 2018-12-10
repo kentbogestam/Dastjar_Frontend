@@ -56,33 +56,7 @@
 <script type="text/javascript">
 
 	$(document).on("scrollstop", function (e) {
-		var tempCount = list.length
-    	var activePage = $.mobile.pageContainer.pagecontainer("getActivePage"),
-        screenHeight = $.mobile.getScreenHeight(),
-        contentHeight = $(".ui-content", activePage).outerHeight(),
-        header = $(".ui-header", activePage).outerHeight() - 1,
-        scrolled = $(window).scrollTop(),
-        footer = $(".ui-footer", activePage).outerHeight() - 1,
-        scrollEnd = contentHeight - screenHeight + header + footer;
-
-    	$(".ui-btn-left", activePage).text("Scrolled: " + scrolled);
-    	//$(".ui-btn-right", activePage).text("ScrollEnd: " + scrollEnd);
-
-    	
-    	//if in future this page will get it, then add this condition in and in below if activePage[0].id == "home" 
-    	if (scrolled >= scrollEnd) {
-       // console.log(list);
-        $.mobile.loading("show", {
-        text: "loading more..",
-        textVisible: true,
-        theme: "b"
-    	});
-    	setTimeout(function () {
-          addMore(tempCount,"{{url('restro-menu-list/')}}",noImageUrl,"{{Session::get('order_date')}}");
-         tempCount += 10;
-         $.mobile.loading("hide");
-     },500);
-    	}
+		onscroll("{{url('restro-menu-list/')}}",noImageUrl,"{{Session::get('order_date')}}")
 });
 
 </script>
