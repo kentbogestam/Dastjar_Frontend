@@ -18,7 +18,7 @@
 
 <div data-role="footer" id="footer" data-position="fixed">
 <div class="ui-grid-c inner-footer center">
-	sfsfsfsdfdsf	
+	
 		<div class="ui-block-a">
 
          @if($flag=='true'):
