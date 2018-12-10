@@ -307,6 +307,7 @@ function makeRedirection(link){
     
      window.location.href = link;
 }
+
 // End of Moved function click to file resource/views/location.blade.php
 
 function checkFormsubmit(e){
