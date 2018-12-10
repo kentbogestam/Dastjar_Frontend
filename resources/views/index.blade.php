@@ -19,18 +19,9 @@
     </script>
     
 @endsection
+
 @section('content')
-	<div data-role="header" class="header" id="nav-header"  data-position="fixed">
-		<div class="nav_fixed">
-			<div class="logo">
-				<div class="inner-logo">
-					<img src="{{asset('images/logo.png')}}">
-					@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
-				</div>
-			</div>
-			<a href="{{url('search-map-eatnow')}}" class="ui-btn-right map-btn user-link" data-ajax="false"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
-		</div>
-	</div>
+	@include('includes.headertemplate')
 	<div class="cat-btn">
 		<div class="ui-grid-a top-btn">
 			<div class="ui-block-a"><a href="#" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-active" class="active"><img src="{{asset('images/icons/icon-eat-now-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-now-inactive.png')}}" class="inactive">{{ __('messages.Eat Now') }}</a></div>
