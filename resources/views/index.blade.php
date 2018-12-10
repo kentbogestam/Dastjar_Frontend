@@ -12,6 +12,7 @@
     <script src="{{asset('js/restolist/moment-timezone-with-data.min.js')}}"></script>
     <script src="{{asset('js/restolist/restrolist.js')}}"></script>
     <script src="{{asset('js/restolist/restroListCommon.js')}}"></script>
+	<script src="{{asset('locationJs/currentLocation.js?2')}}"></script>
     
     <script type="text/javascript">
 	  var noImageUrl = "{{url('images/placeholder-image.png')}}";
@@ -66,60 +67,51 @@
 
 @section('footer-script')
 	
-
-
-
 <?php
 	$helper = new Helper();
 
 	if(Auth::check()){
 			
-              if(Session::get('with_login_lat') != null){
-		
-				?>
-                <script type="text/javascript">
-                   // loc_lat = "{{Session::get('with_login_lat')}}";
-                    //loc_lng = "{{Session::get('with_login_lng')}}";
+      if(Session::get('with_login_lat') != null){
 
-                 setLngLat("{{Session::get('with_login_lat')}}","{{Session::get('with_login_lng')}}");
-                   
-                </script>
-				<?php
-			}else if(Session::get('with_out_login_lat') != null){
-
-				?>
-                <script type="text/javascript">
-                	
-                    //loc_lat = "{{Session::get('with_out_login_lat')}}";
-                    //loc_lng = "{{Session::get('with_out_login_lng')}}";
-
-         setLngLat("{{Session::get('with_out_login_lat')}}","{{Session::get('with_out_login_lng')}}");
-                </script>
-				<?php
-			}else{
-				?>
-                <script type="text/javascript">
-                	
-                    //loc_lat = "";
-                    //loc_lng = "";
-					setLngLat(null,null);
-                </script>
-				<?php
-			}
-		}
-		else{
-			if(Session::get('with_out_login_lat') != null){
 		?>
-		<script type="text/javascript">
-				//loc_lat = "{{Session::get('with_out_login_lat')}}";
-				//loc_lng = "{{Session::get('with_out_login_lng')}}";
-		setLngLat("{{Session::get('with_out_login_lat')}}","{{Session::get('with_out_login_lng')}}");
-		</script>
-				<?php
-			}
-		}
-?>
+        <script type="text/javascript">
+         
+         setLngLat("{{Session::get('with_login_lat')}}","{{Session::get('with_login_lng')}}");
+           
+        </script>
+		<?php
+	}else if(Session::get('with_out_login_lat') != null){
 
+		?>
+        <script type="text/javascript">
+        
+ 		setLngLat("{{Session::get('with_out_login_lat')}}","{{Session::get('with_out_login_lng')}}");
+
+        </script>
+		<?php
+	}else{
+		?>
+        <script type="text/javascript">
+        	
+			setLngLat(null,null);
+
+        </script>
+		<?php
+	}
+	}
+	else{
+		if(Session::get('with_out_login_lat') != null){
+	?>
+	<script type="text/javascript">
+			
+	setLngLat("{{Session::get('with_out_login_lat')}}","{{Session::get('with_out_login_lng')}}");
+
+	</script>
+			<?php
+		}
+	}
+?>
 
 <script type="text/javascript">
 
@@ -128,20 +120,17 @@
 	var curDate = new Date();
 	curTimezoneOffset = curDate.getTimezoneOffset();
 
-$(document).on("scrollstop", function (e) {
-	onScroll("{{url('restro-menu-list/')}}");
-	
-});
+	$(document).on("scrollstop", function (e) {
+		onScroll("{{url('restro-menu-list/')}}");
+		
+	});
 
-$(function(){
+	$(function(){
 
-getPos("{{url('lat-long')}}","{{url('restro-menu-list/')}}",noImageUrl);
-checkUserLogin("{{url('checkUserLogin')}}");
+	getPos("{{url('lat-long')}}","{{url('restro-menu-list/')}}",noImageUrl);
+	checkUserLogin("{{url('checkUserLogin')}}");
 
-});
-
-
-
+	});
 </script>
 
 <script type="text/javascript">
@@ -215,5 +204,4 @@ checkUserLogin("{{url('checkUserLogin')}}");
 	}
 </script>
 
-<script src="{{asset('locationJs/currentLocation.js?2')}}"></script>
 @endsection
