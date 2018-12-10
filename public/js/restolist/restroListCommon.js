@@ -18,6 +18,7 @@ function iconEatInactive(){
 	eatInactive.addClass('icon-eat-active');
 }
 
+
 function orderPopup(){
 	
  	$("#order-popup").toggleClass("hide-popup");
