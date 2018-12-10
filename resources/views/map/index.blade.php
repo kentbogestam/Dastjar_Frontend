@@ -64,6 +64,7 @@
 	    map.setTilt(45);
 	
     	var markers = {!! $latLngList !!};
+    	var nearbyRestaurantDetail = {!! json_encode($nearbyRestaurantDetail) !!};
 	                        
 	    // Info Window Content
 	    /*var infoWindowContent = [
@@ -78,6 +79,8 @@
 	        
 	    // Display multiple markers on a map
 	    /*var infoWindow = new google.maps.InfoWindow(), marker, i;*/
+
+	    var infowindow = new google.maps.InfoWindow();
 	    
 	    // Loop through our array of markers & place each one on the map  
 	    for( i = 0; i < markers.length; i++ ) {
@@ -88,22 +91,29 @@
 		            position: position,
 		            map: map,
 		            icon: {
-                    url:"{{ asset('images/blue-pin.png') }}",
-                    size: new google.maps.Size(71, 95),
-                    scaledSize: new google.maps.Size(35, 42),
-                    origin: new google.maps.Point(0, 0),
-                    anchor: new google.maps.Point(17, 36)
-                },
-                anchorPoint: new google.maps.Point(0, -29)
+	                    url:"{{ asset('images/blue-pin.png') }}",
+	                    size: new google.maps.Size(71, 95),
+	                    scaledSize: new google.maps.Size(35, 42),
+	                    origin: new google.maps.Point(0, 0),
+	                    anchor: new google.maps.Point(17, 36)
+	                },
+                	anchorPoint: new google.maps.Point(0, -29)
 		        });
 	    	}else{
 		        var position = new google.maps.LatLng(markers[i][0], markers[i][1]);
 		        bounds.extend(position);
 		        marker = new google.maps.Marker({
 		            position: position,
-		            map: map
+		            map: map,
+		            info: nearbyRestaurantDetail[(i-1)]['store_name']
 		        });
 	    	}
+
+	    	// Allow each marker to have an info window
+			google.maps.event.addListener(marker, 'click', function () {
+				infowindow.setContent(this.info);
+				infowindow.open(map, this);
+			});
 	        
 	        // Allow each marker to have an info window    
 	        /*google.maps.event.addListener(marker, 'click', (function(marker, i) {
