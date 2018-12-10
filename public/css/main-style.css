@@ -867,7 +867,7 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
   #overlay {position: fixed;display: none;width: 100vw;height: 100vh;top: 0;left: 0;right: 0;
         bottom: 0; background-color: rgba(0,0,0,0.5);z-index: 999;}
 
-    #loading-img{display: none; position: absolute; top: 50vh; left: 50vw;z-index: 99999;}
+  #loading-img{display: none; position: absolute; top: 50vh; left: 50vw;z-index: 99999;}
 
     .popup-close1 {width: 30px;height: 26px;padding-top: 4px;display: inline-block; position: absolute;
       top: 5px; right: 5px; -webkit-transition: ease 0.25s all; transition: ease 0.25s all;
