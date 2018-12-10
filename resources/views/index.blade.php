@@ -127,8 +127,8 @@
 
 	$(function(){
 
-	getPos("{{url('lat-long')}}","{{url('restro-menu-list/')}}",noImageUrl);
-	checkUserLogin("{{url('checkUserLogin')}}");
+		getPos("{{url('lat-long')}}","{{url('restro-menu-list/')}}",noImageUrl);
+		checkUserLogin("{{url('checkUserLogin')}}");
 
 	});
 </script>
