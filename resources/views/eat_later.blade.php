@@ -18,7 +18,7 @@
 	        add("{{url('eat-later-data')}}","{{url('restro-menu-list/')}}",noImageUrl,"{{Session::get('order_date')}}");
 
 	      });
-	      window.onload = function () { browserPhoneSetting(); }
+	      window.onload = function () { browserPhoneSetting(); }// function is required the ios add to shortcut popup will work after full page is loaded.
     </script>
 @endsection
 
