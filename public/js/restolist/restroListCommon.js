@@ -1,9 +1,9 @@
-  var loc_lat;
+ var loc_lat;
  var loc_lng;
  $(document).ready(function () {
 
 
-      $("#overlay").show();
+    $("#overlay").show();
 	  $("#loading-img").show();
 
 });
@@ -36,7 +36,7 @@ function orderPopup(){
   function browserPhoneSetting(){
 
     var count = getCookie("iphonePopupcount") + getCookie("iphonePopupcountIncrease");
-	var IphoneVersion;
+	  var IphoneVersion;
     var deviceDetection = function () { 
     var osVersion, 
     device, 
@@ -89,7 +89,7 @@ function orderPopup(){
     }();
     //console.log('IphoneVersion='+IphoneVersion);
 
-	if(getCookie("browser") == 'Safari' && count == 1){
+	if(getCookie("browser") == 'Safari' && count == 1 ||  count == 12){
 		document.cookie="iphonePopupcountIncrease=" + 2;
 		var ath = addToHomescreen({
 		    debug: 'ios',           // activate debug mode in ios emulation
