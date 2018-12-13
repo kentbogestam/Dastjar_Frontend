@@ -88,8 +88,7 @@ function orderPopup(){
              'deviceType': deviceType 
             }; 
     }();
-    //console.log('IphoneVersion='+IphoneVersion);
-alert(count);
+
 	if(getCookie("browser") == 'Safari' && count == 1 ){
 		document.cookie="iphonePopupcountIncrease=" + 2;
 		var ath = addToHomescreen({
