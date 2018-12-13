@@ -76,36 +76,37 @@
 	Route::get('lat-long', 'HomeController@userLatLong');
 	Route::get('checkUserLogin', 'HomeController@checkUserLogin');
 	Route::get('update-location', 'HomeController@updateLocation');
+    Route::get('setResttype','HomeController@setRestarurantType');
+	Route::get('user-setting', 'CustomerController@index');
+	Route::get('select-location', 'CustomerController@selectLocation');
+	Route::post('save-location', 'CustomerController@saveLocation');
+	Route::get('save-location', 'CustomerController@saveLocation');
+	Route::post('save-setting', 'CustomerController@saveSetting');
+	Route::post('store-device-token', 'CustomerController@storeDeviceToken');	
+	Route::post('store-device-token-order-view', 'CustomerController@storeDeviceTokenOrderView');	
 
-		Route::get('user-setting', 'CustomerController@index');
-		Route::get('select-location', 'CustomerController@selectLocation');
-		Route::post('save-location', 'CustomerController@saveLocation');
-		Route::get('save-location', 'CustomerController@saveLocation');
-		Route::post('save-setting', 'CustomerController@saveSetting');
-		Route::post('store-device-token', 'CustomerController@storeDeviceToken');	
-		Route::post('store-device-token-order-view', 'CustomerController@storeDeviceTokenOrderView');	
+	Route::get('restro-menu-list/{storeID}', 'HomeController@menuList');
 
-		Route::get('restro-menu-list/{storeID}', 'HomeController@menuList');
+	Route::get('search-store-map', 'MapController@searchStoreMap');
+	Route::get('404', 'HomeController@page_404')->name('page_404');
 
-		Route::get('search-store-map', 'MapController@searchStoreMap');
-		Route::get('404', 'HomeController@page_404')->name('page_404');
+    Route::group(['middleware' => ['latlng']], function(){
+	Route::get('search-map-eatnow', 'MapController@searchMapEatnow');
+	Route::get('eat-now', 'HomeController@index');
+	Route::resource('customer', 'CustomerController');
+	Route::get('saveCurrentlat-long', 'HomeController@saveCurrentLatLong');
+	Route::get('selectOrder-date', 'HomeController@selectOrderDate');
+	Route::post('eat-later', 'HomeController@eatLater');
+	Route::get('eat-later', 'HomeController@eatLater');
+	Route::get('eat-later-data', 'HomeController@eatLaterData');
+	Route::get('search-map-eatlater', 'MapController@searchMapEatlater');
+	Route::get('eat-later-map', 'HomeController@eatLaterMap');
+	Route::post('save-order', 'OrderController@saveOrder');
+	Route::get('save-order', 'OrderController@saveOrder');
+	Route::get('withOutLogin', 'OrderController@withOutLogin')->name('withOutLogin');
+	Route::get('checkDistance','DistanceController@checkDistance');
 	
-	Route::group(['middleware' => ['latlng']], function(){
-		Route::get('search-map-eatnow', 'MapController@searchMapEatnow');
-		Route::get('eat-now', 'HomeController@index');
-		Route::resource('customer', 'CustomerController');
-		Route::get('saveCurrentlat-long', 'HomeController@saveCurrentLatLong');
-		Route::get('selectOrder-date', 'HomeController@selectOrderDate');
-		Route::post('eat-later', 'HomeController@eatLater');
-		Route::get('eat-later', 'HomeController@eatLater');
-		Route::get('eat-later-data', 'HomeController@eatLaterData');
-		Route::get('search-map-eatlater', 'MapController@searchMapEatlater');
-		Route::get('eat-later-map', 'HomeController@eatLaterMap');
-		Route::post('save-order', 'OrderController@saveOrder');
-		Route::get('save-order', 'OrderController@saveOrder');
-		Route::get('withOutLogin', 'OrderController@withOutLogin')->name('withOutLogin');
-		Route::get('checkDistance','DistanceController@checkDistance');
-	});
+});
 
 	Route::group(['middleware' => ['auth']], function(){
 		Route::get('blank-view', 'HomeController@blankView');
