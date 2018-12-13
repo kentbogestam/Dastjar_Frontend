@@ -9,7 +9,7 @@
 	
 	$(function(){
       setCurrentLatLong("{{url('update-location')}}");
-      browserPhoneSetting();
+     // browserPhoneSetting();
       var d=$('#browserCurrentTime').val();
       
 	});
