@@ -79,7 +79,6 @@ function decrementValue(id)
 }
 
 function setCurrentLatLong(urllatlng){
-   alert(urllatlng);
    navigator.geolocation.getCurrentPosition(function(position) {
 
       document.cookie="latitude=" + position.coords.latitude;
