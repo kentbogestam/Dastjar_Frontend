@@ -3,7 +3,7 @@
     $flag='false';
     $menuActivate='false';
     $selectEatLaterTime='false';
-    $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+echo    $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
     $baseurl=$app->make('url')->to('/')."/";
     if (strpos($_SERVER['REQUEST_URI'], 'eat-now') !== false || strpos($_SERVER['REQUEST_URI'], 'eat-later') !== false || $actual_link === $baseurl || strpos($_SERVER['REQUEST_URI'], 'home') !== false ) {
 
