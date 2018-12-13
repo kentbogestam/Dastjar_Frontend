@@ -182,7 +182,7 @@ alert("ios");
             }; 
     }();
     //console.log('IphoneVersion='+IphoneVersion);
-
+alert(count);
 	if(getCookie("browser") == 'Safari' && count == 1){
 alert("i am in");
 		//alert(getCookie("browser")+count)
