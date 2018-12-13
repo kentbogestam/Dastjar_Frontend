@@ -90,7 +90,7 @@ function orderPopup(){
     }();
     //console.log('IphoneVersion='+IphoneVersion);
 alert(count);
-	if(getCookie("browser") == 'Safari' && count == 1 ||  count == 12){
+	if(getCookie("browser") == 'Safari' && count == 1 ){
 		document.cookie="iphonePopupcountIncrease=" + 2;
 		var ath = addToHomescreen({
 		    debug: 'ios',           // activate debug mode in ios emulation
