@@ -65,19 +65,7 @@ $(document).ready(function(){
 @endsection
 @section('content')
 	<div data-role="page" data-theme="c">
-		<div data-role="header" class="header" data-position="fixed" id="nav-header"  data-position="fixed" data-tap-toggle="false"> 
-			<div class="nav_fixed">
-				<a href="{{ url('eat-now') }}" data-ajax="false" class="ui-btn-left text-left backarrow-btn"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a>
-				<div class="logo">
-					<div class="inner-logo">
-						<img src="{{asset('images/logo.png')}}">
-						@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
-					</div>
-				</div>
-				<a class="ui-btn-right map-btn user-link" 
-				href="{{url('search-map-eatnow')}}" data-ajax="false"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
-			</div>
-		</div>
+		@include('includes.headertemplate')
 
 		<form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('eat-later') }}">
 			{{ csrf_field() }}
