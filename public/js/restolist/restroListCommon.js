@@ -33,9 +33,11 @@ function orderPopup(){
 
   }
 
+  // Browser setting function used for browsershortcut fro apple
   function browserPhoneSetting(){
 
     var count = getCookie("iphonePopupcount") + getCookie("iphonePopupcountIncrease");
+    alert("yes");
 	  var IphoneVersion;
     var deviceDetection = function () { 
     var osVersion, 
@@ -88,7 +90,7 @@ function orderPopup(){
             }; 
     }();
     //console.log('IphoneVersion='+IphoneVersion);
-
+alert("nice detction");
 	if(getCookie("browser") == 'Safari' && count == 1 ||  count == 12){
 		document.cookie="iphonePopupcountIncrease=" + 2;
 		var ath = addToHomescreen({
