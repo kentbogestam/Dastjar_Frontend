@@ -25,15 +25,13 @@
     <title>Anar</title>
 	<meta charset="utf-8">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link rel="icon" href="{{asset('images/l-logo.png')}}">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-        
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="mobile-web-app-capable" content="yes" />
-	<meta name="apple-mobile-web-app-capable" content="yes" /> 
+    <meta name="apple-mobile-web-app-capable" content="yes" /> 
+    <link rel="icon" href="{{asset('images/l-logo.png')}}">
 
-	<link rel="manifest" href="{{asset('manifest.json')}}">
-		
+	<link rel="manifest" href="{{asset('manifest.json')}}">	
  	<link rel = "stylesheet" href ="{{asset('css/jquery.mobile.min.css')}}">
  	<link rel="stylesheet" href="{{asset('css/jquery.mobile.icons.min.css')}}">
  	<link rel="stylesheet" href="{{asset('css/main-style.css')}}" >
@@ -44,7 +42,7 @@
 	<link rel="stylesheet" type="text/css" href="{{asset('addToHomeIphoneCss/addtohomescreen.css')}}">
 	@yield('styles')
  	<script src = "{{asset('js/device.detect.js')}}"></script>
- 	<script src = "{{asset('js/jquery.min.js')}}"></script>
+ 	<script src = "{{asset('js/jquery.min.js')}}"></script> 
 	<script src = "{{asset('js/jquery.mobile.min.js')}}"></script>
 	<script src = "{{asset('js/main.js')}}"></script>
     <script src = "{{asset('js/common.js')}}"></script>
