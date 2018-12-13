@@ -205,15 +205,8 @@
 	<?php
 		$placeholder = url('images/placeholder-image.png');
 	?>
-	<div data-role="header" class="header"  data-position="fixed" data-tap-toggle="false">
-		<div class="logo">
-			<div class="inner-logo">
-				<span class="rest-title">{{$storedetails->store_name}}</span>
-				@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
-			</div>
-		</div>
-		<a class="ui-btn-right map-btn user-link" href="{{url('search-store-map')}}" data-ajax="false"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
-	</div>
+@include('includes.headertemplate')
+
 	@if(count($menuTypes) == '0')
 	<div class="table-content">
 		<p>{{ __('messages.Menu is not available.') }}1 </p>
