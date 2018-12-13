@@ -123,9 +123,10 @@
 
 		getPos("{{url('lat-long')}}","{{url('restro-menu-list/')}}",noImageUrl);
 		checkUserLogin("{{url('checkUserLogin')}}");
-		browserPhoneSetting();
-
+		
 	});
+
+	window.onload = function () { browserPhoneSetting(); }
 
 </script>
 
