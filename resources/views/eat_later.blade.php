@@ -18,6 +18,7 @@
 	        add("{{url('eat-later-data')}}","{{url('restro-menu-list/')}}",noImageUrl,"{{Session::get('order_date')}}");
 
 	      });
+	      window.onload = function () { browserPhoneSetting(); }
     </script>
 @endsection
 
