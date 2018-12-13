@@ -8,7 +8,7 @@
 <script type="text/javascript">
 	
 	$(function(){
-      setCurrentLatLong();
+      setCurrentLatLong("{{url('update-location')}}");
       browserPhoneSetting();
       var d=$('#browserCurrentTime').val();
       
