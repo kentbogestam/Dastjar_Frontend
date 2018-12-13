@@ -1,15 +1,17 @@
 @extends('layouts.master')
 @section('content')
 
-	<div data-role="header" class="header" id="nav-header"  data-position="fixed">
+@include('includes.headertemplate')
+	<!--<div data-role="header" class="header" id="nav-header"  data-position="fixed">
 		<div class="logo">
+			{{$storedetails->store_id}}
 			<div class="inner-logo">
 				<span class="rest-title">{{$storedetails->store_name}}</span>
 				@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
 			</div>
 		</div>
 		<a class="ui-btn-right map-btn user-link" href="#left-side-bar"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
-	</div>
+	</div>-->
 	<div role="main" data-role="main-content" class="content">
 		<div id="map" class="map_container"></div>
 	</div>
