@@ -136,7 +136,7 @@
     deviceType, 
     userAgent, 
     isSmartphoneOrTablet; 
-alert("wowo");
+
     device = (navigator.userAgent).match(/Android|iPhone|iPad|iPod/i); 
 
     if ( /Android/i.test(device) ) { 
@@ -145,7 +145,7 @@ alert("wowo");
         } else { 
             deviceType = 'phone'; 
         } 
-
+alert("andriod");
         osVersion = (navigator.userAgent).match(/Android\s+([\d\.]+)/i); 
         osVersion = osVersion[0]; 
         osVersion = osVersion.replace('Android ', ''); 
@@ -158,7 +158,7 @@ alert("wowo");
         osVersion = osVersion.replace('OS ', ''); 
 
 		document.cookie="osVersion=" + osVersion;		
-
+alert("ios");
 	    if(osVersion >= 10){
 	    	$('.footer').css({'padding-top':'10px', 'padding-bottom':'10px'});
 	    }			
@@ -169,6 +169,7 @@ alert("wowo");
         osVersion = osVersion[0]; 
         osVersion = osVersion.replace(/_/g, '.'); 
         osVersion = osVersion.replace('OS ', ''); 
+        alert("ipad");
     } 
     isSmartphoneOrTablet = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent); 
     userAgent = navigator.userAgent; 
