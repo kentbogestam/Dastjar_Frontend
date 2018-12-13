@@ -136,7 +136,7 @@
     deviceType, 
     userAgent, 
     isSmartphoneOrTablet; 
-
+alert("wowo");
     device = (navigator.userAgent).match(/Android|iPhone|iPad|iPod/i); 
 
     if ( /Android/i.test(device) ) { 
@@ -183,6 +183,8 @@
     //console.log('IphoneVersion='+IphoneVersion);
 
 	if(getCookie("browser") == 'Safari' && count == 1){
+alert("i am in");
+		//alert(getCookie("browser")+count)
 		document.cookie="iphonePopupcountIncrease=" + 2;
 		var ath = addToHomescreen({
 		    debug: 'ios',           // activate debug mode in ios emulation
