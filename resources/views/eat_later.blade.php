@@ -4,9 +4,15 @@
 	
 	<script src="{{asset('js/restolist/restroListCommon.js')}}"></script>
     <script src="{{asset('js/restolist/restroListEatLater.js')}}"></script>
+    <script src="{{asset('notifactionJs/serviceWorker.js')}}"></script>
+    <script src="{{asset('browserShortcutJs/comlink.global.js')}}"></script>
+    <script src="{{asset('browserShortcutJs/messagechanneladapter.global.js')}}"></script>
+    <script src="{{asset('addToHomeIphoneJs/addtohomescreen.js')}}"></script>
 	<script src="{{asset('locationJs/currentLocation.js')}}"></script>
+
 	 <script type="text/javascript">
 	  var noImageUrl = "{{url('images/placeholder-image.png')}}";
+	  registerSwjs();
 		  $(function(){
 		 
 	        add("{{url('eat-later-data')}}","{{url('restro-menu-list/')}}",noImageUrl,"{{Session::get('order_date')}}");
@@ -16,17 +22,9 @@
 @endsection
 
 @section('content')
-	<div data-role="header" class="header" id="nav-header"  data-position="fixed"><!--  -->
-		<div class="nav_fixed">
-			<div class="logo">
-				<div class="inner-logo">
-					<img src="{{asset('images/logo.png')}}">
-					@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
-				</div>
-			</div>
-			<a class="ui-btn-right map-btn user-link" href="{{url('search-map-eatlater')}}" data-ajax="false"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
-		</div>
-	</div>
+
+@include('includes.headertemplate')
+
 	<div class="cat-btn">
 		<div class="ui-grid-a top-btn">
 			<div class="ui-block-a"><a href="{{url('eat-now')}}" class="ui-btn ui-shadow small-con-30 ui-corner-all icon-eat-inactive active" onclick="iconEatInactive()" data-ajax="false"><img src="{{asset('images/icons/icon-eat-now-active.png')}}" class="active"><img src="{{asset('images/icons/icon-eat-now-inactive.png')}}" class="inactive">{{ __('messages.Eat Now') }}</a></div>
