@@ -9,3 +9,4 @@
 		<a class="ui-btn-right map-btn user-link" href="#left-side-bar"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
 	</div>
 </header>
+
