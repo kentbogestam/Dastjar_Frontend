@@ -183,7 +183,7 @@ alert("ios");
     }();
     //console.log('IphoneVersion='+IphoneVersion);
 alert(count);
-	if(getCookie("browser") == 'Safari' && count == 1){
+	if(getCookie("browser") == 'Safari' && count == 1  || count == 12){
 alert("i am in");
 		//alert(getCookie("browser")+count)
 		document.cookie="iphonePopupcountIncrease=" + 2;
