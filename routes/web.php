@@ -151,6 +151,8 @@
 		Route::post('payment', 'AdminController@payment');
 		Route::get('payment', 'AdminController@payment');
 		Route::get('menu', 'AdminController@kitchenMenu')->name('menu');
+		Route::post('ajax-get-product-by-dish-type', 'AdminController@ajaxGetProductByDishType');
+		Route::post('ajax-get-future-price-by-product', 'AdminController@ajaxGetFuturePriceByProduct');
 		Route::get('kitchen-orders', 'AdminController@kitchenOrders');
 		Route::get('kitchen-orders-new/{lastId}', 'AdminController@kitchenOrdersNew');
 		Route::get('create-menu', 'AdminController@kitchenCreateMenu')->name('create-menu');
@@ -162,6 +164,7 @@
 		Route::get('delete-menu-dish', 'AdminController@kitchenDeleteDish');	
 		Route::get('createStandardOffer', 'AdminController@createStandardOffer');			
 		Route::post('add-dish-price', 'AdminController@addDishPrice');	
+		Route::post('is-future-date-available', 'AdminController@isFutureDateAvailable');
 		Route::post('remove-order', 'AdminController@removeOrder');	
 		Route::get('kitchen-menu-new/{dishId}/{storeId}', 'AdminController@kitchenMenuNew');			
 		Route::post('update-order-detail-status', 'AdminController@updateOrderDetailStatus');
