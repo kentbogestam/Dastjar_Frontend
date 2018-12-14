@@ -10,7 +10,7 @@
 		</div>
 	@else
 	<div class="ui-block-c order-active">
-    	<a href="javascript:void(0)" class="ui-shadow ui-corner-all icon-img ui-btn-inline ordersec" data-ajax="false">
+    	<a href="javascript:void(0)" class="ui-shadow ui-corner-all icon-img ui-btn-inline ordersec" data-ajax="false" onclick="orderPopup()">
 	        <div class="img-container">
 	        	<img src="{{asset('images/icons/select-store_05-active.png')}}">
 	        </div>

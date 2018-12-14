@@ -49,7 +49,7 @@
         </script>
     </form>
 
-	<div data-role="footer" class="footer" data-position="fixed">
+	<!--<div data-role="footer" class="footer" data-position="fixed">
 		<div class="ui-grid-c inner-footer center">
 		<div class="ui-block-a"><a href="{{Session::get('route_url')}}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 			<div class="img-container">
@@ -68,7 +68,8 @@
 			<div class="img-container"><img src="{{asset('images/icons/select-store_07.png')}}"></div>
 		</a></div>
 		</div>
-	</div>
+	</div>-->
+@include('includes.fixedfooter')
 
 @endsection
 

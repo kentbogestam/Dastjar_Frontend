@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('head-scripts')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
+
 
 <style>
 	.msg-lbl{
@@ -199,9 +199,6 @@ adasd
 @endsection
 
 @section('footer-script')
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>	 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-
 
 	<script type="text/javascript">
 

@@ -78,44 +78,34 @@ function decrementValue(id)
 
 }
 
+function setCurrentLatLong(urllatlng){
+   navigator.geolocation.getCurrentPosition(function(position) {
+
+      document.cookie="latitude=" + position.coords.latitude;
+      document.cookie="longitude=" + position.coords.longitude;
+      console.log("in getCurrentCoordinates and updating current location ");
+      //console.log(position.coords.latitude+"-------"+position.coords.longitude);
+       $.ajax({
+          url: urllatlng,
+           type: "GET",
+           data: {lat : position.coords.latitude, long : position.coords.longitude},
+           dataType: "json"
+       });
+
+      // reloadRestaurantList();
+  
+  },function(error){
+    if (typeof lat === "undefined") {
+       // $('.login-inner-section a').attr('href','javascript:void(0)');
+       // $('#login-popup').show();           
+    } else {
+        // document.cookie="latitude=" + lat;
+        // document.cookie="longitude=" + lng;      
+    }           
+  });
 
 
-/* ==================== content height ============================ */
-/* 
-$(document).ready(function($) {
-    var headerHeight = $( '.header' ).height();
-    var footerHeight = $( '.footer' ).height();
-    var maincontent =$(window).height();
-    var height = maincontent - (headerHeight + footerHeight);
-    console.log(maincontent);
-    console.log(headerHeight);
-    console.log(footerHeight);
 
-
-    $( '.content' ).height( height );
-    var mql = window.matchMedia("(orientation: portrait)");
-
-
-
-
-    mql.addListener(function(m) {
-        if(m.matches) {
-        var headerHeight = $( '.header' ).height();
-        var footerHeight = $( '.footer' ).height();
-        var maincontent =$(window).height();
-        var height = maincontent - (headerHeight + footerHeight);
-        $( '.content' ).height( height );
-        }
-        else {
-        var headerHeight = $( '.header' ).height();
-        var footerHeight = $( '.footer' ).height();
-        var maincontent =$(window).height();
-        var height = maincontent - (headerHeight + footerHeight);
-        $( '.content' ).height( height );
-        }
-    })
- });
-
-*/
+}
 
 kWindow = window;

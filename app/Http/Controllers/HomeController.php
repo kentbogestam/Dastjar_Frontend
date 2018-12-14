@@ -19,6 +19,7 @@ use Carbon\Carbon;
 use App\App42\App42API;
 use Artisan;
 use Helper;
+use Illuminate\Support\Facades\Input;
 
 class HomeController extends Controller
 {
@@ -255,9 +256,11 @@ class HomeController extends Controller
     {
         Artisan::call('view:clear');
        
-          $request->session()->put('route_url', url('/').'/eat-now'); // code added by saurabh to update correct url for eat-later and eat-now
+       if($request->session()->get('type_selection') == null){ //code added by saurabh to render the view for the selection of eat later nd eat now
+         return view('includes.popupSelection', compact(''));
+       }else{
 
-
+       $request->session()->put('route_url', url('/').'/eat-now'); // code added by saurabh to update correct url for eat-later and eat-now
         if(Auth::check()){
             $versionDetail = WebVersion::orderBy('created_at', 'DESC')->first();
             $userDetail = User::whereId(Auth()->id())->first();
@@ -275,6 +278,7 @@ class HomeController extends Controller
             return view('index', compact(''));
         }
     }
+}
 
     public function blankView(){
       return view('blankPage');    
@@ -461,6 +465,7 @@ class HomeController extends Controller
     }
 
     public function selectOrderDate(){
+        
         return view('select-datetime', compact('')); 
     }
 	
@@ -559,4 +564,40 @@ class HomeController extends Controller
         }
        
     }
+
+
+public function setRestarurantType(Request $request){
+
+
+     if(!empty($request->input())){
+                $data = $request->input();
+
+       
+        $request->session()->put('current_date_time', $data['currentdateTime']);
+   
+   
+     
+     if($data['restType']=="eatnow"){
+
+          $request->session()->put('type_selection', "checked");
+              //return redirect('/selectOrder-date');
+          $url= url("/");
+
+     }
+      else{
+     
+
+           $request->session()->put('type_selection', "checked");
+           $url= url("/selectOrder-date");
+            
+   //return redirect('/selectOrder-date');
+      }
+
+      return response()->json(['status' => 'success', 'response' => true,'data'=>$url]);
+  }
+ }
+
+
 }
+
+

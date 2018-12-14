@@ -819,6 +819,7 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
 .payment_form_btn{text-align: center;margin-top: 25px;}
 .payment_form_btn button{width: 50%;}
 
+
 @media screen and (orientation : landscape){
     .bottom_login_text{position: relative;}
     .login-inner-section{
@@ -857,4 +858,51 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
     .login-popup .inner-popup {
       width: 60%;
     }
+}
+
+/* code added by saurabh
+
+   Code included in index.blade.php 
+
+ */
+  #overlay {position: fixed;display: none;width: 100vw;height: 100vh;top: 0;left: 0;right: 0;
+        bottom: 0; background-color: rgba(0,0,0,0.5);z-index: 999;}
+
+  #loading-img{display: none; position: absolute; top: 50vh; left: 50vw;z-index: 99999;}
+
+    .popup-close1 {width: 30px;height: 26px;padding-top: 4px;display: inline-block; position: absolute;
+      top: 5px; right: 5px; -webkit-transition: ease 0.25s all; transition: ease 0.25s all;
+      -webkit-transform: translate(50%, -50%); transform: translate(50%, -50%);
+      border-radius: 100% !important; background: #7ebe12; font-family: Arial, Sans-Serif;
+      font-size: 20px; text-align: center; line-height: 0.8; color: #fff;cursor: pointer; padding-left: 0px;
+      z-index: 999;
+    }
+.popup-close1:hover {text-decoration: none;}
+
+/*custom popup-design*/
+.popupSelection{
+  border: 1px solid #ddd;
+    width: 40%;
+    margin: 0 auto;
+    padding: 20px;
+    box-shadow: 0 0 12px rgba(0,0,0,.6);
+    border-radius: 5px;
+}
+.static-content, .select-restaurant{text-align: center;}
+.select-restaurant ul{ display: inline-block;
+    width: 70%;
+    padding: 0px;}
+.select-restaurant ul li{list-style: none;float: left;
+    width: 50%;
+    text-align: center;}
+.select-restaurant a.eatnow-btn{background-color: #333;
+    border-color: #1f1f1f;
+    color: #fff;
+    padding: .7em 1em;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,.15);}
+.select-restaurant a.eatnow-btn:hover{
+    background-color: #c3c3c3;
+    border-color: #1f1f1f;
+    color: #333;
 }
