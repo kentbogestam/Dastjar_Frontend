@@ -89,5 +89,5 @@ return [
     'Payment Done Successfully' => 'Payment Done Successfully',
     'Others' => 'Others',
     'dateTimeAlert'=>'Both time and date needs to be set to proceed',
-    'kitchenTextToSpeechDefault' => 'My Order',
+    'kitchenTextToSpeechDefault' => 'New Order',
 ];

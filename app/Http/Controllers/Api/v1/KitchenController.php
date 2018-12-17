@@ -10,6 +10,7 @@ use DB;
 use App\Order;
 use App\OrderDetail;
 use App\Product;
+use App\DishType;
 use App\Store;
 use Carbon\Carbon;
 use Auth;
@@ -90,6 +91,21 @@ class KitchenController extends Controller
             $product->where('dish_type',$request->dish_type)->where('product_rank',1)->where('product_id','>',$request->product_id)->update(['product_rank' => $request->index+1]);
         
         return response()->json(['status' => 'success', 'response' => true,'data'=>"Rank Updated"]);
+    }
+
+    /**
+     * Update restaurant menu order to display
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function updateMenuRank(Request $request)
+    {
+        $dishType = new DishType();
+
+        $dishType->where('u_id', $request->u_id)->where('rank', $request->index)->update(['rank' => ($request->index+1)]);
+        $dishType->where('dish_id', $request->dish_id)->update(['rank' => $request->index]);
+
+        return response()->json(['status' => 'success', 'response' => true,'data' => "Rank Updated"]);
     }
 
 }

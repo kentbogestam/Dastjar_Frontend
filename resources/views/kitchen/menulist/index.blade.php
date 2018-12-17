@@ -217,18 +217,23 @@
 		<a href="{{ url('kitchen/create-menu') }}" class="fa fa-plus-circle fa-4x add_menu_btn" data-ajax="false"></a>
 		<hr>
 
-		<!-- OLD CODE WAS HERE -->
-		@foreach($menuTypes as $key => $value)
-			<a href="#demo_{{$key}}" class="partial-circle menu-type" data-id="{{$key}}" data-toggle="collapse">
-				<p class="dish_type">{{ $value }}</p>
-			</a>
-			<br/><br/>
-			<div id="demo_{{$key}}" data-id="{{$key}}" class="collapse collapse_block sortable">Loading...</div>
-			<br>
-			@if(!$loop->last)
-				<hr>
-			@endif
-		@endforeach
+		@if(!$menuTypes->isEmpty())
+			<div class="menu-sortable">
+				@foreach($menuTypes as $key => $value)
+					<div id="{{$key}}" class="menu-sortable-item">
+						<a href="#demo_{{$key}}" class="partial-circle menu-type" data-id="{{$key}}" data-toggle="collapse">
+							<p class="dish_type">{{ $value }}</p>
+						</a>
+						<br/><br/>
+						<div id="demo_{{$key}}" data-id="{{$key}}" class="collapse collapse_block sortable">Loading...</div>
+						<br>
+						@if(!$loop->last)
+							<hr>
+						@endif
+					</div>
+				@endforeach
+			</div>
+		@endif
 
 		<!-- The Modal -->
 		<div class="modal fade" id="myModal">
@@ -569,6 +574,28 @@
 			    });
 			}
 		 });
+
+		 //
+		 if( $('.menu-sortable').length )
+		 {
+		 	$(".menu-sortable").sortable({
+			 	stop: function(event, ui) {
+			 		index =  ui.item.index();
+			 		dish_type_id = ui.item.attr("id");
+			 		//console.log(index, dish_type_id);
+			 		
+			 		$.post("{{ url('api/v1/kitchen/update-menu-rank') }}", 
+						{
+							u_id: "<?php echo Auth::user()->u_id; ?>",
+							dish_id: dish_type_id,
+							index  : index+1
+						}, function(data, status){
+			        		console.log("Data: " + data['data'] + "\nStatus: " + status);
+				    	}
+				    );
+			 	}
+			 });
+		 }
 	});
 	</script>
 

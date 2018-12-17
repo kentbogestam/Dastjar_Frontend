@@ -652,7 +652,7 @@ class AdminController extends Controller
             $employer = new Employer();
             $companyId = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
 
-            $menuTypes = DishType::where('company_id', $companyId)->pluck('dish_name','dish_id');
+            $menuTypes = DishType::where('company_id', $companyId)->orderBy('rank')->orderBy('dish_id')->pluck('dish_name','dish_id');
             //echo '<pre>'; print_r($menuTypes->toArray()); exit;
 
             $companydetails = new Company();

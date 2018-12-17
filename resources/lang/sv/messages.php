@@ -92,5 +92,5 @@ return [
     'Others' => 'Övriga',
     'Extra Preparation Time' => 'Öka beredningstiden',
     'dateTimeAlert'=>'Både tid och datum måste anges för att gå vidare',
-    'kitchenTextToSpeechDefault' => 'My Order',
+    'kitchenTextToSpeechDefault' => 'Ny Order',
 ];
