@@ -374,6 +374,9 @@ function registerDeviceWithApp42(token,type ){
 					<p>{{ __('messages.Order Number') }} </p>
 					<p class="large-text">{{$order->customer_order_id}}</p>
 					<p>({{$order->store_name}})</p>
+					@if( is_numeric($storeDetail->phone) )
+						<p><i class="fa fa-phone" aria-hidden="true"></i> <span>{{ $storeDetail->phone }}</span></p>
+					@endif
 					<p>
 						<?php
 							$time = $order->order_delivery_time;
