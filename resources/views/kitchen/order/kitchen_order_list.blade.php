@@ -200,9 +200,12 @@
 				          			liItem += "<td>"+''+"</td>";
 				          		}
 			          		}else{
-			          			// Default 'text to speech' if 'text to speech' is off
-			          			test("{{ __('messages.kitchenTextToSpeechDefault') }}");
-			          			updateSpeak(temp[i]['id']);
+			          			// Default 'text to speech' if 'text to speech' is off and not already spoken
+			          			if(temp[i]['is_speak'] == 0)
+			          			{
+				          			test("{{ __('messages.kitchenTextToSpeechDefault') }}");
+				          			updateSpeak(temp[i]['id']);
+			          			}
 
 			          			if(temp[i]["product_description"] != null){
 				          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
@@ -312,9 +315,12 @@ console.log('lastOrderId'+lastOrderId);
 				          			liItem += "<td>"+''+"</td>";
 				          		}
 			          		}else{
-			          			// Default 'text to speech' if 'text to speech' is off
-			          			test("{{ __('messages.kitchenTextToSpeechDefault') }}");
-			          			updateSpeak(temp[i]['id']);
+			          			// Default 'text to speech' if 'text to speech' is off and not already spoken
+								if(temp[i]['is_speak'] == 0)
+								{
+									test("{{ __('messages.kitchenTextToSpeechDefault') }}");
+			          				updateSpeak(temp[i]['id']);
+								}
 
 			          			if(temp[i]["product_description"] != null){
 				          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
@@ -459,9 +465,12 @@ console.log('lastOrderId'+lastOrderId);
 		          			liItem += "<td>"+''+"</td>";
 		          		}
 	          		}else{
-	          			// Default 'text to speech' if 'text to speech' is off
-	          			test("{{ __('messages.kitchenTextToSpeechDefault') }}");
-			          	updateSpeak(temp[i]['id']);
+	          			// Default 'text to speech' if 'text to speech' is off and not already spoken
+						if(temp[i]['is_speak'] == 0)
+						{
+							test("{{ __('messages.kitchenTextToSpeechDefault') }}");
+			          		updateSpeak(temp[i]['id']);
+						}
 
 	          			if(list[i]["product_description"] != null){
 		          			liItem += "<td>"+list[i]["product_description"]+"</td>";
@@ -511,9 +520,10 @@ console.log('lastOrderId'+lastOrderId);
 	      $("#orderDetailContianer").append(liItem);	
 		}
 
+		// Update column is DB to speak it once only
 		function updateSpeak(id){
 			//console.log('ssssssssssssssssssssssssssssssssssssssssssssssssssssss');
-			var url = '{{url('kitchen/updateTextspeach')}}'+'/'+id;
+			var url = '{{url('api/v1/kitchen/updateTextspeach')}}'+'/'+id;
 			//console.log('urlurl'+url);
 			$.ajax({
 	            url: url, //This is the current doc
