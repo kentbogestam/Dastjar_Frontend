@@ -1,0 +1,4 @@
+2018-12-10 08:52:19 - device id eqx-D647vmg:APA91bH1myZHCQNgxGV16-RYIN9I2dDWNpIIqqvN1FQo0iHR-gbdqFS5VudtBB0bLA5RrRdRhRk_tcVEacrdl0bv1DN2ixRfbj2ksKi9rVP0aoQkwvuF0hcOsdhxZBteBRv7LPAYfD4A exist  
+2018-12-10 09:12:49 - device id eqx-D647vmg:APA91bH1myZHCQNgxGV16-RYIN9I2dDWNpIIqqvN1FQo0iHR-gbdqFS5VudtBB0bLA5RrRdRhRk_tcVEacrdl0bv1DN2ixRfbj2ksKi9rVP0aoQkwvuF0hcOsdhxZBteBRv7LPAYfD4A exist  
+2018-12-10 09:14:30 - device id eqx-D647vmg:APA91bH1myZHCQNgxGV16-RYIN9I2dDWNpIIqqvN1FQo0iHR-gbdqFS5VudtBB0bLA5RrRdRhRk_tcVEacrdl0bv1DN2ixRfbj2ksKi9rVP0aoQkwvuF0hcOsdhxZBteBRv7LPAYfD4A exist  
+2018-12-10 09:16:27 - device id eqx-D647vmg:APA91bH1myZHCQNgxGV16-RYIN9I2dDWNpIIqqvN1FQo0iHR-gbdqFS5VudtBB0bLA5RrRdRhRk_tcVEacrdl0bv1DN2ixRfbj2ksKi9rVP0aoQkwvuF0hcOsdhxZBteBRv7LPAYfD4A exist  

@@ -342,6 +342,21 @@
 			</tbody>
 		</table>
 	</div>
+
+	<!-- Warning Model: if time doesn't cover the working hours of the restaurant -->
+	<div class="modal fade" id="warning-add-product-future-price">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Warning!</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">{{ __('messages.warningAddProductFuturePrice') }}</div>
+			</div>
+		</div>
+	</div>
 @endsection
 
 @section('footer-script')
@@ -373,8 +388,8 @@
 						"_token": "{{ csrf_token() }}", 
 						'product_id': $('#selected_prod_product_id').val(),
 						'store_id': $('#selected_prod_store_id').val(),
-						'publishing_start_date': $("#date-start").val(), 
-						'publishing_end_date': $("#date-end").val()
+						'publishing_start_date': $("#date-start-utc").val(), 
+						'publishing_end_date': $("#date-end-utc").val()
 					}, 
 					function(data) {
 						console.log(data);
@@ -439,8 +454,18 @@
 				        	var currentPrice = '';
 				        	if(item.current_price != null)
 				        	{
+				        		//
+								dStart = item.current_price.publishing_start_date;
+								dStart = moment.utc(dStart).toDate();
+								dStart = moment(dStart).local().format('MMM DD, Y HH:mm');
+								dEnd = item.current_price.publishing_end_date;
+								dEnd = moment.utc(dEnd).toDate();				
+								dEnd = moment(dEnd).local().format('MMM DD, Y HH:mm');
+								formattedFromToDate = " " + dStart + " - " + dEnd;
+
+								//
 				        		currentPrice += '<div class="menu_icons">'+
-				        			'<span style="margin-right: 10px; color: rgba(199,7,17,1)">SEK '+item.current_price.price+'</span><span class="fa fa-calendar"></span>'+
+				        			'<span style="margin-right: 10px; color: rgba(199,7,17,1)">SEK '+item.current_price.price+'</span><span class="fa fa-calendar"></span><span>'+formattedFromToDate+'</span>'+
 				        			'<a href="javascript:void(0)" onClick="delete_dish(\'{{url('kitchen/delete-menu-dish?product_id=')}}'+item.product_id+'&price_id='+item.current_price.id+'\')" data-ajax="false">'+
 				        				'<span class="fa fa-trash" style="float: right; margin-left: 15px"></span>'+
 				        			'</a>'+
@@ -477,6 +502,11 @@
 			}
 		});
 	});
+
+	// Show warning add future price model
+	@if(Session::has('warningAddFuturePrice'))
+		$("#warning-add-product-future-price").modal();
+	@endif
 
 	$(document).on("scrollstop", function (e) {
     	var activePage = $.mobile.pageContainer.pagecontainer("getActivePage"),
@@ -535,8 +565,18 @@
 				if(returnedData.futureProductPrices != null && returnedData.futureProductPrices.length)
 				{
 					$.each(returnedData.futureProductPrices, function(i, item) {
+						//
+						dStart = item.publishing_start_date;
+						dStart = moment.utc(dStart).toDate();
+						dStart = moment(dStart).local().format('MMM DD, Y HH:mm');
+						dEnd = item.publishing_end_date;
+						dEnd = moment.utc(dEnd).toDate();				
+						dEnd = moment(dEnd).local().format('MMM DD, Y HH:mm');
+						formattedFromToDate = " " + dStart + " - " + dEnd;
+
+						//
 			        	futurePricesHtml += '<div class="menu_icons">'+
-		        			'<span style="margin-right: 10px; color: rgba(199,7,17,1)">SEK '+item.price+'</span><span class="fa fa-calendar"></span>'+
+		        			'<span style="margin-right: 10px; color: rgba(199,7,17,1)">SEK '+item.price+'</span><span class="fa fa-calendar"></span><span>'+formattedFromToDate+'</span>'+
 		        			'<a href="javascript:void(0)" onClick="delete_dish(\'{{url('kitchen/delete-menu-dish?product_id=')}}'+item.product_id+'&price_id='+item.id+'\')" data-ajax="false">'+
 		        				'<span class="fa fa-trash" style="float: right; margin-left: 15px"></span>'+
 		        			'</a>'+

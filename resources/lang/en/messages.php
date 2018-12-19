@@ -90,4 +90,5 @@ return [
     'Others' => 'Others',
     'dateTimeAlert'=>'Both time and date needs to be set to proceed',
     'kitchenTextToSpeechDefault' => 'New Order',
+    'warningAddProductFuturePrice' => 'Your proposed time is conflicting with the stores opening hours!'
 ];

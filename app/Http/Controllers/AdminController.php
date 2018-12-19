@@ -1183,8 +1183,8 @@ class AdminController extends Controller
      */
     public function isFutureDateAvailable(Request $request)
     {
-        $publishing_start_date = \DateTime::createFromFormat('d/m/Y - H:i', $request->publishing_start_date);
-        $publishing_end_date = \DateTime::createFromFormat('d/m/Y - H:i', $request->publishing_end_date);
+        $publishing_start_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_start_date);
+        $publishing_end_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_end_date);
 
         $status = 1;
         $product_price_list = new ProductPriceList();
@@ -1194,10 +1194,11 @@ class AdminController extends Controller
             $status = 0;
         }
 
-        return response()->json(['status' => $status]);
+        return response()->json(['status' => $status, 'publishing_start_date' => $publishing_start_date]);
     }
 
     public function addDishPrice(Request $request){
+        //dd($request->all());
         // dd($request->publishing_start_date);
         $publishing_start_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_start_date);
 
@@ -1230,6 +1231,39 @@ class AdminController extends Controller
         $product_price_list->publishing_start_date = $request->publishing_start_date;
         $product_price_list->publishing_end_date = $request->publishing_end_date;
         $product_price_list->save();
+
+        // Check if time doesn't cover the working hours of the restaurant
+        $store = Store::select(['store_open_close_day_time'])
+                    ->where('store_id', $request->store_id)
+                    ->first();
+
+        if($store)
+        {
+            $openTimeRestaurant = $closeTimeRestaurant = null;
+            $dayOfPriceDate = $publishing_start_date->format('D');
+            $openCloseList = explode(",", $store->store_open_close_day_time);
+            $startTimeFuturePrice = \DateTime::createFromFormat('d/m/Y - H:i', $request->dateStart)->format('H:i:00');
+            $endTimeFuturePrice = \DateTime::createFromFormat('d/m/Y - H:i', $request->dateEnd)->format('H:i:00');
+
+            // Get restaurant working hours
+            if( (count($openCloseList) == 1) && strpos($store->store_open_close_day_time, 'All') >= 0 )
+            {
+                $getDay = explode("::", $openCloseList[0]);
+                $getTime = explode("to", $getDay[1]);
+                $openTimeRestaurant = $getTime[0];
+                $closeTimeRestaurant = $getTime[1];
+            }
+
+            // Check if future price time doesn't cover restaurant working hours
+            if( $openTimeRestaurant != null & $closeTimeRestaurant != null )
+            {
+                if( strtotime($startTimeFuturePrice) < strtotime($openTimeRestaurant) || 
+                    strtotime($endTimeFuturePrice) > strtotime($closeTimeRestaurant) )
+                {
+                    $request->session()->flash('warningAddFuturePrice', 1);
+                }
+            }
+        }
 
         return back()->with('success','Price added successfully');
     }

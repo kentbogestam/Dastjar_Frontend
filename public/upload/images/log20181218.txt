@@ -1,0 +1,7 @@
+2018-12-18 08:34:25 - device id eqx-D647vmg:APA91bH1myZHCQNgxGV16-RYIN9I2dDWNpIIqqvN1FQo0iHR-gbdqFS5VudtBB0bLA5RrRdRhRk_tcVEacrdl0bv1DN2ixRfbj2ksKi9rVP0aoQkwvuF0hcOsdhxZBteBRv7LPAYfD4A exist  
+2018-12-18 08:42:02 - device id eqx-D647vmg:APA91bH1myZHCQNgxGV16-RYIN9I2dDWNpIIqqvN1FQo0iHR-gbdqFS5VudtBB0bLA5RrRdRhRk_tcVEacrdl0bv1DN2ixRfbj2ksKi9rVP0aoQkwvuF0hcOsdhxZBteBRv7LPAYfD4A exist  
+2018-12-18 08:43:23 - device id eqx-D647vmg:APA91bH1myZHCQNgxGV16-RYIN9I2dDWNpIIqqvN1FQo0iHR-gbdqFS5VudtBB0bLA5RrRdRhRk_tcVEacrdl0bv1DN2ixRfbj2ksKi9rVP0aoQkwvuF0hcOsdhxZBteBRv7LPAYfD4A exist  
+2018-12-18 08:43:41 - device id eqx-D647vmg:APA91bH1myZHCQNgxGV16-RYIN9I2dDWNpIIqqvN1FQo0iHR-gbdqFS5VudtBB0bLA5RrRdRhRk_tcVEacrdl0bv1DN2ixRfbj2ksKi9rVP0aoQkwvuF0hcOsdhxZBteBRv7LPAYfD4A exist  
+2018-12-18 08:47:27 - device id eqx-D647vmg:APA91bH1myZHCQNgxGV16-RYIN9I2dDWNpIIqqvN1FQo0iHR-gbdqFS5VudtBB0bLA5RrRdRhRk_tcVEacrdl0bv1DN2ixRfbj2ksKi9rVP0aoQkwvuF0hcOsdhxZBteBRv7LPAYfD4A exist  
+2018-12-18 08:48:29 - device id eqx-D647vmg:APA91bH1myZHCQNgxGV16-RYIN9I2dDWNpIIqqvN1FQo0iHR-gbdqFS5VudtBB0bLA5RrRdRhRk_tcVEacrdl0bv1DN2ixRfbj2ksKi9rVP0aoQkwvuF0hcOsdhxZBteBRv7LPAYfD4A exist  
+2018-12-18 10:25:40 - device id eqx-D647vmg:APA91bH1myZHCQNgxGV16-RYIN9I2dDWNpIIqqvN1FQo0iHR-gbdqFS5VudtBB0bLA5RrRdRhRk_tcVEacrdl0bv1DN2ixRfbj2ksKi9rVP0aoQkwvuF0hcOsdhxZBteBRv7LPAYfD4A exist  
