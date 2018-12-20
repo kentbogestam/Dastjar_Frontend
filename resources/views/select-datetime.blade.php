@@ -57,9 +57,10 @@ window.addEventListener('load', function(){ setTimeout(function(){ window.scroll
 								$('*[name=date16]').appendDtpicker({
 									"inline": true,
 									"futureOnly": true,
-									"amPmInTimeList": true,
+									
 									"todayButton": false,
-									"locale": "sv"
+									"locale": "sv",
+									"dateFormat": "DD.MM.YY H:mmTT"
 								});
 							});
 						</script>
