@@ -52,6 +52,7 @@ window.addEventListener('load', function(){ setTimeout(function(){ window.scroll
 	    		 <div class="error-show" id="error-show"></div>
              	 <div class="dateandtime" id="dateandtime">
 		            
+		          @if(Session::get('applocale') ==='sv')
 						<script type="text/javascript">
 							$(function(){
 								$('*[name=date16]').appendDtpicker({
@@ -59,12 +60,30 @@ window.addEventListener('load', function(){ setTimeout(function(){ window.scroll
 									"futureOnly": true,
 									"todayButton": false,
 									"minuteInterval": 15,
-									"locale": "sv",
+									"locale": 'sv',
 									"dateFormat": "DD.MM.YY H:mmTT"
 								});
 							});
 						</script>
-						 <input type="hidden" name="date16" id="date16" value="" onchange="setDateTime()">
+					@else
+						<script type="text/javascript">
+							$(function(){
+								$('*[name=date16]').appendDtpicker({
+									"inline": true,
+									"futureOnly": true,
+									"todayButton": false,
+									"minuteInterval": 15,
+									"locale": 'en',
+									"dateFormat": "DD.MM.YY H:mmTT"
+								});
+							});
+						</script>
+
+						@endif
+
+					
+                    
+					<input type="hidden" name="date16" id="date16" value="" onchange="setDateTime()"/>
 				</div>	
 			</div>	
 	    		
