@@ -189,17 +189,21 @@ window.addEventListener('load', function(){ setTimeout(function(){ window.scroll
         });*/
 
          $("#ss").click(function(e){
+
+         	var dateVar = $('#date16').handleDtpicker('getDate');
+         	$('#date-value1-23').val(dateVar.toString());
+			window.alert($('#date-value1-23').val());
 	   		
 	   			var timeHH = $('#timeH').val();
 				var timeMM = $('#timeM').val();
 
 				var curDate = new Date().getTime();
-				var selDate = new Date($('#date16').val()).getTime();
+				var selDate = new Date($('#date-value1-23').val()).getTime();
 
-			      var cur=  new Date();
-			var sel = new Date($('#date16').val());
+			    var cur=  new Date();
+			    var sel = new Date($('#date-value1-23').val());
 
-                 alert(cur.getDate());alert(sel.getDate());
+                 alert(cur.getDate());alert("select"+sel.getDate());
 
 				hdate = moment(selDate).toDate();
 				utcdate = moment.utc(hdate);
@@ -212,7 +216,7 @@ window.addEventListener('load', function(){ setTimeout(function(){ window.scroll
 				}else{
 					$('#date-value1-23').val(hdate);					
 					$('.error_time').hide();
-					$("#form").submit();
+					//$("#form").submit();
 				}
 	   		
 		});
