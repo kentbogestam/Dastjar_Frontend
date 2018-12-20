@@ -1,8 +1,6 @@
 @extends('layouts.master')
 @section('head-scripts')
-	<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-<!-- 	<link rel="stylesheet" href="{{asset('css/spinningwheel.css')}}" type="text/css" media="all">
-	<script type="text/javascript" src="{{asset('js/spinningwheel.js')}}"></script> -->
+	
 
 	<style type="text/css">
 		#demo1-2{
@@ -28,7 +26,7 @@
 <script type="text/javascript" src="//momentjs.com/downloads/moment-with-locales.min.js"></script>
 <script type="text/javascript" src="{{asset('js/datetime/select-date-time.js')}}"></script>
 <link type="text/css" href="{{asset('css/dateandtime/jquery.simple-dtpicker.css')}}" rel="stylesheet" />
-
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 
 <script type="text/javascript">
 
