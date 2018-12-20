@@ -23,8 +23,19 @@
 		    display: none;
 		}		
 	</style>
+<script type="text/javascript" src="{{asset('js/jquery-1.11.1.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/datetime/jquery.simple-dtpicker.js')}}"></script>
+<link type="text/css" href="{{asset('js/datetime/jquery.simple-dtpicker.css')}}" rel="stylesheet" />
+
+
+	<!-- <script type="text/javascript" src="{{asset('js/jquery.datetimepicker.min.js')}}"></script>
+	<script type="text/javascript" src="{{asset('js/dateFormat.min.js')}}"></script>-->
+	<script type="text/javascript" src="{{asset('js/jquery-dateformat.min.js')}}"></script> 
+	<script type="text/javascript" src="//momentjs.com/downloads/moment-with-locales.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.21/moment-timezone-with-data.min.js"></script>
 
 <script type="text/javascript">
+
 window.addEventListener('load', function(){ setTimeout(function(){ window.scrollTo(0,0); }, 100); }, true);
 
 $(document).ready(function(){
@@ -58,7 +69,7 @@ $(document).ready(function(){
  			// $("#bdaytime").setNow();
 
 	    }else{
-	    	$("#demo1-2").show();
+	    	$("#dateandtime").show();
 	    }
 });
 </script>
@@ -71,7 +82,23 @@ $(document).ready(function(){
 			{{ csrf_field() }}
 			<div role="main" data-role="main-content" class="content" id="wrapper">
 				<div class="">
-		        	<div id="demo1-2"></div>
+		        	<!--<div id="demo1-2"></div>-->
+  <div class="dateandtime" id="dateandtime">
+		        	<h4>Only allow future datetimes ("futureOnly": true)</h4>
+		            
+						<script type="text/javascript">
+							$(function(){
+								$('*[name=date16]').appendDtpicker({
+									"inline": true,
+									"futureOnly": true,
+									"amPmInTimeList": true,
+									"todayButton": false,
+									"locale": "sv"
+								});
+							});
+						</script>
+						 <input type="text" name="date16" id="date16" value="">
+</div>
 
 					<div class="date_block">
 					  Date and Time:
@@ -99,12 +126,6 @@ $(document).ready(function(){
 
 @section('footer-script')
 
-	<script type="text/javascript" src="{{asset('js/jquery-1.11.1.min.js')}}"></script>
-	<script type="text/javascript" src="{{asset('js/jquery.datetimepicker.min.js')}}"></script>
-	<script type="text/javascript" src="{{asset('js/dateFormat.min.js')}}"></script>
-	<script type="text/javascript" src="{{asset('js/jquery-dateformat.min.js')}}"></script>
-	<script type="text/javascript" src="//momentjs.com/downloads/moment-with-locales.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.21/moment-timezone-with-data.min.js"></script>
 
 	<script type="text/javascript">
 		/*$('.error_time').hide();	*/
@@ -144,7 +165,7 @@ $(document).ready(function(){
         $('#date-value1-2').html(dateVal);
         $('#date-value1-23').val(date);
 
-	   $('#demo1-2').datetimepicker({
+	 /*  $('#demo1-2').datetimepicker({
             date: date,
             startDate: startDate,
             viewMode: 'YMDHM',
@@ -164,48 +185,35 @@ $(document).ready(function(){
                 $('#date-value1-2').text(dateVal);
                 $('#date-value1-23').val(this.getValue());
             }
-        });
+        });*/
 
          $("#ss").click(function(e){
-	   		if($("#demo1-2").css('display') == 'block'){
+	   		if($("#dateandtime").css('display') == 'block'){
 	   			var timeHH = $('#timeH').val();
 				var timeMM = $('#timeM').val();
 
 				var curDate = new Date().getTime();
-				var selDate = new Date($('#date-value1-23').val()).getTime();
+				var selDate = new Date($('#date16').val()).getTime();
 
 			var cur=  new Date();
-			var sel = new Date($('#date-value1-23').val());
+			var sel = new Date($('#date16').val());
 
-
+                 //alert(cur.getDate());alert(sel.getDate());
 
 				hdate = moment(selDate).toDate();
 				utcdate = moment.utc(hdate);
+console.log(hdate);
+console.log(utcdate);
+
 
 
                if(cur.getDate()==sel.getDate()){
-					//$('.error_time2').show();
+					
                   $('.error_time3').show();
-					//console.log(timeHH);
-				}
-				else if(timeHH == 00 && timeMM == 00){
-					$('.error_time').show();
-					//console.log(timeHH);
-				}else if(selDate<curDate){
-					$('.error_time2').show();
-					//console.log(timeHH);
-				}
+					
 				
-				else if(timeHH == 00 && timeMM != 00){
-					$('#date-value1-23').val(utcdate);					
-					$('.error_time').hide();
-					$("#form").submit();
-				}else if(timeHH != 00 && timeMM == 00){
-					$('#date-value1-23').val(utcdate);					
-					$('.error_time').hide();
-					$("#form").submit();
 				}else{
-					$('#date-value1-23').val(utcdate);					
+					$('#date-value1-23').val(hdate);					
 					$('.error_time').hide();
 					$("#form").submit();
 				}
@@ -223,18 +231,13 @@ $(document).ready(function(){
 
 	 			    $('.error_apple_time').hide();
 	                $('#date-value1-23').val(utcdate);
-					$("#form").submit();
+					//$("#form").submit();
 				}
 	   		}
 		});
 
 
 	   $(document).ready(function(){
-	   		//$("td.day:contains('"+curr_date+"')").addClass("today selected");
-
-//              $("td:contains").filter(function() {
-//     return $(this).text() == curr_date;
-// }).addClass("today selected");
 
 	   	    $("td.day.today").parent().prevAll().andSelf().find("td.oday").css({"pointer-events":"none"});
 
@@ -249,7 +252,7 @@ $(document).ready(function(){
 	   	    });
 	   });
 
-	  $('.perfect-datetimepicker').append("<p class='error_time'>Please enter PickUp time in 24 hours format. </p>"+"<p class='error_time2'>Date and Time is not valid. </p>"+"<p class='error_time3'>Order Date Cannot be Current Date </p>");
+	  $('.dateandtime').append("<p class='error_time'>Please enter PickUp time in 24 hours format. </p>"+"<p class='error_time2'>Date and Time is not valid. </p>"+"<p class='error_time3'>Order Date Cannot be Current Date </p>");
 	// var lar_r =   $('.tt tbody').find('tr:first')
 	// var bb = $(lar_r).append('<td class=""></td>');
 
