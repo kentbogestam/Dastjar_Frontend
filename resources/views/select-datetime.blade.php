@@ -83,8 +83,15 @@ window.addEventListener('load', function(){ setTimeout(function(){ window.scroll
 			<div role="main" data-role="main-content" class="content" id="wrapper">
 				<div class="">
 		        	<!--<div id="demo1-2"></div>-->
+		        	<div class="show-date-time">
+				        <span id="date-value1-2" class="date_show_section" value = ""></span>
+				        <input type="hidden" id="date-value1-23" name="dateorder" value="" />
+		    			<div class="go-btn">
+		    				<button type="button" id="ss" class="fa fa-chevron-right"></button>
+		    			</div>
+		    		</div>
   <div class="dateandtime" id="dateandtime">
-		        	<h4>Only allow future datetimes ("futureOnly": true)</h4>
+		        	<!--<h4>Only allow future datetimes ("futureOnly": true)</h4>-->
 		            
 						<script type="text/javascript">
 							$(function(){
@@ -107,13 +114,7 @@ window.addEventListener('load', function(){ setTimeout(function(){ window.scroll
 					  <p class='error_apple_time'>Date and Time is not valid. </p>
 					</div>-->
 
-		    		<div class="show-date-time">
-				        <span id="date-value1-2" class="date_show_section" value = ""></span>
-				        <input type="hidden" id="date-value1-23" name="dateorder" value="" />
-		    			<div class="go-btn">
-		    				<button type="button" id="ss" class="fa fa-chevron-right"></button>
-		    			</div>
-		    		</div>
+		    		
 				</div>	
 	    		
 			</div>
@@ -198,7 +199,7 @@ window.addEventListener('load', function(){ setTimeout(function(){ window.scroll
 			      var cur=  new Date();
 			var sel = new Date($('#date16').val());
 
-                 //alert(cur.getDate());alert(sel.getDate());
+                 alert(cur.getDate());alert(sel.getDate());
 
 				hdate = moment(selDate).toDate();
 				utcdate = moment.utc(hdate);
