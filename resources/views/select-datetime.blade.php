@@ -214,9 +214,10 @@ window.addEventListener('load', function(){ setTimeout(function(){ window.scroll
 					
 				
 				}else{
+					
 					$('#date-value1-23').val(hdate);					
 					$('.error_time').hide();
-					//$("#form").submit();
+					$("#form").submit();
 				}
 	   		
 		});
