@@ -38,7 +38,7 @@
 
 window.addEventListener('load', function(){ setTimeout(function(){ window.scrollTo(0,0); }, 100); }, true);
 
-$(document).ready(function(){
+/*$(document).ready(function(){
 	var ua= navigator.userAgent, tem, 
 	    M= ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
 
@@ -71,7 +71,7 @@ $(document).ready(function(){
 	    }else{
 	    	$("#dateandtime").show();
 	    }
-});
+});*/
 </script>
 @endsection
 @section('content')
@@ -195,17 +195,13 @@ $(document).ready(function(){
 				var curDate = new Date().getTime();
 				var selDate = new Date($('#date16').val()).getTime();
 
-			var cur=  new Date();
-			var sel = new Date($('#date16').val());
+			    var cur=  new Date();
+			    var sel = new Date($('#date16').val());
 
                  //alert(cur.getDate());alert(sel.getDate());
 
 				hdate = moment(selDate).toDate();
 				utcdate = moment.utc(hdate);
-console.log(hdate);
-console.log(utcdate);
-
-
 
                if(cur.getDate()==sel.getDate()){
 					
@@ -217,7 +213,7 @@ console.log(utcdate);
 					$('.error_time').hide();
 					$("#form").submit();
 				}
-	   		}else{
+	   		}/*else{
 				dateVal = new Date($("#bdaytime").val());
 
 				if(dateVal<new Date()){
@@ -230,9 +226,9 @@ console.log(utcdate);
 					utcdate = moment.utc(hdate);
 
 	 			    $('.error_apple_time').hide();
-	                $('#date-value1-23').val(utcdate);
-					//$("#form").submit();
-				}
+	                $('#date-value1-23').val(hdate);
+					$("#form").submit();
+				}*/
 	   		}
 		});
 
