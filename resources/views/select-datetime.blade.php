@@ -100,12 +100,12 @@ window.addEventListener('load', function(){ setTimeout(function(){ window.scroll
 						 <input type="text" name="date16" id="date16" value="">
 </div>
 
-					<div class="date_block">
+					<!--<div class="date_block">
 					  Date and Time:
 					  <input type="datetime-local" id="bdaytime" name="bdaytime" value="" min="">
 					  <span>Please click on the date above to change the date</span>
 					  <p class='error_apple_time'>Date and Time is not valid. </p>
-					</div>
+					</div>-->
 
 		    		<div class="show-date-time">
 				        <span id="date-value1-2" class="date_show_section" value = ""></span>
@@ -188,15 +188,15 @@ window.addEventListener('load', function(){ setTimeout(function(){ window.scroll
         });*/
 
          $("#ss").click(function(e){
-	   		if($("#dateandtime").css('display') == 'block'){
+	   		
 	   			var timeHH = $('#timeH').val();
 				var timeMM = $('#timeM').val();
 
 				var curDate = new Date().getTime();
 				var selDate = new Date($('#date16').val()).getTime();
 
-			    var cur=  new Date();
-			    var sel = new Date($('#date16').val());
+			      var cur=  new Date();
+			var sel = new Date($('#date16').val());
 
                  //alert(cur.getDate());alert(sel.getDate());
 
@@ -213,23 +213,7 @@ window.addEventListener('load', function(){ setTimeout(function(){ window.scroll
 					$('.error_time').hide();
 					$("#form").submit();
 				}
-	   		}/*else{
-				dateVal = new Date($("#bdaytime").val());
-
-				if(dateVal<new Date()){
-				    $('.error_apple_time').show();
-				}else{
-					$('#date-value1-23').val(moment.utc($('#date-value1-23').val()).format('DD/MM/YYYY HH:mm'));				
-
-					selDate = dateVal.getTime();
-					hdate = moment(selDate).toDate();
-					utcdate = moment.utc(hdate);
-
-	 			    $('.error_apple_time').hide();
-	                $('#date-value1-23').val(hdate);
-					$("#form").submit();
-				}*/
-	   		}
+	   		
 		});
 
 
