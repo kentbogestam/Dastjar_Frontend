@@ -309,12 +309,15 @@ class OrderController extends Controller
     }*/
 
     public function orderView($orderId){
+
         $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
 
         $storeDetail = Store::where('store_id', $order->store_id)->first();
         $user = User::where('id',$order->user_id)->first();
 
         $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
+
+        Session::forget('paymentmode');
 
         return view('order.index', compact('order','orderDetails','storeDetail','user'));
     }
@@ -549,10 +552,13 @@ class OrderController extends Controller
                     $request->session()->put('stripeAccount', $companyUserDetail->stripe_user_id);
                 }
                 Session::forget('orderData');
+                 $request->session()->put('paymentmode',1);
                  return view('order.cart', compact('order','orderDetails'));
             }else{
-                $user = User::where('id',$order->user_id)->first();                      
-                return redirect()->route('order-cart', $orderId);
+                $user = User::where('id',$order->user_id)->first(); 
+                   $request->session()->put('paymentmode',0);
+                return view('order.cart', compact('order','orderDetails'));                     
+               //return redirect()->route('order-view', $orderId);
             }
         }else{
             $todayDate = $request->session()->get('browserTodayDate');
@@ -694,13 +700,16 @@ public function cart(Request $request){
 
                     if(isset($companyUserDetail->stripe_user_id))
                     $request->session()->put('stripeAccount', $companyUserDetail->stripe_user_id);
-
+                     $request->session()->put('paymentmode',1);
                     return view('order.cart', compact('order','orderDetails'));
                 }else{
+                   
+
+                     $request->session()->put('paymentmode',0);
                     $user = User::where('id',$order->user_id)->first();      
                     
-
-                    return redirect()->route('order-view', $orderId);
+                    return view('order.cart', compact('order','orderDetails'));
+                  //  return redirect()->route('order-view', $orderId);
                 }
             }else{
                 $todayDate = $request->session()->get('browserTodayDate');
@@ -767,7 +776,7 @@ public function cart(Request $request){
 
     if (strpos($url, 'eat-later') !=false){
      
-     return redirect()->action('HomeController@eatLater');
+     return redirect()->action('HomeController@selectOrderDate');
 
     }elseif(strpos($url, 'eat-now') !=false){
 
