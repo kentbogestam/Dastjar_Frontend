@@ -2,6 +2,7 @@
 
     $flag='false';
     $menuActivate='false';
+    $cart='false';
     $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
     $baseurl=$app->make('url')->to('/')."/";
     if (strpos($_SERVER['REQUEST_URI'], 'eat-now') !== false || strpos($_SERVER['REQUEST_URI'], 'eat-later') !== false || $actual_link === $baseurl ) {
@@ -13,6 +14,10 @@
        $menuActivate='true';
       
     }
+    elseif( strpos($_SERVER['REQUEST_URI'], 'cart') !== false || strpos($_SERVER['REQUEST_URI'], 'save-order') !== false ){
+       
+       $cart='true';  
+    }
  }}
  @endphp
 
@@ -21,11 +26,18 @@
 	
 		<div class="ui-block-a">
 
-         @if($flag=='true'):
+         @if($flag=='true')
 			<a href="javascript:void(0)" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
 		@else
-		     <a href="{{Session::get('route_url')}}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 
+             @if($cart=='true')
+             <a href="#" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" onclick=deleteFullCart("{{ url('emptyCart/') }}",'2')> 1
+             @else
+		     <a href="{{Session::get('route_url')}}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">2
+            
+            @endif
+            
+		
 		@endif
 			<div class="img-container">
 				<img src="{{asset('images/icons/select-store_01.png')}}">
@@ -34,7 +46,7 @@
 		</a>
 	  </div>
 
-         @if($menuActivate=='false'):
+         @if($menuActivate=='false')
 
 		<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
 			<div class="img-container">
@@ -42,7 +54,7 @@
 			</div>
 			<span>{{ __('messages.Send') }}</span>
 		</a></div>
-
+      
         @else
 
 		  <div class="ui-block-b">
