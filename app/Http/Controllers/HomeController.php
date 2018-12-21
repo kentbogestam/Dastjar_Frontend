@@ -362,6 +362,8 @@ class HomeController extends Controller
     }
 
     public function eatLater(Request $request){
+
+       // if($request->session()->get('order_date') != null){
         $pieces = explode(" ", $request->session()->get('current_date_time'));
         $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
         $currentTime = $pieces[4];
@@ -370,9 +372,11 @@ class HomeController extends Controller
          $request->session()->put('route_url', url('/').'/eat-later'); // code added by saurabh to update correct url for eat-later and eat-now
 
         if(!empty($request->input())) {
+
             $data = $request->input();
             $request->session()->put('order_date', $data['dateorder']);
             return view('eat_later', compact(''));
+            
         } else {
             if(Auth::check()){
                 $userDetail = User::whereId(Auth()->id())->first();
