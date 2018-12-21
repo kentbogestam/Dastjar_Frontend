@@ -4,6 +4,7 @@
     $menuActivate='false';
     $selectEatLaterTime='false';
     $map='false';
+    $cart='false';
     $storeMap=false;
     //$actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
     $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
@@ -32,6 +33,12 @@
        }
       
     }
+    elseif(strpos($_SERVER['REQUEST_URI'], 'cart') !== false){
+       
+       $cart='true';
+      
+    }
+
  }}
  @endphp
 
@@ -102,6 +109,22 @@
 		<a class="ui-btn-right map-btn user-link" href="#left-side-bar"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
 	</div>
 	</div>
+
+	 @elseif($cart=='true')
+	 <div data-role="header" class="header" id="nav-header"  data-position="fixed">
+			<div class="nav_fixed">
+				<div class="logo">6
+					<a href="#" data-ajax="false" class="ui-btn-left text-left backarrow-btn" onclick=getResturantMenu(this)>
+
+						<img src="{{asset('images/icons/backarrow.png')}}" width="11px" ></a>
+					<div class="inner-logo">
+						<img src="{{asset('images/logo.png')}}">
+						@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
+					</div>
+				</div>
+				<a href="{{url('search-map-eatnow')}}" class="ui-btn-right map-btn user-link" data-ajax="false"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
+			</div>
+		</div>
 	@else
 	<div data-role="header" class="header" id="nav-header"  data-position="fixed">
 			<div class="nav_fixed">
