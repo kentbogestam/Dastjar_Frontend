@@ -46,7 +46,7 @@
 	<div data-role="header" class="header" id="nav-header"  data-position="fixed">
 			<div class="nav_fixed">
 				<div class="logo">
-					1
+					
 					<div class="inner-logo">
 						<img src="{{asset('images/logo.png')}}">
 						@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
@@ -60,7 +60,7 @@
 
  <div data-role="header" class="header"  data-position="fixed" data-tap-toggle="false">
 		<div class="logo">
-			2
+			
 			<div class="inner-logo">
 				<span class="rest-title">{{$storedetails->store_name}}</span>
 				@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
@@ -75,7 +75,7 @@
 			<div class="nav_fixed">
 				<a href="{{Session::get('route_url')}}" data-ajax="false" class="ui-btn-left text-left backarrow-btn"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a>
 				<div class="logo">
-					3
+					
 					<div class="inner-logo">
 						<img src="{{asset('images/logo.png')}}">
 						@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
@@ -113,7 +113,7 @@
 	 @elseif($cart=='true')
 	 <div data-role="header" class="header" id="nav-header"  data-position="fixed">
 			<div class="nav_fixed">
-				<div class="logo">6
+				<div class="logo">
 					<a href="#" data-ajax="false" class="ui-btn-left text-left backarrow-btn" onclick=getResturantMenu(this)>
 
 						<img src="{{asset('images/icons/backarrow.png')}}" width="11px" ></a>
@@ -129,7 +129,7 @@
 	<div data-role="header" class="header" id="nav-header"  data-position="fixed">
 			<div class="nav_fixed">
 				<div class="logo">
-					5
+					
 					<div class="inner-logo">
 						<img src="{{asset('images/logo.png')}}">
 						@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
