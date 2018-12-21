@@ -239,9 +239,17 @@ function decrementCartValue(id)
 
   }
 
-  function deleteFullCart(url){
+  function deleteFullCart(url,value){
+     
+       var deleteConfirm;
+     if(value==1){
 
-    var deleteConfirm = confirm("Are you sure you want to delete the Cart");
+      deleteConfirm = confirm("Are you sure you want to delete the Cart");
+     
+     }else if(value==2){
+
+      deleteConfirm = confirm("Your cart item will be removed if you leave this page");
+     }
 
       if(deleteConfirm==true){
       
@@ -255,5 +263,17 @@ function decrementCartValue(id)
 
 
   }
+
+  function getResturantMenu(e){
+
+    if (e) e.preventDefault(); //W3C method
+  else window.event.returnValue = false; // IE method
+  //.. stuff to do
+  return false; // simpler method that works across browsers
+
+    //makeRedirection($("#redirectUrl").val());
+  }
+
+
 
 kWindow = window;
