@@ -31,9 +31,9 @@
 		@else
 
              @if($cart=='true')
-             <a href="#" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" onclick=deleteFullCart("{{ url('emptyCart/') }}",'2')> 1
+             <a href="#" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" onclick=deleteFullCart("{{ url('emptyCart/') }}",'2')> 
              @else
-		     <a href="{{Session::get('route_url')}}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">2
+		     <a href="{{Session::get('route_url')}}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
             
             @endif
             
