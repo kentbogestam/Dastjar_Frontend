@@ -471,7 +471,6 @@
 
 	$("body").on('click',".accept-btn", function(){
 
-		alert("wowowwow");
 		$.ajax({
 			url: "{{ url('accept-gdpr') }}", 
 			type: "POST",
@@ -481,10 +480,10 @@
 			success: function(result){
 				//console.log(result);
     			if(result == 0){
-    				alert("1");
+    				
 					off();
 				}else{
-					alert("2");
+
 					off();
 					$("#form").submit();
 				}
