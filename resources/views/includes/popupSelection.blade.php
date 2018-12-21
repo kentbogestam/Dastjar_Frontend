@@ -23,9 +23,14 @@
 
 <div class="popupSelection">
 
-	<div class="static-content">
+	<div class="static-content" id="contentEnglish">
 		<h3>Welcome to anar !</h3>
 		<p>Please choose to Eat now or later!</p>
+	</div>
+
+	<div class="static-content" id="contentSwedish">
+		<h3>Välkommen till anar!</h3>
+		<p>Välj mellan "Ät nu eller Senare"!</p>
 	</div>
 		
     <div class="select-restaurant">

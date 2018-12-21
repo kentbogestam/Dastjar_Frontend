@@ -40,17 +40,8 @@ function setResttype(url,type){
 	
 	$.get(url, { restType: type, currentdateTime : d}, 
     	function(returnedData){
-         
-    		// console.log(returnedData["data"]);
-    		// temp =returnedData["data"];
-
+    
     		window.location.href = returnedData["data"];
-    		//loc_flag=4;
-   //  		$('#login-popup').hide();
-			// $("#loading-img").hide();
-   //  		$("#overlay").hide();
-
-	    	
-
-		});
+    	
+  });
 }

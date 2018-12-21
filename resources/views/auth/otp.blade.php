@@ -76,6 +76,7 @@ function timer()
 }
 
 function goToLogin(){
+  
        window.location.href = "{{url('mobileLogin')}}@if(Session::get('userPhoneNumber')!=null)?m={{Session::get('userPhoneNumber')}}@endif";
 }
 

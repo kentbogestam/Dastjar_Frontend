@@ -5,10 +5,10 @@
     $selectEatLaterTime='false';
     $map='false';
     $storeMap=false;
-    $actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-   // $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+    //$actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+    $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
     $baseurl=$app->make('url')->to('/')."/";
-    if (strpos($_SERVER['REQUEST_URI'], 'eat-now') !== false || strpos($_SERVER['REQUEST_URI'], 'eat-later') !== false || $actual_link === $baseurl || strpos($_SERVER['REQUEST_URI'], 'home') !== false ) {
+    if (strpos($_SERVER['REQUEST_URI'], 'eat-now') !== false || strpos($_SERVER['REQUEST_URI'], 'eat-later') !== false || $actual_link === $baseurl || strpos($_SERVER['REQUEST_URI'], 'home') !== false  || strpos($_SERVER['REQUEST_URI'], 'save-order') !== false) {
 
 		$flag = 'true';
     }
@@ -102,4 +102,18 @@
 		<a class="ui-btn-right map-btn user-link" href="#left-side-bar"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
 	</div>
 	</div>
+	@else
+	<div data-role="header" class="header" id="nav-header"  data-position="fixed">
+			<div class="nav_fixed">
+				<div class="logo">
+					5
+					<div class="inner-logo">
+						<img src="{{asset('images/logo.png')}}">
+						@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
+					</div>
+				</div>
+				<a href="{{url('search-map-eatnow')}}" class="ui-btn-right map-btn user-link" data-ajax="false"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
+			</div>
+		</div>
+
 @endif

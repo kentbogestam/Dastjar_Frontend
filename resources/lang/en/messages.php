@@ -27,6 +27,7 @@ return [
     'Order Number'   => 'Order Number',
     'Your order will be ready on'   => 'Your order will be ready on',
     'ORDER DETAILS'   => 'ORDER DETAILS',
+    'CART DETAILS'   => 'CART DETAILS',
     'TOTAL'   => 'TOTAL',
     'Orders'  => 'Orders',
     'Alias'  => 'Name',  
