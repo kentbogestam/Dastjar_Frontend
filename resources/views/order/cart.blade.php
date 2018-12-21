@@ -9,7 +9,7 @@
 				<h2>{{ __('messages.CART DETAILS') }}</h2>
             <div class="del-cart">
 
-            	<a href="#" data-ajax="false" onclick=deleteFullCart("{{ url('emptyCart/') }}")>Delete Full Cart</a>
+            	<a href="#" data-ajax="false" onclick=deleteFullCart("{{ url('emptyCart/') }}",'1')>Delete Full Cart</a>
 
 
              </div>
@@ -50,7 +50,14 @@
 				
 	</table>
 
-				<div id="saveorder"><a href="{{url('save-order').'/?orderid='.$order->order_id}}" data-ajax="false">send order and pay in restaurant</a></div>
+				<div id="saveorder">
+					@if(Session::get('paymentmode') !=0)
+					<a href="{{url('save-order').'/?orderid='.$order->order_id}}" data-ajax="false">send order and pay in restaurant</a>
+					@else
+					<a href="{{url('order-view').'/'.$order->order_id}}" data-ajax="false">send order and pay in restaurant</a>
+					@endif
+
+				</div>
 			</div>
 		</div>
 	</div>
