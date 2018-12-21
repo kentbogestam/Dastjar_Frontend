@@ -771,19 +771,20 @@ public function cart(Request $request){
  public function emptyCart(Request $request){
 
      $data = $request->input();
+
      $this->deleteWholecart($data['orderid']);
      $url=$request->session()->get('route_url');
 
-    if (strpos($url, 'eat-later') !=false){
+    if (strpos($url, 'selectOrder-date') !=false){
      
      return redirect()->action('HomeController@selectOrderDate');
 
     }elseif(strpos($url, 'eat-now') !=false){
 
          return redirect()->action('HomeController@index');
-    }
-
+    } 
  }
+
 public function deleteWholecart($orderid){
 
           DB::table('orders')->where('order_id', $orderid)->delete();
