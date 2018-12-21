@@ -244,7 +244,7 @@ function decrementCartValue(id)
        var deleteConfirm;
      if(value==1){
 
-      deleteConfirm = confirm("Are you sure you want to delete the Cart");
+      deleteConfirm = confirm("Are you sure that you want to delete all orders");
      
      }else if(value==2){
 
