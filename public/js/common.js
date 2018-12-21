@@ -317,3 +317,7 @@ function checkFormsubmit(e){
       setLocationCookieTime();
   }
 }
+
+function orderPopup(){
+  $("#order-popup").toggleClass("hide-popup");
+ }
