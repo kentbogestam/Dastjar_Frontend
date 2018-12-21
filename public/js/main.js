@@ -10,24 +10,6 @@
 -----------------------------------------------------------------------------------------------------------*/
 
 
-/* ======================  start sticky header js =================== */     
-/*    $(document).ready(function(){
-        $(window).scroll(function(){
-            var window_top = $(window).scrollTop() + 0; // the "12" should equal the margin-top value for nav.stick
-            var div_top = $('#nav-anchor').offset().top;
-                if (window_top > div_top) {
-                    $('.nav_fixed').addClass('stick');
-                } else {
-                    $('.nav_fixed').removeClass('stick');
-                }
-        });
-        
-    });*/
-
-
-/* ======================  end sticky header js =================== */
-
-
 $(document).ready(function($) {
 
     "use strict";
@@ -65,6 +47,7 @@ function incrementValue(id)
     var value = parseInt(document.getElementById(id).value, 10);
     value = isNaN(value) ? 0 : value;
     value++;
+    $("#item"+id).css("background-color", "yellow");
     document.getElementById(id).value = value;
 }
 function decrementValue(id)
@@ -73,12 +56,28 @@ function decrementValue(id)
     value = isNaN(value) ? 0 : value;
     if(value>0){
         value--;
-            document.getElementById(id).value = value;
+        document.getElementById(id).value = value;
+    }
+
+    if(value==0){
+       $("#item"+id).css("background-color", "white");
     }
 
 }
 
 function setCurrentLatLong(urllatlng){
+
+      var userLang = navigator.language || navigator.userLanguage; 
+        if (userLang=='sv'){
+            $("#contentEnglish").hide();
+            $("#contentSwedish").show();
+       
+        }else{
+
+            $("#contentEnglish").show();
+            $("#contentSwedish").hide();
+        }
+
    navigator.geolocation.getCurrentPosition(function(position) {
 
       document.cookie="latitude=" + position.coords.latitude;
@@ -104,8 +103,157 @@ function setCurrentLatLong(urllatlng){
     }           
   });
 
+}
 
+
+function incrementCartValue(id)
+{
+    var grandtotal=0;
+    var value = parseInt(document.getElementById('qty'+id).value, 10);
+    value = isNaN(value) ? 0 : value;
+    value= parseInt(value)+1;
+ 
+    itemprice = parseInt(document.getElementById('itemprice'+id).value, 10);
+    total= parseInt(value)*itemprice;
+    $('#itemtotalDisplay'+id).html(total);
+    $('#itemtotal'+id).val(total);
+
+    document.getElementById('qty'+id).value = value;
+
+    grandtotal= calculateGrandtotal();
+
+    updateCart(value,$('#prod'+id).val(),total,grandtotal);
+
+    $('#grandTotalDisplay').html(grandtotal);
 
 }
+
+
+function decrementCartValue(id)
+{
+     var grandtotal=0;
+   var total=0;
+    var value = parseInt(document.getElementById('qty'+id).value, 10);
+    
+    value = isNaN(value) ? 0 : value;
+    if(value>1){
+        value--;
+        document.getElementById('qty'+id).value = value;
+        itemprice = parseInt(document.getElementById('itemprice'+id).value, 10);
+        total= parseInt(value)*itemprice;
+        $('#itemtotalDisplay'+id).html(total);
+        $('#itemtotal'+id).val(total);
+
+         grandtotal= calculateGrandtotal();
+
+         updateCart(value,$('#prod'+id).val(),total,grandtotal);
+
+
+         $('#grandTotalDisplay').html(grandtotal);
+    }else{
+
+     var deleteConfirm = confirm("Are you sure you want to delete the product");
+
+      if(deleteConfirm==true){
+       
+        var rowCount = $('#table-custom-2 tr').length;
+
+        var productid=$('#prod'+id).val();
+        
+        $('#row_'+id).remove();
+
+                if(rowCount > 3 ){ // count set to 2, because we have 2 row count at last cart item
+                 
+                 grandtotal= calculateGrandtotal();
+                  
+                  value=0; 
+                  updateCart(value,productid,total,grandtotal);
+
+                 $('#grandTotalDisplay').html(grandtotal);
+               }else{
+                      
+                    $('#last-row').remove();
+                    $('#saveorder').remove();
+                    updateCart(0,0,0,0);
+                   makeRedirection($('#redirectUrl').val());
+               }
+
+      }else{
+
+         console.log('not deleted');
+
+
+      }
+    }
+
+  }
+
+  function calculateGrandtotal(){
+
+    var grandtotal=0;
+    var arrayValues = $('input:hidden.itemtotal').map(function(){
+                      return $(this).val()
+                  }).get();
+   
+    for (var i=0;i<arrayValues.length;i++){
+ 
+       grandtotal=parseInt(grandtotal)+parseInt(arrayValues[i]);
+      
+    }
+
+    return grandtotal;
+  }
+
+  function updateCart(qty,productId,totalProductPrice,grandtotal){
+
+   var url= $('#baseUrl').val()+"/updateCart";
+
+   var orderid= $('#orderid').val();
+
+      $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $("input[name=_token]").val()
+                    }
+                });
+
+      $.ajax({
+                    url: url,
+                    data: {'qty': qty, 'productId':productId, 'totalProductPrice':totalProductPrice,
+                            'grandtotal':grandtotal, 'orderid': orderid},
+                    type: 'POST',
+                    datatype: 'JSON',
+                    async: false,
+                    success: function (response) {
+                        if (response.status === 'success') {
+                            //console.log(response.data);
+                            //$('#myModalCallback').modal('toggle');
+                        } else {
+                            alert('Issue in updating cart please contact admin');
+                        }
+                    },
+                    error: function (response) {
+                        $('#errormessage').html(response.message);
+                    }
+                });
+
+
+  }
+
+  function deleteFullCart(url){
+
+    var deleteConfirm = confirm("Are you sure you want to delete the Cart");
+
+      if(deleteConfirm==true){
+      
+        var orderid= $('#orderid').val();
+
+        url= url+"/?orderid="+orderid;
+
+        makeRedirection(url);
+       
+    }
+
+
+  }
 
 kWindow = window;
