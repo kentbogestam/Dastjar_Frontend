@@ -27,6 +27,7 @@ return [
     'Order Number'   => 'Order-ID',
     'Your order will be ready on'   => 'Din beställning är klar på ', 
     'ORDER DETAILS'   => 'ORDERDETALJER',
+    'CART DETAILS'   => 'CART DETALJER',
     'TOTAL'   => 'TOTAL',
     'Orders'  => 'Beställningar',
     'Alias'  => 'Namn',  
@@ -91,5 +92,9 @@ return [
     'Payment Done Successfully' => 'Betallningen genomfördes!',
     'Others' => 'Övriga',
     'Extra Preparation Time' => 'Öka beredningstiden',
-     'dateTimeAlert'=>'Både tid och datum måste anges för att gå vidare',
+    'dateTimeAlert'=>'Både tid och datum måste anges för att gå vidare',
+    'send order and pay in restaurant'=>'skicka order och betala i restaurang',
+    'Delete Product'=>'Är du säker på att du vill radera produkten',
+    'Delete Cart Order'=>'Är du säker på att du vill radera alla beställningar',
+    'Leave Cart Page'=>'Din kundvagns artikel kommer att tas bort om du lämnar den här sidan',
 ];
