@@ -129,7 +129,7 @@ function incrementCartValue(id)
 }
 
 
-function decrementCartValue(id)
+function decrementCartValue(id,msg)
 {
      var grandtotal=0;
    var total=0;
@@ -152,7 +152,7 @@ function decrementCartValue(id)
          $('#grandTotalDisplay').html(grandtotal);
     }else{
 
-     var deleteConfirm = confirm("Are you sure you want to delete the product");
+     var deleteConfirm = confirm(msg);
 
       if(deleteConfirm==true){
        
@@ -239,12 +239,13 @@ function decrementCartValue(id)
 
   }
 
-  function deleteFullCart(url,value){
+  function deleteFullCart(url,value,msg){
+
      
        var deleteConfirm;
      if(value==1){
 
-      deleteConfirm = confirm("Are you sure that you want to delete all orders");
+      deleteConfirm = confirm(msg);
      
      }else if(value==2){
 
@@ -263,17 +264,6 @@ function decrementCartValue(id)
 
 
   }
-
-  function getResturantMenu(e){
-
-    if (e) e.preventDefault(); //W3C method
-  else window.event.returnValue = false; // IE method
-  //.. stuff to do
-  return false; // simpler method that works across browsers
-
-    //makeRedirection($("#redirectUrl").val());
-  }
-
 
 
 kWindow = window;

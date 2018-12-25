@@ -114,7 +114,7 @@
 	 <div data-role="header" class="header" id="nav-header"  data-position="fixed">
 			<div class="nav_fixed">
 				<div class="logo">
-					<a href="#" data-ajax="false" class="ui-btn-left text-left backarrow-btn" onclick=getResturantMenu(this)>
+					<a href="#" data-ajax="false" class="ui-btn-left text-left backarrow-btn">
 
 						<img src="{{asset('images/icons/backarrow.png')}}" width="11px" ></a>
 					<div class="inner-logo">

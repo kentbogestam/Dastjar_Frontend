@@ -91,4 +91,9 @@ return [
     'Others' => 'Others',
     'dateTimeAlert'=>'Both time and date needs to be set to proceed',
     'kitchenTextToSpeechDefault' => 'My Order',
+    'send order and pay in restaurant'=>'send order and pay in restaurant',
+    'Delete Product'=>'Are you sure you want to delete the product',
+    'Delete Cart Order'=>'Are you sure that you want to delete all orders',
+    'Leave Cart Page'=>'Your cart item will be removed if you leave this page',
+
 ];

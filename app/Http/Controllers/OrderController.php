@@ -612,6 +612,7 @@ public function cart(Request $request){
                 $checkOrderDate;
                 
                 if($request->session()->get('order_date') != null){
+                   
                     $pieces = explode(" ", $request->session()->get('order_date'));
                     $date=date_create($pieces[3]."-".$pieces[1]."-".$pieces[2]);
                     $checkOrderDate = date_format($date,"Y-m-d");
@@ -620,6 +621,7 @@ public function cart(Request $request){
                     $orderTime = $pieces[4];
                     $request->session()->forget('order_date');
                 }else{
+                    
                     $pieces = explode(" ", $data['browserCurrentTime']);
                     $date=date_create($pieces[3]."-".$pieces[1]."-".$pieces[2]);
                     $checkOrderDate = date_format($date,"Y-m-d");
