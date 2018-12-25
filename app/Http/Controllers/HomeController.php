@@ -369,7 +369,7 @@ class HomeController extends Controller
         $currentTime = $pieces[4];
         $todayDay = $pieces[0];
 
-         $request->session()->put('route_url', url('/').'/selectOrder-date'); // code added by saurabh to update correct url for eat-later and eat-now
+         $request->session()->put('route_url', url('/').'/eat-later'); // code added by saurabh to update correct url for eat-later and eat-now
 
         if(!empty($request->input())) {
 
