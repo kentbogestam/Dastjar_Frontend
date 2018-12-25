@@ -652,7 +652,17 @@ class AdminController extends Controller
             $employer = new Employer();
             $companyId = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
 
-            $menuTypes = DishType::where('company_id', $companyId)->orderBy('rank')->orderBy('dish_id')->pluck('dish_name','dish_id');
+            // Strange logic to get menu types for specific store ID 
+            //$menuTypes = DishType::where('company_id', $companyId)->orderBy('rank')->orderBy('dish_id')->pluck('dish_name','dish_id');
+            $menuTypes = DishType::select('DT.dish_name','DT.dish_id')
+                ->from('dish_type AS DT')
+                ->join('product AS P', 'P.dish_type', '=', 'DT.dish_id')
+                ->join('product_price_list AS PPL', 'PPL.product_id', '=', 'P.product_id')
+                ->where('PPL.store_id', Session::get('storeId'))
+                ->groupBy('DT.dish_id')
+                ->orderBy('DT.rank')
+                ->orderBy('DT.dish_id')
+                ->pluck('DT.dish_name','DT.dish_id');
             //echo '<pre>'; print_r($menuTypes->toArray()); exit;
 
             $companydetails = new Company();
