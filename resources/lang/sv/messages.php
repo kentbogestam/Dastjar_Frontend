@@ -93,6 +93,7 @@ return [
     'Others' => 'Övriga',
     'Extra Preparation Time' => 'Öka beredningstiden',
     'dateTimeAlert'=>'Både tid och datum måste anges för att gå vidare',
+    'kitchenTextToSpeechDefault' => 'My Order',
     'send order and pay in restaurant'=>'skicka order och betala i restaurang',
     'Delete Product'=>'Är du säker på att du vill radera produkten',
     'Delete Cart Order'=>'Är du säker på att du vill radera alla beställningar',
