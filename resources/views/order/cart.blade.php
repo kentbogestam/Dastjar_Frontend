@@ -9,7 +9,7 @@
 				<h2>{{ __('messages.CART DETAILS') }}</h2>
             <div class="del-cart">
 
-            	<a href="#" data-ajax="false" onclick=deleteFullCart("{{ url('emptyCart/') }}",'1')>Delete Full Cart</a>
+            	<a href="#" data-ajax="false" onclick="deleteFullCart('{{ url("emptyCart/") }}','1','{{ __("messages.Delete Cart Order") }}')">Delete Full Cart</a>
 
 
              </div>
@@ -24,12 +24,13 @@
 					@foreach($orderDetails as $value)
 
 						<tr id="row_{{$j}}">
+							
 		                    <td><input type="hidden" name="prod[{{$j}}]" id="prod{{$j}}" value="{{ $value->product_id }}">
 							<td>{{ $value->product_name }}	</td>
 							<td>{{ $value->price }} <input type="hidden" name="itemprice[{{$j}}]" id="itemprice{{$j}}" value="{{$value->price}}"/></td>
 							<td>
 								<div class="qty-sec">
-									<input type="button" onclick="decrementCartValue('{{$j}}')" value="-"  class="min" />
+									<input type="button" onclick="decrementCartValue('{{$j}}','{{ __("messages.Delete Product") }}')" value="-"  class="min" />
 									<input type="text" name="product[{{$j}}][prod_quant]" value="{{ $value->product_quality }}" maxlength="2" readonly size="1" id="qty{{$j}}" />
 									<input type="button" onclick="incrementCartValue('{{$j}}')" value="+" class="max" />
 								</div>
@@ -54,7 +55,7 @@
 					@if(Session::get('paymentmode') !=0)
 					<a href="{{url('save-order').'/?orderid='.$order->order_id}}" data-ajax="false">send order and pay in restaurant</a>
 					@else
-					<a href="{{url('order-view').'/'.$order->order_id}}" data-ajax="false">send order and pay in restaurant</a>
+					<a href="{{url('order-view').'/'.$order->order_id}}" data-ajax="false">{{ __('messages.send order and pay in restaurant') }}</a>
 					@endif
 
 				</div>
