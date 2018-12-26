@@ -6,11 +6,9 @@
 		<div class="inner-page-container">
 			
 			<div class="table-content">
-				<h2>{{ __('messages.CART DETAILS') }}</h2>
-            <div class="del-cart">
-
-            	<a href="#" data-ajax="false" onclick="deleteFullCart('{{ url("emptyCart/") }}','1','{{ __("messages.Delete Cart Order") }}')">Delete Full Cart</a>
-
+            <div class="head_line">
+            	<h2>{{ __('messages.CART DETAILS') }}</h2>
+            	<div class="delt-cart"><a href="#" data-ajax="false" onclick="deleteFullCart('{{ url("emptyCart/") }}','1','{{ __("messages.Delete Cart Order") }}')"><img src="images/dlt_icon.png"></a></div>
 
              </div>
 				
@@ -20,14 +18,14 @@
 					<input type="hidden" name="orderid" id="orderid" value="{{ $order->order_id }}" />
 					<input type="hidden" name="baseUrl" id="baseUrl" value="{{ url('/')}}"/>
                    {{ csrf_field() }}
-					<td>
+				
 					@foreach($orderDetails as $value)
 
-						<tr id="row_{{$j}}">
+						<tr class="custom_row1" id="row_{{$j}}">
 							
-		                    <td><input type="hidden" name="prod[{{$j}}]" id="prod{{$j}}" value="{{ $value->product_id }}">
+		                    <input type="hidden" name="prod[{{$j}}]" id="prod{{$j}}" value="{{ $value->product_id }}">
 							<td>{{ $value->product_name }}	</td>
-							<td>{{ $value->price }} <input type="hidden" name="itemprice[{{$j}}]" id="itemprice{{$j}}" value="{{$value->price}}"/></td>
+							<td class="g-text">{{ $order->currencies }} {{ $value->price }} <input type="hidden" name="itemprice[{{$j}}]" id="itemprice{{$j}}" value="{{$value->price}}"/></td>
 							<td>
 								<div class="qty-sec">
 									<input type="button" onclick="decrementCartValue('{{$j}}','{{ __("messages.Delete Product") }}')" value="-"  class="min" />
@@ -44,6 +42,7 @@
 				<tr class="last-row" id="last-row">	
 					<td> </td>
 					<td> </td>
+					<td></td>
 					<td>  TOTAL:-    {{$order->currencies}}<span id="grandTotalDisplay"> {{$order->order_total}}</span>
                     <input type="hidden" name="grandtotal" id="grandtotal" value="{{$order->order_total}}"/>
 					</td>
