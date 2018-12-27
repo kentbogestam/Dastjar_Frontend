@@ -926,12 +926,13 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
 .head_line h2{border-bottom: none !important;}
 .delt-cart{display: inline-block;margin: 0.5em;}
 .delt-cart a img{width: 25px;}
-@media only screen and (max-width: 450px) {
- .select-restaurant ul li{width: 100%;}
-}
+
 @media only screen and (max-width: 480px) {
     .login-popup .inner-popup {
       width: 60%;
     }
     
+}
+@media only screen and (max-width: 400px) {
+ .select-restaurant ul li{width: 100%;}
 }
