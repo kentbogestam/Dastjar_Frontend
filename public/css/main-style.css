@@ -881,13 +881,18 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
 .popup-close1:hover {text-decoration: none;}
 
 /*custom popup-design*/
+.ui-page{position: relative;}
 .popupSelection{
   border: 1px solid #ddd;
     width: 65%;
-    margin: 40px auto;
+    margin: 0px auto;
     padding: 20px;
     box-shadow: 0 0 12px rgba(0,0,0,.6);
     border-radius: 5px;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    left: 50%;
 }
 .static-content, .select-restaurant{text-align: center;}
 .select-restaurant ul{ display: inline-block;
