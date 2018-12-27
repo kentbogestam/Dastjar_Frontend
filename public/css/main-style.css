@@ -933,6 +933,6 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
     }
     
 }
-@media only screen and (max-width: 400px) {
+@media only screen and (max-width: 360px) {
  .select-restaurant ul li{width: 100%;}
 }
