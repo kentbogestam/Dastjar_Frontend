@@ -98,5 +98,7 @@ return [
     'Delete Product'=>'Är du säker på att du vill radera produkten',
     'Delete Cart Order'=>'Är du säker på att du vill radera alla beställningar',
     'Leave Cart Page'=>'Din kundvagns artikel kommer att tas bort om du lämnar den här sidan',
+    'Welcome To Anar'=>'Välkommen till anar!',
+    'Select Restaurant'=>'Välj mellan "Ät nu eller Senare"!',
     
 ];
