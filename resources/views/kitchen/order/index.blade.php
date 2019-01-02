@@ -42,59 +42,9 @@
 		    </tbody>
 		</table>
 	</div>
-	<div data-role="footer" data-position="fixed" data-tap-toggle="false" class="footer_container">
-		<div class="ui-grid-a center">
-			<div class="ui-block-a left-side_menu">
-				<div class="ui-block-a block_div active">
-					<a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-1.png')}}">
-					</div>
-					<span>{{ __('messages.Orders') }}</span>
-					</a>
-				</div>
-				<div class="ui-block-b">
-					<a href = "{{ url('kitchen/kitchen-detail') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-2.png')}}">
-					</div>
-					<span>{{ __('messages.Kitchen') }}</span>
-					</a>
-				</div>
-				<div class="ui-block-b">
-					<a href = "{{ url('kitchen/catering') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-3.png')}}">
-					</div>
-					<span>{{ __('messages.Catering') }}</span>
-					</a>
-				</div>
-			</div>
-			<div class="ui-block-b right-side_menu">
-				
-				
-				<div class="ui-block-a drop_down"><a href = "{{ url('kitchen/kitchen-setting') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-6.png')}}">
-					</div>
-				</a></div>
+	
+	@include('includes.kitchen-footer-menu')
 
-				<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" href="{{ url('kitchen/menu') }}">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-7.png')}}">
-					</div>
-					<span>{{ __('messages.Menu') }}</span>
-				</a></div>
-
-				<div class="ui-block-c"><a href = "{{ url('kitchen/kitchen-order-onsite') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-4.png')}}">
-					</div>
-					<span>{{ __('messages.Order Onsite') }}</span>
-				</a></div>
-			</div>
-		</div>
-	</div>
 	<div data-role="popup" id="popupCloseRight" class="ui-content" style="max-width:100%;border: none;">
 	    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" style="background-color:#000;border-color: #000;">Close</a>
 		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow table-stripe ui-responsive table_size" >
@@ -128,12 +78,12 @@
 	$(function(){
 		$.get("{{url('api/v1/kitchen/order-detail')}}/" + storeId,
 		function(returnedData){
-			console.log(returnedData["data"]);
+			// console.log(returnedData["data"]);
 			var count = 18;
 			var temp = returnedData["data"];
 			extra_prep_time = returnedData["extra_prep_time"];
           	list = temp;
-          	//console.log(temp.length);
+          	// console.log(temp.length);
           	var liItem = "";
           	totallength = temp.length;
           	if(temp.length != 0){
@@ -144,7 +94,7 @@
 	          	}
 
 	          	totalCount -= 10;
-	          	console.log();
+	          	// console.log();
 	          	for (var i=0;i<count;i++){
 	          		if(i>=totallength){
 			      		break;
@@ -210,7 +160,7 @@
 		var liItem = "";
 		$.get("{{url('api/v1/kitchen/orderSpecificOdrderDetail')}}/"+orderId,
 		function(returnedData){
-			//console.log(returnedData["data"]);
+			// console.log(returnedData["data"]);
 			var temp = returnedData["data"];
 			for (var i=0;i<temp.length;i++){
 				liItem += "<tr>";
@@ -233,12 +183,12 @@
 	var ajaxCall = function(){
 		$.get("{{url('api/v1/kitchen/order-detail')}}/" + storeId,
 		function(returnedData){
-			//console.log(returnedData["data"]);
+			// console.log(returnedData["data"]);
 			var count = 18;
 			var temp = returnedData["data"];
 			extra_prep_time = returnedData["extra_prep_time"];
           	list = temp;
-          	console.log(temp.length);
+          	// console.log(temp.length);
           	var liItem = "";
           	if(temp.length != 0){
           		totalCount = temp.length;
@@ -327,7 +277,7 @@
     	
     	//if in future this page will get it, then add this condition in and in below if activePage[0].id == "home" 
     	if (scrolled >= scrollEnd) {
-		        console.log(list);
+		        // console.log(list);
 		        $.mobile.loading("show", {
 		        text: "loading more..",
 		        textVisible: true,
@@ -357,9 +307,9 @@
 
 
       for (var i=len;i<len + 10;i++){
-      //console.log(returnedData["data"]);console.log("len="+len);
-      console.log("i="+i);
-      console.log("totallength="+totallength);
+      // console.log(returnedData["data"]);console.log("len="+len);
+      // console.log("i="+i);
+      // console.log("totallength="+totallength);
       	if(i>=totallength){
       		tempCount = 18;
       		break;
@@ -451,6 +401,25 @@
 	  return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2)
 	}
 
+	// Server-Sent Events allow a web page to get updates from a server.
+	if(typeof(EventSource) !== "undefined") {
+		var es = new EventSource("{{ url('kitchen/check-store-subscription-plan') }}");
+
+		es.addEventListener("message", function(e) {
+			var data = JSON.parse(e.data);
+			//console.log(data);
+			if(data.length)
+			{
+				for(var i = 0; i < data.length; i++)
+				{
+					if( $('#menu-'+data[i]).hasClass('ui-state-disabled') )
+					{
+						$('#menu-'+data[i]).removeClass('ui-state-disabled');
+					}
+				}
+			}
+		}, false);
+	}
 </script>
 
 @endsection

@@ -129,9 +129,22 @@
 		Route::get('store', 'AdminController@index');
 		Route::get('logout', 'Auth\AdminLoginController@logout');
 		Route::get('onReadyAjax/{OrderId}', 'AdminController@onReadyAjax');		
-		Route::get('kitchen-detail', 'AdminController@kitchenOrderDetail');
-		Route::get('catering', 'AdminController@cateringDetails');
-		Route::get('kitchen-order-onsite', 'AdminController@kitchenPreOrder');
+		
+		//
+		Route::group(['middleware' => 'isModuleSubscribed:kitchen'], function() {
+			Route::get('kitchen-detail', 'AdminController@kitchenOrderDetail');
+		});
+
+		//
+		Route::group(['middleware' => 'isModuleSubscribed:catering'], function() {
+			Route::get('catering', 'AdminController@cateringDetails');
+		});
+
+		//
+		Route::group(['middleware' => 'isModuleSubscribed:orderonsite'], function() {
+			Route::get('kitchen-order-onsite', 'AdminController@kitchenPreOrder');
+		});
+
 		Route::get('order-started/{OrderId}', 'AdminController@orderStarted');
 		Route::get('orderStartedKitchen/{OrderId}', 'AdminController@orderStartedKitchen');		
 		Route::get('order-readyKitchen/{OrderId}', 'AdminController@orderReadyKitchen');
@@ -170,6 +183,8 @@
 		Route::get('kitchen-menu-new/{dishId}/{storeId}', 'AdminController@kitchenMenuNew');			
 		Route::post('update-order-detail-status', 'AdminController@updateOrderDetailStatus');
 
+		//
+		Route::get('check-store-subscription-plan', 'AdminController@checkStoreSubscriptionPlan');
 	});
 
 

@@ -61,5 +61,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'latlng' => \App\Http\Middleware\CheckLatLng::class,
         'preventBackHistory' => \App\Http\Middleware\PreventBackHistory::class,
+        'isModuleSubscribed' => \App\Http\Middleware\CheckSubsModule::class,
     ];
 }

@@ -49,6 +49,11 @@ use App\ProductKeyword;
 use App\Resizer;
 use App\PhocaGalleryRenderProcess;
 
+use App\SubscriptionPlan;
+use App\UserPlan;
+
+//use Symfony\Component\HttpFoundation\StreamedResponse;
+
 class AdminController extends Controller
 {
     /**
@@ -107,9 +112,100 @@ class AdminController extends Controller
                 return view('kitchen.storeList', compact('storeDetails'));
             }
 
+            // Update subscription plan for logged-in store
+            $this->updateStoreSubscriptionPlan();
+            // dd($request->session()->all());
+
             $storedetails = $store->first();
             $storeName = $storedetails->store_name;
             return view('kitchen.order.index', compact('storeName'));    
+    }
+
+    /**
+     * Get subscribed plan for logged-in store and set them in session to access the module
+     * @return [type] [description]
+     */
+    private function updateStoreSubscriptionPlan()
+    {
+        // Destroy existing subscription from session if any
+        Session::forget('subscribedPlans');
+        Session::save();
+
+        // Get subscribed plan for store
+        $storePlan = SubscriptionPlan::from('billing_products AS BP')
+            ->select('BP.id', 'UP.plan_id')
+            ->join('user_plan AS UP', 'BP.plan_id', '=', 'UP.plan_id')
+            ->where('BP.s_activ', 1)
+            ->whereDate('subscription_start_at', '<=', Carbon::parse(Carbon::now())->format('Y-m-d'))
+            ->whereDate('subscription_end_at', '>=', Carbon::parse(Carbon::now())->format('Y-m-d'))
+            ->where('UP.user_id', Auth::user()->u_id)
+            ->where('UP.store_id', Session::get('storeId'))
+            ->pluck('plan_id')
+            ->toArray();
+            //->toSql();
+
+        //dd($storePlan);
+
+        if($storePlan)
+        {
+            // Kitchen
+            if( in_array('plan_EE3Gi7A6f6Jvvb', $storePlan) )
+            {
+                Session::put('subscribedPlans.kitchen', 1);
+            }
+
+            // Order on Site
+            if( in_array('plan_EE3HCFoL3Q4w2g', $storePlan) )
+            {
+                Session::put('subscribedPlans.orderonsite', 1);
+            }
+
+            // Catering
+            if( in_array('plan_EE3IyKkF4fRTRt', $storePlan) )
+            {
+                Session::put('subscribedPlans.catering', 1);
+            }
+
+            // Payment
+            if( in_array('plan_EE3J8meXbkIq0M', $storePlan) )
+            {
+                Session::put('subscribedPlans.payment', 1);
+            }
+
+            Session::save();
+        }
+
+        return Session::get('subscribedPlans');
+    }
+
+    /**
+     * Keep checking if subscription plan got updated for store
+     * @return [type] [description]
+     */
+    public function checkStoreSubscriptionPlan()
+    {
+        $response = new \Symfony\Component\HttpFoundation\StreamedResponse(function() {
+            $staticPlans = array('kitchen', 'orderonsite', 'catering');
+            $currentPlans = Session::get('subscribedPlans');
+            $data = array_keys($currentPlans);
+
+            while (true) {
+                // if (!empty($data)) {}
+                echo 'data: ' . json_encode($data) . "\n\n";
+                ob_flush();
+                flush();
+
+                //sleep for 30 seconds
+                sleep(3);
+
+                // Check and update subscription plan for logged-in store
+                $currentPlans = array_keys($this->updateStoreSubscriptionPlan());
+                $data = array_values(array_intersect($staticPlans, $currentPlans));
+            }
+        });
+
+        $response->headers->set('Content-Type', 'text/event-stream');
+        return $response;
     }
 
     public function kitchenOrderDetail(){

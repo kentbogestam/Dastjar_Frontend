@@ -269,60 +269,8 @@
 			</div>
 		</div>
 	</div>
-
-
-	<div data-role="footer" data-position="fixed" data-tap-toggle="false" class="footer_container">
-		<div class="ui-grid-a center">
-			<div class="ui-block-a left-side_menu">
-				<div class="ui-block-a block_div">
-					<a href="{{ url('kitchen/store') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-1.png')}}">
-					</div>
-					<span>{{ __('messages.Orders') }}</span>
-					</a>
-				</div>
-				<div class="ui-block-b" title="{{ __('messages.Kitchen') }}">
-					<a href = "{{ url('kitchen/kitchen-detail') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-2.png')}}">
-					</div>
-					<span>{{ __('messages.Kitchen') }}</span>
-					</a>
-				</div>
-				<div class="ui-block-b" title="{{ __('messages.Catering') }}">
-					<a href = "{{ url('kitchen/catering') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-3.png')}}">
-					</div>
-					<span>{{ __('messages.Catering') }}</span>
-					</a>
-				</div>
-			</div>
-
-			<div class="ui-block-b right-side_menu" title="Kitchen Setting">							
-				<div class="ui-block-a drop_down"><a href = "{{ url('kitchen/kitchen-setting') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-6.png')}}">
-					</div>
-				</a></div>
-
-				<div class="ui-block-b block_div active" title="{{ __('messages.Menu') }}"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-7.png')}}">
-					</div>
-					<span>{{ __('messages.Menu') }}</span>
-				</a></div>
-
-				<div class="ui-block-c" title="{{ __('messages.Order Onsite') }}"><a href = "{{ url('kitchen/kitchen-order-onsite') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-4.png')}}">
-					</div>
-					<span>{{ __('messages.Order Onsite') }}</span>
-				</a></div>
-			</div>
-		</div>
-	</div>
+	
+	@include('includes.kitchen-footer-menu')
 
 	<div data-role="popup" id="popupCloseRight" class="ui-content" style="max-width:100%;border: none;">
 	    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" style="background-color:#000;border-color: #000;">Close</a>
