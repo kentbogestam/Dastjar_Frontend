@@ -775,12 +775,13 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
   cursor: pointer;
 }
 [data-role="footer"] .inner-footer{
-  padding: 0.3em 0;
+  padding: 0.8em 0;
   overflow: visible;
   position: relative;
+  display: inline-block;width: 100%;
 }
 [data-role="footer"] .inner-footer a span{
-  display: block;
+  display: none;
   color: #fff; 
   font-family: "ProximaNova-Regular";
 }
@@ -894,7 +895,7 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
 .select-restaurant ul{ display: inline-block;
     width: 100%;
     padding: 0px;overflow: hidden;}
-.select-restaurant ul li img{width: 30px;vertical-align: middle;margin-right: 5px;}
+.select-restaurant ul li img{width: 30px;vertical-align: middle;margin-right: 8px;}
 .select-restaurant ul li{list-style: none;float: left;
     width: 46%;margin: 3px;
     text-align: center;background: #cde9f3;}
@@ -903,7 +904,8 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
     border-color: #1f1f1f;
     color: #333;
 }
-.select-restaurant a.ui-link{color: #000;margin: 4px;display: inline-block;width: 100%;}
+.select-restaurant a.ui-link{color: #000;display: inline-block;width: 100%;padding: 6px 5px;
+    text-align: center;}
 .dateandtime .datepicker{width: 100%;}
 .datepicker > .datepicker_inner_container > .datepicker_calendar > .datepicker_table > tbody > tr > td.today{border: 2px solid #bd2b2b !important;}
 .datepicker > .datepicker_inner_container > .datepicker_calendar > table{width: 100%;}
@@ -933,6 +935,7 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
     }
     
 }
-@media only screen and (max-width: 360px) {
+@media only screen and (max-width: 380px) {
  .select-restaurant ul li{width: 100%;}
+ .select-restaurant ul li img{margin-right: 15px;}
 }
