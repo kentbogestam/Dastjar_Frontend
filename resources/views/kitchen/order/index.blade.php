@@ -109,7 +109,9 @@
 	          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"],extra_prep_time);
 	          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
 	          		var orderIdSpecific = temp[i]["order_id"] ;
-	          		liItem += "<tr>";
+	          		var orderStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
+
+	          		liItem += "<tr class='"+orderStatus+"'>";
 	          		liItem += "<th>";
 	          		liItem += "<a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>";
 	          		liItem += temp[i]["customer_order_id"]; 
@@ -255,7 +257,9 @@
 	          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"],extra_prep_time);
 	          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
 	          		var orderIdSpecific = temp[i]["order_id"] ;
-	          		liItem += "<tr>";
+	          		var orderStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
+
+	          		liItem += "<tr class='"+orderStatus+"'>";
 	          		liItem += "<th>"
 	          		liItem += "<a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>"
 	          		liItem += temp[i]["customer_order_id"]
@@ -413,7 +417,9 @@
       	var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
       	var timeOrder = addTimes("00:00:00",list[i]["deliver_time"]);
       	var orderIdSpecific = list[i]["order_id"] ;
-      	liItem += "<tr>";
+      	var orderStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
+
+      	liItem += "<tr class='"+orderStatus+"'>";
   		liItem += "<th>"
   		liItem += "<a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>"
   		liItem += temp[i]["customer_order_id"]
