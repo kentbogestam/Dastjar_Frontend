@@ -50,7 +50,7 @@
 
 		<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
 			<div class="img-container">
-				<img src="{{asset('images/icons/select-store_03.png')}}">
+				<img src="{{asset('images/icon-cart.png')}}">
 			</div>
 			<span>{{ __('messages.Send') }}</span>
 		</a></div>
@@ -60,7 +60,7 @@
 		  <div class="ui-block-b">
 				<a href="#" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" id="menudataSave" data-ajax="false">
 					<div class="img-container">
-						<img src="{{asset('images/icons/select-store_03.png')}}">
+						<img src="{{asset('images/notification-2.png')}}">
 					</div>
 					<input type="button" value="{{ __('messages.Send') }}" id="dataSave"/>
 				</a>
