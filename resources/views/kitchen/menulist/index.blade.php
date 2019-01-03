@@ -180,7 +180,7 @@
 		<a href = "{{ url('kitchen/logout') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">{{ __('messages.Logout') }}
 			</a>
 		</div>
-		<h3 class="ui-bar ui-bar-a order_background">{{ __('messages.Menu') }} <span>{{$storeName}}</span></h3>
+		<h3 class="ui-bar ui-bar-a order_background"><span>{{$storeName}}</span></h3>
 	</div>
 	<div role="main" class="ui-content">
 		<div class="ready_notification">

@@ -32,9 +32,15 @@ class KitchenController extends Controller
     }
 
    public function orderDetail($reCompanyId){
-        $orderDetailscustomer = Order::select('orders.*','customer.name as name')->where(['store_id' => $reCompanyId])->where('user_type','=','customer')->where('check_deliveryDate',Carbon::now()->toDateString())->where('orders.paid', '0')->whereNotIn('orders.online_paid', [2])->where('orders.cancel','!=', 1)->leftJoin('customer','orders.user_id','=','customer.id');
-
-        // $orderDetails = Order::select('orders.*','user.fname as name')->where('orders.store_id', '=' ,$reCompanyId)->where('user_type','=','admin')->where('check_deliveryDate',Carbon::now()->toDateString())->where('orders.paid', '0')->whereNotIn('orders.online_paid', [2])->where('orders.cancel', '!=', 1)->leftJoin('user','orders.user_id','=','user.id');
+        $orderDetailscustomer = Order::select('orders.*','customer.name as name', 'order_details.id AS order_details_id', 'order_details.order_started', 'order_details.order_ready')
+            ->where(['orders.store_id' => $reCompanyId])
+            ->where('user_type','=','customer')
+            ->where('check_deliveryDate',Carbon::now()->toDateString())
+            ->where('orders.paid', '0')
+            ->whereNotIn('orders.online_paid', [2])
+            ->where('orders.cancel','!=', 1)
+            ->join('order_details', 'orders.order_id', '=' ,'order_details.order_id')
+            ->leftJoin('customer','orders.user_id','=','customer.id');
 
         $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;
         

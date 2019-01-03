@@ -7,7 +7,7 @@
 		<a href = "{{ url('kitchen/logout') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">{{ __('messages.Logout') }}
 			</a>
 		</div>
-		<h3 class="ui-bar ui-bar-a order_background">{{ __('messages.Orders') }} <span>{{$storeName}}</span></h3>
+		<h3 class="ui-bar ui-bar-a order_background"><span>{{$storeName}}</span></h3>
 	</div>
 	<div role="main" class="ui-content">
 		<div class="ready_notification">
@@ -30,9 +30,14 @@
 			 		<th data-priority="2">{{ __('messages.Orders') }}</th>
 			   		<th>{{ __('messages.Alias') }}</th> 
 			   		<th data-priority="3">{{ __('messages.Date and Time') }}</th>
-			    	<th data-priority="1">{{ __('messages.Ready') }}</th> 
+			   		@if( !Session::has('subscribedPlans.kitchen') )
+						<th data-priority="3">{{ __('messages.Started') }}</th>
+			      		<th data-priority="1">{{ __('messages.Ready') }}</th> 
+			      	@else
+			      		<th data-priority="1">{{ __('messages.Ready') }}</th> 
+					@endif
 			    	<th data-priority="5">{{ __('messages.Delivered') }}</th>
-			    	 <th data-priority="3">{{ __('messages.Paid') }}</th>
+			    	<th data-priority="3">{{ __('messages.Paid') }}</th>
 			     	<th data-priority="1">{{ __('messages.Pick up Time') }}</th>
 			    </tr>
 			</thead>
@@ -74,6 +79,8 @@
 	var storeId = "{{Session::get('storeId')}}";
 	var url = "{{url('kitchen/order-ready')}}";
 	var urldeliver = "{{url('kitchen/order-deliver')}}";
+	var urlReady = "{{url('kitchen/order-readyKitchen')}}";
+	var imageUrl = "{{asset('kitchenImages/right_sign.png')}}";
 
 	$(function(){
 		$.get("{{url('api/v1/kitchen/order-detail')}}/" + storeId,
@@ -114,15 +121,55 @@
 
 	          		liItem += "<td>"+temp[i]["name"]+"</td>";
 	          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
-	          		liItem += "<td>"
-			  		if(list[i]["order_ready"] == 0){
-	          			liItem += "<a data-ajax='false'>"
-			  				liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
-			  		}else{
-	          			liItem += "<a data-ajax='false'>"
-			  				liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
-			  		}
-	          		liItem +="</a></td>";
+
+	          		// Add additional column if 'kitchen' module not subscribed
+	          		@if( !Session::has('subscribedPlans.kitchen') )
+	          			// Order Started
+	          			if(temp[i]["order_started"] == 0){
+		          			ids = temp[i]['order_details_id'];
+			          		liItem += "<td>"
+			          		liItem += "<a data-ajax='false' href='javascript:void(0)'  onclick='orderReadyStarted("+ids+", this)'>"
+			          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/subs_sign.png')}}'>"
+			          		liItem +="</a></td>";
+			          		
+		          		}else{
+		          			liItem += "<td>"
+			          		liItem += "<a>"
+			          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
+			          		liItem +="</a></td>";
+		          		}
+
+		          		// Order Ready
+		          		if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 0){
+		          			ids = temp[i]['order_details_id'];
+			          		liItem += "<td>"
+			          		liItem += "<a data-ajax='false' href='javascript:void(0)' >"
+			          		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
+			          		liItem +="</a></td>";
+			          	}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
+			          		liItem += "<td>"
+			          		liItem += "<a data-ajax='false' href="+urlReady+"/"+temp[i]['order_details_id']+" >"
+			          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
+			          		liItem +="</a></td>";
+
+			          	}else{
+			          		liItem += "<td>"
+			          		liItem += "<a>"
+			          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
+			          		liItem +="</a></td>";
+		          		}
+		          	@else
+		          		liItem += "<td>"
+				  		if(list[i]["order_ready"] == 0){
+		          			liItem += "<a data-ajax='false'>"
+				  				liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
+				  		}else{
+		          			liItem += "<a data-ajax='false'>"
+				  				liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
+				  		}
+		          		liItem +="</a></td>";
+	          		@endif
+	          		
 	          		liItem += "<td>"
 	          		if(list[i]["paid"] == 0 && list[i]["order_ready"] == 0){
 		          		liItem += "<a data-ajax='false' >"
@@ -137,11 +184,14 @@
 	          		}
 	          		liItem +="</a></td>";
 	          		liItem += "<td>"
-	          		if(list[i]["paid"] == 1 || list[i]["online_paid"] == 1){
+	          		if(list[i]["paid"] == 1 || list[i]["online_paid"] == 1 || list[i]["online_paid"] == 3){
 	          			liItem += "<input class='yes_check'  type='button' data-role='none' value='yes' name=''>"
+	          		}else if(list[i]["online_paid"] == 0){
+	          			liItem += "<input type='button' value='Pay Manual' data-role='none' onclick='orderPayManually("+list[i]["order_id"]+", this);'>"
 	          		}else{
 	          			liItem += "<input class='no_check'  type='button' data-role='none' value='no' name=''>"
 	          		}
+
 	          		liItem += "<td>"+time+"</td>";
 	          		liItem += "</tr>";
 	          	}
@@ -217,15 +267,55 @@
 	          		
 	          		liItem += "<td>"+temp[i]["name"]+"</td>";
 	          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
-	          		liItem += "<td>"
-			  		if(list[i]["order_ready"] == 0){
-	          			liItem += "<a data-ajax='false'>"
-			  			liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
-			  		}else{
-	          			liItem += "<a data-ajax='false'>"
-			  			liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
-			  		}
-	          		liItem +="</a></td>";
+
+	          		// Add additional column if 'kitchen' module not subscribed
+	          		@if( !Session::has('subscribedPlans.kitchen') )
+	          			// Order Started
+	          			if(temp[i]["order_started"] == 0){
+		          			ids = temp[i]['order_details_id'];
+			          		liItem += "<td>"
+			          		liItem += "<a data-ajax='false' href='javascript:void(0)'  onclick='orderReadyStarted("+ids+", this)'>"
+			          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/subs_sign.png')}}'>"
+			          		liItem +="</a></td>";
+			          		
+		          		}else{
+		          			liItem += "<td>"
+			          		liItem += "<a>"
+			          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
+			          		liItem +="</a></td>";
+		          		}
+
+		          		// Order Ready
+		          		if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 0){
+		          			ids = temp[i]['order_details_id'];
+			          		liItem += "<td>"
+			          		liItem += "<a data-ajax='false' href='javascript:void(0)' >"
+			          		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
+			          		liItem +="</a></td>";
+			          	}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
+			          		liItem += "<td>"
+			          		liItem += "<a data-ajax='false' href="+urlReady+"/"+temp[i]['order_details_id']+" >"
+			          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
+			          		liItem +="</a></td>";
+
+			          	}else{
+			          		liItem += "<td>"
+			          		liItem += "<a>"
+			          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
+			          		liItem +="</a></td>";
+		          		}
+		          	@else
+		          		liItem += "<td>"
+				  		if(list[i]["order_ready"] == 0){
+		          			liItem += "<a data-ajax='false'>"
+				  			liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
+				  		}else{
+		          			liItem += "<a data-ajax='false'>"
+				  			liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
+				  		}
+		          		liItem +="</a></td>";
+	          		@endif
+	          		
 	          		liItem += "<td>"
 	          		if(list[i]["paid"] == 0 && list[i]["order_ready"] == 0){
 		          		liItem += "<a data-ajax='false' >"
@@ -240,11 +330,14 @@
 	          		}
 	          		liItem +="</a></td>";
 	          		liItem += "<td>"
-	          		if(list[i]["paid"] == 1 || list[i]["online_paid"] == 1){
+	          		if(list[i]["paid"] == 1 || list[i]["online_paid"] == 1 || list[i]["online_paid"] == 3){
 	          			liItem += "<input class='yes_check'  type='button' data-role='none' value='yes' name=''>"
+	          		}else if(list[i]["online_paid"] == 0){
+	          			liItem += "<input type='button' value='Pay Manual' data-role='none' onclick='orderPayManually("+list[i]["order_id"]+", this);'>"
 	          		}else{
 	          			liItem += "<input class='no_check'  type='button' data-role='none' value='no' name=''>"
 	          		}
+
 	          		liItem += "<td>"+time+"</td>";
 	          		liItem += "</tr>";
 	          	}
@@ -327,15 +420,55 @@
   		liItem += "</a></th>";
   		liItem += "<td>"+list[i]["name"]+"</td>";
   		liItem += "<td>"+list[i]["deliver_date"]+' '+timeOrder+"</td>";
-  		liItem += "<td>"
-  		if(list[i]["order_ready"] == 0){
-  			liItem += "<a data-ajax='false'>"
-  			liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
-  		}else{
-  			liItem += "<a data-ajax='false'>"
-  			liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
-  		}
-  		liItem +="</a></td>";
+  		
+  		// Add additional column if 'kitchen' module not subscribed
+  		@if( !Session::has('subscribedPlans.kitchen') )
+  			// Order Started
+  			if(temp[i]["order_started"] == 0){
+      			ids = temp[i]['order_details_id'];
+          		liItem += "<td>"
+          		liItem += "<a data-ajax='false' href='javascript:void(0)'  onclick='orderReadyStarted("+ids+", this)'>"
+          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/subs_sign.png')}}'>"
+          		liItem +="</a></td>";
+          		
+      		}else{
+      			liItem += "<td>"
+          		liItem += "<a>"
+          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
+          		liItem +="</a></td>";
+      		}
+
+      		// Order Ready
+      		if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 0){
+      			ids = temp[i]['order_details_id'];
+          		liItem += "<td>"
+          		liItem += "<a data-ajax='false' href='javascript:void(0)' >"
+          		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
+          		liItem +="</a></td>";
+          	}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
+          		liItem += "<td>"
+          		liItem += "<a data-ajax='false' href="+urlReady+"/"+temp[i]['order_details_id']+" >"
+          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
+          		liItem +="</a></td>";
+
+          	}else{
+          		liItem += "<td>"
+          		liItem += "<a>"
+          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
+          		liItem +="</a></td>";
+      		}
+      	@else
+      		liItem += "<td>"
+	  		if(list[i]["order_ready"] == 0){
+	  			liItem += "<a data-ajax='false'>"
+	  			liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
+	  		}else{
+	  			liItem += "<a data-ajax='false'>"
+	  			liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
+	  		}
+	  		liItem +="</a></td>";
+  		@endif
+  		
   		liItem += "<td>"
   		if(list[i]["paid"] == 0 && list[i]["order_ready"] == 0 ){
       		liItem += "<a data-ajax='false' >"
@@ -350,11 +483,14 @@
   		}
   		liItem +="</a></td>";
   		liItem += "<td>"
-  		if(list[i]["paid"] == 1 || list[i]["online_paid"] == 1){
+  		if(list[i]["paid"] == 1 || list[i]["online_paid"] == 1 || list[i]["online_paid"] == 3){
   			liItem += "<input class='yes_check'  type='button' data-role='none' value='yes' name=''>"
+  		}else if(list[i]["online_paid"] == 0){
+  			liItem += "<input type='button' value='Pay Manual' data-role='none' onclick='orderPayManually("+list[i]["order_id"]+", this);'>"
   		}else{
   			liItem += "<input class='no_check'  type='button' data-role='none' value='no' name=''>"
   		}
+
   		liItem += "<td>"+time+"</td>";
   		liItem += "</tr>";
       	countCheck++;
@@ -399,6 +535,58 @@
 	  }
 
 	  return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2)
+	}
+
+	// Update the status of 'order_started' to 1
+	function orderReadyStarted(id, This) {
+		$This = $(This);			
+		$.get("{{url('kitchen/orderStartedKitchen')}}/"+id,
+		function(returnedData){
+			// console.log(returnedData["data"]);
+			$('body').find('#'+id).attr('src',imageUrl);
+			$('body').find('#'+id).parent("a").attr('onclick',' ');
+			$('body').find('#'+id+'ready').parent("a").attr('onclick','onReady('+id+')');
+			$This.closest('tr').removeClass('not-started');
+		});
+	}
+
+	// Update the status of 'order_ready' to 1
+	function onReady(id) {		
+		$('body').find('#'+id+'ready').attr('src',imageUrl);
+		$('body').find('#'+id+'ready').parent("a").attr('onclick',' ');
+
+		$.get("{{url('kitchen/order-readyKitchen')}}/"+id,
+		function(returnedData){
+			// console.log(returnedData["data"]);
+			$('body').find('#'+id+'ready').parents("tr").remove();
+			if(returnedData["status"] == 'ready'){
+				$("#popupCloseRight").popup("open");
+			}else{
+				$("#popupNotifaction").popup("open");	
+			}
+		});
+
+	}
+
+	// Make payment manually as cash at store;
+	function orderPayManually(id, This)
+	{
+		$This = $(This);
+
+		$.get("{{url('kitchen/order-pay-manually')}}/"+id,
+		function(returnedData){
+			console.log(returnedData);
+			if(returnedData["status"])
+			{
+				$This.val('Yes');
+				$This.addClass('yes_check');
+				$This.removeAttr('onclick');
+			}
+			else
+			{
+				alert('Something went wrong!');
+			}
+		});
 	}
 
 	// Server-Sent Events allow a web page to get updates from a server.

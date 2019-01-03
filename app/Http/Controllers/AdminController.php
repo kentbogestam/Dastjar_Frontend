@@ -311,9 +311,9 @@ class AdminController extends Controller
 
            
 
-            return redirect()->action('AdminController@kitchenOrderDetail')->with('success', 'Order Ready Notification Send Successfully.');
+            return redirect()->back()->with('success', 'Order Ready Notification Send Successfully.');
         }
-        return redirect()->action('AdminController@kitchenOrderDetail')->with('success', 'Order Ready Successfully.');
+        return redirect()->back()->with('success', 'Order Ready Successfully.');
     }
         catch(\Exception $ex){
             $helper->logs("Step 6: Exception = " .$ex->getMessage());            
@@ -1424,6 +1424,24 @@ class AdminController extends Controller
 
               return view('kitchen.order.index', compact('storeName'));
         }
+    }
+
+    /**
+     * [Update order payment manually from 'Orders' page]
+     * @param  [type] $order_id [primary key of table 'order']
+     * @return [type]           [status]
+     */
+    function orderPayManually($order_id)
+    {
+        $status = false;
+        $order = Order::findOrFail($order_id);
+
+        if( $order->where('order_id', $order_id)->update(['online_paid' => 3]) )
+        {
+           $status = true;
+        }
+
+        return response()->json(['status' => $status, 'order' => $order]);
     }
 
     public function sentOtp(Request $request){

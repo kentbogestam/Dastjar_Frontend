@@ -185,6 +185,7 @@
 
 		//
 		Route::get('check-store-subscription-plan', 'AdminController@checkStoreSubscriptionPlan');
+		Route::get('order-pay-manually/{order_id}', 'AdminController@orderPayManually');
 	});
 
 
