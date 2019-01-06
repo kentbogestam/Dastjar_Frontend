@@ -9,5 +9,16 @@
     	@yield('content')
     </div>
     @yield('footer-script')
+
+    <script type="text/javascript">
+		if( document.getElementsByClassName('link-logout').length && typeof(EventSource) !== "undefined" )
+		{
+			function closeConnection()
+			{
+				es.close();
+				console.log('close');
+			}
+		}
+	</script>
 </body>
 </html>

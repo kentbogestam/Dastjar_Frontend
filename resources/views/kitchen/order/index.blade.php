@@ -1,12 +1,8 @@
 @extends('layouts.blank')
 
 @section('content')
-<div data-role="header" data-position="fixed" data-tap-toggle="false" class="header">
-		<div class="logo_header">
-		<img src="{{asset('kitchenImages/logo-img.png')}}">
-		<a href = "{{ url('kitchen/logout') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">{{ __('messages.Logout') }}
-			</a>
-		</div>
+	<div data-role="header" data-position="fixed" data-tap-toggle="false" class="header">
+		@include('includes.kitchen-header-sticky-bar')
 		<h3 class="ui-bar ui-bar-a order_background"><span>{{$storeName}}</span></h3>
 	</div>
 	<div role="main" class="ui-content">
@@ -596,12 +592,12 @@
 	}
 
 	// Server-Sent Events allow a web page to get updates from a server.
-	/*if(typeof(EventSource) !== "undefined") {
+	if(typeof(EventSource) !== "undefined") {
 		var es = new EventSource("{{ url('kitchen/check-store-subscription-plan') }}");
 
 		es.addEventListener('message', function(e) {
 			var data = JSON.parse(e.data);
-			//console.log(data);
+			console.log('message');
 			if(data.length)
 			{
 				for(var i = 0; i < data.length; i++)
@@ -615,11 +611,9 @@
 		}, false);
 
 		es.addEventListener('error', function(e) {
-			if (e.readyState == EventSource.CLOSED) {
-				alert('Connection was closed.');
-			}
+			console.log('error');
 		}, false);
-	}*/
+	}
 </script>
 
 @endsection

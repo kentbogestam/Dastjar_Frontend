@@ -188,6 +188,7 @@ class AdminController extends Controller
             $staticPlans = array('kitchen', 'orderonsite', 'catering');
             $currentPlans = Session::get('subscribedPlans');
             $data = array_keys($currentPlans);
+            $i = 0;
 
             while (true) {
                 // if (!empty($data)) {}
@@ -195,12 +196,16 @@ class AdminController extends Controller
                 ob_flush();
                 flush();
 
+                if ( connection_aborted() ) break;
+
                 //sleep for 30 seconds
-                sleep(20);
+                sleep(30);
 
                 // Check and update subscription plan for logged-in store
-                $currentPlans = array_keys($this->updateStoreSubscriptionPlan());
+                $currentPlans = array_keys(array());
                 $data = array_values(array_intersect($staticPlans, $currentPlans));
+
+                $i++;
             }
         });
 
