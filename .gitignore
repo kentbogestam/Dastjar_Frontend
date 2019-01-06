@@ -1,7 +1,6 @@
 /node_modules
 /public/hot
 /public/storage
-public/uploads/*
 /storage/*.key
 /vendor
 /.idea
@@ -12,3 +11,4 @@ npm-debug.log
 yarn-error.log
 .env
 config/services.php
+public/uploads/*
