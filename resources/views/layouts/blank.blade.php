@@ -14,6 +14,7 @@
     	@if(Session::has('storeId'))
     		// Server-Sent Events allow a web page to get updates from a server.
 			if(typeof(EventSource) !== "undefined") {
+				console.log('SSE supported!');
 				var es = new EventSource("{{ url('kitchen/check-store-subscription-plan') }}");
 
 				function closeConnection()
@@ -40,6 +41,10 @@
 				es.addEventListener('error', function(e) {
 					console.log('error');
 				}, false);
+			}
+			else
+			{
+				console.log('SSE not supported by browser!');
 			}
     	@endif
 	</script>
