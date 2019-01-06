@@ -12,7 +12,6 @@
 
     <script type="text/javascript">
     	@if(Session::has('storeId'))
-    	{
     		// Server-Sent Events allow a web page to get updates from a server.
 			if(typeof(EventSource) !== "undefined") {
 				var es = new EventSource("{{ url('kitchen/check-store-subscription-plan') }}");
@@ -42,7 +41,6 @@
 					console.log('error');
 				}, false);
 			}
-    	}
     	@endif
 	</script>
 </body>
