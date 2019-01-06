@@ -8,8 +8,6 @@
 	<div data-role="page">
     	@yield('content')
     </div>
-    @yield('footer-script')
-
     <script type="text/javascript">
     	@if(Session::has('storeId'))
     		// Server-Sent Events allow a web page to get updates from a server.
@@ -48,5 +46,7 @@
 			}
     	@endif
 	</script>
+	
+    @yield('footer-script')
 </body>
 </html>
