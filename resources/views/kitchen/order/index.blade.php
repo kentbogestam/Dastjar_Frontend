@@ -590,30 +590,6 @@
 			}
 		});
 	}
-
-	// Server-Sent Events allow a web page to get updates from a server.
-	if(typeof(EventSource) !== "undefined") {
-		var es = new EventSource("{{ url('kitchen/check-store-subscription-plan') }}");
-
-		es.addEventListener('message', function(e) {
-			var data = JSON.parse(e.data);
-			console.log('message');
-			if(data.length)
-			{
-				for(var i = 0; i < data.length; i++)
-				{
-					if( $('#menu-'+data[i]).hasClass('ui-state-disabled') )
-					{
-						$('#menu-'+data[i]).removeClass('ui-state-disabled');
-					}
-				}
-			}
-		}, false);
-
-		es.addEventListener('error', function(e) {
-			console.log('error');
-		}, false);
-	}
 </script>
 
 @endsection

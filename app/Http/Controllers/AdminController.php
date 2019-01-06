@@ -198,8 +198,8 @@ class AdminController extends Controller
 
                 if ( connection_aborted() ) break;
 
-                //sleep for 30 seconds
-                sleep(30);
+                //sleep for x seconds
+                sleep(20);
 
                 // Check and update subscription plan for logged-in store
                 $currentPlans = array_keys(array());
