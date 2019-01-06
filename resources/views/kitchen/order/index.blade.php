@@ -109,7 +109,7 @@
 	          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"],extra_prep_time);
 	          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
 	          		var orderIdSpecific = temp[i]["order_id"] ;
-	          		var orderStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
+	          		var orderStatus = temp[i]["order_started"] == 0 ? 'new' : ''; // Add class 'new' until order 'started'
 
 	          		liItem += "<tr class='"+orderStatus+"'>";
 	          		liItem += "<th>";
@@ -189,7 +189,7 @@
 	          		if(list[i]["paid"] == 1 || list[i]["online_paid"] == 1 || list[i]["online_paid"] == 3){
 	          			liItem += "<input class='yes_check'  type='button' data-role='none' value='yes' name=''>"
 	          		}else if(list[i]["online_paid"] == 0){
-	          			liItem += "<input type='button' value='Pay Manual' data-role='none' onclick='orderPayManually("+list[i]["order_id"]+", this);'>"
+	          			liItem += "<input class='no_check' type='button' value='Pay Manual' data-role='none' onclick='orderPayManually("+list[i]["order_id"]+", this);'>"
 	          		}else{
 	          			liItem += "<input class='no_check'  type='button' data-role='none' value='no' name=''>"
 	          		}
@@ -257,7 +257,7 @@
 	          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"],extra_prep_time);
 	          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
 	          		var orderIdSpecific = temp[i]["order_id"] ;
-	          		var orderStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
+	          		var orderStatus = temp[i]["order_started"] == 0 ? 'new' : ''; // Add class 'new' until order 'started'
 
 	          		liItem += "<tr class='"+orderStatus+"'>";
 	          		liItem += "<th>"
@@ -337,7 +337,7 @@
 	          		if(list[i]["paid"] == 1 || list[i]["online_paid"] == 1 || list[i]["online_paid"] == 3){
 	          			liItem += "<input class='yes_check'  type='button' data-role='none' value='yes' name=''>"
 	          		}else if(list[i]["online_paid"] == 0){
-	          			liItem += "<input type='button' value='Pay Manual' data-role='none' onclick='orderPayManually("+list[i]["order_id"]+", this);'>"
+	          			liItem += "<input class='no_check' type='button' value='Pay Manual' data-role='none' onclick='orderPayManually("+list[i]["order_id"]+", this);'>"
 	          		}else{
 	          			liItem += "<input class='no_check'  type='button' data-role='none' value='no' name=''>"
 	          		}
@@ -417,7 +417,7 @@
       	var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
       	var timeOrder = addTimes("00:00:00",list[i]["deliver_time"]);
       	var orderIdSpecific = list[i]["order_id"] ;
-      	var orderStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
+      	var orderStatus = temp[i]["order_started"] == 0 ? 'new' : ''; // Add class 'new' until order 'started'
 
       	liItem += "<tr class='"+orderStatus+"'>";
   		liItem += "<th>"
@@ -492,7 +492,7 @@
   		if(list[i]["paid"] == 1 || list[i]["online_paid"] == 1 || list[i]["online_paid"] == 3){
   			liItem += "<input class='yes_check'  type='button' data-role='none' value='yes' name=''>"
   		}else if(list[i]["online_paid"] == 0){
-  			liItem += "<input type='button' value='Pay Manual' data-role='none' onclick='orderPayManually("+list[i]["order_id"]+", this);'>"
+  			liItem += "<input class='no_check' type='button' value='Pay Manual' data-role='none' onclick='orderPayManually("+list[i]["order_id"]+", this);'>"
   		}else{
   			liItem += "<input class='no_check'  type='button' data-role='none' value='no' name=''>"
   		}
@@ -585,7 +585,7 @@
 			if(returnedData["status"])
 			{
 				$This.val('Yes');
-				$This.addClass('yes_check');
+				$This.removeClass('no_check').addClass('yes_check');
 				$This.removeAttr('onclick');
 			}
 			else
@@ -596,10 +596,10 @@
 	}
 
 	// Server-Sent Events allow a web page to get updates from a server.
-	if(typeof(EventSource) !== "undefined") {
+	/*if(typeof(EventSource) !== "undefined") {
 		var es = new EventSource("{{ url('kitchen/check-store-subscription-plan') }}");
 
-		es.addEventListener("message", function(e) {
+		es.addEventListener('message', function(e) {
 			var data = JSON.parse(e.data);
 			//console.log(data);
 			if(data.length)
@@ -613,7 +613,13 @@
 				}
 			}
 		}, false);
-	}
+
+		es.addEventListener('error', function(e) {
+			if (e.readyState == EventSource.CLOSED) {
+				alert('Connection was closed.');
+			}
+		}, false);
+	}*/
 </script>
 
 @endsection

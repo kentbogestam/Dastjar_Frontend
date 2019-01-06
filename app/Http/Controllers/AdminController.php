@@ -196,7 +196,7 @@ class AdminController extends Controller
                 flush();
 
                 //sleep for 30 seconds
-                sleep(3);
+                sleep(20);
 
                 // Check and update subscription plan for logged-in store
                 $currentPlans = array_keys($this->updateStoreSubscriptionPlan());

@@ -98,10 +98,6 @@
 			transform: translate(-50%);
 			z-index: 99999;
 	}
-
-	#orderDetailContianer tr.new th, #orderDetailContianer tr.new td {
-		background-color: #EBF8A4 !important;
-	}
 </style>
 @stop
 
