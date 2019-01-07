@@ -184,11 +184,18 @@ class AdminController extends Controller
      */
     public function checkStoreSubscriptionPlan()
     {
-        $response = new \Symfony\Component\HttpFoundation\StreamedResponse(function() {
+        $staticPlans = array('kitchen', 'orderonsite', 'catering');
+        
+        // Check and update subscription plan for logged-in store
+        $currentPlans = array_keys($this->updateStoreSubscriptionPlan());
+        $result = array_values(array_intersect($staticPlans, $currentPlans));
+
+        return response()->json(['data' => $result]);
+
+        /*$response = new \Symfony\Component\HttpFoundation\StreamedResponse(function() {
             $staticPlans = array('kitchen', 'orderonsite', 'catering');
             $currentPlans = Session::get('subscribedPlans');
             $data = array_keys($currentPlans);
-            $i = 0;
 
             while (true) {
                 // if (!empty($data)) {}
@@ -202,15 +209,13 @@ class AdminController extends Controller
                 sleep(20);
 
                 // Check and update subscription plan for logged-in store
-                $currentPlans = array_keys(array());
+                $currentPlans = array_keys($this->updateStoreSubscriptionPlan());
                 $data = array_values(array_intersect($staticPlans, $currentPlans));
-
-                $i++;
             }
         });
 
         $response->headers->set('Content-Type', 'text/event-stream');
-        return $response;
+        return $response;*/
     }
 
     public function kitchenOrderDetail(){

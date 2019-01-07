@@ -8,10 +8,30 @@
 	<div data-role="page">
     	@yield('content')
     </div>
+    @yield('footer-script')
     <script type="text/javascript">
     	@if(Session::has('storeId'))
-    		// Server-Sent Events allow a web page to get updates from a server.
-			if(typeof(EventSource) !== "undefined") {
+    		// Server-Sent Events allow a web page to get updates from a server in x second.
+    		var serverSE = function() {
+    			$.get("{{ url('kitchen/check-store-subscription-plan') }}", function(returnedData) {
+    				console.log('message');
+    				var data = returnedData['data'];
+    				if(data.length)
+					{
+						for(var i = 0; i < data.length; i++)
+						{
+							if( $('#menu-'+data[i]).hasClass('ui-state-disabled') )
+							{
+								$('#menu-'+data[i]).removeClass('ui-state-disabled');
+							}
+						}
+					}
+    			});
+    		}
+
+    		setInterval(serverSE, 30000);
+
+			/*if(typeof(EventSource) !== "undefined") {
 				console.log('SSE supported!');
 				var es = new EventSource("{{ url('kitchen/check-store-subscription-plan') }}");
 
@@ -43,10 +63,8 @@
 			else
 			{
 				console.log('SSE not supported by browser!');
-			}
+			}*/
     	@endif
 	</script>
-	
-    @yield('footer-script')
 </body>
 </html>
