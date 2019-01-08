@@ -166,6 +166,8 @@
 		#sortable li { margin: 0 5px 5px 5px; padding: 5px; font-size: 1.2em; height: 1.5em; }
 		html>body #sortable li { height: 1.5em; line-height: 1.2em; }
 		.ui-state-highlight { height: 1.5em; line-height: 1.2em; }
+
+		.future-prices { display: none; }
 	</style>
 @stop
 
@@ -238,7 +240,7 @@
 			  
 				<!-- Modal Header -->
 				<div class="modal-header">
-				  <h4 class="modal-title">Add Future Price</h4>
+				  <h4 class="modal-title">Add New Price</h4>
 				  <button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
@@ -427,13 +429,13 @@
 				            				'<div class="col-sm-10">'+
 				            					'<div>'+
 				            						'<h3 style="display: inline">'+item.product_name+'</h3>'+
-				            						'<a href="javascript:void(0)" onClick="add_dish_price(\''+item.product_id+'\', \'{{Session::get('storeId')}}\')" class="btn waves-effect add-price-btn" data-ajax="false">Add Future Price</a>'+
+				            						'<a href="javascript:void(0)" onClick="add_dish_price(\''+item.product_id+'\', \'{{Session::get('storeId')}}\')" class="btn waves-effect add-price-btn" data-ajax="false">Add New Price</a>'+
 				            					'</div>'+
 				            					'<div>'+
 				            						'<p>'+item.product_description+'</p>'+
 				            					'</div>'+
 				            					'<div class="current-price">'+currentPrice+'</div>'+
-				            					'<button type="button" onclick="getFuturePriceByProduct(\''+item.product_id+'\', this);">Show future prices</button>'+
+				            					'<button type="button" class="ui-btn ui-mini ui-btn-inline btn-show-future-prices" onclick="getFuturePriceByProduct(\''+item.product_id+'\', this);">Show future prices</button>'+
 				            					'<div class="future-prices"></div>'+
 				            				'</div>'+
 				            			'</div>'+
@@ -499,44 +501,53 @@
 	{
 		var $this = $(This);
 
-		$.post("{{url('kitchen/ajax-get-future-price-by-product')}}",
-			{"_token": "{{ csrf_token() }}", "product_id": product_id},
-			function(returnedData){
-				console.log(returnedData);
-				console.log(returnedData.futureProductPrices.length);
-				var futurePricesHtml = '';
+		if( $this.next('.future-prices').text().length )
+		{
+			$this.next('.future-prices').slideUp('100').text('');
+			$this.text('Show future prices');
+		}
+		else
+		{
+			$.post("{{url('kitchen/ajax-get-future-price-by-product')}}",
+				{"_token": "{{ csrf_token() }}", "product_id": product_id},
+				function(returnedData){
+					console.log(returnedData);
+					console.log(returnedData.futureProductPrices.length);
+					var futurePricesHtml = '';
 
-				if(returnedData.futureProductPrices != null && returnedData.futureProductPrices.length)
-				{
-					$.each(returnedData.futureProductPrices, function(i, item) {
-						//
-						dStart = item.publishing_start_date;
-						dStart = moment.utc(dStart).toDate();
-						dStart = moment(dStart).local().format('MMM DD, Y HH:mm');
-						dEnd = item.publishing_end_date;
-						dEnd = moment.utc(dEnd).toDate();				
-						dEnd = moment(dEnd).local().format('MMM DD, Y HH:mm');
-						formattedFromToDate = " " + dStart + " - " + dEnd;
+					if(returnedData.futureProductPrices != null && returnedData.futureProductPrices.length)
+					{
+						$.each(returnedData.futureProductPrices, function(i, item) {
+							//
+							dStart = item.publishing_start_date;
+							dStart = moment.utc(dStart).toDate();
+							dStart = moment(dStart).local().format('MMM DD, Y HH:mm');
+							dEnd = item.publishing_end_date;
+							dEnd = moment.utc(dEnd).toDate();				
+							dEnd = moment(dEnd).local().format('MMM DD, Y HH:mm');
+							formattedFromToDate = " " + dStart + " - " + dEnd;
 
-						//
-			        	futurePricesHtml += '<div class="menu_icons">'+
-		        			'<span style="margin-right: 10px; color: rgba(199,7,17,1)">SEK '+item.price+'</span><span class="fa fa-calendar"></span><span>'+formattedFromToDate+'</span>'+
-		        			'<a href="javascript:void(0)" onClick="delete_dish(\'{{url('kitchen/delete-menu-dish?product_id=')}}'+item.product_id+'&price_id='+item.id+'\')" data-ajax="false">'+
-		        				'<span class="fa fa-trash" style="float: right; margin-left: 15px"></span>'+
-		        			'</a>'+
-		        			'<a href="{{url('kitchen/edit-menu-dish?product_id=')}}'+item.product_id+'&store_id={{ Session::get('storeId') }}&price_id='+item.id+'" data-ajax="false"><span class="fa fa-edit" style="float: right"></span>'+
-		        			'</a>'+
-		        		'</div>';
-			        });
+							//
+				        	futurePricesHtml += '<div class="menu_icons">'+
+			        			'<span style="margin-right: 10px; color: rgba(199,7,17,1)">SEK '+item.price+'</span><span class="fa fa-calendar"></span><span>'+formattedFromToDate+'</span>'+
+			        			'<a href="javascript:void(0)" onClick="delete_dish(\'{{url('kitchen/delete-menu-dish?product_id=')}}'+item.product_id+'&price_id='+item.id+'\')" data-ajax="false">'+
+			        				'<span class="fa fa-trash" style="float: right; margin-left: 15px"></span>'+
+			        			'</a>'+
+			        			'<a href="{{url('kitchen/edit-menu-dish?product_id=')}}'+item.product_id+'&store_id={{ Session::get('storeId') }}&price_id='+item.id+'" data-ajax="false"><span class="fa fa-edit" style="float: right"></span>'+
+			        			'</a>'+
+			        		'</div>';
+				        });
+					}
+					else
+					{
+						futurePricesHtml += 'No future price found for this product.';
+					}
+
+					$this.next('.future-prices').html(futurePricesHtml).slideDown(200);
+					$this.text('Hide future prices');
 				}
-				else
-				{
-					futurePricesHtml += 'No future price found for this product.';
-				}
-
-				$this.next('.future-prices').html(futurePricesHtml);
-			}
-		);
+			);
+		}
 	}
 
 	var lastDishId;
