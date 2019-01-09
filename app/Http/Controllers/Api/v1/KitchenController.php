@@ -32,14 +32,13 @@ class KitchenController extends Controller
     }
 
    public function orderDetail($reCompanyId){
-        $orderDetailscustomer = Order::select('orders.*','customer.name as name', 'order_details.id AS order_details_id', 'order_details.order_started', 'order_details.order_ready')
+        $orderDetailscustomer = Order::select('orders.*','customer.name as name')
             ->where(['orders.store_id' => $reCompanyId])
             ->where('user_type','=','customer')
             ->where('check_deliveryDate',Carbon::now()->toDateString())
             ->where('orders.paid', '0')
             ->whereNotIn('orders.online_paid', [2])
             ->where('orders.cancel','!=', 1)
-            ->join('order_details', 'orders.order_id', '=' ,'order_details.order_id')
             ->leftJoin('customer','orders.user_id','=','customer.id');
 
         $store = Store::select(['extra_prep_time', 'order_response'])->where('store_id', $reCompanyId)->first();

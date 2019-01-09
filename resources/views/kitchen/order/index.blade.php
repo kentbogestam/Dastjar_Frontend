@@ -18,7 +18,7 @@
 		            {{ $languageStrings[$message] or $message }}
 		        @endif
 		    </div>
-		@endif
+			@endif
 		</div>
 		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow table-stripe ui-responsive table_size" >
 			<thead>
@@ -75,7 +75,7 @@
 	var storeId = "{{Session::get('storeId')}}";
 	var url = "{{url('kitchen/order-ready')}}";
 	var urldeliver = "{{url('kitchen/order-deliver')}}";
-	var urlReady = "{{url('kitchen/order-readyKitchen')}}";
+	var urlReadyOrder = "{{url('kitchen/make-order-ready')}}";
 	var imageUrl = "{{asset('kitchenImages/right_sign.png')}}";
 
 	$(function(){
@@ -124,9 +124,9 @@
 	          		@if( !Session::has('subscribedPlans.kitchen') )
 	          			// Order Started
 	          			if(temp[i]["order_started"] == 0){
-		          			ids = temp[i]['order_details_id'];
+		          			ids = temp[i]['order_id'];
 			          		liItem += "<td>"
-			          		liItem += "<a data-ajax='false' href='javascript:void(0)'  onclick='orderReadyStarted("+ids+", this)'>"
+			          		liItem += "<a data-ajax='false' href='javascript:void(0)'  onclick='startOrder("+temp[i]['order_id']+", this)'>"
 			          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 			          		liItem +="</a></td>";
 			          		
@@ -139,14 +139,14 @@
 
 		          		// Order Ready
 		          		if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 0){
-		          			ids = temp[i]['order_details_id'];
+		          			ids = temp[i]['order_id'];
 			          		liItem += "<td>"
 			          		liItem += "<a data-ajax='false' href='javascript:void(0)' >"
 			          		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 			          		liItem +="</a></td>";
 			          	}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
 			          		liItem += "<td>"
-			          		liItem += "<a data-ajax='false' href="+urlReady+"/"+temp[i]['order_details_id']+" >"
+			          		liItem += "<a data-ajax='false' href="+urlReadyOrder+"/"+temp[i]['order_id']+" >"
 			          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
 			          		liItem +="</a></td>";
 
@@ -272,9 +272,9 @@
 	          		@if( !Session::has('subscribedPlans.kitchen') )
 	          			// Order Started
 	          			if(temp[i]["order_started"] == 0){
-		          			ids = temp[i]['order_details_id'];
+		          			ids = temp[i]['order_id'];
 			          		liItem += "<td>"
-			          		liItem += "<a data-ajax='false' href='javascript:void(0)'  onclick='orderReadyStarted("+ids+", this)'>"
+			          		liItem += "<a data-ajax='false' href='javascript:void(0)'  onclick='startOrder("+temp[i]['order_id']+", this)'>"
 			          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 			          		liItem +="</a></td>";
 			          		
@@ -287,14 +287,14 @@
 
 		          		// Order Ready
 		          		if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 0){
-		          			ids = temp[i]['order_details_id'];
+		          			ids = temp[i]['order_id'];
 			          		liItem += "<td>"
 			          		liItem += "<a data-ajax='false' href='javascript:void(0)' >"
 			          		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 			          		liItem +="</a></td>";
 			          	}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
 			          		liItem += "<td>"
-			          		liItem += "<a data-ajax='false' href="+urlReady+"/"+temp[i]['order_details_id']+" >"
+			          		liItem += "<a data-ajax='false' href="+urlReadyOrder+"/"+temp[i]['order_id']+" >"
 			          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
 			          		liItem +="</a></td>";
 
@@ -427,9 +427,9 @@
   		@if( !Session::has('subscribedPlans.kitchen') )
   			// Order Started
   			if(temp[i]["order_started"] == 0){
-      			ids = temp[i]['order_details_id'];
+      			ids = temp[i]['order_id'];
           		liItem += "<td>"
-          		liItem += "<a data-ajax='false' href='javascript:void(0)'  onclick='orderReadyStarted("+ids+", this)'>"
+          		liItem += "<a data-ajax='false' href='javascript:void(0)'  onclick='startOrder("+temp[i]['order_id']+", this)'>"
           		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/subs_sign.png')}}'>"
           		liItem +="</a></td>";
           		
@@ -442,14 +442,14 @@
 
       		// Order Ready
       		if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 0){
-      			ids = temp[i]['order_details_id'];
+      			ids = temp[i]['order_id'];
           		liItem += "<td>"
           		liItem += "<a data-ajax='false' href='javascript:void(0)' >"
           		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
           		liItem +="</a></td>";
           	}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
           		liItem += "<td>"
-          		liItem += "<a data-ajax='false' href="+urlReady+"/"+temp[i]['order_details_id']+" >"
+          		liItem += "<a data-ajax='false' href="+urlReadyOrder+"/"+temp[i]['order_id']+" >"
           		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
           		liItem +="</a></td>";
 
@@ -539,33 +539,28 @@
 	  return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2)
 	}
 
-	// Update the status of 'order_started' to 1
-	function orderReadyStarted(id, This) {
+	// Update all the order items status 'order_started' to 1
+	function startOrder(id, This) {
 		$This = $(This);			
-		$.get("{{url('kitchen/orderStartedKitchen')}}/"+id,
+		$.get("{{url('kitchen/start-order')}}/"+id,
 		function(returnedData){
 			// console.log(returnedData["data"]);
 			$('body').find('#'+id).attr('src',imageUrl);
 			$('body').find('#'+id).parent("a").attr('onclick',' ');
-			$('body').find('#'+id+'ready').parent("a").attr('onclick','onReady('+id+')');
+			$('body').find('#'+id+'ready').parent("a").attr('onclick','makeOrderReady('+id+')');
 			$This.closest('tr').removeClass('not-started');
 		});
 	}
 
-	// Update the status of 'order_ready' to 1
-	function onReady(id) {		
+	// Update the order and order items
+	function makeOrderReady(id) {
 		$('body').find('#'+id+'ready').attr('src',imageUrl);
 		$('body').find('#'+id+'ready').parent("a").attr('onclick',' ');
 
-		$.get("{{url('kitchen/order-readyKitchen')}}/"+id,
+		$.get("{{url('kitchen/make-order-ready')}}/"+id,
 		function(returnedData){
-			// console.log(returnedData["data"]);
-			$('body').find('#'+id+'ready').parents("tr").remove();
-			if(returnedData["status"] == 'ready'){
-				$("#popupCloseRight").popup("open");
-			}else{
-				$("#popupNotifaction").popup("open");	
-			}
+			//$('body').find('#'+id+'ready').parents("tr").remove();
+			window.location.reload();
 		});
 
 	}

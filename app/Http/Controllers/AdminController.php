@@ -96,29 +96,30 @@ class AdminController extends Controller
     }
 
     public function index(Request $request){
-            if(!empty($request->input())){
-                $data = $request->input();
-                Session::put('storeId', $data['storeId']);
-                $storeId = $data['storeId'];
-            }else{
-                $storeId = Session::get('storeId');
-            }
+        // dd(Session::all());
+        if(!empty($request->input())){
+            $data = $request->input();
+            Session::put('storeId', $data['storeId']);
+            $storeId = $data['storeId'];
+        }else{
+            $storeId = Session::get('storeId');
+        }
 
-            Session::put('checkStore', 1);
-            $store = Store::where('store_id' , $storeId);
+        Session::put('checkStore', 1);
+        $store = Store::where('store_id' , $storeId);
 
-            if(!$store->exists()){
-                $storeDetails = [];
-                return view('kitchen.storeList', compact('storeDetails'));
-            }
+        if(!$store->exists()){
+            $storeDetails = [];
+            return view('kitchen.storeList', compact('storeDetails'));
+        }
 
-            // Update subscription plan for logged-in store
-            $this->updateStoreSubscriptionPlan();
-            // dd($request->session()->all());
+        // Update subscription plan for logged-in store
+        //$this->updateStoreSubscriptionPlan();
+        // dd($request->session()->all());
 
-            $storedetails = $store->first();
-            $storeName = $storedetails->store_name;
-            return view('kitchen.order.index', compact('storeName'));    
+        $storedetails = $store->first();
+        $storeName = $storedetails->store_name;
+        return view('kitchen.order.index', compact('storeName'));    
     }
 
     /**
@@ -218,6 +219,135 @@ class AdminController extends Controller
         return $response;*/
     }
 
+    /**
+     * Start all the items belongs to an order
+     * @param  [type] $id [description]
+     * @return [type]     [description]
+     */
+    function startOrder($id)
+    {
+        $status = 0;
+
+        if( OrderDetail::where('order_id', $id)->update(['order_started' => 1]) )
+        {
+            Order::where('order_id', $id)->update(['order_started' => 1]);
+            $status = 1;
+        }
+
+        return response()->json(['status' => $status]);
+    }
+
+    /**
+     * [makeOrderReady description]
+     * @param  [type] $orderId [description]
+     * @return [type]          [description]
+     */
+    function makeOrderReady(Request $request, $orderId)
+    {
+        $helper = new Helper();
+
+        try{
+            // Get order detail
+            $order = Order::select(['user_id', 'user_type', 'customer_order_id'])
+                ->where('order_id' , $orderId)
+                ->first();
+
+            $helper->logs("Ready Step 1: order id = " . $orderId);
+            
+            // Update order and order items as ready
+            DB::table('order_details')->where('order_id', $orderId)->update(['order_ready' => 1]);
+            DB::table('orders')->where('order_id', $orderId)->update(['order_ready' => 1]);
+
+            $message = 'orderReady';
+            $helper->logs("Step 2: order table updated = " . $orderId . " And user id=" . $order->user_id);
+
+            if($order->user_id != 0)
+            {
+                $recipients = [];
+                if($order->user_type == 'customer'){
+                    $adminDetail = User::where('id' , $order->user_id)->first();
+                    if(isset($adminDetail->phone_number_prifix) && isset($adminDetail->phone_number)){
+                        $recipients = ['+'.$adminDetail->phone_number_prifix.$adminDetail->phone_number];
+                    }
+                }
+                else{
+                    $adminDetail = Admin::where('id' , $order->user_id)->first();
+                    $recipients = ['+'.$adminDetail->mobile_phone];
+                }
+
+                if(isset($adminDetail->browser)){
+                    $pieces = explode(" ", $adminDetail->browser);
+                }else{
+                    $pieces[0] = '';
+                }
+            }
+            else
+            {
+                $pieces[0] = '';
+            }
+
+            $helper->logs("Step 3: recipient calculation = " . $orderId . " And browser=" .$pieces[0]);
+
+            if($pieces[0] == 'Safari')
+            {
+                $url = "https://gatewayapi.com/rest/mtsms";
+                $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
+                $message = "Your Order Ready Please click on Link \n ".env('APP_URL').'ready-notification/'.$order->customer_order_id;
+                
+                $json = [
+                    'sender' => 'Dastjar',
+                    'message' => ''.$message.'',
+                    'recipients' => [],
+                ];
+
+                foreach ($recipients as $msisdn)
+                {
+                    $json['recipients'][] = ['msisdn' => $msisdn];
+                }
+
+                $ch = curl_init();
+                curl_setopt($ch,CURLOPT_URL, $url);
+                curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+                curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
+                curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
+                curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+                $result = curl_exec($ch);
+                curl_close($ch);
+                $helper->logs("Step 4: IOS notification sent = " . $orderId . " And Result=" .$result);
+            }
+            else
+            {
+                if($order->user_id != 0)
+                {
+                    $result = $this->sendNotifaction($order->customer_order_id , $message);
+                    $helper->logs("Step 5: Android notification sent = " . $orderId . " And Result=" .$result);
+                }
+            }
+
+            return redirect()->back()->with('success', 'Order Ready Notification Send Successfully.');
+        } catch(\Exception $ex){
+            $helper->logs("Step 6: Exception = " .$ex->getMessage());
+        }
+    }
+
+    /**
+     * [Update order payment manually from 'Orders' page]
+     * @param  [type] $order_id [primary key of table 'order']
+     * @return [type]           [status]
+     */
+    function orderPayManually($order_id)
+    {
+        $status = false;
+        $order = Order::findOrFail($order_id);
+
+        if( $order->where('order_id', $order_id)->update(['online_paid' => 3]) )
+        {
+           $status = true;
+        }
+
+        return response()->json(['status' => $status, 'order' => $order]);
+    }
+
     public function kitchenOrderDetail(){
         $store = Store::where('store_id' , Session::get('storeId'));
 
@@ -233,10 +363,18 @@ class AdminController extends Controller
     }
 
 
-    public function orderStarted(Request $request, $orderID){
-        DB::table('order_details')->where('id', $orderID)->update([
-                            'order_started' => 1,
-                        ]);
+    public function orderStarted(Request $request, $orderItemId){
+        if( DB::table('order_details')->where('id', $orderItemId)->update(['order_started' => 1]) )
+        {
+            // Check if all item has started for an order and update order as 'order_started' too
+            $orderId = OrderDetail::select(['order_id'])->where('id', $orderItemId)->first()->order_id;
+
+            if( !OrderDetail::where(['order_id' => $orderId, 'order_started' => 0])->count() )
+            {
+                Order::where('order_id', $orderId)->update(['order_started' => 1]);
+            }
+        }
+
         return redirect()->action('AdminController@kitchenOrderDetail')->with('success', 'Order Started Successfully.');
     }
 
@@ -1479,24 +1617,6 @@ class AdminController extends Controller
         }
     }
 
-    /**
-     * [Update order payment manually from 'Orders' page]
-     * @param  [type] $order_id [primary key of table 'order']
-     * @return [type]           [status]
-     */
-    function orderPayManually($order_id)
-    {
-        $status = false;
-        $order = Order::findOrFail($order_id);
-
-        if( $order->where('order_id', $order_id)->update(['online_paid' => 3]) )
-        {
-           $status = true;
-        }
-
-        return response()->json(['status' => $status, 'order' => $order]);
-    }
-
     public function sentOtp(Request $request){
         if(!empty($request->input())){
             $data = $request->input();
@@ -1548,8 +1668,18 @@ class AdminController extends Controller
         }
     }
 
-    public function orderStartedKitchen(Request $request, $orderID){
-        DB::table('order_details')->where('id', $orderID)->update(['order_started' => 1]);
+    public function orderStartedKitchen(Request $request, $orderItemId){
+        if( DB::table('order_details')->where('id', $orderItemId)->update(['order_started' => 1]) )
+        {
+            // Check if all item has started for an order and update order as 'order_started' too
+            $orderId = OrderDetail::select(['order_id'])->where('id', $orderItemId)->first()->order_id;
+
+            if( !OrderDetail::where(['order_id' => $orderId, 'order_started' => 0])->count() )
+            {
+                Order::where('order_id', $orderId)->update(['order_started' => 1]);
+            }
+        }
+
         return response()->json(['status' => 'success', 'data'=>true]);
     }
 

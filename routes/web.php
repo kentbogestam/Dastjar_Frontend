@@ -148,6 +148,10 @@
 		Route::get('order-started/{OrderId}', 'AdminController@orderStarted');
 		Route::get('orderStartedKitchen/{OrderId}', 'AdminController@orderStartedKitchen');		
 		Route::get('order-readyKitchen/{OrderId}', 'AdminController@orderReadyKitchen');
+
+		Route::get('start-order/{id}', 'AdminController@startOrder');
+		Route::get('make-order-ready/{orderId}', 'AdminController@makeOrderReady');
+
 		Route::get('is-manual-prep-time-for-order/{orderId}', 'AdminController@isManualPrepTimeForOrder');
 		Route::post('add-manual-prep-time','AdminController@addManualPrepTime');
 		Route::post('kitchen-order-save','AdminController@kitchenOrderSave');
