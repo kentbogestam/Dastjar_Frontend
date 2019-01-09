@@ -96,7 +96,6 @@ class AdminController extends Controller
     }
 
     public function index(Request $request){
-        // dd(Session::all());
         if(!empty($request->input())){
             $data = $request->input();
             Session::put('storeId', $data['storeId']);
@@ -114,7 +113,7 @@ class AdminController extends Controller
         }
 
         // Update subscription plan for logged-in store
-        //$this->updateStoreSubscriptionPlan();
+        $this->updateStoreSubscriptionPlan();
         // dd($request->session()->all());
 
         $storedetails = $store->first();
