@@ -386,15 +386,19 @@ function registerDeviceWithApp42(token,type ){
 						?>
 
 						@if($order->order_type == 'eat_later')
-						{{ __('messages.Your order will be ready on') }}
-						{{$order->deliver_date}}
-						{{date_format(date_create($order->deliver_time), 'G:i')}} 
+							{{ __('messages.Your order will be ready on') }}
+							{{$order->deliver_date}}
+							{{date_format(date_create($order->deliver_time), 'G:i')}} 
 						@else
-						{{ __('messages.Your order will be ready in about') }}
-							@if(date_format(date_create($result), 'H')!="00")
-							{{date_format(date_create($result), 'H')}} hours 						
+							{{ __('messages.Your order will be ready in about') }}
+							@if(!$storeDetail->order_response && $order->extra_prep_time)
+								{{ $order->extra_prep_time }} mins
+							@else
+								@if(date_format(date_create($result), 'H')!="00")
+									{{date_format(date_create($result), 'H')}} hours 						
+								@endif
+								{{date_format(date_create($result), 'i')}} mins
 							@endif
-						{{date_format(date_create($result), 'i')}} mins
 						@endif
 					</p>
 				</div>

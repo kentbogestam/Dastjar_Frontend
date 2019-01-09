@@ -74,8 +74,8 @@ background: linear-gradient(to bottom, rgba(199,7,17,1) 0%, rgba(72,13,13,1) 100
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c70711', endColorstr='#480d0d', GradientType=0 );}
 .table_size tbody tr{background-color: #fff;}
 .table-stripe tbody tr:nth-child(odd) td, .table-stripe tbody tr:nth-child(odd) th{background-color: #fff;}
-.table-stripe tbody tr.not-started th {background-color: #FE8E44 !important; color: #fff;}
-.table-stripe tbody tr.not-started td {background-color: #FE8E44 !important; color: #fff;}
+.table-stripe tbody tr.not-started th {background-color: #ff9933 !important; color: #fff;}
+.table-stripe tbody tr.not-started td {background-color: #ff9933 !important; color: #fff;}
 .table-stripe tbody#orderDetailContianer tr.new th, .table-stripe tbody#orderDetailContianer tr.new td {
     background-color: #EBF8A4 !important;
 }

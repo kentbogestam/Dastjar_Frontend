@@ -42,13 +42,14 @@ class KitchenController extends Controller
             ->join('order_details', 'orders.order_id', '=' ,'order_details.order_id')
             ->leftJoin('customer','orders.user_id','=','customer.id');
 
-        $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;
+        $store = Store::select(['extra_prep_time', 'order_response'])->where('store_id', $reCompanyId)->first();
+        $extra_prep_time = $store->extra_prep_time;
         
         // $results = $orderDetailscustomer->union($orderDetails)->get();
 
         $results = $orderDetailscustomer->get();
 
-        return response()->json(['status' => 'success', 'response' => true, 'extra_prep_time' => $extra_prep_time, 'data'=>$results]);
+        return response()->json(['status' => 'success', 'response' => true, 'store' => $store, 'extra_prep_time' => $extra_prep_time, 'data'=>$results]);
     }
     
     public function updateTextspeach($id){

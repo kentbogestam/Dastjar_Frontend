@@ -226,9 +226,10 @@ class AdminController extends Controller
             return view('kitchen.storeList', compact('storeDetails'));
         }
 
-        $storeName = $store->first()->store_name;
+        $store = $store->first();
+        $storeName = $store->store_name;
         
-       return view('kitchen.order.kitchen_order_list', compact('storeName'));
+       return view('kitchen.order.kitchen_order_list', compact('store', 'storeName'));
     }
 
 
@@ -328,6 +329,39 @@ class AdminController extends Controller
         catch(\Exception $ex){
             $helper->logs("Step 6: Exception = " .$ex->getMessage());            
         }
+    }
+
+    /**
+     * Check the count of item of order that have been started
+     * @param  Request $request [description]
+     * @param  [type]  $orderId [description]
+     * @return boolean          [description]
+     */
+    function isManualPrepTimeForOrder(Request $request, $orderId)
+    {
+        $count = OrderDetail::where(['order_id' => $orderId, 'order_started' => 1])->count();
+
+        return response()->json(['count' => $count]);
+    }
+
+    /**
+     * [addManualPrepTime description]
+     * @param Request $request [description]
+     */
+    function addManualPrepTime(Request $request)
+    {
+        $status = 0;
+
+        // Update extra preparation time
+        $result = Order::where('order_id', $request->order_id)
+            ->update(['extra_prep_time' => $request->extra_prep_time]);
+
+        if($result)
+        {
+            $status = 1;
+        }
+
+        return response()->json(['status' => $status]);
     }
     
     public function cateringDetails(){
@@ -633,7 +667,11 @@ class AdminController extends Controller
     }
 
     public function kitchenSetting(){
-        return view('kitchen.setting.index');
+        // Get logged-in store detail
+        $store = Store::select(['order_response'])
+            ->where('store_id' , Session::get('storeId'))->first();
+
+        return view('kitchen.setting.index', compact('store'));
     }
 
     public function saveKitchenSetting(Request $request){
@@ -647,6 +685,11 @@ class AdminController extends Controller
                     'language' => $data['radio-choice-v-2'],
                     'text_speech' => $data['text_speech'],
                 ]);
+
+        // Update store setting
+        Store::where('store_id', Session::get('storeId'))
+            ->update(['order_response' => $data['order_response']]);
+
         return redirect()->back()->with('success', 'Setting updated successfully.');
     }
 

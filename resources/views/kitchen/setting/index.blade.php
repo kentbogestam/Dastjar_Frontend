@@ -136,6 +136,24 @@ textarea.ui-input-text{
 				        <label for="radio-choice-v-2e">On</label>
 				    </fieldset>
 				</li>
+				<li data-role="collapsible" class="range-sec">
+					<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">
+						{{ __("messages.orderResponse") }}
+						<span>
+							@if(!$store->order_response)
+								Manual
+							@else
+								Automatic
+							@endif
+						</span>
+					</h2>
+					<fieldset data-role="controlgroup">
+						<input type="radio" name="order_response" id="order-response-manual" value="0" @if($store->order_response == 0) checked="checked" @endif>
+				        <label for="order-response-manual">Manual</label>
+				        <input type="radio" name="order_response" id="order-response-automatic" value="1" @if($store->order_response == 1) checked="checked" @endif>
+				        <label for="order-response-automatic">Automatic</label>
+					</fieldset>
+				</li>
 				</form>
 
 				<li id="prep_time" class="range-sec btn_blk">

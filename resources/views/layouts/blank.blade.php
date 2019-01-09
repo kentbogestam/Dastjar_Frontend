@@ -3,12 +3,17 @@
 <head>
     @include('includes.kitchenHead')
     @yield('style')
+
+    <script type="text/javascript">
+    	var RESTAURANT_BASE_URL = "{{ url('kitchen') }}";
+    </script>
 </head>
 <body>
 	<div data-role="page">
     	@yield('content')
     </div>
     @yield('footer-script')
+    <script src="{{asset('kitchenJs/init.js')}}"></script>
     <script type="text/javascript">
     	@if(Session::has('storeId'))
     		// Server-Sent Events allow a web page to get updates from a server in x second.

@@ -93,5 +93,7 @@ return [
     'Extra Preparation Time' => 'Öka beredningstiden',
     'dateTimeAlert'=>'Både tid och datum måste anges för att gå vidare',
     'kitchenTextToSpeechDefault' => 'Ny Order',
-    'warningAddProductFuturePrice' => 'Den föreslagna tiden överensstämmer inte med butikens öppettider!'
+    'warningAddProductFuturePrice' => 'Den föreslagna tiden överensstämmer inte med butikens öppettider!',
+    'orderResponse' => 'Order Respons',
+    'textAddManualPrepTime' => 'Välj antal minuter till leverans för hela ordern!'
 ];
