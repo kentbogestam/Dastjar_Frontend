@@ -51,6 +51,10 @@ class OrderController extends Controller
                     $orderTime = $pieces[4];
                 }
 
+                // Get store detail
+                $storeDetail = Store::where('store_id', $data['storeID'])->first();
+
+                //
                 foreach ($data['product'] as $key => $value) {
                     //if commant and quantity require then use condition "$value['prod_quant'] != '0' && $value['prod_desc'] != null"
                     if($value['prod_quant'] != '0'){
@@ -66,6 +70,12 @@ class OrderController extends Controller
                             $order->deliver_date = $orderDate;
                             $order->deliver_time = $orderTime;
                             $order->check_deliveryDate = $checkOrderDate;
+
+                            if($storeDetail->order_response == 0 && $orderType == 'eat_now')
+                            {
+                                $order->order_accepted = 0;
+                            }
+
                             $order->save();
                             $orders = Order::select('*')->whereUserId(Auth::id())->orderBy('order_id', 'DESC')->first();
                             $orderId = $orders->order_id;
@@ -105,8 +115,6 @@ class OrderController extends Controller
                 $request->session()->put('currentOrderId', $order->order_id);
                 //$orderDetails = OrderDetail::select('*')->where('order_id',$orderId)->get();
                 $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
-
-                $storeDetail = Store::where('store_id', $data['storeID'])->first();
 
                 //If store support ontine payment then if condition run.
                 if($storeDetail->online_payment == 1){
@@ -180,6 +188,10 @@ class OrderController extends Controller
                 $orderTime = $pieces[4];
             }
 
+            // Get store detail
+            $storeDetail = Store::where('store_id', $data['storeID'])->first();
+
+            //
             foreach ($data['product'] as $key => $value) {
                 //if commant and quantity require then use condition "$value['prod_quant'] != '0' && $value['prod_desc'] != null"
                 if($value['prod_quant'] != '0'){
@@ -195,6 +207,12 @@ class OrderController extends Controller
                         $order->deliver_date = $orderDate;
                         $order->deliver_time = $orderTime;
                         $order->check_deliveryDate = $checkOrderDate;
+
+                        if($storeDetail->order_response == 0 && $orderType == 'eat_now')
+                        {
+                            $order->order_accepted = 0;
+                        }
+
                         $order->save();
                         $orders = Order::select('*')->whereUserId(Auth::id())->orderBy('order_id', 'DESC')->first();
                         $orderId = $orders->order_id;
@@ -235,7 +253,6 @@ class OrderController extends Controller
             //$orderDetails = OrderDetail::select('*')->where('order_id',$orderId)->get();
             $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 
-            $storeDetail = Store::where('store_id', $data['storeID'])->first();
             //If store support ontine payment then if condition run.
             if($storeDetail->online_payment == 1){
                 $companyDetail = Company::where('company_id', $productTime->company_id)->first();
@@ -300,6 +317,72 @@ class OrderController extends Controller
         $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 
         return view('order.index', compact('order','orderDetails','storeDetail','user'));
+    }
+
+    /**
+     * Check if order accepted, return the text along with order number to show end-user
+     * @param  [type] $orderId [description]
+     * @return [type]          [description]
+     */
+    function checkIfOrderAccepted($orderId)
+    {
+        $status = false; $responseStr ='';
+
+        // If accepted prepare string to show end-user
+        if(Order::where(['order_id' => $orderId, 'order_accepted' => 1])->count())
+        {
+            // Get order and associated store detail
+            $order = Order::select('orders.customer_order_id', 'orders.order_type', 'orders.deliver_date', 'orders.order_delivery_time', 'orders.order_accepted', 'orders.extra_prep_time', 'store.store_name', 'store.phone', 'store.extra_prep_time AS extra_prep_time_store', 'store.order_response')
+            ->join('store', 'store.store_id', '=', 'orders.store_id')
+            ->where('orders.order_id', $orderId)
+            ->first();
+
+            $status = true;
+
+            //
+            $responseStr .= '<p>'.__('messages.Thanks for your order').'</p>';
+            $responseStr .= '<p>'.__('messages.Order Number').'</p>';
+            $responseStr .= "<p class='large-text'>{$order->customer_order_id}</p>";
+            $responseStr .= "<p>({$order->store_name})</p>";
+
+            if( is_numeric($order->phone) )
+            {
+                $responseStr .= "<p><i class='fa fa-phone' aria-hidden='true'></i> <span>{$order->phone}</span></p>";
+            }
+
+            $time = $order->order_delivery_time;
+            $time2 = $order->extra_prep_time_store;
+            $secs = strtotime($time2)-strtotime("00:00:00");
+            $result = date("H:i:s",strtotime($time)+$secs);
+
+            $responseStr .= '<p>';
+            if($order->order_type == 'eat_later')
+            {
+                $responseStr .= __('messages.Your order will be ready on').' '.$order->deliver_date.' '.date_format(date_create($order->deliver_time), 'G:i');;
+            }
+            else
+            {
+                $responseStr .= __('messages.Your order will be ready in about').' ';
+
+                if(!$order->order_response && $order->extra_prep_time)
+                {
+                    $responseStr .= $order->extra_prep_time.' mins';
+                }
+                else
+                {
+                    if(date_format(date_create($result), 'H')!="00")
+                    {
+                        $responseStr .= date_format(date_create($result), 'H').' hours ';
+                    }
+
+                    $responseStr .= date_format(date_create($result), 'i').' mins';
+                }
+            }
+            $responseStr .= '</p>';
+        }
+
+        // Return response data
+        return response()->json(['status' => $status, 'responseStr' => $responseStr]);
     }
 
     public function random_num($size) {

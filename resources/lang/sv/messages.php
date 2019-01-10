@@ -95,5 +95,6 @@ return [
     'kitchenTextToSpeechDefault' => 'Ny Order',
     'warningAddProductFuturePrice' => 'Den föreslagna tiden överensstämmer inte med butikens öppettider!',
     'orderResponse' => 'Order Respons',
-    'textAddManualPrepTime' => 'Välj antal minuter till leverans för hela ordern!'
+    'textAddManualPrepTime' => 'Välj antal minuter till leverans för hela ordern!',
+    'waitForOrderConfirmation' => 'Din order är mottagen. Var vänlig invänta konfirmationen på ordern.'
 ];

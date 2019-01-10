@@ -369,38 +369,42 @@ function registerDeviceWithApp42(token,type ){
 			    </div>
 			@endif
 			<div class="wait-bg-img">
-				<div class="text-content">
-					<p>{{ __('messages.Thanks for your order') }} </p>
-					<p>{{ __('messages.Order Number') }} </p>
-					<p class="large-text">{{$order->customer_order_id}}</p>
-					<p>({{$order->store_name}})</p>
-					@if( is_numeric($storeDetail->phone) )
-						<p><i class="fa fa-phone" aria-hidden="true"></i> <span>{{ $storeDetail->phone }}</span></p>
-					@endif
-					<p>
-						<?php
-							$time = $order->order_delivery_time;
-							$time2 = $storeDetail->extra_prep_time;
-							$secs = strtotime($time2)-strtotime("00:00:00");
-							$result = date("H:i:s",strtotime($time)+$secs);
-						?>
-
-						@if($order->order_type == 'eat_later')
-							{{ __('messages.Your order will be ready on') }}
-							{{$order->deliver_date}}
-							{{date_format(date_create($order->deliver_time), 'G:i')}} 
-						@else
-							{{ __('messages.Your order will be ready in about') }}
-							@if(!$storeDetail->order_response && $order->extra_prep_time)
-								{{ $order->extra_prep_time }} mins
-							@else
-								@if(date_format(date_create($result), 'H')!="00")
-									{{date_format(date_create($result), 'H')}} hours 						
-								@endif
-								{{date_format(date_create($result), 'i')}} mins
-							@endif
+				<div class="text-content order-confirmation-block">
+					@if($order->order_accepted)
+						<p>{{ __('messages.Thanks for your order') }} </p>
+						<p>{{ __('messages.Order Number') }} </p>
+						<p class="large-text">{{$order->customer_order_id}}</p>
+						<p>({{$order->store_name}})</p>
+						@if( is_numeric($storeDetail->phone) )
+							<p><i class="fa fa-phone" aria-hidden="true"></i> <span>{{ $storeDetail->phone }}</span></p>
 						@endif
-					</p>
+						<p>
+							<?php
+								$time = $order->order_delivery_time;
+								$time2 = $storeDetail->extra_prep_time;
+								$secs = strtotime($time2)-strtotime("00:00:00");
+								$result = date("H:i:s",strtotime($time)+$secs);
+							?>
+
+							@if($order->order_type == 'eat_later')
+								{{ __('messages.Your order will be ready on') }}
+								{{$order->deliver_date}}
+								{{date_format(date_create($order->deliver_time), 'G:i')}} 
+							@else
+								{{ __('messages.Your order will be ready in about') }}
+								@if(!$storeDetail->order_response && $order->extra_prep_time)
+									{{ $order->extra_prep_time }} mins
+								@else
+									@if(date_format(date_create($result), 'H')!="00")
+										{{date_format(date_create($result), 'H')}} hours 						
+									@endif
+									{{date_format(date_create($result), 'i')}} mins
+								@endif
+							@endif
+						</p>
+					@else
+						<p>{{ __('messages.waitForOrderConfirmation') }} </p>
+					@endif
 				</div>
 			</div>
 			<div class="table-content">
@@ -744,6 +748,23 @@ function registerDeviceWithApp42(token,type ){
 		$(".pop_up").hide();
 		$('#overlay').hide();
 	}
+
+	@if(!$order->order_accepted)
+		var intervalCheckIfOrderAccepted = null;
+
+		// If 'order response' set to manual for store and order not accepted, check for order accepted
+		var checkIfOrderAccepted = function() {
+			$.get('{{ url('check-if-order-accepted').'/'.$order->order_id }}', function(result) {
+				if(result.status)
+				{
+					$('.order-confirmation-block').html(result.responseStr);
+					clearInterval(intervalCheckIfOrderAccepted);
+				}
+			});
+		}
+
+		intervalCheckIfOrderAccepted = setInterval(checkIfOrderAccepted, 5000);
+	@endif
 </script>
 
 @endsection
