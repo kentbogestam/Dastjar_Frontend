@@ -3,7 +3,7 @@
 		<div class="ui-block-c">
 			<a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 				<div class="img-container">
-					<img src="{{asset('images/icons/select-store_05.png')}}">
+					<img src="{{asset('images/notification-2.png')}}">
 				</div>
 				<span>{{ __('messages.Orders') }}</span>
 			</a>
@@ -12,7 +12,7 @@
 	<div class="ui-block-c order-active">
     	<a href="javascript:void(0)" class="ui-shadow ui-corner-all icon-img ui-btn-inline ordersec" data-ajax="false" onclick="orderPopup()">
 	        <div class="img-container">
-	        	<img src="{{asset('images/icons/select-store_05-active.png')}}">
+	        	<img src="{{asset('images/notification-2.png')}}">
 	        </div>
         	<span>{{ __('messages.Orders') }}<span class="order-number">{{count(Auth::user()->paidOrderList)}}</span></span>
         </a>
