@@ -26,7 +26,7 @@
 			 		<th data-priority="2">{{ __('messages.Orders') }}</th>
 			   		<th>{{ __('messages.Alias') }}</th> 
 			   		<th data-priority="3">{{ __('messages.Date and Time') }}</th>
-			   		@if( !Session::has('subscribedPlans.kitchen') )
+			   		@if( Session::has('subscribedPlans.kitchen') )
 						<th data-priority="3">{{ __('messages.Started') }}</th>
 			      		<th data-priority="1">{{ __('messages.Ready') }}</th> 
 			      	@else
@@ -65,6 +65,8 @@
 			</tbody>
 		</table>
 	</div>
+
+	@include('includes.kitchen-popup-add-manual-preparation-time')
 @endsection
 
 @section('footer-script')
@@ -88,6 +90,7 @@
           	list = temp;
           	// console.log(temp.length);
           	var liItem = "";
+          	var aString = '';
           	totallength = temp.length;
           	if(temp.length != 0){
           		totalCount = temp.length;
@@ -121,12 +124,19 @@
 	          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
 
 	          		// Add additional column if 'kitchen' module not subscribed
-	          		@if( !Session::has('subscribedPlans.kitchen') )
+	          		@if( Session::has('subscribedPlans.kitchen') )
 	          			// Order Started
 	          			if(temp[i]["order_started"] == 0){
 		          			ids = temp[i]['order_id'];
+
+		          			@if($storedetails->order_response)
+		          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='startOrder("+ids+", this)'>";
+		          			@else
+		          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='isManualPrepTimeForOrder("+ids+", false, this)'>";
+		          			@endif
+
 			          		liItem += "<td>"
-			          		liItem += "<a data-ajax='false' href='javascript:void(0)'  onclick='startOrder("+temp[i]['order_id']+", this)'>"
+			          		liItem += aString
 			          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 			          		liItem +="</a></td>";
 			          		
@@ -238,6 +248,7 @@
           	list = temp;
           	// console.log(temp.length);
           	var liItem = "";
+          	var aString = '';
           	if(temp.length != 0){
           		totalCount = temp.length;
 
@@ -269,12 +280,19 @@
 	          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
 
 	          		// Add additional column if 'kitchen' module not subscribed
-	          		@if( !Session::has('subscribedPlans.kitchen') )
+	          		@if( Session::has('subscribedPlans.kitchen') )
 	          			// Order Started
 	          			if(temp[i]["order_started"] == 0){
 		          			ids = temp[i]['order_id'];
+
+		          			@if($storedetails->order_response)
+		          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='startOrder("+ids+", this)'>";
+		          			@else
+		          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='isManualPrepTimeForOrder("+ids+", false, this)'>";
+		          			@endif
+
 			          		liItem += "<td>"
-			          		liItem += "<a data-ajax='false' href='javascript:void(0)'  onclick='startOrder("+temp[i]['order_id']+", this)'>"
+			          		liItem += "<a data-ajax='false' href='javascript:void(0)' onclick='startOrder("+temp[i]['order_id']+", this)'>"
 			          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 			          		liItem +="</a></td>";
 			          		
@@ -352,7 +370,7 @@
 		}); 
 	}
 
-	setInterval(ajaxCall, 10000);
+	// setInterval(ajaxCall, 10000);
 
 	var tempCount = 18;
 	$(document).on("scrollstop", function (e) {
@@ -386,6 +404,7 @@
 
 	function  addMore(len){
 		var liItem = "";
+		var aString = '';
     	var limit = 0;
     	var countCheck = 1;
 		if(totalCount > 10){
@@ -424,12 +443,19 @@
   		liItem += "<td>"+list[i]["deliver_date"]+' '+timeOrder+"</td>";
   		
   		// Add additional column if 'kitchen' module not subscribed
-  		@if( !Session::has('subscribedPlans.kitchen') )
+  		@if( Session::has('subscribedPlans.kitchen') )
   			// Order Started
   			if(temp[i]["order_started"] == 0){
       			ids = temp[i]['order_id'];
+
+      			@if($storedetails->order_response)
+	  				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='startOrder("+ids+", this)'>";
+	  			@else
+	  				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='isManualPrepTimeForOrder("+ids+", false, this)'>";
+	  			@endif
+
           		liItem += "<td>"
-          		liItem += "<a data-ajax='false' href='javascript:void(0)'  onclick='startOrder("+temp[i]['order_id']+", this)'>"
+          		liItem += aString
           		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/subs_sign.png')}}'>"
           		liItem +="</a></td>";
           		
@@ -541,7 +567,7 @@
 
 	// Update all the order items status 'order_started' to 1
 	function startOrder(id, This) {
-		$This = $(This);			
+		$This = $(This);
 		$.get("{{url('kitchen/start-order')}}/"+id,
 		function(returnedData){
 			// console.log(returnedData["data"]);

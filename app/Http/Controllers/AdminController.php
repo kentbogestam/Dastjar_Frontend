@@ -118,7 +118,8 @@ class AdminController extends Controller
 
         $storedetails = $store->first();
         $storeName = $storedetails->store_name;
-        return view('kitchen.order.index', compact('storeName'));    
+
+        return view('kitchen.order.index', compact('storedetails', 'storeName'));    
     }
 
     /**
@@ -225,12 +226,15 @@ class AdminController extends Controller
      */
     function startOrder($id)
     {
-        $status = 0;
+        $status = false;
 
         if( OrderDetail::where('order_id', $id)->update(['order_started' => 1]) )
         {
+            $status = true;
             Order::where('order_id', $id)->update(['order_accepted' => 1, 'order_started' => 1]);
-            $status = 1;
+            
+            // Send text/notification on order accepted
+            $this->onOrderAccepted($id);
         }
 
         return response()->json(['status' => $status]);
@@ -246,18 +250,17 @@ class AdminController extends Controller
         $helper = new Helper();
 
         try{
+            $helper->logs("Ready Step 1: order id - " . $orderId);
+
             // Get order detail
             $order = Order::select(['user_id', 'user_type', 'customer_order_id'])
                 ->where('order_id' , $orderId)
                 ->first();
-
-            $helper->logs("Ready Step 1: order id = " . $orderId);
             
             // Update order and order items as ready
             DB::table('order_details')->where('order_id', $orderId)->update(['order_ready' => 1]);
             DB::table('orders')->where('order_id', $orderId)->update(['order_ready' => 1]);
 
-            $message = 'orderReady';
             $helper->logs("Step 2: order table updated = " . $orderId . " And user id=" . $order->user_id);
 
             if($order->user_id != 0)
@@ -279,48 +282,28 @@ class AdminController extends Controller
                 }else{
                     $pieces[0] = '';
                 }
-            }
-            else
-            {
-                $pieces[0] = '';
-            }
 
-            $helper->logs("Step 3: recipient calculation = " . $orderId . " And browser=" .$pieces[0]);
+                $helper->logs("Step 3: recipient calculation = " . $orderId . " And browser=" .$pieces[0]);
 
-            if($pieces[0] == 'Safari')
-            {
-                $url = "https://gatewayapi.com/rest/mtsms";
-                $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
-                $message = "Your Order Ready Please click on Link \n ".env('APP_URL').'ready-notification/'.$order->customer_order_id;
-                
-                $json = [
-                    'sender' => 'Dastjar',
-                    'message' => ''.$message.'',
-                    'recipients' => [],
-                ];
-
-                foreach ($recipients as $msisdn)
+                // Send message/notification to user
+                if($pieces[0] == 'Safari')
                 {
-                    $json['recipients'][] = ['msisdn' => $msisdn];
+                    $message = "Your Order Ready Please click on Link \n ".env('APP_URL').'ready-notification/'.$order->customer_order_id;
+                    $result = $this->apiSendTextMessage($recipients, $message);
+                    
+                    $helper->logs("Step 4: IOS notification sent = " . $orderId . " And Result=" .$result);
                 }
-
-                $ch = curl_init();
-                curl_setopt($ch,CURLOPT_URL, $url);
-                curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
-                curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
-                curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
-                curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
-                $result = curl_exec($ch);
-                curl_close($ch);
-                $helper->logs("Step 4: IOS notification sent = " . $orderId . " And Result=" .$result);
-            }
-            else
-            {
-                if($order->user_id != 0)
+                else
                 {
+                    $message = 'orderReady';
                     $result = $this->sendNotifaction($order->customer_order_id , $message);
+                    
                     $helper->logs("Step 5: Android notification sent = " . $orderId . " And Result=" .$result);
                 }
+            }
+            else
+            {
+                $helper->logs("Step 3 Ready: ELSE; Order ID - ".$orderId);
             }
 
             return redirect()->back()->with('success', 'Order Ready Notification Send Successfully.');

@@ -13,7 +13,17 @@ function isManualPrepTimeForOrder(orderId, itemId, This)
 			$('#add-manual-prep-time').popup('open');
 		}
 
-		orderReadyStarted(itemId, This);
+		// Start order item or order
+		if(itemId)
+		{
+			// Start item individually for order from 'Kitchen Menu' 
+			orderReadyStarted(itemId, This);
+		}
+		else
+		{
+			// Start order from 'Order Menu'
+			startOrder(orderId, This);
+		}
 	});
 }
 
