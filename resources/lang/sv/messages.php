@@ -27,7 +27,7 @@ return [
     'Order Number'   => 'Order-ID',
     'Your order will be ready on'   => 'Din beställning är klar på ', 
     'ORDER DETAILS'   => 'ORDERDETALJER',
-    'CART DETAILS'   => 'CART DETALJER',
+    'Order Details'   => 'Order Lista',
     'TOTAL'   => 'TOTAL',
     'Orders'  => 'Beställningar',
     'Alias'  => 'Namn',  
@@ -95,10 +95,12 @@ return [
     'dateTimeAlert'=>'Både tid och datum måste anges för att gå vidare',
     'kitchenTextToSpeechDefault' => 'My Order',
     'send order and pay in restaurant'=>'skicka order och betala i restaurang',
+    'Send Order'=>'skicka order',
     'Delete Product'=>'Är du säker på att du vill radera produkten',
     'Delete Cart Order'=>'Är du säker på att du vill radera alla beställningar',
     'Leave Cart Page'=>'Din kundvagns artikel kommer att tas bort om du lämnar den här sidan',
     'Welcome To Anar'=>'Välkommen till anar!',
     'Select Restaurant'=>'Välj mellan "Ät nu eller Senare"!',
+    'Pay with card'=>'Betala med kort',
     
 ];
