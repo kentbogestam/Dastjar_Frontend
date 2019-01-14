@@ -916,7 +916,8 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
 #table-custom-2 .qty-sec{display: inline-flex;
     border: 1px solid rgba(0, 0, 0, 0.2) !important;
     border-radius: 30px;align-items: center;}
-#table-custom-2 .qty-sec .ui-btn,#table-custom-2 .qty-sec .ui-input-text{margin: 4px 2px !important;padding: 1px 5px !important;}
+#table-custom-2 .qty-sec .ui-btn,#table-custom-2 .qty-sec .ui-input-text{margin: 4px 5px !important;padding: 1px 8px !important;}
+#table-custom-2 .qty-sec .ui-btn.ui-input-btn{font-size: 21px;font-weight: bold;}
 #saveorder{padding: 10px;width: 75%;margin: 0 auto;
     text-align: center;
     background: #89ccf7;border-radius: 9px;background-image: linear-gradient(#7dc5ee,#008cdd 85%,#30a2e4);}
