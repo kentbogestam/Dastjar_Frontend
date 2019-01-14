@@ -133,10 +133,12 @@ function decrementCartValue(id,msg)
 {
      var grandtotal=0;
    var total=0;
+   var rowCount = $('#table-custom-2 tr').length;
     var value = parseInt(document.getElementById('qty'+id).value, 10);
     
     value = isNaN(value) ? 0 : value;
-    if(value>1){
+    
+    if(value > 1 || rowCount >= 3){
         value--;
         document.getElementById('qty'+id).value = value;
         itemprice = parseInt(document.getElementById('itemprice'+id).value, 10);
@@ -148,6 +150,10 @@ function decrementCartValue(id,msg)
 
          updateCart(value,$('#prod'+id).val(),total,grandtotal);
 
+          if(value ==0){
+       
+            $('#row_'+id).remove();
+          }
 
          $('#grandTotalDisplay').html(grandtotal);
     }else{
@@ -156,7 +162,7 @@ function decrementCartValue(id,msg)
 
       if(deleteConfirm==true){
        
-        var rowCount = $('#table-custom-2 tr').length;
+        
 
         var productid=$('#prod'+id).val();
         
@@ -171,7 +177,7 @@ function decrementCartValue(id,msg)
 
                  $('#grandTotalDisplay').html(grandtotal);
                }else{
-                      
+                     
                     $('#last-row').remove();
                     $('#saveorder').remove();
                     updateCart(0,0,0,0);
