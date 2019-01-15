@@ -19,7 +19,7 @@ use App\Helper;
 class PaymentController extends Controller
 {
     public function payment(Request $request)
-    {
+    { 
     	if(!empty($request->input())){
     		$amount = $request->session()->get('paymentAmount') * 100;
 	    	$stripeAccount = $request->session()->get('stripeAccount');
