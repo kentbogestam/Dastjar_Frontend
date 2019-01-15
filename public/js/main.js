@@ -242,7 +242,6 @@ function decrementCartValue(id,msg)
                     }
                 });
 
-
   }
 
   function deleteFullCart(url,value,msg){
