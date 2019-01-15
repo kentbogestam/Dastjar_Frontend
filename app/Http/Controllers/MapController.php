@@ -14,6 +14,10 @@ use Session;
 class MapController extends Controller
 {
     public function searchMapEatnow(Request $request){
+        // Nearby restaurant detail
+        $nearbyRestaurantDetail = array();
+
+        //
         if(Auth::check()){
             if(Session::get('with_login_address') != null){
                 $loc_lat = Session::get('with_login_lat');
@@ -35,6 +39,12 @@ class MapController extends Controller
             $i = 0;
             array_push($latLng,[$loc_lat, $loc_lng]);
             foreach ($restaurantLatLngList as $restaurantLatLng) {
+                // Array have variable details
+                $nearbyRestaurantDetail[] = array(
+                    'store_id' => $restaurantLatLng['store_id'],
+                    'store_name' => $restaurantLatLng['store_name']
+                );
+
                 $getTime = explode('::', $restaurantLatLng['store_open_close_day_time']);
                 if(count($getTime) == 2){
                     $storeTime = explode('to', $getTime[1]);
@@ -61,8 +71,9 @@ class MapController extends Controller
                 }
                 $i++;
             }
+
             $latLngList = json_encode($latLng);
-            return view('map.index', compact('latLngList'));
+            return view('map.index', compact('latLngList', 'nearbyRestaurantDetail'));
         }else{
             $pieces = explode(" ", $request->session()->get('current_date_time'));
 
@@ -79,6 +90,12 @@ class MapController extends Controller
             $i = 0;
             array_push($latLng,[floatval($request->session()->get('with_out_login_lat')), floatval($request->session()->get('with_out_login_lng'))]);
             foreach ($restaurantLatLngList as $restaurantLatLng) {
+                // Array have variable details
+                $nearbyRestaurantDetail[] = array(
+                    'store_id' => $restaurantLatLng['store_id'],
+                    'store_name' => $restaurantLatLng['store_name']
+                );
+
                 $getTime = explode('::', $restaurantLatLng['store_open_close_day_time']);
                 if(count($getTime) == 2){
                     $storeTime = explode('to', $getTime[1]);
@@ -107,7 +124,7 @@ class MapController extends Controller
             }
 
             $latLngList = json_encode($latLng);
-            return view('map.index', compact('latLngList'));
+            return view('map.index', compact('latLngList', 'nearbyRestaurantDetail'));
         }
     }
 

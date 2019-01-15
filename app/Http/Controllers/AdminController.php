@@ -601,7 +601,7 @@ class AdminController extends Controller
 
             $allData = [];
 
-            $prods = $products->join('dish_type','dish_type.dish_id','=','product.dish_type')->where('product.u_id', Auth::user()->u_id)->where('s_activ', '!=' , 2)->where('dish_activate',1)
+            /*$prods = $products->join('dish_type','dish_type.dish_id','=','product.dish_type')->where('product.u_id', Auth::user()->u_id)->where('s_activ', '!=' , 2)->where('dish_activate',1)
             ->orderBy('product_rank', 'ASC')
             ->get()->groupBy('dish_type');
             $prodprices = $productPriceList->where('store_id', Session::get('storeId'))->get()->groupBy('product_id');
@@ -644,7 +644,7 @@ class AdminController extends Controller
                         }
                     }
                 }
-            }
+            }*/
 
             $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
             $storeName = $storedetails->store_name;
@@ -653,12 +653,91 @@ class AdminController extends Controller
             $companyId = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
 
             $menuTypes = DishType::where('company_id', $companyId)->pluck('dish_name','dish_id');
+            //echo '<pre>'; print_r($menuTypes->toArray()); exit;
 
             $companydetails = new Company();
             $currency = $companydetails->where('company_id' , '=', $companyId)->first()->currencies;
 
             return view('kitchen.menulist.index', compact('menuTypes','storeName', 'currency', 'allData'));
         }
+    }
+
+    /**
+     * Return products for specific menu along with the current price
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function ajaxGetProductByDishType(Request $request) {
+        // Get all products by dish
+        $products = Product::select('product_id', 'product_name', 'product_description', 'small_image')
+            ->join('dish_type','dish_type.dish_id','=','product.dish_type')
+            ->where('product.dish_type', $request->dish_id)
+            ->where('product.u_id', Auth::user()->u_id)
+            ->where('s_activ', '!=' , 2)
+            ->where('dish_activate',1)
+            ->orderBy('product_rank', 'ASC')
+            ->get();
+            //->groupBy('dish_type');
+
+        $data = array();
+
+        if($products)
+        {
+            foreach($products as $key => $value)
+            {
+                $data[$key] = $value;
+
+                if( strpos($value->small_image, '.png') == false )
+                {
+                    $data[$key]['small_image'] = asset('images/placeholder-image.png');
+                }
+
+                // Get current product price detail
+                $data[$key]['current_price'] = null;
+                $current_date = date('Y-m-d H:00:00');
+
+                $currentProductPrice = ProductPriceList::select('id', 'text', 'price', 'publishing_start_date', 'publishing_end_date')
+                    ->where('product_id', $value->product_id)
+                    ->where('store_id', Session::get('storeId'))
+                    ->where('publishing_start_date', '<=', $current_date)
+                    ->where('publishing_end_date', '>=', $current_date)
+                    ->first();
+                    //->toSql();
+                
+                if($currentProductPrice)
+                {
+                    $data[$key]['current_price'] = $currentProductPrice;
+                }
+            }
+        }
+
+        return response()->json(['products' => $data]);
+    }
+
+    /**
+     * Return future prices for specific product
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function ajaxGetFuturePriceByProduct(Request $request)
+    {
+        //
+        $current_date = date('Y-m-d H:00:00');
+        $data = null;
+
+        $futureProductPrices = ProductPriceList::select('id', 'product_id', 'text', 'price', 'publishing_start_date', 'publishing_end_date')
+            ->where('product_id', $request->product_id)
+            ->where('store_id', Session::get('storeId'))
+            ->where('publishing_start_date', '>', $current_date)
+            ->orderBy('publishing_start_date')
+            ->get();
+
+        if($futureProductPrices)
+        {
+            $data = $futureProductPrices;
+        }
+
+        return response()->json(['futureProductPrices' => $data]);
     }
 
     public function kitchenCreateMenu(Request $request){        
@@ -1097,6 +1176,27 @@ class AdminController extends Controller
         return back()->with('success','Dish deleted successfully');
     }
 
+    /**
+     * Check if future date belongs to any of existing product dates
+     * @param  Request $request [description]
+     * @return boolean          [description]
+     */
+    public function isFutureDateAvailable(Request $request)
+    {
+        $publishing_start_date = \DateTime::createFromFormat('d/m/Y - H:i', $request->publishing_start_date);
+        $publishing_end_date = \DateTime::createFromFormat('d/m/Y - H:i', $request->publishing_end_date);
+
+        $status = 1;
+        $product_price_list = new ProductPriceList();
+
+        if($product_price_list->where('product_id', $request->product_id)->where('store_id', $request->store_id)->where('publishing_start_date','<=',$publishing_start_date)->where('publishing_end_date','>=',$publishing_start_date)->exists() || $product_price_list->where('product_id', $request->product_id)->where('store_id', $request->store_id)->where('publishing_start_date','<=',$publishing_end_date)->where('publishing_end_date','>=',$publishing_end_date)->exists() || $product_price_list->where('product_id', $request->product_id)->where('store_id', $request->store_id)->where('publishing_start_date','>=',$publishing_start_date)->where('publishing_end_date','<=',$publishing_end_date)->exists())
+        {
+            $status = 0;
+        }
+
+        return response()->json(['status' => $status]);
+    }
+
     public function addDishPrice(Request $request){
         // dd($request->publishing_start_date);
         $publishing_start_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_start_date);
@@ -1108,7 +1208,7 @@ class AdminController extends Controller
 
         // dd($publishing_start_date);
 
-        if($product_price_list->where('product_id', $request->product_id)->where('publishing_start_date','<=',$publishing_start_date)->where('publishing_end_date','>=',$publishing_start_date)->exists() || $product_price_list->where('product_id', $request->product_id)->where('publishing_start_date','<=',$publishing_end_date)->where('publishing_end_date','>=',$publishing_end_date)->exists()){
+        if($product_price_list->where('product_id', $request->product_id)->where('store_id', $request->store_id)->where('publishing_start_date','<=',$publishing_start_date)->where('publishing_end_date','>=',$publishing_start_date)->exists() || $product_price_list->where('product_id', $request->product_id)->where('store_id', $request->store_id)->where('publishing_start_date','<=',$publishing_end_date)->where('publishing_end_date','>=',$publishing_end_date)->exists()){
             return back()->with('error','Invalid date');
         }
 
@@ -1370,6 +1470,20 @@ class AdminController extends Controller
                 curl_close($ch);   
 
         return response()->json(['status' => 'success', 'data'=>'Order Cancelled Successfully.']);        
+    }
+
+    /**
+     * [updateOrderDetailStatus function to update order status if order is new]
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    function updateOrderDetailStatus(Request $request) {
+        $orderDetail = OrderDetail::where('id', $request->id)
+            ->update(['is_new' => 0]);
+
+        if($orderDetail) {
+            return response()->json(['status' => 'success', 'data'=>'Updated Successfully.']);        
+        }
     }
 
     public function getDates(){
