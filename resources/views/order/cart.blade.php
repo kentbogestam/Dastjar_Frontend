@@ -7,7 +7,7 @@
 			
 			<div class="table-content">
             <div class="head_line">
-            	<h2>{{ __('messages.CART DETAILS') }}</h2>
+            	<h2>{{ __('messages.Order Details') }}</h2>
             	<div class="delt-cart"><a href="#" data-ajax="false" onclick="deleteFullCart('{{ url("emptyCart/") }}','1','{{ __("messages.Delete Cart Order") }}')"><img src="images/dlt_icon.png"></a></div>
 
              </div>
@@ -52,7 +52,7 @@
 
 				<div id="saveorder">
 					@if(Session::get('paymentmode') !=0)
-					<a href="{{url('save-order').'/?orderid='.$order->order_id}}" data-ajax="false">send order and pay in restaurant</a>
+					<a href="{{url('save-order').'/?orderid='.$order->order_id}}" data-ajax="false">{{ __('messages.Send Order') }}</a>
 					@else
 					<a href="{{url('order-view').'/'.$order->order_id}}" data-ajax="false">{{ __('messages.send order and pay in restaurant') }}</a>
 					@endif

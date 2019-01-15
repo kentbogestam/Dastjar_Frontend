@@ -38,6 +38,7 @@
                 data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
                 data-token="true"
                 data-locale="auto"
+                data-label="{{__('messages.Pay with card')}}"
                 data-zip-code="false">
         </script>
     </form>

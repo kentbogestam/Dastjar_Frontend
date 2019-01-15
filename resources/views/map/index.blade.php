@@ -7,7 +7,7 @@
 	</div>
 
 	
- @include('includes.fixedfooter')
+ <!--@include('includes.fixedfooter')-->
 @endsection
 
 @section('footer-script')
@@ -36,6 +36,7 @@
 	    map.setTilt(45);
 	
     	var markers = {!! $latLngList !!};
+
     	var nearbyRestaurantDetail = {!! json_encode($nearbyRestaurantDetail) !!};
 	                        
 	    // Info Window Content
@@ -48,6 +49,7 @@
 	        '<p>The Palace of Westminster is the meeting place of the House of Commons and the House of Lords, the two houses of the Parliament of the United Kingdom. Commonly known as the Houses of Parliament after its tenants.</p>' +
 	        '</div>']
 	    ];*/
+
 	        
 	    // Display multiple markers on a map
 	    /*var infoWindow = new google.maps.InfoWindow(), marker, i;*/
