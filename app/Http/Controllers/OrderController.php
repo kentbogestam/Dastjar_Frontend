@@ -756,9 +756,13 @@ public function cart(Request $request){
                                 'order_total' => $data['grandtotal']
                             ]);
 
+        $request->session()->put('paymentAmount', $data['grandtotal']);
+
     }elseif($data['grandtotal']!=0){
 
         DB::table('order_details')->where('order_id', $data['orderid'])->where('product_id',$data['productId'])->delete();
+
+         $request->session()->put('paymentAmount', $data['grandtotal']);
     }
     elseif($data['grandtotal']==0 && $data['productId']==0 && $data['qty']==0){
 
