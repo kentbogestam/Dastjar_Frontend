@@ -96,5 +96,6 @@ return [
     'warningAddProductFuturePrice' => 'Den föreslagna tiden överensstämmer inte med butikens öppettider!',
     'orderResponse' => 'Order Respons',
     'textAddManualPrepTime' => 'Välj antal minuter till leverans för hela ordern!',
-    'waitForOrderConfirmation' => 'Din order är mottagen. Var vänlig invänta konfirmationen på ordern.'
+    'waitForOrderConfirmation' => 'Din order är mottagen. Var vänlig invänta konfirmationen på ordern.',
+    'noRestaurantFound' => 'Det finns vid den här tiden inga öppna restauranger i detta område.'
 ];

@@ -93,5 +93,6 @@ return [
     'warningAddProductFuturePrice' => 'Your proposed time is conflicting with the stores opening hours!',
     'orderResponse' => 'Order Response',
     'textAddManualPrepTime' => 'Select the amount of minutes for delivery for the complete order!',
-    'waitForOrderConfirmation' => 'Your order has been received. Please wait for order confirmation.'
+    'waitForOrderConfirmation' => 'Your order has been received. Please wait for order confirmation.',
+    'noRestaurantFound' => 'There are no open restaurants in you area at this hour.'
 ];

@@ -198,9 +198,15 @@ class HomeController extends Controller
             }catch(\Exception $ex){
                   $helper->logs("getListRestaurants " . $ex->getMessage());
             }
-                           
 
-            return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails]);
+            // Check if restaurant found and send translated message
+            $restaurantStatusMsg = '';
+            if( $companydetails == '' || !count($companydetails) )
+            {
+                $restaurantStatusMsg = __('messages.noRestaurantFound');
+            }
+
+            return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg]);
             
         } else{
 
@@ -245,9 +251,16 @@ class HomeController extends Controller
                     $request->session()->put('rang', $rang);
                 }
                 $companydetails = Store::getListRestaurants($lat,$lng,$rang,'1','3',$todayDate,$currentTime,$todayDay);
-
             }
-            return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails]);
+
+            // Check if restaurant found and send translated message
+            $restaurantStatusMsg = '';
+            if( $companydetails == '' || !count($companydetails) )
+            {
+                $restaurantStatusMsg = __('messages.noRestaurantFound');
+            }
+
+            return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg]);
         }
     }
 
@@ -357,8 +370,15 @@ class HomeController extends Controller
             } 
             $companydetails = Store::getEatLaterListRestaurants($lat,$lng,$rang,'2','3',$todayDate,$currentTime,$todayDay);
         }
+
+        // Check if restaurant found and send translated message
+        $restaurantStatusMsg = '';
+        if( $companydetails == '' || !count($companydetails) )
+        {
+            $restaurantStatusMsg = __('messages.noRestaurantFound');
+        }
         
-        return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails]); 
+        return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg]); 
     }
 
     public function eatLater(Request $request){

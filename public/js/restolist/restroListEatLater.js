@@ -29,52 +29,47 @@
 			var liItem = "";
 			if(temp.length != 0){
 				
-			if(temp.length < count){
-				count = temp.length;
-			}
-					
+				if(temp.length < count){
+					count = temp.length;
+				}
+						
 
-		for (var i=0;i<count;i++){
-		if(checkTime(temp[i]["store_open_close_day_time"],sessionTime)){
+				for (var i=0;i<count;i++){
+					if(checkTime(temp[i]["store_open_close_day_time"],sessionTime)){
+						liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
+						liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+temp[i]['store_id']+" data-ajax='false'>";
+						liItem += "<img src="+temp[i]['store_image']+" onerror=this.src='"+noImageUrl+"'>";
 
+						liItem += "<h2>"+temp[i]["store_name"]+"</h2>";
+						liItem += "<p>";
 
-			liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
-			liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+temp[i]['store_id']+" data-ajax='false'>";
-			liItem += "<img src="+temp[i]['store_image']+" onerror=this.src='"+noImageUrl+"'>";
+			          	// Code added to display tagline of restaurant	
+						if(temp[i]["tagline"]){
+			            	liItem += temp[i]["tagline"];
+						}
+						// End of code added to dispaly tagline of restaurant
 
-			liItem += "<h2>"+temp[i]["store_name"]+"</h2>";
-			liItem += "<p>";
+						liItem += "</p>";
+						liItem += "<div class='ui-li-count ui-body-inherit'>";
+						liItem += "<span>"+temp[i]["distance"].toFixed(2)+ "&nbsp;Km" + "</span>";
 
-          	// Code added to display tagline of restaurant	
-			if(temp[i]["tagline"]){
-             liItem += temp[i]["tagline"];
+						liItem += "</div></a></li>";
 
-			}
-		// End of code added to dispaly tagline of restaurant
-
+						totalCount= i;
+					}
+				}
+			}else{
+				liItem += "<div class='table-content'>";
+				liItem += "<p>";
+				liItem += returnedData['restaurantStatusMsg'];
 				liItem += "</p>";
-				liItem += "<div class='ui-li-count ui-body-inherit'>";
-				liItem += "<span>"+temp[i]["distance"].toFixed(2)+ "&nbsp;Km" + "</span>";
-
-				liItem += "</div></a></li>";
-
-				totalCount= i;
+				liItem += "</div>";
 			}
-		}
 
-	}else{
-		liItem += "<div class='table-content'>";
-		liItem += "<p>";
-		liItem += '';
-		liItem += "</p>";
-		liItem += "</div>";
-	}
-
-		$("#companyDetailContianer").append(liItem);
+			$("#companyDetailContianer").append(liItem);
 		});
 	}
 }
-
 
 function  addMore(len,url,noImageUrl,sessionTime){
 

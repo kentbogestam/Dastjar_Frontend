@@ -357,7 +357,19 @@ class AdminController extends Controller
                 $arrOrderUpdate['order_started'] = 1;
             }
 
+            // Check and update order as accepted if not already accepted
+            if( Order::where(['order_id' => $orderId, 'order_accepted' => 0])->count() )
+            {
+                $arrOrderUpdate['order_accepted'] = 1;
+            }
+
             Order::where('order_id', $orderId)->update($arrOrderUpdate);
+
+            // If order accepted, send 'order accepted' notification
+            if( isset($arrOrderUpdate['order_accepted']) )
+            {
+                $this->onOrderAccepted($orderId);
+            }
         }
 
         return redirect()->action('AdminController@kitchenOrderDetail')->with('success', 'Order Started Successfully.');
