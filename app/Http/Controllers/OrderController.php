@@ -86,7 +86,12 @@ class OrderController extends Controller
                         if($max_time < $productTime->preparation_Time){
                             $max_time = $productTime->preparation_Time;
                         }else{}
-                        $productPrice = ProductPriceList::select('price')->whereProductId($value['id'])->where('store_id' , $data['storeID'])->first();
+                        $productPrice = ProductPriceList::select('price')
+                            ->whereProductId($value['id'])
+                            ->where('store_id' , $data['storeID'])
+                            ->where('publishing_start_date','<=',Carbon::now())
+                            ->where('publishing_end_date','>=',Carbon::now())
+                            ->first();
                         $total_price = $total_price + ($productPrice->price * $value['prod_quant']); 
                         $orderDetail =  new OrderDetail();
                         $orderDetail->order_id = $orders->order_id;
@@ -223,7 +228,12 @@ class OrderController extends Controller
                     if($max_time < $productTime->preparation_Time){
                         $max_time = $productTime->preparation_Time;
                     }else{}
-                    $productPrice = ProductPriceList::select('price')->whereProductId($value['id'])->where('store_id' , $data['storeID'])->first();
+                    $productPrice = ProductPriceList::select('price')
+                        ->whereProductId($value['id'])
+                        ->where('store_id' , $data['storeID'])
+                        ->where('publishing_start_date','<=',Carbon::now())
+                        ->where('publishing_end_date','>=',Carbon::now())
+                        ->first();
                     $total_price = $total_price + ($productPrice->price * $value['prod_quant']); 
                     $orderDetail =  new OrderDetail();
                     $orderDetail->order_id = $orders->order_id;

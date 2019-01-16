@@ -670,7 +670,7 @@ class AdminController extends Controller
                         if($max_time < $productTime->preparation_Time){
                             $max_time = $productTime->preparation_Time;
                         }else{}
-                        $productPrice = ProductPriceList::select('price')->whereProductId($value['id'])->first();
+                        $productPrice = ProductPriceList::select('price')->whereProductId($value['id'])->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->first();
                         $total_price = $total_price + ($productPrice->price * $value['prod_quant']); 
                         $orderDetail =  new OrderDetail();
                         $orderDetail->order_id = $orders->order_id;
@@ -723,7 +723,7 @@ class AdminController extends Controller
                 return view('kitchen.order.order-detail', compact('order','orderDetails','storeDetail'));
         }else{
             $menuTypes = null;
-            $menuDetails = ProductPriceList::where('store_id',Session::get('storeId'))->with('menuPrice')->with('storeProduct')->get();
+            $menuDetails = ProductPriceList::where('store_id',Session::get('storeId'))->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->with('menuPrice')->with('storeProduct')->get();
             if(count($menuDetails) != 0){
 
                 foreach ($menuDetails as $menuDetail) {
@@ -764,7 +764,7 @@ class AdminController extends Controller
         }else{}
 
         $menuTypes = null;
-        $menuDetails = ProductPriceList::where('store_id',Session::get('storeId'))->with('menuPrice')->with('storeProduct')->get();
+        $menuDetails = ProductPriceList::where('store_id',Session::get('storeId'))->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->with('menuPrice')->with('storeProduct')->get();
 
         if(count($menuDetails) != 0){
             foreach ($menuDetails as $menuDetail) {
