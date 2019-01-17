@@ -50,32 +50,36 @@
 				
 	</table>
 
-				<div id="saveorder">
-					@if(Session::get('paymentmode') !=0)
-					<!--<a href="{{url('save-order').'/?orderid='.$order->order_id}}" data-ajax="false">{{ __('messages.Send Order') }}</a>-->
-
-					<form action="{{ url('/payment') }}" class="payment_form_btn" method="POST">
-        {{ csrf_field() }} 
-        <script
-                src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-				data-key="{{env('STRIPE_PUB_KEY')}}"
-                data-amount=""
-                data-name="Stripe"
-                data-email="{{Auth::user()->email}}"
-                data-description="Dastjar"
-                data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
-                data-token="true"
-                data-locale="auto"
-                data-label="{{__('messages.Pay with card')}}"
-                data-zip-code="false">
-        </script>
-    </form>
+@if(Session::get('paymentmode') !=0)
+				   <form action="{{ url('/payment') }}" class="payment_form_btn" method="POST">
+			        {{ csrf_field() }} 
+			        <script
+			                src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+							data-key="{{env('STRIPE_PUB_KEY')}}"
+			                data-amount=""
+			                data-name="Stripe"
+			                data-email="{{Auth::user()->email}}"
+			                data-description="Dastjar"
+			                data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+			                data-token="true"
+			                data-locale="auto"
+			                data-label="{{__('messages.Pay with card')}}"
+			                data-zip-code="false">
+			        </script>
+			    </form>
 
 					@else
+				<div id="saveorder">
+					
+					<!--<a href="{{url('save-order').'/?orderid='.$order->order_id}}" data-ajax="false">{{ __('messages.Send Order') }}</a>-->
+
+				
+
 					<a href="{{url('order-view').'/'.$order->order_id}}" data-ajax="false">{{ __('messages.send order and pay in restaurant') }}</a>
-					@endif
+					
 
 				</div>
+				@endif
 			</div>
 		</div>
 	</div>
