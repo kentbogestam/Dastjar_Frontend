@@ -943,4 +943,4 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
  .select-restaurant ul li{width: 100%;}
  .select-restaurant ul li img{margin-right: 15px;}
 }
-#last-row td.cart-total{ width: 320px;font-size: 13px;}
+#last-row td.cart-total{ width: 60%;font-size: 13px;}
