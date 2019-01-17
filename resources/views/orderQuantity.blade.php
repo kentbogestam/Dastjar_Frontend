@@ -14,8 +14,10 @@
 	        <div class="img-container">
 	        	<img src="{{asset('images/notification-2.png')}}">
 	        </div>
-        	<span>{{ __('messages.Orders') }}<span class="order-number">{{count(Auth::user()->paidOrderList)}}</span></span>
+        	<span class="name-order">{{ __('messages.Orders') }}</span>
+<span class="order-number">{{count(Auth::user()->paidOrderList)}}</span>
         </a>
+
         <div id="order-popup" data-theme="a">
 	      <ul data-role="listview">
 	      	@foreach(Auth::user()->paidOrderList as $order)
