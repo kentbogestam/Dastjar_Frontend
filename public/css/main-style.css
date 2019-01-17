@@ -459,6 +459,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
 .setting-list input[type="radio"]{display: none;}
 .setting-list label{padding-left: 1em;}
 .order-active a span{color: #86c22b !important ; text-shadow: none; font-size: 12.5px}
+.order-active a span.order-number{color: #000 !important;text-shadow: none;font-size: 12.5px;background: #fff;border: 1px solid #000;border-radius: 50px;padding: 3px 8px;position: absolute;right: -20px;top: -10px;}
+.img-container{position:relative;}
 .sucess_msg{
     background: #e6f9caf2;
     margin-top: 1.4em !important;
