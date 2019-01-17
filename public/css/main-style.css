@@ -927,7 +927,7 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
 #table-custom-2 .ui-table td{padding: .5em .5em;}
 #table-custom-2 .qty-sec .ui-input-text input{padding: 0;line-height: .6em;min-height: 1em;text-align: center;}
 #last-row td:last-child, #last-row td:last-child span{color: #000;}
-.custom_row1 .g-text{color: #7ebe12;}
+.custom_row1 .g-text{color: #7ebe12;width:25%;font-size: 14px;line-height: 42px}
 .head_line{display: flex;justify-content: space-between;border-bottom: 1px solid rgba(0, 0, 0, 0.2);}
 .head_line h2{border-bottom: none !important;}
 .delt-cart{display: inline-block;margin: 0.5em;}
@@ -943,3 +943,4 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
  .select-restaurant ul li{width: 100%;}
  .select-restaurant ul li img{margin-right: 15px;}
 }
+#last-row td.cart-total{ width: 320px;font-size: 13px;}
