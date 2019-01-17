@@ -780,7 +780,7 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
   position: relative;
   display: inline-block;width: 100%;
 }
-[data-role="footer"] .inner-footer a span{
+[data-role="footer"] .inner-footer a span.name-order{
   display: none;
   color: #fff; 
   font-family: "ProximaNova-Regular";
