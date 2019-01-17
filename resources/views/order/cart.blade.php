@@ -43,7 +43,7 @@
 					<td> </td>
 					<td> </td>
 					<td></td>
-					<td>  TOTAL:-    {{$order->currencies}}<span id="grandTotalDisplay"> {{$order->order_total}}</span>
+					<td class="cart-total">  TOTAL:-    {{$order->currencies}}<span id="grandTotalDisplay"> {{$order->order_total}}</span>
                     <input type="hidden" name="grandtotal" id="grandtotal" value="{{$order->order_total}}"/>
 					</td>
 				</tr>
