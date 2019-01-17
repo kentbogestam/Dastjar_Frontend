@@ -5,7 +5,7 @@
 				<div class="img-container">
 					<img src="{{asset('images/notification-2.png')}}">
 				</div>
-				<span>{{ __('messages.Orders') }}</span>
+				<span class="name-order">{{ __('messages.Orders') }}</span>
 			</a>
 		</div>
 	@else
@@ -37,7 +37,7 @@
 		<div class="img-container">
 			<img src="{{asset('images/notification-2.png')}}">
 		</div>
-		<span>{{ __('messages.Orders') }}</span>
+		<span class="name-order">{{ __('messages.Orders') }}</span>
 	</a>
 </div>
 
