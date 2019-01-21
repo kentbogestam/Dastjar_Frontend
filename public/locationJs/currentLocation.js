@@ -67,40 +67,42 @@ function showError(error) {
 	setMyCookie('showError',error, 7);
 }
 
-function setDistanceParmeter(){
+// Update distance while move either to get restaurant list or to update map
+function setDistanceParmeter()
+{
+	/* Testing Data
 
-/* Testing Data
+	var lat1="28.580830";
+	var lon1="77.077720";
 
-		var lat1="28.580830";
-		var lon1="77.077720";
+	var lat2="28.585560";
+	var lon2="77.074809";
 
-		var lat2="28.585560";
-		var lon2="77.074809";
+	end of testing data*/
 
-		end of testing data*/
+	var lat1 = getCookie("latitude");
+	var lon1 = getCookie("longitude");
 
-	  var lat1 = getCookie("latitude");
-	  var lon1 = getCookie("longitude");
+	var lat2 =  getCookie("everyMinutelatitude");
+	var lon2 =  getCookie("everyMinutelongitude");
 
-	  var lat2 =  getCookie("everyMinutelatitude");
-	  var lon2 =  getCookie("everyMinutelongitude");
+	var distance = distanceLatLon(lat1, lon1, lat2, lon2, "K");
 
-      var distance = distanceLatLon(lat1, lon1, lat2, lon2, "K");
+	distance = distance*1000;
 
-      distance = distance*1000;
+	if(distance >300){
+		document.cookie="latitude="  + '';
+		document.cookie="longitude=" + '';
 
-	  if(distance >300){
+		document.cookie="latitude="  + lat2;
+		document.cookie="longitude=" + lon2;
 
-	  	 document.cookie="latitude="  + '';
-	     document.cookie="longitude=" + '';
-	  	
-         document.cookie="latitude="  + lat2;
-         document.cookie="longitude=" + lon2;
-
-		   checkDistance(lat2,lon2);
-
-      }
-
+		checkDistance(lat2,lon2, true);
+	}
+	else if(distance > 50) // Update map on each 50 meter
+	{
+		checkDistance(lat2,lon2);
+	}
 }
 
 function distanceLatLon(lat1, lon1, lat2, lon2, unit) {
@@ -126,17 +128,18 @@ function distanceLatLon(lat1, lon1, lat2, lon2, unit) {
 }
 
 //set geo location data
-function checkDistance(latt,lngg)
+function checkDistance(latt, lngg, reload = false)
 {
-	
 	$.ajax({
 			type: "GET",
 			url: "checkDistance",
 			data: {lat: latt, lng : lngg},
 			success: function( returnedData ) {
 				//alert("in success of alert Distance Executed Distance check parameter");
-				reloadRestaurantList();
-				
+				if(reload)
+				{
+					reloadRestaurantList();
+				}
 			}
 		});
 	}
