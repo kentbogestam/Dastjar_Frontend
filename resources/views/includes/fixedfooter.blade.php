@@ -42,7 +42,7 @@
 			<div class="img-container">
 				<img src="{{asset('images/icons/select-store_01.png')}}">
 			</div>
-			<span>{{ __('messages.Restaurant') }}</span>
+			<!-- <span>{{ __('messages.Restaurant') }}</span> -->
 		</a>
 	  </div>
 
@@ -52,7 +52,7 @@
 			<div class="img-container">
 				<img src="{{asset('images/icon-cart.png')}}">
 			</div>
-			<span>{{ __('messages.Send') }}</span>
+			<!-- <span>{{ __('messages.Send') }}</span> -->
 		</a></div>
       
         @else
@@ -62,7 +62,7 @@
 					<div class="img-container">
 						<img src="{{asset('images/icon-cart.png')}}">
 					</div>
-					<input type="button" value="{{ __('messages.Send') }}" id="dataSave"/>
+					<!-- <input type="button" value="{{ __('messages.Send') }}" id="dataSave"/> -->
 				</a>
 			</div>
 
