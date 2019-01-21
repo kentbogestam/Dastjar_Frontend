@@ -21,11 +21,6 @@ function iconEatInactive(){
 }
 
 
-function orderPopup(){
-	
- 	$("#order-popup").toggleClass("hide-popup");
- }
-
   function setLngLat(lat,lng){
 
    loc_lat = lat;

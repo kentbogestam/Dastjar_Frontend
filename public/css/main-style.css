@@ -459,6 +459,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
 .setting-list input[type="radio"]{display: none;}
 .setting-list label{padding-left: 1em;}
 .order-active a span{color: #86c22b !important ; text-shadow: none; font-size: 12.5px}
+.order-active a span.order-number{color: #000 !important;text-shadow: none;font-size: 12.5px;background: #fff;border: 1px solid #000;border-radius: 50px;padding: 1px 6px;position: absolute;right: -20px;top: -10px;line-height: 26px;}
+.img-container{position:relative;}
 .sucess_msg{
     background: #e6f9caf2;
     margin-top: 1.4em !important;
@@ -558,10 +560,10 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
 
 .show-date-time{
     background:#e7e7e7; /*#17bbdf*/
-    margin: 1.5em 0em;
-    padding: 1em;
+    margin: .6em 0em;
+    padding: .6em;
     color: #000000;
-    font-size: 1em;
+    font-size: 14px;
     line-height: 1.5em;
     border-radius: 0px;
     box-sizing: border-box;
@@ -582,7 +584,7 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
 .go-btn .ui-btn{
   text-align: right; display: inline-block;background:#c2444c;
   color: #fff;
-  padding: 0.5em 1em;
+  padding: 0.5em 1.4em;
   margin:0;
   border-radius: 10px !important;
   opacity: 1;
@@ -590,6 +592,7 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
   width: auto;
   position: relative;
   text-indent: unset;
+  border:none;
 }
 .perfect-datetimepicker table.tt input{border: none !important; height: auto; width: auto;}
 .go-btn input[type="button"]{
@@ -774,12 +777,13 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
   cursor: pointer;
 }
 [data-role="footer"] .inner-footer{
-  padding: 0.3em 0;
+  padding: 0.8em 0;
   overflow: visible;
   position: relative;
+  display: inline-block;width: 100%;
 }
-[data-role="footer"] .inner-footer a span{
-  display: block;
+[data-role="footer"] .inner-footer a span.name-order{
+  display: none;
   color: #fff; 
   font-family: "ProximaNova-Regular";
 }
@@ -787,6 +791,7 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
   display: inline-block;
   margin-left: 5px;
 }
+.actibe-icon-img .ui-btn{display: none;}
 
 #order-popup ul li a{border: none; padding: .4em; font-size: 12.5px; color: #000 }
 /*#order-popup ul li a{background-color: #333;
@@ -854,11 +859,7 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
 .text_box_login p{text-align: left;color: #fff; font-size: 14px;margin-bottom: 5px;margin-top: 0px;padding-left: 26px;}
 .text_box_login p:last-child{margin-bottom: 0px;}
 
-@media only screen and (max-width: 480px) {
-    .login-popup .inner-popup {
-      width: 60%;
-    }
-}
+
 
 /* code added by saurabh
 
@@ -880,29 +881,66 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
 .popup-close1:hover {text-decoration: none;}
 
 /*custom popup-design*/
+.ui-page{position: relative;}
 .popupSelection{
   border: 1px solid #ddd;
-    width: 40%;
-    margin: 0 auto;
+    width: 65%;
+    margin: 0px auto;
     padding: 20px;
     box-shadow: 0 0 12px rgba(0,0,0,.6);
     border-radius: 5px;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    left: 50%;
 }
 .static-content, .select-restaurant{text-align: center;}
 .select-restaurant ul{ display: inline-block;
-    width: 70%;
-    padding: 0px;}
+    width: 100%;
+    padding: 0px;overflow: hidden;}
+.select-restaurant ul li img{width: 30px;vertical-align: middle;margin-right: 8px;}
 .select-restaurant ul li{list-style: none;float: left;
-    width: 50%;
-    text-align: center;}
-.select-restaurant a.eatnow-btn{background-color: #333;
-    border-color: #1f1f1f;
-    color: #fff;
-    padding: .7em 1em;
-    cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0,0,0,.15);}
+    width: 46%;margin: 3px;
+    text-align: center;background: #cde9f3;}
 .select-restaurant a.eatnow-btn:hover{
     background-color: #c3c3c3;
     border-color: #1f1f1f;
     color: #333;
 }
+.select-restaurant a.ui-link{color: #000;display: inline-block;width: 100%;padding: 6px 5px;
+    text-align: center;}
+.dateandtime .datepicker{width: 100%;}
+.datepicker > .datepicker_inner_container > .datepicker_calendar > .datepicker_table > tbody > tr > td.today{border: 2px solid #bd2b2b !important;}
+.datepicker > .datepicker_inner_container > .datepicker_calendar > table{width: 100%;}
+.datepicker > .datepicker_inner_container > .datepicker_calendar{width: 80% !important;}
+.datepicker > .datepicker_inner_container > .datepicker_timelist{width: 19% !important;text-align: center !important;}
+.datepicker > .datepicker_inner_container > .datepicker_calendar > .datepicker_table > tbody > tr > td.active{background-color: #bd2b2b !important;border-bottom: none !important;}
+#table-custom-2 .qty-sec{display: inline-flex;
+    border: 1px solid rgba(0, 0, 0, 0.2) !important;
+    border-radius: 30px;align-items: center;}
+#table-custom-2 .qty-sec .ui-btn,#table-custom-2 .qty-sec .ui-input-text{margin: 4px 5px !important;padding: 1px 8px !important;}
+#table-custom-2 .qty-sec .ui-btn.ui-input-btn{font-size: 21px;font-weight: bold;}
+#saveorder{padding: 10px;width: 75%;margin: 0 auto;
+    text-align: center;
+    background: #89ccf7;border-radius: 9px;background-image: linear-gradient(#7dc5ee,#008cdd 85%,#30a2e4);}
+#saveorder a{color: #fff;}
+#table-custom-2 .ui-table td{padding: .5em .5em;}
+#table-custom-2 .qty-sec .ui-input-text input{padding: 0;line-height: .6em;min-height: 1em;text-align: center;}
+#last-row td:last-child, #last-row td:last-child span{color: #000;}
+.custom_row1 .g-text{color: #7ebe12;width:25%;font-size: 14px;line-height: 32px}
+.head_line{display: flex;justify-content: space-between;border-bottom: 1px solid rgba(0, 0, 0, 0.2);}
+.head_line h2{border-bottom: none !important;}
+.delt-cart{display: inline-block;margin: 0.5em;}
+.delt-cart a img{width: 25px;}
+
+@media only screen and (max-width: 480px) {
+    .login-popup .inner-popup {
+      width: 60%;
+    }
+    
+}
+@media only screen and (max-width: 380px) {
+ .select-restaurant ul li{width: 100%;}
+ .select-restaurant ul li img{margin-right: 15px;}
+}
+#last-row td.cart-total{ width: 70%;font-size: 13px;}

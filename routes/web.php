@@ -89,6 +89,7 @@
 
 	Route::get('search-store-map', 'MapController@searchStoreMap');
 	Route::get('404', 'HomeController@page_404')->name('page_404');
+   Route::post('updateCart', 'OrderController@updateCart');
 
     Route::group(['middleware' => ['latlng']], function(){
 	Route::get('search-map-eatnow', 'MapController@searchMapEatnow');
@@ -101,10 +102,12 @@
 	Route::get('eat-later-data', 'HomeController@eatLaterData');
 	Route::get('search-map-eatlater', 'MapController@searchMapEatlater');
 	Route::get('eat-later-map', 'HomeController@eatLaterMap');
-	Route::post('save-order', 'OrderController@saveOrder');
-	Route::get('save-order', 'OrderController@saveOrder');
 	Route::get('withOutLogin', 'OrderController@withOutLogin')->name('withOutLogin');
 	Route::get('checkDistance','DistanceController@checkDistance');
+	Route::post('cart', 'OrderController@cart');
+	Route::get('cart', 'OrderController@cartWithOutLogin')->name('cartWithOutLogin');
+
+	
 	
 });
 
@@ -116,6 +119,13 @@
 		Route::get('payment', 'PaymentController@payment');
 		Route::post('cancel-order', 'OrderController@cancelOrderPost');		
 		Route::get('cancel-order/{order_number}', 'OrderController@cancelOrder')->name('cancel-order');		
+		Route::post('save-order', 'OrderController@saveOrder');
+	    Route::get('save-order', 'OrderController@saveOrder');
+		
+	   
+	    Route::get('emptyCart', 'OrderController@emptyCart');
+		
+	   
 	});
 
 	Route::prefix('admin')->group(function(){

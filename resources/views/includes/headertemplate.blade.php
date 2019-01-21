@@ -4,12 +4,12 @@
     $menuActivate='false';
     $selectEatLaterTime='false';
     $map='false';
+    $cart='false';
     $storeMap=false;
     $protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
     $actual_link = "$protocol$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-   // $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
     $baseurl=$app->make('url')->to('/')."/";
-    if (strpos($_SERVER['REQUEST_URI'], 'eat-now') !== false || strpos($_SERVER['REQUEST_URI'], 'eat-later') !== false || $actual_link === $baseurl || strpos($_SERVER['REQUEST_URI'], 'home') !== false ) {
+    if (strpos($_SERVER['REQUEST_URI'], 'eat-now') !== false || strpos($_SERVER['REQUEST_URI'], 'eat-later') !== false || $actual_link === $baseurl || strpos($_SERVER['REQUEST_URI'], 'home') !== false  || strpos($_SERVER['REQUEST_URI'], 'save-order') !== false) {
 
 		$flag = 'true';
     }
@@ -33,6 +33,12 @@
        }
       
     }
+    elseif(strpos($_SERVER['REQUEST_URI'], 'cart') !== false){
+       
+       $cart='true';
+      
+    }
+
  }}
  @endphp
 
@@ -40,7 +46,7 @@
 	<div data-role="header" class="header" id="nav-header"  data-position="fixed">
 			<div class="nav_fixed">
 				<div class="logo">
-					1
+					
 					<div class="inner-logo">
 						<img src="{{asset('images/logo.png')}}">
 						@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
@@ -54,7 +60,7 @@
 
  <div data-role="header" class="header"  data-position="fixed" data-tap-toggle="false">
 		<div class="logo">
-			2
+			
 			<div class="inner-logo">
 				<span class="rest-title">{{$storedetails->store_name}}</span>
 				@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
@@ -69,7 +75,7 @@
 			<div class="nav_fixed">
 				<a href="{{Session::get('route_url')}}" data-ajax="false" class="ui-btn-left text-left backarrow-btn"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a>
 				<div class="logo">
-					3
+					
 					<div class="inner-logo">
 						<img src="{{asset('images/logo.png')}}">
 						@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
@@ -103,4 +109,34 @@
 		<a class="ui-btn-right map-btn user-link" href="#left-side-bar"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
 	</div>
 	</div>
+
+	 @elseif($cart=='true')
+	 <div data-role="header" class="header" id="nav-header"  data-position="fixed">
+			<div class="nav_fixed">
+				<div class="logo">
+					<a href="#" data-ajax="false" class="ui-btn-left text-left backarrow-btn">
+
+						<img src="{{asset('images/icons/backarrow.png')}}" width="11px" ></a>
+					<div class="inner-logo">
+						<img src="{{asset('images/logo.png')}}">
+						@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
+					</div>
+				</div>
+				<a href="{{url('search-map-eatnow')}}" class="ui-btn-right map-btn user-link" data-ajax="false"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
+			</div>
+		</div>
+	@else
+	<div data-role="header" class="header" id="nav-header"  data-position="fixed">
+			<div class="nav_fixed">
+				<div class="logo">
+					
+					<div class="inner-logo">
+						<img src="{{asset('images/logo.png')}}">
+						@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
+					</div>
+				</div>
+				<a href="{{url('search-map-eatnow')}}" class="ui-btn-right map-btn user-link" data-ajax="false"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
+			</div>
+		</div>
+
 @endif

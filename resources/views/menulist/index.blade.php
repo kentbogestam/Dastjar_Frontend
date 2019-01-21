@@ -212,7 +212,7 @@
 		<p>{{ __('messages.Menu is not available.') }}1 </p>
 	</div>
 	@endif
-	<form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('save-order') }}">
+   <form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('cart') }}">
 		{{ csrf_field() }}
 		<div role="main" data-role="main-content" class="content">
 			<div class="cat-list-sec single-restro-list-sec">
@@ -227,7 +227,7 @@
 							@foreach($menuDetails as $productDetail)
 								@foreach($productDetail->storeProduct as $menuDetail)
 									@if($menuType->dish_id == $menuDetail->dish_type)
-								<ul data-role="listview" data-inset="true" >
+								<ul data-role="listview" data-inset="true" id="item{{$menuDetail->product_id}}" >
 									<li>
 										<img src="{{$menuDetail->small_image}}" onerror="this.src='{{$placeholder}}'">
 													<div class="list-content">
@@ -279,7 +279,7 @@
 							
 								@foreach($productDetail->storeProduct as $menuDetail)
 									@if($menuType->dish_id == $menuDetail->dish_type)
-										<ul data-role="listview" data-inset="true" >
+										<ul data-role="listview" data-inset="true" id="item{{$menuDetail->product_id}}">
 											<li>
 													<img src="{{$menuDetail->small_image}}" onerror="this.src='{{$placeholder}}'">
 													<div class="list-content">
@@ -470,6 +470,7 @@
 	}
 
 	$("body").on('click',".accept-btn", function(){
+
 		$.ajax({
 			url: "{{ url('accept-gdpr') }}", 
 			type: "POST",
@@ -477,10 +478,12 @@
 				"_token": "{{ csrf_token() }}"
 			},
 			success: function(result){
-				console.log(result);
+				//console.log(result);
     			if(result == 0){
+    				
 					off();
 				}else{
+
 					off();
 					$("#form").submit();
 				}

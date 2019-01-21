@@ -23,20 +23,18 @@
 
 <div class="popupSelection">
 
-	<div class="static-content">
-		<h3>Welcome to anar !</h3>
-		<p>Please choose to Eat now or later!</p>
+	<div class="static-content" id="contentEnglish1">
+		<h3>{{ __('messages.Welcome To Anar') }}</h3>
+		<p>{{ __('messages.Select Restaurant') }}</p>
 	</div>
 		
     <div class="select-restaurant">
         <ul>
-        	<li><a class="eatnow-btn-df" href="#" data-ajax="false" onclick=setResttype("{{url('setResttype')}}","eatnow")>Eat Now</a></li>
-        	<li><a class="eatnow-btn-fg" href="#" data-ajax="false" onclick=setResttype("{{url('setResttype')}}","eatlater")>Eat Later</a></li>
+        	<li><a class="eatnow-btn-df" href="#" data-ajax="false" onclick=setResttype("{{url('setResttype')}}","eatnow")><img src="{{asset('images/icons/icon-eat-now-active.png')}}" />Eat Now</a></li>
+        	<li><a class="eatnow-btn-fg" href="#" data-ajax="false" onclick=setResttype("{{url('setResttype')}}","eatlater")><img src="{{asset('images/icons/icon-eat-later-inactive.png')}}" />Eat Later</a></li>
         </ul>
       
      </div>
-
-
 </div>
 
 @include('includes.fixedfooter')

@@ -97,7 +97,8 @@ class LoginController extends Controller
             if(Session::get('orderData') == null ){
               return redirect()->action('HomeController@index');
             }else{
-                return redirect()->route('withOutLogin');
+               // return redirect()->route('withOutLogin');//commented by saurabh
+            return redirect()->route('cartWithOutLogin');
             }
         }else{
             $lang;
@@ -121,7 +122,8 @@ class LoginController extends Controller
 
             Auth::login($user);
 
-            return redirect()->route('withOutLogin');
+            //return redirect()->route('withOutLogin');//commented by saurabh
+            return redirect()->route('cartWithOutLogin');
         }
     }
 
@@ -155,7 +157,8 @@ class LoginController extends Controller
                         'language' => $lang,
                     ]);
             //return redirect()->action('HomeController@index');
-            return redirect()->route('withOutLogin');
+            //return redirect()->route('withOutLogin'); commented by saurabh
+            return redirect()->route('cartWithOutLogin');
         }else{
           if ($request->session()->get('userPhoneNumber')) {
             Session::flash('userPhoneNumber',$request->session()->get('userPhoneNumber'));

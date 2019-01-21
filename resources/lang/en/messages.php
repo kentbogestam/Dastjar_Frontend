@@ -27,6 +27,7 @@ return [
     'Order Number'   => 'Order Number',
     'Your order will be ready on'   => 'Your order will be ready on',
     'ORDER DETAILS'   => 'ORDER DETAILS',
+    'Order Details'   => 'Order Details',
     'TOTAL'   => 'TOTAL',
     'Orders'  => 'Orders',
     'Alias'  => 'Name',  
@@ -94,5 +95,13 @@ return [
     'orderResponse' => 'Order Response',
     'textAddManualPrepTime' => 'Select the amount of minutes for delivery for the complete order!',
     'waitForOrderConfirmation' => 'Your order has been received. Please wait for order confirmation.',
-    'noRestaurantFound' => 'There are no open restaurants in you area at this hour.'
+    'noRestaurantFound' => 'There are no open restaurants in you area at this hour.',
+    'send order and pay in restaurant'=>'send order and pay in restaurant',
+    'Send Order' => 'Send Order',
+    'Delete Product'=>'Are you sure you want to delete the product',
+    'Delete Cart Order'=>'Are you sure that you want to delete all orders',
+    'Leave Cart Page'=>'Your cart item will be removed if you leave this page',
+    'Welcome To Anar'=>'Welcome to anar !',
+    'Select Restaurant'=>'Please choose to Eat now or later!',
+    'Pay with card'=>'Pay with card',
 ];
