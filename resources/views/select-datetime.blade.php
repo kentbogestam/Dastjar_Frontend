@@ -20,6 +20,9 @@
 		    margin-top: 15px;
 		    display: none;
 		}		
+		.btn {
+			padding: 0 0 10px 0;
+		}
 	</style>
 
 <script type="text/javascript" src="{{asset('js/datetime/jquery.simple-dtpicker.js')}}"></script>
@@ -45,73 +48,63 @@ window.addEventListener('load', function(){ setTimeout(function(){ window.scroll
 		        	<div class="show-date-time">
 				        <span id="date-value1-2" class="date_show_section" value = ""></span>
 				        <input type="hidden" id="date-value1-23" name="dateorder" value="" />
-		    			<div class="go-btn">
+		    			<!-- <div class="go-btn">
 		    				<button type="button" id="ss" class="fa fa-chevron-right" onclick="checkDate()"></button>
-		    			</div>
+		    			</div> -->
 		    		</div>
-	    		 <div class="error-show" id="error-show"></div>
-             	 <div class="dateandtime" id="dateandtime">
-		            
-		          @if(Session::get('applocale') ==='sv')
-						<script type="text/javascript">
-							$(function(){
-								$('*[name=date16]').appendDtpicker({
-									"inline": true,
-									"futureOnly": true,
-									"todayButton": false,
-									"minuteInterval": 15,
-									"locale": 'sv',
-									"dateFormat": "DD.MM.YY H:mmTT"
+	    		 	<div class="error-show" id="error-show"></div>
+             	 	<div class="dateandtime" id="dateandtime">
+			          	@if(Session::get('applocale') ==='sv')
+							<script type="text/javascript">
+								$(function(){
+									$('*[name=date16]').appendDtpicker({
+										"inline": true,
+										"futureOnly": true,
+										"todayButton": false,
+										"minuteInterval": 15,
+										"locale": 'sv',
+										"dateFormat": "DD.MM.YY H:mmTT"
+									});
 								});
-							});
-						</script>
-					@else
-						<script type="text/javascript">
-							$(function(){
-								$('*[name=date16]').appendDtpicker({
-									"inline": true,
-									"futureOnly": true,
-									"todayButton": false,
-									"minuteInterval": 15,
-									"locale": 'en',
-									"dateFormat": "DD.MM.YY H:mmTT"
+							</script>
+						@else
+							<script type="text/javascript">
+								$(function(){
+									$('*[name=date16]').appendDtpicker({
+										"inline": true,
+										"futureOnly": true,
+										"todayButton": false,
+										"minuteInterval": 15,
+										"locale": 'en',
+										"dateFormat": "DD.MM.YY H:mmTT"
+									});
 								});
-							});
-						</script>
-
+							</script>
 						@endif
-
-					
-                    
-					<input type="hidden" name="date16" id="date16" value="" onchange="setDateTime()"/>
-				</div>	
-			</div>	
-	    		
+						<input type="hidden" name="date16" id="date16" value="" onchange="setDateTime()"/>
+					</div>
+					<div class="btn text-center">
+	    				<button type="button" id="ss" onclick="checkDate()">{{ __('messages.continue') }}</button>
+	    			</div>
+				</div>
 			</div>
 		</form>
 
 		@include('includes.fixedfooter')
 	</div>
-
 @endsection
 
 @section('footer-script')
-
-
 	<script type="text/javascript">	 	
-		
-		 $(".ordersec").click(function(){
-		    $("#order-popup").toggleClass("hide-popup");
-		 });
+		$(".ordersec").click(function(){
+			$("#order-popup").toggleClass("hide-popup");
+		});
 
-
-	  $('.error-show').append("<p class='error_time'>Please enter PickUp time in 24 hours format. </p>"+"<p class='error_time2'>Date and Time is not valid. </p>"+"<p class='error_time3'>Order Date Cannot be Current Date </p>");
-
+		$('.error-show').append("<p class='error_time'>Please enter PickUp time in 24 hours format. </p>"+"<p class='error_time2'>Date and Time is not valid. </p>"+"<p class='error_time3'>Order Date Cannot be Current Date </p>");
 	</script>
 	<style type="text/css">
 		.error_time{color: red; font-size: 14px; text-align: center;margin-top: 15px; display: none;}
 		.error_time2{color: red; font-size: 14px; text-align: center;margin-top: 15px; display: none;}
 		.error_time3{color: red; font-size: 14px; text-align: center;margin-top: 15px; display: none;}
 	</style>
-
 @endsection

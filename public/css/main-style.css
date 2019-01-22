@@ -581,7 +581,7 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
    vertical-align:-webkit-baseline-middle;
    float: right;
 }
-.go-btn .ui-btn{
+.go-btn .ui-btn, .btn .ui-btn{
   text-align: right; display: inline-block;background:#c2444c;
   color: #fff;
   padding: 0.5em 1.4em;
@@ -606,6 +606,9 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
     width: auto;
     position: relative;
     text-indent: unset;*/
+}
+.text-center {
+    text-align: center !important;
 }
 /* =-=========== popup design  ============= */
 .pop.in{

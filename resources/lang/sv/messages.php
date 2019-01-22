@@ -107,4 +107,5 @@ return [
     'Welcome To Anar'=>'Välkommen till anar!',
     'Select Restaurant'=>'Välj mellan "Ät nu eller Senare"!',
     'Pay with card'=>'Betala med kort',
+    'continue' => 'Fortsätt',
 ];

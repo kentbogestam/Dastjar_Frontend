@@ -104,4 +104,5 @@ return [
     'Welcome To Anar'=>'Welcome to anar !',
     'Select Restaurant'=>'Please choose to Eat now or later!',
     'Pay with card'=>'Pay with card',
+    'continue' => 'Continue',
 ];
