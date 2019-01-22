@@ -337,12 +337,25 @@ class OrderController extends Controller
 
     public function orderView($orderId){
 
+       $mode=Session::get('paymentmode');
+
+         if($mode == 0){
+
+            DB::table('orders')->where('order_id', $orderId)->update([
+                            'online_paid' => 0,
+                        ]);
+         }
+
+      
+
         $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
 
         $storeDetail = Store::where('store_id', $order->store_id)->first();
         $user = User::where('id',$order->user_id)->first();
 
         $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
+
+
 
         Session::forget('paymentmode');
 
@@ -738,6 +751,7 @@ public function cart(Request $request){
                             $order->deliver_date = $orderDate;
                             $order->deliver_time = $orderTime;
                             $order->check_deliveryDate = $checkOrderDate;
+                           // $order->cancel = 1;
                             $order->save();
                             $orders = Order::select('*')->whereUserId(Auth::id())->orderBy('order_id', 'DESC')->first();
                             $orderId = $orders->order_id;
@@ -783,6 +797,7 @@ public function cart(Request $request){
 
                 //If store support ontine payment then if condition run.
                 if($storeDetail->online_payment == 1){
+                 //   echo "else with payment";exit;
                     $companyDetail = Company::where('company_id', $productTime->company_id)->first();
                     $companyUserDetail = Admin::where('u_id', $companyDetail->u_id)->first();
 
@@ -799,7 +814,9 @@ public function cart(Request $request){
                     return view('order.cart', compact('order','orderDetails'));
                 }else{
                    
-
+                     DB::table('orders')->where('order_id', $orderId)->update([
+                            'online_paid' => 2,
+                        ]);
                      $request->session()->put('paymentmode',0);
                     $user = User::where('id',$order->user_id)->first();      
                     

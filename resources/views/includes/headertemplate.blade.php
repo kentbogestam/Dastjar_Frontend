@@ -114,9 +114,9 @@
 	 <div data-role="header" class="header" id="nav-header"  data-position="fixed">
 			<div class="nav_fixed">
 				<div class="logo">
-					<a href="#" data-ajax="false" class="ui-btn-left text-left backarrow-btn">
+					<!--<a href="#" data-ajax="false" class="ui-btn-left text-left backarrow-btn">
 
-						<img src="{{asset('images/icons/backarrow.png')}}" width="11px" ></a>
+						<img src="{{asset('images/icons/backarrow.png')}}" width="11px" ></a>-->
 					<div class="inner-logo">
 						<img src="{{asset('images/logo.png')}}">
 						@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
