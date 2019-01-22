@@ -3,42 +3,44 @@
 @section('content')
 <div class="login-page" data-role="page" data-theme="c">
     <div role="main" data-role="main-content" class="content">
-      <div class="ready_notification">
-        @if ($message = Session::get('success'))
-        <div class="table-content sucess_msg">
-          <img src="{{asset('images/icons/Yes_Check_Circle.png')}}">
-           @if(is_array($message))
-                  @foreach ($message as $m)
-                      {{ $languageStrings[$m] or $m }}
-                  @endforeach
-              @else
-                  {{ $languageStrings[$message] or $message }}
-              @endif
-          </div>
-      @endif
-      </div>
+        <div class="ready_notification">
+            @if ($message = Session::get('success'))
+                <div class="table-content sucess_msg">
+                    <img src="{{asset('images/icons/Yes_Check_Circle.png')}}">
+                    @if(is_array($message))
+                        @foreach ($message as $m)
+                            {{ $languageStrings[$m] or $m }}
+                        @endforeach
+                    @else
+                        {{ $languageStrings[$message] or $message }}
+                    @endif
+                </div>
+            @endif
+        </div>
         <div class="inner-page-container">
             <div class="login-inner-section">
                 <div class="logo-img-sec">
                     <img src="{{asset('images/l-logo.png')}}">
                 </div>
                 <div class="social-sec">
-                    <div id="facebook-hide" class="ui-grid-solo">
-                        <div class="ui-block-a"><a href="{{ url('login/facebook')}}" class="ui-btn ui-shadow ui-corner-all" data-ajax="false"><img src="{{asset('images/fb-icon.png')}}"></a></div>
-                    </div>
-                    <div id="google-hide" class="ui-grid-solo">
-                        <div class="ui-block-a"><a href="{{ url('login/google')}}" class="ui-btn ui-shadow ui-corner-all" data-ajax="false"><img src="{{asset('images/gplus.png')}}"></a></div>
-                    </div>
-                     <div class="ui-grid-solo login_mobile">
-                        <div class="ui-block-a"><a href="{{ url('/mobileLogin') }}" class="ui-btn ui-shadow ui-corner-all orange_box" data-ajax="false"><div class="text_box_login"><img src="{{asset('images/phone.png')}}"><div class="wrap_text_signin"><p>Sign in with Mobile Number</p></div></div></a></div></div>
+                    @if( !((strpos($agent, 'Mobile/') !== false) && (strpos($agent, 'Safari/') == false)) )
+                        <div id="facebook-hide" class="ui-grid-solo">
+                            <div class="ui-block-a"><a href="{{ url('login/facebook')}}" class="ui-btn ui-shadow ui-corner-all" data-ajax="false"><img src="{{asset('images/fb-icon.png')}}"></a></div>
+                        </div>
+                        <div id="google-hide" class="ui-grid-solo">
+                            <div class="ui-block-a"><a href="{{ url('login/google')}}" class="ui-btn ui-shadow ui-corner-all" data-ajax="false"><img src="{{asset('images/gplus.png')}}"></a></div>
+                        </div>
+                    @endif
+                    <div class="ui-grid-solo login_mobile">
+                        <div class="ui-block-a"><a href="{{ url('/mobileLogin') }}" class="ui-btn ui-shadow ui-corner-all orange_box" data-ajax="false"><div class="text_box_login"><img src="{{asset('images/phone.png')}}"><div class="wrap_text_signin"><p>Sign in with Mobile Number</p></div></div></a></div>
                     </div>
                 </div>
-            </div>  
-        </div>
-       <!--   <div class="ui-grid-solo bottom_login_text">
-                    <div class="ui-block-a"><a href="{{ url('/userRegister') }}" class="ui-btn ui-shadow ui-corner-all" data-ajax="false"><span>Not a member ? sign up now</span></a></div>
-                </div> -->
+            </div>
+        </div>  
     </div>
+    <!-- <div class="ui-grid-solo bottom_login_text">
+        <div class="ui-block-a"><a href="{{ url('/userRegister') }}" class="ui-btn ui-shadow ui-corner-all" data-ajax="false"><span>Not a member ? sign up now</span></a></div>
+    </div> -->
 </div>
 
 @endsection

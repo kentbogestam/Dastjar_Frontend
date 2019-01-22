@@ -179,8 +179,10 @@ class LoginController extends Controller
       }
     }
 
-    public function login(){
-        return view('auth.login');       
+    public function login(Request $request){
+        $agent = $request->server('HTTP_USER_AGENT');
+        
+        return view('auth.login', compact('agent'));       
     }
 
     public function mobileLogin(){
