@@ -89,27 +89,24 @@
 
 	Route::get('search-store-map', 'MapController@searchStoreMap');
 	Route::get('404', 'HomeController@page_404')->name('page_404');
-   Route::post('updateCart', 'OrderController@updateCart');
+   	Route::post('updateCart', 'OrderController@updateCart');
 
     Route::group(['middleware' => ['latlng']], function(){
-	Route::get('search-map-eatnow', 'MapController@searchMapEatnow');
-	Route::get('eat-now', 'HomeController@index');
-	Route::resource('customer', 'CustomerController');
-	Route::get('saveCurrentlat-long', 'HomeController@saveCurrentLatLong');
-	Route::get('selectOrder-date', 'HomeController@selectOrderDate');
-	Route::post('eat-later', 'HomeController@eatLater');
-	Route::get('eat-later', 'HomeController@eatLater');
-	Route::get('eat-later-data', 'HomeController@eatLaterData');
-	Route::get('search-map-eatlater', 'MapController@searchMapEatlater');
-	Route::get('eat-later-map', 'HomeController@eatLaterMap');
-	Route::get('withOutLogin', 'OrderController@withOutLogin')->name('withOutLogin');
-	Route::get('checkDistance','DistanceController@checkDistance');
-	Route::post('cart', 'OrderController@cart');
-	Route::get('cart', 'OrderController@cartWithOutLogin')->name('cartWithOutLogin');
-
-	
-	
-});
+		Route::get('search-map-eatnow', 'MapController@searchMapEatnow');
+		Route::get('eat-now', 'HomeController@index');
+		Route::resource('customer', 'CustomerController');
+		Route::get('saveCurrentlat-long', 'HomeController@saveCurrentLatLong');
+		Route::get('selectOrder-date', 'HomeController@selectOrderDate');
+		Route::post('eat-later', 'HomeController@eatLater');
+		Route::get('eat-later', 'HomeController@eatLater');
+		Route::get('eat-later-data', 'HomeController@eatLaterData');
+		Route::get('search-map-eatlater', 'MapController@searchMapEatlater');
+		Route::get('eat-later-map', 'HomeController@eatLaterMap');
+		Route::get('withOutLogin', 'OrderController@withOutLogin')->name('withOutLogin');
+		Route::get('checkDistance','DistanceController@checkDistance');
+		Route::post('cart', 'OrderController@cart');
+		Route::get('cart', 'OrderController@cartWithOutLogin')->name('cartWithOutLogin');
+	});
 
 	Route::group(['middleware' => ['auth']], function(){
 		Route::get('blank-view', 'HomeController@blankView');
