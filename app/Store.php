@@ -160,6 +160,7 @@ class Store extends Model
             ->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')
             ->leftJoin('dish_type', 'dish_type.dish_id', '=', 'product.dish_type')
             ->where('store_close_dates', 'not like', '%'.$todayDate.'%')->where('store_open_close_day_time', 'like', '%'."All".'%')->where('store.s_activ','=','1')->where('dish_type.dish_activate',1)->whereIn('store_type', [1, 3])->where('product_price_list.publishing_start_date','<=',Carbon::now())->where('product_price_list.publishing_end_date','>=',Carbon::now())->groupBy('store.store_id')->with('products'))            
+            ->orderBy('distance')
             ->get();
 
 /*
