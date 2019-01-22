@@ -365,7 +365,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
     border-radius: 10px !important;
 }
 .cat-list-sec li .ui-li-count{
-    font-size: 14.5px;border: none; right: 1.3em;
+    font-size: 14.5px;border: none; right: 1.3em !important;
     color: rgba(134, 134, 134, 0.56);
     font-family: "ProximaNova-Regular";
 }

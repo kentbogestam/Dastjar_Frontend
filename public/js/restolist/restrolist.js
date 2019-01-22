@@ -146,7 +146,7 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 
 						liItem += "</p>";
 						liItem += "<div class='ui-li-count ui-body-inherit'>";
-						liItem += "<span>"+temp[i]["distance"].toFixed(2)+ "&nbsp;Km" + "</span>";
+						liItem += "<span>"+temp[i]["distance"].toFixed(1)+ "&nbsp;Km" + "</span>";
 
 						liItem += "</div></a></li>";
 
