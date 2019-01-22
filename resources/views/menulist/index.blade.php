@@ -501,9 +501,9 @@
 		window.location.href = link;
 	}
 
-	$(".ordersec").click(function(){
+	/*$(".ordersec").click(function(){
 	    $("#order-popup").toggleClass("hide-popup");
-	 });
+	 });*/
 	
 	 $("body").on('click', ".submit_btn", function (e) {        
         // Remove any old one

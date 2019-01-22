@@ -7,7 +7,7 @@
 	</div>
 
 	
- <!--@include('includes.fixedfooter')-->
+ {{-- @include('includes.fixedfooter') --}}
 @endsection
 
 @section('footer-script')
@@ -111,8 +111,8 @@
 	}
 		google.maps.event.addDomListener(window, 'load', initialize);
 
-		$(".ordersec").click(function(){
+		/*$(".ordersec").click(function(){
 		    $("#order-popup").toggleClass("hide-popup");
-		 });
+		 });*/
 </script>
 @endsection

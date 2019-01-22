@@ -5,7 +5,7 @@
 				<div class="img-container">
 					<img src="{{asset('images/notification-2.png')}}">
 				</div>
-				<span class="name-order">{{ __('messages.Orders') }}</span>
+				<!-- <span class="name-order">{{ __('messages.Orders') }}</span> -->
 			</a>
 		</div>
 	@else
@@ -15,7 +15,7 @@
 	        	<span class="order-number">{{count(Auth::user()->paidOrderList)}}</span>
 	        	<img src="{{asset('images/notification-2.png')}}">
 	        </div>
-        	<span class="name-order">{{ __('messages.Orders') }}</span>
+        	<!-- <span class="name-order">{{ __('messages.Orders') }}</span> -->
 
         </a>
 
@@ -37,7 +37,7 @@
 		<div class="img-container">
 			<img src="{{asset('images/notification-2.png')}}">
 		</div>
-		<span class="name-order">{{ __('messages.Orders') }}</span>
+		<!-- <span class="name-order">{{ __('messages.Orders') }}</span> -->
 	</a>
 </div>
 

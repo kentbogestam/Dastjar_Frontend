@@ -279,9 +279,9 @@
 		window.location.href = link;
 	}
 
-	$(".ordersec").click(function(){
+	/*$(".ordersec").click(function(){
 	    $("#order-popup").toggleClass("hide-popup");
-	 });
+	 });*/
 	
 </script>
 @endsection

@@ -76,8 +76,8 @@
 
 @section('footer-script')
 	<script type="text/javascript">
-		$(".ordersec").click(function(){
+		/*$(".ordersec").click(function(){
 		    $("#order-popup").toggleClass("hide-popup");
-		 });
+		 });*/
 	</script>
 @endsection

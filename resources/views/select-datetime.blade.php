@@ -96,9 +96,9 @@ window.addEventListener('load', function(){ setTimeout(function(){ window.scroll
 
 @section('footer-script')
 	<script type="text/javascript">	 	
-		$(".ordersec").click(function(){
+		/*$(".ordersec").click(function(){
 			$("#order-popup").toggleClass("hide-popup");
-		});
+		});*/
 
 		$('.error-show').append("<p class='error_time'>Please enter PickUp time in 24 hours format. </p>"+"<p class='error_time2'>Date and Time is not valid. </p>"+"<p class='error_time3'>Order Date Cannot be Current Date </p>");
 	</script>

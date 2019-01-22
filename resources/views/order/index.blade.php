@@ -429,26 +429,6 @@ function registerDeviceWithApp42(token,type ){
 		</div>
 	</div>
 	
-	<!--<div data-role="footer" class="footer" data-position="fixed">
-		<div class="ui-grid-c inner-footer center">
-		<div class="ui-block-a"><a href="{{ Session::get('route_url') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-			<div class="img-container">
-				<img src="{{asset('images/icons/select-store_01.png')}}">
-			</div>
-			<span>{{ __('messages.Restaurant') }}</span>
-		</a></div>
-		<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-			<div class="img-container">
-				<img src="{{asset('images/icons/select-store_03.png')}}">
-			</div>
-			<span>{{ __('messages.Send') }}</span>
-		</a></div>
-		@include('orderQuantity')
-		<div class="ui-block-d"><a href="{{url('user-setting')}}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-			<div class="img-container"><img src="{{asset('images/icons/select-store_07.png')}}"></div>
-		</a></div>
-		</div>
-	</div>-->
 	@include('includes.fixedfooter')
 
 <div class="pop_up">   
@@ -730,9 +710,9 @@ function registerDeviceWithApp42(token,type ){
 		$("#select-native-5-button").find("span").html($( "#select-native-5 option:selected" ).text());
 	});
 
-	 $(".ordersec").click(function(){
+	 /*$(".ordersec").click(function(){
 	    $("#order-popup").toggleClass("hide-popup");
-	 });
+	 });*/
 
 	 $(".cancel-order-btn").click(function(){
 		$('#overlay').show();

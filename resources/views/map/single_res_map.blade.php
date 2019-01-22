@@ -7,7 +7,7 @@
 		<div id="map" class="map_container"></div>
 	</div>
 
-<!--@include('includes.fixedfooter')	-->
+{{-- @include('includes.fixedfooter') --}}
 
 @endsection
 
@@ -67,8 +67,8 @@
 			});
 		}
 
-		$(".ordersec").click(function(){
+		/*$(".ordersec").click(function(){
 		    $("#order-popup").toggleClass("hide-popup");
-		 });
+		 });*/
 </script>
 @endsection
