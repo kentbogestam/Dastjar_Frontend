@@ -99,7 +99,7 @@ function setDistanceParmeter()
 
 		checkDistance(lat2,lon2, true);
 	}
-	else if(distance > 50) // Update map on each 50 meter
+	else if(distance > 20) // Update map on each x meter
 	{
 		checkDistance(lat2,lon2);
 	}
