@@ -10,24 +10,27 @@ function isManualPrepTimeForOrder(orderId, itemId, This)
 		if(!returnedData.count)
 		{
 			$('#add-manual-prep-time').find('input[name="order_id"]').val(orderId);
+			$('#add-manual-prep-time').find('input[name="item_id"]').val(itemId);
 			$('#add-manual-prep-time').popup('open');
-		}
-
-		// Start order item or order
-		if(itemId)
-		{
-			// Start item individually for order from 'Kitchen Menu' 
-			orderReadyStarted(itemId, This);
 		}
 		else
 		{
-			// Start order from 'Order Menu'
-			startOrder(orderId, This);
+			// Start order item or order
+			if(itemId)
+			{
+				// Start item individually for order from 'Kitchen Menu' 
+				orderReadyStarted(itemId, This);
+			}
+			else
+			{
+				// Start order from 'Order Menu'
+				startOrder(orderId, This);
+			}
 		}
 	});
 }
 
-// Update the manual extra time for order
+// Update the manual extra time for order and then start the order/item
 function frmAddManualPrepTime()
 {
 	$.post(RESTAURANT_BASE_URL+"/add-manual-prep-time",
@@ -37,6 +40,24 @@ function frmAddManualPrepTime()
 			'extra_prep_time': $('input[name="extra_prep_time"]:checked').val()
 		},
 		function(data) {
+			// Start order item or order
+			orderId = $('input[name=order_id]').val();
+			itemId = $('input[name=item_id]').val();
+
+			This = (itemId != 'false') ? 'img#'+itemId : 'img#'+orderId;
+
+			if(itemId != 'false')
+			{
+				// Start item individually for order from 'Kitchen Menu' 
+				orderReadyStarted(itemId, This);
+			}
+			else
+			{
+				// Start order from 'Order Menu'
+				startOrder(orderId, This);
+			}
+			
+			// Close the popup
 			$( "#add-manual-prep-time" ).popup("close");
 		}
 	);

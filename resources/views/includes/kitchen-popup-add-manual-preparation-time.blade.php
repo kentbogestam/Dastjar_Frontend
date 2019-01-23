@@ -22,8 +22,9 @@
 				<input type="radio" name="extra_prep_time" id="manual-prep-time-50" value="50">
 				<label for="manual-prep-time-50">50</label>
 			</fieldset>
-			<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-b" data-rel="back">Cancel</a>
 			<input type="hidden" name="order_id">
+			<input type="hidden" name="item_id">
+			<!-- <a href="javascript:void(0)" onclick="frmAddManualPrepTime()" class="ui-btn ui-corner-all ui-shadow ui-btn-b" data-rel="back">Cancel</a> -->
 			<button type="button" onclick="frmAddManualPrepTime()" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left">Update</button>
 		</form>
 	</div>

@@ -66,7 +66,7 @@
 		var totalCount = 0;
 		var textSpeach = 0;
 		var totallength = 0;
-		var url = "{{url('kitchen/order-started')}}";
+		//var url = "{{url('kitchen/order-started')}}";
 		var urlReady = "{{url('kitchen/order-readyKitchen')}}";
 		var textSpeachDone = "{{url('kitchen/textSpeachDone')}}";
 		var lastOrderId;
@@ -210,7 +210,7 @@
 			          		liItem += "</tr>"
 					    	$("#orderDetailContianer").append(liItem);
 					    	liItem = null;
-						     }, 4000*i);
+						     }, 500*i);
 					    })(i);
 		          	}
 	          	}else{
@@ -223,7 +223,7 @@
 	          	$("#orderDetailContianer").append(liItem);
 			}); 
 		});
-console.log('lastOrderId'+lastOrderId);
+		// console.log('lastOrderId'+lastOrderId);
 		var ajaxCall = function(){
 			$.get("{{url('kitchen/kitchen-orders-new')}}/"+lastOrderId,
 			function(returnedData){
@@ -257,7 +257,8 @@ console.log('lastOrderId'+lastOrderId);
 						    	console.log('iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'+i);
 			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time",extra_prep_time]);
 			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
-			          		liItem += "<tr>";
+			          		var clsStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
+			          		liItem += "<tr class='"+clsStatus+"'>";
 			          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 			          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
 			          		liItem += "<td>"+temp[i]["product_name"]+

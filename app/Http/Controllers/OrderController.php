@@ -589,6 +589,10 @@ class OrderController extends Controller
                 $orderTime = $pieces[4];
             }
 
+            // Get store detail
+            $storeDetail = Store::where('store_id', $data['storeID'])->first();
+
+            //
             foreach ($data['product'] as $key => $value) {
                 //if commant and quantity require then use condition "$value['prod_quant'] != '0' && $value['prod_desc'] != null"
                 if($value['prod_quant'] != '0'){
@@ -604,6 +608,12 @@ class OrderController extends Controller
                         $order->deliver_date = $orderDate;
                         $order->deliver_time = $orderTime;
                         $order->check_deliveryDate = $checkOrderDate;
+
+                        if($storeDetail->order_response == 0 && $orderType == 'eat_now')
+                        {
+                            $order->order_accepted = 0;
+                        }
+
                         $order->save();
                         $orders = Order::select('*')->whereUserId(Auth::id())->orderBy('order_id', 'DESC')->first();
                         $orderId = $orders->order_id;
@@ -614,7 +624,12 @@ class OrderController extends Controller
                     if($max_time < $productTime->preparation_Time){
                         $max_time = $productTime->preparation_Time;
                     }else{}
-                    $productPrice = ProductPriceList::select('price')->whereProductId($value['id'])->where('store_id' , $data['storeID'])->first();
+                    $productPrice = ProductPriceList::select('price')
+                        ->whereProductId($value['id'])
+                        ->where('store_id' , $data['storeID'])
+                        ->where('publishing_start_date','<=',Carbon::now())
+                        ->where('publishing_end_date','>=',Carbon::now())
+                        ->first();
                     $total_price = $total_price + ($productPrice->price * $value['prod_quant']); 
                     $orderDetail =  new OrderDetail();
                     $orderDetail->order_id = $orders->order_id;
@@ -643,8 +658,7 @@ class OrderController extends Controller
             $request->session()->put('currentOrderId', $order->order_id);
            
             $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
-
-            $storeDetail = Store::where('store_id', $data['storeID'])->first();
+            
             //If store support ontine payment then if condition run.
             if($storeDetail->online_payment == 1){
                 $companyDetail = Company::where('company_id', $productTime->company_id)->first();
@@ -718,7 +732,6 @@ public function cart(Request $request){
                 $checkOrderDate;
                 
                 if($request->session()->get('order_date') != null){
-                   
                     $pieces = explode(" ", $request->session()->get('order_date'));
                     $date=date_create($pieces[3]."-".$pieces[1]."-".$pieces[2]);
                     $checkOrderDate = date_format($date,"Y-m-d");
@@ -727,7 +740,6 @@ public function cart(Request $request){
                     $orderTime = $pieces[4];
                     $request->session()->forget('order_date');
                 }else{
-                    
                     $pieces = explode(" ", $data['browserCurrentTime']);
                     $date=date_create($pieces[3]."-".$pieces[1]."-".$pieces[2]);
                     $checkOrderDate = date_format($date,"Y-m-d");
@@ -736,6 +748,10 @@ public function cart(Request $request){
                     $orderTime = $pieces[4];
                 }
 
+                // Get store detail
+                $storeDetail = Store::where('store_id', $data['storeID'])->first();
+
+                //
                 foreach ($data['product'] as $key => $value) {
                     //if commant and quantity require then use condition "$value['prod_quant'] != '0' && $value['prod_desc'] != null"
                     if($value['prod_quant'] != '0'){
@@ -751,7 +767,12 @@ public function cart(Request $request){
                             $order->deliver_date = $orderDate;
                             $order->deliver_time = $orderTime;
                             $order->check_deliveryDate = $checkOrderDate;
-                           // $order->cancel = 1;
+
+                            if($storeDetail->order_response == 0 && $orderType == 'eat_now')
+                            {
+                                $order->order_accepted = 0;
+                            }
+
                             $order->save();
                             $orders = Order::select('*')->whereUserId(Auth::id())->orderBy('order_id', 'DESC')->first();
                             $orderId = $orders->order_id;
@@ -763,7 +784,12 @@ public function cart(Request $request){
                             $max_time = $productTime->preparation_Time;
                         }
 
-                        $productPrice = ProductPriceList::select('price')->whereProductId($value['id'])->where('store_id' , $data['storeID'])->first();
+                        $productPrice = ProductPriceList::select('price')
+                            ->whereProductId($value['id'])
+                            ->where('store_id' , $data['storeID'])
+                            ->where('publishing_start_date','<=',Carbon::now())
+                            ->where('publishing_end_date','>=',Carbon::now())
+                            ->first();
                         $total_price = $total_price + ($productPrice->price * $value['prod_quant']); 
                         $orderDetail =  new OrderDetail();
                         $orderDetail->order_id = $orders->order_id;
@@ -792,8 +818,6 @@ public function cart(Request $request){
                 $request->session()->put('currentOrderId', $order->order_id);
                 
                 $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name','order_details.product_id')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
-
-                $storeDetail = Store::where('store_id', $data['storeID'])->first();
 
                 //If store support ontine payment then if condition run.
                 if($storeDetail->online_payment == 1){

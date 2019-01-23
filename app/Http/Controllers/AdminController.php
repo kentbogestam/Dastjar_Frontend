@@ -231,10 +231,22 @@ class AdminController extends Controller
         if( OrderDetail::where('order_id', $id)->update(['order_started' => 1]) )
         {
             $status = true;
-            Order::where('order_id', $id)->update(['order_accepted' => 1, 'order_started' => 1]);
-            
-            // Send text/notification on order accepted
-            $this->onOrderAccepted($id);
+
+            $arrOrderUpdate['order_started'] = 1;
+
+            // Check and update order as accepted if not already accepted
+            if( Order::where(['order_id' => $id, 'order_accepted' => 0])->count() )
+            {
+                $arrOrderUpdate['order_accepted'] = 1;
+            }
+
+            Order::where('order_id', $id)->update($arrOrderUpdate);
+
+            // If order accepted, send 'order accepted' text/notification
+            if( isset($arrOrderUpdate['order_accepted']) )
+            {
+                $this->onOrderAccepted($id);
+            }
         }
 
         return response()->json(['status' => $status]);
@@ -344,7 +356,7 @@ class AdminController extends Controller
        return view('kitchen.order.kitchen_order_list', compact('store', 'storeName'));
     }
 
-    public function orderStarted(Request $request, $orderItemId){
+    /*public function orderStarted(Request $request, $orderItemId){
         if( DB::table('order_details')->where('id', $orderItemId)->update(['order_started' => 1]) )
         {
             $arrOrderUpdate['order_accepted'] = 1;
@@ -373,137 +385,7 @@ class AdminController extends Controller
         }
 
         return redirect()->action('AdminController@kitchenOrderDetail')->with('success', 'Order Started Successfully.');
-    }
-
-    /**
-     * Update 'order' and 'order item' status as ready from 'Kitchen Menu'
-     * @param  Request $request [description]
-     * @param  [type]  $orderID [description]
-     * @return [type]           [description]
-     */
-    public function orderReadyKitchen(Request $request, $orderID)
-    {
-        $helper = new Helper();        
-        try{
-              $helper->logs("Ready Step 1: order id = " . $orderID);       
-        DB::table('order_details')->where('id', $orderID)->update([
-                            'order_ready' => 1,
-                        ]);
-        $userOrderId = OrderDetail::where('id' , $orderID)->first();
-
-        $userOrderStatus = OrderDetail::where('order_id' , $userOrderId->order_id)->get();
-        $readyOrderStatus = OrderDetail::where('order_id' , $userOrderId->order_id)->where('order_ready' , '1')->get();
-        if(count($userOrderStatus) == count($readyOrderStatus)){
-
-            $OrderId = Order::where('order_id' , $userOrderId->order_id)->first();
-            DB::table('orders')->where('order_id', $userOrderId->order_id)->update([
-                            'order_ready' => 1,
-                        ]);
-
-            $message = 'orderReady';
-              $helper->logs("Step 2: order table updated = " . $orderID . " And user id=" . $OrderId->user_id);       
-
-            if($OrderId->user_id != 0)
-            {
-                $recipients = [];                
-                if($OrderId->user_type == 'customer'){
-                    $adminDetail = User::where('id' , $OrderId->user_id)->first();
-                    if(isset($adminDetail->phone_number_prifix) && isset($adminDetail->phone_number)){
-                        $recipients = ['+'.$adminDetail->phone_number_prifix.$adminDetail->phone_number];
-                    }
-                }
-                else{
-                    $adminDetail = Admin::where('id' , $OrderId->user_id)->first();
-                    $recipients = ['+'.$adminDetail->mobile_phone];
-                }                
-
-                if(isset($adminDetail->browser)){
-                    $pieces = explode(" ", $adminDetail->browser);
-                }else{
-                    $pieces[0] = '';                              
-                }
-
-            }
-            else
-            {
-                $pieces[0] = '';               
-            }
-
-            $helper->logs("Step 3: recipient calculation = " . $orderID . " And browser=" .$pieces[0]);  
-
-            if($pieces[0] == 'Safari'){
-                $url = "https://gatewayapi.com/rest/mtsms";
-                $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
-                $message = "Your Order Ready Please click on Link \n ".env('APP_URL').'ready-notification/'.$OrderId->customer_order_id;
-                $json = [
-                    'sender' => 'Dastjar',
-                    'message' => ''.$message.'',
-                    'recipients' => [],
-                ];
-                foreach ($recipients as $msisdn) {
-                    $json['recipients'][] = ['msisdn' => $msisdn];}
-
-                $ch = curl_init();
-                curl_setopt($ch,CURLOPT_URL, $url);
-                curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
-                curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
-                curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
-                curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
-                $result = curl_exec($ch);
-                curl_close($ch);   
-                   $helper->logs("Step 4: IOS notification sent = " . $orderID . " And Result=" .$result);
-            }
-            else
-            {
-                if($OrderId->user_id != 0){
-                    $result = $this->sendNotifaction($OrderId->customer_order_id , $message);
-                     $helper->logs("Step 5: Android notification sent = " . $orderID . " And Result=" .$result);
-                }
-            }
-
-           
-
-            return redirect()->back()->with('success', 'Order Ready Notification Send Successfully.');
-        }
-        return redirect()->back()->with('success', 'Order Ready Successfully.');
-    }
-        catch(\Exception $ex){
-            $helper->logs("Step 6: Exception = " .$ex->getMessage());            
-        }
-    }
-
-    /**
-     * Check the count of item of order that have been started
-     * @param  Request $request [description]
-     * @param  [type]  $orderId [description]
-     * @return boolean          [description]
-     */
-    function isManualPrepTimeForOrder(Request $request, $orderId)
-    {
-        $count = OrderDetail::where(['order_id' => $orderId, 'order_started' => 1])->count();
-
-        return response()->json(['count' => $count]);
-    }
-
-    /**
-     * [addManualPrepTime description]
-     * @param Request $request [description]
-     */
-    function addManualPrepTime(Request $request)
-    {
-        $status = 0;
-
-        // Update extra preparation time
-        $result = Order::where('order_id', $request->order_id)
-            ->update(['extra_prep_time' => $request->extra_prep_time]);
-
-        if($result)
-        {
-            $status = 1;
-        }
-
-        return response()->json(['status' => $status]);
-    }
+    }*/
     
     public function cateringDetails(){
         $store = Store::where('store_id' , Session::get('storeId'));
@@ -861,7 +743,7 @@ class AdminController extends Controller
 
         if($message == 'orderDeliver')
         {
-            $url = env('APP_URL').'deliver-notification';
+            $url = env('APP_URL').'deliver-notification/'.$order->customer_order_id;
             $message = "{'alert': 'Your Order Deliver.','_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': 'Your Order Deliver.','type':'openUrl','content':" ."'". $url."'" . "}}";
         }
         elseif($message = 'orderAccepted')
@@ -869,10 +751,10 @@ class AdminController extends Controller
             $url = env('APP_URL').'order-view/'.$order->order_id;
             $message = "{'alert': 'Your Order Accepted.','_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': 'Your Order Accepted.','type':'openUrl','content':" ."'". $url."'" . "}}";
         }
-        else
+        elseif($message = 'orderReady')
         {
-            $url = env('APP_URL').'ready-notification/'.$orderID;
-            $messageDelever = "Your Order ". $orderID . " Ready";
+            $url = env('APP_URL').'ready-notification/'.$order->customer_order_id;
+            $messageDelever = "Your Order ". $order->customer_order_id . " Ready";
             $message = "{'alert': " ."'". $messageDelever."'" . ",'_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': " ."'". $messageDelever."'" . ",'type':'openUrl','content':" ."'". $url."'" . "}}";
         }
 
@@ -1688,6 +1570,39 @@ class AdminController extends Controller
     }
 
     /**
+     * Check the count of item of order that have been started
+     * @param  Request $request [description]
+     * @param  [type]  $orderId [description]
+     * @return boolean          [description]
+     */
+    function isManualPrepTimeForOrder(Request $request, $orderId)
+    {
+        $count = OrderDetail::where(['order_id' => $orderId, 'order_started' => 1])->count();
+
+        return response()->json(['count' => $count]);
+    }
+
+    /**
+     * [addManualPrepTime description]
+     * @param Request $request [description]
+     */
+    function addManualPrepTime(Request $request)
+    {
+        $status = 0;
+
+        // Update extra preparation time
+        $result = Order::where('order_id', $request->order_id)
+            ->update(['extra_prep_time' => $request->extra_prep_time]);
+
+        if($result)
+        {
+            $status = 1;
+        }
+
+        return response()->json(['status' => $status]);
+    }
+
+    /**
      * Update 'order item' as started from 'Kitchen Menu'
      * @param  Request $request     [description]
      * @param  [type]  $orderItemId [description]
@@ -1720,6 +1635,103 @@ class AdminController extends Controller
         }
 
         return response()->json(['status' => 'success', 'data'=>true]);
+    }
+
+    /**
+     * Update 'order' and 'order item' status as ready from 'Kitchen Menu'
+     * @param  Request $request [description]
+     * @param  [type]  $orderID [description]
+     * @return [type]           [description]
+     */
+    public function orderReadyKitchen(Request $request, $orderID)
+    {
+        $helper = new Helper();        
+        try{
+              $helper->logs("Ready Step 1: order id = " . $orderID);       
+        DB::table('order_details')->where('id', $orderID)->update([
+                            'order_ready' => 1,
+                        ]);
+        $userOrderId = OrderDetail::where('id' , $orderID)->first();
+
+        $userOrderStatus = OrderDetail::where('order_id' , $userOrderId->order_id)->get();
+        $readyOrderStatus = OrderDetail::where('order_id' , $userOrderId->order_id)->where('order_ready' , '1')->get();
+        if(count($userOrderStatus) == count($readyOrderStatus)){
+
+            $OrderId = Order::where('order_id' , $userOrderId->order_id)->first();
+            DB::table('orders')->where('order_id', $userOrderId->order_id)->update([
+                            'order_ready' => 1,
+                        ]);
+
+            $message = 'orderReady';
+              $helper->logs("Step 2: order table updated = " . $orderID . " And user id=" . $OrderId->user_id);       
+
+            if($OrderId->user_id != 0)
+            {
+                $recipients = [];                
+                if($OrderId->user_type == 'customer'){
+                    $adminDetail = User::where('id' , $OrderId->user_id)->first();
+                    if(isset($adminDetail->phone_number_prifix) && isset($adminDetail->phone_number)){
+                        $recipients = ['+'.$adminDetail->phone_number_prifix.$adminDetail->phone_number];
+                    }
+                }
+                else{
+                    $adminDetail = Admin::where('id' , $OrderId->user_id)->first();
+                    $recipients = ['+'.$adminDetail->mobile_phone];
+                }                
+
+                if(isset($adminDetail->browser)){
+                    $pieces = explode(" ", $adminDetail->browser);
+                }else{
+                    $pieces[0] = '';                              
+                }
+
+            }
+            else
+            {
+                $pieces[0] = '';               
+            }
+
+            $helper->logs("Step 3: recipient calculation = " . $orderID . " And browser=" .$pieces[0]);  
+
+            if($pieces[0] == 'Safari'){
+                $url = "https://gatewayapi.com/rest/mtsms";
+                $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
+                $message = "Your Order Ready Please click on Link \n ".env('APP_URL').'ready-notification/'.$OrderId->customer_order_id;
+                $json = [
+                    'sender' => 'Dastjar',
+                    'message' => ''.$message.'',
+                    'recipients' => [],
+                ];
+                foreach ($recipients as $msisdn) {
+                    $json['recipients'][] = ['msisdn' => $msisdn];}
+
+                $ch = curl_init();
+                curl_setopt($ch,CURLOPT_URL, $url);
+                curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+                curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
+                curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
+                curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+                $result = curl_exec($ch);
+                curl_close($ch);   
+                   $helper->logs("Step 4: IOS notification sent = " . $orderID . " And Result=" .$result);
+            }
+            else
+            {
+                if($OrderId->user_id != 0){
+                    $result = $this->sendNotifaction($OrderId->customer_order_id , $message);
+                     $helper->logs("Step 5: Android notification sent = " . $orderID . " And Result=" .$result);
+                }
+            }
+
+           
+
+            return redirect()->back()->with('success', 'Order Ready Notification Send Successfully.');
+        }
+        return redirect()->back()->with('success', 'Order Ready Successfully.');
+    }
+        catch(\Exception $ex){
+            $helper->logs("Step 6: Exception = " .$ex->getMessage());            
+        }
     }
 
     /**
@@ -1827,7 +1839,7 @@ class AdminController extends Controller
         return $result;
     }
 
-    public function onReadyAjax(Request $request, $orderID){
+    /*public function onReadyAjax(Request $request, $orderID){
         dd(DB::table('order_details')->where('id', $orderID)->first());
         DB::table('order_details')->where('id', $orderID)->update(['order_ready' => 1]);
         $userOrderId = OrderDetail::where('id' , $orderID)->first();
@@ -1877,7 +1889,7 @@ class AdminController extends Controller
         }
 
         return response()->json(['status' => 'ready', 'data'=>'Order Ready Successfully.']);
-    }
+    }*/
       
     public function extraPrepTime(){
         $storeId = Session::get('storeId');
