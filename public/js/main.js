@@ -49,6 +49,10 @@ function incrementValue(id)
     value++;
     $("#item"+id).css("background-color", "yellow");
     document.getElementById(id).value = value;
+
+    // Update value in basket
+    cntCartItems++;
+    $('.cart-badge').html(cntCartItems);
 }
 function decrementValue(id)
 {
@@ -57,12 +61,15 @@ function decrementValue(id)
     if(value>0){
         value--;
         document.getElementById(id).value = value;
+
+        // Update value in basket
+        cntCartItems--;
+        $('.cart-badge').html(cntCartItems);
     }
 
     if(value==0){
        $("#item"+id).css("background-color", "white");
     }
-
 }
 
 function setCurrentLatLong(urllatlng){

@@ -44,6 +44,7 @@
 			<div class="ui-block-b<?php echo ($cart=='true') ? ' active' : ''; ?>">
 				<a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
 					<div class="img-container">
+						<span class="badge cart-badge">0</span>
 						<img src="{{asset('images/icon-cart.png')}}">
 					</div>
 					<!-- <span>{{ __('messages.Send') }}</span> -->
@@ -53,6 +54,7 @@
 			<div class="ui-block-b">
 				<a href="#" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline actibe-icon-img" id="menudataSave" data-ajax="false">
 					<div class="img-container">
+						<span class="badge cart-badge">0</span>
 						<img src="{{asset('images/icon-cart.png')}}">
 					</div>
 					<!-- <input type="button" value="{{ __('messages.Send') }}" id="dataSave"/> -->

@@ -19,7 +19,14 @@
 					<input type="hidden" name="baseUrl" id="baseUrl" value="{{ url('/')}}"/>
                    {{ csrf_field() }}
 				
+					@php
+					$cntCartItems = 0;
+					@endphp
+
 					@foreach($orderDetails as $value)
+						@php
+						$cntCartItems += $value->product_quality;
+						@endphp
 
 						<tr class="custom_row1" id="row_{{$j}}">
 							
@@ -90,5 +97,9 @@
 @endsection
 
 @section('footer-script')
-
+<script type="text/javascript">
+	// Update value in basket
+	var cntCartItems = "{{ $cntCartItems }}";
+	$('.cart-badge').html(cntCartItems);
+</script>
 @endsection

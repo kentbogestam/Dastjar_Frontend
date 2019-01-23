@@ -399,6 +399,7 @@
 
 	<script type="text/javascript">
 		var id;
+		var cntCartItems = 0;
 
 		$(".extra-btn a").click(function(){
 			id=$(this).attr('id');
