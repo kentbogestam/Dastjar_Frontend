@@ -268,7 +268,7 @@ class AdminController extends Controller
 
         try{
             $helper->logs("Order Ready: Order ID - " . $orderId);
-            
+
             // Get order detail
             $order = Order::select(['user_id', 'user_type', 'customer_order_id'])
                 ->where('order_id' , $orderId)
@@ -1654,7 +1654,7 @@ class AdminController extends Controller
     {
         $helper = new Helper();        
         try{
-            $helper->logs("Order Ready: Order ID - " . $orderID);
+            $helper->logs("Order Ready: Order Item ID - " . $orderID);
 
         DB::table('order_details')->where('id', $orderID)->update([
                             'order_ready' => 1,
@@ -1719,14 +1719,14 @@ class AdminController extends Controller
                 $result = curl_exec($ch);
                 curl_close($ch);   
 
-                $helper->logs("Order Ready: IOS notification sent. Order ID - " . $orderID);
+                $helper->logs("Order Ready: IOS notification sent. Order Item ID - " . $orderID);
             }
             else
             {
                 if($OrderId->user_id != 0){
                     $result = $this->sendNotifaction($OrderId->customer_order_id , $message);
 
-                    $helper->logs("Order Ready: Android notification sent. Order ID - " . $orderID);
+                    $helper->logs("Order Ready: Android notification sent. Order Item ID - " . $orderID);
                 }
             }
 

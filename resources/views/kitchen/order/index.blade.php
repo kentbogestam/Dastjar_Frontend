@@ -26,7 +26,7 @@
 			 		<th data-priority="2">{{ __('messages.Orders') }}</th>
 			   		<th>{{ __('messages.Alias') }}</th> 
 			   		<th data-priority="3">{{ __('messages.Date and Time') }}</th>
-			   		@if( Session::has('subscribedPlans.kitchen') )
+			   		@if( !Session::has('subscribedPlans.kitchen') )
 						<th data-priority="3">{{ __('messages.Started') }}</th>
 					@endif
 					<th data-priority="1">{{ __('messages.Ready') }}</th>
@@ -116,7 +116,7 @@
 	          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
 
 	          		// Add additional column if 'kitchen' module not subscribed
-	          		@if( Session::has('subscribedPlans.kitchen') )
+	          		@if( !Session::has('subscribedPlans.kitchen') )
 	          			// Order Started
 	          			if(temp[i]["order_started"] == 0){
 		          			ids = temp[i]['order_id'];
@@ -271,7 +271,7 @@
 	          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
 
 	          		// Add additional column if 'kitchen' module not subscribed
-	          		@if( Session::has('subscribedPlans.kitchen') )
+	          		@if( !Session::has('subscribedPlans.kitchen') )
 	          			// Order Started
 	          			if(temp[i]["order_started"] == 0){
 		          			ids = temp[i]['order_id'];
@@ -433,7 +433,7 @@
   		liItem += "<td>"+list[i]["deliver_date"]+' '+timeOrder+"</td>";
   		
   		// Add additional column if 'kitchen' module not subscribed
-  		@if( Session::has('subscribedPlans.kitchen') )
+  		@if( !Session::has('subscribedPlans.kitchen') )
   			// Order Started
   			if(temp[i]["order_started"] == 0){
       			ids = temp[i]['order_id'];
