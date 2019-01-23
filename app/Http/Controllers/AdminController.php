@@ -230,6 +230,8 @@ class AdminController extends Controller
 
         if( OrderDetail::where('order_id', $id)->update(['order_started' => 1]) )
         {
+            $helper = new Helper();
+            
             $status = true;
 
             $arrOrderUpdate['order_started'] = 1;
@@ -246,7 +248,10 @@ class AdminController extends Controller
             if( isset($arrOrderUpdate['order_accepted']) )
             {
                 $this->onOrderAccepted($id);
+                $helper->logs("Order Accepted: Order ID - " . $id);
             }
+
+            $helper->logs("Order Started: Order ID - " . $id);
         }
 
         return response()->json(['status' => $status]);
@@ -262,8 +267,8 @@ class AdminController extends Controller
         $helper = new Helper();
 
         try{
-            $helper->logs("Ready Step 1: order id - " . $orderId);
-
+            $helper->logs("Order Ready: Order ID - " . $orderId);
+            
             // Get order detail
             $order = Order::select(['user_id', 'user_type', 'customer_order_id'])
                 ->where('order_id' , $orderId)
@@ -272,8 +277,6 @@ class AdminController extends Controller
             // Update order and order items as ready
             DB::table('order_details')->where('order_id', $orderId)->update(['order_ready' => 1]);
             DB::table('orders')->where('order_id', $orderId)->update(['order_ready' => 1]);
-
-            $helper->logs("Step 2: order table updated = " . $orderId . " And user id=" . $order->user_id);
 
             if($order->user_id != 0)
             {
@@ -295,27 +298,25 @@ class AdminController extends Controller
                     $pieces[0] = '';
                 }
 
-                $helper->logs("Step 3: recipient calculation = " . $orderId . " And browser=" .$pieces[0]);
-
                 // Send message/notification to user
                 if($pieces[0] == 'Safari')
                 {
                     $message = "Your Order Ready Please click on Link \n ".env('APP_URL').'ready-notification/'.$order->customer_order_id;
                     $result = $this->apiSendTextMessage($recipients, $message);
                     
-                    $helper->logs("Step 4: IOS notification sent = " . $orderId . " And Result=" .$result);
+                    $helper->logs("Order Ready: IOS notification sent. Order ID - " . $orderId);
                 }
                 else
                 {
                     $message = 'orderReady';
                     $result = $this->sendNotifaction($order->customer_order_id , $message);
                     
-                    $helper->logs("Step 5: Android notification sent = " . $orderId . " And Result=" .$result);
+                    $helper->logs("Order Ready: Android notification sent. Order ID - " . $orderId);
                 }
             }
             else
             {
-                $helper->logs("Step 3 Ready: ELSE; Order ID - ".$orderId);
+                $helper->logs("Order Ready: ELSE; Order ID - ".$orderId);
             }
 
             return redirect()->back()->with('success', 'Order Ready Notification Send Successfully.');
@@ -743,19 +744,20 @@ class AdminController extends Controller
 
         if($message == 'orderDeliver')
         {
+            $helper->logs("App42 Step1: " . $orderID);
+
             $url = env('APP_URL').'deliver-notification/'.$order->customer_order_id;
             $message = "{'alert': 'Your Order Deliver.','_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': 'Your Order Deliver.','type':'openUrl','content':" ."'". $url."'" . "}}";
         }
-        elseif($message = 'orderAccepted')
+        elseif($message == 'orderAccepted')
         {
             $url = env('APP_URL').'order-view/'.$order->order_id;
             $message = "{'alert': 'Your Order Accepted.','_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': 'Your Order Accepted.','type':'openUrl','content':" ."'". $url."'" . "}}";
         }
-        elseif($message = 'orderReady')
+        elseif($message == 'orderReady')
         {
             $url = env('APP_URL').'ready-notification/'.$order->customer_order_id;
-            $messageDelever = "Your Order ". $order->customer_order_id . " Ready";
-            $message = "{'alert': " ."'". $messageDelever."'" . ",'_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': " ."'". $messageDelever."'" . ",'type':'openUrl','content':" ."'". $url."'" . "}}";
+            $message = "{'alert': 'Your Order Ready.','_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': 'Your Order Ready.','type':'openUrl','content':" ."'". $url."'" . "}}";
         }
 
         try{
@@ -1611,6 +1613,8 @@ class AdminController extends Controller
     public function orderStartedKitchen(Request $request, $orderItemId){
         if( DB::table('order_details')->where('id', $orderItemId)->update(['order_started' => 1]) )
         {
+            $helper = new Helper();
+
             // Check if all item has started for an order and update order as 'order_started' too
             $orderId = OrderDetail::select(['order_id'])->where('id', $orderItemId)->first()->order_id;
 
@@ -1631,7 +1635,10 @@ class AdminController extends Controller
             if( isset($arrOrderUpdate['order_accepted']) )
             {
                 $this->onOrderAccepted($orderId);
+                $helper->logs("Order Accepted: Order ID - " . $orderId);
             }
+
+            $helper->logs("Order Item Started: ID - " . $orderItemId);
         }
 
         return response()->json(['status' => 'success', 'data'=>true]);
@@ -1647,7 +1654,8 @@ class AdminController extends Controller
     {
         $helper = new Helper();        
         try{
-              $helper->logs("Ready Step 1: order id = " . $orderID);       
+            $helper->logs("Order Ready: Order ID - " . $orderID);
+
         DB::table('order_details')->where('id', $orderID)->update([
                             'order_ready' => 1,
                         ]);
@@ -1663,7 +1671,6 @@ class AdminController extends Controller
                         ]);
 
             $message = 'orderReady';
-              $helper->logs("Step 2: order table updated = " . $orderID . " And user id=" . $OrderId->user_id);       
 
             if($OrderId->user_id != 0)
             {
@@ -1691,8 +1698,6 @@ class AdminController extends Controller
                 $pieces[0] = '';               
             }
 
-            $helper->logs("Step 3: recipient calculation = " . $orderID . " And browser=" .$pieces[0]);  
-
             if($pieces[0] == 'Safari'){
                 $url = "https://gatewayapi.com/rest/mtsms";
                 $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
@@ -1713,13 +1718,15 @@ class AdminController extends Controller
                 curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
                 $result = curl_exec($ch);
                 curl_close($ch);   
-                   $helper->logs("Step 4: IOS notification sent = " . $orderID . " And Result=" .$result);
+
+                $helper->logs("Order Ready: IOS notification sent. Order ID - " . $orderID);
             }
             else
             {
                 if($OrderId->user_id != 0){
                     $result = $this->sendNotifaction($OrderId->customer_order_id , $message);
-                     $helper->logs("Step 5: Android notification sent = " . $orderID . " And Result=" .$result);
+
+                    $helper->logs("Order Ready: Android notification sent. Order ID - " . $orderID);
                 }
             }
 
