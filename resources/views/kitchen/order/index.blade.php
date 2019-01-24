@@ -67,7 +67,7 @@
 	var totalCount = 0;
 	var totallength = 0;
 	var storeId = "{{Session::get('storeId')}}";
-	var url = "{{url('kitchen/order-ready')}}";
+	// var url = "{{url('kitchen/order-ready')}}";
 	var urldeliver = "{{url('kitchen/order-deliver')}}";
 	var urlReadyOrder = "{{url('kitchen/make-order-ready')}}";
 	var imageUrl = "{{asset('kitchenImages/right_sign.png')}}";
