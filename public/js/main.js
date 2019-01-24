@@ -133,6 +133,9 @@ function incrementCartValue(id)
 
     $('#grandTotalDisplay').html(grandtotal);
 
+    // Update value in basket
+    cntCartItems++;
+    $('.cart-badge').html(cntCartItems);
 }
 
 
@@ -199,6 +202,9 @@ function decrementCartValue(id,msg)
       }
     }
 
+    // Update value in basket
+    cntCartItems--;
+    $('.cart-badge').html(cntCartItems);
   }
 
   function calculateGrandtotal(){
