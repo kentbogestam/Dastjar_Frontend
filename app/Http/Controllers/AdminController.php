@@ -751,14 +751,14 @@ class AdminController extends Controller
         }
         elseif($message == 'orderAccepted')
         {
+            $messageDelever = __('messages.notificationOrderReceived', ['order_id' => $order->customer_order_id]);
             $url = env('APP_URL').'order-view/'.$order->order_id;
-            $messageDelever = "Your Order {$order->customer_order_id} Accepted";
             $message = "{'alert': '".$messageDelever."','_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': '".$messageDelever."','type':'openUrl','content':" ."'". $url."'" . "}}";
         }
         elseif($message == 'orderReady')
         {
+            $messageDelever = __('messages.notificationOrderReady', ['order_id' => $order->customer_order_id]);
             $url = env('APP_URL').'ready-notification/'.$order->customer_order_id;
-            $messageDelever = "Your Order {$order->customer_order_id} Ready";
             $message = "{'alert': '".$messageDelever."','_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': '".$messageDelever."','type':'openUrl','content':" ."'". $url."'" . "}}";
         }
 

@@ -19,7 +19,6 @@
  });
 
 function checkUserLogin(url){
-
     $.get(url, 
 	    function(returnedData){
 	    	var temp = returnedData["data"];
@@ -38,23 +37,13 @@ function checkUserLogin(url){
 	    			// console.log('logout');
 	    		}
 	    	}
-	    });
-
-  }
-
- /* function setLngLat(lat,lng){
-
-   loc_lat = lat;
-   loc_lng = lng;
-
-  }*/
+		}
+	);
+}
 
 function getPos(urlLatlng,urlMenulist,noImageUrl){
-			
-		if (typeof loc_lat === "undefined" || loc_lat == "") {	
-
-		   navigator.geolocation.getCurrentPosition(function(position) { 
-
+	if (typeof loc_lat === "undefined" || loc_lat == "") {
+		navigator.geolocation.getCurrentPosition(function(position) { 
 			loc_flag=1;
 		    document.cookie="latitude="  + position.coords.latitude;
 		    document.cookie="longitude=" + position.coords.longitude;
@@ -66,10 +55,8 @@ function getPos(urlLatlng,urlMenulist,noImageUrl){
 			extraclass.classList.remove('disableClass');
 			
 			add(urlLatlng,urlMenulist,noImageUrl);
-
-		   },function(error){
-				// $.get("{{url('writeLogs')}}",{'log':'cookie ' + getCookie("latitude")});
-
+	   },function(error){
+			// $.get("{{url('writeLogs')}}",{'log':'cookie ' + getCookie("latitude")});
 			if (typeof loc_lat === "undefined" || loc_lat == "") {
 				if (!getCookie("latitude")){
 		    		$("#loading-img").hide();
@@ -91,19 +78,17 @@ function getPos(urlLatlng,urlMenulist,noImageUrl){
 				// $.get("{{url('writeLogs')}}",{'log':'location 4'});
 				add(urlLatlng,urlMenulist,noImageUrl);
 			} 
-			},{maximumAge:0,timeout:5000});
-			}else{
-					loc_flag=5;
-				    document.cookie="latitude=" + loc_lat;
-				    document.cookie="longitude=" + loc_lng;	
-					// $.get("{{url('writeLogs')}}",{'log':'location 5'});
-					add(urlLatlng,urlMenulist,noImageUrl);		    
-			}
-	} 
-
+		},{maximumAge:0,timeout:5000});
+	}else{
+		loc_flag=5;
+	    document.cookie="latitude=" + loc_lat;
+	    document.cookie="longitude=" + loc_lng;	
+		// $.get("{{url('writeLogs')}}",{'log':'location 5'});
+		add(urlLatlng,urlMenulist,noImageUrl);		    
+	}
+}
 
 function add(urlLatlng,urlMenulist,noImageUrl){
-	
 	var d = new Date();
 	//console.log(d);
 	$("#browserCurrentTime").val(d);
@@ -140,9 +125,8 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 			          	// Code added to display tagline of restaurant	
 						if(temp[i]["tagline"]){
 			             liItem += temp[i]["tagline"];
-
 						}
-					// End of code added to dispaly tagline of restaurant
+						// End of code added to dispaly tagline of restaurant
 
 						liItem += "</p>";
 						liItem += "<div class='ui-li-count ui-body-inherit'>";
@@ -153,7 +137,6 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 						totalCount= i;
 					}
 				}
-
 			}else{
 				liItem += "<div class='table-content'>";
 				liItem += "<p>";

@@ -91,6 +91,8 @@
 	Route::get('404', 'HomeController@page_404')->name('page_404');
    	Route::post('updateCart', 'OrderController@updateCart');
 
+   	Route::get('pretty-session-cookie', 'HomeController@prettySessionCookie');
+
     Route::group(['middleware' => ['latlng']], function(){
 		Route::get('search-map-eatnow', 'MapController@searchMapEatnow');
 		Route::get('eat-now', 'HomeController@index');

@@ -3,32 +3,21 @@ var lat;
 var lng;
 
 $(document).ready(function($) {
-var options = {
-  enableHighAccuracy: true,
-  timeout: 5000,
-  maximumAge: 0
-};
+	var options = {
+		enableHighAccuracy: true,
+		timeout: 5000,
+		maximumAge: 0
+	};
 
-setInterval(function(){getLocation()},10000);
+//
+// setInterval(function(){getLocation()},10000);
+setTimeout(getLocation, 0);
 
-//get location
+// Geolocation API is used to locate a user's position.
 function getLocation() {
-	
     if (navigator.geolocation) 
 	{
-        navigator.geolocation.getCurrentPosition(showPosition, showError,options);
-        var flag=checkTimeAfterLocationSet();
-
-        if(flag==false){
-         //alert("Setting location as per distance paramater");
-        // setCurrentCoordinates();
-         setDistanceParmeter();
-
-         
-       }else{
-
-       	console.log("location set nothing to to do with distance calculation");
-       }
+		navigator.geolocation.watchPosition(showPosition, showError, options);
     } 
 	else 
 	{ 
@@ -36,6 +25,7 @@ function getLocation() {
 	   console.log('NOT SUPPORT');
     }
 }
+
 //get postion
 function showPosition(position) {
 
@@ -45,7 +35,17 @@ function showPosition(position) {
    // geo set location 
 	//checkDistance(position.coords.latitude,position.coords.longitude);
 	console.log('ACCEPTTED');
+
+	var flag=checkTimeAfterLocationSet();
+
+	if(flag==false){
+		setDistanceParmeter();
+	}else{
+		console.log("location set nothing to to do with distance calculation");
+		//alert(flag);
+	}
 }
+
 //error throw position
 function showError(error) {
 	var error = '';
@@ -90,7 +90,9 @@ function setDistanceParmeter()
 
 	distance = distance*1000;
 
-	if(distance >300){
+	// alert(distance);
+
+	if(distance > 100){
 		document.cookie="latitude="  + '';
 		document.cookie="longitude=" + '';
 
@@ -99,50 +101,24 @@ function setDistanceParmeter()
 
 		checkDistance(lat2,lon2, true);
 	}
-	else if(distance > 20) // Update map on each x meter
-	{
-		checkDistance(lat2,lon2);
-	}
-}
-
-function distanceLatLon(lat1, lon1, lat2, lon2, unit) {
-	if ((lat1 == lat2) && (lon1 == lon2)) {
-		return 0;
-	}
-	else {
-		var radlat1 = Math.PI * lat1/180;
-		var radlat2 = Math.PI * lat2/180;
-		var theta = lon1-lon2;
-		var radtheta = Math.PI * theta/180;
-		var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-		if (dist > 1) {
-			dist = 1;
-		}
-		dist = Math.acos(dist);
-		dist = dist * 180/Math.PI;
-		dist = dist * 60 * 1.1515;
-		if (unit=="K") { dist = dist * 1.609344 }
-		if (unit=="N") { dist = dist * 0.8684 }
-		return dist;
-	}
 }
 
 //set geo location data
 function checkDistance(latt, lngg, reload = false)
 {
 	$.ajax({
-			type: "GET",
-			url: "checkDistance",
-			data: {lat: latt, lng : lngg},
-			success: function( returnedData ) {
-				//alert("in success of alert Distance Executed Distance check parameter");
-				if(reload)
-				{
-					reloadRestaurantList();
-				}
+		type: "GET",
+		url: "checkDistance",
+		data: {lat: latt, lng : lngg},
+		success: function( returnedData ) {
+			//alert("in success of alert Distance Executed Distance check parameter");
+			if(reload)
+			{
+				reloadRestaurantList();
 			}
-		});
-	}
+		}
+	});
+}
 //check empty
 function isEmpty(e) {
   switch (e) {

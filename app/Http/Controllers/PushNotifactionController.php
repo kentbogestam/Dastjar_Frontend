@@ -156,10 +156,8 @@ class PushNotifactionController extends Controller
             $userName = $userDetail->email;
 	
     	if($message == 'orderDeliver'){
-
+            $messageDelever = __('messages.notificationOrderDelivered', ['order_id' => $orderID]);
     		$url = env('APP_URL').'deliver-notification/'.$orderID;
-    		//$url = env('APP_URL').'/public/deliver-notification/'.$orderID;
-            $messageDelever = "Your Order ". $orderID . " Deliver";
             $message = "{'alert': " ."'". $messageDelever."'" . ",'_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': " ."'". $messageDelever."'" . ",'type':'openUrl','content':" ."'". $url."'" . "}}";
 
     		//$message = "{'alert':'Your Order Deliver.','badge':1,'sound':'default','Url':" ."'". $url."'" . "}";

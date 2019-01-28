@@ -67,7 +67,7 @@ function getCurrentCoordinates(){
 
 }
 
-function setCurrentCoordinates(){
+/*function setCurrentCoordinates(){
    
    navigator.geolocation.getCurrentPosition(function(position) {
 
@@ -94,42 +94,33 @@ function setCurrentCoordinates(){
         // document.cookie="longitude=" + lng;      
     }           
   });
-
-
-
-}
+}*/
 
 
 function checkTimeAfterLocationSet(){
-
-   var setLocationTime = getCookie("setLocationTime");
-//alert(setLocationTime);
+    var setLocationTime = getCookie("setLocationTime");
+    
     if (setLocationTime!=''){
+        var date1 = getCookie("setLocationTime");
+        var date2=getDateTimeStamp("D"); 
 
-      var date1 = getCookie("setLocationTime");
-      var date2=getDateTimeStamp("D"); 
-
-      var minutes =getDiffTimeStamp(date1,date2);
+        var minutes =getDiffTimeStamp(date1,date2);
   
-       if (minutes > 20){
-             //setCurrentCoordinates();
-             unsetLocationCookieTime();
-             return true;
-      
-      }else{
-
+        if (minutes > 5){
+            //setCurrentCoordinates();
+            unsetLocationCookieTime();
             return true;
-       }
-
-      }else{
-
-         return false;
-      console.log("setLocationTime set to null ")
-     }
-
-
-
+        }
+        else{
+            return true;
+        }
+    }
+    else{
+        return false;
+        console.log("setLocationTime set to null ")
+    }
 }
+
 // Function get cookie
 function getCookie(cname) {
 
@@ -321,3 +312,26 @@ function checkFormsubmit(e){
 function orderPopup(){
   $("#order-popup").toggleClass("hide-popup");
  }
+
+// Return distance between two coordinates using 'haversine formula'
+function distanceLatLon(lat1, lon1, lat2, lon2, unit) {
+    if ((lat1 == lat2) && (lon1 == lon2)) {
+        return 0;
+    }
+    else {
+        var radlat1 = Math.PI * lat1/180;
+        var radlat2 = Math.PI * lat2/180;
+        var theta = lon1-lon2;
+        var radtheta = Math.PI * theta/180;
+        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+        if (dist > 1) {
+            dist = 1;
+        }
+        dist = Math.acos(dist);
+        dist = dist * 180/Math.PI;
+        dist = dist * 60 * 1.1515;
+        if (unit=="K") { dist = dist * 1.609344 }
+        if (unit=="N") { dist = dist * 0.8684 }
+        return dist;
+    }
+}

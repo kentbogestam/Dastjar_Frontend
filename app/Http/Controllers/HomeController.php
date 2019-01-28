@@ -11,6 +11,7 @@ use App\Order;
 use App\Gdpr;
 use App\User;
 use Session;
+use Cookie;
 use DB;
 use Auth;
 use App\ProductPriceList;
@@ -268,6 +269,8 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         Artisan::call('view:clear');
+
+        // dd(Session::all());
        
        if($request->session()->get('type_selection') == null){ //code added by saurabh to render the view for the selection of eat later nd eat now
          return view('includes.popupSelection', compact(''));
@@ -620,6 +623,22 @@ public function setRestarurantType(Request $request){
       return response()->json(['status' => 'success', 'response' => true,'data'=>$url]);
   }
  }
+
+
+    /**
+     * Print session and cookie
+     */
+    function prettySessionCookie(Request $request)
+    {
+        echo '<pre>Session<br>'; print_r(Session::all());
+        // echo '<pre>Cookie<br>'; print_r(Cookie::get());
+        
+        echo '<br>Cookie:<br>';
+        foreach($_COOKIE as $key => $value)
+        {
+            echo $key.' => '.$value.'<br>';
+        }
+    }
 
 
 }

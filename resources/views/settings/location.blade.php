@@ -13,27 +13,27 @@
         <div class="nav_fixed">
             <div data-role="navbar"> 
                 <ul> 
-            <li>
-                @if(isset($_GET['k']))
-                    <a href="{{url('')}}" data-ajax="false" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a>
-                @else
-                    <a href="{{url('user-setting')}}" data-ajax="false" id="back_arw" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a>
-                @endif
-            </li>
-             <li><a data-ajax="false" class="ui-btn-active">{{ __('messages.Location') }}</a></li>
-              <li class="done-btn" id="dataSave" onclick="dataSave();">  <input type="button" value="{{ __('messages.Done') }}" /></li>  </ul>
-              
-                <a href="#" class="location_icon" id="locationSave" onclick=locationSave("{{url('saveCurrentlat-long/')}}")>
-                   <img src="{{asset('images/icons/location.png')}}">
-                   <p>{{ __('messages.Current Position') }}</p> 
-                      </a>
+                    <li>
+                        @if(isset($_GET['k']))
+                            <a href="{{url('')}}" data-ajax="false" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a>
+                        @else
+                            <a href="{{url('user-setting')}}" data-ajax="false" id="back_arw" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a>
+                        @endif
+                    </li>
+                    <li><a data-ajax="false" class="ui-btn-active">{{ __('messages.Location') }}</a></li>
+                    <li class="done-btn" id="dataSave" onclick="dataSave();">
+                        <input type="button" value="{{ __('messages.Done') }}" />
+                    </li>
+                </ul>
+
+                <a href="#" class="location_icon" id="locationSave" onclick=locationSave("{{url('saveCurrentlat-long/')}}")><img src="{{asset('images/icons/location.png')}}"><p>{{ __('messages.Current Position') }}</p></a>
             </div><!-- /navbar -->
         </div>
     </div>
+
     <form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('save-location') }}">
     {{ csrf_field() }}
         <div role="main" data-role="main-content" class="content map-container">
-            
             <div class="map-input">
                 @if(Auth::check())
                     <input type="text" name="street_address" id="pac-input" class="" placeholder="{{ __('messages.Enter a Location') }}*" value="{{ Session::get('with_login_address')}}" required placeholder="Address*" onKeyPress="checkFormsubmit(event)"/>
@@ -47,19 +47,17 @@
                     <input type="hidden" name="redirect_to_home" value="0"/>
                 @endif
             </div>
-            <div id="map" style="height: 665px;">
-            </div>
+            <div id="map" style="height: 665px;"></div>
         </div>
     </form>
 </div>
 @endsection
 
 @section('footer-script')
-    
-        
-    <script type="text/javascript">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyByLiizP2XW9JUAiD92x57u7lFvU3pS630&libraries=places&callback=initMap" async defer></script>
 
-        $(function(){       
+    <script type="text/javascript">
+        /*$(function(){       
             // Check for Geolocation API permissions  
             navigator.geolocation.getCurrentPosition(function(position) { 
                 console.log("latitude=" + position.coords.latitude);
@@ -73,7 +71,10 @@
                 
             });
 
-        });
+        });*/
+
+        var map = null;
+        var marker = null;
 
         function initMap() {
             @if(Auth::check())
@@ -90,10 +91,10 @@
                 @endif    
             @endif
             
-            var map = new google.maps.Map(document.getElementById('map'), {
+            map = new google.maps.Map(document.getElementById('map'), {
                 center: location,
                 zoom: 5,
-                mapTypeId: 'roadmap',
+                // mapTypeId: 'roadmap',
                 mapTypeControl: false,
                 scrollwheel: false
             });
@@ -108,7 +109,7 @@
             map.setOptions(opt);
 
             var infowindow = new google.maps.InfoWindow();
-            var marker = new google.maps.Marker({
+            marker = new google.maps.Marker({
                 position:location,
                 map: map,
                 icon: {
@@ -200,9 +201,64 @@
                 infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
                 infowindow.open(map, marker);
             });
+
+            //changeMarkerPosition( map, marker );
         }
 
+        // Update map and market on move
+        function changeMarkerPosition(lat, lng)
+        {
+            var newLatLng = new google.maps.LatLng(lat, lng);
+
+            marker.setPosition(newLatLng);
+            // map.panTo(newLatLng);
+        }
+
+        // Watch position callback on change location, update lat/lng on moved x meter
+        function showLocation(position)
+        {
+            var lat1 = getCookie("latitude");
+            var lon1 = getCookie("longitude");
+            var lat2 = position.coords.latitude;
+            var lon2 = position.coords.longitude;
+            // var lat2 = 28.477330;
+            // var lon2 = 77.068140;
+
+            var distance = (distanceLatLon(lat1, lon1, lat2, lon2, "K") * 1000);
+
+            if(distance > 20)
+            {
+                // alert('lat1/lon1: '+lat1+'/'+lon1+', lat2/lon2: '+lat2+'/'+lon2+', distance:'+distance);
+                document.cookie="latitude="  + lat2;
+                document.cookie="longitude=" + lon2;
+
+                $.ajax({
+                    type: "GET",
+                    url: "checkDistance",
+                    data: {lat: lat2, lng : lon2},
+                    success: function( returnedData ) {
+                        changeMarkerPosition(lat2, lon2);
+                    }
+                });
+            }
+        }
+
+        // Error through position
+        function errorHandler(err) {
+            if(err.code == 1) {
+                alert("Error: Access is denied!");
+            } else if( err.code == 2) {
+                alert("Error: Position is unavailable!");
+            }
+        }
+
+        $(window).on('load', function() {
+            // Add watch on location change
+            if(navigator.geolocation)
+            {
+                var options = {timeout:60000};
+                watchPosition = navigator.geolocation.watchPosition(showLocation, errorHandler, options);
+            }
+        });
     </script>
-        
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyByLiizP2XW9JUAiD92x57u7lFvU3pS630&libraries=places&callback=initMap" async defer></script>
 @endsection
