@@ -725,6 +725,29 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Setting updated successfully.');
     }
 
+    /**
+     * Send test notification
+     * @param  [type] $orderId [description]
+     * @return [type]          [description]
+     */
+    function testSendNotifaction($order_id=null)
+    {
+        if( is_numeric($order_id) )
+        {
+            $order = Order::select(['user_id', 'user_type', 'customer_order_id'])
+                ->where('order_id' , $order_id)
+                ->first();
+
+            if($order)
+            {
+                $message = 'orderAccepted';
+                $result = $this->sendNotifaction($order->customer_order_id , $message);
+
+                echo 'sent';
+            }
+        }
+    }
+
     public function sendNotifaction($orderID, $message){
         $helper = new Helper();                
         $helper->logs("App42 Step1: " . $orderID);

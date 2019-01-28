@@ -242,10 +242,10 @@
 		}
 	</style>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.5.1/fingerprint2.min.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.5.1/fingerprint2.min.js"></script>
 <script src="{{asset('notifactionJs/App42-all-3.1.min.js')}}"></script>
 <script src="{{asset('notifactionJs/SiteTwo.js')}}"></script> 
-<script src="{{asset('notifactionJs/serviceWorker.js')}}"></script> 
+<script src="{{asset('notifactionJs/serviceWorker.js')}}"></script>  -->
 
 <script>
 	  $(document).ready(function () {
@@ -264,10 +264,10 @@
 	  });
 </script>
 
-<script src="{{asset('notifactionJs/newNotifaction/App42.js')}}"></script>
+<!-- <script src="{{asset('notifactionJs/newNotifaction/App42.js')}}"></script>
 <script src="{{asset('notifactionJs/newNotifaction/jQuery.js')}}"></script>
-<script src="{{asset('notifactionJs/newNotifaction/browser.js')}}"></script>
-<script type="text/javascript">
+<script src="{{asset('notifactionJs/newNotifaction/browser.js')}}"></script> -->
+<!-- <script type="text/javascript">
 'use strict';
 var API_KEY = "{{env('APP42_API_KEY')}}";
 var SECERT_KEY = "{{env('APP42_API_SECRET')}}";
@@ -341,7 +341,7 @@ function registerDeviceWithApp42(token,type ){
         }  
     });  
 }
-</script>
+</script> -->
 @endsection      
 
 @section('content')
