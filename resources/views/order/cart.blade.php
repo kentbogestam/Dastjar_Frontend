@@ -101,5 +101,6 @@
 	// Update value in basket
 	var cntCartItems = "{{ $cntCartItems }}";
 	$('.cart-badge').html(cntCartItems);
+	$('.cart-badge').removeClass('hidden');
 </script>
 @endsection

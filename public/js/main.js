@@ -53,6 +53,7 @@ function incrementValue(id)
     // Update value in basket
     cntCartItems++;
     $('.cart-badge').html(cntCartItems);
+    $('.cart-badge').removeClass('hidden');
 }
 function decrementValue(id)
 {
@@ -65,6 +66,11 @@ function decrementValue(id)
         // Update value in basket
         cntCartItems--;
         $('.cart-badge').html(cntCartItems);
+
+        if(!cntCartItems)
+        {
+            $('.cart-badge').addClass('hidden');
+        }
     }
 
     if(value==0){
@@ -136,6 +142,7 @@ function incrementCartValue(id)
     // Update value in basket
     cntCartItems++;
     $('.cart-badge').html(cntCartItems);
+    $('.cart-badge').removeClass('hidden');
 }
 
 
@@ -205,6 +212,11 @@ function decrementCartValue(id,msg)
     // Update value in basket
     cntCartItems--;
     $('.cart-badge').html(cntCartItems);
+
+    if(!cntCartItems)
+    {
+        $('.cart-badge').addClass('hidden');
+    }
   }
 
   function calculateGrandtotal(){

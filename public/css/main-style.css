@@ -961,3 +961,6 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
  .select-restaurant ul li img{margin-right: 15px;}
 }
 #last-row td.cart-total{ width: 70%;font-size: 13px;}
+.hidden {
+    display: none !important;
+}

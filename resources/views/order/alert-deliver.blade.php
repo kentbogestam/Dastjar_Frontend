@@ -22,8 +22,9 @@
 		</div>
 	</div>
 
+	@include('includes.fixedfooter')
 
-	<div data-role="footer" class="footer" data-position="fixed">
+	<!-- <div data-role="footer" class="footer" data-position="fixed">
 		<div class="ui-grid-c inner-footer center">
 		<div class="ui-block-a"><a href="{{ Session::get('route_url') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 			<div class="img-container">
@@ -51,25 +52,24 @@
 		<div class="ui-block-c order-active">
 	    	<a  class="ui-shadow ui-corner-all icon-img ui-btn-inline ordersec" data-ajax="false">
 		        <div class="img-container">
-		       		<!-- <img src="images/icons/select-store_05.png"> -->
 		        	<img src="{{asset('images/icons/select-store_05-active.png')}}">
 		        </div>
 	        	<span>{{ __('messages.Order') }}<span class="order-number">{{count($user->paidOrderList)}}</span></span>
 	        </a>
 	        <div id="order-popup" data-theme="a">
 		      <ul data-role="listview">
-		      	@foreach($user->paidOrderList as $order)
+		      	{{-- @foreach($user->paidOrderList as $order)
 					<li>
 						<a href="{{ url('order-view/'.$order->order_id) }}" data-ajax="false">{{ __('messages.Order id') }} - {{$order->customer_order_id}}</a>
 					</li>
-				@endforeach
+				@endforeach --}}
 		      </ul>
 		    </div>
 	    </div>
 		@endif
 		
 		</div>
-	</div>
+	</div> -->
 
 </div>
 @endsection
