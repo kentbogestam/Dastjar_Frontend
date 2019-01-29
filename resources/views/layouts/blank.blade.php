@@ -19,7 +19,7 @@
     		// Server-Sent Events allow a web page to get updates from a server in x second.
     		var serverSE = function() {
     			$.get("{{ url('kitchen/check-store-subscription-plan') }}", function(returnedData) {
-    				console.log('message');
+    				// console.log('message');
     				var data = returnedData['data'];
     				if(data.length)
 					{

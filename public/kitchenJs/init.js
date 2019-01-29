@@ -18,8 +18,9 @@ function isManualPrepTimeForOrder(orderId, itemId, This)
 			// Start order item or order
 			if(itemId)
 			{
-				// Start item individually for order from 'Kitchen Menu' 
+				// Start item individually for order from 'Kitchen Menu', and update speak
 				orderReadyStarted(itemId, This);
+				updateSpeak(itemId);
 			}
 			else
 			{
@@ -48,8 +49,9 @@ function frmAddManualPrepTime()
 
 			if(itemId != 'false')
 			{
-				// Start item individually for order from 'Kitchen Menu' 
+				// Start item individually for order from 'Kitchen Menu', and update speak
 				orderReadyStarted(itemId, This);
+				updateSpeak(itemId);
 			}
 			else
 			{

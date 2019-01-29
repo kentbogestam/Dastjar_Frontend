@@ -71,12 +71,13 @@
 		var textSpeachDone = "{{url('kitchen/textSpeachDone')}}";
 		var lastOrderId;
 		var imageUrl = "{{asset('kitchenImages/right_sign.png')}}";
+		var intervalSpeakText = 0;
 
 		function orderReadyStarted(id, This) {
 			$This = $(This);			
 			$.get("{{url('kitchen/orderStartedKitchen')}}/"+id,
 			function(returnedData){
-				console.log(returnedData["data"]);
+				// console.log(returnedData["data"]);
 				$('body').find('#'+id).attr('src',imageUrl);
 				$('body').find('#'+id).parent("a").attr('onclick',' ');
 				$('body').find('#'+id+'ready').parent("a").attr('onclick','onReady('+id+')');
@@ -90,7 +91,7 @@
 
 			$.get("{{url('kitchen/order-readyKitchen')}}/"+id,
 			function(returnedData){
-				console.log(returnedData["data"]);
+				// console.log(returnedData["data"]);
 				$('body').find('#'+id+'ready').parents("tr").remove();
 				if(returnedData["status"] == 'ready'){
 					$("#popupCloseRight").popup("open");
@@ -103,7 +104,7 @@
 		$(function(){
 			$.get("{{url('kitchen/kitchen-orders')}}",
 			function(returnedData){
-				console.log(returnedData["data"]);
+				// console.log(returnedData["data"]);
 				textSpeach = returnedData["user"];
 				extra_prep_time = returnedData["extra_prep_time"];
 				order_response = returnedData["order_response"];
@@ -111,7 +112,7 @@
 				
 				var temp = returnedData["data"];
 	          	list = temp;
-	          	console.log(temp.length);
+	          	// console.log(temp.length);
 	          	var liItem = "";
 	          	var ids = '';
 	          	var aString = '';
@@ -141,11 +142,13 @@
 			          		"</td>";
 			          		if(textSpeach == 1 && temp[i]['is_speak'] == 0){
 			          			if(temp[i]["product_description"] != null){
-			          				test(temp[i]["product_quality"]+temp[i]["product_name"]+temp[i]["product_description"]);
+			          				var message = temp[i]["product_quality"]+temp[i]["product_name"]+temp[i]["product_description"];
 			          			}else{
-			          				test(temp[i]["product_quality"]+temp[i]["product_name"]);
+			          				var message = temp[i]["product_quality"]+temp[i]["product_name"];
 			          			}
-			          			updateSpeak(temp[i]['id']);
+
+			          			speakText(message);
+			          			
 			          			if(temp[i]["product_description"] != null){
 				          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
 				          		}else{
@@ -155,8 +158,10 @@
 			          			// Default 'text to speech' if 'text to speech' is off and not already spoken
 			          			if(temp[i]['is_speak'] == 0)
 			          			{
-				          			test("{{ __('messages.kitchenTextToSpeechDefault') }}");
-				          			updateSpeak(temp[i]['id']);
+			          				speakText("{{ __('messages.kitchenTextToSpeechDefault') }}", 1);
+
+			          				// test("{{ __('messages.kitchenTextToSpeechDefault') }}");
+				          			// updateSpeak(temp[i]['id']);
 			          			}
 
 			          			if(temp[i]["product_description"] != null){
@@ -227,14 +232,14 @@
 		var ajaxCall = function(){
 			$.get("{{url('kitchen/kitchen-orders-new')}}/"+lastOrderId,
 			function(returnedData){
-				console.log(returnedData["data"]);
+				// console.log(returnedData["data"]);
 				var count = 18;
 				var temp = returnedData["data"];
 				textSpeach = returnedData["user"];
 				extra_prep_time = returnedData["extra_prep_time"];
 				totallength = temp.length;
 	          	list = temp;
-	          	console.log(temp.length);
+	          	// console.log(temp.length);
 	          	var liItem = "";
 	          	var ids = '';
 	          	var aString = '';
@@ -254,7 +259,7 @@
 				      	
 				      	(function (i) {
 						    setTimeout(function () {
-						    	console.log('iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'+i);
+						    // console.log('iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'+i);
 			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time",extra_prep_time]);
 			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
 			          		var clsStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
@@ -265,11 +270,13 @@
 			          		"</td>";
 			          		if(textSpeach == 1 && temp[i]['is_speak'] == 0){
 			          			if(temp[i]["product_description"] != null){
-			          				test(temp[i]["product_quality"]+temp[i]["product_name"]+temp[i]["product_description"]);
+			          				var message = temp[i]["product_quality"]+temp[i]["product_name"]+temp[i]["product_description"];
 			          			}else{
-			          				test(temp[i]["product_quality"]+temp[i]["product_name"]);
+			          				var message = temp[i]["product_quality"]+temp[i]["product_name"];
 			          			}
-			          			updateSpeak(temp[i]['id']);
+
+			          			speakText(message);
+				          		
 				          		if(temp[i]["product_description"] != null){
 				          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
 				          		}else{
@@ -279,8 +286,7 @@
 			          			// Default 'text to speech' if 'text to speech' is off and not already spoken
 								if(temp[i]['is_speak'] == 0)
 								{
-									test("{{ __('messages.kitchenTextToSpeechDefault') }}");
-			          				updateSpeak(temp[i]['id']);
+									speakText("{{ __('messages.kitchenTextToSpeechDefault') }}", 1);
 								}
 
 			          			if(temp[i]["product_description"] != null){
@@ -365,7 +371,7 @@
 	    	
 	    	//if in future this page will get it, then add this condition in and in below if activePage[0].id == "home" 
 	    	if (scrolled >= scrollEnd) {
-			        console.log(list);
+			        // console.log(list);
 			        $.mobile.loading("show", {
 			        text: "loading more..",
 			        textVisible: true,
@@ -404,7 +410,7 @@
 	      //console.log(returnedData["data"]);
 	      //console.log("len="+len);
 	     // console.log("i="+i);
-	      console.log("totallength="+totallength);
+	      // console.log("totallength="+totallength);
 	      	if(i>=totallength){
 	      		tempCount = 10;
 	      		break;
@@ -412,7 +418,7 @@
 	      	if(countCheck>limit){
 	      		break;
 	      	}
-	      	console.log('iiiiiiiiissssssssssssssssss'+i);
+	      	// console.log('iiiiiiiiissssssssssssssssss'+i);
 	      	 (function (i) {
 			    setTimeout(function () {
 			      	var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
@@ -423,11 +429,13 @@
 		      		liItem += "<td>"+list[i]["product_name"]+"</td>";
 		      		if(textSpeach == 1 && list[i]['is_speak'] == 0){
 		      			if(list[i]["product_description"] != null){
-	          				test(list[i]["product_quality"]+list[i]["product_name"]+list[i]["product_description"]);
+	          				var message = list[i]["product_quality"]+list[i]["product_name"]+list[i]["product_description"];
 	          			}else{
-	          				test(list[i]["product_quality"]+list[i]["product_name"]);
+	          				var message = list[i]["product_quality"]+list[i]["product_name"];
 	          			}
-		      			updateSpeak(list[i]['id']);
+
+	          			speakText(message);
+		          		
 		          		if(list[i]["product_description"] != null){
 		          			liItem += "<td>"+list[i]["product_description"]+"</td>";
 		          		}else{
@@ -435,10 +443,9 @@
 		          		}
 	          		}else{
 	          			// Default 'text to speech' if 'text to speech' is off and not already spoken
-						if(temp[i]['is_speak'] == 0)
+						if(list[i]['is_speak'] == 0)
 						{
-							test("{{ __('messages.kitchenTextToSpeechDefault') }}");
-			          		updateSpeak(temp[i]['id']);
+							speakText("{{ __('messages.kitchenTextToSpeechDefault') }}", 1);
 						}
 
 	          			if(list[i]["product_description"] != null){
@@ -496,21 +503,32 @@
 	      $("#orderDetailContianer").append(liItem);	
 		}
 
+		// Function to speak text once/repeat 
+		function speakText(message = null, repeat = 0)
+		{
+			clearInterval(intervalSpeakText);
+			test(message);
+
+			if(repeat)
+			{
+				intervalSpeakText = setInterval(function() {
+					test(message);
+				}, 5000);
+			}
+		}
+
 		// Update column is DB to speak it once only
 		function updateSpeak(id){
-			//console.log('ssssssssssssssssssssssssssssssssssssssssssssssssssssss');
 			var url = '{{url('api/v1/kitchen/updateTextspeach')}}'+'/'+id;
-			//console.log('urlurl'+url);
 			$.ajax({
 	            url: url, //This is the current doc
 	            type: "GET",//variables should be pass like this
 	            success: function(data){
 	               //console.log('fff');
+	               clearInterval(intervalSpeakText);
 	            }
 	        }); 
 		}
-
-
 
 		function addTimes (startTime, endTime, extra_prep_time) {
 		  var times = [ 0, 0, 0 ];
