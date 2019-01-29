@@ -235,7 +235,7 @@ function setLocationCookieTime(){
      var setLocationTime = getCookie("setLocationTime");
 }
      
-
+// Remove cookie 'setLocationTime' that used to reset location after x minute
 function unsetLocationCookieTime(){
 
       document.cookie="setLocationTime=" + '';
@@ -267,32 +267,26 @@ function unsetLocationCookieTime(){
         }
 
 
- function locationSave(url){
+// Update location, cookie and session with current coordinates
+function locationSave(url){
+    unsetLocationCookieTime();
+    
+    // Check for Geolocation API permissions  
+    navigator.geolocation.getCurrentPosition(function(position) {
+        // Update Cookie
+        document.cookie="latitude=" + position.coords.latitude;
+        document.cookie="longitude=" + position.coords.longitude;
 
-             unsetLocationCookieTime();
-            // Check for Geolocation API permissions  
-            navigator.geolocation.getCurrentPosition(function(position) {
-
-                console.log("latitude=" + position.coords.latitude);
-                console.log("longitude=" + position.coords.longitude);
-                document.cookie="latitude=" + position.coords.latitude;
-                document.cookie="longitude=" + position.coords.longitude;
-                
-            },function(error){
-               $('.login-inner-section a').attr('href','javascript:void(0)');
-               $('#login-popup').show();
-                
-            });
-            var latitude  = getCookie("latitude");
-            var longitude = getCookie("longitude");
-
-            $.get(url, { lat: latitude, lng : longitude}, function(returnedData){
-                console.log(returnedData["data"]);
-                location.reload();
-            });
-            console.log(latitude);
-            console.log(longitude);
-        };
+        // Update Session
+        $.get(url, { lat: position.coords.latitude, lng : position.coords.longitude}, function(returnedData){
+            console.log(returnedData["data"]);
+            location.reload();
+        });
+    },function(error){
+       $('.login-inner-section a').attr('href','javascript:void(0)');
+       $('#login-popup').show();
+    });
+}
 
 function makeRedirection(link){
     

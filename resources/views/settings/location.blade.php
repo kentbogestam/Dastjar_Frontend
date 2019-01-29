@@ -26,7 +26,7 @@
                     </li>
                 </ul>
 
-                <a href="#" class="location_icon" id="locationSave" onclick=locationSave("{{url('saveCurrentlat-long/')}}")><img src="{{asset('images/icons/location.png')}}"><p>{{ __('messages.Current Position') }}</p></a>
+                <a href="javascript:void(0)" class="location_icon" id="locationSave" onclick=locationSave("{{url('saveCurrentlat-long/')}}")><img src="{{asset('images/icons/location.png')}}"><p>{{ __('messages.Current Position') }}</p></a>
             </div><!-- /navbar -->
         </div>
     </div>

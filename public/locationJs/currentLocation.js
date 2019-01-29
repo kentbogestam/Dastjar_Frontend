@@ -11,7 +11,7 @@ $(document).ready(function($) {
 
 //
 // setInterval(function(){getLocation()},10000);
-setTimeout(getLocation, 0);
+setTimeout(getLocation, 10);
 
 // Geolocation API is used to locate a user's position.
 function getLocation() {
