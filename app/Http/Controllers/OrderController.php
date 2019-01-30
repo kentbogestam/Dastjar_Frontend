@@ -336,17 +336,12 @@ class OrderController extends Controller
     }*/
 
     public function orderView($orderId){
-
-       $mode=Session::get('paymentmode');
-
-         if($mode == 0){
-
+        if( Session::has('paymentmode') && Session::get('paymentmode') == 0 )
+        {
             DB::table('orders')->where('order_id', $orderId)->update([
-                            'online_paid' => 0,
-                        ]);
-         }
-
-      
+                'online_paid' => 0,
+            ]);
+        }
 
         $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
 
