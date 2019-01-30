@@ -185,11 +185,15 @@ class AdminController extends Controller
      */
     public function checkStoreSubscriptionPlan()
     {
+        $result = array();
         $staticPlans = array('kitchen', 'orderonsite', 'catering');
         
         // Check and update subscription plan for logged-in store
-        $currentPlans = array_keys($this->updateStoreSubscriptionPlan());
-        $result = array_values(array_intersect($staticPlans, $currentPlans));
+        if( is_array($this->updateStoreSubscriptionPlan()) && !empty($this->updateStoreSubscriptionPlan()) )
+        {
+            $currentPlans = array_keys($this->updateStoreSubscriptionPlan());
+            $result = array_values(array_intersect($staticPlans, $currentPlans));
+        }
 
         return response()->json(['data' => $result]);
 
@@ -869,10 +873,14 @@ class AdminController extends Controller
 
             // Strange logic to get menu types for specific store ID 
             //$menuTypes = DishType::where('company_id', $companyId)->orderBy('rank')->orderBy('dish_id')->pluck('dish_name','dish_id');
+
             $menuTypes = DishType::select('DT.dish_name','DT.dish_id')
                 ->from('dish_type AS DT')
                 ->join('product AS P', 'P.dish_type', '=', 'DT.dish_id')
                 ->join('product_price_list AS PPL', 'PPL.product_id', '=', 'P.product_id')
+                ->where('P.u_id', Auth::user()->u_id)
+                ->where('P.s_activ', '!=' , 2)
+                ->where('DT.dish_activate', 1)
                 ->where('PPL.store_id', Session::get('storeId'))
                 ->groupBy('DT.dish_id')
                 ->orderBy('DT.rank')
@@ -894,15 +902,17 @@ class AdminController extends Controller
      */
     public function ajaxGetProductByDishType(Request $request) {
         // Get all products by dish
-        $products = Product::select('product_id', 'product_name', 'product_description', 'small_image')
+        $products = Product::select('product.product_id', 'product.product_name', 'product.product_description', 'product.small_image')
             ->join('dish_type','dish_type.dish_id','=','product.dish_type')
+            ->join('product_price_list AS PPL', 'PPL.product_id', '=', 'product.product_id')
             ->where('product.dish_type', $request->dish_id)
             ->where('product.u_id', Auth::user()->u_id)
-            ->where('s_activ', '!=' , 2)
-            ->where('dish_activate',1)
+            ->where('PPL.store_id', Session::get('storeId'))
+            ->where('product.s_activ', '!=' , 2)
+            ->where('dish_type.dish_activate',1)
+            ->groupBy('product.product_id')
             ->orderBy('product_rank', 'ASC')
             ->get();
-            //->groupBy('dish_type');
 
         $data = array();
 
