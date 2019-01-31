@@ -89,6 +89,7 @@ function getPos(urlLatlng,urlMenulist,noImageUrl){
 }
 
 function add(urlLatlng,urlMenulist,noImageUrl){
+	// alert(loc_lat+', '+loc_lng+', '+getCookie("latitude")+', '+getCookie("longitude"));
 	var d = new Date();
 	//console.log(d);
 	$("#browserCurrentTime").val(d);
