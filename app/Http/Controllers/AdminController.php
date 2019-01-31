@@ -1691,86 +1691,86 @@ class AdminController extends Controller
         try{
             $helper->logs("Order Ready: Order Item ID - " . $orderID);
 
-        DB::table('order_details')->where('id', $orderID)->update([
-                            'order_ready' => 1,
-                        ]);
-        $userOrderId = OrderDetail::where('id' , $orderID)->first();
+            DB::table('order_details')->where('id', $orderID)->update([
+                'order_ready' => 1,
+            ]);
 
-        $userOrderStatus = OrderDetail::where('order_id' , $userOrderId->order_id)->get();
-        $readyOrderStatus = OrderDetail::where('order_id' , $userOrderId->order_id)->where('order_ready' , '1')->get();
-        if(count($userOrderStatus) == count($readyOrderStatus)){
+            $orderDetail = OrderDetail::where('id' , $orderID)->first();
 
-            $OrderId = Order::where('order_id' , $userOrderId->order_id)->first();
-            DB::table('orders')->where('order_id', $userOrderId->order_id)->update([
-                            'order_ready' => 1,
-                        ]);
+            $userOrderStatus = OrderDetail::where('order_id' , $orderDetail->order_id)->get();
+            $readyOrderStatus = OrderDetail::where('order_id' , $orderDetail->order_id)->where('order_ready' , '1')->get();
 
-            $message = 'orderReady';
+            $cntOrderNotReady = OrderDetail::where(['order_id' => $orderDetail->order_id, 'order_ready' => 0])->count();
 
-            if($OrderId->user_id != 0)
-            {
-                $recipients = [];                
-                if($OrderId->user_type == 'customer'){
-                    $adminDetail = User::where('id' , $OrderId->user_id)->first();
-                    if(isset($adminDetail->phone_number_prifix) && isset($adminDetail->phone_number)){
-                        $recipients = ['+'.$adminDetail->phone_number_prifix.$adminDetail->phone_number];
+            if( !$cntOrderNotReady ){
+                $OrderId = Order::where('order_id' , $orderDetail->order_id)->first();
+                DB::table('orders')->where('order_id', $orderDetail->order_id)->update([
+                    'order_ready' => 1,
+                ]);
+
+                if($OrderId->user_id != 0)
+                {
+                    $recipients = [];                
+                    if($OrderId->user_type == 'customer'){
+                        $adminDetail = User::where('id' , $OrderId->user_id)->first();
+                        if(isset($adminDetail->phone_number_prifix) && isset($adminDetail->phone_number)){
+                            $recipients = ['+'.$adminDetail->phone_number_prifix.$adminDetail->phone_number];
+                        }
+                    }
+                    else{
+                        $adminDetail = Admin::where('id' , $OrderId->user_id)->first();
+                        $recipients = ['+'.$adminDetail->mobile_phone];
+                    }                
+
+                    if(isset($adminDetail->browser)){
+                        $pieces = explode(" ", $adminDetail->browser);
+                    }else{
+                        $pieces[0] = '';                              
                     }
                 }
-                else{
-                    $adminDetail = Admin::where('id' , $OrderId->user_id)->first();
-                    $recipients = ['+'.$adminDetail->mobile_phone];
-                }                
-
-                if(isset($adminDetail->browser)){
-                    $pieces = explode(" ", $adminDetail->browser);
-                }else{
-                    $pieces[0] = '';                              
+                else
+                {
+                    $pieces[0] = '';               
                 }
 
-            }
-            else
-            {
-                $pieces[0] = '';               
-            }
+                if($pieces[0] == 'Safari'){
+                    $url = "https://gatewayapi.com/rest/mtsms";
+                    $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
+                    $message = "Your Order Ready Please click on Link \n ".env('APP_URL').'ready-notification/'.$OrderId->customer_order_id;
+                    $json = [
+                        'sender' => 'Dastjar',
+                        'message' => ''.$message.'',
+                        'recipients' => [],
+                    ];
+                    foreach ($recipients as $msisdn) {
+                        $json['recipients'][] = ['msisdn' => $msisdn];}
 
-            if($pieces[0] == 'Safari'){
-                $url = "https://gatewayapi.com/rest/mtsms";
-                $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
-                $message = "Your Order Ready Please click on Link \n ".env('APP_URL').'ready-notification/'.$OrderId->customer_order_id;
-                $json = [
-                    'sender' => 'Dastjar',
-                    'message' => ''.$message.'',
-                    'recipients' => [],
-                ];
-                foreach ($recipients as $msisdn) {
-                    $json['recipients'][] = ['msisdn' => $msisdn];}
+                    $ch = curl_init();
+                    curl_setopt($ch,CURLOPT_URL, $url);
+                    curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+                    curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
+                    curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
+                    curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+                    $result = curl_exec($ch);
+                    curl_close($ch);   
 
-                $ch = curl_init();
-                curl_setopt($ch,CURLOPT_URL, $url);
-                curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
-                curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
-                curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
-                curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
-                $result = curl_exec($ch);
-                curl_close($ch);   
-
-                $helper->logs("Order Ready: IOS notification sent. Order Item ID - " . $orderID);
-            }
-            else
-            {
-                if($OrderId->user_id != 0){
-                    $result = $this->sendNotifaction($OrderId->customer_order_id , $message);
-
-                    $helper->logs("Order Ready: Android notification sent. Order Item ID - " . $orderID);
+                    $helper->logs("Order Ready: IOS notification sent. Order Item ID - " . $orderID);
                 }
+                else
+                {
+                    if($OrderId->user_id != 0){
+                        $message = 'orderReady';
+                        $result = $this->sendNotifaction($OrderId->customer_order_id , $message);
+                        
+                        $helper->logs("Order Ready: Android notification sent. Order Item ID - " . $orderID);
+                    }
+                }
+
+                return redirect()->back()->with('success', 'Order Ready Notification Send Successfully.');
             }
 
-           
-
-            return redirect()->back()->with('success', 'Order Ready Notification Send Successfully.');
+            return redirect()->back()->with('success', 'Order Item Ready Successfully.');
         }
-        return redirect()->back()->with('success', 'Order Ready Successfully.');
-    }
         catch(\Exception $ex){
             $helper->logs("Step 6: Exception = " .$ex->getMessage());            
         }
