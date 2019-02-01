@@ -55,6 +55,7 @@
 
 @section('footer-script')
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyByLiizP2XW9JUAiD92x57u7lFvU3pS630&libraries=places&callback=initMap" async defer></script>
+    <script type="text/javascript" src="{{ asset('js/init.js') }}"></script>
 
     <script type="text/javascript">
         /*$(function(){       
@@ -75,6 +76,7 @@
 
         var map = null;
         var marker = null;
+        var myMarker = null;
 
         function initMap() {
             @if(Auth::check())
@@ -109,7 +111,7 @@
             map.setOptions(opt);
 
             var infowindow = new google.maps.InfoWindow();
-            marker = new google.maps.Marker({
+            myMarker = marker = new google.maps.Marker({
                 position:location,
                 map: map,
                 icon: {
@@ -201,55 +203,6 @@
                 infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
                 infowindow.open(map, marker);
             });
-
-            //changeMarkerPosition( map, marker );
-        }
-
-        // Update map and market on move
-        function changeMarkerPosition(lat, lng)
-        {
-            var newLatLng = new google.maps.LatLng(lat, lng);
-
-            marker.setPosition(newLatLng);
-            // map.panTo(newLatLng);
-        }
-
-        // Watch position callback on change location, update lat/lng on moved x meter
-        function showLocation(position)
-        {
-            var lat1 = getCookie("latitude");
-            var lon1 = getCookie("longitude");
-            var lat2 = position.coords.latitude;
-            var lon2 = position.coords.longitude;
-            // var lat2 = 28.477330;
-            // var lon2 = 77.068140;
-
-            var distance = (distanceLatLon(lat1, lon1, lat2, lon2, "K") * 1000);
-
-            if(distance > 20)
-            {
-                // alert('lat1/lon1: '+lat1+'/'+lon1+', lat2/lon2: '+lat2+'/'+lon2+', distance:'+distance);
-                document.cookie="latitude="  + lat2;
-                document.cookie="longitude=" + lon2;
-
-                $.ajax({
-                    type: "GET",
-                    url: "checkDistance",
-                    data: {lat: lat2, lng : lon2},
-                    success: function( returnedData ) {
-                        changeMarkerPosition(lat2, lon2);
-                    }
-                });
-            }
-        }
-
-        // Error through position
-        function errorHandler(err) {
-            if(err.code == 1) {
-                alert("Error: Access is denied!");
-            } else if( err.code == 2) {
-                alert("Error: Position is unavailable!");
-            }
         }
 
         $(window).on('load', function() {
@@ -257,7 +210,7 @@
             if(navigator.geolocation)
             {
                 var options = {timeout:60000};
-                watchPosition = navigator.geolocation.watchPosition(showLocation, errorHandler, options);
+                watchPosition = navigator.geolocation.watchPosition(updateLocationOnMap, errorHandlerOnMap, options);
             }
         });
     </script>

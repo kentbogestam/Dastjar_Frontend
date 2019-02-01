@@ -1,5 +1,14 @@
+// Update map and market on move
+function changeMarkerPosition(lat, lng)
+{
+    var newLatLng = new google.maps.LatLng(lat, lng);
+
+    myMarker.setPosition(newLatLng);
+    // map.panTo(newLatLng);
+}
+
 // Watch position callback on change location, update lat/lng on moved x meter
-function updateMapOnLocationChange(position)
+function updateLocationOnMap(position)
 {
     var lat1 = getCookie("latitude");
     var lon1 = getCookie("longitude");
@@ -9,11 +18,11 @@ function updateMapOnLocationChange(position)
     // var lon2 = 77.068140;
 
     var distance = (distanceLatLon(lat1, lon1, lat2, lon2, "K") * 1000);
+    // alert('lat1/lon1: '+lat1+'/'+lon1+', lat2/lon2: '+lat2+'/'+lon2+', distance:'+distance);
 
     if(distance > 20)
     {
-        alert('lat1/lon1: '+lat1+'/'+lon1+', lat2/lon2: '+lat2+'/'+lon2+', distance:'+distance);
-        document.cookie="latitude="  + lat2;
+        /*document.cookie="latitude="  + lat2;
         document.cookie="longitude=" + lon2;
 
         $.ajax({
@@ -21,14 +30,16 @@ function updateMapOnLocationChange(position)
             url: "checkDistance",
             data: {lat: lat2, lng : lon2},
             success: function( returnedData ) {
-                window.location.reload();
+                changeMarkerPosition(lat2, lon2);
             }
-        });
+        });*/
+        
+        changeMarkerPosition(lat2, lon2);
     }
 }
 
 // Error through position
-function updateMapErrorHandler(err) {
+function errorHandlerOnMap(err) {
     if(err.code == 1) {
         alert("Error: Access is denied!");
     } else if( err.code == 2) {

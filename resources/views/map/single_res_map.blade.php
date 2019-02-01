@@ -25,40 +25,44 @@
 	/*alert( height);*/
 	$( '.content' ).height( height );
 
-	var map = null;
-    var markers = null;
-
 	function initMap() {
-		var directionsService = new google.maps.DirectionsService;
-		var directionsDisplay = new google.maps.DirectionsRenderer;
+		// Instantiate a directions service.
+		directionsService = new google.maps.DirectionsService;
+		
 		markers = {!! $latLngList !!};
+		console.log(markers);
+		
 		for( i = 0; i < markers.length; i++ ) {
 			var userLat = markers[0][0];
 			var userLong = markers[0][1];
 		}
 		
+		// Create a map and center it on Users Location
 		map = new google.maps.Map(document.getElementById('map'), {
 		  zoom: 18,
 		  center: {lat: userLat, lng: userLong}
 		});
 		
+		// Create a renderer for directions and bind it to the map.
+		directionsDisplay = new google.maps.DirectionsRenderer;
 		directionsDisplay.setMap(map);
 
-		calculateAndDisplayRoute(directionsService, directionsDisplay);
+		// Display the route between the initial start and end selections.
+		calculateAndDisplayRoute();
 	}
 
-	function calculateAndDisplayRoute(directionsService, directionsDisplay) {
-		markers = {!! $latLngList !!};
+	function calculateAndDisplayRoute() {
 		for( i = 0; i < markers.length; i++ ) {
 			var userLat = markers[0][0];
 			var userLong = markers[0][1];
 			var resLat = markers[1][0];
 			var resLongt = markers[1][1];
 		}
+
 		directionsService.route({
 			origin: {lat: userLat, lng: userLong},
 			destination: {lat: resLat, lng: resLongt},
-			travelMode: 'DRIVING'
+			travelMode: 'WALKING'
 		}, function(response, status) {
 			if (status === 'OK') {
 				directionsDisplay.setDirections(response);
@@ -68,9 +72,7 @@
 		});
 	}
 
-	/*$(".ordersec").click(function(){
-	    $("#order-popup").toggleClass("hide-popup");
-	});*/
+	// setTimeout(showLocation, 5000);
 
 	// Watch position callback on change location, update lat/lng on moved x meter
     function showLocation(position)
@@ -83,21 +85,14 @@
         // var lon2 = 77.068140;
 
         var distance = (distanceLatLon(lat1, lon1, lat2, lon2, "K") * 1000);
+        // alert('lat1/lon1: '+lat1+'/'+lon1+', lat2/lon2: '+lat2+'/'+lon2+', distance:'+distance);
 
         if(distance > 20)
         {
-            // alert('lat1/lon1: '+lat1+'/'+lon1+', lat2/lon2: '+lat2+'/'+lon2+', distance:'+distance);
-            document.cookie="latitude="  + lat2;
-            document.cookie="longitude=" + lon2;
+            markers[0][0] = lat2;
+            markers[0][1] = lon2;
 
-            $.ajax({
-                type: "GET",
-                url: "checkDistance",
-                data: {lat: lat2, lng : lon2},
-                success: function( returnedData ) {
-                    window.location.reload();
-                }
-            });
+            calculateAndDisplayRoute();
         }
     }
 
