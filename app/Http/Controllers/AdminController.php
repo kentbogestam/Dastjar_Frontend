@@ -305,7 +305,8 @@ class AdminController extends Controller
                 // Send message/notification to user
                 if($pieces[0] == 'Safari')
                 {
-                    $message = "Your Order Ready Please click on Link \n ".env('APP_URL').'ready-notification/'.$order->customer_order_id;
+                    // $message = "Your Order Ready Please click on Link \n ".env('APP_URL').'ready-notification/'.$order->customer_order_id;
+                    $message = __('messages.notificationOrderReady', ['order_id' => $order->customer_order_id]);
                     $result = $this->apiSendTextMessage($recipients, $message);
                     
                     $helper->logs("Order Ready: IOS notification sent. Order ID - " . $orderId);
@@ -1821,7 +1822,8 @@ class AdminController extends Controller
                 // Send message/notification to user
                 if($pieces[0] == 'Safari')
                 {
-                    $message = "Your recent order has been accepted. Your order number is: {$order->customer_order_id}";
+                    // $message = "Your recent order has been accepted. Your order number is: {$order->customer_order_id}";
+                    $message = __('messages.notificationOrderReceived', ['order_id' => $order->customer_order_id]);
                     $result = $this->apiSendTextMessage($recipients, $message);
 
                     $helper->logs("Step 3: IOS notification sent - ".$orderId." and result - ".$result);

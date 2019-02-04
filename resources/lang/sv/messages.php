@@ -108,7 +108,7 @@ return [
     'Select Restaurant'=>'Välj mellan "Ät nu eller Senare"!',
     'Pay with card'=>'Betala med kort',
     'continue' => 'Fortsätt',
-    'notificationOrderReceived' => 'Din Order :order_id Mottagen',
-    'notificationOrderReady' => 'Din Order :order_id Ready',
-    'notificationOrderDelivered' => 'Din Order :order_id Levererad',
+    'notificationOrderReceived' => 'Din order är mottaget. Din order nummer är: :order_id',
+    'notificationOrderReady' => 'Din Order, :order_id är Klar',
+    'notificationOrderDelivered' => 'Din Order, :order_id är Levererad',
 ];

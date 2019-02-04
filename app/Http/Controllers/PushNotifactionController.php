@@ -54,7 +54,7 @@ class PushNotifactionController extends Controller
     }
 
     public function orderDeliver(Request $request, $orderID){
-        $helper = new Helper();
+        /*$helper = new Helper();
         try {
         $helper->logs("Step 1: order id = " . $orderID);       
 
@@ -122,8 +122,13 @@ class PushNotifactionController extends Controller
         return redirect()->action('AdminController@index');
         } catch (Exception $e) {
             $helper->logs("Step 6: Exception = " .$ex->getMessage());            
-        }
+        }*/
 
+        DB::table('orders')->where('customer_order_id', $orderID)->update([
+            'paid' => 1,
+        ]);
+        
+        return redirect()->action('AdminController@index');
     }
 
     public function deliverNotifaction(Request $request, $orderID){

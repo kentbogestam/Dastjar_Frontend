@@ -105,7 +105,7 @@ return [
     'Select Restaurant'=>'Please choose to Eat now or later!',
     'Pay with card'=>'Pay with card',
     'continue' => 'Continue',
-    'notificationOrderReceived' => 'Your Order :order_id Received',
-    'notificationOrderReady' => 'Your Order :order_id Ready',
-    'notificationOrderDelivered' => 'Your Order :order_id Delivered',
+    'notificationOrderReceived' => 'Your order has been accepted. Your order number is: :order_id',
+    'notificationOrderReady' => 'Your Order :order_id is Ready',
+    'notificationOrderDelivered' => 'Your Order :order_id is Delivered',
 ];
