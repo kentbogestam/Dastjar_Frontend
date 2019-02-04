@@ -12,7 +12,7 @@
     <script src="{{asset('js/restolist/moment-timezone-with-data.min.js')}}"></script>
     <script src="{{asset('js/restolist/restrolist.js')}}"></script>
     <script src="{{asset('js/restolist/restroListCommon.js')}}"></script>
-	<script src="{{asset('locationJs/currentLocation.js?2')}}"></script>
+	<script src="{{ asset('locationJs/currentLocation.js').'?v='.env('APP_VERSION') }}"></script>
     
     <script type="text/javascript">
 	  var noImageUrl = "{{url('images/placeholder-image.png')}}";
