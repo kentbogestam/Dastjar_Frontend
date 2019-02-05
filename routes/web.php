@@ -114,6 +114,7 @@
 		Route::get('blank-view', 'HomeController@blankView');
 		Route::get('order-view/{OrderId}', 'OrderController@orderView')->name('order-view');
 		Route::get('check-if-order-accepted/{orderId}', 'OrderController@checkIfOrderAccepted');
+		Route::get('check-if-order-ready', 'OrderController@checkIfOrderReady');
 		Route::post('payment', 'PaymentController@payment');
 		Route::get('payment', 'PaymentController@payment');
 		Route::post('cancel-order', 'OrderController@cancelOrderPost');		

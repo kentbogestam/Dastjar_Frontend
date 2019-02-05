@@ -31,6 +31,25 @@
 	    		$('div[data-role="footer"]').css({'padding-top':'10px', 'padding-bottom':'10px'});
 			}
     	});
+
+    	// Check if session 'recentOrderList' exist
+    	@if( Session::has('recentOrderList') && !empty(Session::get('recentOrderList')) )
+    		var intervalCheckIfOrderReady = null;
+
+    		// Check in each x second and if order is ready, redirect on 'order ready' page automatically
+			var checkIfOrderReady = function() {
+				$.get('{{ url('check-if-order-ready') }}', function(result) {
+					if(result.status)
+					{
+						console.log(result.order['order_id']);
+						window.location = "{{ url('ready-notification') }}/"+result.order['customer_order_id'];
+						// clearInterval(intervalCheckIfOrderReady);
+					}
+				});
+			}
+
+			intervalCheckIfOrderReady = setInterval(checkIfOrderReady, 10000);
+    	@endif
     </script>
 </body>
 </html>

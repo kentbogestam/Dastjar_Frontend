@@ -350,9 +350,30 @@ class OrderController extends Controller
 
         $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 
-
-
         Session::forget('paymentmode');
+
+        // Put order in session 'recentOrderList' until its ready
+        // Session::forget('recentOrderList'); Session::save();
+        $recentOrder = Order::select('order_id')->where(['order_id' => $orderId, 'order_ready' => 0])->first();
+
+        if($recentOrder)
+        {
+            $recentOrderList = Session::get('recentOrderList');
+
+            if( !empty($recentOrderList) )
+            {
+                if( !array_key_exists($recentOrder->order_id, $recentOrderList) )
+                {
+                    $recentOrderList[$recentOrder->order_id] = 1;
+                    Session::put('recentOrderList', $recentOrderList);
+                }
+            }
+            else
+            {
+                Session::put('recentOrderList', array($recentOrder->order_id => 1));
+            }
+        }
+        // dd(Session::all());
 
         return view('order.index', compact('order','orderDetails','storeDetail','user'));
     }
@@ -421,6 +442,36 @@ class OrderController extends Controller
 
         // Return response data
         return response()->json(['status' => $status, 'responseStr' => $responseStr]);
+    }
+
+    /**
+     * Check if order is ready from session 'recentOrderList'
+     * @return [json]
+     */
+    function checkIfOrderReady()
+    {
+        $status = false; $order = null;
+
+        $recentOrderList = Session::get('recentOrderList');
+
+        if( !empty($recentOrderList) )
+        {
+            $orderList = array_keys($recentOrderList);
+            
+            $order = Order::select('order_id', 'customer_order_id')
+                ->where(['user_id' => Auth::id(), 'order_ready' => 1])
+                ->whereIn('order_id', $orderList)
+                ->orderBy('order_id')
+                ->first();
+
+            if($order)
+            {
+                $status = true;
+            }
+        }
+
+        // Return response data
+        return response()->json(['status' => $status, 'order' => $order]);
     }
 
     public function random_num($size) {
