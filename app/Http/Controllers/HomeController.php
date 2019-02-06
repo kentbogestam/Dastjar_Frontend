@@ -117,7 +117,6 @@ class HomeController extends Controller
         $helper = new Helper();
 
         if(Auth::check()){
-
             $request->session()->forget('current_date_time');
           
             $versionDetail = WebVersion::orderBy('created_at', 'DESC')->first();
@@ -132,15 +131,15 @@ class HomeController extends Controller
                 $todayDay = $pieces[0];
                 if($userDetail->range == null){
                     DB::table('customer')->where('id', Auth::id())->update([
-                                'range' => 7,
-                                'language' => 'ENG',
-                                'web_version' => $versionDetail->version,
-                                'browser' => $data['browserVersion'],
-                            ]);
+                        'range' => 7,
+                        'language' => 'ENG',
+                        'web_version' => $versionDetail->version,
+                        'browser' => $data['browserVersion'],
+                    ]);
                 }
             }
 
-            if($request->session()->get('updateThreeHundrMeterAfterLogin') == null && $request->session()->get('updateLocationBySettingAfterLogin') == null){
+            /*if($request->session()->get('updateThreeHundrMeterAfterLogin') == null && $request->session()->get('updateLocationBySettingAfterLogin') == null){
                                    
 
                 if(empty($data['lat'])){
@@ -177,8 +176,24 @@ class HomeController extends Controller
                 $lat = $request->session()->get('with_login_lat');
                 $lng = $request->session()->get('with_login_lng');
                 $request->session()->put('with_login_lat', $request->session()->get('with_login_lat')); 
+            }*/
+
+            // Get and update lat/lng
+            if( empty($data['lat']) || empty($data['lng']) )
+            {
+                $lat = Session::get('with_login_lat');
+                $lng = Session::get('with_login_lng');
+            }
+            else
+            {
+                $lat = $data['lat'];
+                $lng = $data['lng'];
             }
 
+            $request->session()->put('with_login_lat', $lat);
+            $request->session()->put('with_login_lng', $lng);
+
+            //
             if($userDetail->web_version != $versionDetail->version){
                 DB::table('customer')->where('id', Auth::id())->update(['web_version' => $versionDetail->version,]);
                 Auth::logout();
@@ -208,9 +223,7 @@ class HomeController extends Controller
             }
 
             return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg]);
-            
         } else{
-
             if($request->session()->get('sessionBrowserLanguageValue') == null){
                 if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
                   $languages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
@@ -223,14 +236,14 @@ class HomeController extends Controller
                     Session::put('applocale', 'en');
                   }
                 }
+
                 $request->session()->put('browserLanguageWithOutLogin', $lang);
             }
 
             if(!empty($request->input())){
-
                 $data = $request->input();
 
-                if($request->session()->get('setLocationBySettingValue') == null){
+                /*if($request->session()->get('setLocationBySettingValue') == null){
                     $request->session()->put('with_out_login_lat', $data['lat']);
                     $request->session()->put('with_out_login_lng', $data['lng']);
                     $lat =  $data['lat'];
@@ -238,8 +251,24 @@ class HomeController extends Controller
                 }else{
                     $lat = $request->session()->get('with_out_login_lat');
                     $lng = $request->session()->get('with_out_login_lng');
+                }*/
+
+                // Get and update lat/lng
+                if( empty($data['lat']) || empty($data['lng']) )
+                {
+                    $lat = Session::get('with_out_login_lat');
+                    $lng = Session::get('with_out_login_lng');
+                }
+                else
+                {
+                    $lat = $data['lat'];
+                    $lng = $data['lng'];
                 }
 
+                $request->session()->put('with_out_login_lat', $lat);
+                $request->session()->put('with_out_login_lng', $lng);
+
+                //
                 $request->session()->put('current_date_time', $data['currentdateTime']);
                 $pieces = explode(" ", $request->session()->get('current_date_time'));
                 $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
