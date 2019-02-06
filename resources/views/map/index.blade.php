@@ -95,15 +95,20 @@
 	google.maps.event.addDomListener(window, 'load', initialize);
 
 	$(window).on('load', function() {
-        // Add watch on location change
-        if(navigator.geolocation)
+        // Add watch on location change if location is set to current location
+        var flag = checkTimeAfterLocationSet();
+
+        if(!flag)
         {
-            var options = {timeout:60000};
-            watchPosition = navigator.geolocation.watchPosition(updateLocationOnMap, errorHandlerOnMap, options);
-        }
-        else
-        {
-        	alert('Location not supported');
+        	if(navigator.geolocation)
+	        {
+	            var options = {timeout:60000};
+	            watchPosition = navigator.geolocation.watchPosition(updateLocationOnMap, errorHandlerOnMap, options);
+	        }
+	        else
+	        {
+	        	alert('Location not supported');
+	        }
         }
     });
 </script>
