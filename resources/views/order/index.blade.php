@@ -412,11 +412,12 @@ function registerDeviceWithApp42(token,type ){
 				<table data-role="table" id="table-custom-2" data-mode="" class="ui-body-d ui-shadow table-stripe ui-responsive">
 					@foreach($orderDetails as $orderDetail)
 						<tr>
-							<td>{{$orderDetail->product_name}}	</td><td>{{$orderDetail->product_quality}} x {{$orderDetail->price}}</td><td>{{$order->currencies}} {{$orderDetail->product_quality*$orderDetail->price}}</td>
-						</tr>	
+							<td>{{$orderDetail->product_name}}	</td>
+							<td>{{$orderDetail->product_quality}} x {{$orderDetail->price}}</td>
+							<td>{{$orderDetail->product_quality*$orderDetail->price}}  {{$order->currencies}}</td>
+						</tr>
 					@endforeach
-				<tr class="last-row">	<td> </td><td>         </td><td>  TOTAL:-    {{$order->currencies}} {{$order->order_total}}</td></tr>
-				</tr>
+					<tr class="last-row">	<td> </td><td>         </td><td>  TOTAL {{$order->order_total}} {{$order->currencies}} </td></tr>
 				</table>
 			</div>
 

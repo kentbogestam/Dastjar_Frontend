@@ -11,7 +11,7 @@
 	@else
 	<div class="ui-block-c order-active">
     	<a href="javascript:void(0)" class="ui-shadow ui-corner-all icon-img ui-btn-inline ordersec" data-ajax="false" onclick="orderPopup()">
-	        <div class="img-container">
+	        <div class="img-container orderNumImg">
 	        	<span class="order-number<?php echo !(count(Auth::user()->paidOrderList)) ? ' hidden' : ''; ?>">{{count(Auth::user()->paidOrderList)}}</span>
 	        	<img src="{{asset('images/notification-2.png')}}">
 	        </div>

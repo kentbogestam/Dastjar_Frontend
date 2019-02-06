@@ -42,7 +42,7 @@
 
         @if($menuActivate=='false')
 			<div class="ui-block-b<?php echo ($cart=='true') ? ' active' : ''; ?>">
-				<a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
+				<a class="ui-shadow ui-corner-all icon-img ui-btn-inline">
 					<div class="img-container">
 						<span class="badge cart-badge hidden">0</span>
 						<img src="{{asset('images/icon-cart.png')}}">
@@ -52,7 +52,7 @@
 			</div>
         @else
 			<div class="ui-block-b">
-				<a href="#" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline actibe-icon-img" id="menudataSave" data-ajax="false">
+				<a href="#" class="ui-shadow ui-corner-all icon-img ui-btn-inline actibe-icon-img" id="menudataSave" data-ajax="false">
 					<div class="img-container">
 						<span class="badge cart-badge hidden">0</span>
 						<img src="{{asset('images/icon-cart.png')}}">
@@ -66,7 +66,7 @@
 
 		<div class="ui-block-d">
 			<a href = "{{url('user-setting')}}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-				<div class="img-container">
+				<div class="img-container Q">
 					<img src="{{asset('images/icons/select-store_07.png')}}">
 				</div>
 			</a>

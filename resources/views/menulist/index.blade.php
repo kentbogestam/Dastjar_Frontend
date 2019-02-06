@@ -227,14 +227,15 @@
 							@foreach($menuDetails as $productDetail)
 								@foreach($productDetail->storeProduct as $menuDetail)
 									@if($menuType->dish_id == $menuDetail->dish_type)
-								<ul data-role="listview" data-inset="true" id="item{{$menuDetail->product_id}}" >
-									<li>
+								<ul data-role="listview" data-inset="true">
+									<li id="item{{$menuDetail->product_id}}">
 										<img src="{{$menuDetail->small_image}}" onerror="this.src='{{$placeholder}}'">
 													<div class="list-content">
 														<h2>{{$menuDetail->product_name}}</h2>
 													<div class="fulldiscription"><p>{{$menuDetail->product_description}}</p></div>
 													<p class="price">
-														{{$companydetails->currencies}} {{number_format((float)$productDetail->price, 2, '.', '')}}
+														{{number_format((float)$productDetail->price, 2, '.', '')}} 
+														{{$companydetails->currencies}} 
 													</p>
 													</div>
 												<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />
@@ -279,14 +280,15 @@
 							
 								@foreach($productDetail->storeProduct as $menuDetail)
 									@if($menuType->dish_id == $menuDetail->dish_type)
-										<ul data-role="listview" data-inset="true" id="item{{$menuDetail->product_id}}">
-											<li>
+										<ul data-role="listview" data-inset="true">
+											<li id="item{{$menuDetail->product_id}}">
 													<img src="{{$menuDetail->small_image}}" onerror="this.src='{{$placeholder}}'">
 													<div class="list-content">
 														<h2>{{$menuDetail->product_name}}</h2>
 													<div class="fulldiscription"><p>{{$menuDetail->product_description}}</p></div>
 													<p class="price">
-														{{$companydetails->currencies}} {{number_format((float)$productDetail->price, 2, '.', '')}}
+														{{number_format((float)$productDetail->price, 2, '.', '')}} 
+														{{$companydetails->currencies}} 
 													</p>
 													</div>
 												<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />
