@@ -11,7 +11,7 @@ $(document).ready(function($) {
 
 //
 // setInterval(function(){getLocation()},10000);
-setTimeout(getLocation, 10);
+setTimeout(getLocation, 0);
 
 // Geolocation API is used to locate a user's position.
 function getLocation() {
@@ -20,9 +20,9 @@ function getLocation() {
 		navigator.geolocation.watchPosition(showPosition, showError, options);
     } 
 	else 
-	{ 
-	   setMyCookie('showError','Geolocation is not supported by this browser.', 7);
-	   console.log('NOT SUPPORT');
+	{
+	   	setMyCookie('showError','Geolocation is not supported by this browser.', 7);
+	   	console.log('NOT SUPPORT');
     }
 }
 
@@ -99,12 +99,12 @@ function setDistanceParmeter()
 		document.cookie="latitude="  + lat2;
 		document.cookie="longitude=" + lon2;
 
-		checkDistance(lat2,lon2, true);
+		checkDistance(lat2,lon2);
 	}
 }
 
 //set geo location data
-function checkDistance(latt, lngg, reload = false)
+function checkDistance(latt, lngg)
 {
 	$.ajax({
 		type: "GET",
@@ -112,10 +112,7 @@ function checkDistance(latt, lngg, reload = false)
 		data: {lat: latt, lng : lngg},
 		success: function( returnedData ) {
 			//alert("in success of alert Distance Executed Distance check parameter");
-			if(reload)
-			{
-				reloadRestaurantList();
-			}
+			reloadRestaurantList();
 		}
 	});
 }

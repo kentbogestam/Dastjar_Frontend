@@ -2,30 +2,25 @@
  var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1]; //for local testing
  //var baseUrl =getUrl .protocol + "//" + getUrl.host ; // for live testing
  
-setInterval(function(){//console.log("updating current location after 20 min");
-getCurrentCoordinates();},1200000); // Check the position afer 20 min and reset the longitude and latitude
+setInterval(function() {
+    getCurrentCoordinates();
+}, 1200000); // Check the position afer 20 min and reset the longitude and latitude
 
 $(document).ready(function() {
-
     checkTimeAfterLocationSet();
-    
 });
 
 function reloadRestaurantList(){
+    var url = window.location.href;
+    //var pathname = window.location.pathname 
 
-  var url      = window.location.href;
-  //var pathname = window.location.pathname 
+    var pieces = url.split("/");
 
-  var pieces = url.split("/");
-
-  $value=pieces[pieces.length-1];
+    $value=pieces[pieces.length-1];
 
     if($value=='eat-now' || $value=='eat-later' || $value=='' ){
-
-      location.reload();
+        location.reload();
     }
-  
-
 }
 
 function getCurrentCoordinates(){
@@ -96,7 +91,6 @@ function getCurrentCoordinates(){
   });
 }*/
 
-
 function checkTimeAfterLocationSet(){
     var setLocationTime = getCookie("setLocationTime");
     
@@ -109,7 +103,7 @@ function checkTimeAfterLocationSet(){
         if (minutes > 5){
             //setCurrentCoordinates();
             unsetLocationCookieTime();
-            return true;
+            return false;
         }
         else{
             return true;
@@ -181,91 +175,75 @@ function setMyCookie(cname, cvalue, exdays) {
 */
 
 function getDateTimeStamp(val){
-
-   
     if (val=='D'){
+        var dt = new Date();
+        return dt;
+    }else if (val=='T'){
+        var t= $.now() ;
+        return t;
+    }
 
-     var dt = new Date();
-     return dt;
-
-   }else if (val=='T'){
-
-   	 var t= $.now() ;
-   	 return t;
-   }
-   
-   //alert(dt.getDate() + '/' + (dt.getMonth()+1) + '/' + dt.getFullYear());
-   // var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
-   // return v;
+    //alert(dt.getDate() + '/' + (dt.getMonth()+1) + '/' + dt.getFullYear());
+    // var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+    // return v;
 }
 
 function getDiffTimeStamp(date1,date2){
+    date1 = new Date(date1);
+    //  document.write(""+date1);
 
-         date1 = new Date(date1);
-       //  document.write(""+date1);
+    date2 = new Date( date2 );
+    //  document.write("<br>"+date2);
 
-         date2 = new Date( date2 );
-       //  document.write("<br>"+date2);
+    var res = Math.abs(date1 - date2) / 1000;
 
-         var res = Math.abs(date1 - date2) / 1000;
-         
-         // get total days between two dates
-         // var days = Math.floor(res / 86400);
-         // alert("<br>Difference (Days): "+days);                        
-         
-         // get hours        
-         // var hours = Math.floor(res / 3600) % 24;        
-         // alert("<br>Difference (Hours): "+hours);  
-         
-         // get minutes
-         var minutes = Math.floor(res / 60) % 60;
-        // alert ("<br>Difference (Minutes): "+minutes);  
-     
-          return minutes
-         // get seconds
-         //var seconds = res % 60;
-         //alert("<br>Difference (Seconds): "+seconds);  
+    // get total days between two dates
+    // var days = Math.floor(res / 86400);
+    // alert("<br>Difference (Days): "+days);                        
+
+    // get hours        
+    // var hours = Math.floor(res / 3600) % 24;        
+    // alert("<br>Difference (Hours): "+hours);  
+
+    // get minutes
+    var minutes = Math.floor(res / 60) % 60;
+    // alert ("<br>Difference (Minutes): "+minutes);  
+
+    return minutes
+    // get seconds
+    //var seconds = res % 60;
+    //alert("<br>Difference (Seconds): "+seconds);  
 }
 
 function setLocationCookieTime(){
-
-
-	var date1=getDateTimeStamp("D"); 
-     document.cookie="setLocationTime=" + date1;
-     var setLocationTime = getCookie("setLocationTime");
+    var date1=getDateTimeStamp("D"); 
+    document.cookie="setLocationTime=" + date1;
+    var setLocationTime = getCookie("setLocationTime");
 }
      
 // Remove cookie 'setLocationTime' that used to reset location after x minute
 function unsetLocationCookieTime(){
-
-      document.cookie="setLocationTime=" + '';
-     // var setLocationTime = getCookie("setLocationTime");
-	 
+    document.cookie="setLocationTime=" + '';
+    // var setLocationTime = getCookie("setLocationTime");
 }
 
-
 // Moved function click to file resource/views/location.blade.php
- function dataSave(){
+function dataSave(){
+    var flag = true;
 
-            var flag = true;
-
-            if(flag){
-
-                if($("#pac-input").val()){
-
-                   setLocationCookieTime(); // code add by saurabh to set the location set start time
-
-                 }else{
-
-                  console.log("Map text box value not exist");
-                 }
-                $("#form").submit();
-            } else{
-                alert("Please fill some value");    
-                e.preventDefault();
-            }
+    if(flag){
+        if($("#pac-input").val()){
+            setLocationCookieTime(); // code add by saurabh to set the location set start time
+        }else{
+            console.log("Map text box value not exist");
         }
 
+        $("#form").submit();
+    } else{
+        alert("Please fill some value");    
+        e.preventDefault();
+    }
+}
 
 // Update location, cookie and session with current coordinates
 function locationSave(url){
@@ -276,15 +254,18 @@ function locationSave(url){
         // Update Cookie
         document.cookie="latitude=" + position.coords.latitude;
         document.cookie="longitude=" + position.coords.longitude;
-
-        // Update Session
-        $.get(url, { lat: position.coords.latitude, lng : position.coords.longitude}, function(returnedData){
-            console.log(returnedData["data"]);
-            location.reload();
-        });
     },function(error){
        $('.login-inner-section a').attr('href','javascript:void(0)');
        $('#login-popup').show();
+    });
+
+    // Update Session
+    var latitude  = getCookie("latitude");
+    var longitude = getCookie("longitude");
+
+    $.get(url, { lat: latitude, lng : longitude}, function(returnedData){
+        console.log(returnedData["data"]);
+        location.reload();
     });
 }
 

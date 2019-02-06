@@ -15,7 +15,7 @@
 	<script src="{{ asset('locationJs/currentLocation.js').'?v='.env('APP_VERSION') }}"></script>
     
     <script type="text/javascript">
-	  var noImageUrl = "{{url('images/placeholder-image.png')}}";
+		var noImageUrl = "{{url('images/placeholder-image.png')}}";
     </script>
     
 @endsection
@@ -60,55 +60,24 @@
 @endsection
 
 @section('footer-script')
-	
-<?php
-	$helper = new Helper();
-
-	if(Auth::check()){
-			
-      if(Session::get('with_login_lat') != null){
-
-		?>
-        <script type="text/javascript">
-         
-         setLngLat("{{Session::get('with_login_lat')}}","{{Session::get('with_login_lng')}}");
-           
-        </script>
-		<?php
-	}else if(Session::get('with_out_login_lat') != null){
-
-		?>
-        <script type="text/javascript">
-        
- 		setLngLat("{{Session::get('with_out_login_lat')}}","{{Session::get('with_out_login_lng')}}");
-
-        </script>
-		<?php
-	}else{
-		?>
-        <script type="text/javascript">
-        	
-			setLngLat(null,null);
-
-        </script>
-		<?php
-	}
-	}
-	else{
-		if(Session::get('with_out_login_lat') != null){
-	?>
-	<script type="text/javascript">
-			
-	   setLngLat("{{Session::get('with_out_login_lat')}}","{{Session::get('with_out_login_lng')}}");
-
-	</script>
-			<?php
-		}
-	}
-?>
 
 <script type="text/javascript">
+	// Update global variable call 'lat/lng' value
+	@if(Auth::check())
+		@if(Session::get('with_login_lat') != null)
+			setLngLat("{{Session::get('with_login_lat')}}","{{Session::get('with_login_lng')}}");
+		@elseif(Session::get('with_out_login_lat') != null)
+			setLngLat("{{Session::get('with_out_login_lat')}}","{{Session::get('with_out_login_lng')}}");
+		@else
+			setLngLat(null,null);
+		@endif
+	@else
+		@if(Session::get('with_out_login_lat') != null)
+			setLngLat("{{Session::get('with_out_login_lat')}}","{{Session::get('with_out_login_lng')}}");
+		@endif
+	@endif
 
+	//
 	getTimeZone("{{url('set-timezone')}}");
 	
 	var curDate = new Date();
