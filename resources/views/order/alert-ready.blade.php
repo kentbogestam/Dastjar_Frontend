@@ -3,9 +3,9 @@
 <div data-role="page" data-theme="c">
 	<div data-role="header" class="header" id="nav-header"  data-position="fixed">
 		<!-- Back button if redirected here automatically on order ready -->
-		@if(Request::server('HTTP_REFERER'))
+		@if(!Request::server('HTTP_REFERER'))
 			<a href="{{ Request::server('HTTP_REFERER') }}" data-ajax="false" style="padding: 15px 0 0px 10px;">
-				<img src="http://localhost/Dastjar_Frontend/public/images/icons/backarrow.png" width="11px">
+				<img src="{{asset('images/icons/backarrow.png')}}" width="11px">
 			</a>
 		@endif
 
