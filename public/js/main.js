@@ -47,7 +47,7 @@ function incrementValue(id)
     var value = parseInt(document.getElementById(id).value, 10);
     value = isNaN(value) ? 0 : value;
     value++;
-    $("#item"+id).css("background-color", "yellow");
+    $("#item"+id).css("background-color", "#fafadc");
     document.getElementById(id).value = value;
 
     // Update value in basket
@@ -78,6 +78,7 @@ function decrementValue(id)
     }
 }
 
+// Call from 'popupSelection' on load and update user location (if type_selection is null)
 function setCurrentLatLong(urllatlng){
 
       var userLang = navigator.language || navigator.userLanguage; 

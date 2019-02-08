@@ -34,14 +34,12 @@ $(document).ready(function () {
 
 });
 
+// Set restaurant 'type_selection' and redirect user on 'Eat Now/Eat Later'
 function setResttype(url,type){
-
 	var d = new Date();
-	
+
 	$.get(url, { restType: type, currentdateTime : d}, 
-    	function(returnedData){
-    
-    		window.location.href = returnedData["data"];
-    	
-  });
+		function(returnedData){
+		window.location.href = returnedData["data"];
+	});
 }

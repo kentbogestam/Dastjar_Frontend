@@ -621,37 +621,27 @@ class HomeController extends Controller
        
     }
 
-
-public function setRestarurantType(Request $request){
-
-
-     if(!empty($request->input())){
-                $data = $request->input();
-
-       
-        $request->session()->put('current_date_time', $data['currentdateTime']);
-   
-   
-     
-     if($data['restType']=="eatnow"){
-
-          $request->session()->put('type_selection', "checked");
-              //return redirect('/selectOrder-date');
-          $url= url("/");
-
-     }
-      else{
-     
-
-           $request->session()->put('type_selection', "checked");
-           $url= url("/selectOrder-date");
+    /**
+     * Call from 'popupSelection' view when user select 'Eat Now/Eat Later' first time on app
+     * @param Request $request [description]
+     */
+    public function setRestarurantType(Request $request){
+        if(!empty($request->input())){
+            $data = $request->input();
             
-   //return redirect('/selectOrder-date');
-      }
+            $request->session()->put('current_date_time', $data['currentdateTime']);
+            $request->session()->put('type_selection', "checked");
+            
+            if($data['restType']=="eatnow"){
+                $url= url("/");
+            }
+            else{
+                $url= url("/selectOrder-date");
+            }
 
-      return response()->json(['status' => 'success', 'response' => true,'data'=>$url]);
-  }
- }
+            return response()->json(['status' => 'success', 'response' => true,'data'=>$url]);
+        }
+    }
 
 
     /**
