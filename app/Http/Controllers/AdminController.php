@@ -119,7 +119,10 @@ class AdminController extends Controller
         $storedetails = $store->first();
         $storeName = $storedetails->store_name;
 
-        return view('kitchen.order.index', compact('storedetails', 'storeName'));    
+        // Get if Text2Speech is on/off
+        $textSpeech = Auth::guard('admin')->user()->text_speech;
+
+        return view('kitchen.order.index', compact('storedetails', 'storeName', 'textSpeech'));    
     }
 
     /**

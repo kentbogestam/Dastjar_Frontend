@@ -71,6 +71,7 @@
 	var urldeliver = "{{url('kitchen/order-deliver')}}";
 	var urlReadyOrder = "{{url('kitchen/make-order-ready')}}";
 	var imageUrl = "{{asset('kitchenImages/right_sign.png')}}";
+	var intervalSpeakText = 0;
 
 	$(function(){
 		$.get("{{url('api/v1/kitchen/order-detail')}}/" + storeId,
@@ -119,6 +120,14 @@
 	          		@if( !Session::has('subscribedPlans.kitchen') )
 	          			// Order Started
 	          			if(temp[i]["order_started"] == 0){
+	          				// Speech text
+	          				@if($textSpeech)
+		          				speakText("{{ __('messages.kitchenTextToSpeechDefault') }}");
+		          			@else
+		          				speakText("{{ __('messages.kitchenTextToSpeechDefault') }}", 1);
+		          			@endif
+
+		          			//
 		          			ids = temp[i]['order_id'];
 
 		          			@if($storedetails->order_response)
@@ -274,6 +283,14 @@
 	          		@if( !Session::has('subscribedPlans.kitchen') )
 	          			// Order Started
 	          			if(temp[i]["order_started"] == 0){
+	          				// Speech text
+	          				@if($textSpeech)
+		          				speakText("{{ __('messages.kitchenTextToSpeechDefault') }}");
+		          			@else
+		          				speakText("{{ __('messages.kitchenTextToSpeechDefault') }}", 1);
+		          			@endif
+
+		          			//
 		          			ids = temp[i]['order_id'];
 
 		          			@if($storedetails->order_response)
@@ -436,6 +453,14 @@
   		@if( !Session::has('subscribedPlans.kitchen') )
   			// Order Started
   			if(temp[i]["order_started"] == 0){
+  				// Speech text
+  				@if($textSpeech)
+      				speakText("{{ __('messages.kitchenTextToSpeechDefault') }}");
+      			@else
+      				speakText("{{ __('messages.kitchenTextToSpeechDefault') }}", 1);
+      			@endif
+
+  				//
       			ids = temp[i]['order_id'];
 
       			@if($storedetails->order_response)
@@ -601,5 +626,5 @@
 		});
 	}
 </script>
-
+<script src="{{asset('kitchenJs/speekJs.js')}}"></script>
 @endsection

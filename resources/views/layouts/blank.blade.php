@@ -6,6 +6,7 @@
 
     <script type="text/javascript">
     	var RESTAURANT_BASE_URL = "{{ url('kitchen') }}";
+    	var BASE_URL_API = '{{url('api')}}';
     </script>
 </head>
 <body>

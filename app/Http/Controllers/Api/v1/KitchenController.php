@@ -51,11 +51,17 @@ class KitchenController extends Controller
         return response()->json(['status' => 'success', 'response' => true, 'store' => $store, 'extra_prep_time' => $extra_prep_time, 'data'=>$results]);
     }
     
+    /**
+     * Update order item as speak
+     * @param  [int] $id [description]
+     * @return [json]     [description]
+     */
     public function updateTextspeach($id){
         DB::table('order_details')->where('id', $id)->update([
-                    'is_speak' => 1,
-                ]);
-         return response()->json(['status' => 'success', 'response' => true,'data'=>$id]);
+            'is_speak' => 1,
+        ]);
+
+        return response()->json(['status' => 'success', 'response' => true,'data'=>$id]);
     }
 
     public function orderSpecificOrderDetail($orderId){

@@ -24,8 +24,9 @@ function isManualPrepTimeForOrder(orderId, itemId, This)
 			}
 			else
 			{
-				// Start order from 'Order Menu'
+				// Start order from 'Order Menu' and stop text to speak
 				startOrder(orderId, This);
+				clearSpeakTextInterval();
 			}
 		}
 	});
@@ -55,12 +56,48 @@ function frmAddManualPrepTime()
 			}
 			else
 			{
-				// Start order from 'Order Menu'
+				// Start order from 'Order Menu' and stop text to speak
 				startOrder(orderId, This);
+				clearSpeakTextInterval();
 			}
 			
 			// Close the popup
 			$( "#add-manual-prep-time" ).popup("close");
 		}
 	);
+}
+
+// Function to speak text once/repeat 
+function speakText(message = null, repeat = 0)
+{
+	clearInterval(intervalSpeakText);
+	test(message);
+
+	if(repeat)
+	{
+		intervalSpeakText = setInterval(function() {
+			test(message);
+		}, 5000);
+	}
+}
+
+// Stop speakText interval
+function clearSpeakTextInterval()
+{
+	clearInterval(intervalSpeakText);
+}
+
+// Update column is DB to speak it once only
+function updateSpeak(id){
+	// var url = '{{url('api/v1/kitchen/updateTextspeach')}}'+'/'+id;
+	var url = BASE_URL_API+'/v1/kitchen/updateTextspeach/'+id;
+
+	$.ajax({
+        url: url, //This is the current doc
+        type: "GET",//variables should be pass like this
+        success: function(data){
+           //console.log('fff');
+           clearInterval(intervalSpeakText);
+        }
+    });
 }

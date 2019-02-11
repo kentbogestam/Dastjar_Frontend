@@ -215,7 +215,7 @@
 			          		liItem += "</tr>"
 					    	$("#orderDetailContianer").append(liItem);
 					    	liItem = null;
-						     }, 500*i);
+						     }, 2000*i);
 					    })(i);
 		          	}
 	          	}else{
@@ -501,33 +501,6 @@
 		    })(i);
 	      }
 	      $("#orderDetailContianer").append(liItem);	
-		}
-
-		// Function to speak text once/repeat 
-		function speakText(message = null, repeat = 0)
-		{
-			clearInterval(intervalSpeakText);
-			test(message);
-
-			if(repeat)
-			{
-				intervalSpeakText = setInterval(function() {
-					test(message);
-				}, 5000);
-			}
-		}
-
-		// Update column is DB to speak it once only
-		function updateSpeak(id){
-			var url = '{{url('api/v1/kitchen/updateTextspeach')}}'+'/'+id;
-			$.ajax({
-	            url: url, //This is the current doc
-	            type: "GET",//variables should be pass like this
-	            success: function(data){
-	               //console.log('fff');
-	               clearInterval(intervalSpeakText);
-	            }
-	        }); 
 		}
 
 		function addTimes (startTime, endTime, extra_prep_time) {
