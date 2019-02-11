@@ -135,6 +135,10 @@ class AdminController extends Controller
         Session::forget('subscribedPlans');
         Session::save();
 
+        $store = Store::select('check_subscription')
+            ->where('store_id', Session::get('storeId'))
+            ->first();
+
         // Get subscribed plan for store
         $storePlan = SubscriptionPlan::from('billing_products AS BP')
             ->select('BP.id', 'UP.plan_id')
@@ -152,27 +156,38 @@ class AdminController extends Controller
 
         if($storePlan)
         {
-            // Kitchen
-            if( in_array('plan_EE3Gi7A6f6Jvvb', $storePlan) )
+            // Check if store's 'check_subscription' has set to '0', give access of all modules without subscription
+            if($store->check_subscription)
+            {
+                // Kitchen
+                if( in_array('plan_EE3Gi7A6f6Jvvb', $storePlan) )
+                {
+                    Session::put('subscribedPlans.kitchen', 1);
+                }
+
+                // Order on Site
+                if( in_array('plan_EE3HCFoL3Q4w2g', $storePlan) )
+                {
+                    Session::put('subscribedPlans.orderonsite', 1);
+                }
+
+                // Catering
+                if( in_array('plan_EE3IyKkF4fRTRt', $storePlan) )
+                {
+                    Session::put('subscribedPlans.catering', 1);
+                }
+
+                // Payment
+                if( in_array('plan_EE3J8meXbkIq0M', $storePlan) )
+                {
+                    Session::put('subscribedPlans.payment', 1);
+                }
+            }
+            else
             {
                 Session::put('subscribedPlans.kitchen', 1);
-            }
-
-            // Order on Site
-            if( in_array('plan_EE3HCFoL3Q4w2g', $storePlan) )
-            {
                 Session::put('subscribedPlans.orderonsite', 1);
-            }
-
-            // Catering
-            if( in_array('plan_EE3IyKkF4fRTRt', $storePlan) )
-            {
                 Session::put('subscribedPlans.catering', 1);
-            }
-
-            // Payment
-            if( in_array('plan_EE3J8meXbkIq0M', $storePlan) )
-            {
                 Session::put('subscribedPlans.payment', 1);
             }
 
