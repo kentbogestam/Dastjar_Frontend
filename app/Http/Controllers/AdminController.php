@@ -139,25 +139,25 @@ class AdminController extends Controller
             ->where('store_id', Session::get('storeId'))
             ->first();
 
-        // Get subscribed plan for store
-        $storePlan = SubscriptionPlan::from('billing_products AS BP')
-            ->select('BP.id', 'UP.plan_id')
-            ->join('user_plan AS UP', 'BP.plan_id', '=', 'UP.plan_id')
-            ->where('BP.s_activ', 1)
-            ->whereDate('subscription_start_at', '<=', Carbon::parse(Carbon::now())->format('Y-m-d'))
-            ->whereDate('subscription_end_at', '>=', Carbon::parse(Carbon::now())->format('Y-m-d'))
-            ->where('UP.user_id', Auth::user()->u_id)
-            ->where('UP.store_id', Session::get('storeId'))
-            ->pluck('plan_id')
-            ->toArray();
-            //->toSql();
-
-        //dd($storePlan);
-
-        if($storePlan)
+        // Check if store's 'check_subscription' has set to '0', give access of all modules without subscription
+        if($store->check_subscription)
         {
-            // Check if store's 'check_subscription' has set to '0', give access of all modules without subscription
-            if($store->check_subscription)
+            // Get subscribed plan for store
+            $storePlan = SubscriptionPlan::from('billing_products AS BP')
+                ->select('BP.id', 'UP.plan_id')
+                ->join('user_plan AS UP', 'BP.plan_id', '=', 'UP.plan_id')
+                ->where('BP.s_activ', 1)
+                ->whereDate('subscription_start_at', '<=', Carbon::parse(Carbon::now())->format('Y-m-d'))
+                ->whereDate('subscription_end_at', '>=', Carbon::parse(Carbon::now())->format('Y-m-d'))
+                ->where('UP.user_id', Auth::user()->u_id)
+                ->where('UP.store_id', Session::get('storeId'))
+                ->pluck('plan_id')
+                ->toArray();
+                //->toSql();
+
+            //dd($storePlan);
+
+            if($storePlan)
             {
                 // Kitchen
                 if( in_array('plan_EE3Gi7A6f6Jvvb', $storePlan) )
@@ -182,14 +182,16 @@ class AdminController extends Controller
                 {
                     Session::put('subscribedPlans.payment', 1);
                 }
+
+                Session::save();
             }
-            else
-            {
-                Session::put('subscribedPlans.kitchen', 1);
-                Session::put('subscribedPlans.orderonsite', 1);
-                Session::put('subscribedPlans.catering', 1);
-                Session::put('subscribedPlans.payment', 1);
-            }
+        }
+        else
+        {
+            Session::put('subscribedPlans.kitchen', 1);
+            Session::put('subscribedPlans.orderonsite', 1);
+            Session::put('subscribedPlans.catering', 1);
+            Session::put('subscribedPlans.payment', 1);
 
             Session::save();
         }
