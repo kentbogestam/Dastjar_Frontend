@@ -16,9 +16,14 @@ class CheckSubsModule
     public function handle($request, Closure $next, $module)
     {
         // Check if module exist in subscribed module, otherwise return to store page
-        $subscribedModule = array_keys($request->session()->get('subscribedPlans'));
+        $subscribedModule = array();
+
+        if( $request->session()->has('subscribedPlans') )
+        {
+            $subscribedModule = array_keys($request->session()->get('subscribedPlans'));
+        }
         
-        if( !in_array($module, $subscribedModule) )
+        if( empty($subscribedModule) || !in_array($module, $subscribedModule) )
         {
             return redirect(url('kitchen/store'));
         }
