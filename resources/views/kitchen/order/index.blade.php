@@ -72,6 +72,7 @@
 	var urlReadyOrder = "{{url('kitchen/make-order-ready')}}";
 	var imageUrl = "{{asset('kitchenImages/right_sign.png')}}";
 	var intervalSpeakText = 0;
+	var speakOrderItemList = [];
 
 	$(function(){
 		$.get("{{url('api/v1/kitchen/order-detail')}}/" + storeId,
@@ -79,6 +80,7 @@
 			// console.log(returnedData["data"]);
 			var count = 18;
 			var temp = returnedData["data"];
+			var orderItems = returnedData['orderItems'];
 			extra_prep_time = returnedData["extra_prep_time"];
           	list = temp;
           	// console.log(temp.length);
@@ -120,14 +122,6 @@
 	          		@if( !Session::has('subscribedPlans.kitchen') )
 	          			// Order Started
 	          			if(temp[i]["order_started"] == 0){
-	          				// Speech text
-	          				@if($textSpeech)
-		          				speakText("{{ __('messages.kitchenTextToSpeechDefault') }}");
-		          			@else
-		          				speakText("{{ __('messages.kitchenTextToSpeechDefault') }}", 1);
-		          			@endif
-
-		          			//
 		          			ids = temp[i]['order_id'];
 
 		          			@if($storedetails->order_response)
@@ -203,6 +197,46 @@
 	          		liItem += "<td>"+time+"</td>";
 	          		liItem += "</tr>";
 	          	}
+
+	          	// Speech text
+	          	@if( Session::has('subscribedPlans.kitchen') )
+	          		if(orderItems.length)
+	          		{
+	          			var message = [];
+
+	          			for(var j = 0; j < orderItems.length; j++)
+	          			{
+	          				speakOrderItemList.push(orderItems[j]['id']);
+
+	          				@if($textSpeech)
+	          					if(orderItems[j]["product_description"] != null){
+			          				message[j] = orderItems[j]["product_quality"]+orderItems[j]["product_name"]+orderItems[j]["product_description"];
+			          			}else{
+			          				message[j] = orderItems[j]["product_quality"]+orderItems[j]["product_name"];
+			          			}
+
+			          			// speakText(message)
+			          		@else
+			          			speakText("{{ __('messages.kitchenTextToSpeechDefault') }}", 1);
+	          				@endif
+	          			}
+
+	          			// Loop speech
+	          			if(message.length)
+	          			{
+	          				var k = 0;
+		          			speakTextInterval = setInterval(function() {
+		          				speakText(message[k]);
+		          				k++;
+
+		          				if(k >= j)
+		          				{
+		          					clearInterval(speakTextInterval);
+		          				}
+		          			}, 4000);
+	          			}
+	          		}
+	          	@endif
           	}else{
           		liItem += "<div class='table-content'>";
 	        	liItem += "<p>";
@@ -244,6 +278,7 @@
 			// console.log(returnedData["data"]);
 			var count = 18;
 			var temp = returnedData["data"];
+			var orderItems = returnedData['orderItems'];
 			extra_prep_time = returnedData["extra_prep_time"];
           	list = temp;
           	// console.log(temp.length);
@@ -283,14 +318,6 @@
 	          		@if( !Session::has('subscribedPlans.kitchen') )
 	          			// Order Started
 	          			if(temp[i]["order_started"] == 0){
-	          				// Speech text
-	          				@if($textSpeech)
-		          				speakText("{{ __('messages.kitchenTextToSpeechDefault') }}");
-		          			@else
-		          				speakText("{{ __('messages.kitchenTextToSpeechDefault') }}", 1);
-		          			@endif
-
-		          			//
 		          			ids = temp[i]['order_id'];
 
 		          			@if($storedetails->order_response)
@@ -366,6 +393,49 @@
 	          		liItem += "<td>"+time+"</td>";
 	          		liItem += "</tr>";
 	          	}
+
+	          	// Speech text
+	          	@if( Session::has('subscribedPlans.kitchen') )
+	          		if(orderItems.length)
+	          		{
+	          			var message = [];
+
+	          			for(var j = 0; j < orderItems.length; j++)
+	          			{
+	          				if(speakOrderItemList.indexOf(orderItems[j]['id']) == -1)
+	          				{
+	          					speakOrderItemList.push(orderItems[j]['id']);
+
+		          				@if($textSpeech)
+		          					if(orderItems[j]["product_description"] != null){
+				          				message[j] = orderItems[j]["product_quality"]+orderItems[j]["product_name"]+orderItems[j]["product_description"];
+				          			}else{
+				          				message[j] = orderItems[j]["product_quality"]+orderItems[j]["product_name"];
+				          			}
+
+				          			// speakText(message);
+				          		@else
+				          			speakText("{{ __('messages.kitchenTextToSpeechDefault') }}", 1);
+		          				@endif
+	          				}
+	          			}
+
+	          			// Loop speech
+	          			if(message.length)
+	          			{
+	          				var k = 0;
+		          			speakTextInterval = setInterval(function() {
+		          				speakText(message[k]);
+		          				k++;
+
+		          				if(k >= j)
+		          				{
+		          					clearInterval(speakTextInterval);
+		          				}
+		          			}, 4000);
+	          			}
+	          		}
+	          	@endif
           	}else{
           		liItem += "<div class='table-content'>";
 	        	liItem += "<p>";

@@ -48,7 +48,20 @@ class KitchenController extends Controller
 
         $results = $orderDetailscustomer->get();
 
-        return response()->json(['status' => 'success', 'response' => true, 'store' => $store, 'extra_prep_time' => $extra_prep_time, 'data'=>$results]);
+        // Get order items
+        $orderItems = array();
+        if($results)
+        {
+            $orderItems = OrderDetail::select('order_details.id', 'order_details.product_quality', 'order_details.product_description', 'product.product_name')
+                ->join('orders', 'orders.order_id', '=', 'order_details.order_id')
+                ->join('product', 'product.product_id', '=', 'order_details.product_id')
+                ->where(['orders.store_id' => $reCompanyId, 'user_type' => 'customer', 'check_deliveryDate' => Carbon::now()->toDateString(), 'orders.order_started' => '0', 'orders.paid' => '0'])
+                ->whereNotIn('orders.online_paid', [2])
+                ->where('orders.cancel','!=', 1)
+                ->get();
+        }
+
+        return response()->json(['status' => 'success', 'response' => true, 'store' => $store, 'extra_prep_time' => $extra_prep_time, 'data'=>$results, 'orderItems' => $orderItems]);
     }
     
     /**
