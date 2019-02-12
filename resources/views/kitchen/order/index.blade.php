@@ -199,7 +199,7 @@
 	          	}
 
 	          	// Speech text
-	          	@if( Session::has('subscribedPlans.kitchen') )
+	          	@if( !Session::has('subscribedPlans.kitchen') )
 	          		if(orderItems.length)
 	          		{
 	          			var message = [];
@@ -395,7 +395,7 @@
 	          	}
 
 	          	// Speech text
-	          	@if( Session::has('subscribedPlans.kitchen') )
+	          	@if( !Session::has('subscribedPlans.kitchen') )
 	          		if(orderItems.length)
 	          		{
 	          			var message = [];
