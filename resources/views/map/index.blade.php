@@ -14,7 +14,7 @@
 @section('footer-script')
 <!-- <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=places"></script> -->
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyByLiizP2XW9JUAiD92x57u7lFvU3pS630"></script>
-<script type="text/javascript" src="{{ asset('js/init.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/init.js').'?v='.$RAND_APP_VERSION }}"></script>
 
 <script type="text/javascript">
 		
