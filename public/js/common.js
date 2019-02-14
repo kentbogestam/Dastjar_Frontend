@@ -36,8 +36,7 @@ function getCurrentCoordinates(){
       //console.log("in getCurrentCoordinates and updating current location ");
       //console.log(position.coords.latitude+"-------"+position.coords.longitude);
        $.ajax({
-          url: baseUrl+"/public/update-location", // for local host testing
-         // url: baseUrl+"/update-location", // for live testing
+          url: BASE_URL+"/update-location",
            type: "GET",
            data: {lat : position.coords.latitude, long : position.coords.longitude},
            dataType: "json"
