@@ -4,6 +4,7 @@ namespace App\Providers;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,6 +26,8 @@ class AppServiceProvider extends ServiceProvider
             \Session::put('applocale', 'en');
           }
         }
+
+        View::share('RAND_APP_VERSION', mt_rand(100,1000));
     }
 
     /**
