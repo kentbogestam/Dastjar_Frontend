@@ -12,7 +12,8 @@
     <script src="{{asset('js/restolist/moment-timezone-with-data.min.js')}}"></script>
     <script src="{{asset('js/restolist/restrolist.js')}}"></script>
     <script src="{{asset('js/restolist/restroListCommon.js')}}"></script>
-	<script src="{{ asset('locationJs/currentLocation.js').'?v='.$RAND_APP_VERSION }}"></script>
+	<!-- <script src="{{ asset('locationJs/currentLocation.js').'?v='.$RAND_APP_VERSION }}"></script> -->
+	<script src="{{ asset('locationJs/currentLocation.js') }}"></script>
     
     <script type="text/javascript">
 		var noImageUrl = "{{url('images/placeholder-image.png')}}";

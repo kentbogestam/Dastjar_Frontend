@@ -35,7 +35,8 @@
 	<link rel="manifest" href="{{asset('manifest.json')}}">	
  	<link rel = "stylesheet" href ="{{asset('css/jquery.mobile.min.css')}}">
  	<link rel="stylesheet" href="{{asset('css/jquery.mobile.icons.min.css')}}">
- 	<link rel="stylesheet" href="{{ asset('css/main-style.css').'?v='.$RAND_APP_VERSION }}">
+ 	<!-- <link rel="stylesheet" href="{{ asset('css/main-style.css').'?v='.$RAND_APP_VERSION }}"> -->
+    <link rel="stylesheet" href="{{ asset('css/main-style.css') }}">
  	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 	<link href="//fonts.googleapis.com/css?family=Aclonica" rel="stylesheet">
 	<link rel="apple-touch-icon-precomposed" href="{{asset('addToHomeIphoneImage/icon-152x152.png')}}">
@@ -44,8 +45,10 @@
  	<script src = "{{asset('js/device.detect.js')}}"></script>
  	<script src = "{{asset('js/jquery.min.js')}}"></script> 
 	<script src = "{{asset('js/jquery.mobile.min.js')}}"></script>
-	<script src = "{{ asset('js/main.js').'?v='.$RAND_APP_VERSION }}"></script>
-    <script src = "{{ asset('js/common.js').'?v='.$RAND_APP_VERSION }}"></script>
+	<!-- <script src = "{{ asset('js/main.js').'?v='.$RAND_APP_VERSION }}"></script> -->
+    <script src = "{{ asset('js/main.js') }}"></script>
+    <!-- <script src = "{{ asset('js/common.js').'?v='.$RAND_APP_VERSION }}"></script> -->
+    <script src = "{{ asset('js/common.js') }}"></script>
 	<link rel="stylesheet" href="{{asset('css/jquery.datetimepicker.min.css')}}">
 	@yield('head-scripts')
 </head>
