@@ -110,6 +110,8 @@
 	        	alert('Location not supported');
 	        }
         }
+
+        // setTimeout(updateLocationOnMap, 5000);
     });
 </script>
 @endsection
