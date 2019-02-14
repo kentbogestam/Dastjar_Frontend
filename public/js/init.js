@@ -4,7 +4,7 @@ function changeMarkerPosition(lat, lng)
     var newLatLng = new google.maps.LatLng(lat, lng);
     console.log('changeMarkerPosition:: lat: '+lat+', lng: '+lng+', newLatLng: '+newLatLng+', myMarker: '+myMarker);
 
-    if(newLatLng != null)
+    if(myMarker != null)
     {
         myMarker.setPosition(newLatLng);
         map.panTo(newLatLng);
