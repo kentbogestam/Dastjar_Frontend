@@ -659,6 +659,8 @@
 			$('body').find('#'+id).parent("a").attr('onclick',' ');
 			$('body').find('#'+id+'ready').parent("a").attr('onclick','makeOrderReady('+id+')');
 			$This.closest('tr').removeClass('not-started');
+
+			clearSpeakTextInterval();
 		});
 	}
 

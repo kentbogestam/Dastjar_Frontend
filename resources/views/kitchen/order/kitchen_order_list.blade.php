@@ -82,6 +82,9 @@
 				$('body').find('#'+id).parent("a").attr('onclick',' ');
 				$('body').find('#'+id+'ready').parent("a").attr('onclick','onReady('+id+')');
 				$This.closest('tr').removeClass('not-started');
+
+				// Update item as speak
+				updateSpeak(id);
 			});
 		}
 
@@ -215,7 +218,7 @@
 			          		liItem += "</tr>"
 					    	$("#orderDetailContianer").append(liItem);
 					    	liItem = null;
-						     }, 2000*i);
+						     }, 4000*i);
 					    })(i);
 		          	}
 	          	}else{
