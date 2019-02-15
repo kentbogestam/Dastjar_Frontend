@@ -242,107 +242,109 @@
 		}
 	</style>
 
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.5.1/fingerprint2.min.js"></script>
-<script src="{{asset('notifactionJs/App42-all-3.1.min.js')}}"></script>
-<script src="{{asset('notifactionJs/SiteTwo.js')}}"></script> 
-<script src="{{asset('notifactionJs/serviceWorker.js')}}"></script>  -->
+	@if(Request::server('HTTP_REFERER'))
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.5.1/fingerprint2.min.js"></script>
+		<script src="{{asset('notifactionJs/App42-all-3.1.min.js')}}"></script>
+		<script src="{{asset('notifactionJs/SiteTwo.js')}}"></script> 
+		<script src="{{asset('notifactionJs/serviceWorker.js')}}"></script>
 
-<script>
-	  $(document).ready(function () {
-	      // App42.setEventBaseUrl("https://analytics.shephertz.com/cloud/1.0/");
-	      // App42.setBaseUrl("https://api.shephertz.com/cloud/1.0/");
+		<script>
+			  $(document).ready(function () {
+			      // App42.setEventBaseUrl("https://analytics.shephertz.com/cloud/1.0/");
+			      // App42.setBaseUrl("https://api.shephertz.com/cloud/1.0/");
 
-	      // App42.initialize(API_KEY,SECERT_KEY);
-	      // App42.enableEventService(true);
-	      // var userName,device_token;
-	      // new Fingerprint2().get(function(result, components){
-	      //     userName = "{{ Auth::user()->email}}";
-	      //     console.log("Username : " + userName); //a hash, representing your device fingerprint
-	      //     App42.setLoggedInUser(userName);
-	      //    /// getDeviceToken();
-	      // });
-	  });
-</script>
+			      // App42.initialize(API_KEY,SECERT_KEY);
+			      // App42.enableEventService(true);
+			      // var userName,device_token;
+			      // new Fingerprint2().get(function(result, components){
+			      //     userName = "{{ Auth::user()->email}}";
+			      //     console.log("Username : " + userName); //a hash, representing your device fingerprint
+			      //     App42.setLoggedInUser(userName);
+			      //    /// getDeviceToken();
+			      // });
+			  });
+		</script>
 
-<!-- <script src="{{asset('notifactionJs/newNotifaction/App42.js')}}"></script>
-<script src="{{asset('notifactionJs/newNotifaction/jQuery.js')}}"></script>
-<script src="{{asset('notifactionJs/newNotifaction/browser.js')}}"></script> -->
-<!-- <script type="text/javascript">
-'use strict';
-var API_KEY = "{{env('APP42_API_KEY')}}";
-var SECERT_KEY = "{{env('APP42_API_SECRET')}}";
+		<script src="{{asset('notifactionJs/newNotifaction/App42.js')}}"></script>
+		<script src="{{asset('notifactionJs/newNotifaction/jQuery.js')}}"></script>
+		<script src="{{asset('notifactionJs/newNotifaction/browser.js')}}"></script>
+		<script type="text/javascript">
+		'use strict';
+		var API_KEY = "{{env('APP42_API_KEY')}}";
+		var SECERT_KEY = "{{env('APP42_API_SECRET')}}";
 
-var userName = "{{ Auth::user()->email}}";
-if ('serviceWorker' in navigator) {
-  var type = jQuery.browser.name;
-  var jsAddress = "{{asset('notifactionJs/chrome-worker.js')}}";
+		var userName = "{{ Auth::user()->email}}";
+		if ('serviceWorker' in navigator) {
+		  var type = jQuery.browser.name;
+		  var jsAddress = "{{asset('notifactionJs/chrome-worker.js')}}";
 
-  if(type== "Firefox"){
-      jsAddress = "{{asset('notifactionJs/firefox-worker.js')}}";
-  }
+		  if(type== "Firefox"){
+		      jsAddress = "{{asset('notifactionJs/firefox-worker.js')}}";
+		  }
 
-  navigator.serviceWorker.register(jsAddress).then(function(reg) {
-     reg.pushManager.getSubscription().then(function(sub) {  
-    var regID ;
-      if (sub === null) {
-        reg.pushManager.subscribe({userVisibleOnly: true}).then(function(sub) {
-            regID = sub.endpoint
-                if(type=="Chrome"){
-                    var idD = regID.substring(regID.indexOf("d/")+1);
-                    regID =  idD.substring(idD.indexOf("/")+1);
-                }else if(type=="Firefox" || type=="Safari"){
-                    var idD = regID.substring(regID.indexOf("v1/")+ 1);
-                    regID = sub.endpoint.replace(/ /g,'')
-                }
+		  navigator.serviceWorker.register(jsAddress).then(function(reg) {
+		     reg.pushManager.getSubscription().then(function(sub) {  
+		    var regID ;
+		      if (sub === null) {
+		        reg.pushManager.subscribe({userVisibleOnly: true}).then(function(sub) {
+		            regID = sub.endpoint
+		                if(type=="Chrome"){
+		                    var idD = regID.substring(regID.indexOf("d/")+1);
+		                    regID =  idD.substring(idD.indexOf("/")+1);
+		                }else if(type=="Firefox" || type=="Safari"){
+		                    var idD = regID.substring(regID.indexOf("v1/")+ 1);
+		                    regID = sub.endpoint.replace(/ /g,'')
+		                }
 
 
-        	$.post("{{url('store-device-token-order-view')}}", {_token: "{{ csrf_token() }}", email: "{{ Auth::user()->email}}", deviceToken: regID}, 
-                        function(data, status){
-                        console.log(data);
-            });
-                registerDeviceWithApp42(regID,type.toUpperCase())   
-          }).catch(function(e) {
-            // Handle Exception here
-            console.log(e.message);
-          });
-      } else {
-       regID = sub.endpoint
-        if(type=="Chrome"){
-            var idD = regID.substring(regID.indexOf("d/")+1);
-            regID =  idD.substring(idD.indexOf("/")+1);
-        }else if(type=="Firefox" || type=="Safari"){
-            var idD = regID.substring(regID.indexOf("v1/")+ 1);
-            regID = sub.endpoint.replace(/ /g,'')
-        }
+		        	$.post("{{url('store-device-token-order-view')}}", {_token: "{{ csrf_token() }}", email: "{{ Auth::user()->email}}", deviceToken: regID}, 
+		                        function(data, status){
+		                        console.log(data);
+		            });
+		                registerDeviceWithApp42(regID,type.toUpperCase())   
+		          }).catch(function(e) {
+		            // Handle Exception here
+		            console.log(e.message);
+		          });
+		      } else {
+		       regID = sub.endpoint
+		        if(type=="Chrome"){
+		            var idD = regID.substring(regID.indexOf("d/")+1);
+		            regID =  idD.substring(idD.indexOf("/")+1);
+		        }else if(type=="Firefox" || type=="Safari"){
+		            var idD = regID.substring(regID.indexOf("v1/")+ 1);
+		            regID = sub.endpoint.replace(/ /g,'')
+		        }
 
-        	$.post("{{url('store-device-token')}}", {_token: "{{ csrf_token() }}", email: "{{ Auth::user()->email}}", deviceToken: regID}, 
-                        function(data, status){
-                       console.log(data);
-            });
-        registerDeviceWithApp42(regID,type.toUpperCase())   
-      }
-    });
-  })
-   .catch(function(err) {
-    console.log('Service Worker registration failed: ');
-  });
-}
+		        	$.post("{{url('store-device-token')}}", {_token: "{{ csrf_token() }}", email: "{{ Auth::user()->email}}", deviceToken: regID}, 
+		                        function(data, status){
+		                       console.log(data);
+		            });
+		        registerDeviceWithApp42(regID,type.toUpperCase())   
+		      }
+		    });
+		  })
+		   .catch(function(err) {
+		    console.log('Service Worker registration failed: ');
+		  });
+		}
 
-function registerDeviceWithApp42(token,type ){
-    var pushNotificationService  = new App42Push();
-    App42.initialize(API_KEY, SECERT_KEY);
-    pushNotificationService.storeDeviceToken(userName,token,type,{  
-        success: function(object) 
-        {  
-            // window.close();
-        },
-        error: function(error) {  
-            window.close();
-        }  
-    });  
-}
-</script> -->
-@endsection      
+		function registerDeviceWithApp42(token,type ){
+		    var pushNotificationService  = new App42Push();
+		    App42.initialize(API_KEY, SECERT_KEY);
+		    pushNotificationService.storeDeviceToken(userName,token,type,{  
+		        success: function(object) 
+		        {  
+		            // window.close();
+		        },
+		        error: function(error) {  
+		            window.close();
+		        }  
+		    });  
+		}
+		</script>
+	@endif
+@endsection
 
 @section('content')
 	<div data-role="header" class="header" id="nav-header"  data-position="fixed">

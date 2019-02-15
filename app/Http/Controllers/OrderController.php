@@ -761,12 +761,9 @@ class OrderController extends Controller
         } 
     }
 
-public function cart(Request $request){
-
- if(Auth::check()){
-
+    public function cart(Request $request){
+        if(Auth::check()){
             if(!empty($request->input())){
-
                 $data = $request->input();
 
                 $i = 0;
@@ -908,14 +905,13 @@ public function cart(Request $request){
                 $companydetails = Store::getListRestaurants($request->session()->get('with_login_lat'),$request->session()->get('with_login_lng'),$range,'1','3',$todayDate,$currentTime,$todayDay);
                 
                 return view('index', compact('companydetails'));
-            } 
+            }
         }else{
-
-          $data = $request->input();
-          Session::put('orderData', $data);
-          return redirect()->route('customer-login');
+            $data = $request->input();
+            Session::put('orderData', $data);
+            return redirect()->route('customer-login');
         }
-}
+    }
 
  public function updateCart(Request $request){
 
