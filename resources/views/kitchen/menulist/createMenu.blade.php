@@ -287,6 +287,10 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 		<input type="hidden" name="store_id" value="{{ $store_id or "" }}"/>
 		@endif
 
+		@if(isset($product_price_list->id))
+			<input type="hidden" name="price_id" value="{{ $product_price_list->id }}">
+		@endif
+
 		{{ csrf_field() }}
 
 		<div class="row">

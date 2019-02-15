@@ -1202,11 +1202,12 @@ class AdminController extends Controller
     }
 
 
- public function kitchenUpdateMenuPost(Request $request){
+    public function kitchenUpdateMenuPost(Request $request){
         $helper = new Helper();
 
         $product_id = $request->product_id;
         $store_id = $request->store_id;
+        $price_id = $request->price_id;
         $message = "Dish Updated Successfully.";
 
         $util = new Util(env('APP42_API_KEY'),env('APP42_API_SECRET'));
@@ -1231,34 +1232,34 @@ class AdminController extends Controller
         $error = "";
 
         // Opload images related to
-            if (!empty($_FILES["prodImage"]["name"])) {
-                $file_extension = strtolower($info['extension']);
-                if ($file_extension == "png" || $file_extension == "jpg" || $file_extension == "jpeg" || $file_extension == "gif" || $file_extension == "bmp") { 
-                    if ($_FILES["prodImage"]["error"] > 0) {
-                        $error.=$_FILES["prodImage"]["error"] . "<br />";
-                    } else {
-                        $cat_filename = $CategoryIconName . "." . strtolower($info['extension']);
-                        $fileOriginal = $_FILES['prodImage']['tmp_name'];
-                        $crop = '5';
-                        $size = 'iphone4_cat';
-                        $path = UPLOAD_DIR . "category/";
-                        $fileThumbnail = $path . $cat_filename;
-                        $resizer = new Resizer();
+        if (!empty($_FILES["prodImage"]["name"])) {
+            $file_extension = strtolower($info['extension']);
+            if ($file_extension == "png" || $file_extension == "jpg" || $file_extension == "jpeg" || $file_extension == "gif" || $file_extension == "bmp") { 
+                if ($_FILES["prodImage"]["error"] > 0) {
+                    $error.=$_FILES["prodImage"]["error"] . "<br />";
+                } else {
+                    $cat_filename = $CategoryIconName . "." . strtolower($info['extension']);
+                    $fileOriginal = $_FILES['prodImage']['tmp_name'];
+                    $crop = '5';
+                    $size = 'iphone4_cat';
+                    $path = UPLOAD_DIR . "category/";
+                    $fileThumbnail = $path . $cat_filename;
+                    $resizer = new Resizer();
 
-                       // move_uploaded_file($fileOriginal,$fileThumbnail);
+                   // move_uploaded_file($fileOriginal,$fileThumbnail);
 
-                        try{
-                            $resizer->createFileThumbnail($fileOriginal, $fileThumbnail, $size, 
-                                $frontUpload = 0, $crop, $errorMsg);
-                        } catch (\Exception $ex) {
-                            echo $ex->getMessage();
-                            die();
-                        }
-
-                        $small_image = $cat_filename;
+                    try{
+                        $resizer->createFileThumbnail($fileOriginal, $fileThumbnail, $size, 
+                            $frontUpload = 0, $crop, $errorMsg);
+                    } catch (\Exception $ex) {
+                        echo $ex->getMessage();
+                        die();
                     }
+
+                    $small_image = $cat_filename;
                 }
             }
+        }
 
         $product = Product::where(['product_id' => $product_id])->first();
         $product->product_name = $request->prodName;
@@ -1318,7 +1319,7 @@ class AdminController extends Controller
         $langText->lang = $request->dishLang;
         $langText->save();
 
-        $product_price_list = ProductPriceList::where(['product_id' => $product_id])->first();
+        $product_price_list = ProductPriceList::where(['id' => $price_id])->first();
         $product_price_list->store_id = $store_id;
         $product_price_list->text = "Price:" . $request->prodPrice . $request->currency;
         $product_price_list->price = $request->prodPrice;
