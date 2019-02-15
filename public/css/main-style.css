@@ -969,10 +969,41 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
 .hidden {
     display: none !important;
 }
-.cart_rowA{width:100%; text-align:left;}.cart_rowA td{width:100%;padding:0 0 5px 0; text-align:left!important}.cart_rowB{width:100%}.cart_rowB .colA, .cart_rowB .colB, .cart_rowB .colC{float:left; width:33%!important; padding:0}.cart_rowB .colA{text-align:left;}.cart_rowB .colB{text-align:center}.cart_rowB .colC{text-align:right}.cart_rowB div.qtySec{text-align:center; padding:0 0 20px 0}.orderNumImg img{width: 28px;}.dataSavebtn{float:right;}
+.cart_rowA{float:left; width:100%; text-align:left;}.cart_rowA td{width:100%;padding:0 0 5px 0; text-align:left!important}.cart_rowB{float:left;width:100%}.cart_rowB .colA, .cart_rowB .colB, .cart_rowB .colC{float:left; width:33%; padding:0}.cart_rowB .colA{text-align:left;}.cart_rowB .colB{text-align:center}.cart_rowB .colC{text-align:right}.cart_rowB div.qtySec{text-align:center; padding:0 0 20px 0}.orderNumImg img{width: 28px;}.dataSavebtn{float:right;}
+@media(max-width:320px){
+.custom_row1{float:left; width:100%;}
+.custom_row1 .cart_rowA{width: 100%; float: left; text-align:left;}
+.custom_row1 .cart_rowB{width: 100%; float: left;}
+.custom_row1 .cart_rowB .colA, .custom_row1 .cart_rowB .colC{width:32%}
+.custom_row1 .cart_rowB .colB{width:36%}
+.table-content{margin:0 0.5em}
+}
+@media(max-width:480px){
+.custom_row1{float:left; width:100%;}
+.custom_row1 .cart_rowA{width: 100%; float: left; text-align:left;}
+.custom_row1 .cart_rowB{width: 100%; float: left;}
+.custom_row1 .cart_rowB .colA, .custom_row1 .cart_rowB .colC{width:32%}
+.custom_row1 .cart_rowB .colB{width:36%}
+.table-content{margin:0 0.5em}
+}
+@media only screen and (min-width :481px) and (max-width :640px){
+.custom_row1{float:left; width:100%;}
+.custom_row1 .cart_rowA{width: 100%; float: left; text-align:left;}
+.custom_row1 .cart_rowB{width: 100%; float: left;}
+.custom_row1 .cart_rowB .colA, .custom_row1 .cart_rowB .colC{width:32%}
+.custom_row1 .cart_rowB .colB{width:36%}
+.table-content{margin:0 0.5em}
+}
 /*
-.ui-block-a.active img, .ui-block-b.active img, .ui-block-c.active img{
+.ui-block-a.active img, .ui-block-b.active img, .ui-block-c.active img, .ui-block-d.active img{
  -webkit-filter: opacity(1) drop-shadow(0 0 0 #1287d1);
   filter: opacity(1) drop-shadow(0 0 0 #1287d1);
-}
-*/
+  
+  -webkit-filter: brightness(100) invert(100);
+  filter: brightness(100) invert(100);
+}*/
+/*.ui-block-a.active img, .ui-block-b.active img, .ui-block-c.active img, .ui-block-d.active img{
+  -webkit-filter: hue-rotate(180deg);
+  filter: hue-rotate(180deg);
+}*/
+
