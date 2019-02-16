@@ -54,9 +54,6 @@
 @endsection
 
 @section('footer-script')
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyByLiizP2XW9JUAiD92x57u7lFvU3pS630&libraries=places&callback=initMap" async defer></script>
-    <script type="text/javascript" src="{{ asset('js/init.js').'?v='.$RAND_APP_VERSION }}"></script>
-
     <script type="text/javascript">
         /*$(function(){       
             // Check for Geolocation API permissions  
@@ -219,4 +216,6 @@
             }
         });
     </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyByLiizP2XW9JUAiD92x57u7lFvU3pS630&libraries=places&callback=initMap" async defer></script>
+    <script type="text/javascript" src="{{ asset('js/init.js').'?v='.$RAND_APP_VERSION }}"></script>
 @endsection
