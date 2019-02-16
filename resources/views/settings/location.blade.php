@@ -4,6 +4,9 @@
     #back_arw{
         width: 20px;
     }
+
+    .ui-btn-active.Settings{width:80px;margin:0 auto !important}
+    .done-btn.dataSave{width:40px;margin:0 auto !important; float: right;}
 </style>
 @endsection
 
@@ -20,8 +23,8 @@
                             <a href="{{url('user-setting')}}" data-ajax="false" id="back_arw" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a>
                         @endif
                     </li>
-                    <li><a data-ajax="false" class="ui-btn-active">{{ __('messages.Location') }}</a></li>
-                    <li class="done-btn" id="dataSave" onclick="dataSave();">
+                    <li><a data-ajax="false" class="ui-btn-active Settings">{{ __('messages.Location') }}</a></li>
+                    <li class="done-btn dataSave" id="dataSave" onclick="dataSave();">
                         <input type="button" value="{{ __('messages.Done') }}" />
                     </li>
                 </ul>
