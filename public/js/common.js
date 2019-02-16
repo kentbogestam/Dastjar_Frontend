@@ -4,7 +4,7 @@
  
 setInterval(function() {
     getCurrentCoordinates();
-}, 300000); // Check the position afer 20 min and reset the longitude and latitude
+}, 1200000); // Check the position afer 20 min and reset the longitude and latitude
 
 $(document).ready(function() {
     checkTimeAfterLocationSet();
@@ -99,7 +99,7 @@ function checkTimeAfterLocationSet(){
 
         var minutes =getDiffTimeStamp(date1,date2);
   
-        if (minutes > 5){
+        if (minutes > 10){
             //setCurrentCoordinates();
             unsetLocationCookieTime();
             return false;

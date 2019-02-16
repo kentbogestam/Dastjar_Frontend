@@ -284,6 +284,7 @@
           	// console.log(temp.length);
           	var liItem = "";
           	var aString = '';
+          	totallength = temp.length;
           	if(temp.length != 0){
           		totalCount = temp.length;
 
