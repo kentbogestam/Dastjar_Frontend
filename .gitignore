@@ -11,8 +11,4 @@ npm-debug.log
 yarn-error.log
 .env
 config/services.php
-<<<<<<< HEAD
 public/uploads/*
-=======
-public/uploads/*
->>>>>>> dastjar_anar_r1.1
