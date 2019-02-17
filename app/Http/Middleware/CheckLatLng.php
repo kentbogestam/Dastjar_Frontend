@@ -18,6 +18,7 @@ class CheckLatLng
         if($request->session()->get('with_out_login_lat') != null || $request->session()->get('with_login_lat') != null){
             return $next($request);
         }else{
+            
             return redirect()->route('home');
         }
     }

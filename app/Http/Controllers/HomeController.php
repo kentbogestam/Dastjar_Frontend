@@ -11,6 +11,7 @@ use App\Order;
 use App\Gdpr;
 use App\User;
 use Session;
+use Cookie;
 use DB;
 use Auth;
 use App\ProductPriceList;
@@ -19,6 +20,7 @@ use Carbon\Carbon;
 use App\App42\App42API;
 use Artisan;
 use Helper;
+use Illuminate\Support\Facades\Input;
 
 class HomeController extends Controller
 {
@@ -115,7 +117,6 @@ class HomeController extends Controller
         $helper = new Helper();
 
         if(Auth::check()){
-
             $request->session()->forget('current_date_time');
           
             $versionDetail = WebVersion::orderBy('created_at', 'DESC')->first();
@@ -130,15 +131,15 @@ class HomeController extends Controller
                 $todayDay = $pieces[0];
                 if($userDetail->range == null){
                     DB::table('customer')->where('id', Auth::id())->update([
-                                'range' => 7,
-                                'language' => 'ENG',
-                                'web_version' => $versionDetail->version,
-                                'browser' => $data['browserVersion'],
-                            ]);
+                        'range' => 7,
+                        'language' => 'ENG',
+                        'web_version' => $versionDetail->version,
+                        'browser' => $data['browserVersion'],
+                    ]);
                 }
             }
 
-            if($request->session()->get('updateThreeHundrMeterAfterLogin') == null && $request->session()->get('updateLocationBySettingAfterLogin') == null){
+            /*if($request->session()->get('updateThreeHundrMeterAfterLogin') == null && $request->session()->get('updateLocationBySettingAfterLogin') == null){
                                    
 
                 if(empty($data['lat'])){
@@ -175,8 +176,24 @@ class HomeController extends Controller
                 $lat = $request->session()->get('with_login_lat');
                 $lng = $request->session()->get('with_login_lng');
                 $request->session()->put('with_login_lat', $request->session()->get('with_login_lat')); 
+            }*/
+
+            // Get and update lat/lng
+            if( empty($data['lat']) || empty($data['lng']) )
+            {
+                $lat = Session::get('with_login_lat');
+                $lng = Session::get('with_login_lng');
+            }
+            else
+            {
+                $lat = $data['lat'];
+                $lng = $data['lng'];
             }
 
+            $request->session()->put('with_login_lat', $lat);
+            $request->session()->put('with_login_lng', $lng);
+
+            //
             if($userDetail->web_version != $versionDetail->version){
                 DB::table('customer')->where('id', Auth::id())->update(['web_version' => $versionDetail->version,]);
                 Auth::logout();
@@ -197,12 +214,16 @@ class HomeController extends Controller
             }catch(\Exception $ex){
                   $helper->logs("getListRestaurants " . $ex->getMessage());
             }
-                           
 
-            return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails]);
-            
+            // Check if restaurant found and send translated message
+            $restaurantStatusMsg = '';
+            if( $companydetails == '' || !count($companydetails) )
+            {
+                $restaurantStatusMsg = __('messages.noRestaurantFound');
+            }
+
+            return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg]);
         } else{
-
             if($request->session()->get('sessionBrowserLanguageValue') == null){
                 if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
                   $languages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
@@ -215,14 +236,14 @@ class HomeController extends Controller
                     Session::put('applocale', 'en');
                   }
                 }
+
                 $request->session()->put('browserLanguageWithOutLogin', $lang);
             }
 
             if(!empty($request->input())){
-
                 $data = $request->input();
 
-                if($request->session()->get('setLocationBySettingValue') == null){
+                /*if($request->session()->get('setLocationBySettingValue') == null){
                     $request->session()->put('with_out_login_lat', $data['lat']);
                     $request->session()->put('with_out_login_lng', $data['lng']);
                     $lat =  $data['lat'];
@@ -230,8 +251,24 @@ class HomeController extends Controller
                 }else{
                     $lat = $request->session()->get('with_out_login_lat');
                     $lng = $request->session()->get('with_out_login_lng');
+                }*/
+
+                // Get and update lat/lng
+                if( empty($data['lat']) || empty($data['lng']) )
+                {
+                    $lat = Session::get('with_out_login_lat');
+                    $lng = Session::get('with_out_login_lng');
+                }
+                else
+                {
+                    $lat = $data['lat'];
+                    $lng = $data['lng'];
                 }
 
+                $request->session()->put('with_out_login_lat', $lat);
+                $request->session()->put('with_out_login_lng', $lng);
+
+                //
                 $request->session()->put('current_date_time', $data['currentdateTime']);
                 $pieces = explode(" ", $request->session()->get('current_date_time'));
                 $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
@@ -244,9 +281,16 @@ class HomeController extends Controller
                     $request->session()->put('rang', $rang);
                 }
                 $companydetails = Store::getListRestaurants($lat,$lng,$rang,'1','3',$todayDate,$currentTime,$todayDay);
-
             }
-            return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails]);
+
+            // Check if restaurant found and send translated message
+            $restaurantStatusMsg = '';
+            if( $companydetails == '' || !count($companydetails) )
+            {
+                $restaurantStatusMsg = __('messages.noRestaurantFound');
+            }
+
+            return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg]);
         }
     }
 
@@ -254,10 +298,14 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         Artisan::call('view:clear');
+
+        // dd(Session::all());
        
-          $request->session()->put('route_url', url('/').'/eat-now'); // code added by saurabh to update correct url for eat-later and eat-now
+       if($request->session()->get('type_selection') == null){ //code added by saurabh to render the view for the selection of eat later nd eat now
+         return view('includes.popupSelection', compact(''));
+       }else{
 
-
+       $request->session()->put('route_url', url('/').'/eat-now'); // code added by saurabh to update correct url for eat-later and eat-now
         if(Auth::check()){
             $versionDetail = WebVersion::orderBy('created_at', 'DESC')->first();
             $userDetail = User::whereId(Auth()->id())->first();
@@ -275,6 +323,7 @@ class HomeController extends Controller
             return view('index', compact(''));
         }
     }
+}
 
     public function blankView(){
       return view('blankPage');    
@@ -353,11 +402,20 @@ class HomeController extends Controller
             } 
             $companydetails = Store::getEatLaterListRestaurants($lat,$lng,$rang,'2','3',$todayDate,$currentTime,$todayDay);
         }
+
+        // Check if restaurant found and send translated message
+        $restaurantStatusMsg = '';
+        if( $companydetails == '' || !count($companydetails) )
+        {
+            $restaurantStatusMsg = __('messages.noRestaurantFound');
+        }
         
-        return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails]); 
+        return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg]); 
     }
 
     public function eatLater(Request $request){
+
+       // if($request->session()->get('order_date') != null){
         $pieces = explode(" ", $request->session()->get('current_date_time'));
         $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
         $currentTime = $pieces[4];
@@ -366,9 +424,11 @@ class HomeController extends Controller
          $request->session()->put('route_url', url('/').'/eat-later'); // code added by saurabh to update correct url for eat-later and eat-now
 
         if(!empty($request->input())) {
+
             $data = $request->input();
             $request->session()->put('order_date', $data['dateorder']);
             return view('eat_later', compact(''));
+            
         } else {
             if(Auth::check()){
                 $userDetail = User::whereId(Auth()->id())->first();
@@ -461,6 +521,7 @@ class HomeController extends Controller
     }
 
     public function selectOrderDate(){
+        
         return view('select-datetime', compact('')); 
     }
 	
@@ -559,4 +620,46 @@ class HomeController extends Controller
         }
        
     }
+
+    /**
+     * Call from 'popupSelection' view when user select 'Eat Now/Eat Later' first time on app
+     * @param Request $request [description]
+     */
+    public function setRestarurantType(Request $request){
+        if(!empty($request->input())){
+            $data = $request->input();
+            
+            $request->session()->put('current_date_time', $data['currentdateTime']);
+            $request->session()->put('type_selection', "checked");
+            
+            if($data['restType']=="eatnow"){
+                $url= url("/");
+            }
+            else{
+                $url= url("/selectOrder-date");
+            }
+
+            return response()->json(['status' => 'success', 'response' => true,'data'=>$url]);
+        }
+    }
+
+
+    /**
+     * Print session and cookie
+     */
+    function prettySessionCookie(Request $request)
+    {
+        echo '<pre>Session<br>'; print_r(Session::all());
+        // echo '<pre>Cookie<br>'; print_r(Cookie::get());
+        
+        echo '<br>Cookie:<br>';
+        foreach($_COOKIE as $key => $value)
+        {
+            echo $key.' => '.$value.'<br>';
+        }
+    }
+
+
 }
+
+

@@ -157,12 +157,8 @@
 @section('content')
 
 <div data-role="header" data-position="fixed" data-tap-toggle="false" class="header">
-		<div class="logo_header">
-		<img src="{{asset('kitchenImages/logo-img.png')}}">
-		<a href = "{{ url('kitchen/logout') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">{{ __('messages.Logout') }}
-			</a>
-		</div>
-		<h3 class="ui-bar ui-bar-a order_background">{{ __('messages.Menu') }} <span>{{$storeName}}</span></h3>
+		@include('includes.kitchen-header-sticky-bar')
+		<h3 class="ui-bar ui-bar-a order_background"><span>{{$storeName}}</span></h3>
 	</div>
 	<div role="main" class="ui-content">
 		<div class="ready_notification">
@@ -289,6 +285,10 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 
 		@if(isset($store_id))
 		<input type="hidden" name="store_id" value="{{ $store_id or "" }}"/>
+		@endif
+
+		@if(isset($product_price_list->id))
+			<input type="hidden" name="price_id" value="{{ $product_price_list->id }}">
 		@endif
 
 		{{ csrf_field() }}

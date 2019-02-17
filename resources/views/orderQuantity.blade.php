@@ -3,19 +3,22 @@
 		<div class="ui-block-c">
 			<a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 				<div class="img-container">
-					<img src="{{asset('images/icons/select-store_05.png')}}">
+					<img src="{{asset('images/notification-2.png')}}">
 				</div>
-				<span>{{ __('messages.Orders') }}</span>
+				<!-- <span class="name-order">{{ __('messages.Orders') }}</span> -->
 			</a>
 		</div>
 	@else
 	<div class="ui-block-c order-active">
-    	<a href="javascript:void(0)" class="ui-shadow ui-corner-all icon-img ui-btn-inline ordersec" data-ajax="false">
-	        <div class="img-container">
-	        	<img src="{{asset('images/icons/select-store_05-active.png')}}">
+    	<a href="javascript:void(0)" class="ui-shadow ui-corner-all icon-img ui-btn-inline ordersec" data-ajax="false" onclick="orderPopup()">
+	        <div class="img-container orderNumImg">
+	        	<span class="order-number<?php echo !(count(Auth::user()->paidOrderList)) ? ' hidden' : ''; ?>">{{count(Auth::user()->paidOrderList)}}</span>
+	        	<img src="{{asset('images/notification-2.png')}}">
 	        </div>
-        	<span>{{ __('messages.Orders') }}<span class="order-number">{{count(Auth::user()->paidOrderList)}}</span></span>
+        	<!-- <span class="name-order">{{ __('messages.Orders') }}</span> -->
+
         </a>
+
         <div id="order-popup" data-theme="a">
 	      <ul data-role="listview">
 	      	@foreach(Auth::user()->paidOrderList as $order)
@@ -32,9 +35,9 @@
 <div class="ui-block-c">
 	<a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 		<div class="img-container">
-			<img src="{{asset('images/icons/select-store_05.png')}}">
+			<img src="{{asset('images/notification-2.png')}}">
 		</div>
-		<span>{{ __('messages.Orders') }}</span>
+		<!-- <span class="name-order">{{ __('messages.Orders') }}</span> -->
 	</a>
 </div>
 

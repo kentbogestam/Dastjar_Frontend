@@ -205,21 +205,14 @@
 	<?php
 		$placeholder = url('images/placeholder-image.png');
 	?>
-	<div data-role="header" class="header"  data-position="fixed" data-tap-toggle="false">
-		<div class="logo">
-			<div class="inner-logo">
-				<span class="rest-title">{{$storedetails->store_name}}</span>
-				@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
-			</div>
-		</div>
-		<a class="ui-btn-right map-btn user-link" href="{{url('search-store-map')}}" data-ajax="false"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
-	</div>
+@include('includes.headertemplate')
+
 	@if(count($menuTypes) == '0')
 	<div class="table-content">
 		<p>{{ __('messages.Menu is not available.') }}1 </p>
 	</div>
 	@endif
-	<form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('save-order') }}">
+   <form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('cart') }}">
 		{{ csrf_field() }}
 		<div role="main" data-role="main-content" class="content">
 			<div class="cat-list-sec single-restro-list-sec">
@@ -234,14 +227,15 @@
 							@foreach($menuDetails as $productDetail)
 								@foreach($productDetail->storeProduct as $menuDetail)
 									@if($menuType->dish_id == $menuDetail->dish_type)
-								<ul data-role="listview" data-inset="true" >
-									<li>
+								<ul data-role="listview" data-inset="true">
+									<li id="item{{$menuDetail->product_id}}">
 										<img src="{{$menuDetail->small_image}}" onerror="this.src='{{$placeholder}}'">
 													<div class="list-content">
 														<h2>{{$menuDetail->product_name}}</h2>
 													<div class="fulldiscription"><p>{{$menuDetail->product_description}}</p></div>
 													<p class="price">
-														{{$companydetails->currencies}} {{number_format((float)$productDetail->price, 2, '.', '')}}
+														{{number_format((float)$productDetail->price, 2, '.', '')}} 
+														{{$companydetails->currencies}} 
 													</p>
 													</div>
 												<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />
@@ -286,14 +280,15 @@
 							
 								@foreach($productDetail->storeProduct as $menuDetail)
 									@if($menuType->dish_id == $menuDetail->dish_type)
-										<ul data-role="listview" data-inset="true" >
-											<li>
+										<ul data-role="listview" data-inset="true">
+											<li id="item{{$menuDetail->product_id}}">
 													<img src="{{$menuDetail->small_image}}" onerror="this.src='{{$placeholder}}'">
 													<div class="list-content">
 														<h2>{{$menuDetail->product_name}}</h2>
 													<div class="fulldiscription"><p>{{$menuDetail->product_description}}</p></div>
 													<p class="price">
-														{{$companydetails->currencies}} {{number_format((float)$productDetail->price, 2, '.', '')}}
+														{{number_format((float)$productDetail->price, 2, '.', '')}} 
+														{{$companydetails->currencies}} 
 													</p>
 													</div>
 												<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />
@@ -354,28 +349,7 @@
 
         <input type="hidden" name="browser" id="browser" value="">
 
-		<div data-role="footer" class="footer" data-tap-toggle="false" data-position="fixed">
-			<div class="ui-grid-c inner-footer center">
-			<div class="ui-block-a"><a href="{{ Session::get('route_url')}}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-				<div class="img-container">
-					<img src="{{asset('images/icons/select-store_01.png')}}">
-				</div>
-				<span>{{ __('messages.Restaurant') }}</span>
-			</a></div>
-			<div class="ui-block-b">
-				<a href="#" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" id="menudataSave" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('images/icons/select-store_03.png')}}">
-					</div>
-					<input type="button" value="{{ __('messages.Send') }}" id="dataSave"/>
-				</a>
-			</div>
-			@include('orderQuantity')
-			<div class="ui-block-d"><a href="{{url('user-setting')}}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-				<div class="img-container"><img src="{{asset('images/icons/select-store_07.png')}}"></div>
-			</a></div>
-			</div>
-		</div>
+       @include('includes.fixedfooter')
 	</form>
 	
 	  <div class="pop_up">   
@@ -427,6 +401,7 @@
 
 	<script type="text/javascript">
 		var id;
+		var cntCartItems = 0;
 
 		$(".extra-btn a").click(function(){
 			id=$(this).attr('id');
@@ -498,6 +473,7 @@
 	}
 
 	$("body").on('click',".accept-btn", function(){
+
 		$.ajax({
 			url: "{{ url('accept-gdpr') }}", 
 			type: "POST",
@@ -505,10 +481,12 @@
 				"_token": "{{ csrf_token() }}"
 			},
 			success: function(result){
-				console.log(result);
+				//console.log(result);
     			if(result == 0){
+    				
 					off();
 				}else{
+
 					off();
 					$("#form").submit();
 				}
@@ -526,9 +504,9 @@
 		window.location.href = link;
 	}
 
-	$(".ordersec").click(function(){
+	/*$(".ordersec").click(function(){
 	    $("#order-popup").toggleClass("hide-popup");
-	 });
+	 });*/
 	
 	 $("body").on('click', ".submit_btn", function (e) {        
         // Remove any old one

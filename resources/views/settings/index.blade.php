@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('head-scripts')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
+
 
 <style>
 	.msg-lbl{
@@ -47,6 +47,8 @@
 	#language fieldset{
 		display: block;
 	}
+	.ui-btn-active.Settings{width:40px;margin:0 auto !important}
+	.done-btn.dataSave{width:40px;margin:0 auto !important; float: right;}
 </style>
 @endsection
 
@@ -58,9 +60,9 @@ adasd
 			<div data-role="navbar"> 
 				<ul> 
 			<li><a href="{{Session::get('route_url')}}" data-ajax="false" id="back_arw" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
-			 <li><a data-ajax="false" class="ui-btn-active">{{ __('messages.Settings') }}</a></li>
+			 <li><a data-ajax="false" class="ui-btn-active Settings">{{ __('messages.Settings') }}</a></li>
 
-			  <li class="done-btn" id="dataSave">  <input type="button" value="{{ __('messages.Done') }}" /></li> </ul>
+			  <li class="done-btn dataSave" id="dataSave">  <input type="button" value="{{ __('messages.Done') }}" /></li> </ul>
 			</div><!-- /navbar -->
 		</div>
 	</div>
@@ -199,9 +201,6 @@ adasd
 @endsection
 
 @section('footer-script')
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>	 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-
 
 	<script type="text/javascript">
 

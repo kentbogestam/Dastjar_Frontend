@@ -10,6 +10,7 @@ use DB;
 use App\Order;
 use App\OrderDetail;
 use App\Product;
+use App\DishType;
 use App\Store;
 use Carbon\Carbon;
 use Auth;
@@ -31,24 +32,49 @@ class KitchenController extends Controller
     }
 
    public function orderDetail($reCompanyId){
-        $orderDetailscustomer = Order::select('orders.*','customer.name as name')->where(['store_id' => $reCompanyId])->where('user_type','=','customer')->where('check_deliveryDate',Carbon::now()->toDateString())->where('orders.paid', '0')->whereNotIn('orders.online_paid', [2])->where('orders.cancel','!=', 1)->leftJoin('customer','orders.user_id','=','customer.id');
+        $orderDetailscustomer = Order::select('orders.*','customer.name as name')
+            ->where(['orders.store_id' => $reCompanyId])
+            ->where('user_type','=','customer')
+            ->where('check_deliveryDate',Carbon::now()->toDateString())
+            ->where('orders.paid', '0')
+            ->whereNotIn('orders.online_paid', [2])
+            ->where('orders.cancel','!=', 1)
+            ->leftJoin('customer','orders.user_id','=','customer.id');
 
-        // $orderDetails = Order::select('orders.*','user.fname as name')->where('orders.store_id', '=' ,$reCompanyId)->where('user_type','=','admin')->where('check_deliveryDate',Carbon::now()->toDateString())->where('orders.paid', '0')->whereNotIn('orders.online_paid', [2])->where('orders.cancel', '!=', 1)->leftJoin('user','orders.user_id','=','user.id');
-
-        $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;
+        $store = Store::select(['extra_prep_time', 'order_response'])->where('store_id', $reCompanyId)->first();
+        $extra_prep_time = $store->extra_prep_time;
         
         // $results = $orderDetailscustomer->union($orderDetails)->get();
 
         $results = $orderDetailscustomer->get();
 
-        return response()->json(['status' => 'success', 'response' => true, 'extra_prep_time' => $extra_prep_time, 'data'=>$results]);
+        // Get order items
+        $orderItems = array();
+        if($results)
+        {
+            $orderItems = OrderDetail::select('order_details.id', 'order_details.product_quality', 'order_details.product_description', 'product.product_name')
+                ->join('orders', 'orders.order_id', '=', 'order_details.order_id')
+                ->join('product', 'product.product_id', '=', 'order_details.product_id')
+                ->where(['orders.store_id' => $reCompanyId, 'user_type' => 'customer', 'check_deliveryDate' => Carbon::now()->toDateString(), 'orders.order_started' => '0', 'orders.paid' => '0'])
+                ->whereNotIn('orders.online_paid', [2])
+                ->where('orders.cancel','!=', 1)
+                ->get();
+        }
+
+        return response()->json(['status' => 'success', 'response' => true, 'store' => $store, 'extra_prep_time' => $extra_prep_time, 'data'=>$results, 'orderItems' => $orderItems]);
     }
     
+    /**
+     * Update order item as speak
+     * @param  [int] $id [description]
+     * @return [json]     [description]
+     */
     public function updateTextspeach($id){
         DB::table('order_details')->where('id', $id)->update([
-                    'is_speak' => 1,
-                ]);
-         return response()->json(['status' => 'success', 'response' => true,'data'=>$id]);
+            'is_speak' => 1,
+        ]);
+
+        return response()->json(['status' => 'success', 'response' => true,'data'=>$id]);
     }
 
     public function orderSpecificOrderDetail($orderId){
@@ -90,6 +116,21 @@ class KitchenController extends Controller
             $product->where('dish_type',$request->dish_type)->where('product_rank',1)->where('product_id','>',$request->product_id)->update(['product_rank' => $request->index+1]);
         
         return response()->json(['status' => 'success', 'response' => true,'data'=>"Rank Updated"]);
+    }
+
+    /**
+     * Update restaurant menu order to display
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function updateMenuRank(Request $request)
+    {
+        $dishType = new DishType();
+
+        $dishType->where('u_id', $request->u_id)->where('rank', $request->index)->update(['rank' => ($request->index+1)]);
+        $dishType->where('dish_id', $request->dish_id)->update(['rank' => $request->index]);
+
+        return response()->json(['status' => 'success', 'response' => true,'data' => "Rank Updated"]);
     }
 
 }

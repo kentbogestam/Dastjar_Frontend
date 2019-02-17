@@ -167,7 +167,7 @@ function registerDeviceWithApp42(token,type ){
 		</div>
 	</div>
 
-    <div data-role="footer" id="footer" data-position="fixed">
+    <!--<div data-role="footer" id="footer" data-position="fixed">
             <div class="ui-grid-c inner-footer center">
             <div class="ui-block-a"><a href="{{ Session::get('route_url')}}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
                 <div class="img-container">
@@ -192,7 +192,9 @@ function registerDeviceWithApp42(token,type ){
                 </a>
             </div>
             </div>
-    </div>
+    </div>-->
+
+    @include('includes.fixedfooter')
 @endsection
 
 @section('footer-script')

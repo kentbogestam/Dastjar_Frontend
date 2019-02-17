@@ -22,6 +22,7 @@ use DB;
 use App\Store;
 use App\OrderDetail;
 use App\Helper;
+use Session;
 
 
 class PushNotifactionController extends Controller
@@ -38,7 +39,7 @@ class PushNotifactionController extends Controller
     }
 
     public function readyNotifaction(Request $request, $orderID){
-        if(Order::where('customer_order_id', $orderID)->exists()){
+        if(Order::where(['customer_order_id' => $orderID, 'order_ready' => 1])->exists()){
             $orderDetail = Order::where('customer_order_id', $orderID)->first();
 
             if(!User::where('id', $orderDetail->user_id)->exists()){
@@ -47,6 +48,13 @@ class PushNotifactionController extends Controller
 
             $user = User::where('id', $orderDetail->user_id)->first();
             $companydetails = Store::where('store_id', $orderDetail->store_id)->first();
+
+            // Remove order from session 'recentOrderList' once its ready
+            if( Session::has('recentOrderList.'.$orderDetail->order_id) )
+            {
+                Session::forget('recentOrderList.'.$orderDetail->order_id);
+            }
+
             return view('order.alert-ready',compact('orderID','companydetails','user'));            
         }else{
             return redirect('home');
@@ -54,7 +62,7 @@ class PushNotifactionController extends Controller
     }
 
     public function orderDeliver(Request $request, $orderID){
-        $helper = new Helper();
+        /*$helper = new Helper();
         try {
         $helper->logs("Step 1: order id = " . $orderID);       
 
@@ -122,8 +130,13 @@ class PushNotifactionController extends Controller
         return redirect()->action('AdminController@index');
         } catch (Exception $e) {
             $helper->logs("Step 6: Exception = " .$ex->getMessage());            
-        }
+        }*/
 
+        DB::table('orders')->where('customer_order_id', $orderID)->update([
+            'paid' => 1,
+        ]);
+        
+        return redirect()->action('AdminController@index');
     }
 
     public function deliverNotifaction(Request $request, $orderID){
@@ -156,10 +169,8 @@ class PushNotifactionController extends Controller
             $userName = $userDetail->email;
 	
     	if($message == 'orderDeliver'){
-
+            $messageDelever = __('messages.notificationOrderDelivered', ['order_id' => $orderID]);
     		$url = env('APP_URL').'deliver-notification/'.$orderID;
-    		//$url = env('APP_URL').'/public/deliver-notification/'.$orderID;
-            $messageDelever = "Your Order ". $orderID . " Deliver";
             $message = "{'alert': " ."'". $messageDelever."'" . ",'_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': " ."'". $messageDelever."'" . ",'type':'openUrl','content':" ."'". $url."'" . "}}";
 
     		//$message = "{'alert':'Your Order Deliver.','badge':1,'sound':'default','Url':" ."'". $url."'" . "}";

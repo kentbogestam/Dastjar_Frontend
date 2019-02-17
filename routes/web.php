@@ -76,21 +76,24 @@
 	Route::get('lat-long', 'HomeController@userLatLong');
 	Route::get('checkUserLogin', 'HomeController@checkUserLogin');
 	Route::get('update-location', 'HomeController@updateLocation');
+    Route::get('setResttype','HomeController@setRestarurantType');
+	Route::get('user-setting', 'CustomerController@index');
+	Route::get('select-location', 'CustomerController@selectLocation');
+	Route::post('save-location', 'CustomerController@saveLocation');
+	Route::get('save-location', 'CustomerController@saveLocation');
+	Route::post('save-setting', 'CustomerController@saveSetting');
+	Route::post('store-device-token', 'CustomerController@storeDeviceToken');	
+	Route::post('store-device-token-order-view', 'CustomerController@storeDeviceTokenOrderView');	
 
-		Route::get('user-setting', 'CustomerController@index');
-		Route::get('select-location', 'CustomerController@selectLocation');
-		Route::post('save-location', 'CustomerController@saveLocation');
-		Route::get('save-location', 'CustomerController@saveLocation');
-		Route::post('save-setting', 'CustomerController@saveSetting');
-		Route::post('store-device-token', 'CustomerController@storeDeviceToken');	
-		Route::post('store-device-token-order-view', 'CustomerController@storeDeviceTokenOrderView');	
+	Route::get('restro-menu-list/{storeID}', 'HomeController@menuList');
 
-		Route::get('restro-menu-list/{storeID}', 'HomeController@menuList');
+	Route::get('search-store-map', 'MapController@searchStoreMap');
+	Route::get('404', 'HomeController@page_404')->name('page_404');
+   	Route::post('updateCart', 'OrderController@updateCart');
 
-		Route::get('search-store-map', 'MapController@searchStoreMap');
-		Route::get('404', 'HomeController@page_404')->name('page_404');
-	
-	Route::group(['middleware' => ['latlng']], function(){
+   	Route::get('pretty-session-cookie', 'HomeController@prettySessionCookie');
+
+    Route::group(['middleware' => ['latlng']], function(){
 		Route::get('search-map-eatnow', 'MapController@searchMapEatnow');
 		Route::get('eat-now', 'HomeController@index');
 		Route::resource('customer', 'CustomerController');
@@ -101,19 +104,28 @@
 		Route::get('eat-later-data', 'HomeController@eatLaterData');
 		Route::get('search-map-eatlater', 'MapController@searchMapEatlater');
 		Route::get('eat-later-map', 'HomeController@eatLaterMap');
-		Route::post('save-order', 'OrderController@saveOrder');
-		Route::get('save-order', 'OrderController@saveOrder');
 		Route::get('withOutLogin', 'OrderController@withOutLogin')->name('withOutLogin');
 		Route::get('checkDistance','DistanceController@checkDistance');
+		Route::post('cart', 'OrderController@cart');
+		Route::get('cart', 'OrderController@cartWithOutLogin')->name('cartWithOutLogin');
 	});
 
 	Route::group(['middleware' => ['auth']], function(){
 		Route::get('blank-view', 'HomeController@blankView');
 		Route::get('order-view/{OrderId}', 'OrderController@orderView')->name('order-view');
+		Route::get('check-if-order-accepted/{orderId}', 'OrderController@checkIfOrderAccepted');
+		Route::get('check-if-order-ready', 'OrderController@checkIfOrderReady');
 		Route::post('payment', 'PaymentController@payment');
 		Route::get('payment', 'PaymentController@payment');
 		Route::post('cancel-order', 'OrderController@cancelOrderPost');		
 		Route::get('cancel-order/{order_number}', 'OrderController@cancelOrder')->name('cancel-order');		
+		Route::post('save-order', 'OrderController@saveOrder');
+	    Route::get('save-order', 'OrderController@saveOrder');
+		
+	   
+	    Route::get('emptyCart', 'OrderController@emptyCart');
+		
+	   
 	});
 
 	Route::prefix('admin')->group(function(){
@@ -128,12 +140,31 @@
 		Route::get('store', 'AdminController@index');
 		Route::get('logout', 'Auth\AdminLoginController@logout');
 		Route::get('onReadyAjax/{OrderId}', 'AdminController@onReadyAjax');		
-		Route::get('kitchen-detail', 'AdminController@kitchenOrderDetail');
-		Route::get('catering', 'AdminController@cateringDetails');
-		Route::get('kitchen-order-onsite', 'AdminController@kitchenPreOrder');
+		
+		//
+		Route::group(['middleware' => 'isModuleSubscribed:kitchen'], function() {
+			Route::get('kitchen-detail', 'AdminController@kitchenOrderDetail');
+		});
+
+		//
+		Route::group(['middleware' => 'isModuleSubscribed:catering'], function() {
+			Route::get('catering', 'AdminController@cateringDetails');
+		});
+
+		//
+		Route::group(['middleware' => 'isModuleSubscribed:orderonsite'], function() {
+			Route::get('kitchen-order-onsite', 'AdminController@kitchenPreOrder');
+		});
+
 		Route::get('order-started/{OrderId}', 'AdminController@orderStarted');
 		Route::get('orderStartedKitchen/{OrderId}', 'AdminController@orderStartedKitchen');		
 		Route::get('order-readyKitchen/{OrderId}', 'AdminController@orderReadyKitchen');
+
+		Route::get('start-order/{id}', 'AdminController@startOrder');
+		Route::get('make-order-ready/{orderId}', 'AdminController@makeOrderReady');
+
+		Route::get('is-manual-prep-time-for-order/{orderId}', 'AdminController@isManualPrepTimeForOrder');
+		Route::post('add-manual-prep-time','AdminController@addManualPrepTime');
 		Route::post('kitchen-order-save','AdminController@kitchenOrderSave');
 		Route::get('kitchen-order-save','AdminController@kitchenOrderSave');
 		Route::get('selectOrder-dateKitchen', 'AdminController@selectOrderDateKitchen');
@@ -151,6 +182,8 @@
 		Route::post('payment', 'AdminController@payment');
 		Route::get('payment', 'AdminController@payment');
 		Route::get('menu', 'AdminController@kitchenMenu')->name('menu');
+		Route::post('ajax-get-product-by-dish-type', 'AdminController@ajaxGetProductByDishType');
+		Route::post('ajax-get-future-price-by-product', 'AdminController@ajaxGetFuturePriceByProduct');
 		Route::get('kitchen-orders', 'AdminController@kitchenOrders');
 		Route::get('kitchen-orders-new/{lastId}', 'AdminController@kitchenOrdersNew');
 		Route::get('create-menu', 'AdminController@kitchenCreateMenu')->name('create-menu');
@@ -162,9 +195,16 @@
 		Route::get('delete-menu-dish', 'AdminController@kitchenDeleteDish');	
 		Route::get('createStandardOffer', 'AdminController@createStandardOffer');			
 		Route::post('add-dish-price', 'AdminController@addDishPrice');	
+		Route::post('is-future-date-available', 'AdminController@isFutureDateAvailable');
 		Route::post('remove-order', 'AdminController@removeOrder');	
 		Route::get('kitchen-menu-new/{dishId}/{storeId}', 'AdminController@kitchenMenuNew');			
+		Route::post('update-order-detail-status', 'AdminController@updateOrderDetailStatus');
 
+		//
+		Route::get('check-store-subscription-plan', 'AdminController@checkStoreSubscriptionPlan');
+		Route::get('order-pay-manually/{order_id}', 'AdminController@orderPayManually');
+
+		Route::get('test-send-notifaction/{order_id}', 'AdminController@testSendNotifaction');
 	});
 
 

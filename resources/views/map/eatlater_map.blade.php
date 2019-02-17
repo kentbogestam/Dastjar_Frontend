@@ -15,27 +15,7 @@
 		<div id="map" class="map_container"></div>
 	</div>
 
-	<div data-role="footer" class="footer" data-position="fixed">
-		<div class="ui-grid-c inner-footer center">
-		<div class="ui-block-a"><a href = "{{ url('eat-later-map') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-			<div class="img-container">
-				<img src="{{asset('images/icons/select-store_01.png')}}">
-			</div>
-			<span>{{ __('messages.Restaurant') }}</span>
-		</a></div>
-		<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
-			<div class="img-container">
-				<img src="{{asset('images/icons/select-store_03.png')}}">
-			</div>
-			<span>{{ __('messages.Send') }}</span>
-		</a></div>
-		@include('orderQuantity')
-		<div class="ui-block-d"><a href = "{{url('user-setting')}}" data-ajax="false" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
-			<div class="img-container"><img src="{{asset('images/icons/select-store_07.png')}}"></div>
-		</a></div>
-		</div>
-	</div>
-	
+	{{-- @include('includes.fixedfooter') --}}
 
 @endsection
 
@@ -65,20 +45,6 @@
 	    map.setTilt(45);
 	
     	var markers = {!! $latLngList !!};
-	                        
-	    // Info Window Content
-	    /*var infoWindowContent = [
-	        ['<div class="info_content">' +
-	        '<h3>London Eye</h3>' +
-	        '<p>The London Eye is a giant Ferris wheel situated on the banks of the River Thames. The entire structure is 135 metres (443 ft) tall and the wheel has a diameter of 120 metres (394 ft).</p>' +        '</div>'],
-	        ['<div class="info_content">' +
-	        '<h3>Palace of Westminster</h3>' +
-	        '<p>The Palace of Westminster is the meeting place of the House of Commons and the House of Lords, the two houses of the Parliament of the United Kingdom. Commonly known as the Houses of Parliament after its tenants.</p>' +
-	        '</div>']
-	    ];*/
-	        
-	    // Display multiple markers on a map
-	    /*var infoWindow = new google.maps.InfoWindow(), marker, i;*/
 	    
 	    // Loop through our array of markers & place each one on the map  
 	    for( i = 0; i < markers.length; i++ ) {
@@ -128,8 +94,8 @@
 		google.maps.event.addDomListener(window, 'load', initialize);
 
 
-		$(".ordersec").click(function(){
+		/*$(".ordersec").click(function(){
 		    $("#order-popup").toggleClass("hide-popup");
-		 });
+		 });*/
 </script>
 @endsection

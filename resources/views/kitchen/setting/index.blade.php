@@ -70,11 +70,7 @@ textarea.ui-input-text{
 @section('content')
 <div class="setting-page" data-role="page" data-theme="c">
 	<div data-role="header"  data-position="fixed" data-tap-toggle="false" class="header">
-		<div class="logo_header">
-			<img src="{{asset('kitchenImages/logo-img.png')}}">
-			<a href = "{{ url('kitchen/logout') }}"  class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">{{ __('messages.Logout') }}
-			</a>
-		</div>
+		@include('includes.kitchen-header-sticky-bar')
 		<div class="order_background setting_head_container">
 			<div class="ui-grid-b center">
 				<div class="ui-block-a">
@@ -139,6 +135,24 @@ textarea.ui-input-text{
 				        <input type="radio" name="text_speech" id="radio-choice-v-2e" value="1" @if(Auth::guard('admin')->user()->text_speech == 1) checked="checked" @endif>
 				        <label for="radio-choice-v-2e">On</label>
 				    </fieldset>
+				</li>
+				<li data-role="collapsible" class="range-sec">
+					<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">
+						{{ __("messages.orderResponse") }}
+						<span>
+							@if(!$store->order_response)
+								Manual
+							@else
+								Automatic
+							@endif
+						</span>
+					</h2>
+					<fieldset data-role="controlgroup">
+						<input type="radio" name="order_response" id="order-response-manual" value="0" @if($store->order_response == 0) checked="checked" @endif>
+				        <label for="order-response-manual">Manual</label>
+				        <input type="radio" name="order_response" id="order-response-automatic" value="1" @if($store->order_response == 1) checked="checked" @endif>
+				        <label for="order-response-automatic">Automatic</label>
+					</fieldset>
 				</li>
 				</form>
 

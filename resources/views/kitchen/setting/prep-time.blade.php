@@ -78,11 +78,7 @@
 @section('content')
 <div class="setting-page" data-role="page" data-theme="c">
 	<div data-role="header"  data-position="fixed" data-tap-toggle="false" class="header">
-		<div class="logo_header">
-			<img src="{{asset('kitchenImages/logo-img.png')}}">
-			<a href = "{{ url('kitchen/logout') }}"  class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">{{ __('messages.Logout') }}
-			</a>
-		</div>
+		@include('includes.kitchen-header-sticky-bar')
 		<div class="order_background setting_head_container">
 			<div class="ui-grid-b center">
 				<div class="ui-block-a">

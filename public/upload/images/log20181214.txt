@@ -1,0 +1,2 @@
+2018-12-14 12:29:28 - device id eqx-D647vmg:APA91bH1myZHCQNgxGV16-RYIN9I2dDWNpIIqqvN1FQo0iHR-gbdqFS5VudtBB0bLA5RrRdRhRk_tcVEacrdl0bv1DN2ixRfbj2ksKi9rVP0aoQkwvuF0hcOsdhxZBteBRv7LPAYfD4A exist  
+2018-12-14 13:01:50 - device id eqx-D647vmg:APA91bH1myZHCQNgxGV16-RYIN9I2dDWNpIIqqvN1FQo0iHR-gbdqFS5VudtBB0bLA5RrRdRhRk_tcVEacrdl0bv1DN2ixRfbj2ksKi9rVP0aoQkwvuF0hcOsdhxZBteBRv7LPAYfD4A exist  

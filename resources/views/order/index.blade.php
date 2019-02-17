@@ -242,107 +242,109 @@
 		}
 	</style>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.5.1/fingerprint2.min.js"></script>
-<script src="{{asset('notifactionJs/App42-all-3.1.min.js')}}"></script>
-<script src="{{asset('notifactionJs/SiteTwo.js')}}"></script> 
-<script src="{{asset('notifactionJs/serviceWorker.js')}}"></script> 
+	@if(Request::server('HTTP_REFERER'))
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.5.1/fingerprint2.min.js"></script>
+		<script src="{{asset('notifactionJs/App42-all-3.1.min.js')}}"></script>
+		<script src="{{asset('notifactionJs/SiteTwo.js')}}"></script> 
+		<script src="{{asset('notifactionJs/serviceWorker.js')}}"></script>
 
-<script>
-	  $(document).ready(function () {
-	      // App42.setEventBaseUrl("https://analytics.shephertz.com/cloud/1.0/");
-	      // App42.setBaseUrl("https://api.shephertz.com/cloud/1.0/");
+		<script>
+			  $(document).ready(function () {
+			      // App42.setEventBaseUrl("https://analytics.shephertz.com/cloud/1.0/");
+			      // App42.setBaseUrl("https://api.shephertz.com/cloud/1.0/");
 
-	      // App42.initialize(API_KEY,SECERT_KEY);
-	      // App42.enableEventService(true);
-	      // var userName,device_token;
-	      // new Fingerprint2().get(function(result, components){
-	      //     userName = "{{ Auth::user()->email}}";
-	      //     console.log("Username : " + userName); //a hash, representing your device fingerprint
-	      //     App42.setLoggedInUser(userName);
-	      //    /// getDeviceToken();
-	      // });
-	  });
-</script>
+			      // App42.initialize(API_KEY,SECERT_KEY);
+			      // App42.enableEventService(true);
+			      // var userName,device_token;
+			      // new Fingerprint2().get(function(result, components){
+			      //     userName = "{{ Auth::user()->email}}";
+			      //     console.log("Username : " + userName); //a hash, representing your device fingerprint
+			      //     App42.setLoggedInUser(userName);
+			      //    /// getDeviceToken();
+			      // });
+			  });
+		</script>
 
-<script src="{{asset('notifactionJs/newNotifaction/App42.js')}}"></script>
-<script src="{{asset('notifactionJs/newNotifaction/jQuery.js')}}"></script>
-<script src="{{asset('notifactionJs/newNotifaction/browser.js')}}"></script>
-<script type="text/javascript">
-'use strict';
-var API_KEY = "{{env('APP42_API_KEY')}}";
-var SECERT_KEY = "{{env('APP42_API_SECRET')}}";
+		<script src="{{asset('notifactionJs/newNotifaction/App42.js')}}"></script>
+		<script src="{{asset('notifactionJs/newNotifaction/jQuery.js')}}"></script>
+		<script src="{{asset('notifactionJs/newNotifaction/browser.js')}}"></script>
+		<script type="text/javascript">
+		'use strict';
+		var API_KEY = "{{env('APP42_API_KEY')}}";
+		var SECERT_KEY = "{{env('APP42_API_SECRET')}}";
 
-var userName = "{{ Auth::user()->email}}";
-if ('serviceWorker' in navigator) {
-  var type = jQuery.browser.name;
-  var jsAddress = "{{asset('notifactionJs/chrome-worker.js')}}";
+		var userName = "{{ Auth::user()->email}}";
+		if ('serviceWorker' in navigator) {
+		  var type = jQuery.browser.name;
+		  var jsAddress = "{{asset('notifactionJs/chrome-worker.js')}}";
 
-  if(type== "Firefox"){
-      jsAddress = "{{asset('notifactionJs/firefox-worker.js')}}";
-  }
+		  if(type== "Firefox"){
+		      jsAddress = "{{asset('notifactionJs/firefox-worker.js')}}";
+		  }
 
-  navigator.serviceWorker.register(jsAddress).then(function(reg) {
-     reg.pushManager.getSubscription().then(function(sub) {  
-    var regID ;
-      if (sub === null) {
-        reg.pushManager.subscribe({userVisibleOnly: true}).then(function(sub) {
-            regID = sub.endpoint
-                if(type=="Chrome"){
-                    var idD = regID.substring(regID.indexOf("d/")+1);
-                    regID =  idD.substring(idD.indexOf("/")+1);
-                }else if(type=="Firefox" || type=="Safari"){
-                    var idD = regID.substring(regID.indexOf("v1/")+ 1);
-                    regID = sub.endpoint.replace(/ /g,'')
-                }
+		  navigator.serviceWorker.register(jsAddress).then(function(reg) {
+		     reg.pushManager.getSubscription().then(function(sub) {  
+		    var regID ;
+		      if (sub === null) {
+		        reg.pushManager.subscribe({userVisibleOnly: true}).then(function(sub) {
+		            regID = sub.endpoint
+		                if(type=="Chrome"){
+		                    var idD = regID.substring(regID.indexOf("d/")+1);
+		                    regID =  idD.substring(idD.indexOf("/")+1);
+		                }else if(type=="Firefox" || type=="Safari"){
+		                    var idD = regID.substring(regID.indexOf("v1/")+ 1);
+		                    regID = sub.endpoint.replace(/ /g,'')
+		                }
 
 
-        	$.post("{{url('store-device-token-order-view')}}", {_token: "{{ csrf_token() }}", email: "{{ Auth::user()->email}}", deviceToken: regID}, 
-                        function(data, status){
-                        console.log(data);
-            });
-                registerDeviceWithApp42(regID,type.toUpperCase())   
-          }).catch(function(e) {
-            // Handle Exception here
-            console.log(e.message);
-          });
-      } else {
-       regID = sub.endpoint
-        if(type=="Chrome"){
-            var idD = regID.substring(regID.indexOf("d/")+1);
-            regID =  idD.substring(idD.indexOf("/")+1);
-        }else if(type=="Firefox" || type=="Safari"){
-            var idD = regID.substring(regID.indexOf("v1/")+ 1);
-            regID = sub.endpoint.replace(/ /g,'')
-        }
+		        	$.post("{{url('store-device-token-order-view')}}", {_token: "{{ csrf_token() }}", email: "{{ Auth::user()->email}}", deviceToken: regID}, 
+		                        function(data, status){
+		                        console.log(data);
+		            });
+		                registerDeviceWithApp42(regID,type.toUpperCase())   
+		          }).catch(function(e) {
+		            // Handle Exception here
+		            console.log(e.message);
+		          });
+		      } else {
+		       regID = sub.endpoint
+		        if(type=="Chrome"){
+		            var idD = regID.substring(regID.indexOf("d/")+1);
+		            regID =  idD.substring(idD.indexOf("/")+1);
+		        }else if(type=="Firefox" || type=="Safari"){
+		            var idD = regID.substring(regID.indexOf("v1/")+ 1);
+		            regID = sub.endpoint.replace(/ /g,'')
+		        }
 
-        	$.post("{{url('store-device-token')}}", {_token: "{{ csrf_token() }}", email: "{{ Auth::user()->email}}", deviceToken: regID}, 
-                        function(data, status){
-                       console.log(data);
-            });
-        registerDeviceWithApp42(regID,type.toUpperCase())   
-      }
-    });
-  })
-   .catch(function(err) {
-    console.log('Service Worker registration failed: ');
-  });
-}
+		        	$.post("{{url('store-device-token')}}", {_token: "{{ csrf_token() }}", email: "{{ Auth::user()->email}}", deviceToken: regID}, 
+		                        function(data, status){
+		                       console.log(data);
+		            });
+		        registerDeviceWithApp42(regID,type.toUpperCase())   
+		      }
+		    });
+		  })
+		   .catch(function(err) {
+		    console.log('Service Worker registration failed: ');
+		  });
+		}
 
-function registerDeviceWithApp42(token,type ){
-    var pushNotificationService  = new App42Push();
-    App42.initialize(API_KEY, SECERT_KEY);
-    pushNotificationService.storeDeviceToken(userName,token,type,{  
-        success: function(object) 
-        {  
-            // window.close();
-        },
-        error: function(error) {  
-            window.close();
-        }  
-    });  
-}
-</script>
-@endsection      
+		function registerDeviceWithApp42(token,type ){
+		    var pushNotificationService  = new App42Push();
+		    App42.initialize(API_KEY, SECERT_KEY);
+		    pushNotificationService.storeDeviceToken(userName,token,type,{  
+		        success: function(object) 
+		        {  
+		            // window.close();
+		        },
+		        error: function(error) {  
+		            window.close();
+		        }  
+		    });  
+		}
+		</script>
+	@endif
+@endsection
 
 @section('content')
 	<div data-role="header" class="header" id="nav-header"  data-position="fixed">
@@ -369,31 +371,42 @@ function registerDeviceWithApp42(token,type ){
 			    </div>
 			@endif
 			<div class="wait-bg-img">
-				<div class="text-content">
-					<p>{{ __('messages.Thanks for your order') }} </p>
-					<p>{{ __('messages.Order Number') }} </p>
-					<p class="large-text">{{$order->customer_order_id}}</p>
-					<p>({{$order->store_name}})</p>
-					<p>
-						<?php
-							$time = $order->order_delivery_time;
-							$time2 = $storeDetail->extra_prep_time;
-							$secs = strtotime($time2)-strtotime("00:00:00");
-							$result = date("H:i:s",strtotime($time)+$secs);
-						?>
-
-						@if($order->order_type == 'eat_later')
-						{{ __('messages.Your order will be ready on') }}
-						{{$order->deliver_date}}
-						{{date_format(date_create($order->deliver_time), 'G:i')}} 
-						@else
-						{{ __('messages.Your order will be ready in about') }}
-							@if(date_format(date_create($result), 'H')!="00")
-							{{date_format(date_create($result), 'H')}} hours 						
-							@endif
-						{{date_format(date_create($result), 'i')}} mins
+				<div class="text-content order-confirmation-block">
+					@if($order->order_accepted)
+						<p>{{ __('messages.Thanks for your order') }} </p>
+						<p>{{ __('messages.Order Number') }} </p>
+						<p class="large-text">{{$order->customer_order_id}}</p>
+						<p>({{$order->store_name}})</p>
+						@if( is_numeric($storeDetail->phone) )
+							<p><i class="fa fa-phone" aria-hidden="true"></i> <span>{{ $storeDetail->phone }}</span></p>
 						@endif
-					</p>
+						<p>
+							<?php
+								$time = $order->order_delivery_time;
+								$time2 = $storeDetail->extra_prep_time;
+								$secs = strtotime($time2)-strtotime("00:00:00");
+								$result = date("H:i:s",strtotime($time)+$secs);
+							?>
+
+							@if($order->order_type == 'eat_later')
+								{{ __('messages.Your order will be ready on') }}
+								{{$order->deliver_date}}
+								{{date_format(date_create($order->deliver_time), 'G:i')}} 
+							@else
+								{{ __('messages.Your order will be ready in about') }}
+								@if(!$storeDetail->order_response && $order->extra_prep_time)
+									{{ $order->extra_prep_time }} mins
+								@else
+									@if(date_format(date_create($result), 'H')!="00")
+										{{date_format(date_create($result), 'H')}} hours 						
+									@endif
+									{{date_format(date_create($result), 'i')}} mins
+								@endif
+							@endif
+						</p>
+					@else
+						<p>{{ __('messages.waitForOrderConfirmation') }} </p>
+					@endif
 				</div>
 			</div>
 			<div class="table-content">
@@ -401,11 +414,12 @@ function registerDeviceWithApp42(token,type ){
 				<table data-role="table" id="table-custom-2" data-mode="" class="ui-body-d ui-shadow table-stripe ui-responsive">
 					@foreach($orderDetails as $orderDetail)
 						<tr>
-							<td>{{$orderDetail->product_name}}	</td><td>{{$orderDetail->product_quality}} x {{$orderDetail->price}}</td><td>{{$order->currencies}} {{$orderDetail->product_quality*$orderDetail->price}}</td>
-						</tr>	
+							<td>{{$orderDetail->product_name}}	</td>
+							<td>{{$orderDetail->product_quality}} x {{$orderDetail->price}}</td>
+							<td>{{$orderDetail->product_quality*$orderDetail->price}}  {{$order->currencies}}</td>
+						</tr>
 					@endforeach
-				<tr class="last-row">	<td> </td><td>         </td><td>  TOTAL:-    {{$order->currencies}} {{$order->order_total}}</td></tr>
-				</tr>
+					<tr class="last-row">	<td> </td><td>         </td><td>  TOTAL {{$order->order_total}} {{$order->currencies}} </td></tr>
 				</table>
 			</div>
 
@@ -418,26 +432,7 @@ function registerDeviceWithApp42(token,type ){
 		</div>
 	</div>
 	
-	<div data-role="footer" class="footer" data-position="fixed">
-		<div class="ui-grid-c inner-footer center">
-		<div class="ui-block-a"><a href="{{ Session::get('route_url') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-			<div class="img-container">
-				<img src="{{asset('images/icons/select-store_01.png')}}">
-			</div>
-			<span>{{ __('messages.Restaurant') }}</span>
-		</a></div>
-		<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-			<div class="img-container">
-				<img src="{{asset('images/icons/select-store_03.png')}}">
-			</div>
-			<span>{{ __('messages.Send') }}</span>
-		</a></div>
-		@include('orderQuantity')
-		<div class="ui-block-d"><a href="{{url('user-setting')}}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-			<div class="img-container"><img src="{{asset('images/icons/select-store_07.png')}}"></div>
-		</a></div>
-		</div>
-	</div>
+	@include('includes.fixedfooter')
 
 <div class="pop_up">   
 		<div class="pop_up_inner">   
@@ -718,9 +713,9 @@ function registerDeviceWithApp42(token,type ){
 		$("#select-native-5-button").find("span").html($( "#select-native-5 option:selected" ).text());
 	});
 
-	 $(".ordersec").click(function(){
+	 /*$(".ordersec").click(function(){
 	    $("#order-popup").toggleClass("hide-popup");
-	 });
+	 });*/
 
 	 $(".cancel-order-btn").click(function(){
 		$('#overlay').show();
@@ -736,6 +731,23 @@ function registerDeviceWithApp42(token,type ){
 		$(".pop_up").hide();
 		$('#overlay').hide();
 	}
+
+	@if(!$order->order_accepted)
+		var intervalCheckIfOrderAccepted = null;
+
+		// If 'order response' set to manual for store and order not accepted, check for order accepted
+		var checkIfOrderAccepted = function() {
+			$.get('{{ url('check-if-order-accepted').'/'.$order->order_id }}', function(result) {
+				if(result.status)
+				{
+					$('.order-confirmation-block').html(result.responseStr);
+					clearInterval(intervalCheckIfOrderAccepted);
+				}
+			});
+		}
+
+		intervalCheckIfOrderAccepted = setInterval(checkIfOrderAccepted, 5000);
+	@endif
 </script>
 
 @endsection

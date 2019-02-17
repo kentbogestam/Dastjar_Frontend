@@ -127,7 +127,6 @@
 @stop
 
 @section('content')
-
 	<div data-role="header" class="header"  data-position="fixed" data-tap-toggle="false">
 		<div class="logo">
 			<div class="inner-logo">
@@ -164,28 +163,7 @@
 			</div>
 		</div>
 
-
-
-		<div data-role="footer" class="footer" data-tap-toggle="false" data-position="fixed">
-			<div class="ui-grid-c inner-footer center">
-			<div class="ui-block-a"><a href="{{Session::get('route_url')}}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-				<div class="img-container">
-					<img src="{{asset('images/icons/select-store_01.png')}}">
-				</div>
-				<span>{{ __('messages.Restaurant') }}</span>
-			</a></div>
-			<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-				<div class="img-container" id = "menudataSave">
-					<img src="{{asset('images/icons/select-store_03.png')}}">
-				</div>
-				<input type="button" value="{{ __('messages.Send') }}" id="dataSave"/>
-			</a></div>
-			@include('orderQuantity')
-			<div class="ui-block-d"><a href="{{url('user-setting')}}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-				<div class="img-container"><img src="{{asset('images/icons/select-store_07.png')}}"></div>
-			</a></div>
-			</div>
-		</div>
+      @include('includes.fixedfooter')
 	</form>
 	
 	<div class="pop_up">   
@@ -301,9 +279,9 @@
 		window.location.href = link;
 	}
 
-	$(".ordersec").click(function(){
+	/*$(".ordersec").click(function(){
 	    $("#order-popup").toggleClass("hide-popup");
-	 });
+	 });*/
 	
 </script>
 @endsection

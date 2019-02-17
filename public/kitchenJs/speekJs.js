@@ -43,14 +43,14 @@ function speak(arg){
     if (arg !== '') {
     var utterThis = new SpeechSynthesisUtterance(arg);
     utterThis.onend = function (event) {
-        console.log('SpeechSynthesisUtterance.onend');
+        // console.log('SpeechSynthesisUtterance.onend');
     }
     utterThis.onerror = function (event) {
         console.error('SpeechSynthesisUtterance.onerror');
     }
     //var selectedOption = 'icelandic';
     var selectedOption = 'swahili-test';
-    console.log('selectedOption='+selectedOption);
+    // console.log('selectedOption='+selectedOption);
     for(i = 0; i < voices.length ; i++) {
       if(voices[i].name === selectedOption) {
         utterThis.voice = voices[i];
@@ -71,7 +71,7 @@ function speak(arg){
 // }
 
 function test(test){
-  console.log(test);
+  // console.log(test);
   speak(test);
   return true;
 

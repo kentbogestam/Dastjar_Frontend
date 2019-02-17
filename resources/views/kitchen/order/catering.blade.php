@@ -104,12 +104,8 @@
 @section('content')
 
 <div data-role="header" data-position="fixed" data-tap-toggle="false" class="header">
-		<div class="logo_header">
-			<img src="{{asset('kitchenImages/logo-img.png')}}">
-			<a  href = "{{ url('kitchen/logout') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">{{ __('messages.Logout') }}
-			</a>
-		</div>
-		<h3 class="ui-bar ui-bar-a order_background">{{ __('messages.Catering') }} <span>{{$storeName}}</span></h3>
+		@include('includes.kitchen-header-sticky-bar')
+		<h3 class="ui-bar ui-bar-a order_background"><span>{{$storeName}}</span></h3>
 	</div>
 	<div role="main" class="ui-content">
 		<div class="ready_notification">
@@ -136,71 +132,26 @@
 		    </tbody>
 		</table>
 	</div>
-	<div data-role="footer" data-position="fixed" data-tap-toggle="false" class="footer_container">
-		<div class="ui-grid-a center">
-			<div class="ui-block-a left-side_menu">
-				<div class="ui-block-a active"><a  href="{{ url('kitchen/store') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-1.png')}}">
-					</div>
-					<span>{{ __('messages.Orders') }}</span>
-				</a></div>
-				<div class="ui-block-b"><a href = "{{ url('kitchen/kitchen-detail') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-2.png')}}">
-					</div>
-					<span>{{ __('messages.Kitchen') }}</span>
-				</a></div>
-				<div class="ui-block-b block_div active">
-					<a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-3.png')}}">
-					</div>
-					<span>{{ __('messages.Catering') }}</span>
-					</a>
-				</div>
-			</div>
-			<div class="ui-block-b right-side_menu">
-			
-			
-				<div class="ui-block-a drop_down"><a href = "{{ url('kitchen/kitchen-setting') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-6.png')}}">
-					</div>
-				</a></div>
-				
-				<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" href="{{ url('kitchen/menu') }}">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-7.png')}}">
-					</div>
-					<span>{{ __('messages.Menu') }}</span>
-				</a></div>
-				<div class="ui-block-c"><a href = "{{ url('kitchen/kitchen-order-onsite') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-4.png')}}">
-					</div>
-					<span>{{ __('messages.Order Onsite') }}</span>
-				</a></div>
-			</div>
-		</div>
-	</div>
+	
+	@include('includes.kitchen-footer-menu')
+
 	<?php 
 		$lan = "eng";
 	?>
 
-							@if(Auth::check())
-								@if(Auth::user()->language != 'ENG')
-								<?php 
-									$lan = "swe";
-								?>
-								@endif
-							@else
-								@if(Session::get('browserLanguageWithOutLogin') != 'ENG')
-								<?php 
-									$lan = "swe";
-								?>
-								@endif
-							@endif
+	@if(Auth::check())
+		@if(Auth::user()->language != 'ENG')
+		<?php 
+			$lan = "swe";
+		?>
+		@endif
+	@else
+		@if(Session::get('browserLanguageWithOutLogin') != 'ENG')
+		<?php 
+			$lan = "swe";
+		?>
+		@endif
+	@endif
 
 	<div id="dialog-confirm" title="Delete Account">
 		@if($lan == "eng")
@@ -264,11 +215,24 @@
 						}
 		        ]
 				
-			}); 
+			});
+		}
 
-				
+		// If order is new then it update the order status
+		function updateOrderDetailStatus(This, id) {
+			$this = $(This);
 
+			if($this.hasClass('new'))
+			{
+				$.post("{{url('kitchen/update-order-detail-status')}}",
+					{"_token": "{{ csrf_token() }}", "id": id},
+					function(returnedData){
+						$this.removeClass('new');
+						$this.removeAttr('onclick');
+					}
+				);
 			}
+		}
 
 		$(function(){
 			
@@ -297,7 +261,17 @@
 		          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
 		          		var orderCreate = orderCreateTime(temp[i]["created_at"]);
 		          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
-		          		liItem += "<tr class='order_id_"+temp[i]["order_id"]+"'>";
+		          		
+		          		// Add new class on tr if order added recently
+		          		if(temp[i]['is_new'])
+		          		{
+		          			liItem += "<tr class='order_id_"+temp[i]["order_id"]+" new' onclick='updateOrderDetailStatus(this, "+temp[i]['id']+")'>";
+		          		}
+		          		else
+		          		{
+		          			liItem += "<tr class='order_id_"+temp[i]["order_id"]+"'>";
+		          		}
+		          		
 		          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 		          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
 		          		liItem += "<td>"+temp[i]["product_name"]+"</td>";
@@ -347,7 +321,18 @@
 		          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
 		          		var orderCreate = orderCreateTime(temp[i]["created_at"]);
 		          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
-		          		liItem += "<tr class='order_id_"+temp[i]["order_id"]+"'>";
+		          		var isNew = temp[i]['is_new'] ? ' new' : '';
+
+		          		// Add new class on tr if order added recently
+		          		if(temp[i]['is_new'])
+		          		{
+		          			liItem += "<tr class='order_id_"+temp[i]["order_id"]+" new' onclick='updateOrderDetailStatus(this, "+temp[i]['id']+")'>";
+		          		}
+		          		else
+		          		{
+		          			liItem += "<tr class='order_id_"+temp[i]["order_id"]+"'>";
+		          		}
+		          		
 		          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 		          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
 		          		liItem += "<td>"+temp[i]["product_name"]+"</td>";

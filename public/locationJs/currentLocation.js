@@ -3,39 +3,29 @@ var lat;
 var lng;
 
 $(document).ready(function($) {
-var options = {
-  enableHighAccuracy: true,
-  timeout: 5000,
-  maximumAge: 0
-};
+	var options = {
+		enableHighAccuracy: true,
+		timeout: 5000,
+		maximumAge: 0
+	};
 
-setInterval(function(){getLocation()},10000);
+//
+// setInterval(function(){getLocation()},10000);
+setTimeout(getLocation, 0);
 
-//get location
+// Geolocation API is used to locate a user's position.
 function getLocation() {
-	
     if (navigator.geolocation) 
 	{
-        navigator.geolocation.getCurrentPosition(showPosition, showError,options);
-        var flag=checkTimeAfterLocationSet();
-
-        if(flag==false){
-         //alert("Setting location as per distance paramater");
-        // setCurrentCoordinates();
-         setDistanceParmeter();
-
-         
-       }else{
-
-       	console.log("location set nothing to to do with distance calculation");
-       }
+		navigator.geolocation.watchPosition(showPosition, showError, options);
     } 
 	else 
-	{ 
-	   setMyCookie('showError','Geolocation is not supported by this browser.', 7);
-	   console.log('NOT SUPPORT');
+	{
+	   	setMyCookie('showError','Geolocation is not supported by this browser.', 7);
+	   	console.log('NOT SUPPORT');
     }
 }
+
 //get postion
 function showPosition(position) {
 
@@ -45,7 +35,17 @@ function showPosition(position) {
    // geo set location 
 	//checkDistance(position.coords.latitude,position.coords.longitude);
 	console.log('ACCEPTTED');
+
+	var flag=checkTimeAfterLocationSet();
+
+	if(flag==false){
+		setDistanceParmeter();
+	}else{
+		console.log("location set nothing to to do with distance calculation");
+		//alert(flag);
+	}
 }
+
 //error throw position
 function showError(error) {
 	var error = '';
@@ -67,79 +67,55 @@ function showError(error) {
 	setMyCookie('showError',error, 7);
 }
 
-function setDistanceParmeter(){
+// Update distance while move either to get restaurant list or to update map
+function setDistanceParmeter()
+{
+	/* Testing Data
 
-/* Testing Data
+	var lat1="28.580830";
+	var lon1="77.077720";
 
-		var lat1="28.580830";
-		var lon1="77.077720";
+	var lat2="28.585560";
+	var lon2="77.074809";
 
-		var lat2="28.585560";
-		var lon2="77.074809";
+	end of testing data*/
 
-		end of testing data*/
+	var lat1 = getCookie("latitude");
+	var lon1 = getCookie("longitude");
 
-	  var lat1 = getCookie("latitude");
-	  var lon1 = getCookie("longitude");
+	var lat2 =  getCookie("everyMinutelatitude");
+	var lon2 =  getCookie("everyMinutelongitude");
 
-	  var lat2 =  getCookie("everyMinutelatitude");
-	  var lon2 =  getCookie("everyMinutelongitude");
+	var distance = distanceLatLon(lat1, lon1, lat2, lon2, "K");
 
-      var distance = distanceLatLon(lat1, lon1, lat2, lon2, "K");
+	distance = distance*1000;
 
-      distance = distance*1000;
+	// alert(distance);
 
-	  if(distance >300){
+	if(distance > 100){
+		document.cookie="latitude="  + '';
+		document.cookie="longitude=" + '';
 
-	  	 document.cookie="latitude="  + '';
-	     document.cookie="longitude=" + '';
-	  	
-         document.cookie="latitude="  + lat2;
-         document.cookie="longitude=" + lon2;
+		document.cookie="latitude="  + lat2;
+		document.cookie="longitude=" + lon2;
 
-		   checkDistance(lat2,lon2);
-
-      }
-
-}
-
-function distanceLatLon(lat1, lon1, lat2, lon2, unit) {
-	if ((lat1 == lat2) && (lon1 == lon2)) {
-		return 0;
-	}
-	else {
-		var radlat1 = Math.PI * lat1/180;
-		var radlat2 = Math.PI * lat2/180;
-		var theta = lon1-lon2;
-		var radtheta = Math.PI * theta/180;
-		var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-		if (dist > 1) {
-			dist = 1;
-		}
-		dist = Math.acos(dist);
-		dist = dist * 180/Math.PI;
-		dist = dist * 60 * 1.1515;
-		if (unit=="K") { dist = dist * 1.609344 }
-		if (unit=="N") { dist = dist * 0.8684 }
-		return dist;
+		checkDistance(lat2,lon2);
 	}
 }
 
 //set geo location data
-function checkDistance(latt,lngg)
+function checkDistance(latt, lngg)
 {
-	
 	$.ajax({
-			type: "GET",
-			url: "checkDistance",
-			data: {lat: latt, lng : lngg},
-			success: function( returnedData ) {
-				//alert("in success of alert Distance Executed Distance check parameter");
-				reloadRestaurantList();
-				
-			}
-		});
-	}
+		type: "GET",
+		url: "checkDistance",
+		data: {lat: latt, lng : lngg},
+		success: function( returnedData ) {
+			//alert("in success of alert Distance Executed Distance check parameter");
+			reloadRestaurantList();
+		}
+	});
+}
 //check empty
 function isEmpty(e) {
   switch (e) {

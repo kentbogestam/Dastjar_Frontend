@@ -7,12 +7,8 @@
 @section('content')
 
 <div data-role="header" data-position="fixed" data-tap-toggle="false" class="header">
-		<div class="logo_header">
-			<img src="{{asset('kitchenImages/logo-img.png')}}">
-			<a href = "{{ url('kitchen/logout') }}"  class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">{{ __('messages.Logout') }}
-			</a>
-		</div>
-		<h3 class="ui-bar ui-bar-a order_background">{{ __('messages.Kitchen') }} <span>{{$storeName}}</span></h3>
+		@include('includes.kitchen-header-sticky-bar')
+		<h3 class="ui-bar ui-bar-a order_background"><span>{{$storeName}}</span></h3>
 	</div>
 	<div role="main" class="ui-content">
 		<div id="audio"></div>
@@ -49,54 +45,7 @@
 		</table>
 	</div>
 
-		<div data-role="footer" data-position="fixed" data-tap-toggle="false" class="footer_container">
-		<div class="ui-grid-a center">
-			<div class="ui-block-a left-side_menu">
-				<div class="ui-block-a block_div "><a  href = "{{ url('kitchen/store') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-1.png')}}">
-					</div>
-					<span>{{ __('messages.Orders') }}</span>
-				</a></div>
-				<div class="ui-block-b block_div active" ><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-2.png')}}">
-					</div>
-					<span>{{ __('messages.Kitchen') }}</span>
-				</a></div>
-				<div class="ui-block-b">
-					<a href = "{{ url('kitchen/catering') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-3.png')}}">
-					</div>
-					<span>{{ __('messages.Catering') }}</span>
-					</a>
-				</div>
-			</div>
-			<div class="ui-block-b right-side_menu">
-			
-			
-				<div class="ui-block-a drop_down"><a href = "{{ url('kitchen/kitchen-setting') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-6.png')}}">
-					</div>
-				</a></div>
-				
-				<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" href="{{ url('kitchen/menu') }}">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-7.png')}}">
-					</div>
-					<span>{{ __('messages.Menu') }}</span>
-				</a></div>
-				<div class="ui-block-c"><a href = "{{ url('kitchen/kitchen-order-onsite') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-					<div class="img-container">
-						<img src="{{asset('kitchenImages/icon-4.png')}}">
-					</div>
-					<span>{{ __('messages.Order Onsite') }}</span>
-				</a></div>
-			</div>
-		</div>
-	</div>
+	@include('includes.kitchen-footer-menu')
 	
 	<!-- <div data-role="popup" id="popupNotifaction" class="ui-content" style="max-width:280px;padding: 15px;">
 	    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
@@ -106,6 +55,8 @@
 	    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
 	<p style="color: #0c780c;line-height: 22px;margin: 0;">{{ __('messages.Order Ready Successfully.') }}</p>
 	</div> -->
+	
+	@include('includes.kitchen-popup-add-manual-preparation-time')
 
 @endsection
 
@@ -115,19 +66,25 @@
 		var totalCount = 0;
 		var textSpeach = 0;
 		var totallength = 0;
-		var url = "{{url('kitchen/order-started')}}";
+		//var url = "{{url('kitchen/order-started')}}";
 		var urlReady = "{{url('kitchen/order-readyKitchen')}}";
 		var textSpeachDone = "{{url('kitchen/textSpeachDone')}}";
 		var lastOrderId;
 		var imageUrl = "{{asset('kitchenImages/right_sign.png')}}";
+		var intervalSpeakText = 0;
 
-		function orderReadyStarted(id) {			
+		function orderReadyStarted(id, This) {
+			$This = $(This);			
 			$.get("{{url('kitchen/orderStartedKitchen')}}/"+id,
 			function(returnedData){
-				console.log(returnedData["data"]);
+				// console.log(returnedData["data"]);
 				$('body').find('#'+id).attr('src',imageUrl);
 				$('body').find('#'+id).parent("a").attr('onclick',' ');
 				$('body').find('#'+id+'ready').parent("a").attr('onclick','onReady('+id+')');
+				$This.closest('tr').removeClass('not-started');
+
+				// Update item as speak
+				updateSpeak(id);
 			});
 		}
 
@@ -137,7 +94,7 @@
 
 			$.get("{{url('kitchen/order-readyKitchen')}}/"+id,
 			function(returnedData){
-				console.log(returnedData["data"]);
+				// console.log(returnedData["data"]);
 				$('body').find('#'+id+'ready').parents("tr").remove();
 				if(returnedData["status"] == 'ready'){
 					$("#popupCloseRight").popup("open");
@@ -145,22 +102,23 @@
 					$("#popupNotifaction").popup("open");	
 				}
 			});
-	
 		}
 
 		$(function(){
 			$.get("{{url('kitchen/kitchen-orders')}}",
 			function(returnedData){
-				console.log(returnedData["data"]);
+				// console.log(returnedData["data"]);
 				textSpeach = returnedData["user"];
 				extra_prep_time = returnedData["extra_prep_time"];
+				order_response = returnedData["order_response"];
 				var count = 18;
 				
 				var temp = returnedData["data"];
 	          	list = temp;
-	          	console.log(temp.length);
+	          	// console.log(temp.length);
 	          	var liItem = "";
 	          	var ids = '';
+	          	var aString = '';
 	          	totallength = temp.length;
 	          	if(temp.length != 0){
 	          		totalCount = temp.length;
@@ -179,24 +137,36 @@
 						    setTimeout(function () {
 			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"],extra_prep_time);
 			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
-			          		liItem += "<tr>";
+			          		var clsStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
+			          		liItem += "<tr class='"+clsStatus+"'>";
 			          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 			          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
 			          		liItem += "<td>"+temp[i]["product_name"]+
 			          		"</td>";
 			          		if(textSpeach == 1 && temp[i]['is_speak'] == 0){
 			          			if(temp[i]["product_description"] != null){
-			          				test(temp[i]["product_quality"]+temp[i]["product_name"]+temp[i]["product_description"]);
+			          				var message = temp[i]["product_quality"]+temp[i]["product_name"]+temp[i]["product_description"];
 			          			}else{
-			          				test(temp[i]["product_quality"]+temp[i]["product_name"]);
+			          				var message = temp[i]["product_quality"]+temp[i]["product_name"];
 			          			}
-			          			updateSpeak(temp[i]['id']);
+
+			          			speakText(message);
+			          			
 			          			if(temp[i]["product_description"] != null){
 				          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
 				          		}else{
 				          			liItem += "<td>"+''+"</td>";
 				          		}
 			          		}else{
+			          			// Default 'text to speech' if 'text to speech' is off and not already spoken
+			          			if(temp[i]['is_speak'] == 0)
+			          			{
+			          				speakText("{{ __('messages.kitchenTextToSpeechDefault') }}", 1);
+
+			          				// test("{{ __('messages.kitchenTextToSpeechDefault') }}");
+				          			// updateSpeak(temp[i]['id']);
+			          			}
+
 			          			if(temp[i]["product_description"] != null){
 				          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
 				          		}else{
@@ -207,8 +177,15 @@
 
 			          		if(temp[i]["order_started"] == 0){
 			          			ids = temp[i]['id'];
+
+			          			@if($store->order_response)
+			          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='orderReadyStarted("+ids+", this)'>";
+			          			@else
+			          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='isManualPrepTimeForOrder("+temp[i]['order_id']+", "+ids+", this)'>";
+			          			@endif
+
 				          		liItem += "<td >"
-				          		liItem += "<a data-ajax='false' href='#'  onclick=orderReadyStarted("+ids+")>"
+				          		liItem += aString
 				          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 				          		liItem +="</a></td>";
 				          		
@@ -254,20 +231,21 @@
 	          	$("#orderDetailContianer").append(liItem);
 			}); 
 		});
-console.log('lastOrderId'+lastOrderId);
+		// console.log('lastOrderId'+lastOrderId);
 		var ajaxCall = function(){
 			$.get("{{url('kitchen/kitchen-orders-new')}}/"+lastOrderId,
 			function(returnedData){
-				console.log(returnedData["data"]);
+				// console.log(returnedData["data"]);
 				var count = 18;
 				var temp = returnedData["data"];
 				textSpeach = returnedData["user"];
 				extra_prep_time = returnedData["extra_prep_time"];
 				totallength = temp.length;
 	          	list = temp;
-	          	console.log(temp.length);
+	          	// console.log(temp.length);
 	          	var liItem = "";
 	          	var ids = '';
+	          	var aString = '';
 	          	if(temp.length != 0){
 	          		totalCount = temp.length;
 
@@ -284,27 +262,36 @@ console.log('lastOrderId'+lastOrderId);
 				      	
 				      	(function (i) {
 						    setTimeout(function () {
-						    	console.log('iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'+i);
+						    // console.log('iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'+i);
 			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time",extra_prep_time]);
 			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
-			          		liItem += "<tr>";
+			          		var clsStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
+			          		liItem += "<tr class='"+clsStatus+"'>";
 			          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 			          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
 			          		liItem += "<td>"+temp[i]["product_name"]+
 			          		"</td>";
 			          		if(textSpeach == 1 && temp[i]['is_speak'] == 0){
 			          			if(temp[i]["product_description"] != null){
-			          				test(temp[i]["product_quality"]+temp[i]["product_name"]+temp[i]["product_description"]);
+			          				var message = temp[i]["product_quality"]+temp[i]["product_name"]+temp[i]["product_description"];
 			          			}else{
-			          				test(temp[i]["product_quality"]+temp[i]["product_name"]);
+			          				var message = temp[i]["product_quality"]+temp[i]["product_name"];
 			          			}
-			          			updateSpeak(temp[i]['id']);
+
+			          			speakText(message);
+				          		
 				          		if(temp[i]["product_description"] != null){
 				          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
 				          		}else{
 				          			liItem += "<td>"+''+"</td>";
 				          		}
 			          		}else{
+			          			// Default 'text to speech' if 'text to speech' is off and not already spoken
+								if(temp[i]['is_speak'] == 0)
+								{
+									speakText("{{ __('messages.kitchenTextToSpeechDefault') }}", 1);
+								}
+
 			          			if(temp[i]["product_description"] != null){
 				          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
 				          		}else{
@@ -315,8 +302,15 @@ console.log('lastOrderId'+lastOrderId);
 
 			          		if(temp[i]["order_started"] == 0){
 				          		ids = temp[i]['id'];
+
+				          		@if($store->order_response)
+			          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='orderReadyStarted("+ids+", this)'>";
+			          			@else
+			          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='isManualPrepTimeForOrder("+temp[i]['order_id']+", "+ids+", this)'>";
+			          			@endif
+
 				          		liItem += "<td >"
-				          		liItem += "<a data-ajax='false' href='javascript:void(0)'  onclick=orderReadyStarted("+ids+")>"
+				          		liItem += aString
 				          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 				          		liItem +="</a></td>";
 			          		}else{
@@ -380,7 +374,7 @@ console.log('lastOrderId'+lastOrderId);
 	    	
 	    	//if in future this page will get it, then add this condition in and in below if activePage[0].id == "home" 
 	    	if (scrolled >= scrollEnd) {
-			        console.log(list);
+			        // console.log(list);
 			        $.mobile.loading("show", {
 			        text: "loading more..",
 			        textVisible: true,
@@ -401,6 +395,7 @@ console.log('lastOrderId'+lastOrderId);
 		function  addMore(len){
 			var liItem = "";
 	        var ids = '';
+	        var aString = '';
 	    	var limit = 0;
 	    	var countCheck = 1;
 			if(totalCount > 10){
@@ -418,7 +413,7 @@ console.log('lastOrderId'+lastOrderId);
 	      //console.log(returnedData["data"]);
 	      //console.log("len="+len);
 	     // console.log("i="+i);
-	      console.log("totallength="+totallength);
+	      // console.log("totallength="+totallength);
 	      	if(i>=totallength){
 	      		tempCount = 10;
 	      		break;
@@ -426,7 +421,7 @@ console.log('lastOrderId'+lastOrderId);
 	      	if(countCheck>limit){
 	      		break;
 	      	}
-	      	console.log('iiiiiiiiissssssssssssssssss'+i);
+	      	// console.log('iiiiiiiiissssssssssssssssss'+i);
 	      	 (function (i) {
 			    setTimeout(function () {
 			      	var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
@@ -437,17 +432,25 @@ console.log('lastOrderId'+lastOrderId);
 		      		liItem += "<td>"+list[i]["product_name"]+"</td>";
 		      		if(textSpeach == 1 && list[i]['is_speak'] == 0){
 		      			if(list[i]["product_description"] != null){
-	          				test(list[i]["product_quality"]+list[i]["product_name"]+list[i]["product_description"]);
+	          				var message = list[i]["product_quality"]+list[i]["product_name"]+list[i]["product_description"];
 	          			}else{
-	          				test(list[i]["product_quality"]+list[i]["product_name"]);
+	          				var message = list[i]["product_quality"]+list[i]["product_name"];
 	          			}
-		      			updateSpeak(list[i]['id']);
+
+	          			speakText(message);
+		          		
 		          		if(list[i]["product_description"] != null){
 		          			liItem += "<td>"+list[i]["product_description"]+"</td>";
 		          		}else{
 		          			liItem += "<td>"+''+"</td>";
 		          		}
 	          		}else{
+	          			// Default 'text to speech' if 'text to speech' is off and not already spoken
+						if(list[i]['is_speak'] == 0)
+						{
+							speakText("{{ __('messages.kitchenTextToSpeechDefault') }}", 1);
+						}
+
 	          			if(list[i]["product_description"] != null){
 		          			liItem += "<td>"+list[i]["product_description"]+"</td>";
 		          		}else{
@@ -457,8 +460,15 @@ console.log('lastOrderId'+lastOrderId);
 		      		liItem += "<td>"+list[i]["deliver_date"]+' '+timeOrder+"</td>";
 		      		if(list[i]["order_started"] == 0){
 		      			ids = list[i]['id'];
+
+		      			@if($store->order_response)
+	          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='orderReadyStarted("+ids+", this)'>";
+	          			@else
+	          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='isManualPrepTimeForOrder("+temp[i]['order_id']+", "+ids+", this)'>";
+	          			@endif
+
 		          		liItem += "<td >"
-		          		liItem += "<a data-ajax='false' href='#'  onclick=orderReadyStarted("+ids+")>"
+		          		liItem += aString
 		          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 		          		liItem +="</a></td>";
 		      		}else{
@@ -495,21 +505,6 @@ console.log('lastOrderId'+lastOrderId);
 	      }
 	      $("#orderDetailContianer").append(liItem);	
 		}
-
-		function updateSpeak(id){
-			//console.log('ssssssssssssssssssssssssssssssssssssssssssssssssssssss');
-			var url = '{{url('kitchen/updateTextspeach')}}'+'/'+id;
-			//console.log('urlurl'+url);
-			$.ajax({
-	            url: url, //This is the current doc
-	            type: "GET",//variables should be pass like this
-	            success: function(data){
-	               //console.log('fff');
-	            }
-	        }); 
-		}
-
-
 
 		function addTimes (startTime, endTime, extra_prep_time) {
 		  var times = [ 0, 0, 0 ];

@@ -1,14 +1,7 @@
 @extends('layouts.master')
 @section('content')
-	<div data-role="header" class="header" id="nav-header"  data-position="fixed">
-		<div class="logo">
-			<div class="inner-logo">
-				<img src="{{asset('images/logo.png')}}">
-				<span>{{ Auth::user()->name}}</span>
-			</div>
-		</div>
-		<a href="{{url('search-map-eatnow')}}" class="ui-btn-right map-btn user-link" data-ajax="false"><img src="{{asset('images/icons/map-icon.png')}}" width="30px"></a>
-	</div>
+@include('includes.headertemplate')
+
 	<div role="main" data-role="main-content" class="content">
 		<div class="inner-page-container">
 			
@@ -45,39 +38,16 @@
                 data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
                 data-token="true"
                 data-locale="auto"
+                data-label="{{__('messages.Pay with card')}}"
                 data-zip-code="false">
         </script>
     </form>
 
-	<div data-role="footer" class="footer" data-position="fixed">
-		<div class="ui-grid-c inner-footer center">
-		<div class="ui-block-a"><a href="{{Session::get('route_url')}}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-			<div class="img-container">
-				<img src="{{asset('images/icons/select-store_01.png')}}">
-			</div>
-			<span>{{ __('messages.Restaurant') }}</span>
-		</a></div>
-		<div class="ui-block-b"><a class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-			<div class="img-container">
-				<img src="{{asset('images/icons/select-store_03.png')}}">
-			</div>
-			<span>{{ __('messages.Send') }}</span>
-		</a></div>
-		@include('orderQuantity')
-		<div class="ui-block-d"><a href="{{url('user-setting')}}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
-			<div class="img-container"><img src="{{asset('images/icons/select-store_07.png')}}"></div>
-		</a></div>
-		</div>
-	</div>
+	
+@include('includes.fixedfooter')
 
 @endsection
 
 @section('footer-script')
-
-<script type="text/javascript">
-	 $(".ordersec").click(function(){
-	    $("#order-popup").toggleClass("hide-popup");
-	 });
-</script>
 
 @endsection

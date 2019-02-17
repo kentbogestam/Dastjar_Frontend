@@ -1,31 +1,26 @@
  var getUrl = window.location;
- //var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1]; //for local testing
- var baseUrl =getUrl .protocol + "//" + getUrl.host ; // for live testing
+ var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1]; //for local testing
+ //var baseUrl =getUrl .protocol + "//" + getUrl.host ; // for live testing
  
-setInterval(function(){//console.log("updating current location after 20 min");
-getCurrentCoordinates();},1200000); // Check the position afer 20 min and reset the longitude and latitude
+setInterval(function() {
+    getCurrentCoordinates();
+}, 1200000); // Check the position afer 20 min and reset the longitude and latitude
 
 $(document).ready(function() {
-
     checkTimeAfterLocationSet();
-    
 });
 
 function reloadRestaurantList(){
+    var url = window.location.href;
+    //var pathname = window.location.pathname 
 
-  var url      = window.location.href;
-  //var pathname = window.location.pathname 
+    var pieces = url.split("/");
 
-  var pieces = url.split("/");
-
-  $value=pieces[pieces.length-1];
+    $value=pieces[pieces.length-1];
 
     if($value=='eat-now' || $value=='eat-later' || $value=='' ){
-
-      location.reload();
+        location.reload();
     }
-  
-
 }
 
 function getCurrentCoordinates(){
@@ -41,8 +36,7 @@ function getCurrentCoordinates(){
       //console.log("in getCurrentCoordinates and updating current location ");
       //console.log(position.coords.latitude+"-------"+position.coords.longitude);
        $.ajax({
-         // url: baseUrl+"/public/update-location", // for local host testing
-          url: baseUrl+"/update-location", // for live testing
+          url: BASE_URL+"/update-location",
            type: "GET",
            data: {lat : position.coords.latitude, long : position.coords.longitude},
            dataType: "json"
@@ -67,7 +61,7 @@ function getCurrentCoordinates(){
 
 }
 
-function setCurrentCoordinates(){
+/*function setCurrentCoordinates(){
    
    navigator.geolocation.getCurrentPosition(function(position) {
 
@@ -76,8 +70,8 @@ function setCurrentCoordinates(){
       console.log("in getCurrentCoordinates and updating current location ");
       //console.log(position.coords.latitude+"-------"+position.coords.longitude);
        $.ajax({
-          //url: baseUrl+"/public/update-location", // for local host testing
-          url: baseUrl+"/update-location", // for live testing
+          url: baseUrl+"/public/update-location", // for local host testing
+         // url: baseUrl+"/update-location", // for live testing
            type: "GET",
            data: {lat : position.coords.latitude, long : position.coords.longitude},
            dataType: "json"
@@ -94,42 +88,32 @@ function setCurrentCoordinates(){
         // document.cookie="longitude=" + lng;      
     }           
   });
-
-
-
-}
-
+}*/
 
 function checkTimeAfterLocationSet(){
-
-   var setLocationTime = getCookie("setLocationTime");
-//alert(setLocationTime);
+    var setLocationTime = getCookie("setLocationTime");
+    
     if (setLocationTime!=''){
+        var date1 = getCookie("setLocationTime");
+        var date2=getDateTimeStamp("D"); 
 
-      var date1 = getCookie("setLocationTime");
-      var date2=getDateTimeStamp("D"); 
-
-      var minutes =getDiffTimeStamp(date1,date2);
+        var minutes =getDiffTimeStamp(date1,date2);
   
-       if (minutes > 1){
-             //setCurrentCoordinates();
-             unsetLocationCookieTime();
-             return true;
-      
-      }else{
-
+        if (minutes > 10){
+            //setCurrentCoordinates();
+            unsetLocationCookieTime();
+            return false;
+        }
+        else{
             return true;
-       }
-
-      }else{
-
-         return false;
-      console.log("setLocationTime set to null ")
-     }
-
-
-
+        }
+    }
+    else{
+        return false;
+        console.log("setLocationTime set to null ")
+    }
 }
+
 // Function get cookie
 function getCookie(cname) {
 
@@ -190,122 +174,105 @@ function setMyCookie(cname, cvalue, exdays) {
 */
 
 function getDateTimeStamp(val){
-
-   
     if (val=='D'){
+        var dt = new Date();
+        return dt;
+    }else if (val=='T'){
+        var t= $.now() ;
+        return t;
+    }
 
-     var dt = new Date();
-     return dt;
-
-   }else if (val=='T'){
-
-   	 var t= $.now() ;
-   	 return t;
-   }
-   
-   //alert(dt.getDate() + '/' + (dt.getMonth()+1) + '/' + dt.getFullYear());
-   // var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
-   // return v;
+    //alert(dt.getDate() + '/' + (dt.getMonth()+1) + '/' + dt.getFullYear());
+    // var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+    // return v;
 }
 
 function getDiffTimeStamp(date1,date2){
+    date1 = new Date(date1);
+    //  document.write(""+date1);
 
-         date1 = new Date(date1);
-       //  document.write(""+date1);
+    date2 = new Date( date2 );
+    //  document.write("<br>"+date2);
 
-         date2 = new Date( date2 );
-       //  document.write("<br>"+date2);
+    var res = Math.abs(date1 - date2) / 1000;
 
-         var res = Math.abs(date1 - date2) / 1000;
-         
-         // get total days between two dates
-         // var days = Math.floor(res / 86400);
-         // alert("<br>Difference (Days): "+days);                        
-         
-         // get hours        
-         // var hours = Math.floor(res / 3600) % 24;        
-         // alert("<br>Difference (Hours): "+hours);  
-         
-         // get minutes
-         var minutes = Math.floor(res / 60) % 60;
-        // alert ("<br>Difference (Minutes): "+minutes);  
-     
-          return minutes
-         // get seconds
-         //var seconds = res % 60;
-         //alert("<br>Difference (Seconds): "+seconds);  
+    // get total days between two dates
+    // var days = Math.floor(res / 86400);
+    // alert("<br>Difference (Days): "+days);                        
+
+    // get hours        
+    // var hours = Math.floor(res / 3600) % 24;        
+    // alert("<br>Difference (Hours): "+hours);  
+
+    // get minutes
+    var minutes = Math.floor(res / 60) % 60;
+    // alert ("<br>Difference (Minutes): "+minutes);  
+
+    return minutes
+    // get seconds
+    //var seconds = res % 60;
+    //alert("<br>Difference (Seconds): "+seconds);  
 }
 
 function setLocationCookieTime(){
-
-
-	var date1=getDateTimeStamp("D"); 
-     document.cookie="setLocationTime=" + date1;
-     var setLocationTime = getCookie("setLocationTime");
+    var date1=getDateTimeStamp("D"); 
+    document.cookie="setLocationTime=" + date1;
+    var setLocationTime = getCookie("setLocationTime");
 }
      
-
+// Remove cookie 'setLocationTime' that used to reset location after x minute
 function unsetLocationCookieTime(){
-
-      document.cookie="setLocationTime=" + '';
-     // var setLocationTime = getCookie("setLocationTime");
-	 
+    document.cookie="setLocationTime=" + '';
+    // var setLocationTime = getCookie("setLocationTime");
 }
 
-
 // Moved function click to file resource/views/location.blade.php
- function dataSave(){
+function dataSave(){
+    var flag = true;
 
-            var flag = true;
-
-            if(flag){
-
-                if($("#pac-input").val()){
-
-                   setLocationCookieTime(); // code add by saurabh to set the location set start time
-
-                 }else{
-
-                  console.log("Map text box value not exist");
-                 }
-                $("#form").submit();
-            } else{
-                alert("Please fill some value");    
-                e.preventDefault();
-            }
+    if(flag){
+        if($("#pac-input").val()){
+            setLocationCookieTime(); // code add by saurabh to set the location set start time
+        }else{
+            console.log("Map text box value not exist");
         }
 
+        $("#form").submit();
+    } else{
+        alert("Please fill some value");    
+        e.preventDefault();
+    }
+}
 
- function locationSave(url){
+// Update location, cookie and session with current coordinates
+function locationSave(url){
+    unsetLocationCookieTime();
+    
+    // Check for Geolocation API permissions  
+    navigator.geolocation.getCurrentPosition(function(position) {
+        // Update Cookie
+        document.cookie="latitude=" + position.coords.latitude;
+        document.cookie="longitude=" + position.coords.longitude;
+    },function(error){
+       $('.login-inner-section a').attr('href','javascript:void(0)');
+       $('#login-popup').show();
+    });
 
-             unsetLocationCookieTime();
-            // Check for Geolocation API permissions  
-            navigator.geolocation.getCurrentPosition(function(position) {
+    // Update Session
+    var latitude  = getCookie("latitude");
+    var longitude = getCookie("longitude");
 
-                console.log("latitude=" + position.coords.latitude);
-                console.log("longitude=" + position.coords.longitude);
-                document.cookie="latitude=" + position.coords.latitude;
-                document.cookie="longitude=" + position.coords.longitude;
-                
-            },function(error){
-               $('.login-inner-section a').attr('href','javascript:void(0)');
-               $('#login-popup').show();
-                
-            });
-            var latitude  = getCookie("latitude");
-            var longitude = getCookie("longitude");
+    $.get(url, { lat: latitude, lng : longitude}, function(returnedData){
+        console.log(returnedData["data"]);
+        location.reload();
+    });
+}
 
-            $.get(url, { lat: latitude, lng : longitude}, function(returnedData){
-                console.log(returnedData["data"]);
-                location.reload();
-            });
-            console.log(latitude);
-            console.log(longitude);
-        };
+function makeRedirection(link){
+    
+     window.location.href = link;
+}
 
-    function makeRedirection(link){
-            window.location.href = link;
-     }
 // End of Moved function click to file resource/views/location.blade.php
 
 function checkFormsubmit(e){
@@ -314,4 +281,31 @@ function checkFormsubmit(e){
   if(code == 13) { //Enter keycode
       setLocationCookieTime();
   }
+}
+
+function orderPopup(){
+  $("#order-popup").toggleClass("hide-popup");
+ }
+
+// Return distance between two coordinates using 'haversine formula'
+function distanceLatLon(lat1, lon1, lat2, lon2, unit) {
+    if ((lat1 == lat2) && (lon1 == lon2)) {
+        return 0;
+    }
+    else {
+        var radlat1 = Math.PI * lat1/180;
+        var radlat2 = Math.PI * lat2/180;
+        var theta = lon1-lon2;
+        var radtheta = Math.PI * theta/180;
+        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+        if (dist > 1) {
+            dist = 1;
+        }
+        dist = Math.acos(dist);
+        dist = dist * 180/Math.PI;
+        dist = dist * 60 * 1.1515;
+        if (unit=="K") { dist = dist * 1.609344 }
+        if (unit=="N") { dist = dist * 0.8684 }
+        return dist;
+    }
 }

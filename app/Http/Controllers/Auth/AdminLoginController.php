@@ -110,6 +110,7 @@ class AdminLoginController extends Controller
         $this->guard()->logout();
         Session::forget('storeId');
         Session::forget('checkStore');
+        Session::forget('subscribedPlans');
         //$request->session()->flush();
 
         //$request->session()->regenerate();

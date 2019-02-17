@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class DishType extends Model
 {
     protected $table = 'dish_type';
+    public $timestamps = false;
 
     public function __construct(array $attributes = [])
     {

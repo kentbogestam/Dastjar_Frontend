@@ -23,7 +23,7 @@
                     </div>
                     <div class="social-sec social-sec_login">
                         <div class="ui-grid-solo">
-                         <input id="first_name" type="text" class="form-control" name="name" value="{{ old('name') }}" required autofocus placeholder="First Name*">
+                         <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}" required autofocus placeholder="First Name*">
                         </div>
                          <div class="ui-grid-solo">
                         <div class="ui-block-a"> 
@@ -253,33 +253,43 @@
 @section('footer-script')
 
  <script type="text/javascript">
-     $(document).ready(function(){
-       
-       $(".reg_button").on("click", function(){
-             var mobNum = $("#phone_number").val();
-             var filter = /^\d*(?:\.\d{1,2})?$/;
+    $(document).ready(function(){
+        $(".reg_button").on("click", function(){
+            var mobNum = $("#phone_number").val();
+            var name = $("#name").val();
+            var email = $("#email").val();
+            var filter = /^\d*(?:\.\d{1,2})?$/;
 
-               if (filter.test(mobNum)) {
-                 if(mobNum.length==9 || mobNum.length==10){
-                     document.getElementById('form').submit();
-                       return true;
-                  } else {
-                     alert('Please put 9  digit mobile number');
+            if(!name.length)
+            {
+                alert('Please enter name.');
+                return false;
+            }
+            else if(!email.length)
+            {
+                alert('Please enter email.');
+                return false;
+            }
+
+            if (filter.test(mobNum)) {
+                if(mobNum.length==9 || mobNum.length==10){
+                    document.getElementById('form').submit();
+                    return true;
+                } else {
+                    alert('Please put 9  digit mobile number');
                     $("#folio-invalid").removeClass("hidden");
                     $("#mobile-valid").addClass("hidden");
-                     return false;
-                   }
-                 }
-                 else {
-                   alert('Not a valid number');
-                   $("#folio-invalid").removeClass("hidden");
-                   $("#mobile-valid").addClass("hidden");
-                   return false;
+                    return false;
                 }
-         
-       });
-       
-     });
+            }
+            else {
+                alert('Not a valid number');
+                $("#folio-invalid").removeClass("hidden");
+                $("#mobile-valid").addClass("hidden");
+                return false;
+            } 
+        });
+    });
  </script>
 
 @endsection

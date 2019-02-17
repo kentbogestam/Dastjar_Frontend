@@ -2,6 +2,13 @@
 @section('content')
 <div data-role="page" data-theme="c">
 	<div data-role="header" class="header" id="nav-header"  data-position="fixed">
+		<!-- Back button if redirected here automatically on order ready -->
+		@if(Request::server('HTTP_REFERER'))
+			<a href="{{ Request::server('HTTP_REFERER') }}" data-ajax="false" style="padding: 15px 0 0px 10px;">
+				<img src="{{asset('images/icons/backarrow.png')}}" width="11px">
+			</a>
+		@endif
+
 		<div class="logo">
 			<div class="inner-logo">
 				<span class="rest-title">{{$companydetails->store_name}}</span>
@@ -22,8 +29,9 @@
 		</div>
 	</div>
 
+	@include('includes.fixedfooter')
 
-	<div data-role="footer" class="footer" data-position="fixed">
+	<!-- <div data-role="footer" class="footer" data-position="fixed">
 		<div class="ui-grid-c inner-footer center">
 		<div class="ui-block-a"><a href="{{ Session::get('route_url') }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 			<div class="img-container">
@@ -48,18 +56,17 @@
 		<div class="ui-block-c order-active">
 	    	<a  class="ui-shadow ui-corner-all icon-img ui-btn-inline ordersec" data-ajax="false">
 		        <div class="img-container">
-		       		<!-- <img src="images/icons/select-store_05.png"> -->
 		        	<img src="{{asset('images/icons/select-store_05-active.png')}}">
 		        </div>
 	        	<span>{{ __('messages.Order') }}<span class="order-number">{{count($user->paidOrderList)}}</span></span>
 	        </a>
 	        <div id="order-popup" data-theme="a">
 		      <ul data-role="listview">
-		      	@foreach($user->paidOrderList as $order)
+		      	{{-- @foreach($user->paidOrderList as $order)
 					<li>
 						<a href="{{ url('order-view/'.$order->order_id) }}" data-ajax="false">{{ __('messages.Order id') }} - {{$order->customer_order_id}}</a>
 					</li>
-				@endforeach
+				@endforeach --}}
 		      </ul>
 		    </div>
 	    </div>
@@ -68,15 +75,15 @@
 			<div class="img-container"><img src="{{asset('images/icons/select-store_07.png')}}"></div>
 		</a></div>
 		</div>
-	</div>
+	</div> -->
 
 </div>
 @endsection
 
 @section('footer-script')
 	<script type="text/javascript">
-		$(".ordersec").click(function(){
+		/*$(".ordersec").click(function(){
 		    $("#order-popup").toggleClass("hide-popup");
-		 });
+		 });*/
 	</script>
 @endsection

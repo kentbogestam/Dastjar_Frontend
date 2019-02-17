@@ -4,6 +4,9 @@
     #back_arw{
         width: 20px;
     }
+
+    .ui-btn-active.Settings{width:80px;margin:0 auto !important}
+    .done-btn.dataSave{width:40px;margin:0 auto !important; float: right;}
 </style>
 @endsection
 
@@ -13,27 +16,27 @@
         <div class="nav_fixed">
             <div data-role="navbar"> 
                 <ul> 
-            <li>
-                @if(isset($_GET['k']))
-                    <a href="{{url('')}}" data-ajax="false" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a>
-                @else
-                    <a href="{{url('user-setting')}}" data-ajax="false" id="back_arw" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a>
-                @endif
-            </li>
-             <li><a data-ajax="false" class="ui-btn-active">{{ __('messages.Location') }}</a></li>
-              <li class="done-btn" id="dataSave" onclick="dataSave();">  <input type="button" value="{{ __('messages.Done') }}" /></li>  </ul>
-              
-                <a href="#" class="location_icon" id="locationSave" onclick=locationSave("{{url('saveCurrentlat-long/')}}")>
-                   <img src="{{asset('images/icons/location.png')}}">
-                   <p>{{ __('messages.Current Position') }}</p> 
-                      </a>
+                    <li>
+                        @if(isset($_GET['k']))
+                            <a href="{{url('')}}" data-ajax="false" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a>
+                        @else
+                            <a href="{{url('user-setting')}}" data-ajax="false" id="back_arw" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a>
+                        @endif
+                    </li>
+                    <li><a data-ajax="false" class="ui-btn-active Settings">{{ __('messages.Location') }}</a></li>
+                    <li class="done-btn dataSave" id="dataSave" onclick="dataSave();">
+                        <input type="button" value="{{ __('messages.Done') }}" />
+                    </li>
+                </ul>
+
+                <a href="javascript:void(0)" class="location_icon" id="locationSave" onclick=locationSave("{{url('saveCurrentlat-long/')}}")><img src="{{asset('images/icons/location.png')}}"><p>{{ __('messages.Current Position') }}</p></a>
             </div><!-- /navbar -->
         </div>
     </div>
+
     <form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('save-location') }}">
     {{ csrf_field() }}
         <div role="main" data-role="main-content" class="content map-container">
-            
             <div class="map-input">
                 @if(Auth::check())
                     <input type="text" name="street_address" id="pac-input" class="" placeholder="{{ __('messages.Enter a Location') }}*" value="{{ Session::get('with_login_address')}}" required placeholder="Address*" onKeyPress="checkFormsubmit(event)"/>
@@ -47,19 +50,15 @@
                     <input type="hidden" name="redirect_to_home" value="0"/>
                 @endif
             </div>
-            <div id="map" style="height: 665px;">
-            </div>
+            <div id="map" style="height: 665px;"></div>
         </div>
     </form>
 </div>
 @endsection
 
 @section('footer-script')
-    
-        
     <script type="text/javascript">
-
-        $(function(){       
+        /*$(function(){       
             // Check for Geolocation API permissions  
             navigator.geolocation.getCurrentPosition(function(position) { 
                 console.log("latitude=" + position.coords.latitude);
@@ -73,7 +72,11 @@
                 
             });
 
-        });
+        });*/
+
+        var map = null;
+        var marker = null;
+        var myMarker = null;
 
         function initMap() {
             @if(Auth::check())
@@ -90,10 +93,10 @@
                 @endif    
             @endif
             
-            var map = new google.maps.Map(document.getElementById('map'), {
+            map = new google.maps.Map(document.getElementById('map'), {
                 center: location,
                 zoom: 5,
-                mapTypeId: 'roadmap',
+                // mapTypeId: 'roadmap',
                 mapTypeControl: false,
                 scrollwheel: false
             });
@@ -108,7 +111,7 @@
             map.setOptions(opt);
 
             var infowindow = new google.maps.InfoWindow();
-            var marker = new google.maps.Marker({
+            myMarker = marker = new google.maps.Marker({
                 position:location,
                 map: map,
                 icon: {
@@ -202,7 +205,20 @@
             });
         }
 
+        $(window).on('load', function() {
+            // Add watch on location change if location is set to current location
+            var flag = checkTimeAfterLocationSet();
+
+            if(!flag)
+            {
+                if(navigator.geolocation)
+                {
+                    var options = {timeout:60000};
+                    watchPosition = navigator.geolocation.watchPosition(updateLocationOnMap, errorHandlerOnMap, options);
+                }
+            }
+        });
     </script>
-        
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyByLiizP2XW9JUAiD92x57u7lFvU3pS630&libraries=places&callback=initMap" async defer></script>
+    <script type="text/javascript" src="{{ asset('js/init.js').'?v='.$RAND_APP_VERSION }}"></script>
 @endsection
