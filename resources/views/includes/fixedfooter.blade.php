@@ -1,24 +1,19 @@
-@php {{
-
+@php
     $flag='false';
     $menuActivate='false';
     $cart='false';
     $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
     $baseurl=$app->make('url')->to('/')."/";
-    if (strpos($_SERVER['REQUEST_URI'], 'eat-now') !== false || strpos($_SERVER['REQUEST_URI'], 'eat-later') !== false || $actual_link === $baseurl ) {
-
+    // if (strpos($_SERVER['REQUEST_URI'], 'eat-now') !== false || strpos($_SERVER['REQUEST_URI'], 'eat-later') !== false || $actual_link === $baseurl ) {
+    if( \Request::is('/') || \Request::is('home') || \Request::is('eat-now') || \Request::is('eat-later') ) {
 		$flag = 'true';
     }
     elseif(strpos($_SERVER['REQUEST_URI'], 'restro-menu-list') !== false){
-       
        $menuActivate='true';
-      
     }
     elseif( strpos($_SERVER['REQUEST_URI'], 'cart') !== false || strpos($_SERVER['REQUEST_URI'], 'save-order') !== false ){
-       
        $cart='true';  
     }
- }}
  @endphp
 
 <div data-role="footer" id="footer" data-position="fixed">
