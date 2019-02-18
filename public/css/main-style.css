@@ -994,16 +994,8 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
 .custom_row1 .cart_rowB .colB{width:36%}
 .table-content{margin:0 0.5em}
 }
-/*
-.ui-block-a.active img, .ui-block-b.active img, .ui-block-c.active img, .ui-block-d.active img{
- -webkit-filter: opacity(1) drop-shadow(0 0 0 #1287d1);
-  filter: opacity(1) drop-shadow(0 0 0 #1287d1);
-  
-  -webkit-filter: brightness(100) invert(100);
-  filter: brightness(100) invert(100);
-}*/
-/*.ui-block-a.active img, .ui-block-b.active img, .ui-block-c.active img, .ui-block-d.active img{
-  -webkit-filter: hue-rotate(180deg);
-  filter: hue-rotate(180deg);
-}*/
-
+.customF{margin:5px 0 0 0}
+.customF .sCartBage{position: absolute!important;top: -10px!important;right: -20px!important;min-height: 20px!important;min-width: 20px!important;border-radius: 50%!important;}
+.uSeting{margin-top:-10px}
+.Resto, .Scart, .OrderList{font-size:28px!important; color:#fff; font-weight:normal!important}
+.ui-block-a.active .Resto, .ui-block-b.active .Scart, .ui-block-c.active .OrderList{color:#d7e13b;}
