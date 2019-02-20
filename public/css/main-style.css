@@ -459,11 +459,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
 .setting-list input[type="radio"]{display: none;}
 .setting-list label{padding-left: 1em;}
 .order-active a span{color: #86c22b !important ; text-shadow: none; font-size: 12.5px}
-.order-active a span.order-number{color: #d51723 !important;text-shadow: none;font-size: 12.5px;background: #fff;border: 1px solid #000;border-radius: 50px;padding: 1px 6px;position: absolute;right: -20px;top: -10px;line-height: 26px;}
+.order-active a span.order-number{color: #d51723 !important;text-shadow: none;font-size: 11.5px;background: #fff;border: 1px solid #000;border-radius: 50px;padding: 0px 4px;position: absolute;right: -20px;top: -10px;line-height: 26px;}
 .badge {
     display: inline-block;
     padding: 3px 7px;
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 700;
     line-height: 1;
     color: #000 !important;
@@ -471,7 +471,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
     white-space: nowrap;
     vertical-align: middle;
     background-color: #fff;
-    border: 1px solid #000;border-radius: 50%;padding: 1px 6px;position: absolute;right: -12px;top: -10px;line-height: 26px;
+    border: 1px solid #000;border-radius: 50%;padding: 0px 4px;position: absolute;right: -12px;top: -10px;line-height: 26px;
 }
 .img-container{position:relative;}
 .sucess_msg{
@@ -995,7 +995,9 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
 .table-content{margin:0 0.5em}
 }
 .customF{margin:5px 0 0 0}
-.customF .sCartBage{position: absolute!important;top: -10px!important;right: -20px!important;min-height: 20px!important;min-width: 20px!important;border-radius: 50%!important;}
+.customF .sCartBage{position: absolute!important;top: -12px!important;right: -15px!important;min-height: 20px!important;min-width: 20px!important;border-radius: 50%!important;}
 .uSeting{margin-top:-10px}
 .Resto, .Scart, .OrderList{font-size:28px!important; color:#fff; font-weight:normal!important}
 .ui-block-a.active .Resto, .ui-block-b.active .Scart, .ui-block-c.active .OrderList{color:#d7e13b;}
+.customHdr{padding:15px 0 5px 0}
+.customHdr .rest-title{margin: 0 0 10px 0 !important}

@@ -58,7 +58,7 @@
 
  @elseif($menuActivate=='true')
 
- <div data-role="header" class="header"  data-position="fixed" data-tap-toggle="false">
+ <div data-role="header" class="header customHdr"  data-position="fixed" data-tap-toggle="false">
 		<div class="logo">
 			
 			<div class="inner-logo">
