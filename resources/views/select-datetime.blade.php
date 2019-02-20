@@ -1,46 +1,40 @@
 @extends('layouts.master')
 @section('head-scripts')
-	
+<style type="text/css">
+	#demo1-2{
+		display: none;
+	}
 
-	<style type="text/css">
-		#demo1-2{
-			display: none;
-		}
+	.date_block{
+		display: none;
+		margin-top: 20px;
+		height: 100px;
+	}
 
-		.date_block{
-			display: none;
-			margin-top: 20px;
-			height: 100px;
-		}
-
-		.error_apple_time {
-		    color: red;
-		    font-size: 14px;
-		    text-align: center;
-		    margin-top: 15px;
-		    display: none;
-		}		
-		.btn {
-			padding: 0 0 10px 0;
-		}
-	</style>
-
+	.error_apple_time {
+	    color: red;
+	    font-size: 14px;
+	    text-align: center;
+	    margin-top: 15px;
+	    display: none;
+	}		
+	.btn {
+		padding: 0 0 10px 0;
+	}
+</style>
 <script type="text/javascript" src="{{asset('js/datetime/jquery.simple-dtpicker.js')}}"></script>
 <script type="text/javascript" src="//momentjs.com/downloads/moment-with-locales.min.js"></script>
 <script type="text/javascript" src="{{asset('js/datetime/select-date-time.js')}}"></script>
 <link type="text/css" href="{{asset('css/dateandtime/jquery.simple-dtpicker.css')}}" rel="stylesheet" />
 <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-
 <script type="text/javascript">
-
-window.addEventListener('load', function(){ setTimeout(function(){ window.scrollTo(0,0); }, 100); }, true);
-
+	window.addEventListener('load', function(){ setTimeout(function(){ window.scrollTo(0,0); }, 100); }, true);
 </script>
 @endsection
 @section('content')
 	<div data-role="page" data-theme="c">
 		@include('includes.headertemplate')
-
+		
 		<form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('eat-later') }}">
 			{{ csrf_field() }}
 			<div role="main" data-role="main-content" class="content" id="wrapper">
@@ -54,33 +48,26 @@ window.addEventListener('load', function(){ setTimeout(function(){ window.scroll
 		    		</div>
 	    		 	<div class="error-show" id="error-show"></div>
              	 	<div class="dateandtime" id="dateandtime">
-			          	@if(Session::get('applocale') ==='sv')
-							<script type="text/javascript">
-								$(function(){
-									$('*[name=date16]').appendDtpicker({
-										"inline": true,
-										"futureOnly": true,
-										"todayButton": false,
-										"minuteInterval": 15,
-										"locale": 'sv',
-										"dateFormat": "DD.MM.YY H:mmTT"
-									});
+             	 		<script type="text/javascript">
+							// Create date object 
+							var todayDate = eatLaterDate = new Date();
+							eatLaterDate.setDate(todayDate.getDate() + 1);
+							
+							$(function(){
+								// Initialize datepicker
+								$('*[name=date16]').appendDtpicker({
+									"inline": true,
+									"futureOnly": true,
+									"todayButton": false,
+									"minuteInterval": 15,
+									"locale": "{{ (Session::get('applocale') === 'sv') ? 'sv' : 'en' }}",
+									"dateFormat": "DD.MM.YY H:mmTT",
+									"onInit": function(handler) {
+										handler.setDate(new Date(eatLaterDate.getFullYear(), eatLaterDate.getMonth(), eatLaterDate.getDate(), 12, 30, 0, 0));
+									}
 								});
-							</script>
-						@else
-							<script type="text/javascript">
-								$(function(){
-									$('*[name=date16]').appendDtpicker({
-										"inline": true,
-										"futureOnly": true,
-										"todayButton": false,
-										"minuteInterval": 15,
-										"locale": 'en',
-										"dateFormat": "DD.MM.YY H:mmTT"
-									});
-								});
-							</script>
-						@endif
+							});
+						</script>
 						<input type="hidden" name="date16" id="date16" value="" onchange="setDateTime()"/>
 					</div>
 					<div class="btn text-center">
