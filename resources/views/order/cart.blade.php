@@ -6,7 +6,12 @@
 		<div class="table-content">
 			<div class="head_line">
 				<h2>{{ __('messages.Order Details') }}</h2>
-				<div class="delt-cart"><a href="#" data-ajax="false" onclick="deleteFullCart('{{ url("emptyCart/") }}','1','{{ __("messages.Delete Cart Order") }}')"><img src="images/dlt_icon.png"></a></div>
+				<div class="delt-cart">
+					<a href="javascript:void(0)" id="delete-cart" data-content="{{ __("messages.Delete Cart Order") }}" data-ajax="false">
+						<img src="images/dlt_icon.png">
+					</a>
+				</div>
+				</div>
 			</div>
 			<table data-role="table" id="table-custom-2" data-mode="" class="ui-body-d ui-shadow table-stripe ui-responsive">
 				<?php $j=1 ;?>
@@ -78,10 +83,48 @@
 @include('includes.fixedfooter')
 @endsection
 @section('footer-script')
+<!-- Delete cart popup -->
+<div id="delete-cart-alert" class="actionBox">
+	<div class="actionBox-content">
+		<div class="mInner">
+			<p>{{ __("messages.Delete Cart Order") }}</p>
+			<div class="btnWrapper">
+				<span class="close">Cancel</span>
+				<span onclick="deleteFullCart('{{ url("emptyCart/") }}','1','{{ __("messages.Delete Cart Order") }}')">Delete</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Delete cart item popup -->
+<div id="delete-cart-item-alert" class="actionBox">
+	<div class="actionBox-content">
+		<div class="mInner">
+			<p>{{ __("messages.Delete Product") }}</p>
+			<div class="btnWrapper">
+				<span class="close">Cancel</span>
+				<span class="delete">Delete</span>
+			</div>
+		</div>
+	</div>
+</div>
+
 <script type="text/javascript">
 	// Update value in basket
 	var cntCartItems = "{{ $cntCartItems }}";
 	$('.cart-badge').html(cntCartItems);
 	$('.cart-badge').removeClass('hidden');
+
+	// Show delete cart popup
+	$('#delete-cart, #leave-cart').on('click', function() {
+		var content = $(this).data('content');
+		$('#delete-cart-alert').find('p').html(content);
+		$('#delete-cart-alert').show();
+	});
+
+	// Close popup
+	$('.actionBox .close').on('click', function() {
+		$(this).closest('.actionBox').hide();
+	});
 </script>
 @endsection

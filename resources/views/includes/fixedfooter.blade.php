@@ -23,7 +23,7 @@
 				<a href="javascript:void(0)" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline">
 			@else
 	             @if($cart=='true')
-	             	<a href="#" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false" onclick="deleteFullCart('{{ url("emptyCart/") }}','1','{{ __("messages.Leave Cart Page") }}')"> 
+	             	<a href="javascript:void(0)" id="leave-cart" data-content="{{ __("messages.Leave Cart Page") }}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 	             @else
 			     	<a href="{{Session::get('route_url')}}" class="ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">
 	            @endif
