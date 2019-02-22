@@ -160,11 +160,11 @@ class LoginController extends Controller
             //return redirect()->route('withOutLogin'); commented by saurabh
             return redirect()->route('cartWithOutLogin');
         }else{
-          if ($request->session()->get('userPhoneNumber')) {
-            Session::flash('userPhoneNumber',$request->session()->get('userPhoneNumber'));
-          }else if(isset($request->userPhoneNumber)){
-            Session::flash('userPhoneNumber',$request->userPhoneNumber);
-          }
+            /*if ($request->session()->get('userPhoneNumber')) {
+                Session::flash('userPhoneNumber',$request->session()->get('userPhoneNumber'));
+            }else if(isset($request->userPhoneNumber)){
+                Session::flash('userPhoneNumber',$request->userPhoneNumber);
+            }*/
             
             return redirect()->action('Auth\LoginController@enterOtp')->with('success', 'You have entered wrong otp.');
         }
@@ -186,6 +186,11 @@ class LoginController extends Controller
     }
 
     public function mobileLogin(){
+        if(Session::has('userPhoneNumber'))
+        {
+            Session::forget('userPhoneNumber');
+        }
+
         return view('auth.mobile'); 
     }
 
