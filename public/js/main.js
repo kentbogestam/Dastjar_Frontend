@@ -119,7 +119,7 @@ function setCurrentLatLong(urllatlng){
 
 }
 
-
+// Increase quantity of cart item
 function incrementCartValue(id)
 {
     var grandtotal=0;
@@ -140,20 +140,20 @@ function incrementCartValue(id)
 
     $('#grandTotalDisplay').html(grandtotal);
 
-    // Update value in basket
+    // Update value in cart badge and show
     cntCartItems++;
     $('.cart-badge').html(cntCartItems);
     $('.cart-badge').removeClass('hidden');
 }
 
-
+// Decrease quantity of cart item
 function decrementCartValue(id,msg)
 {
-     var grandtotal=0;
-   var total=0;
-   var rowCount = $('#table-custom-2 tr').length;
+    var grandtotal=0;
+    var total=0;
+    var rowCount = $('#table-custom-2 tr').length;
     var value = parseInt(document.getElementById('qty'+id).value, 10);
-    
+
     value = isNaN(value) ? 0 : value;
     
     if(value > 1 || rowCount >= 3){
@@ -164,61 +164,43 @@ function decrementCartValue(id,msg)
         $('#itemtotalDisplay'+id).html(total);
         $('#itemtotal'+id).val(total);
 
-         grandtotal= calculateGrandtotal();
+        grandtotal= calculateGrandtotal();
 
-         updateCart(value,$('#prod'+id).val(),total,grandtotal);
+        updateCart(value,$('#prod'+id).val(),total,grandtotal);
 
-          if(value ==0){
-       
+        if(value ==0){
             $('#row_'+id).remove();
-          }
+        }
 
-         $('#grandTotalDisplay').html(grandtotal);
+        $('#grandTotalDisplay').html(grandtotal);
+
+        // Update value in cart badge and hide/show
+        cntCartItems--;
+        $('.cart-badge').html(cntCartItems);
+
+        if(!cntCartItems)
+        {
+            $('.cart-badge').addClass('hidden');
+        }
     }else{
-
-     var deleteConfirm = confirm(msg);
-
-      if(deleteConfirm==true){
-       
-        
-
-        var productid=$('#prod'+id).val();
-        
-        $('#row_'+id).remove();
-
-                if(rowCount > 3 ){ // count set to 2, because we have 2 row count at last cart item
-                 
-                 grandtotal= calculateGrandtotal();
-                  
-                  value=0; 
-                  updateCart(value,productid,total,grandtotal);
-
-                 $('#grandTotalDisplay').html(grandtotal);
-               }else{
-                     
-                    $('#last-row').remove();
-                    $('#saveorder').remove();
-                    updateCart(0,0,0,0);
-                   makeRedirection($('#redirectUrl').val());
-               }
-
-      }else{
-
-         console.log('not deleted');
-
-
-      }
+        $('#delete-cart-item-alert').find('span.delete').attr('onclick', 'onDeleteLastItemFromCart('+id+')')
+        $('#delete-cart-item-alert').show();
     }
+}
 
-    // Update value in basket
-    cntCartItems--;
-    $('.cart-badge').html(cntCartItems);
-
-    if(!cntCartItems)
+// Delele last item on cart and redirect
+function onDeleteLastItemFromCart(id = null)
+{
+    if(id)
     {
-        $('.cart-badge').addClass('hidden');
+        $('#row_'+id).remove();
+        $('#last-row').remove();
+        $('#saveorder').remove();
+        
+        updateCart(0,0,0,0);
+        makeRedirection($('#redirectUrl').val());
     }
-  }
+}
 
   function calculateGrandtotal(){
 
@@ -270,31 +252,26 @@ function decrementCartValue(id,msg)
 
   }
 
-  function deleteFullCart(url,value,msg){
+// Delete cart function #It only redirects on other page so need add functionality to delete cart server side
+function deleteFullCart(url,value,msg){
+    /*var deleteConfirm;
 
-     
-       var deleteConfirm;
-     if(value==1){
-
-      deleteConfirm = confirm(msg);
-     
-     }else if(value==2){
-
-      deleteConfirm = confirm("Your cart item will be removed if you leave this page");
-     }
-
-      if(deleteConfirm==true){
-      
-        var orderid= $('#orderid').val();
-
-        url= url+"/?orderid="+orderid;
-
-        makeRedirection(url);
-       
+    if(value==1){
+        deleteConfirm = confirm(msg);
+    }else if(value==2){
+        deleteConfirm = confirm("Your cart item will be removed if you leave this page");
     }
 
+    if(deleteConfirm==true){
+        var orderid= $('#orderid').val();
+        url= url+"/?orderid="+orderid;
+        makeRedirection(url);
+    }*/
 
-  }
+    var orderid= $('#orderid').val();
+    url= url+"/?orderid="+orderid;
+    makeRedirection(url);
+}
 
 
 kWindow = window;

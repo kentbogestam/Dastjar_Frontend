@@ -189,7 +189,8 @@
 		    padding-left: 30px;
 		}
 	}
-
+	
+	.ui-btn-active.logo{width:100px;margin:0 auto !important}
 	</style>
 </head> 
 
@@ -199,7 +200,7 @@
 			<div data-role="navbar"> 
 				<ul> 
 			<li><a href="{{url('user-setting')}}" data-ajax="false" id="back_arw" class="text-left" style="margin-top: 10px"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
-			 <li><a data-ajax="false" class="ui-btn-active">					
+			 <li><a data-ajax="false" class="ui-btn-active logo">
 			 	<img src="{{asset('images/logo.png')}}" class="anar-logo">
 				</a>
 			</li>
