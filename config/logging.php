@@ -89,6 +89,11 @@ return [
             'driver' => 'errorlog',
             'level' => 'debug',
         ],
+
+        'pushnotifaction' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/pushNotifaction.log'),
+        ],
     ],
 
 ];

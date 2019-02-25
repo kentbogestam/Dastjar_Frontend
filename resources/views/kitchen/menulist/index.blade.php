@@ -187,10 +187,10 @@
 				<img src="{{asset('images/icons/Yes_Check_Circle.png')}}">
 				 @if(is_array($message))
 		            @foreach ($message as $m)
-		                {{ $languageStrings[$m] or $m }}
+		                {{ $languageStrings[$m] ?? $m }}
 		            @endforeach
 		        @else
-		            {{ $languageStrings[$message] or $message }}
+		            {{ $languageStrings[$message] ?? $message }}
 		        @endif
 		    </div>
 			@endif
@@ -200,10 +200,10 @@
 				<img src="{{asset('images/icons/error-256.png')}}" style="width: 24px; height: 24px">
 				 @if(is_array($message))
 		            @foreach ($message as $m)
-		                {{ $languageStrings[$m] or $m }}
+		                {{ $languageStrings[$m] ?? $m }}
 		            @endforeach
 		        @else
-		            {{ $languageStrings[$message] or $message }}
+		            {{ $languageStrings[$message] ?? $message }}
 		        @endif
 		    </div>
 			@endif

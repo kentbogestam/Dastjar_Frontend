@@ -814,15 +814,13 @@ class AdminController extends Controller
         try{
             $helper->logs("App42 Step2: Username- " . $userName);
             App42API::initialize(env('APP42_API_KEY'),env('APP42_API_SECRET'));
-            Log::useDailyFiles(storage_path().'/logs/pushNotifaction');
-            Log::info('Before pushNotification time : '.Carbon::now()); 
+            Log::channel('pushnotifaction')->info('Before pushNotification time : '.Carbon::now());
 
             $pushNotificationService = App42API::buildPushNotificationService(); 
     
             $pushNotification = $pushNotificationService->sendPushMessageToUser($userName,$message);
             $helper->logs("App42 Step3: " . $pushNotification);
-
-            Log::info('After pushNotification time : '.Carbon::now()); 
+            Log::channel('pushnotifaction')->info('After pushNotification time : '.Carbon::now());
         }catch(\Exception $e){
             $helper->logs("App42 Exception: " . $e->getMessage());            
             return $e->getMessage();
