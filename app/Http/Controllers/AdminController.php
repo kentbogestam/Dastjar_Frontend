@@ -1374,14 +1374,28 @@ class AdminController extends Controller
         return view('kitchen.menulist.createMenu',compact('product', 'product_price_list', 'store_id', 'storeName', 'listDishes', 'currency'));
     }
 
+    /**
+     * Delete product price
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    function deleteDishPrice(Request $request)
+    {
+        $productPriceList = new ProductPriceList();
+        $productPriceList->where('id', '=', $request->price_id)->delete();
+
+        return back()->with('success','Dish Price deleted successfully');
+    }
+
     public function kitchenDeleteDish(Request $request){
         $productid = $request->product_id;
-        $productPriceList = new ProductPriceList();
+        
+        /*$productPriceList = new ProductPriceList();
 
         if($productPriceList->where('product_id', '=', $productid)->count() > 1){
             $productPriceList->where('id', '=', $request->price_id)->delete();
             return back()->with('success','Dish Price deleted successfully');
-        }
+        }*/
 
         $c_s_rel = new C_S_Rel();
 

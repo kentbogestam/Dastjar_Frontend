@@ -94,11 +94,11 @@
 		}
 
 		.add-price-btn{
-			float: right; 
+			/*float: right; */
 			margin-left: 15px;
 			color: rgba(199,7,17,1) !important;
 			border: 1px solid rgba(199,7,17,1);
-			padding: 8px;
+			padding: 4px 8px;
 			font-size: 16px;
 			letter-spacing: 1px;
 		}
@@ -410,36 +410,39 @@
 								formattedFromToDate = " " + dStart + " - " + dEnd;
 
 								//
-				        		currentPrice += '<div class="menu_icons">'+
-				        			'<span style="margin-right: 10px; color: rgba(199,7,17,1)">SEK '+item.current_price.price+'</span><span class="fa fa-calendar"></span><span>'+formattedFromToDate+'</span>'+
-				        			'<a href="javascript:void(0)" onClick="delete_dish(\'{{url('kitchen/delete-menu-dish?product_id=')}}'+item.product_id+'&price_id='+item.current_price.id+'\')" data-ajax="false">'+
-				        				'<span class="fa fa-trash" style="float: right; margin-left: 15px"></span>'+
-				        			'</a>'+
-				        			'<a href="{{url('kitchen/edit-menu-dish?product_id=')}}'+item.product_id+'&store_id={{ Session::get('storeId') }}&price_id='+item.current_price.id+'" data-ajax="false"><span class="fa fa-edit" style="float: right"></span>'+
-				        			'</a>'+
+				        		currentPrice += '<div class="menu_icons row">'+
+				        			'<div class="col-sm-12">'+
+				        				'<span style="margin-right: 10px; color: rgba(199,7,17,1)">SEK '+item.current_price.price+'</span><span class="fa fa-calendar"></span><span>'+formattedFromToDate+'</span>'+
+					        			'<a href="javascript:void(0)" onClick="deleteDishPrice(\'{{url('kitchen/delete-dish-price?price_id=')}}'+item.current_price.id+'\')" data-ajax="false">'+
+					        				'<span class="fa fa-trash" style="margin-left: 15px"></span>'+
+					        			'</a>'+
+					        			'<a href="{{url('kitchen/edit-menu-dish?product_id=')}}'+item.product_id+'&store_id={{ Session::get('storeId') }}&price_id='+item.current_price.id+'" data-ajax="false"><span class="fa fa-edit" style="margin-left: 5px"></span>'+
+					        			'</a>'+
+				        			'</div>'+
 				        		'</div>';
 				        	}
 
 				        	// HTML part
 				            html += '<div class="card" style="padding: 20px" data-id="'+item.product_id+'">'+
-				            			'<div class="row">'+
-				            				'<div class="col-sm-2">'+
-				            					'<img src="'+item.small_image+'" class="prod_img"/>'+
-				            				'</div>'+
-				            				'<div class="col-sm-10">'+
-				            					'<div>'+
-				            						'<h3 style="display: inline">'+item.product_name+'</h3>'+
-				            						'<a href="javascript:void(0)" onClick="add_dish_price(\''+item.product_id+'\', \'{{Session::get('storeId')}}\')" class="btn waves-effect add-price-btn" data-ajax="false">Add New Price</a>'+
-				            					'</div>'+
-				            					'<div>'+
-				            						'<p>'+item.product_description+'</p>'+
-				            					'</div>'+
-				            					'<div class="current-price">'+currentPrice+'</div>'+
-				            					'<button type="button" class="ui-btn ui-mini ui-btn-inline btn-show-future-prices" onclick="getFuturePriceByProduct(\''+item.product_id+'\', this);">Show future prices</button>'+
-				            					'<div class="future-prices"></div>'+
-				            				'</div>'+
-				            			'</div>'+
-				            		'</div>';
+				            	'<div class="row">'+
+				            		'<div class="col-sm-2">'+
+				            			'<img src="'+item.small_image+'" class="prod_img"/>'+
+				            		'</div>'+
+				            		'<div class="col-sm-7">'+
+				            			'<h3>'+item.product_name+'</h3>'+
+										'<p>'+item.product_description+'</p>'+
+										'<div class="current-price">'+currentPrice+'</div>'+
+										'<button type="button" class="ui-btn ui-mini ui-btn-inline btn-show-future-prices" onclick="getFuturePriceByProduct(\''+item.product_id+'\', this);">Show future prices</button>'+
+				            			'<div class="future-prices"></div>'+
+				            		'</div>'+
+				            		'<div class="col-sm-3 text-right">'+
+				            			'<a href="javascript:void(0)" onClick="delete_dish(\'{{url('kitchen/delete-menu-dish?product_id=')}}'+item.product_id+'\')" data-ajax="false">'+
+					        				'<span class="fa fa-trash fa-2x" style="margin-left: 15px"></span>'+
+					        			'</a>'+
+				            			'<a href="javascript:void(0)" onClick="add_dish_price(\''+item.product_id+'\', \'{{Session::get('storeId')}}\')" class="btn waves-effect add-price-btn" data-ajax="false">Add New Price</a>'+
+				            		'</div>'+
+				            	'</div>'+
+				            '</div>';
 				        });
 
 				        $this.nextAll('#demo_'+id).html(html);
@@ -489,6 +492,14 @@
 	    }
 	}
 
+	// Delete dish price
+	function deleteDishPrice(url)
+	{
+		if(confirm('Are you sure you want to delete this price?')) {
+    	    window.location = url;
+	    }
+	}
+
 	function add_dish_price(product_id, store_id){
 			$('#selected_prod_product_id').val(product_id);
 			$('#selected_prod_store_id').val(store_id);
@@ -528,13 +539,15 @@
 							formattedFromToDate = " " + dStart + " - " + dEnd;
 
 							//
-				        	futurePricesHtml += '<div class="menu_icons">'+
-			        			'<span style="margin-right: 10px; color: rgba(199,7,17,1)">SEK '+item.price+'</span><span class="fa fa-calendar"></span><span>'+formattedFromToDate+'</span>'+
-			        			'<a href="javascript:void(0)" onClick="delete_dish(\'{{url('kitchen/delete-menu-dish?product_id=')}}'+item.product_id+'&price_id='+item.id+'\')" data-ajax="false">'+
-			        				'<span class="fa fa-trash" style="float: right; margin-left: 15px"></span>'+
-			        			'</a>'+
-			        			'<a href="{{url('kitchen/edit-menu-dish?product_id=')}}'+item.product_id+'&store_id={{ Session::get('storeId') }}&price_id='+item.id+'" data-ajax="false"><span class="fa fa-edit" style="float: right"></span>'+
-			        			'</a>'+
+				        	futurePricesHtml += '<div class="menu_icons row">'+
+				        		'<div class="col-sm-12">'+
+				        			'<span style="margin-right: 10px; color: rgba(199,7,17,1)">SEK '+item.price+'</span><span class="fa fa-calendar"></span><span>'+formattedFromToDate+'</span>'+
+				        			'<a href="javascript:void(0)" onClick="deleteDishPrice(\'{{url('kitchen/delete-dish-price?price_id=')}}'+item.id+'&price_id='+item.id+'\')" data-ajax="false">'+
+				        				'<span class="fa fa-trash" style="margin-left: 15px"></span>'+
+				        			'</a>'+
+				        			'<a href="{{url('kitchen/edit-menu-dish?product_id=')}}'+item.product_id+'&store_id={{ Session::get('storeId') }}&price_id='+item.id+'" data-ajax="false"><span class="fa fa-edit" style="margin-left: 5px"></span>'+
+				        			'</a>'+
+				        		'</div>'+
 			        		'</div>';
 				        });
 					}
