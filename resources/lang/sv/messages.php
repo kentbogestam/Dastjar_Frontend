@@ -89,7 +89,7 @@ return [
     'Support' => 'Support',
     'Thank you for contacting us.' => 'Tack för ditt meddelande.',
     'Remove' => 'Ta bort',
-    'Payment Done Successfully' => 'Betallningen genomfördes!',
+    'Payment Done Successfully' => 'Betalningen genomfördes!',
     'Others' => 'Övriga',
     'Extra Preparation Time' => 'Öka beredningstiden',
     'dateTimeAlert'=>'Både tid och datum måste anges för att gå vidare',
