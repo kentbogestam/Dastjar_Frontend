@@ -51,9 +51,9 @@
 
 	<div id="login-popup" style="display: none;" class="login-popup" data-theme="a">
 	  <div class="inner-popup">
-	        <div id = "cancel-popup" class="cross"><img src="{{asset('images/icons/cross.png')}}"></div>
 	        <div class="pop-body">
-	           <p>{{ __('messages.Please activate Location Services in your mobile') }}</p>
+	           <p class="text-center">{{ __('messages.Please activate Location Services in your mobile') }}</p>
+	           <p class="text-center"><a href="{{ url('select-location?k=home') }}" class="ui-btn ui-corner-all ui-btn-inline">{{ __('messages.OK') }}</a></p>
 	        </div>
 	  </div>
 	</div>
