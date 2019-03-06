@@ -222,12 +222,13 @@
 					    })(i);
 		          	}
 	          	}else{
-	          		liItem += "<div class='table-content'>";
+	          		/*liItem += "<div class='table-content'>";
 		        	liItem += "<p>";
 		        	//liItem += '{{ __('messages.Order is not available.') }}';
 		        	liItem += "</p>";
-		        	liItem += "</div>";
+		        	liItem += "</div>";*/
 	          	}
+	          	
 	          	$("#orderDetailContianer").append(liItem);
 			}); 
 		});
