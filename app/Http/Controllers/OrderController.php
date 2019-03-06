@@ -14,7 +14,7 @@ use App\Store;
 use App\User;
 use App\Company;
 use App\Admin;
-use App\PromotionDiscount;
+// use App\PromotionDiscount;
 use Session;
 
 class OrderController extends Controller
