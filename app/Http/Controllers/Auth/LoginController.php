@@ -46,7 +46,7 @@ class LoginController extends Controller
     }
 
     public function socialLogin($social){
-        return Socialite::driver($social)->redirect();
+        return Socialite::driver($social)->stateless()->redirect();
     }
 
     public function handelProviderCallback(Request $request, $social){
@@ -57,7 +57,7 @@ class LoginController extends Controller
 
         try {
             // $userSocial = Socialite::with($social)->user();
-            $userSocial = Socialite::driver($social)->user();
+            $userSocial = Socialite::driver($social)->stateless()->user();
         } catch (Exception $e) {
             return redirect('/');
         }
