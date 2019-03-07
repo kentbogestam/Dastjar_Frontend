@@ -521,8 +521,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
     font-size: 1.1em;
 }
 .thanks-msg p{width: 14em; font-family: "ProximaNova-Bold";}
-.alt-msg  span{
-    font-size: 1.5em;
+.alt-msg span{
     margin: 8px 0;
     display: inline-block;
     font-family: "ProximaNova-Semibold"; 

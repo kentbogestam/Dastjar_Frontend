@@ -61,7 +61,7 @@ return [
     'Location updated successfully.'  => 'Platsen är uppdaterad.',        
     'Your order Number'  => 'Ditt Order-ID',               
     'is'  => 'är',                             
-    'Ready to Pick Up'  => 'Klar för Avhämtning',                
+    'Order Ready To Pick Up'  => 'Klar för Avhämtning',                
     'Thanks for your visit.'  => 'Tack för ditt besök.',               
     'Hope to seen you soon again'  => 'På återseende',               
     'Please log in here!'  => 'Logga in här',                     

@@ -62,7 +62,7 @@ return [
     'Location updated successfully.'  => 'Location updated successfully.',        
     'Your order Number'  => 'Your order Number',              
     'is'  => 'is',                 
-    'Ready to Pick up'  => 'Ready to Pick up',                
+    'Order Ready To Pick Up'  => 'Ready to Pick up',                
     'Thanks for your visit.'  => 'Thanks for your visit.',                
     'Hope to seen you soon again'  => 'Hope to see you soon again',               
     'You are the main admin of company.Please login from any store of that company and then the menu of that store will be appeared'  => 'Please login to the store',          
