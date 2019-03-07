@@ -39,9 +39,9 @@
         <div role="main" data-role="main-content" class="content map-container">
             <div class="map-input">
                 @if(Auth::check())
-                    <input type="text" name="street_address" id="pac-input" class="" placeholder="{{ __('messages.Enter a Location') }}*" value="{{ Session::get('with_login_address')}}" required placeholder="Address*" onKeyPress="checkFormsubmit(event)"/>
+                    <input type="text" name="street_address" id="pac-input" class="" placeholder="{{ __('messages.Enter a Location') }}" value="{{ Session::get('with_login_address')}}" required onKeyPress="checkFormsubmit(event)"/>
                 @else
-                    <input type="text" name="street_address" id="pac-input" class="" placeholder="{{ __('messages.Enter a Location') }}*" value="{{ Session::get('address')}}" required placeholder="Address*" onKeyPress="checkFormsubmit(event)"/>
+                    <input type="text" name="street_address" id="pac-input" class="" placeholder="{{ __('messages.Enter a Location') }}" value="{{ Session::get('address')}}" required onKeyPress="checkFormsubmit(event)"/>
                 @endif
 
                 @if(isset($_GET['k']))

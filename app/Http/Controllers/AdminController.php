@@ -814,15 +814,13 @@ class AdminController extends Controller
         try{
             $helper->logs("App42 Step2: Username- " . $userName);
             App42API::initialize(env('APP42_API_KEY'),env('APP42_API_SECRET'));
-            Log::useDailyFiles(storage_path().'/logs/pushNotifaction');
-            Log::info('Before pushNotification time : '.Carbon::now()); 
+            Log::channel('pushnotifaction')->info('Before pushNotification time : '.Carbon::now());
 
             $pushNotificationService = App42API::buildPushNotificationService(); 
     
             $pushNotification = $pushNotificationService->sendPushMessageToUser($userName,$message);
             $helper->logs("App42 Step3: " . $pushNotification);
-
-            Log::info('After pushNotification time : '.Carbon::now()); 
+            Log::channel('pushnotifaction')->info('After pushNotification time : '.Carbon::now());
         }catch(\Exception $e){
             $helper->logs("App42 Exception: " . $e->getMessage());            
             return $e->getMessage();
@@ -1376,14 +1374,28 @@ class AdminController extends Controller
         return view('kitchen.menulist.createMenu',compact('product', 'product_price_list', 'store_id', 'storeName', 'listDishes', 'currency'));
     }
 
+    /**
+     * Delete product price
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    function deleteDishPrice(Request $request)
+    {
+        $productPriceList = new ProductPriceList();
+        $productPriceList->where('id', '=', $request->price_id)->delete();
+
+        return back()->with('success','Dish Price deleted successfully');
+    }
+
     public function kitchenDeleteDish(Request $request){
         $productid = $request->product_id;
-        $productPriceList = new ProductPriceList();
+        
+        /*$productPriceList = new ProductPriceList();
 
         if($productPriceList->where('product_id', '=', $productid)->count() > 1){
             $productPriceList->where('id', '=', $request->price_id)->delete();
             return back()->with('success','Dish Price deleted successfully');
-        }
+        }*/
 
         $c_s_rel = new C_S_Rel();
 

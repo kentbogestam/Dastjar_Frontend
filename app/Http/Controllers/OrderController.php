@@ -14,6 +14,7 @@ use App\Store;
 use App\User;
 use App\Company;
 use App\Admin;
+// use App\PromotionDiscount;
 use Session;
 
 class OrderController extends Controller
@@ -607,8 +608,12 @@ class OrderController extends Controller
         $cust->save();
     }
 
- public function cartWithOutLogin(Request $request){
-       
+    /**
+     * Redirects here right after login if item added into cart
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function cartWithOutLogin(Request $request){   
         $data = Session::get('orderData');
         if(!empty($data)){
             $i = 0;
@@ -618,6 +623,7 @@ class OrderController extends Controller
             $orderDate;
             $orderTime;
             $checkOrderDate;
+
             if($request->session()->get('order_date') != null){
                 $pieces = explode(" ", $request->session()->get('order_date'));
                 $date=date_create($pieces[3]."-".$pieces[1]."-".$pieces[2]);
@@ -721,8 +727,12 @@ class OrderController extends Controller
                  $request->session()->put('paymentmode',1);
                  return view('order.cart', compact('order','orderDetails'));
             }else{
+                DB::table('orders')->where('order_id', $orderId)->update([
+                    'online_paid' => 2,
+                ]);
+                Session::forget('orderData');
                 $user = User::where('id',$order->user_id)->first(); 
-                   $request->session()->put('paymentmode',0);
+                $request->session()->put('paymentmode',0);
                 return view('order.cart', compact('order','orderDetails'));                     
                //return redirect()->route('order-view', $orderId);
             }
@@ -761,6 +771,11 @@ class OrderController extends Controller
         } 
     }
 
+    /**
+     * Proceed cart if already logged-in otherwise redirect to login page
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
     public function cart(Request $request){
         if(Auth::check()){
             if(!empty($request->input())){
@@ -967,12 +982,51 @@ class OrderController extends Controller
     } 
  }
 
-public function deleteWholecart($orderid){
+    public function deleteWholecart($orderid){
+        DB::table('orders')->where('order_id', $orderid)->delete();
 
-          DB::table('orders')->where('order_id', $orderid)->delete();
+        DB::table('order_details')->where('order_id', $orderid)->delete();
+    }
 
-          DB::table('order_details')->where('order_id', $orderid)->delete();
-  }
+    /**
+     * Check and apply if promocode is applicable for store
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    /*public function ajaxApplyPromocode(Request $request)
+    {
+        $status = 0;
 
-    
+        // If storeId exist in session and then check for promocode
+        if( Session::has('storeId') )
+        {
+            $data = $request->input();
+            $storeId = Session::get('storeId');
+
+            // Get the order date in UTC
+            if( Session::has('order_date') )
+            {
+                $orderDate = substr(Session::get('order_date'), 0, strpos(Session::get('order_date'), '('));
+                $orderDate = date('Y-m-d H:i:00', strtotime($orderDate));
+            }
+            else
+            {
+                $orderDate = Carbon::now()->format('Y-m-d h:i:00');
+            }
+            
+            // Get promocode if exist
+            $promoCode = PromotionDiscount::select(['id', 'discount_value'])
+                ->where(['code' => $data['code'], 'status' => 1, 'store_id' => Session::get('storeId')])
+                ->where('start_date', '<=', $orderDate)
+                ->where('end_date', '>=', $orderDate)
+                ->first();
+
+            if($promoCode)
+            {
+                $status = 1;
+            }
+        }
+
+        return response()->json(['status' => $status]);
+    }*/
 }

@@ -21,10 +21,10 @@
                             <h4>Error:</h4>
                             @if(is_array($message))
                                 @foreach ($message as $m)
-                                    <p>{{ $languageStrings[$m] or $m }}</p>
+                                    <p>{{ $languageStrings[$m] ?? $m }}</p>
                                 @endforeach
                             @else
-                                <p>{{ $languageStrings[$message] or $message }}</p>
+                                <p>{{ $languageStrings[$message] ?? $message }}</p>
                             @endif
                         </div>
                     </div>
