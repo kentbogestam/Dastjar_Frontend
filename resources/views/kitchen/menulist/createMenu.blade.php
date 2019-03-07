@@ -167,10 +167,10 @@
 				<img src="{{asset('images/icons/Yes_Check_Circle.png')}}">
 				 @if(is_array($message))
 		            @foreach ($message as $m)
-		                {{ $languageStrings[$m] or $m }}
+		                {{ $languageStrings[$m] ?? $m }}
 		            @endforeach
 		        @else
-		            {{ $languageStrings[$message] or $message }}
+		            {{ $languageStrings[$message] ?? $message }}
 		        @endif
 		    </div>
 		@endif
@@ -194,12 +194,12 @@
 		<div class="row">
 			<div class="col-10 dish_name_col">
 				<a href="{{ url('kitchen/menu') }}" class="menu_back_btn" data-ajax="false"><span class="fa fa-chevron-left"></span>Back</a>
-				<input type="text" name="prodName" placeholder="Dish Name" class="dish_name" value="{{ $product->product_name or "" }}" maxlength="24" title="The name of your product. 
+				<input type="text" name="prodName" placeholder="Dish Name" class="dish_name" value="{{ $product->product_name ?? "" }}" maxlength="24" title="The name of your product. 
 Due to the size of the text only 19 characters may be displayed, so try to shorten down your message." required/>
 			</div>
 			<div class="col-2 menu_image_col">
 				<label class="upload_menu" for="fileupload">
-					<img src="{{ $product->small_image or  "" }}" id="blah"/>
+					<img src="{{ $product->small_image ?? "" }}" id="blah"/>
 					<span class="fa fa-camera camera_icon"></span>
 					<p class="upload_img_txt">Upload Menu Image</p>
 					<input type="file" name="prodImage" id="fileupload" onerror="alert('Image missing')" onchange="readURL(this);"/>
@@ -245,19 +245,19 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 
 		<div class="row">
 			<div class="col-12">
-				<input type="text" name="prodDesc" placeholder="Description" value="{{ $product->product_description or "" }}" maxlength="50" title="Describes the offer itself on max two lines below the title in the list view.  Max 50 characters will fit into the 2 lines." required/>
+				<input type="text" name="prodDesc" placeholder="Description" value="{{ $product->product_description ?? "" }}" maxlength="50" title="Describes the offer itself on max two lines below the title in the list view.  Max 50 characters will fit into the 2 lines." required/>
 			</div>
 		</div>
 
 		<div class="row">
 			<div class="col-12">
-				<input type="number" id="prep-time" name="prepTime" placeholder="Prep. Time (mins)" value="{{ $product->preparation_Time or "" }}" required/>
+				<input type="number" id="prep-time" name="prepTime" placeholder="Prep. Time (mins)" value="{{ $product->preparation_Time ?? "" }}" required/>
 			</div>
 		</div>
 
 		<div class="row">
 			<div class="col-12">
-				<input type="number" name="prodPrice" placeholder="Price ({{$currency}})" value="{{ $product_price_list->price or "" }}" required/>
+				<input type="number" name="prodPrice" placeholder="Price ({{$currency}})" value="{{ $product_price_list->price ?? "" }}" required/>
 			</div>
 		</div>
 
@@ -280,11 +280,11 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 		</div>
 
 		@if(isset($product->product_id))
-		<input type="hidden" name="product_id" value="{{ $product->product_id or "" }}"/>
+		<input type="hidden" name="product_id" value="{{ $product->product_id ?? "" }}"/>
 		@endif
 
 		@if(isset($store_id))
-		<input type="hidden" name="store_id" value="{{ $store_id or "" }}"/>
+		<input type="hidden" name="store_id" value="{{ $store_id ?? "" }}"/>
 		@endif
 
 		@if(isset($product_price_list->id))

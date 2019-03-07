@@ -134,8 +134,15 @@ border: 1px solid #ccc;
     position: absolute;
     left: 50%;
     transform: translate(-50% , -50%);
-    border-radius: 10px;
+    border-radius: 5px;
     padding: 15px;
+}
+.login-popup .inner-popup a.ui-btn {
+    background-color: #333;
+    color: #fff;
+    border-color: #1f1f1f;
+    text-shadow: 0 1px 0 #111;
+    border-radius:5px
 }
 .login-popup .inner-popup p{ margin:0;padding: 0 }
 .cross{
@@ -514,8 +521,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
     font-size: 1.1em;
 }
 .thanks-msg p{width: 14em; font-family: "ProximaNova-Bold";}
-.alt-msg  span{
-    font-size: 1.5em;
+.alt-msg span{
     margin: 8px 0;
     display: inline-block;
     font-family: "ProximaNova-Semibold"; 

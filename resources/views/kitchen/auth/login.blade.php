@@ -17,10 +17,10 @@
                             <h4>Error</h4>
                             @if(is_array($message))
                                 @foreach ($message as $m)
-                                    {{ $languageStrings[$m] or $m }}
+                                    {{ $languageStrings[$m] ?? $m }}
                                 @endforeach
                             @else
-                                {{ $languageStrings[$message] or $message }}
+                                {{ $languageStrings[$message] ?? $message }}
                             @endif
                         </div>
                     </div>

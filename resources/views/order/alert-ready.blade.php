@@ -23,7 +23,7 @@
 			<div class="alt-msg">
 				<img src="{{asset('images/ready-chef.png')}}">
 				<div class="text-msg">
-					<p>{{ __('messages.Your order Number') }} {{$orderID}} {{ __('messages.is') }} <span>{{ __('messages.Ready to Pick Up') }} !</span></p>
+					<p>{{ __('messages.Your order Number') }} {{$orderID}} {{ __('messages.is') }} <span>{{ __('messages.Order Ready To Pick Up') }}!</span></p>
 				</div>
 			</div>
 		</div>

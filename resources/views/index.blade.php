@@ -47,9 +47,9 @@
 
 	<div id="login-popup" style="display: none;" class="login-popup" data-theme="a">
 	  <div class="inner-popup">
-	        <div id="cancel-popup" class="cross" onclick=closeLocationPopup("{{url('select-location?k=home')}}")><span class="popup-close1">x</span></div>
 	        <div class="pop-body">
-	           <p>{{ __('messages.Please activate Location Services in your mobile') }}</p>
+	           <p class="text-center">{{ __('messages.Please activate Location Services in your mobile') }}</p>
+	           <p class="text-center"><a href="javascript:void(0)" class="ui-btn ui-corner-all ui-btn-inline" onclick=closeLocationPopup("{{url('select-location?k=home')}}")>{{ __('messages.OK') }}</a></p>
 	        </div>
 	  </div>
 	</div>

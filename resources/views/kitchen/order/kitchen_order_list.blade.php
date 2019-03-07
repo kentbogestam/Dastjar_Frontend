@@ -18,10 +18,10 @@
 				<img src="{{asset('images/icons/Yes_Check_Circle.png')}}">
 				 @if(is_array($message))
 		            @foreach ($message as $m)
-		                {{ $languageStrings[$m] or $m }}
+		                {{ $languageStrings[$m] ?? $m }}
 		            @endforeach
 		        @else
-		            {{ $languageStrings[$message] or $message }}
+		            {{ $languageStrings[$message] ?? $message }}
 		        @endif
 		    </div>
 		@endif
@@ -222,12 +222,13 @@
 					    })(i);
 		          	}
 	          	}else{
-	          		liItem += "<div class='table-content'>";
+	          		/*liItem += "<div class='table-content'>";
 		        	liItem += "<p>";
 		        	//liItem += '{{ __('messages.Order is not available.') }}';
 		        	liItem += "</p>";
-		        	liItem += "</div>";
+		        	liItem += "</div>";*/
 	          	}
+	          	
 	          	$("#orderDetailContianer").append(liItem);
 			}); 
 		});

@@ -408,6 +408,12 @@
 			comment = $('#orderDetail'+id).val();
 			$('textarea#textarea-1').val(comment);			
 		});
+
+	// 
+	$(document).on("collapsibleexpand", "[data-role=collapsible]", function () {
+		var position = $(this).offset().top;
+		$.mobile.silentScroll(position-30);
+	});
 		
 	$('#submitId').click(function(){ 
 		var text = $('textarea#textarea-1').val();

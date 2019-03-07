@@ -46,7 +46,7 @@ class LoginController extends Controller
     }
 
     public function socialLogin($social){
-        return Socialite::driver($social)->redirect();
+        return Socialite::driver($social)->stateless()->redirect();
     }
 
     public function handelProviderCallback(Request $request, $social){
@@ -56,14 +56,15 @@ class LoginController extends Controller
         }
 
         try {
-            $userSocial = Socialite::with($social)->user();
+            // $userSocial = Socialite::with($social)->user();
+            $userSocial = Socialite::driver($social)->stateless()->user();
         } catch (Exception $e) {
             return redirect('/');
         }
         
         //dd($userSocial->id);
         //$user = User::where(['email' => $userSocial->getEmail()])->first();
-        $user = User::where(['fac_id' => $userSocial->id])->first();
+        $user = User::where(['fac_id' => $userSocial->getId()])->first();
         if($user){
             Auth::login($user);
 
@@ -88,8 +89,8 @@ class LoginController extends Controller
               }
             }
 
-            if(DB::table('customer')->where('fac_id', $userSocial->id)->exists()){
-              DB::table('customer')->where('fac_id', $userSocial->id)->update([
+            if(DB::table('customer')->where('fac_id', $userSocial->getId())->exists()){
+              DB::table('customer')->where('fac_id', $userSocial->getId())->update([
                           'language' => $lang,
                       ]);              
             }
@@ -114,9 +115,9 @@ class LoginController extends Controller
               }
             }
 
-            $user = User::firstOrNew(array('email' => $userSocial->email));
-            $user->fac_id = $userSocial->id;
-            $user->name = $userSocial->name;
+            $user = User::firstOrNew(array('email' => $userSocial->getEmail()));
+            $user->fac_id = $userSocial->getId();
+            $user->name = $userSocial->getName();
             $user->language = $lang;
             $user->save();
 

@@ -7,10 +7,10 @@
               <img src="{{asset('images/icons/Yes_Check_Circle.png')}}">
                @if(is_array($message))
                       @foreach ($message as $m)
-                          {{ $languageStrings[$m] or $m }}
+                          {{ $languageStrings[$m] ?? $m }}
                       @endforeach
                   @else
-                      {{ $languageStrings[$message] or $message }}
+                      {{ $languageStrings[$message] ?? $message }}
                   @endif
               </div>
           @endif
@@ -37,7 +37,7 @@
                     <div class="social-sec">
                         <div class="ui-grid-solo">
                          <input type="hidden" name="userPhoneNumber" value="{{Session::get('userPhoneNumber')}}">
-                         <input id="otp" type="tel" class="form-control" name="otp" value="{{ old('otp') }}" required autofocus placeholder="Enter the code you received on SMS*">
+                         <input id="otp" type="tel" class="form-control" name="otp" value="{{ old('otp') }}" required autofocus placeholder="Enter the code you received on SMS*" autocomplete="off">
                         </div>
                     </div>
                     <div class="ui-grid-solo">

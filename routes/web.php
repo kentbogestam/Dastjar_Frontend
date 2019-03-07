@@ -192,7 +192,8 @@
 		Route::post('create-menu-update', 'AdminController@kitchenUpdateMenuPost');
 
 		Route::get('edit-menu-dish', 'AdminController@kitchenEditDish');		
-		Route::get('delete-menu-dish', 'AdminController@kitchenDeleteDish');	
+		Route::get('delete-menu-dish', 'AdminController@kitchenDeleteDish');
+		Route::get('delete-dish-price', 'AdminController@deleteDishPrice');	
 		Route::get('createStandardOffer', 'AdminController@createStandardOffer');			
 		Route::post('add-dish-price', 'AdminController@addDishPrice');	
 		Route::post('is-future-date-available', 'AdminController@isFutureDateAvailable');

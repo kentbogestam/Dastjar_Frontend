@@ -75,7 +75,7 @@ adasd
 					<img src="{{asset('images/icons/Yes_Check_Circle.png')}}">
 					 @if(is_array($message))
 			            @foreach ($message as $m)
-			                {{ $languageStrings[$m] or $m }}
+			                {{ $languageStrings[$m] ?? $m }}
 			            @endforeach
 			        @else
 			            {{  __("messages.$message") }}
