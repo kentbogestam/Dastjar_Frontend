@@ -54,25 +54,36 @@
         </div>
     </form>
 </div>
+
+<!-- If allow location is off, show login popup -->
+<div id="login-popup" style="display: none;" class="login-popup" data-theme="a">
+    <div class="inner-popup">
+        <div class="pop-body">
+            <p class="text-center">{{ __('messages.Please activate Location Services in your mobile') }}</p>
+            <p class="text-center"><a href="javascript:void(0)" class="ui-btn ui-corner-all ui-btn-inline" onclick="$('#login-popup').hide();">{{ __('messages.OK') }}</a></p>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('footer-script')
     <script type="text/javascript">
-        /*$(function(){       
+        $(function(){
             // Check for Geolocation API permissions  
-            navigator.geolocation.getCurrentPosition(function(position) { 
+            navigator.geolocation.getCurrentPosition(function(position) {
                 console.log("latitude=" + position.coords.latitude);
                 console.log("longitude=" + position.coords.longitude);
-                document.cookie="latitude=" + position.coords.latitude;
-                document.cookie="longitude=" + position.coords.longitude;
-                
+                /*document.cookie="latitude=" + position.coords.latitude;
+                document.cookie="longitude=" + position.coords.longitude;*/
             },function(error){
-               $('.login-inner-section a').attr('href','javascript:void(0)');
-               $('#login-popup').show();
-                
+                if (typeof loc_lat === "undefined" || loc_lat == "") {
+                    if (!getCookie("latitude")){
+                        $('.login-inner-section a').attr('href','javascript:void(0)');
+                        $('#login-popup').show();
+                    }
+                }
             });
-
-        });*/
+        });
 
         var map = null;
         var marker = null;
