@@ -277,7 +277,7 @@ class HomeController extends Controller
                 if($request->session()->get('rang') != null){
                     $rang = $request->session()->get('rang');
                 }else{
-                    $rang = '7';
+                    $rang = '10';
                     $request->session()->put('rang', $rang);
                 }
                 $companydetails = Store::getListRestaurants($lat,$lng,$rang,'1','3',$todayDate,$currentTime,$todayDay);
@@ -397,7 +397,7 @@ class HomeController extends Controller
             if($request->session()->get('rang') != null){
                 $rang = $request->session()->get('rang');
             }else{
-                $rang = '7';
+                $rang = '10';
                 $request->session()->put('rang', $rang);
             } 
             $companydetails = Store::getEatLaterListRestaurants($lat,$lng,$rang,'2','3',$todayDate,$currentTime,$todayDay);
@@ -448,7 +448,7 @@ class HomeController extends Controller
                 if($request->session()->get('rang') != null){
                     $rang = $request->session()->get('rang');
                 }else{
-                    $rang = '7';
+                    $rang = '10';
                     $request->session()->put('rang', $rang);
                 } 
                 $companydetails = Store::getEatLaterListRestaurants($lat,$lng,$rang,'1','3',$todayDate,$currentTime,$todayDay);
