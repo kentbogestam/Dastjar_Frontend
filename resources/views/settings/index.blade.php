@@ -50,6 +50,10 @@
 	.ui-btn-active.Settings{width:40px;margin:0 auto !important}
 	.done-btn.dataSave{width:40px;margin:0 auto !important; float: right;}
 </style>
+
+<!-- Start validation JS -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
+<!-- End -->
 @endsection
 
 @section('content')
@@ -159,6 +163,27 @@ adasd
 			</div>
 		</div>
 	</form>
+
+	@if(Auth::check())
+		<div id="peroid-discount-list" class="setting-list">
+			<ul data-role="listview">
+				<li data-role="collapsible" class="range-sec">
+					<h2 class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Discount') }}</h2>
+					<div class="row">
+						<h2>{{ __('messages.Add Discount') }}</h2>
+						<div data-role="controlgroup">
+							<form name="user-discount" id="user-discount" method="post" action="{{ url('add-customer-discount') }}" data-ajax="false">
+								{{ csrf_field() }}
+								<input type="text" name="code" id="code" placeholder="{{ __('messages.Enter Discount Code') }}" data-rule-required>
+								<p class="error"></p>
+								<button type="submit" class="btn btn-success">{{ __('messages.Submit') }}</button>		
+							</form>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+	@endif
 	
 	<div id="contact-setting-list" class="setting-list">
 			<ul data-role="listview"> 
@@ -217,5 +242,36 @@ adasd
 		function makeRedirection(link){
 			window.location.href = link;
 		}
+
+		// Submit discount
+		$('#user-discount').on('submit', function() {
+			var isValid = false; var msg = 'This field is required.';
+			var code = $('#code').val();
+
+			if(code.length)
+			{
+				// Check if code valid
+				$.ajax({
+					type: 'POST',
+					url: "{{ url('is-valid-discount-code') }}",
+					data: {
+						'_token': "{{ csrf_token() }}",
+						'code': code
+					},
+					async: false,
+					dataType: 'json',
+					success: function(response) {
+						isValid = response.status;
+						msg = response.msg;
+					}
+				});
+			}
+
+			if(!isValid)
+			{
+				$('#user-discount').find('p.error').text(msg);
+				return false;
+			}
+		});
 	</script>
 @endsection

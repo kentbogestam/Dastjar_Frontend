@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use App\PromotionDiscount;
+use App\CustomerDiscount;
+use Carbon\Carbon;
 use DB;
 use Auth;
 use App\Helper;
@@ -24,6 +27,84 @@ class CustomerController extends Controller
         return view('settings.index', compact(''));
     }
 
+    /**
+     * Check if promocode is valid and not already applied
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function ajaxIsValidDiscountCode(Request $request)
+    {
+        $status = 0; $msg = '';
+
+        $data = $request->input();
+        $todayDate = Carbon::now()->format('Y-m-d h:i:00');
+        
+        // Check if discount exist
+        $discount = PromotionDiscount::select(['id', 'code'])
+            ->where(['code' => $data['code'], 'status' => '1'])
+            ->where('start_date', '<=', $todayDate)
+            ->where('end_date', '>=', $todayDate)
+            ->first();
+
+        if($discount)
+        {
+            // Check if discount is not already applied
+            if(!CustomerDiscount::where(['customer_id' => Auth::id(), 'discount_id' => $discount->id])->first())
+            {
+                $status = 1;
+            }
+            else
+            {
+                $msg = __('messages.discountAlreadyApplied');
+            }
+        }
+        else
+        {
+            $msg = __('messages.invalidDiscount');
+        }
+
+        return response()->json(['status' => $status, 'msg' => $msg]);
+    }
+
+    public function addCustomerDiscount(Request $request)
+    {
+        $status = 0;
+
+        // Validation
+        $validatedData = $request->validate([
+            'code' => 'required'
+        ]);
+
+        $data = $request->input();
+        $todayDate = Carbon::now()->format('Y-m-d h:i:00');
+        
+        // Check if discount exist
+        $discount = PromotionDiscount::select(['id', 'code'])
+            ->where(['code' => $data['code'], 'status' => '1'])
+            ->where('start_date', '<=', $todayDate)
+            ->where('end_date', '>=', $todayDate)
+            ->first();
+
+        if($discount)
+        {
+            // Check if discount is not already applied and then add
+            if(!CustomerDiscount::where(['customer_id' => Auth::id(), 'discount_id' => $discount->id])->first())
+            {
+                $status = 1;
+                CustomerDiscount::create(['customer_id' => Auth::id(), 'discount_id' => $discount->id]);
+            }
+        }
+
+        // Redirect
+        if($status)
+        {
+            return redirect('user-setting')->with('success', __('discountAddedSuccessfully'));
+        }
+        else
+        {
+            return redirect('user-setting')->with('success', __('somethingWentWrong'));
+        }
+    }
 
     public function saveSetting(Request $request){
         $data = $request->input();

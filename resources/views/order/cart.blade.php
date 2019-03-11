@@ -54,6 +54,27 @@
 					</td>
 				</tr>
 			</table>
+			<!-- <div class="block-promocode">
+				<div class="ui-grid-solo">
+					<div class="ui-block-a">
+						<div class="ui-bar ui-bar-a">
+							<i class="fa fa-gift"></i> <strong>Apply Promo Code</strong>
+						</div>
+					</div>
+				</div>
+				<div class="ui-grid-a">
+					<div class="ui-block-a">
+						<div class="ui-bar ui-bar-a">
+							<input type="text" name="promocode" id="promocode" placeholder="Enter promocode here" data-mini="true">
+						</div>
+					</div>
+					<div class="ui-block-b">
+						<div class="ui-bar ui-bar-a">
+							<input type="button" data-role="none" value="Apply" class="btn-apply-promocode">
+						</div>
+					</div>
+				</div>
+			</div> -->
 			@if(Session::get('paymentmode') !=0)
 				<form action="{{ url('/payment') }}" class="payment_form_btn" method="POST">
 					{{ csrf_field() }} 
@@ -126,5 +147,26 @@
 	$('.actionBox .close').on('click', function() {
 		$(this).closest('.actionBox').hide();
 	});
+
+	// Apply promocode
+	/*$('.btn-apply-promocode').on('click', function() {
+		var code = $('#promocode').val();
+
+		if(code.length)
+		{
+			$.ajax({
+				type: 'POST',
+				url: "{{ url('apply-promocode') }}",
+				data: {
+					'_token': "{{ csrf_token() }}",
+					'code': code
+				},
+				dataType: 'json',
+				success: function(response) {
+					console.log(response);
+				}
+			});
+		}
+	});*/
 </script>
 @endsection
