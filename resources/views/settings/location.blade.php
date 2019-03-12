@@ -85,6 +85,7 @@
             });
         });
 
+        var watchPosition;
         var map = null;
         var marker = null;
         var myMarker = null;
@@ -216,7 +217,9 @@
             });
         }
 
-        $(window).on('load', function() {
+        // Add watch on position
+        function addWatchOnPosition()
+        {
             // Add watch on location change if location is set to current location
             var flag = checkTimeAfterLocationSet();
 
@@ -228,6 +231,10 @@
                     watchPosition = navigator.geolocation.watchPosition(updateLocationOnMap, errorHandlerOnMap, options);
                 }
             }
+        }
+
+        $(window).on('load', function() {
+            addWatchOnPosition();
         });
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyByLiizP2XW9JUAiD92x57u7lFvU3pS630&libraries=places&callback=initMap" async defer></script>

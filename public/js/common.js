@@ -23,6 +23,7 @@ function reloadRestaurantList(){
     }
 }
 
+// Reset 'co-ordinate' with currect after 20 minutes
 function getCurrentCoordinates(){
  
    var flag=checkTimeAfterLocationSet(); // problem area function called the poisiton itself
@@ -244,27 +245,29 @@ function dataSave(){
     }
 }
 
-// Update location, cookie and session with current coordinates
+// Reset location to current, cookie and session with current coordinates from 'location'
 function locationSave(url){
-    unsetLocationCookieTime();
-    
+    // Clear watch first so it can get the current position
+    navigator.geolocation.clearWatch(watchPosition);
+
     // Check for Geolocation API permissions  
     navigator.geolocation.getCurrentPosition(function(position) {
         // Update Cookie
         document.cookie="latitude=" + position.coords.latitude;
         document.cookie="longitude=" + position.coords.longitude;
+        
+        // Update Session
+        var latitude  = getCookie("latitude");
+        var longitude = getCookie("longitude");
+
+        $.get(url, { lat: latitude, lng : longitude}, function(returnedData){
+            console.log(returnedData["data"]);
+            unsetLocationCookieTime();
+            location.reload();
+        });
     },function(error){
        $('.login-inner-section a').attr('href','javascript:void(0)');
        $('#login-popup').show();
-    });
-
-    // Update Session
-    var latitude  = getCookie("latitude");
-    var longitude = getCookie("longitude");
-
-    $.get(url, { lat: latitude, lng : longitude}, function(returnedData){
-        console.log(returnedData["data"]);
-        location.reload();
     });
 }
 
