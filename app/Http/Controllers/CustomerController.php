@@ -24,7 +24,19 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        return view('settings.index', compact(''));
+        $customerDiscount = null;
+
+        if(Auth::check())
+        {
+            // Get customer added discount
+            $customerDiscount = CustomerDiscount::from('customer_discount AS CD')
+                ->select(['CD.id', 'PD.code'])
+                ->join('promotion_discount AS PD', 'CD.discount_id', '=', 'PD.id')
+                ->where(['CD.customer_id' => Auth::id(), 'CD.status' => '1', 'PD.status' => '1'])
+                ->get();
+        }
+        
+        return view('settings.index', compact('customerDiscount'));
     }
 
     /**
@@ -66,6 +78,10 @@ class CustomerController extends Controller
         return response()->json(['status' => $status, 'msg' => $msg]);
     }
 
+    /**
+     * Add customer discount
+     * @param Request $request [description]
+     */
     public function addCustomerDiscount(Request $request)
     {
         $status = 0;
@@ -79,7 +95,7 @@ class CustomerController extends Controller
         $todayDate = Carbon::now()->format('Y-m-d h:i:00');
         
         // Check if discount exist
-        $discount = PromotionDiscount::select(['id', 'code'])
+        $discount = PromotionDiscount::select(['id', 'store_id', 'discount_value', 'end_date'])
             ->where(['code' => $data['code'], 'status' => '1'])
             ->where('start_date', '<=', $todayDate)
             ->where('end_date', '>=', $todayDate)
@@ -92,6 +108,10 @@ class CustomerController extends Controller
             {
                 $status = 1;
                 CustomerDiscount::create(['customer_id' => Auth::id(), 'discount_id' => $discount->id]);
+
+                // Update user discount in cookie
+                $discountLength = isset($_COOKIE['discount']) ? sizeof($_COOKIE['discount']) : 0;
+                setcookie("discount[{$discountLength}]", json_encode(array('store_id' => $discount->store_id, 'discount_value' => $discount->discount_value)), strtotime($discount->end_date), '/');
             }
         }
 
@@ -127,7 +147,7 @@ class CustomerController extends Controller
             $request->session()->put('browserLanguageWithOutLogin', $lang);
             $request->session()->put('rang', $data['range-1b']);
         }
-        return redirect('customer')->with('success', 'Setting updated successfully.');
+        return redirect('user-setting')->with('success', 'Setting updated successfully.');
     }
 
     public function selectLocation(){
@@ -169,7 +189,7 @@ class CustomerController extends Controller
         if($data['redirect_to_home'] == 1){
             return redirect('home')->with('success', 'Location updated successfully.');
         }else{
-            return redirect('customer')->with('success', 'Location updated successfully.');
+            return redirect('user-setting')->with('success', 'Location updated successfully.');
         }
     }
 

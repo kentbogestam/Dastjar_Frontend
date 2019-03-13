@@ -63,7 +63,7 @@ adasd
 		<div class="nav_fixed">
 			<div data-role="navbar"> 
 				<ul> 
-			<li><a href="{{Session::get('route_url')}}" data-ajax="false" id="back_arw" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
+			<li><a href="{{ Session::has('route_url') ? Session::get('route_url') : url('home') }}" data-ajax="false" id="back_arw" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
 			 <li><a data-ajax="false" class="ui-btn-active Settings">{{ __('messages.Settings') }}</a></li>
 
 			  <li class="done-btn dataSave" id="dataSave">  <input type="button" value="{{ __('messages.Done') }}" /></li> </ul>
@@ -180,6 +180,25 @@ adasd
 							</form>
 						</div>
 					</div>
+					<div class="row list-user-discount">
+						<h2>Available Discount</h2>
+						@if( !is_null($customerDiscount) )
+							@foreach($customerDiscount as $row)
+								<div class="ui-grid-a">
+									<div class="ui-block-a">
+										<div class="ui-bar ui-bar-a">{{ $row['code'] }}</div>
+									</div>
+									<div class="ui-block-b">
+										<div class="ui-bar ui-bar-a">
+											<span id="remove-discount-alert" data-content="{{ __('messages.deleteAlert', ['item' => strtolower(__('messages.Discount'))]) }}">
+												<i class="fa fa-trash" aria-hidden="true"></i>
+											</span>
+										</div>
+									</div>
+								</div>
+							@endforeach
+						@endif
+					</div>
 				</li>
 			</ul>
 		</div>
@@ -226,9 +245,20 @@ adasd
 @endsection
 
 @section('footer-script')
+	<!-- Delete cart item popup -->
+	<div id="delete-alert" class="actionBox">
+		<div class="actionBox-content">
+			<div class="mInner">
+				<p></p>
+				<div class="btnWrapper">
+					<span class="close">Cancel</span>
+					<span class="delete">Delete</span>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<script type="text/javascript">
-
 		$("#dataSave").click(function(e){
 			var flag = true;
 			if(flag){
@@ -243,7 +273,7 @@ adasd
 			window.location.href = link;
 		}
 
-		// Submit discount
+		// Check if discount is valid and save on Submit
 		$('#user-discount').on('submit', function() {
 			var isValid = false; var msg = 'This field is required.';
 			var code = $('#code').val();
@@ -272,6 +302,18 @@ adasd
 				$('#user-discount').find('p.error').text(msg);
 				return false;
 			}
+		});
+
+		// Confirm Delete discount
+		$('#remove-discount-alert').on('click', function() {
+			var content = $(this).data('content');
+			$('#delete-alert').find('p').html(content);
+			$('#delete-alert').show();
+		});
+
+		// Close popup
+		$('.actionBox .close').on('click', function() {
+			$(this).closest('.actionBox').hide();
 		});
 	</script>
 @endsection

@@ -88,6 +88,7 @@ return [
     'discountAlreadyApplied' => 'This code has already been applied.',
     'somethingWentWrong' => 'Something went wrong!',
     'discountAddedSuccessfully' => 'Discount added successfully.',
+    'deleteAlert' => 'Are you sure you want to delete this :item?',
     'Message' => 'Message',
     'Contact Us Placeholder' => 'Enter your Message.Add your email for replay',
     'Terms and Conditions' => 'Terms and Conditions',

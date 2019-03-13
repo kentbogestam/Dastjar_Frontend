@@ -88,6 +88,7 @@ return [
     'discountAlreadyApplied' => 'Koden har redan tillämpats.',
     'somethingWentWrong' => 'Något gick fel!',
     'discountAddedSuccessfully' => 'Rabatt tillagd framgångsrikt',
+    'deleteAlert'=>'Är du säker på att du vill radera :item?',
     'Swedish' => 'Svenska',
     'Message' => 'Meddelande',
    'Contact Us Placeholder' => 'Skriv till oss och lägg till din e-mail address.',
