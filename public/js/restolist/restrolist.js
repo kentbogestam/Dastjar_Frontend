@@ -109,8 +109,8 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 		    	var count = 10;
 		    	var url = urlMenulist;
 				var temp = returnedData["data"];
-				var customerDiscount = (returnedData['customerDiscount']) ? returnedData['customerDiscount'] : '';
-				var discount;
+				var customerDiscount = (returnedData['customerDiscount']) ? returnedData['customerDiscount'] : {};
+				var discountIndex;
 				var isFindDiscount;
 
 				list = temp;
@@ -124,32 +124,37 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 						if(checkTime(temp[i]["store_open_close_day_time"])){
 							// Check if discount is applying on restaurant
 							isFindDiscount = false;
-							if(customerDiscount.length)
+							if(Object.keys(customerDiscount).length)
 							{
-								// Seach and het discount index
-								discount = searchIndexFromMultiDimArray('store_id', temp[i]['store_id'], customerDiscount);
+								// Search and get discount index
+								discountIndex = searchIndexFromMultiDimArray('store_id', temp[i]['store_id'], customerDiscount);
 
-								if(discount && discount != undefined)
+								if(discountIndex != 'false')
 								{
 									isFindDiscount = true;
 								}
 							}
 
 							// Code added to display tagline of restaurant	
-							tagline = '';
+							subStr = '';
 							if(temp[i]["tagline"]){
-								tagline = temp[i]["tagline"];
+								subStr = '<p>'+temp[i]["tagline"]+'</p>';
 							}
 							// End of code added to dispaly tagline of restaurant
 							
 							// If found discount
 							if(isFindDiscount)
 							{
+								if( customerDiscount[discountIndex] )
+								{
+									customerDiscountParsed = JSON.parse(customerDiscount[discountIndex]);
+									subStr += '<p><span>'+customerDiscountParsed.discount_value+'% OFF</span></p>';
+								}
+
 								liItem += '<li class="ui-li-has-count ui-li-has-thumb li-has-discount ui-first-child">'+
 									'<a class="ui-btn ui-btn-icon-right ui-icon-carat-r" href="'+url+'/'+temp[i]['store_id']+'" data-ajax="false">'+
 										'<img src="'+temp[i]['store_image']+'" onerror="this.src=\''+noImageUrl+'\'">'+
-										'<h2>'+temp[i]["store_name"]+'</h2>'+
-										'<p>'+tagline+'</p>'+
+										'<h2>'+temp[i]["store_name"]+'</h2>'+subStr
 										'<div class="ui-li-count ui-body-inherit">'+
 											'<span>'+temp[i]["distance"].toFixed(1)+'&nbsp;Km</span>'+
 										'</div>'+
@@ -161,8 +166,7 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 								liItem += '<li class="ui-li-has-count ui-li-has-thumb ui-first-child">'+
 									'<a class="ui-btn ui-btn-icon-right ui-icon-carat-r" href="'+url+'/'+temp[i]['store_id']+'" data-ajax="false">'+
 										'<img src="'+temp[i]['store_image']+'" onerror="this.src=\''+noImageUrl+'\'">'+
-										'<h2>'+temp[i]["store_name"]+'</h2>'+
-										'<p>'+tagline+'</p>'+
+										'<h2>'+temp[i]["store_name"]+'</h2>'+subStr
 										'<div class="ui-li-count ui-body-inherit">'+
 											'<span>'+temp[i]["distance"].toFixed(1)+'&nbsp;Km</span>'+
 										'</div>'+
@@ -178,6 +182,9 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 				}
 
 				$("#companyDetailContianer").append(liItem);
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				console.log('Something went wrong!');
 			}
 		});
 	}
@@ -185,15 +192,15 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 
 // Return the object index by search column name in array
 function searchIndexFromMultiDimArray(columnName, columnValue, arr) {
-	for(var i = 0; i < arr.length; i++) {
-		row = JSON.parse(arr[i]);
+	for (var key in arr) {
+		row = JSON.parse(arr[key]);
 		if(row[columnName] === columnValue) {
-			return i;
+			return key;
 			break;
 		}
 	}
 
-	return false;
+	return 'false';
 }
 
 function  addMore(len,url,noImageUrl){

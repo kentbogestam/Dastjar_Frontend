@@ -231,33 +231,29 @@ class LoginController extends Controller
                 }
             }
 
-            // Check if customer has discount and save them in cookie while user is logging-in
-            if( !isset($_COOKIE['discount']) )
+            // Get if customer has discount save them in cookie while user is logging-in
+            $customerDiscount = PromotionDiscount::from('promotion_discount AS PD')
+                ->select(['PD.store_id', 'PD.discount_value', 'PD.start_date', 'PD.end_date'])
+                ->join('customer_discount AS CD', 'PD.id', '=', 'CD.discount_id')
+                ->where(['CD.customer_id' => Auth::id(), 'CD.status' => '1', 'PD.status' => '1'])
+                ->where('PD.start_date', '<=', Carbon::now()->format('Y-m-d h:i:00'))
+                ->where('PD.end_date', '>=', Carbon::now()->format('Y-m-d h:i:00'))
+                ->get()->toArray();
+
+            if($customerDiscount)
             {
-                // Get customer discount
-                $customerDiscount = PromotionDiscount::from('promotion_discount AS PD')
-                    ->select(['PD.store_id', 'PD.discount_value', 'PD.start_date', 'PD.end_date'])
-                    ->join('customer_discount AS CD', 'PD.id', '=', 'CD.discount_id')
-                    ->where(['CD.customer_id' => Auth::id(), 'CD.status' => '1', 'PD.status' => '1'])
-                    ->where('PD.start_date', '<=', Carbon::now()->format('Y-m-d h:i:00'))
-                    ->where('PD.end_date', '>=', Carbon::now()->format('Y-m-d h:i:00'))
-                    ->get()->toArray();
+                // Add discount in cookie
+                $discount = array();
 
-                if($customerDiscount)
+                foreach($customerDiscount as $key => $value)
                 {
-                    // Add discount in cookie
-                    $discount = array();
+                    $discount = array(
+                        'store_id' => $value['store_id'],
+                        'discount_value' => $value['discount_value']
+                    );
 
-                    foreach($customerDiscount as $key => $value)
-                    {
-                        $discount = array(
-                            'store_id' => $value['store_id'],
-                            'discount_value' => $value['discount_value']
-                        );
-
-                        setcookie("discount[{$key}]", json_encode($discount), strtotime($value['end_date']), '/');
-                        // setcookie("discount[1]", json_encode(array('store_id' => '1ce0b6b5-48f5-bc47-6c82-49223f75b137', 'discount_value' => 5)), strtotime('2019-03-30'), '/');
-                    }
+                    setcookie("discount[{$key}]", json_encode($discount), strtotime($value['end_date']), '/');
+                    // setcookie("discount[1]", json_encode(array('store_id' => '1ce0b6b5-48f5-bc47-6c82-49223f75b137', 'discount_value' => 5)), strtotime('2019-03-30'), '/');
                 }
             }
         }

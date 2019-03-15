@@ -80,6 +80,7 @@
 	Route::get('user-setting', 'CustomerController@index');
 	Route::post('is-valid-discount-code', 'CustomerController@ajaxIsValidDiscountCode');
 	Route::post('add-customer-discount', 'CustomerController@addCustomerDiscount');
+	Route::post('remove-customer-discount', 'CustomerController@removeCustomerDiscount');
 	Route::get('select-location', 'CustomerController@selectLocation');
 	Route::post('save-location', 'CustomerController@saveLocation');
 	Route::get('save-location', 'CustomerController@saveLocation');

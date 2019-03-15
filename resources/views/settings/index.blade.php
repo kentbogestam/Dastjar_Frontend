@@ -49,6 +49,8 @@
 	}
 	.ui-btn-active.Settings{width:40px;margin:0 auto !important}
 	.done-btn.dataSave{width:40px;margin:0 auto !important; float: right;}
+	p.error { color: #FF0000; }
+	.link { cursor: pointer; }
 </style>
 
 <!-- Start validation JS -->
@@ -164,6 +166,7 @@ adasd
 		</div>
 	</form>
 
+	<!-- Discount tab -->
 	@if(Auth::check())
 		<div id="peroid-discount-list" class="setting-list">
 			<ul data-role="listview">
@@ -174,15 +177,16 @@ adasd
 						<div data-role="controlgroup">
 							<form name="user-discount" id="user-discount" method="post" action="{{ url('add-customer-discount') }}" data-ajax="false">
 								{{ csrf_field() }}
-								<input type="text" name="code" id="code" placeholder="{{ __('messages.Enter Discount Code') }}" data-rule-required>
+								<input type="text" name="code" id="code" placeholder="{{ __('messages.Enter Discount Code') }}" autocomplete="off" data-rule-required>
 								<p class="error"></p>
+								<input type="hidden" id="discountValidate" value="1">
 								<button type="submit" class="btn btn-success">{{ __('messages.Submit') }}</button>		
 							</form>
 						</div>
 					</div>
-					<div class="row list-user-discount">
-						<h2>Available Discount</h2>
-						@if( !is_null($customerDiscount) )
+					@if( !$customerDiscount->isEmpty() )
+						<div class="row list-user-discount">
+							<h2>{{ __('messages.avalableDiscount') }}</h2>
 							@foreach($customerDiscount as $row)
 								<div class="ui-grid-a">
 									<div class="ui-block-a">
@@ -190,15 +194,15 @@ adasd
 									</div>
 									<div class="ui-block-b">
 										<div class="ui-bar ui-bar-a">
-											<span id="remove-discount-alert" data-content="{{ __('messages.deleteAlert', ['item' => strtolower(__('messages.Discount'))]) }}">
+											<span class="link remove-discount-confirm" data-content="{{ __('messages.deleteAlert', ['item' => strtolower(__('messages.Discount'))]) }}">
 												<i class="fa fa-trash" aria-hidden="true"></i>
 											</span>
 										</div>
 									</div>
 								</div>
 							@endforeach
-						@endif
-					</div>
+						</div>
+					@endif
 				</li>
 			</ul>
 		</div>
@@ -252,7 +256,22 @@ adasd
 				<p></p>
 				<div class="btnWrapper">
 					<span class="close">Cancel</span>
-					<span class="delete">Delete</span>
+					<span class="delete" id="remove-discount">Delete</span>
+					<input type="hidden" name="deletealertdata" id="deletealertdata">
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Delete cart item popup -->
+	<div id="replace-discount-alert" class="actionBox">
+		<div class="actionBox-content">
+			<div class="mInner">
+				<p></p>
+				<div class="btnWrapper">
+					<span class="close">No</span>
+					<span class="delete" id="replace-discount">Yes</span>
+					<input type="hidden" name="" id="">
 				</div>
 			</div>
 		</div>
@@ -273,10 +292,16 @@ adasd
 			window.location.href = link;
 		}
 
-		// Check if discount is valid and save on Submit
+		// Check if discount is valid and submit
 		$('#user-discount').on('submit', function() {
 			var isValid = false; var msg = 'This field is required.';
 			var code = $('#code').val();
+
+			// Submit without validating if user want to replace discount if code belongs to same restaurant 
+			if( $('#discountValidate').val() == '0' )
+			{
+				return true;
+			}
 
 			if(code.length)
 			{
@@ -291,8 +316,18 @@ adasd
 					async: false,
 					dataType: 'json',
 					success: function(response) {
-						isValid = response.status;
 						msg = response.msg;
+
+						if( response.status == 1 )
+						{
+							isValid = response.status;
+						}
+						else if( response.status == 2 )
+						{
+							$('#replace-discount-alert').find('p').html(msg);
+							$('#replace-discount-alert').show();
+							msg = '';
+						}
 					}
 				});
 			}
@@ -304,10 +339,37 @@ adasd
 			}
 		});
 
+		// Replace user discount if belongs to the same restaurant
+		$('#replace-discount').on('click', function() {
+			$('#discountValidate').val(0);
+			$('#user-discount').submit();
+		});
+
+		// Remove user discount
+		$('#remove-discount').on('click', function() {
+			$.ajax({
+				type: 'POST',
+				url: '{{ url('remove-customer-discount') }}',
+				data: {
+					'_token': "{{ csrf_token() }}",
+					'code': $('#deletealertdata').val()
+				},
+				async: false,
+				dataType: 'json',
+				success: function(response) {
+					if(response.status)
+					{
+						window.location.reload();
+					}
+				}
+			});
+		});
+
 		// Confirm Delete discount
-		$('#remove-discount-alert').on('click', function() {
+		$('.remove-discount-confirm').on('click', function() {
 			var content = $(this).data('content');
 			$('#delete-alert').find('p').html(content);
+			$('#deletealertdata').val($(this).closest('.ui-grid-a').find('.ui-bar-a').html());
 			$('#delete-alert').show();
 		});
 

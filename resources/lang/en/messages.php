@@ -88,6 +88,8 @@ return [
     'discountAlreadyApplied' => 'This code has already been applied.',
     'somethingWentWrong' => 'Something went wrong!',
     'discountAddedSuccessfully' => 'Discount added successfully.',
+    'avalableDiscount' => 'Available Discount',
+    'discountStoreDuplicate' => 'Do you want to replace your existing discount with this for some restaurant?',
     'deleteAlert' => 'Are you sure you want to delete this :item?',
     'Message' => 'Message',
     'Contact Us Placeholder' => 'Enter your Message.Add your email for replay',

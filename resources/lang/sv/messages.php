@@ -88,6 +88,8 @@ return [
     'discountAlreadyApplied' => 'Koden har redan tillämpats.',
     'somethingWentWrong' => 'Något gick fel!',
     'discountAddedSuccessfully' => 'Rabatt tillagd framgångsrikt',
+    'avalableDiscount' => 'Tillgänglig rabatt',
+    'discountStoreDuplicate' => 'Vill du ersätta din befintliga rabatt med detta för någon restaurang?',
     'deleteAlert'=>'Är du säker på att du vill radera :item?',
     'Swedish' => 'Svenska',
     'Message' => 'Meddelande',
