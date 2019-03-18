@@ -12,6 +12,10 @@ use App\Payment;
 use DB;
 use App\Order;
 use App\OrderDetail;
+
+use App\OrderCustomerDiscount;
+use App\PromotionDiscount;
+
 use App\User;
 use App\Store;
 use App\Helper;
@@ -21,7 +25,7 @@ class PaymentController extends Controller
     public function payment(Request $request)
     { 
     	if(!empty($request->input())){
-    		$amount = $request->session()->get('paymentAmount') * 100;
+    		$amount = $request->session()->get('paymentAmount');
 	    	$stripeAccount = $request->session()->get('stripeAccount');
 	    	$orderId = $request->session()->get('OrderId');
 
@@ -31,7 +35,25 @@ class PaymentController extends Controller
 
 		        $customer = new User();
 				$emailId = $customer->where('id',$request->session()->get('login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d'))->first()->email;		
+
+				// Get order discount and apply on total
+		    	$orderDiscount = PromotionDiscount::from('promotion_discount AS PD')
+		    		->select(['PD.discount_value'])
+		    		->join('order_customer_discount AS OCD', 'OCD.discount_id', '=', 'PD.id')
+		    		->where(['OCD.order_id' => $orderId])
+		    		->first();
+
+		    	if($orderDiscount)
+		    	{
+		    		$discountAmount = ($amount*$orderDiscount->discount_value/100);
+		    		$amount = ($amount - $discountAmount)*100;
+		    	}
+		    	else
+		    	{
+		    		$amount *= 100;
+		    	}
 				
+				//
 				$orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 
 				$description = "";

@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Auth;
 use App\Order;
 use App\OrderDetail;
+use App\OrderCustomerDiscount;
+use App\PromotionDiscount;
+use App\CustomerDiscount;
 use App\Product;
 use App\ProductPriceList;
 use Carbon\Carbon;
@@ -351,6 +354,13 @@ class OrderController extends Controller
 
         $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 
+        // Get order discount if applied
+        $orderDiscount = PromotionDiscount::from('promotion_discount AS PD')
+                    ->select(['PD.discount_value'])
+                    ->join('order_customer_discount AS OCD', 'OCD.discount_id', '=', 'PD.id')
+                    ->where(['OCD.order_id' => $orderId])
+                    ->first();
+
         Session::forget('paymentmode');
 
         // Put order in session 'recentOrderList' until its ready
@@ -376,7 +386,7 @@ class OrderController extends Controller
         }
         // dd(Session::all());
 
-        return view('order.index', compact('order','orderDetails','storeDetail','user'));
+        return view('order.index', compact('order','orderDetails', 'orderDiscount','storeDetail','user'));
     }
 
     /**
@@ -609,6 +619,40 @@ class OrderController extends Controller
     }
 
     /**
+     * View cart function for testing
+     */
+    function viewCart($orderId)
+    {
+        // Get discount that user has applied
+        $todayDate = Carbon::now()->format('Y-m-d h:i:00');
+
+        $customerDiscount = PromotionDiscount::from('promotion_discount AS PD')
+                    ->select(['PD.id', 'PD.code', 'PD.discount_value'])
+                    ->join('customer_discount AS CD', 'CD.discount_id', '=', 'PD.id')
+                    ->where(['CD.customer_id' => Auth::id(), 'CD.status' => '1', 'PD.store_id' => Session::get('storeId')])
+                    ->where('PD.start_date', '<=', $todayDate)
+                    ->where('PD.end_date', '>=', $todayDate)
+                    ->first();
+
+        if($customerDiscount)
+        {
+            // Apply discount on order
+            if( !OrderCustomerDiscount::where(['order_id' => $orderId])->count() )
+            {
+                OrderCustomerDiscount::create(['order_id' => $orderId, 'discount_id' =>$customerDiscount->id]);
+            }
+        }
+
+        // echo '<pre>'; print_r($discount); exit;
+
+        $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
+
+        $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name','order_details.product_id')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
+
+        return view('order.cart', compact('order','orderDetails', 'customerDiscount'));
+    }
+
+    /**
      * Redirects here right after login if item added into cart
      * @param  Request $request [description]
      * @return [type]           [description]
@@ -703,6 +747,25 @@ class OrderController extends Controller
                         'order_total' => $total_price,
                     ]);
 
+            // Get discount if user has applied
+            $todayDate = Carbon::now()->format('Y-m-d h:i:00');
+            $customerDiscount = PromotionDiscount::from('promotion_discount AS PD')
+                        ->select(['PD.id', 'PD.code', 'PD.discount_value'])
+                        ->join('customer_discount AS CD', 'CD.discount_id', '=', 'PD.id')
+                        ->where(['CD.customer_id' => Auth::id(), 'CD.status' => '1', 'PD.store_id' => Session::get('storeId')])
+                        ->where('PD.start_date', '<=', $todayDate)
+                        ->where('PD.end_date', '>=', $todayDate)
+                        ->first();
+
+            if($customerDiscount)
+            {
+                // Apply discount on order
+                if( !OrderCustomerDiscount::where(['order_id' => $orderId])->count() )
+                {
+                    OrderCustomerDiscount::create(['order_id' => $orderId, 'discount_id' =>$customerDiscount->id]);
+                }
+            }
+
             User::where('id',Auth::id())->update(['browser' => $data['browser']]);
 
             $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
@@ -725,7 +788,7 @@ class OrderController extends Controller
                 }
                 Session::forget('orderData');
                  $request->session()->put('paymentmode',1);
-                 return view('order.cart', compact('order','orderDetails'));
+                 return view('order.cart', compact('order','orderDetails', 'customerDiscount'));
             }else{
                 DB::table('orders')->where('order_id', $orderId)->update([
                     'online_paid' => 2,
@@ -733,7 +796,7 @@ class OrderController extends Controller
                 Session::forget('orderData');
                 $user = User::where('id',$order->user_id)->first(); 
                 $request->session()->put('paymentmode',0);
-                return view('order.cart', compact('order','orderDetails'));                     
+                return view('order.cart', compact('order','orderDetails', 'customerDiscount'));                     
                //return redirect()->route('order-view', $orderId);
             }
         }else{
@@ -869,6 +932,25 @@ class OrderController extends Controller
                             'order_total' => $total_price,
                         ]);
 
+                // Get discount if user has applied
+                $todayDate = Carbon::now()->format('Y-m-d h:i:00');
+                $customerDiscount = PromotionDiscount::from('promotion_discount AS PD')
+                            ->select(['PD.id', 'PD.code', 'PD.discount_value'])
+                            ->join('customer_discount AS CD', 'CD.discount_id', '=', 'PD.id')
+                            ->where(['CD.customer_id' => Auth::id(), 'CD.status' => '1', 'PD.store_id' => Session::get('storeId')])
+                            ->where('PD.start_date', '<=', $todayDate)
+                            ->where('PD.end_date', '>=', $todayDate)
+                            ->first();
+
+                if($customerDiscount)
+                {
+                    // Apply discount on order
+                    if( !OrderCustomerDiscount::where(['order_id' => $orderId])->count() )
+                    {
+                        OrderCustomerDiscount::create(['order_id' => $orderId, 'discount_id' =>$customerDiscount->id]);
+                    }
+                }
+
                 User::where('id',Auth::id())->update(['browser' => $data['browser']]);
 
                 $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
@@ -893,7 +975,7 @@ class OrderController extends Controller
                     if(isset($companyUserDetail->stripe_user_id))
                     $request->session()->put('stripeAccount', $companyUserDetail->stripe_user_id);
                      $request->session()->put('paymentmode',1);
-                    return view('order.cart', compact('order','orderDetails'));
+                    return view('order.cart', compact('order','orderDetails', 'customerDiscount'));
                 }else{
                    
                      DB::table('orders')->where('order_id', $orderId)->update([
@@ -902,7 +984,7 @@ class OrderController extends Controller
                      $request->session()->put('paymentmode',0);
                     $user = User::where('id',$order->user_id)->first();      
                     
-                    return view('order.cart', compact('order','orderDetails'));
+                    return view('order.cart', compact('order','orderDetails', 'customerDiscount'));
                   //  return redirect()->route('order-view', $orderId);
                 }
             }else{
@@ -953,6 +1035,10 @@ class OrderController extends Controller
 
         DB::table('order_details')->where('order_id', $data['orderid'])->where('product_id',$data['productId'])->delete();
 
+        DB::table('orders')->where('order_id', $data['orderid'])->update([
+                                'order_total' => $data['grandtotal']
+                            ]);
+
          $request->session()->put('paymentAmount', $data['grandtotal']);
     }
     elseif($data['grandtotal']==0 && $data['productId']==0 && $data['qty']==0){
@@ -986,6 +1072,8 @@ class OrderController extends Controller
         DB::table('orders')->where('order_id', $orderid)->delete();
 
         DB::table('order_details')->where('order_id', $orderid)->delete();
+
+        DB::table('order_customer_discount')->where('order_id', $orderid)->delete();
     }
 
     /**
