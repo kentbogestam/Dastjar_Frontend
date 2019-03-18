@@ -752,7 +752,7 @@ class OrderController extends Controller
             $customerDiscount = PromotionDiscount::from('promotion_discount AS PD')
                         ->select(['PD.id', 'PD.code', 'PD.discount_value'])
                         ->join('customer_discount AS CD', 'CD.discount_id', '=', 'PD.id')
-                        ->where(['CD.customer_id' => Auth::id(), 'CD.status' => '1', 'PD.store_id' => Session::get('storeId')])
+                        ->where(['CD.customer_id' => Auth::id(), 'CD.status' => '1', 'PD.status' => '1', 'PD.store_id' => Session::get('storeId')])
                         ->where('PD.start_date', '<=', $todayDate)
                         ->where('PD.end_date', '>=', $todayDate)
                         ->first();
@@ -937,7 +937,7 @@ class OrderController extends Controller
                 $customerDiscount = PromotionDiscount::from('promotion_discount AS PD')
                             ->select(['PD.id', 'PD.code', 'PD.discount_value'])
                             ->join('customer_discount AS CD', 'CD.discount_id', '=', 'PD.id')
-                            ->where(['CD.customer_id' => Auth::id(), 'CD.status' => '1', 'PD.store_id' => Session::get('storeId')])
+                            ->where(['CD.customer_id' => Auth::id(), 'CD.status' => '1', 'PD.status' => '1', 'PD.store_id' => Session::get('storeId')])
                             ->where('PD.start_date', '<=', $todayDate)
                             ->where('PD.end_date', '>=', $todayDate)
                             ->first();
