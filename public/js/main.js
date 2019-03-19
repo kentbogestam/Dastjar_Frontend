@@ -291,5 +291,21 @@ function deleteFullCart(url,value,msg){
     makeRedirection(url);
 }
 
+// Show spinner
+function showLoading(text = 'Loading...')
+{
+    $.mobile.loading('show', {
+        text: text,
+        textVisible: true,
+        theme: 'a',
+    });
+}
+
+// Hide spinner
+function hideLoading()
+{
+    $.mobile.loading('hide');
+}
+
 
 kWindow = window;

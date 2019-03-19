@@ -59,7 +59,6 @@
 @endsection
 
 @section('content')
-adasd
 <div class="setting-page" data-role="page" data-theme="c">
 	<div data-role="header" class="header" data-position="fixed">
 		<div class="nav_fixed">
@@ -305,6 +304,8 @@ adasd
 
 			if(code.length)
 			{
+				showLoading();
+
 				// Check if code valid
 				$.ajax({
 					type: 'POST',
@@ -316,6 +317,8 @@ adasd
 					async: false,
 					dataType: 'json',
 					success: function(response) {
+						hideLoading();
+
 						msg = response.msg;
 
 						if( response.status == 1 )
@@ -347,6 +350,8 @@ adasd
 
 		// Remove user discount
 		$('#remove-discount').on('click', function() {
+			showLoading();
+
 			$.ajax({
 				type: 'POST',
 				url: '{{ url('remove-customer-discount') }}',
@@ -357,6 +362,8 @@ adasd
 				async: false,
 				dataType: 'json',
 				success: function(response) {
+					hideLoading();
+					
 					if(response.status)
 					{
 						window.location.reload();
