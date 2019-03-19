@@ -205,6 +205,12 @@
 				</li>
 			</ul>
 		</div>
+	@else
+		<div class="setting-list">
+			<div style="margin-right: 15px; margin-top: 5px;">
+				<a href="{{ url('login') }}" class="terms btn btn-primary" data-ajax="false">{{ __('messages.Discount') }}</a>
+			</div>
+		</div>
 	@endif
 	
 	<div id="contact-setting-list" class="setting-list">

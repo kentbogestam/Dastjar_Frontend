@@ -101,11 +101,14 @@ class LoginController extends Controller
                       ]);              
             }
             
-            if(Session::get('orderData') == null ){
-              return redirect()->action('HomeController@index');
+            if( Session::has('redirectAfterLogin') ) {
+                $redirectAfterLogin = Session::get('redirectAfterLogin');
+                return redirect(url($redirectAfterLogin));
+            }elseif(Session::get('orderData') == null ){
+                return redirect()->action('HomeController@index');
             }else{
-               // return redirect()->route('withOutLogin');//commented by saurabh
-            return redirect()->route('cartWithOutLogin');
+                // return redirect()->route('withOutLogin');//commented by saurabh
+                return redirect()->route('cartWithOutLogin');
             }
         }else{
             $lang;
@@ -132,8 +135,16 @@ class LoginController extends Controller
             // Update user discount in cookie
             $this->updateUserDiscount();
 
-            //return redirect()->route('withOutLogin');//commented by saurabh
-            return redirect()->route('cartWithOutLogin');
+            // Redirect after login where it comes from
+            if( Session::has('redirectAfterLogin') )
+            {
+                $redirectAfterLogin = Session::get('redirectAfterLogin');
+                return redirect(url($redirectAfterLogin));
+            }
+            else
+            {
+                return redirect()->route('cartWithOutLogin');
+            }
         }
     }
 
@@ -170,8 +181,17 @@ class LoginController extends Controller
                         'language' => $lang,
                     ]);
             //return redirect()->action('HomeController@index');
-            //return redirect()->route('withOutLogin'); commented by saurabh
-            return redirect()->route('cartWithOutLogin');
+            
+            // Redirect after login where it comes from
+            if( Session::has('redirectAfterLogin') )
+            {
+                $redirectAfterLogin = Session::get('redirectAfterLogin');
+                return redirect(url($redirectAfterLogin));
+            }
+            else
+            {
+                return redirect()->route('cartWithOutLogin');
+            }
         }else{
             /*if ($request->session()->get('userPhoneNumber')) {
                 Session::flash('userPhoneNumber',$request->session()->get('userPhoneNumber'));
@@ -198,6 +218,16 @@ class LoginController extends Controller
 
     public function login(Request $request){
         $agent = $request->server('HTTP_USER_AGENT');
+
+        //
+        if( $request->server('HTTP_REFERER') && strpos($request->server('HTTP_REFERER'), 'user-setting') )
+        {
+            Session::put('redirectAfterLogin', 'user-setting');
+        }
+        else
+        {
+            Session::forget('redirectAfterLogin');
+        }
         
         return view('auth.login', compact('agent'));       
     }
