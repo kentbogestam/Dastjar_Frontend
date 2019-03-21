@@ -92,7 +92,7 @@
 
         function initMap() {
             @if(Auth::check())
-                @if( (Session::has('with_login_lat') && Session::has('with_login_lat')!='null') && (Session::has('with_login_lng') && Session::has('with_login_lng')!='null') )
+                @if( (Session::has('with_login_lat') && Session::get('with_login_lat')!='null') && (Session::has('with_login_lng') && Session::get('with_login_lng')!='null') )
                     var location  = {lat: {{Session::get('with_login_lat')}} , lng: {{ Session::get('with_login_lng')}} };
                 @else    
                     var location  = {lat: 60.1282 , lng: 18.6435};
