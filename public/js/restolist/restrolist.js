@@ -154,7 +154,7 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 								liItem += '<li class="ui-li-has-count ui-li-has-thumb li-has-discount ui-first-child">'+
 									'<a class="ui-btn ui-btn-icon-right ui-icon-carat-r" href="'+url+'/'+temp[i]['store_id']+'" data-ajax="false">'+
 										'<img src="'+temp[i]['store_image']+'" onerror="this.src=\''+noImageUrl+'\'">'+
-										'<h2>'+temp[i]["store_name"]+'</h2>'+subStr
+										'<h2>'+temp[i]["store_name"]+'</h2>'+subStr+
 										'<div class="ui-li-count ui-body-inherit">'+
 											'<span>'+temp[i]["distance"].toFixed(1)+'&nbsp;Km</span>'+
 										'</div>'+
@@ -166,7 +166,7 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 								liItem += '<li class="ui-li-has-count ui-li-has-thumb ui-first-child">'+
 									'<a class="ui-btn ui-btn-icon-right ui-icon-carat-r" href="'+url+'/'+temp[i]['store_id']+'" data-ajax="false">'+
 										'<img src="'+temp[i]['store_image']+'" onerror="this.src=\''+noImageUrl+'\'">'+
-										'<h2>'+temp[i]["store_name"]+'</h2>'+subStr
+										'<h2>'+temp[i]["store_name"]+'</h2>'+subStr+
 										'<div class="ui-li-count ui-body-inherit">'+
 											'<span>'+temp[i]["distance"].toFixed(1)+'&nbsp;Km</span>'+
 										'</div>'+
