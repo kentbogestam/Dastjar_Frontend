@@ -88,67 +88,119 @@ function getPos(urlLatlng,urlMenulist,noImageUrl){
 	}
 }
 
+// Get restaurant list dynamically
 function add(urlLatlng,urlMenulist,noImageUrl){
 	// alert(loc_lat+', '+loc_lng+', '+getCookie("latitude")+', '+getCookie("longitude"));
 	var d = new Date();
-	//console.log(d);
 	$("#browserCurrentTime").val(d);
+	
 	if(resExist==0){
 		resExist=1;
-		$.get(urlLatlng, { lat: getCookie("latitude"), lng : getCookie("longitude"), currentdateTime : d, browserVersion : getCookie("browserVersion")}, 
-    	function(returnedData){
-    		loc_flag=4;
-    		$('#login-popup').hide();
-			$("#loading-img").hide();
-    		$("#overlay").hide();
 
-	    	var count = 10;
-	    	//console.log(returnedData["data"]);
-	    	var url = urlMenulist;
-			var temp = returnedData["data"];
+		$.ajax({
+			url: urlLatlng+'?lat='+getCookie("latitude")+'&lng='+getCookie("longitude")+'&currentdateTime='+d+'&browserVersion='+getCookie("browserVersion"),
+			async: false,
+			success: function(returnedData) {
+				loc_flag=4;
+	    		$('#login-popup').hide();
+				$("#loading-img").hide();
+	    		$("#overlay").hide();
 
-			list = temp;
-			var liItem = "";
-			if(temp.length != 0){
-				if(temp.length < count){
-					count = temp.length;
-				}					
+		    	var count = 10;
+		    	var url = urlMenulist;
+				var temp = returnedData["data"];
+				var customerDiscount = (returnedData['customerDiscount']) ? returnedData['customerDiscount'] : {};
+				var discountIndex;
+				var isFindDiscount;
 
-				for (var i=0;i<count;i++){
-					if(checkTime(temp[i]["store_open_close_day_time"])){
-						liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
-						liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+temp[i]['store_id']+" data-ajax='false'>";
-						liItem += "<img src="+temp[i]['store_image']+" onerror=this.src='"+noImageUrl+"'>";
-
-						liItem += "<h2>"+temp[i]["store_name"]+"</h2>";
-						liItem += "<p>";
-
-			          	// Code added to display tagline of restaurant	
-						if(temp[i]["tagline"]){
-			             liItem += temp[i]["tagline"];
-						}
-						// End of code added to dispaly tagline of restaurant
-
-						liItem += "</p>";
-						liItem += "<div class='ui-li-count ui-body-inherit'>";
-						liItem += "<span>"+temp[i]["distance"].toFixed(1)+ "&nbsp;Km" + "</span>";
-
-						liItem += "</div></a></li>";
-
-						totalCount= i;
+				list = temp;
+				var liItem = "";
+				if(temp.length != 0){
+					if(temp.length < count){
+						count = temp.length;
 					}
-				}
-			}else{
-				liItem += "<div class='table-content'>";
-				liItem += "<p>";
-				liItem += returnedData['restaurantStatusMsg'];
-				liItem += "</p>";
-				liItem += "</div>";
-			}
 
-			$("#companyDetailContianer").append(liItem);
+					for (var i=0;i<count;i++){
+						if(checkTime(temp[i]["store_open_close_day_time"])){
+							// Check if discount is applying on restaurant
+							isFindDiscount = false;
+							if(Object.keys(customerDiscount).length)
+							{
+								// Search and get discount index
+								discountIndex = searchIndexFromMultiDimArray('store_id', temp[i]['store_id'], customerDiscount);
+
+								if(discountIndex != 'false')
+								{
+									isFindDiscount = true;
+								}
+							}
+
+							// Code added to display tagline of restaurant	
+							subStr = '';
+							if(temp[i]["tagline"]){
+								subStr = '<p>'+temp[i]["tagline"]+'</p>';
+							}
+							// End of code added to dispaly tagline of restaurant
+							
+							// If found discount
+							if(isFindDiscount)
+							{
+								if( customerDiscount[discountIndex] )
+								{
+									customerDiscountParsed = JSON.parse(customerDiscount[discountIndex]);
+									subStr += '<p><span>'+customerDiscountParsed.discount_value+'% OFF</span></p>';
+								}
+
+								liItem += '<li class="ui-li-has-count ui-li-has-thumb li-has-discount ui-first-child">'+
+									'<a class="ui-btn ui-btn-icon-right ui-icon-carat-r" href="'+url+'/'+temp[i]['store_id']+'" data-ajax="false">'+
+										'<img src="'+temp[i]['store_image']+'" onerror="this.src=\''+noImageUrl+'\'">'+
+										'<h2>'+temp[i]["store_name"]+'</h2>'+subStr+
+										'<div class="ui-li-count ui-body-inherit">'+
+											'<span>'+temp[i]["distance"].toFixed(1)+'&nbsp;Km</span>'+
+										'</div>'+
+									'</a>'+
+								'</li>';
+							}
+							else
+							{
+								liItem += '<li class="ui-li-has-count ui-li-has-thumb ui-first-child">'+
+									'<a class="ui-btn ui-btn-icon-right ui-icon-carat-r" href="'+url+'/'+temp[i]['store_id']+'" data-ajax="false">'+
+										'<img src="'+temp[i]['store_image']+'" onerror="this.src=\''+noImageUrl+'\'">'+
+										'<h2>'+temp[i]["store_name"]+'</h2>'+subStr+
+										'<div class="ui-li-count ui-body-inherit">'+
+											'<span>'+temp[i]["distance"].toFixed(1)+'&nbsp;Km</span>'+
+										'</div>'+
+									'</a>'+
+								'</li>';
+							}
+
+							totalCount= i;
+						}
+					}
+				}else{
+					liItem += "<div class='table-content'><p>"+returnedData['restaurantStatusMsg']+"</p></div>";
+				}
+
+				$("#companyDetailContianer").append(liItem);
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				console.log('Something went wrong!');
+			}
 		});
 	}
+}
+
+// Return the object index by search column name in array
+function searchIndexFromMultiDimArray(columnName, columnValue, arr) {
+	for (var key in arr) {
+		row = JSON.parse(arr[key]);
+		if(row[columnName] === columnValue) {
+			return key;
+			break;
+		}
+	}
+
+	return 'false';
 }
 
 function  addMore(len,url,noImageUrl){

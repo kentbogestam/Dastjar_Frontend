@@ -31,7 +31,7 @@
 					@endif
 					<th data-priority="1">{{ __('messages.Ready') }}</th>
 			    	<th data-priority="5">{{ __('messages.Delivered') }}</th>
-			    	<th data-priority="3">{{ __('messages.Paid') }}</th>
+			    	<th data-priority="3" width="15%">{{ __('messages.Paid') }}</th>
 			     	<th data-priority="1">{{ __('messages.Pick up Time') }}</th>
 			    </tr>
 			</thead>
@@ -189,7 +189,14 @@
 	          		if(list[i]["paid"] == 1 || list[i]["online_paid"] == 1 || list[i]["online_paid"] == 3){
 	          			liItem += "<input class='yes_check'  type='button' data-role='none' value='yes' name=''>"
 	          		}else if(list[i]["online_paid"] == 0){
-	          			liItem += "<input class='no_check' type='button' value='Pay Manual' data-role='none' onclick='orderPayManually("+list[i]["order_id"]+", this);'>"
+	          			liItem += "<input class='no_check' type='button' value='Pay Manual' data-role='none' onclick='orderPayManually("+list[i]["order_id"]+", this);'>";
+
+	          			// Check if discount applied on order
+	          			if( list[i]["discount_id"] )
+	          			{
+	          				discountAmount = (list[i]["order_total"] * list[i]['discount_value']) / 100;
+	          				liItem += '<div class="show-total"><strong><span class="discounted-total">'+(list[i]["order_total"] - discountAmount).toFixed(2)+' (SEK)</span></strong></div>';
+	          			}
 	          		}else{
 	          			liItem += "<input class='no_check'  type='button' data-role='none' value='no' name=''>"
 	          		}
@@ -386,7 +393,14 @@
 	          		if(list[i]["paid"] == 1 || list[i]["online_paid"] == 1 || list[i]["online_paid"] == 3){
 	          			liItem += "<input class='yes_check'  type='button' data-role='none' value='yes' name=''>"
 	          		}else if(list[i]["online_paid"] == 0){
-	          			liItem += "<input class='no_check' type='button' value='Pay Manual' data-role='none' onclick='orderPayManually("+list[i]["order_id"]+", this);'>"
+	          			liItem += "<input class='no_check' type='button' value='Pay Manual' data-role='none' onclick='orderPayManually("+list[i]["order_id"]+", this);'>";
+
+	          			// Check if discount applied on order
+	          			if( list[i]["discount_id"] )
+	          			{
+	          				discountAmount = (list[i]["order_total"] * list[i]['discount_value']) / 100;
+	          				liItem += '<div class="show-total"><strong><span class="discounted-total">'+(list[i]["order_total"] - discountAmount).toFixed(2)+' (SEK)</span></strong></div>';
+	          			}
 	          		}else{
 	          			liItem += "<input class='no_check'  type='button' data-role='none' value='no' name=''>"
 	          		}
@@ -448,7 +462,7 @@
 		}); 
 	}
 
-	setInterval(ajaxCall, 10000);
+	// setInterval(ajaxCall, 10000);
 
 	var tempCount = 18;
 	$(document).on("scrollstop", function (e) {
@@ -599,7 +613,14 @@
   		if(list[i]["paid"] == 1 || list[i]["online_paid"] == 1 || list[i]["online_paid"] == 3){
   			liItem += "<input class='yes_check'  type='button' data-role='none' value='yes' name=''>"
   		}else if(list[i]["online_paid"] == 0){
-  			liItem += "<input class='no_check' type='button' value='Pay Manual' data-role='none' onclick='orderPayManually("+list[i]["order_id"]+", this);'>"
+  			liItem += "<input class='no_check' type='button' value='Pay Manual' data-role='none' onclick='orderPayManually("+list[i]["order_id"]+", this);'>";
+
+  			// Check if discount applied on order
+  			if( list[i]["discount_id"] )
+  			{
+  				discountAmount = (list[i]["order_total"] * list[i]['discount_value']) / 100;
+  				liItem += '<div class="show-total"><strong><span class="discounted-total">'+(list[i]["order_total"] - discountAmount).toFixed(2)+' (SEK)</span></strong></div>';
+  			}
   		}else{
   			liItem += "<input class='no_check'  type='button' data-role='none' value='no' name=''>"
   		}

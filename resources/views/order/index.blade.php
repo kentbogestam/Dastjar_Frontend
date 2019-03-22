@@ -416,10 +416,29 @@
 						<tr>
 							<td>{{$orderDetail->product_name}}	</td>
 							<td>{{$orderDetail->product_quality}} x {{$orderDetail->price}}</td>
-							<td>{{$orderDetail->product_quality*$orderDetail->price}}  {{$order->currencies}}</td>
+							<td>{{ number_format(($orderDetail->product_quality*$orderDetail->price), 2, '.', '') }}  {{$order->currencies}}</td>
 						</tr>
 					@endforeach
-					<tr class="last-row">	<td> </td><td>         </td><td>  TOTAL {{$order->order_total}} {{$order->currencies}} </td></tr>
+					@if($orderDiscount)
+						@php
+							$discountAmount = ($order->order_total*$orderDiscount->discount_value/100);
+						@endphp
+
+						<tr>
+							<td colspan="3">
+								DISCOUNT {{ number_format($discountAmount, 2, '.', '') }} {{$order->currencies}}
+							</td>
+						</tr>
+					@else
+						@php
+							$discountAmount = 0;
+						@endphp
+					@endif
+					<tr class="last-row">
+						<td colspan="3">
+							TOTAL {{ number_format(($order->order_total - $discountAmount), 2, '.', '') }} {{$order->currencies}}
+						</td>
+					</tr>
 				</table>
 			</div>
 

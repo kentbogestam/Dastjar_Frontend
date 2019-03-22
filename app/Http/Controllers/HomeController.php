@@ -215,6 +215,9 @@ class HomeController extends Controller
                   $helper->logs("getListRestaurants " . $ex->getMessage());
             }
 
+            // Get customer discount from cookie
+            $customerDiscount = isset($_COOKIE['discount']) ? $_COOKIE['discount'] : '';
+
             // Check if restaurant found and send translated message
             $restaurantStatusMsg = '';
             if( $companydetails == '' || !count($companydetails) )
@@ -222,7 +225,7 @@ class HomeController extends Controller
                 $restaurantStatusMsg = __('messages.noRestaurantFound');
             }
 
-            return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg]);
+            return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg, 'customerDiscount' => $customerDiscount]);
         } else{
             if($request->session()->get('sessionBrowserLanguageValue') == null){
                 if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
@@ -277,7 +280,7 @@ class HomeController extends Controller
                 if($request->session()->get('rang') != null){
                     $rang = $request->session()->get('rang');
                 }else{
-                    $rang = '7';
+                    $rang = '10';
                     $request->session()->put('rang', $rang);
                 }
                 $companydetails = Store::getListRestaurants($lat,$lng,$rang,'1','3',$todayDate,$currentTime,$todayDay);
@@ -397,7 +400,7 @@ class HomeController extends Controller
             if($request->session()->get('rang') != null){
                 $rang = $request->session()->get('rang');
             }else{
-                $rang = '7';
+                $rang = '10';
                 $request->session()->put('rang', $rang);
             } 
             $companydetails = Store::getEatLaterListRestaurants($lat,$lng,$rang,'2','3',$todayDate,$currentTime,$todayDay);
@@ -448,7 +451,7 @@ class HomeController extends Controller
                 if($request->session()->get('rang') != null){
                     $rang = $request->session()->get('rang');
                 }else{
-                    $rang = '7';
+                    $rang = '10';
                     $request->session()->put('rang', $rang);
                 } 
                 $companydetails = Store::getEatLaterListRestaurants($lat,$lng,$rang,'1','3',$todayDate,$currentTime,$todayDay);

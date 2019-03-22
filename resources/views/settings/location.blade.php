@@ -54,39 +54,51 @@
         </div>
     </form>
 </div>
+
+<!-- If allow location is off, show login popup -->
+<div id="login-popup" style="display: none;" class="login-popup" data-theme="a">
+    <div class="inner-popup">
+        <div class="pop-body">
+            <p class="text-center">{{ __('messages.Please activate Location Services in your mobile') }}</p>
+            <p class="text-center"><a href="javascript:void(0)" class="ui-btn ui-corner-all ui-btn-inline" onclick="$('#login-popup').hide();">{{ __('messages.OK') }}</a></p>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('footer-script')
     <script type="text/javascript">
-        /*$(function(){       
+        $(function(){
             // Check for Geolocation API permissions  
-            navigator.geolocation.getCurrentPosition(function(position) { 
+            navigator.geolocation.getCurrentPosition(function(position) {
                 console.log("latitude=" + position.coords.latitude);
                 console.log("longitude=" + position.coords.longitude);
-                document.cookie="latitude=" + position.coords.latitude;
-                document.cookie="longitude=" + position.coords.longitude;
-                
+                /*document.cookie="latitude=" + position.coords.latitude;
+                document.cookie="longitude=" + position.coords.longitude;*/
             },function(error){
-               $('.login-inner-section a').attr('href','javascript:void(0)');
-               $('#login-popup').show();
-                
+                if (typeof loc_lat === "undefined" || loc_lat == "") {
+                    if (!getCookie("latitude")){
+                        $('.login-inner-section a').attr('href','javascript:void(0)');
+                        $('#login-popup').show();
+                    }
+                }
             });
+        });
 
-        });*/
-
+        var watchPosition;
         var map = null;
         var marker = null;
         var myMarker = null;
 
         function initMap() {
             @if(Auth::check())
-                @if(Session::get('with_login_lat')!=null && Session::get('with_login_lng')!=null)
+                @if( (Session::has('with_login_lat') && Session::get('with_login_lat')!='null') && (Session::has('with_login_lng') && Session::get('with_login_lng')!='null') )
                     var location  = {lat: {{Session::get('with_login_lat')}} , lng: {{ Session::get('with_login_lng')}} };
                 @else    
                     var location  = {lat: 60.1282 , lng: 18.6435};
                 @endif    
             @else
-                @if(Session::get('with_out_login_lat')!=null && Session::get('with_out_login_lng')!=null)
+                @if( (Session::has('with_out_login_lat') && Session::get('with_out_login_lat')!='null' ) && (Session::has('with_out_login_lng') && Session::get('with_out_login_lng')!='null') )
                     var location  = {lat: {{Session::get('with_out_login_lat')}} , lng: {{Session::get('with_out_login_lng')}} };
                 @else    
                     var location  = {lat: 60.1282 , lng: 18.6435};
@@ -205,7 +217,9 @@
             });
         }
 
-        $(window).on('load', function() {
+        // Add watch on position
+        function addWatchOnPosition()
+        {
             // Add watch on location change if location is set to current location
             var flag = checkTimeAfterLocationSet();
 
@@ -217,6 +231,10 @@
                     watchPosition = navigator.geolocation.watchPosition(updateLocationOnMap, errorHandlerOnMap, options);
                 }
             }
+        }
+
+        $(window).on('load', function() {
+            addWatchOnPosition();
         });
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyByLiizP2XW9JUAiD92x57u7lFvU3pS630&libraries=places&callback=initMap" async defer></script>

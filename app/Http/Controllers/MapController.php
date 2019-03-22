@@ -83,7 +83,7 @@ class MapController extends Controller
             if($request->session()->get('rang') != null){
                 $rang = $request->session()->get('rang');
             }else{
-                $rang = '7';
+                $rang = '10';
             }
             $restaurantLatLngList = Store::getListRestaurants($request->session()->get('with_out_login_lat'),$request->session()->get('with_out_login_lng'),$rang,'1','3',$todayDate,$currentTime,$todayDay);
             $latLng = [];
@@ -199,7 +199,7 @@ class MapController extends Controller
             if($request->session()->get('rang') != null){
                 $rang = $request->session()->get('rang');
             }else{
-                $rang = '7';
+                $rang = '10';
             }
             $restaurantLatLngList = Store::getListRestaurants($request->session()->get('with_out_login_lat'),$request->session()->get('with_out_login_lng'),$rang,'2','3',$todayDate,$currentTime,$todayDay);
             $latLng = [];

@@ -8,10 +8,13 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use App\Exceptions\SocialAuthException;
 use Socialite;
 use App\User;
+use App\PromotionDiscount;
+use App\CustomerDiscount;
 use App\Gdpr;
 use Auth;
 use Session;
 use DB;
+use Carbon\Carbon;
 
 class LoginController extends Controller
 {
@@ -68,6 +71,9 @@ class LoginController extends Controller
         if($user){
             Auth::login($user);
 
+            // Update user discount in cookie
+            $this->updateUserDiscount();
+
             $cookie_name = "gdpr";
             if(isset($_COOKIE[$cookie_name])) {
                 $user_id = Auth::user()->id;
@@ -95,11 +101,14 @@ class LoginController extends Controller
                       ]);              
             }
             
-            if(Session::get('orderData') == null ){
-              return redirect()->action('HomeController@index');
+            if( Session::has('redirectAfterLogin') ) {
+                $redirectAfterLogin = Session::get('redirectAfterLogin');
+                return redirect(url($redirectAfterLogin));
+            }elseif(Session::get('orderData') == null ){
+                return redirect()->action('HomeController@index');
             }else{
-               // return redirect()->route('withOutLogin');//commented by saurabh
-            return redirect()->route('cartWithOutLogin');
+                // return redirect()->route('withOutLogin');//commented by saurabh
+                return redirect()->route('cartWithOutLogin');
             }
         }else{
             $lang;
@@ -123,8 +132,19 @@ class LoginController extends Controller
 
             Auth::login($user);
 
-            //return redirect()->route('withOutLogin');//commented by saurabh
-            return redirect()->route('cartWithOutLogin');
+            // Update user discount in cookie
+            $this->updateUserDiscount();
+
+            // Redirect after login where it comes from
+            if( Session::has('redirectAfterLogin') )
+            {
+                $redirectAfterLogin = Session::get('redirectAfterLogin');
+                return redirect(url($redirectAfterLogin));
+            }
+            else
+            {
+                return redirect()->route('cartWithOutLogin');
+            }
         }
     }
 
@@ -133,6 +153,9 @@ class LoginController extends Controller
         $user = User::where(['otp' => $data['otp']])->where(['phone_number' => $request->session()->get('userPhoneNumber')])->first();
         if($user){            
             Auth::login($user);
+
+            // Update user discount in cookie
+            $this->updateUserDiscount();
 
             $cookie_name = "gdpr";
             if(isset($_COOKIE[$cookie_name])) {
@@ -158,8 +181,17 @@ class LoginController extends Controller
                         'language' => $lang,
                     ]);
             //return redirect()->action('HomeController@index');
-            //return redirect()->route('withOutLogin'); commented by saurabh
-            return redirect()->route('cartWithOutLogin');
+            
+            // Redirect after login where it comes from
+            if( Session::has('redirectAfterLogin') )
+            {
+                $redirectAfterLogin = Session::get('redirectAfterLogin');
+                return redirect(url($redirectAfterLogin));
+            }
+            else
+            {
+                return redirect()->route('cartWithOutLogin');
+            }
         }else{
             /*if ($request->session()->get('userPhoneNumber')) {
                 Session::flash('userPhoneNumber',$request->session()->get('userPhoneNumber'));
@@ -176,12 +208,26 @@ class LoginController extends Controller
       $user = User::where(['id' => $data['usetId']])->first();
       if($user){
         Auth::login($user);
+
+        // Update user discount in cookie
+        $this->updateUserDiscount();
+
         return response()->json(['status' => 'success', 'response' => true,'data'=>true]);
       }
     }
 
     public function login(Request $request){
         $agent = $request->server('HTTP_USER_AGENT');
+
+        //
+        if( $request->server('HTTP_REFERER') && strpos($request->server('HTTP_REFERER'), 'user-setting') )
+        {
+            Session::put('redirectAfterLogin', 'user-setting');
+        }
+        else
+        {
+            Session::forget('redirectAfterLogin');
+        }
         
         return view('auth.login', compact('agent'));       
     }
@@ -197,5 +243,49 @@ class LoginController extends Controller
 
     public function enterOtp(Request $request){
         return view('auth.otp');
+    }
+
+    /**
+     * Update user discount in cookie on login
+     */
+    function updateUserDiscount()
+    {
+        if(Auth::check())
+        {
+            // Destroy If discount is already exist in cookie
+            if(isset($_COOKIE['discount']))
+            {
+                foreach($_COOKIE['discount'] as $key => $value)
+                {
+                    setcookie("discount[{$key}]", null, -1, '/');
+                }
+            }
+
+            // Get if customer has discount save them in cookie while user is logging-in
+            $customerDiscount = PromotionDiscount::from('promotion_discount AS PD')
+                ->select(['PD.store_id', 'PD.discount_value', 'PD.start_date', 'PD.end_date'])
+                ->join('customer_discount AS CD', 'PD.id', '=', 'CD.discount_id')
+                ->where(['CD.customer_id' => Auth::id(), 'CD.status' => '1', 'PD.status' => '1'])
+                ->where('PD.start_date', '<=', Carbon::now()->format('Y-m-d h:i:00'))
+                ->where('PD.end_date', '>=', Carbon::now()->format('Y-m-d h:i:00'))
+                ->get()->toArray();
+
+            if($customerDiscount)
+            {
+                // Add discount in cookie
+                $discount = array();
+
+                foreach($customerDiscount as $key => $value)
+                {
+                    $discount = array(
+                        'store_id' => $value['store_id'],
+                        'discount_value' => $value['discount_value']
+                    );
+
+                    setcookie("discount[{$key}]", json_encode($discount), strtotime($value['end_date']), '/');
+                    // setcookie("discount[1]", json_encode(array('store_id' => '1ce0b6b5-48f5-bc47-6c82-49223f75b137', 'discount_value' => 5)), strtotime('2019-03-30'), '/');
+                }
+            }
+        }
     }
 }

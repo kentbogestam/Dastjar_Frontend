@@ -49,17 +49,22 @@
 	}
 	.ui-btn-active.Settings{width:40px;margin:0 auto !important}
 	.done-btn.dataSave{width:40px;margin:0 auto !important; float: right;}
+	p.error { color: #FF0000; }
+	.link { cursor: pointer; }
 </style>
+
+<!-- Start validation JS -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
+<!-- End -->
 @endsection
 
 @section('content')
-adasd
 <div class="setting-page" data-role="page" data-theme="c">
 	<div data-role="header" class="header" data-position="fixed">
 		<div class="nav_fixed">
 			<div data-role="navbar"> 
 				<ul> 
-			<li><a href="{{Session::get('route_url')}}" data-ajax="false" id="back_arw" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
+			<li><a href="{{ Session::has('route_url') ? Session::get('route_url') : url('home') }}" data-ajax="false" id="back_arw" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
 			 <li><a data-ajax="false" class="ui-btn-active Settings">{{ __('messages.Settings') }}</a></li>
 
 			  <li class="done-btn dataSave" id="dataSave">  <input type="button" value="{{ __('messages.Done') }}" /></li> </ul>
@@ -159,6 +164,54 @@ adasd
 			</div>
 		</div>
 	</form>
+
+	<!-- Discount tab -->
+	@if(Auth::check())
+		<div id="peroid-discount-list" class="setting-list">
+			<ul data-role="listview">
+				<li data-role="collapsible" class="range-sec">
+					<h2 class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Discount') }}</h2>
+					<div class="row">
+						<h2>{{ __('messages.Add Discount') }}</h2>
+						<div data-role="controlgroup">
+							<form name="user-discount" id="user-discount" method="post" action="{{ url('add-customer-discount') }}" data-ajax="false">
+								{{ csrf_field() }}
+								<input type="text" name="code" id="code" placeholder="{{ __('messages.Enter Discount Code') }}" autocomplete="off" data-rule-required>
+								<p class="error"></p>
+								<input type="hidden" id="discountValidate" value="1">
+								<button type="submit" class="btn btn-success">{{ __('messages.Submit') }}</button>		
+							</form>
+						</div>
+					</div>
+					@if( !$customerDiscount->isEmpty() )
+						<div class="row list-user-discount">
+							<h2>{{ __('messages.avalableDiscount') }}</h2>
+							@foreach($customerDiscount as $row)
+								<div class="ui-grid-a">
+									<div class="ui-block-a">
+										<div class="ui-bar ui-bar-a">{{ $row['code'] }}</div>
+									</div>
+									<div class="ui-block-b">
+										<div class="ui-bar ui-bar-a">
+											<span class="link remove-discount-confirm" data-content="{{ __('messages.deleteAlert', ['item' => strtolower(__('messages.Discount'))]) }}">
+												<i class="fa fa-trash" aria-hidden="true"></i>
+											</span>
+										</div>
+									</div>
+								</div>
+							@endforeach
+						</div>
+					@endif
+				</li>
+			</ul>
+		</div>
+	@else
+		<div class="setting-list">
+			<div style="margin-right: 15px; margin-top: 5px;">
+				<a href="{{ url('login') }}" class="terms btn btn-primary" data-ajax="false">{{ __('messages.Discount') }}</a>
+			</div>
+		</div>
+	@endif
 	
 	<div id="contact-setting-list" class="setting-list">
 			<ul data-role="listview"> 
@@ -201,9 +254,35 @@ adasd
 @endsection
 
 @section('footer-script')
+	<!-- Delete cart item popup -->
+	<div id="delete-alert" class="actionBox">
+		<div class="actionBox-content">
+			<div class="mInner">
+				<p></p>
+				<div class="btnWrapper">
+					<span class="close">Cancel</span>
+					<span class="delete" id="remove-discount">Delete</span>
+					<input type="hidden" name="deletealertdata" id="deletealertdata">
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Delete cart item popup -->
+	<div id="replace-discount-alert" class="actionBox">
+		<div class="actionBox-content">
+			<div class="mInner">
+				<p></p>
+				<div class="btnWrapper">
+					<span class="close">No</span>
+					<span class="delete" id="replace-discount">Yes</span>
+					<input type="hidden" name="" id="">
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<script type="text/javascript">
-
 		$("#dataSave").click(function(e){
 			var flag = true;
 			if(flag){
@@ -217,5 +296,99 @@ adasd
 		function makeRedirection(link){
 			window.location.href = link;
 		}
+
+		// Check if discount is valid and submit
+		$('#user-discount').on('submit', function() {
+			var isValid = false; var msg = 'This field is required.';
+			var code = $('#code').val();
+
+			// Submit without validating if user want to replace discount if code belongs to same restaurant 
+			if( $('#discountValidate').val() == '0' )
+			{
+				return true;
+			}
+
+			if(code.length)
+			{
+				showLoading();
+
+				// Check if code valid
+				$.ajax({
+					type: 'POST',
+					url: "{{ url('is-valid-discount-code') }}",
+					data: {
+						'_token': "{{ csrf_token() }}",
+						'code': code
+					},
+					async: false,
+					dataType: 'json',
+					success: function(response) {
+						hideLoading();
+
+						msg = response.msg;
+
+						if( response.status == 1 )
+						{
+							isValid = response.status;
+						}
+						else if( response.status == 2 )
+						{
+							$('#replace-discount-alert').find('p').html(msg);
+							$('#replace-discount-alert').show();
+							msg = '';
+						}
+					}
+				});
+			}
+
+			if(!isValid)
+			{
+				$('#user-discount').find('p.error').text(msg);
+				return false;
+			}
+		});
+
+		// Replace user discount if belongs to the same restaurant
+		$('#replace-discount').on('click', function() {
+			$('#discountValidate').val(0);
+			$('#user-discount').submit();
+		});
+
+		// Remove user discount
+		$('#remove-discount').on('click', function() {
+			showLoading();
+
+			$.ajax({
+				type: 'POST',
+				url: '{{ url('remove-customer-discount') }}',
+				data: {
+					'_token': "{{ csrf_token() }}",
+					'code': $('#deletealertdata').val()
+				},
+				async: false,
+				dataType: 'json',
+				success: function(response) {
+					hideLoading();
+					
+					if(response.status)
+					{
+						window.location.reload();
+					}
+				}
+			});
+		});
+
+		// Confirm Delete discount
+		$('.remove-discount-confirm').on('click', function() {
+			var content = $(this).data('content');
+			$('#delete-alert').find('p').html(content);
+			$('#deletealertdata').val($(this).closest('.ui-grid-a').find('.ui-bar-a').html());
+			$('#delete-alert').show();
+		});
+
+		// Close popup
+		$('.actionBox .close').on('click', function() {
+			$(this).closest('.actionBox').hide();
+		});
 	</script>
 @endsection

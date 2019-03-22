@@ -119,26 +119,37 @@ function setCurrentLatLong(urllatlng){
 
 }
 
-// Increase quantity of cart item
+// Increase quantity of cart item and update price
 function incrementCartValue(id)
 {
-    var grandtotal=0;
+    var subTotal = grandtotal = 0;
     var value = parseInt(document.getElementById('qty'+id).value, 10);
     value = isNaN(value) ? 0 : value;
     value= parseInt(value)+1;
  
     itemprice = parseInt(document.getElementById('itemprice'+id).value, 10);
     total= parseInt(value)*itemprice;
-    $('#itemtotalDisplay'+id).html(total);
+    $('#itemtotalDisplay'+id).html(total.toFixed(2));
     $('#itemtotal'+id).val(total);
 
     document.getElementById('qty'+id).value = value;
 
-    grandtotal= calculateGrandtotal();
+    subTotal = grandtotal = calculateGrandtotal();
 
+    // Update order
     updateCart(value,$('#prod'+id).val(),total,grandtotal);
 
-    $('#grandTotalDisplay').html(grandtotal);
+    // Calculate discounted price if exist
+    if( $('#discount_value').length )
+    {
+        discountAmount = (subTotal*$('#discount_value').val()/100);
+        grandtotal -= discountAmount;
+
+        $('#discount-amount').html(discountAmount.toFixed(2));
+    }
+
+    $('#sub-total').html(subTotal.toFixed(2));
+    $('#grandTotalDisplay').html(grandtotal.toFixed(2));
 
     // Update value in cart badge and show
     cntCartItems++;
@@ -146,25 +157,25 @@ function incrementCartValue(id)
     $('.cart-badge').removeClass('hidden');
 }
 
-// Decrease quantity of cart item
+// Decrease quantity of cart item and update price
 function decrementCartValue(id,msg)
 {
-    var grandtotal=0;
+    var subTotal = grandtotal = 0;
     var total=0;
     var rowCount = $('#table-custom-2 tr').length;
     var value = parseInt(document.getElementById('qty'+id).value, 10);
 
     value = isNaN(value) ? 0 : value;
     
-    if(value > 1 || rowCount >= 3){
+    if(value > 1 || rowCount >= 2){
         value--;
         document.getElementById('qty'+id).value = value;
         itemprice = parseInt(document.getElementById('itemprice'+id).value, 10);
         total= parseInt(value)*itemprice;
-        $('#itemtotalDisplay'+id).html(total);
+        $('#itemtotalDisplay'+id).html(total.toFixed(2));
         $('#itemtotal'+id).val(total);
 
-        grandtotal= calculateGrandtotal();
+        subTotal = grandtotal = calculateGrandtotal();
 
         updateCart(value,$('#prod'+id).val(),total,grandtotal);
 
@@ -172,7 +183,17 @@ function decrementCartValue(id,msg)
             $('#row_'+id).remove();
         }
 
-        $('#grandTotalDisplay').html(grandtotal);
+        // Calculate discounted price if exist
+        if( $('#discount_value').length )
+        {
+            discountAmount = (subTotal*$('#discount_value').val()/100);
+            grandtotal -= discountAmount;
+
+            $('#discount-amount').html(discountAmount.toFixed(2));
+        }
+
+        $('#sub-total').html(subTotal.toFixed(2));
+        $('#grandTotalDisplay').html(grandtotal.toFixed(2));
 
         // Update value in cart badge and hide/show
         cntCartItems--;
@@ -202,21 +223,18 @@ function onDeleteLastItemFromCart(id = null)
     }
 }
 
-  function calculateGrandtotal(){
-
+function calculateGrandtotal(){
     var grandtotal=0;
     var arrayValues = $('input:hidden.itemtotal').map(function(){
-                      return $(this).val()
-                  }).get();
+        return $(this).val()
+    }).get();
    
     for (var i=0;i<arrayValues.length;i++){
- 
        grandtotal=parseInt(grandtotal)+parseInt(arrayValues[i]);
-      
     }
 
     return grandtotal;
-  }
+}
 
   function updateCart(qty,productId,totalProductPrice,grandtotal){
 
@@ -271,6 +289,22 @@ function deleteFullCart(url,value,msg){
     var orderid= $('#orderid').val();
     url= url+"/?orderid="+orderid;
     makeRedirection(url);
+}
+
+// Show spinner
+function showLoading(text = 'Loading...')
+{
+    $.mobile.loading('show', {
+        text: text,
+        textVisible: true,
+        theme: 'a',
+    });
+}
+
+// Hide spinner
+function hideLoading()
+{
+    $.mobile.loading('hide');
 }
 
 

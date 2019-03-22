@@ -1058,34 +1058,33 @@ class AdminController extends Controller
         $error = "";
 
         // Opload images related to
-            if (!empty($_FILES["prodImage"]["name"])) {
-                $file_extension = strtolower($info['extension']);
-                if ($file_extension == "png" || $file_extension == "jpg" || $file_extension == "jpeg" || $file_extension == "gif" || $file_extension == "bmp") { 
-                    if ($_FILES["prodImage"]["error"] > 0) {
-                        $error.=$_FILES["prodImage"]["error"] . "<br />";
-                    } else {
-                        $cat_filename = $CategoryIconName . "." . strtolower($info['extension']);
-                        $fileOriginal = $_FILES['prodImage']['tmp_name'];
-                        $crop = '5';
-                        $size = 'iphone4_cat';
-                        $path = UPLOAD_DIR . "category/";
-                        $fileThumbnail = $path . $cat_filename;
-                        $resizer = new Resizer();
+        if (!empty($_FILES["prodImage"]["name"])) {
+            $file_extension = strtolower($info['extension']);
+            if ($file_extension == "png" || $file_extension == "jpg" || $file_extension == "jpeg" || $file_extension == "gif" || $file_extension == "bmp") { 
+                if ($_FILES["prodImage"]["error"] > 0) {
+                    $error.=$_FILES["prodImage"]["error"] . "<br />";
+                } else {
+                    $cat_filename = $CategoryIconName . "." . strtolower($info['extension']);
+                    $fileOriginal = $_FILES['prodImage']['tmp_name'];
+                    $crop = '5';
+                    $size = 'iphone4_cat';
+                    $path = UPLOAD_DIR . "category/";
+                    $fileThumbnail = $path . $cat_filename;
+                    $resizer = new Resizer();
 
-                         move_uploaded_file($fileOriginal,$fileThumbnail);
+                     move_uploaded_file($fileOriginal,$fileThumbnail);
 
-                  //       try{
-                  //           $resizer->createFileThumbnail($fileOriginal, $fileThumbnail, $size, $frontUpload = 0, $crop, $errorMsg);
-                		// } catch (\Exception $ex) {
-                  //           echo $ex->getMessage();
-                  //           // die();
-                  //       }
+              //       try{
+              //           $resizer->createFileThumbnail($fileOriginal, $fileThumbnail, $size, $frontUpload = 0, $crop, $errorMsg);
+            		// } catch (\Exception $ex) {
+              //           echo $ex->getMessage();
+              //           // die();
+              //       }
 
-                        $small_image = $cat_filename;
-                    }
+                    $small_image = $cat_filename;
                 }
             }
-
+        }
 
         $product = new Product();
         $product->product_id = $product_id;        
@@ -1112,6 +1111,10 @@ class AdminController extends Controller
 
             $product->small_image = $catImg;
             $product->large_image = $catImg;
+        }
+        else
+        {
+            $product->small_image = 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/category/cat_icon_b738a523d72867d1fc84e1f9d3c18b29.png';
         }
 
         // dd($product->small_image);
@@ -1281,6 +1284,10 @@ class AdminController extends Controller
 
             $product->small_image = $catImg;
             $product->large_image = $copImg;
+        }
+        else
+        {
+            $product->small_image = 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/category/cat_icon_b738a523d72867d1fc84e1f9d3c18b29.png';
         }
 
         $minutes = $request->prepTime;

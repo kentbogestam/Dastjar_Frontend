@@ -78,6 +78,9 @@
 	Route::get('update-location', 'HomeController@updateLocation');
     Route::get('setResttype','HomeController@setRestarurantType');
 	Route::get('user-setting', 'CustomerController@index');
+	Route::post('is-valid-discount-code', 'CustomerController@ajaxIsValidDiscountCode');
+	Route::post('add-customer-discount', 'CustomerController@addCustomerDiscount');
+	Route::post('remove-customer-discount', 'CustomerController@removeCustomerDiscount');
 	Route::get('select-location', 'CustomerController@selectLocation');
 	Route::post('save-location', 'CustomerController@saveLocation');
 	Route::get('save-location', 'CustomerController@saveLocation');
@@ -108,6 +111,8 @@
 		Route::get('checkDistance','DistanceController@checkDistance');
 		Route::post('cart', 'OrderController@cart');
 		Route::get('cart', 'OrderController@cartWithOutLogin')->name('cartWithOutLogin');
+		Route::get('view-cart/{orderId}', 'OrderController@viewCart');
+		// Route::post('apply-promocode', 'OrderController@ajaxApplyPromocode');
 	});
 
 	Route::group(['middleware' => ['auth']], function(){
