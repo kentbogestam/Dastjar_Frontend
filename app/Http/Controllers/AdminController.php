@@ -144,14 +144,15 @@ class AdminController extends Controller
         {
             // Get subscribed plan for store
             $storePlan = SubscriptionPlan::from('billing_products AS BP')
-                ->select('BP.id', 'UP.plan_id')
+                ->select('BP.id', 'BP.package_id', 'UP.plan_id')
+                ->join('anar_packages AS AP', 'AP.id', '=', 'BP.package_id')
                 ->join('user_plan AS UP', 'BP.plan_id', '=', 'UP.plan_id')
                 ->where('BP.s_activ', 1)
                 ->whereDate('subscription_start_at', '<=', Carbon::parse(Carbon::now())->format('Y-m-d'))
                 ->whereDate('subscription_end_at', '>=', Carbon::parse(Carbon::now())->format('Y-m-d'))
                 ->where('UP.user_id', Auth::user()->u_id)
                 ->where('UP.store_id', Session::get('storeId'))
-                ->pluck('plan_id')
+                ->pluck('package_id')
                 ->toArray();
                 //->toSql();
 
@@ -160,25 +161,25 @@ class AdminController extends Controller
             if($storePlan)
             {
                 // Kitchen
-                if( in_array('plan_EE3Gi7A6f6Jvvb', $storePlan) )
+                if( in_array('2', $storePlan) )
                 {
                     Session::put('subscribedPlans.kitchen', 1);
                 }
 
                 // Order on Site
-                if( in_array('plan_EE3HCFoL3Q4w2g', $storePlan) )
+                if( in_array('3', $storePlan) )
                 {
                     Session::put('subscribedPlans.orderonsite', 1);
                 }
 
                 // Catering
-                if( in_array('plan_EE3IyKkF4fRTRt', $storePlan) )
+                if( in_array('4', $storePlan) )
                 {
                     Session::put('subscribedPlans.catering', 1);
                 }
 
                 // Payment
-                if( in_array('plan_EE3J8meXbkIq0M', $storePlan) )
+                if( in_array('5', $storePlan) )
                 {
                     Session::put('subscribedPlans.payment', 1);
                 }
