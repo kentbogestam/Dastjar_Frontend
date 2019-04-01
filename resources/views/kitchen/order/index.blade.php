@@ -462,7 +462,7 @@
 		}); 
 	}
 
-	// setInterval(ajaxCall, 10000);
+	setInterval(ajaxCall, 10000);
 
 	var tempCount = 18;
 	$(document).on("scrollstop", function (e) {
