@@ -1070,6 +1070,13 @@ class AdminController extends Controller
                     $crop = '5';
                     $size = 'iphone4_cat';
                     $path = UPLOAD_DIR . "category/";
+
+                    // If doesn't exist directory, create one
+                    if( !file_exists($path) )
+                    {
+                        mkdir($path, 0755, true);
+                    }
+                    
                     $fileThumbnail = $path . $cat_filename;
                     $resizer = new Resizer();
 
@@ -1246,6 +1253,13 @@ class AdminController extends Controller
                     $crop = '5';
                     $size = 'iphone4_cat';
                     $path = UPLOAD_DIR . "category/";
+
+                    // If doesn't exist directory, create one
+                    if( !file_exists($path) )
+                    {
+                        mkdir($path, 0755, true);
+                    }
+
                     $fileThumbnail = $path . $cat_filename;
                     $resizer = new Resizer();
 
