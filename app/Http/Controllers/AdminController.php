@@ -1070,17 +1070,24 @@ class AdminController extends Controller
                     $crop = '5';
                     $size = 'iphone4_cat';
                     $path = UPLOAD_DIR . "category/";
+
+                    // If doesn't exist directory, create one
+                    if( !file_exists($path) )
+                    {
+                        mkdir($path, 0755, true);
+                    }
+                    
                     $fileThumbnail = $path . $cat_filename;
                     $resizer = new Resizer();
 
-                     move_uploaded_file($fileOriginal,$fileThumbnail);
+                    // move_uploaded_file($fileOriginal,$fileThumbnail);
 
-              //       try{
-              //           $resizer->createFileThumbnail($fileOriginal, $fileThumbnail, $size, $frontUpload = 0, $crop, $errorMsg);
-            		// } catch (\Exception $ex) {
-              //           echo $ex->getMessage();
-              //           // die();
-              //       }
+                    try{
+                        $resizer->createFileThumbnail($fileOriginal, $fileThumbnail, $size, $frontUpload = 0, $crop, $errorMsg);
+            		} catch (\Exception $ex) {
+                        echo $ex->getMessage();
+                        // die();
+                    }
 
                     $small_image = $cat_filename;
                 }
@@ -1246,6 +1253,13 @@ class AdminController extends Controller
                     $crop = '5';
                     $size = 'iphone4_cat';
                     $path = UPLOAD_DIR . "category/";
+
+                    // If doesn't exist directory, create one
+                    if( !file_exists($path) )
+                    {
+                        mkdir($path, 0755, true);
+                    }
+
                     $fileThumbnail = $path . $cat_filename;
                     $resizer = new Resizer();
 
