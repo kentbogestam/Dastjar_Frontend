@@ -1080,14 +1080,14 @@ class AdminController extends Controller
                     $fileThumbnail = $path . $cat_filename;
                     $resizer = new Resizer();
 
-                     move_uploaded_file($fileOriginal,$fileThumbnail);
+                    // move_uploaded_file($fileOriginal,$fileThumbnail);
 
-              //       try{
-              //           $resizer->createFileThumbnail($fileOriginal, $fileThumbnail, $size, $frontUpload = 0, $crop, $errorMsg);
-            		// } catch (\Exception $ex) {
-              //           echo $ex->getMessage();
-              //           // die();
-              //       }
+                    try{
+                        $resizer->createFileThumbnail($fileOriginal, $fileThumbnail, $size, $frontUpload = 0, $crop, $errorMsg);
+            		} catch (\Exception $ex) {
+                        echo $ex->getMessage();
+                        // die();
+                    }
 
                     $small_image = $cat_filename;
                 }
