@@ -47,14 +47,13 @@
 			<thead>
 				<tr class="ui-bar-d">
 					<th data-priority="2">{{ __('messages.Orders') }}</th>
-			   		<th>{{ __('messages.Amount') }}</th> 
+			   		<th>{{ __('messages.Amount') }}</th>
+			   		<th class="qty-loyalty-offer">{{ __('messages.qtyLoyaltyOffer') }}</th>
 			   		<th data-priority="3">{{ __('messages.Product') }}</th>
 			    	<th data-priority="1">{{ __('messages.Comments') }}</th> 
 			    </tr>
 			</thead>
-			<tbody id="specificOrderDetailContianer">
-				<tr></tr>
-			</tbody>
+			<tbody id="specificOrderDetailContianer"></tbody>
 		</table>
 	</div>
 
@@ -201,6 +200,12 @@
 	          			liItem += "<input class='no_check'  type='button' data-role='none' value='no' name=''>"
 	          		}
 
+	          		// If order belongs to 'Loyalty'
+	          		if(list[i]['cntLoyaltyUsed'])
+	          		{
+	          			liItem += '<div class="show-total"><strong>Loyalty</strong></div>';
+	          		}
+
 	          		liItem += "<td>"+time+"</td>";
 	          		liItem += "</tr>";
 	          	}
@@ -261,10 +266,13 @@
 		function(returnedData){
 			// console.log(returnedData["data"]);
 			var temp = returnedData["data"];
+			var isQuantityFree = 0;
+
 			for (var i=0;i<temp.length;i++){
 				liItem += "<tr>";
 				liItem += "<td>"+temp[i]["customer_order_id"]+"</td>";
 				liItem += "<td>"+temp[i]["product_quality"]+"</td>";
+				liItem += "<td class='qty-loyalty-offer'>"+temp[i]["quantity_free"]+"</td>";
 				liItem += "<td>"+temp[i]["product_name"]+"</td>";
 				if(temp[i]["product_description"] != null){
 					liItem += "<td>"+temp[i]["product_description"]+"</td>";
@@ -272,8 +280,24 @@
 					liItem += "<td>"+' '+"</td>";
 				}
 				liItem += "</tr>";
+
+				if(temp[i]["quantity_free"])
+				{
+					isQuantityFree = 1;
+				}
 			}
 			$("#specificOrderDetailContianer").html(liItem);
+
+			// Show/hide loyalty column in 'order detail' popup
+			if(!isQuantityFree)
+			{
+				$('.qty-loyalty-offer').hide();
+			}
+			else
+			{
+				$('.qty-loyalty-offer').show();
+			}
+
 			$("#popupCloseRight").popup("open");
 			var liItem = "";
 		});
@@ -403,6 +427,12 @@
 	          			}
 	          		}else{
 	          			liItem += "<input class='no_check'  type='button' data-role='none' value='no' name=''>"
+	          		}
+
+	          		// If order belongs to 'Loyalty'
+	          		if(list[i]['cntLoyaltyUsed'])
+	          		{
+	          			liItem += '<div class="show-total"><strong>Loyalty</strong></div>';
 	          		}
 
 	          		liItem += "<td>"+time+"</td>";
@@ -623,6 +653,12 @@
   			}
   		}else{
   			liItem += "<input class='no_check'  type='button' data-role='none' value='no' name=''>"
+  		}
+
+  		// If order belongs to 'Loyalty'
+  		if(list[i]['cntLoyaltyUsed'])
+  		{
+  			liItem += '<div class="show-total"><strong>Loyalty</strong></div>';
   		}
 
   		liItem += "<td>"+time+"</td>";
