@@ -8,8 +8,11 @@ use App\Product;
 use App\Company;
 use App\DishType;
 use App\Order;
+use App\OrderDetail;
 use App\Gdpr;
 use App\User;
+use App\PromotionLoyalty;
+use App\OrderCustomerLoyalty;
 use Session;
 use Cookie;
 use DB;
@@ -495,7 +498,7 @@ class HomeController extends Controller
            ->orderBy('product.product_rank', 'ASC')
             ->get();
 
-            // dd($menuDetails->toArray());
+        // dd($menuDetails->toArray());
 
         $storedetails = Store::where('store_id' , $storeId)->first();
         $request->session()->put('storeId', $storeId);
@@ -511,9 +514,49 @@ class HomeController extends Controller
 
             if(isset($companyId)){
                 $menuTypes = DishType::where('company_id' , $companyId)->whereIn('dish_id', array_unique($dish_typeId))->where('dish_activate','1')->get();
+                
                 $dish_typeId = null;
                 $companydetails = Company::where('company_id' , $companyId)->first();
-                return view('menulist.index', compact('menuDetails','companydetails','menuTypes','storeId','storedetails'));
+                
+                // Get loyalty offer
+                $promotionLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
+                    ->select(['PL.id', 'PL.quantity_to_buy', 'PL.quantity_get', 'PL.validity', DB::raw('DATE_FORMAT(PL.end_date, "%b %d, %Y") AS end_date'), DB::raw('GROUP_CONCAT(dish_type_id) AS dish_type_ids')])
+                    ->join('promotion_loyalty_dish_type AS PLDT', 'PLDT.loyalty_id', '=', 'PL.id')
+                    ->where(['PL.store_id' => $storeId, 'PL.status' => '1'])
+                    ->where('PL.start_date', '<=', Carbon::now()->format('Y-m-d h:i:00'))
+                    ->where('PL.end_date', '>=', Carbon::now()->format('Y-m-d h:i:00'))
+                    ->groupBy('PL.id')
+                    ->first();
+                
+                $customerLoyalty = null;
+                
+                if( Auth::check() && $promotionLoyalty )
+                {
+                    // Get count of 'loyalty' used number of times
+                    $orderCustomerLoyalty = OrderCustomerLoyalty::from('order_customer_loyalty AS OCL')
+                        ->select([DB::raw('COUNT(OCL.id) AS cnt')])
+                        ->join('orders', 'orders.order_id', '=', 'OCL.order_id')
+                        ->where(['OCL.customer_id' => Auth::id(), 'OCL.loyalty_id' => $promotionLoyalty->id])
+                        ->where('orders.online_paid', '!=', 2)
+                        ->first();
+
+                    // Check if loyalty validity is 'false' so user can use n number of times or, validity should be greater than used validity of user
+                    if( (!$promotionLoyalty->validity) || ($promotionLoyalty->validity > $orderCustomerLoyalty->cnt) )
+                    {
+                        // Get customer loyalty
+                        $customerLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
+                            ->select(['OD.loyalty_id', DB::raw('SUM(OD.product_quality) AS quantity_bought')])
+                            ->join('order_details AS OD', 'OD.loyalty_id', '=', 'PL.id')
+                            ->join('orders', 'orders.order_id', '=', 'OD.order_id')
+                            ->where(['PL.id' => $promotionLoyalty->id, 'OD.user_id' => Auth::id()])
+                            ->where('orders.online_paid', '!=', 2)
+                            ->where('OD.loyalty_id', '!=', null)
+                            ->groupBy('OD.loyalty_id')
+                            ->first();
+                    }
+                }
+
+                return view('menulist.index', compact('menuDetails','companydetails','menuTypes','storeId','storedetails', 'promotionLoyalty', 'customerLoyalty', 'orderCustomerLoyalty'));
             }else{
                 return view('menulist.blankMenu', compact('storedetails'));
             }
