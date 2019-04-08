@@ -993,6 +993,7 @@ class OrderController extends Controller
                         $loyalty_discount = $itemMinPrice * $quantity_offered;
                         $final_order_total -= $loyalty_discount;
                         $orderInvoice['loyalty_quantity_free'] = $quantity_offered;
+                        $orderInvoice['loyaltyOfferApplied'] = __('messages.loyaltyOfferApplied', ['loyalty_quantity_free' => $quantity_offered]);
 
                         // Insert into customer loyalty
                         OrderCustomerLoyalty::create(['customer_id' => Auth::id(), 'loyalty_id' =>$promotionLoyalty->id, 'order_id' => $orderId]);
@@ -1141,14 +1142,14 @@ class OrderController extends Controller
             {
                 // Get count of 'loyalty' used number of times
                 $orderCustomerLoyalty = OrderCustomerLoyalty::from('order_customer_loyalty AS OCL')
-                    ->select([DB::raw('COUNT(OCL.id) AS cnt')])
+                    ->select([DB::raw('COUNT(OCL.id) AS cntLoyaltyUsed')])
                     ->join('orders', 'orders.order_id', '=', 'OCL.order_id')
                     ->where(['OCL.customer_id' => Auth::id(), 'OCL.loyalty_id' => $promotionLoyalty->id])
                     ->where('orders.online_paid', '!=', 2)
                     ->first();
             }
 
-            $loyaltyProductsPrice = array();
+            $loyaltyProducts = array();
 
             $order_total = $final_order_total = 0;
 
@@ -1157,11 +1158,11 @@ class OrderController extends Controller
                 $order_total = $order_total + ($row->price * $row->product_quality);
 
                 // Check if loyalty exist and if product belongs to associated dish_type 
-                if( $promotionLoyalty && (!$promotionLoyalty->validity || ($promotionLoyalty->validity > $orderCustomerLoyalty->cnt)) )
+                if( $promotionLoyalty && (!$promotionLoyalty->validity || ($promotionLoyalty->validity > $orderCustomerLoyalty->cntLoyaltyUsed)) )
                 {
                     if( in_array($row->dish_type, explode(',', $promotionLoyalty->dish_type_ids)) )
                     {
-                        $loyaltyProductsPrice[] = $row->price;
+                        $loyaltyProducts[] = array('id' => $row->id, 'price' => $row->price, 'qty' => $row->product_quality);
                     }
                 }
             }
@@ -1169,18 +1170,19 @@ class OrderController extends Controller
             $final_order_total = $order_total;
 
             // Start applying discount rule
-            if( !empty($loyaltyProductsPrice) )
+            if( !empty($loyaltyProducts) )
             {
                 // Get customer loyalty for order
                 $customerLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
                     ->select(['OD.loyalty_id', DB::raw('SUM(OD.product_quality) AS quantity_bought')])
                     ->join('order_details AS OD', 'OD.loyalty_id', '=', 'PL.id')
                     ->join('orders', 'orders.order_id', '=', 'OD.order_id')
-                    ->where(['PL.id' => $promotionLoyalty->id, 'OD.user_id' => Auth::id()])
-                    ->where('orders.online_paid', '!=', 2)
-                    ->where('OD.loyalty_id', '!=', null)
-                    ->groupBy('OD.loyalty_id')
+                    ->where('PL.id', $promotionLoyalty->id)
+                    ->where('OD.user_id', Auth::id())
+                    ->whereRaw("(orders.online_paid != 2 OR orders.order_id = {$orderId})")
                     ->first();
+
+                // echo '<pre>'; print_r($customerLoyalty->toArray()); exit;
 
                 if($customerLoyalty)
                 {
@@ -1189,21 +1191,22 @@ class OrderController extends Controller
                     $quantity_bought = $customerLoyalty->quantity_bought;
 
                     // Calculate if 'loyalty' already have been applied
-                    $quantity_bought -= ($quantity_to_buy*$orderCustomerLoyalty->cnt);
+                    // $quantity_bought -= ($quantity_to_buy*$orderCustomerLoyalty->cntLoyaltyUsed);
 
                     // Check if eligible to get free item quantity, and update final_total
                     if($quantity_to_buy < $quantity_bought)
                     {
-                        // Insert into customer loyalty
-                        
                         // Get offered quantity on applied loyalty
                         $quantity_offered = floor($quantity_bought/$quantity_to_buy)*$quantity_get;
 
                         // Calculate min price to be deducted and update final_total
-                        $itemMinPrice = min($loyaltyProductsPrice);
+                        $productPrices = array_column($loyaltyProducts, 'price');
+                        $index = array_search(min($productPrices), $productPrices, true);
+                        $itemMinPrice = $loyaltyProducts[$index]['price'];
                         $loyalty_discount = $itemMinPrice * $quantity_offered;
                         $final_order_total -= $loyalty_discount;
-                        $orderInvoice['loyalty_discount'] = $loyalty_discount;
+                        $orderInvoice['loyalty_quantity_free'] = $quantity_offered;
+                        $orderInvoice['loyaltyOfferApplied'] = __('messages.loyaltyOfferApplied', ['loyalty_quantity_free' => $quantity_offered]);
                     }
                 }
             }
@@ -1247,8 +1250,8 @@ class OrderController extends Controller
             ->where('orders.online_paid', '!=', 2)
             ->where('OD.loyalty_id', '!=', null)
             ->groupBy('OD.loyalty_id')
-            ->toSql();
-        echo '<pre>'; print_r($customerLoyalty); exit;*/
+            ->toSql();*/
+        // echo '<pre>'; print_r($orderInvoice); exit;
 
         return view('order.cart', compact('order','orderDetails', 'customerDiscount', 'orderInvoice'));
     }
@@ -1313,7 +1316,7 @@ class OrderController extends Controller
                 }
                 
                 $is_order_customer_loyalty = 0;
-                $loyaltyProducts = $loyaltyProductsPrice = array();
+                $loyaltyProducts = array();
 
                 $order_total = $final_order_total = 0;
 
@@ -1368,6 +1371,7 @@ class OrderController extends Controller
                             $loyalty_discount = $itemMinPrice * $quantity_offered;
                             $final_order_total -= $loyalty_discount;
                             $orderInvoice['loyalty_quantity_free'] = $quantity_offered;
+                            $orderInvoice['loyaltyOfferApplied'] = __('messages.loyaltyOfferApplied', ['loyalty_quantity_free' => $quantity_offered]);
 
                             // Insert into customer loyalty
                             if( !OrderCustomerLoyalty::where(['order_id' => $orderId])->count() )

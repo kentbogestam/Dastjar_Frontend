@@ -272,7 +272,7 @@ function updateCart(qty,productId,totalProductPrice,grandtotal){
                 $('.loyalty-discount-text').text('');
                 if( typeof orderInvoice.loyalty_quantity_free !== 'undefined' )
                 {
-                    $('.loyalty-discount-text').text(orderInvoice.loyalty_quantity_free);
+                    $('.loyalty-discount-text').html(orderInvoice.loyaltyOfferApplied);
                 }
 
                 // Update discount if exist

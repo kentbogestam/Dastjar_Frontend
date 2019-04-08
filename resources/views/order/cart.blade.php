@@ -1,4 +1,11 @@
 @extends('layouts.master')
+@section('styles')
+	<style>
+		.loyalty-discount-text {
+			color: green;
+		}
+	</style>
+@stop
 @section('content')
 @include('includes.headertemplate')
 <div role="main" data-role="main-content" class="content">
@@ -134,7 +141,7 @@
 			<div class="ui-grid-solo text-center row-loyalty-discount">
 				<div class="ui-block-a">
 					<div class="ui-bar ui-bar-a loyalty-discount-text">
-						{{ isset($orderInvoice['loyalty_discount']) ? 'Yes' : 'No' }}
+						{!! isset($orderInvoice['loyalty_quantity_free']) ? $orderInvoice['loyaltyOfferApplied'] : '' !!}
 					</div>
 				</div>
 			</div>

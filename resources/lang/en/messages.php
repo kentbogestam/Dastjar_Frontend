@@ -93,6 +93,7 @@ return [
     'discountStoreDuplicate' => 'Do you want to replace your existing discount with this for some restaurant?',
     'loyaltyOfferMsg' => 'Only <span class="quantity-to-buy">:quantity_to_buy</span> to go, get <span class="quantity-get">:quantity_get</span> for free! Valid till :valid_till',
     'loyaltyOfferOnApply' => 'Congratulations! You\'re eligible to get <span class="quantity-offered">:quantity_offered</span> item(s) for free!',
+    'loyaltyOfferApplied' => 'You\'re getting <span class="quantity-offered">:loyalty_quantity_free</span> quantity(s) for free!',
     'deleteAlert' => 'Are you sure you want to delete this :item?',
     'Message' => 'Message',
     'Contact Us Placeholder' => 'Enter your Message.Add your email for replay',
