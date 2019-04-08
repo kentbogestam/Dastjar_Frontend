@@ -108,7 +108,8 @@ class LoginController extends Controller
                 return redirect()->action('HomeController@index');
             }else{
                 // return redirect()->route('withOutLogin');//commented by saurabh
-                return redirect()->route('cartWithOutLogin');
+                // return redirect()->route('cartWithOutLogin');
+                return redirect(url('cart'));
             }
         }else{
             $lang;
@@ -143,7 +144,8 @@ class LoginController extends Controller
             }
             else
             {
-                return redirect()->route('cartWithOutLogin');
+                // return redirect()->route('cartWithOutLogin');
+                return redirect(url('cart'));
             }
         }
     }
@@ -190,7 +192,8 @@ class LoginController extends Controller
             }
             else
             {
-                return redirect()->route('cartWithOutLogin');
+                // return redirect()->route('cartWithOutLogin');
+                return redirect(url('cart'));
             }
         }else{
             /*if ($request->session()->get('userPhoneNumber')) {

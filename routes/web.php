@@ -110,7 +110,8 @@
 		Route::get('withOutLogin', 'OrderController@withOutLogin')->name('withOutLogin');
 		Route::get('checkDistance','DistanceController@checkDistance');
 		Route::post('cart', 'OrderController@cart');
-		Route::get('cart', 'OrderController@cartWithOutLogin')->name('cartWithOutLogin');
+		Route::get('cart', 'OrderController@cart');
+		// Route::get('cart', 'OrderController@cartWithOutLogin')->name('cartWithOutLogin');
 		Route::get('view-cart/{orderId}', 'OrderController@viewCart');
 		// Route::post('apply-promocode', 'OrderController@ajaxApplyPromocode');
 	});
