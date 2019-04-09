@@ -525,7 +525,7 @@ class HomeController extends Controller
                 
                 // Get loyalty offer
                 $promotionLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
-                    ->select(['PL.id', 'PL.quantity_to_buy', 'PL.quantity_get', 'PL.validity', DB::raw('DATE_FORMAT(PL.end_date, "%b %d, %Y") AS end_date'), DB::raw('GROUP_CONCAT(dish_type_id) AS dish_type_ids')])
+                    ->select(['PL.id', 'PL.quantity_to_buy', 'PL.quantity_get', 'PL.validity', DB::raw('DATE_FORMAT(PL.end_date, "%d/%m-%Y") AS end_date'), DB::raw('GROUP_CONCAT(dish_type_id) AS dish_type_ids')])
                     ->join('promotion_loyalty_dish_type AS PLDT', 'PLDT.loyalty_id', '=', 'PL.id')
                     ->where(['PL.store_id' => $storeId, 'PL.status' => '1'])
                     ->where('PL.start_date', '<=', Carbon::now()->format('Y-m-d h:i:00'))
