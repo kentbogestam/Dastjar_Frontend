@@ -388,7 +388,7 @@ class HomeController extends Controller
         if(Auth::check()){
             $userDetail = User::whereId(Auth()->id())->first();
       
-                if(Session::get('with_login_address') != null){
+                if(Session::get('with_login_lat') != null){
                     $lat = $request->session()->get('with_login_lat');
                     $lng = $request->session()->get('with_login_lng');
                 }else{
@@ -397,6 +397,9 @@ class HomeController extends Controller
                 }
 
             $companydetails = Store::getEatLaterListRestaurants($lat,$lng,$userDetail->range,'2','3',$todayDate,$currentTime,$todayDay);
+
+            // Get customer discount from cookie
+            $customerDiscount = isset($_COOKIE['discount']) ? $_COOKIE['discount'] : '';
         }else{
             $lat = $request->session()->get('with_out_login_lat');
             $lng = $request->session()->get('with_out_login_lng');
@@ -407,6 +410,8 @@ class HomeController extends Controller
                 $request->session()->put('rang', $rang);
             } 
             $companydetails = Store::getEatLaterListRestaurants($lat,$lng,$rang,'2','3',$todayDate,$currentTime,$todayDay);
+
+            $customerDiscount = null;
         }
 
         // Check if restaurant found and send translated message
@@ -416,7 +421,7 @@ class HomeController extends Controller
             $restaurantStatusMsg = __('messages.noRestaurantFound');
         }
         
-        return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg]); 
+        return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg, 'customerDiscount' => $customerDiscount]);
     }
 
     public function eatLater(Request $request){
@@ -439,7 +444,7 @@ class HomeController extends Controller
             if(Auth::check()){
                 $userDetail = User::whereId(Auth()->id())->first();
 
-                if(Session::get('with_login_address') != null){
+                if(Session::get('with_login_lat') != null){
                     $lat = $request->session()->get('with_login_lat');
                     $lng = $request->session()->get('with_login_lng');
                 }else{

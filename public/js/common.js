@@ -312,3 +312,16 @@ function distanceLatLon(lat1, lon1, lat2, lon2, unit) {
         return dist;
     }
 }
+
+// Return the object index by search column name in array
+function searchIndexFromMultiDimArray(columnName, columnValue, arr) {
+    for (var key in arr) {
+        row = JSON.parse(arr[key]);
+        if(row[columnName] === columnValue) {
+            return key;
+            break;
+        }
+    }
+
+    return 'false';
+}
