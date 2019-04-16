@@ -383,38 +383,34 @@ Due to the size of the text only 19 characters may be displayed, so try to short
     });
 
 	$(document).ready(function(){
-		@if(isset($product_price_list->publishing_start_date))
-			@if($product_price_list->publishing_start_date != "0000-00-00 00:00:00")
-				dStart = "{{date('Y-m-d H:i:s', strtotime($product_price_list->publishing_start_date))}}";
-				dStart = moment.utc(dStart).toDate();
-				$('#date-start').val(moment(dStart).local().format("DD/MM/YYYY HH:mm"));
-				$('#date-start-utc').val(moment.utc(dStart).format("DD/MM/YYYY HH:mm"));
-				dStart = moment(dStart).local().format("DD/MM/YYYY HH:mm");
-			@else
-				$('#date-start').val("{{date('d/m/Y 00:00')}}");
-				dStart = "{{date('Y-m-d 00:00:00')}}";	
-				dStart = moment(dStart).toDate();
-				dStart = moment.utc(dStart).format("DD/MM/YYYY HH:mm");
-				$('#date-start-utc').val(dStart);
-			@endif
+		@if(isset($product_price_list->publishing_start_date) && $product_price_list->publishing_start_date != "0000-00-00 00:00:00")
+			dStart = "{{date('Y-m-d H:i:s', strtotime($product_price_list->publishing_start_date))}}";
+			dStart = moment.utc(dStart).toDate();
+			$('#date-start').val(moment(dStart).local().format("DD/MM/YYYY HH:mm"));
+			$('#date-start-utc').val(moment.utc(dStart).format("DD/MM/YYYY HH:mm"));
+			dStart = moment(dStart).local().format("DD/MM/YYYY HH:mm");
+		@else
+			$('#date-start').val("{{date('d/m/Y 00:00')}}");
+			dStart = "{{date('Y-m-d 00:00:00')}}";	
+			dStart = moment(dStart).toDate();
+			dStart = moment.utc(dStart).format("DD/MM/YYYY HH:mm");
+			$('#date-start-utc').val(dStart);
 		@endif
 
-		@if(isset($product_price_list->publishing_end_date))
-			@if($product_price_list->publishing_end_date != "0000-00-00 00:00:00")
-				dEnd = "{{date('Y-m-d H:i:s', strtotime($product_price_list->publishing_end_date))}}";
-				dEnd = moment.utc(dEnd).toDate();
-				$('#date-end').val(moment(dEnd).local().format("DD/MM/YYYY HH:mm"));
-				$('#date-end-utc').val(moment.utc(dEnd).format("DD/MM/YYYY HH:mm"));
-				dKEnd = moment(dEnd).local().format("YYYY-MM-DD HH:mm");					
-				dEnd = moment(dEnd).local().format("DD/MM/YYYY HH:mm");	
-			@else
-				$('#date-end').val("{{date('d/m/Y 23:59')}}");
-				dEnd = "{{date('Y-m-d 23:59:00')}}";
-				dEnd = moment(dEnd).toDate();
-				dKEnd = moment(dEnd).local().format("YYYY-MM-DD HH:mm");											
-				dEnd = moment.utc(dEnd).format("DD/MM/YYYY HH:mm");
-				$('#date-end-utc').val(dEnd);
-			@endif
+		@if(isset($product_price_list->publishing_end_date) && $product_price_list->publishing_end_date != "0000-00-00 00:00:00")
+			dEnd = "{{date('Y-m-d H:i:s', strtotime($product_price_list->publishing_end_date))}}";
+			dEnd = moment.utc(dEnd).toDate();
+			$('#date-end').val(moment(dEnd).local().format("DD/MM/YYYY HH:mm"));
+			$('#date-end-utc').val(moment.utc(dEnd).format("DD/MM/YYYY HH:mm"));
+			dKEnd = moment(dEnd).local().format("YYYY-MM-DD HH:mm");					
+			dEnd = moment(dEnd).local().format("DD/MM/YYYY HH:mm");	
+		@else
+			$('#date-end').val("{{date('d/m/Y 23:59')}}");
+			dEnd = "{{date('Y-m-d 23:59:00')}}";
+			dEnd = moment(dEnd).toDate();
+			dKEnd = moment(dEnd).local().format("YYYY-MM-DD HH:mm");											
+			dEnd = moment.utc(dEnd).format("DD/MM/YYYY HH:mm");
+			$('#date-end-utc').val(dEnd);
 		@endif
 
 		@if(isset($product->small_image))

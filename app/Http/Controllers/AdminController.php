@@ -184,6 +184,18 @@ class AdminController extends Controller
                     Session::put('subscribedPlans.payment', 1);
                 }
 
+                // Discount
+                if( in_array('10', $storePlan) )
+                {
+                    Session::put('subscribedPlans.discount', 1);
+                }
+
+                // Loyalty
+                if( in_array('11', $storePlan) )
+                {
+                    Session::put('subscribedPlans.loyalty', 1);
+                }
+
                 Session::save();
             }
         }
@@ -193,6 +205,8 @@ class AdminController extends Controller
             Session::put('subscribedPlans.orderonsite', 1);
             Session::put('subscribedPlans.catering', 1);
             Session::put('subscribedPlans.payment', 1);
+            Session::put('subscribedPlans.discount', 1);
+            Session::put('subscribedPlans.loyalty', 1);
 
             Session::save();
         }

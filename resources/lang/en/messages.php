@@ -123,4 +123,49 @@ return [
     'notificationOrderReceived' => 'Your order has been accepted. Your order number is: :order_id',
     'notificationOrderReady' => 'Your Order :order_id is Ready',
     'notificationOrderDelivered' => 'Your Order :order_id is Delivered',
+
+    // Store
+    'store' => 'Store',
+    'selectStore' => 'Select Store',
+
+    // Discount 
+    'listDiscount' => 'List Discount',
+    'discountCode' => 'Discount Code',
+    'discountValue' => 'Discount Value',
+    'discountCreated' => 'Discount created successfully.',
+
+    // Dish Type
+    'listDishType' => 'List Dish Type',
+    'dishType' => 'Dish Type',
+    'language' => 'language',
+    'dishTypeCreated' => 'Dish type created successfully.',
+    'dishTypeUpdated' => 'Dish type updated successfully.',
+    'dishTypeNotFound' => 'Dish type not found.',
+    'dishTypeDeleted' => 'Dish type deleted successfully.',
+
+    // Loyalty
+    'loyalty' => 'Loyalty',
+    'listLoyalty' => 'List Loyalty',
+    'quantityToBuy' => 'Quantity to Buy',
+    'quantityGet' => 'Quantity Get',
+    'validity' => 'Validity',
+    'once' => 'Once',
+    'repeatedly' => 'Repeatedly',
+    'loyaltyCreated' => 'Loyalty created successfully.',
+    'loyaltyExistError' => 'Loyalty is already exist between start and end date and for selected store.',
+
+    // Common
+    'addNew' => 'Add New',
+    'select' => 'Select',
+    'startDate' => 'Start Date',
+    'endDate' => 'End Date',
+    'noRecordFound' => 'No record found',
+    'description' => 'Description',
+    'refresh' => 'Refresh',
+    'submit' => 'Submit',
+    'update' => 'Update',
+    'close' => 'Close',
+    'back' => 'Back',
+    'action' => 'Action',
+    'pagination' => 'Showing :first to :last of :total entries',
 ];
