@@ -160,17 +160,13 @@ textarea.ui-input-text{
 					<h2 class="ui-btn">{{ __('messages.Extra Preparation Time') }}</h2>
 				</li>
 				
-				@if(Session::has('subscribedPlans.discount'))
-					<li id="link-discount" class="range-sec btn_blk">
-						<h2 class="ui-btn">{{ __('messages.Discount') }}</h2>
-					</li>
-				@endif
+				<li id="link-discount" class="range-sec btn_blk {{ !Session::has('subscribedPlans.discount') ? 'ui-state-disabled' : '' }}">
+					<h2 class="ui-btn">{{ __('messages.Discount') }}</h2>
+				</li>
 
-				@if(Session::has('subscribedPlans.loyalty'))
-					<li id="link-loyalty" class="range-sec btn_blk">
-						<h2 class="ui-btn">{{ __('messages.loyalty') }}</h2>
-					</li>
-				@endif
+				<li id="link-loyalty" class="range-sec btn_blk {{ !Session::has('subscribedPlans.loyalty') ? 'ui-state-disabled' : '' }}">
+					<h2 class="ui-btn">{{ __('messages.loyalty') }}</h2>
+				</li>
 
 				<li data-role="collapsible" id="range-sec-controlgroup" class="range-sec">
 					<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Support') }}
