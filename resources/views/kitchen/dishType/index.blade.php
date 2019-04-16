@@ -9,7 +9,7 @@
     label.error {
         color: red !important;
     }
-    .btn {
+    .btn-link {
         cursor: pointer;
     }
     </style>
@@ -54,7 +54,7 @@
                             <td>{{ $row->dish_name }}</td>
                             <td>{{ $row->dish_lang }}</td>
                             <td>
-                                <snap class="btn" onclick="getDishType({{ $row->dish_id }})"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></snap>
+                                <snap class="btn-link" onclick="getDishType({{ $row->dish_id }})"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></snap>
                                 <a href="{{ url('kitchen/dishtype/'.$row->dish_id.'/delete') }}" onclick="return confirmDelete()" data-ajax="false">
                                     <i class="fa fa-trash-o" aria-hidden="true"></i>
                                 </a>

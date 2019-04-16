@@ -211,7 +211,9 @@
 	</div>
 
 	<div id="accordion2" class="container">
-		<p class="menu_txt">MENU</p>
+		<p class="menu_txt">
+			<a href="{{ url('kitchen/dishtype/list') }}" data-role="button" data-inline="true" data-ajax="false">Dish Type</a>
+		</p>
 		<a href="{{ url('kitchen/create-menu') }}" class="fa fa-plus-circle fa-4x add_menu_btn" data-ajax="false"></a>
 		<hr>
 
