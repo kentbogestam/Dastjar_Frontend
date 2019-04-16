@@ -66,7 +66,7 @@ class LoyaltyController extends Controller
 		$this->validate($request, [
 			'store_id' => 'required',
 			'quantity_to_buy' => 'required|numeric',
-			'quantity_get' => 'required|numeric',
+			'quantity_get' => 'required|numeric|lt:quantity_to_buy',
             'validity' => 'required|numeric',
 			'start_date_utc' => 'required',
 			'end_date_utc' => 'required|after:start_date_utc',

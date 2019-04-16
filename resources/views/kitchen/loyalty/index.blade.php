@@ -150,8 +150,26 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+        // Validate if value is less than
+        $.validator.addMethod('lessThan', function(value, element, param) {
+            var i = parseInt(value);
+            var j = parseInt($(param).val());
+            return i < j;
+        });
+
         // Form validation
-        $("#add-form").validate();
+        $("#add-form").validate({
+            rules: {
+                quantity_get: {
+                    lessThan: '#quantity_to_buy'
+                }
+            },
+            messages: {
+                quantity_get: {
+                    lessThan: 'Must be less than to buy quantity'
+                }
+            }
+        });
 
         // Initialize start/end datetimepicker
         $('#start_date').bootstrapMaterialDatePicker

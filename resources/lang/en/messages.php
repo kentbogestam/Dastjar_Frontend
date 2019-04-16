@@ -147,7 +147,7 @@ return [
     'loyalty' => 'Loyalty',
     'listLoyalty' => 'List Loyalty',
     'quantityToBuy' => 'Quantity to Buy',
-    'quantityGet' => 'Quantity Get',
+    'quantityGet' => 'Quantity to Get for Free',
     'validity' => 'Validity',
     'once' => 'Once',
     'repeatedly' => 'Repeatedly',
