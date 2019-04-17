@@ -133,7 +133,7 @@ return [
     // Discount 
     'listDiscount' => 'Visa Rabatt',
     'discountCode' => 'Rabattkod',
-    'discountValue' => 'Rabattvärde',
+    'discountValue' => 'Rabattvärde i %',
     'discountCreated' => 'Rabatten skapades Framgångsrikt.',
 
     // Dish Type
