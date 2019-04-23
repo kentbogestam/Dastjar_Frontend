@@ -131,7 +131,7 @@ return [
     // Discount 
     'listDiscount' => 'List Discount',
     'discountCode' => 'Discount Code',
-    'discountValue' => 'Discount Value',
+    'discountValue' => 'Discount Value in %',
     'discountCreated' => 'Discount created successfully.',
     'discountValuePlaceholder' => 'Enter discount value in %',
     'discountStartDatePlaceholder' => 'Enter coupon start date',
