@@ -11,13 +11,29 @@
     </style>
 @stop
 
+@section('content-jMobile')
+<div data-role="header"  data-position="fixed" data-tap-toggle="false" class="header">
+    @include('includes.kitchen-header-sticky-bar')
+    <div class="order_background setting_head_container">
+        <div class="ui-grid-b center">
+            <div class="ui-block-a">
+                <a href="{{ url('kitchen/kitchen-setting') }}" class="back_btn_link ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline right_arrow" data-ajax="false"><img src="{{asset('kitchenImages/backarrow.png')}}" width="11px"></a>
+            </div>
+            <div class="ui-block-b middle_section">
+                <a class="title_name ui-shadow ui-btn ui-corner-all icon-img ui-btn-inline" data-ajax="false">{{ __('messages.listLoyalty') }}</a>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
 @section('content-bootstrap')
-<div class="container" style="margin-top: 50px;">
-    <div class="row">
+<div class="container" style="margin-top: 80px;">
+    <!-- <div class="row">
         <div class="col-md-12">
             <h1>{{ __('messages.listLoyalty') }}</h1>
         </div>
-    </div>
+    </div> -->
     <div class="row">
         <div class="col-md-12">
             <hr>
@@ -26,10 +42,10 @@
         </div>
     </div>
     <div class="row" style="margin-bottom: 10px;">
-        <div class="col-md-6 text-left">
+        <!-- <div class="col-md-6 text-left">
             <a href="{{ url('kitchen/kitchen-setting') }}" class="btn btn-link" data-ajax="false">{{ __('messages.back') }}</a>
-        </div>
-        <div class="col-md-6 text-right">
+        </div> -->
+        <div class="col-md-12 text-right">
             <button class="btn btn-info" data-toggle="modal" data-target="#add-form-model">{{ __('messages.addNew') }}</button>
         </div>
     </div>
