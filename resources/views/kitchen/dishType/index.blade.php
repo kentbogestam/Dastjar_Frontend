@@ -93,7 +93,7 @@
                         </div>
                         <div class="form-group">
                             <label for="dish_name">{{ __('messages.dishType') }} <span class='mandatory'>*</span>:</label>
-                            <input type="text" name="dish_name" placeholder="Enter title" class="form-control" id="dish_name" data-rule-required="true">
+                            <input type="text" name="dish_name" placeholder="Enter title" class="form-control" id="dish_name" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
                         </div>
                         <button type="submit" class="btn btn-success">{{ __('messages.submit') }}</button>
                     </form>
@@ -120,7 +120,7 @@
                         </div>
                         <div class="form-group">
                             <label for="dish_name">{{ __('messages.dishType') }} <span class='mandatory'>*</span>:</label>
-                            <input type="text" name="dish_name" placeholder="Enter title" class="form-control" id="dish_name" data-rule-required="true">
+                            <input type="text" name="dish_name" placeholder="Enter title" class="form-control" id="dish_name" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
                         </div>
                         <input type="hidden" name="dish_id" id="dish_id" data-rule-required="true">
                         <button type="submit" class="btn btn-success">{{ __('messages.update') }}</button>

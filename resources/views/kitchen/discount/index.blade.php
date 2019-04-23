@@ -81,7 +81,7 @@
                         @csrf
                         <div class="form-group">
                             <label for="store_id">{{ __('messages.selectStore') }} <span class='mandatory'>*</span>:</label>
-                            <select name="store_id" class="form-control" id="store_id" data-rule-required="true">
+                            <select name="store_id" class="form-control" id="store_id" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
                                 <option value="">{{ __('messages.select') }}</option>
                                 @if($store)
                                     @foreach($store as $row)
@@ -93,7 +93,7 @@
                         <div class="form-group">
                             <label for="code">{{ __('messages.discountCode') }} <span class='mandatory'>*</span>:</label>
                             <div class="input-group">
-                                <input type="text" name="code" value="" placeholder="Enter discount code" readonly class="form-control" id="code">
+                                <input type="text" name="code" value="" readonly class="form-control" id="code">
                                 <span class="input-group-btn">
                                     <button type="button" class="btn btn-default" onClick="getNewDiscountCode()">{{ __('messages.refresh') }}</button>
                                 </span>
@@ -101,7 +101,7 @@
                         </div>
                         <div class="form-group">
                             <label for="discount_value">{{ __('messages.discountValue') }} <span class='mandatory'>*</span>:</label>
-                            <input type="number" name="discount_value" placeholder="Enter discount value in %" class="form-control" id="discount_value" data-rule-required="true">
+                            <input type="number" name="discount_value" placeholder="{{ __('messages.discountValuePlaceholder') }}" class="form-control" id="discount_value" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
                         </div>
                         <div class="form-group">
                             <label for="description">{{ __('messages.description') }} :</label>
@@ -111,14 +111,14 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="start_date">{{ __('messages.startDate') }} <span class='mandatory'>*</span>:</label>
-                                    <input type="text" name="start_date" placeholder="Enter coupon start date" class="form-control" id="start_date" data-rule-required="true">
+                                    <input type="text" name="start_date" placeholder="{{ __('messages.discountStartDatePlaceholder') }}" class="form-control" id="start_date" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
                                     <input type="hidden" name="start_date_utc" id="start_date_utc">
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="end_date">{{ __('messages.endDate') }} <span class='mandatory'>*</span>:</label>
-                                    <input type="text" name="end_date" placeholder="Enter coupon end date" class="form-control" id="end_date" data-rule-required="true">
+                                    <input type="text" name="end_date" placeholder="{{ __('messages.discountEndDatePlaceholder') }}" class="form-control" id="end_date" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
                                     <input type="hidden" name="end_date_utc" id="end_date_utc">
                                 </div>
                             </div>
@@ -165,7 +165,7 @@
             },
             messages: {
                 code: {
-                    remote: 'This discount code is already added.'
+                    remote: '{{ __('messages.discountCodeFieldRemote') }}'
                 }
             }
         });

@@ -70,7 +70,9 @@ class LoyaltyController extends Controller
             'validity' => 'required|numeric',
 			'start_date_utc' => 'required',
 			'end_date_utc' => 'required|after:start_date_utc',
-		]);
+		], [
+            'end_date_utc.after' => __('messages.discountDateAfter'),
+        ]);
 
 		$data = $request->only(['store_id', 'quantity_to_buy', 'quantity_get', 'validity']);
 		$data['start_date'] = \DateTime::createFromFormat('Y/m/d H:i', $request->start_date_utc);

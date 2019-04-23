@@ -133,6 +133,11 @@ return [
     'discountCode' => 'Discount Code',
     'discountValue' => 'Discount Value',
     'discountCreated' => 'Discount created successfully.',
+    'discountValuePlaceholder' => 'Enter discount value in %',
+    'discountStartDatePlaceholder' => 'Enter coupon start date',
+    'discountEndDatePlaceholder' => 'Enter coupon end date',
+    'discountCodeFieldRemote' => 'This discount code is already added.',
+    'discountDateAfter' => 'End date should be greater than start date.',
 
     // Dish Type
     'listDishType' => 'List Dish Type',
@@ -142,6 +147,7 @@ return [
     'dishTypeUpdated' => 'Dish type updated successfully.',
     'dishTypeNotFound' => 'Dish type not found.',
     'dishTypeDeleted' => 'Dish type deleted successfully.',
+    'dishTypeUnique' => 'This category is already busy.',
 
     // Loyalty
     'loyalty' => 'Loyalty',
@@ -153,6 +159,12 @@ return [
     'repeatedly' => 'Repeatedly',
     'loyaltyCreated' => 'Loyalty created successfully.',
     'loyaltyExistError' => 'Loyalty is already exist between start and end date and for selected store.',
+    'quantityToBuyPlaceholder' => 'Enter quantity to buy',
+    'quantityGetPlaceholder' => 'Enter quantity to get',
+    'quantityGetLessThan' => 'Must be less than to buy quantity',
+
+    // Validation
+    'fieldRequired' => 'This field is required.',
 
     // Common
     'addNew' => 'Add New',

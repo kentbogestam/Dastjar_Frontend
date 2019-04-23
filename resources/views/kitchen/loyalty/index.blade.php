@@ -80,7 +80,7 @@
                         @csrf
                         <div class="form-group">
                             <label for="store_id">{{ __('messages.selectStore') }} <span class='mandatory'>*</span>:</label>
-                            <select name="store_id" class="form-control" id="store_id" data-rule-required="true">
+                            <select name="store_id" class="form-control" id="store_id" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
                                 <option value="">{{ __('messages.select') }}</option>
                                 @if($store)
                                     @foreach($store as $row)
@@ -91,7 +91,7 @@
                         </div>
                         <div class="form-group">
                             <label for="dish_type_id">{{ __('messages.dishType') }} <span class='mandatory'>*</span>:</label>
-                            <select multiple name="dish_type_id[]" class="form-control" id="dish_type_id" data-rule-required="true">
+                            <select multiple name="dish_type_id[]" class="form-control" id="dish_type_id" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
                                 <option value="">{{ __('messages.select') }}</option>
                                 @if($dishType)
                                     @foreach($dishType as $row)
@@ -102,11 +102,11 @@
                         </div>
                         <div class="form-group">
                             <label for="quantity_to_buy">{{ __('messages.quantityToBuy') }} <span class='mandatory'>*</span>:</label>
-                            <input type="number" name="quantity_to_buy" placeholder="Enter quantity to buy" class="form-control" id="quantity_to_buy" data-rule-required="true">
+                            <input type="number" name="quantity_to_buy" placeholder="{{ __('messages.quantityToBuyPlaceholder') }}" class="form-control" id="quantity_to_buy" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
                         </div>
                         <div class="form-group">
                             <label for="quantity_get">{{ __('messages.quantityGet') }} <span class='mandatory'>*</span>:</label>
-                            <input type="number" name="quantity_get" placeholder="Enter quantity to get" class="form-control" id="quantity_get" data-rule-required="true">
+                            <input type="number" name="quantity_get" placeholder="{{ __('messages.quantityGetPlaceholder') }}" class="form-control" id="quantity_get" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
                         </div>
                         <div class="form-group">
                             <label for="validity">{{ __('messages.validity') }} <span class='mandatory'>*</span>:</label>
@@ -119,14 +119,14 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="start_date">{{ __('messages.startDate') }} <span class='mandatory'>*</span>:</label>
-                                    <input type="text" name="start_date" placeholder="Enter coupon start date" class="form-control" id="start_date" data-rule-required="true">
+                                    <input type="text" name="start_date" placeholder="{{ __('messages.discountStartDatePlaceholder') }}" class="form-control" id="start_date" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
                                     <input type="hidden" name="start_date_utc" id="start_date_utc">
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="end_date">{{ __('messages.endDate') }} <span class='mandatory'>*</span>:</label>
-                                    <input type="text" name="end_date" placeholder="Enter coupon end date" class="form-control" id="end_date" data-rule-required="true">
+                                    <input type="text" name="end_date" placeholder="{{ __('messages.discountEndDatePlaceholder') }}" class="form-control" id="end_date" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
                                     <input type="hidden" name="end_date_utc" id="end_date_utc">
                                 </div>
                             </div>
@@ -166,7 +166,7 @@
             },
             messages: {
                 quantity_get: {
-                    lessThan: 'Must be less than to buy quantity'
+                    lessThan: '{{ __('messages.quantityGetLessThan') }}'
                 }
             }
         });

@@ -61,6 +61,9 @@ class DishTypeController extends Controller
                     return $query->where(['dish_lang' => $request->dish_lang, 'dish_name' => $request->dish_name, 'u_id' => Auth::user()->u_id, 'dish_activate' => 1]);
                 })
             ],
+        ], [
+            'dish_name.required' => __('messages.fieldRequired'),
+            'dish_name.unique' => __('messages.dishTypeUnique'),
         ]);
 
         $data = $request->except(['_token']);
@@ -102,6 +105,9 @@ class DishTypeController extends Controller
                     return $query->where(['dish_lang' => $request->dish_lang, 'dish_name' => $request->dish_name, 'u_id' => Auth::user()->u_id, 'dish_activate' => 1])->where('dish_id', '!=', $request->dish_id);
                 })
             ],
+        ], [
+            'dish_name.required' => __('messages.fieldRequired'),
+            'dish_name.unique' => __('messages.dishTypeUnique'),
         ]);
 
         $data = $request->except(['_token']);
