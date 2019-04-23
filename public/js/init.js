@@ -57,34 +57,3 @@ function errorHandlerOnMap(err) {
         alert("Error: Position is unavailable!");
     }
 }
-
-// Make request to return lat/lng from IOS GPS
-function requestGeoAddressToIosNative()
-{
-    window.webkit.messageHandlers.geoAddress.postMessage('msg');
-}
-
-// Get updated lat/lng from IOS native
-function responseGeoAddressFromIosNative(data)
-{
-    if(1)
-    {
-        // Update Cookie
-        document.cookie="latitude=" + data['lat'];
-        document.cookie="longitude=" + data['long'];
-        
-        // Update Session
-        var latitude  = getCookie("latitude");
-        var longitude = getCookie("longitude");
-
-        $.get(BASE_URL+'/saveCurrentlat-long', { lat: latitude, lng : longitude}, function(returnedData){
-            console.log(returnedData["data"]);
-            unsetLocationCookieTime();
-            window.location.reload();
-        });
-    }
-    else
-    {
-        $('#login-popup').show();
-    }
-}

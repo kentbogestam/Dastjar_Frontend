@@ -29,11 +29,7 @@
                     </li>
                 </ul>
 
-                @if( ((strpos(\Request::server('HTTP_USER_AGENT'), 'Mobile/') !== false) && (strpos(\Request::server('HTTP_USER_AGENT'), 'Safari/') == false)) )
-                    <a href="javascript:void(0)" class="location_icon" id="locationSave" onclick=requestGeoAddressToIosNative()><img src="{{asset('images/icons/location.png')}}"><p>{{ __('messages.Current Position') }}</p></a>
-                @else
-                    <a href="javascript:void(0)" class="location_icon" id="locationSave" onclick=locationSave("{{url('saveCurrentlat-long/')}}")><img src="{{asset('images/icons/location.png')}}"><p>{{ __('messages.Current Position') }}</p></a>
-                @endif
+                <a href="javascript:void(0)" class="location_icon" id="locationSave" onclick=locationSave("{{url('saveCurrentlat-long/')}}")><img src="{{asset('images/icons/location.png')}}"><p>{{ __('messages.Current Position') }}</p></a>
             </div><!-- /navbar -->
         </div>
     </div>
@@ -73,25 +69,20 @@
 @section('footer-script')
     <script type="text/javascript">
         $(function(){
-            // Check if its IOS notive
-            @if( ((strpos(\Request::server('HTTP_USER_AGENT'), 'Mobile/') !== false) && (strpos(\Request::server('HTTP_USER_AGENT'), 'Safari/') == false)) )
-                requestGeoAddressToIosNative();
-            @else
-                // Check for Geolocation API permissions
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    console.log("latitude=" + position.coords.latitude);
-                    console.log("longitude=" + position.coords.longitude);
-                    /*document.cookie="latitude=" + position.coords.latitude;
-                    document.cookie="longitude=" + position.coords.longitude;*/
-                },function(error){
-                    if (typeof loc_lat === "undefined" || loc_lat == "") {
-                        if (!getCookie("latitude")){
-                            $('.login-inner-section a').attr('href','javascript:void(0)');
-                            $('#login-popup').show();
-                        }
+            // Check for Geolocation API permissions  
+            navigator.geolocation.getCurrentPosition(function(position) {
+                console.log("latitude=" + position.coords.latitude);
+                console.log("longitude=" + position.coords.longitude);
+                /*document.cookie="latitude=" + position.coords.latitude;
+                document.cookie="longitude=" + position.coords.longitude;*/
+            },function(error){
+                if (typeof loc_lat === "undefined" || loc_lat == "") {
+                    if (!getCookie("latitude")){
+                        $('.login-inner-section a').attr('href','javascript:void(0)');
+                        $('#login-popup').show();
                     }
-                });
-            @endif
+                }
+            });
         });
 
         var watchPosition;
