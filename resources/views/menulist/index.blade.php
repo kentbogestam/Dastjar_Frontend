@@ -207,7 +207,7 @@
 			color: green;
 		}
 
-		@media only screen and (max-width: 420px) {
+		@media only screen and (max-width: 480px) {
 		    .loyalty-offer {
 		    	display: block;
 		    	margin-top: 3px;
