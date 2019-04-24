@@ -89,4 +89,29 @@ class Helper extends Model
             fwrite($myfile, $txt);
             fclose($myfile);
     }
+
+    /**
+     * Function to generate alphanumeric random number
+     * @param  [type] $size [description]
+     * @return [type]       [description]
+     */
+    function random_num($size) {
+        $alpha_key = '';
+        $keys = range('A', 'Z');
+
+        for ($i = 0; $i < 3; $i++) {
+            $alpha_key .= $keys[array_rand($keys)];
+        }
+
+        $length = $size - 3;
+
+        $key = '';
+        $keys = range(0, 9);
+
+        for ($i = 0; $i < $length; $i++) {
+            $key .= $keys[array_rand($keys)];
+        }
+
+        return $alpha_key . $key;
+    }
 }

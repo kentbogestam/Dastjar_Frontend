@@ -122,34 +122,17 @@ function setCurrentLatLong(urllatlng){
 // Increase quantity of cart item and update price
 function incrementCartValue(id)
 {
-    var subTotal = grandtotal = 0;
-    var value = parseInt(document.getElementById('qty'+id).value, 10);
-    value = isNaN(value) ? 0 : value;
-    value= parseInt(value)+1;
- 
-    itemprice = parseInt(document.getElementById('itemprice'+id).value, 10);
-    total= parseInt(value)*itemprice;
-    $('#itemtotalDisplay'+id).html(total.toFixed(2));
-    $('#itemtotal'+id).val(total);
+    // Update item quantity
+    var itemQty = parseInt($('#qty'+id).val(), 10);
+    itemQty = isNaN(itemQty) ? 0 : itemQty;
+    itemQty++;
+    $('#qty'+id).val(itemQty);
 
-    document.getElementById('qty'+id).value = value;
+    // Update static cart value
+    updateCartDetail(id);
 
-    subTotal = grandtotal = calculateGrandtotal();
-
-    // Update order
-    updateCart(value,$('#prod'+id).val(),total,grandtotal);
-
-    // Calculate discounted price if exist
-    if( $('#discount_value').length )
-    {
-        discountAmount = (subTotal*$('#discount_value').val()/100);
-        grandtotal -= discountAmount;
-
-        $('#discount-amount').html(discountAmount.toFixed(2));
-    }
-
-    $('#sub-total').html(subTotal.toFixed(2));
-    $('#grandTotalDisplay').html(grandtotal.toFixed(2));
+    // Update cart
+    updateCart(itemQty, $('#prod'+id).val(), 0, 0);
 
     // Update value in cart badge and show
     cntCartItems++;
@@ -160,40 +143,28 @@ function incrementCartValue(id)
 // Decrease quantity of cart item and update price
 function decrementCartValue(id,msg)
 {
-    var subTotal = grandtotal = 0;
-    var total=0;
+    // Get item quantity
+    var itemQty = parseInt($('#qty'+id).val(), 10);
+    itemQty = isNaN(itemQty) ? 0 : itemQty;
     var rowCount = $('#table-custom-2 tr').length;
-    var value = parseInt(document.getElementById('qty'+id).value, 10);
+    var productId = $('#prod'+id).val();
 
-    value = isNaN(value) ? 0 : value;
-    
-    if(value > 1 || rowCount >= 2){
-        value--;
-        document.getElementById('qty'+id).value = value;
-        itemprice = parseInt(document.getElementById('itemprice'+id).value, 10);
-        total= parseInt(value)*itemprice;
-        $('#itemtotalDisplay'+id).html(total.toFixed(2));
-        $('#itemtotal'+id).val(total);
-
-        subTotal = grandtotal = calculateGrandtotal();
-
-        updateCart(value,$('#prod'+id).val(),total,grandtotal);
-
-        if(value ==0){
+    if(itemQty > 1 || rowCount >= 2)
+    {
+        // Update item quantity or remove complete row
+        itemQty--;
+        $('#qty'+id).val(itemQty);
+        
+        if(itemQty == 0)
+        {
             $('#row_'+id).remove();
         }
 
-        // Calculate discounted price if exist
-        if( $('#discount_value').length )
-        {
-            discountAmount = (subTotal*$('#discount_value').val()/100);
-            grandtotal -= discountAmount;
+        // Update static cart value
+        updateCartDetail(id);
 
-            $('#discount-amount').html(discountAmount.toFixed(2));
-        }
-
-        $('#sub-total').html(subTotal.toFixed(2));
-        $('#grandTotalDisplay').html(grandtotal.toFixed(2));
+        // Update cart
+        updateCart(itemQty, productId, 0, 0);
 
         // Update value in cart badge and hide/show
         cntCartItems--;
@@ -203,10 +174,39 @@ function decrementCartValue(id,msg)
         {
             $('.cart-badge').addClass('hidden');
         }
-    }else{
+    }
+    else
+    {
         $('#delete-cart-item-alert').find('span.delete').attr('onclick', 'onDeleteLastItemFromCart('+id+')')
         $('#delete-cart-item-alert').show();
     }
+}
+
+// While increment/decrement, update item total, subtotal, discount etc.
+function updateCartDetail(id)
+{
+    var subTotal = finalTotal = 0;
+    itemQty = $('#qty'+id).val();
+
+    // Update item price
+    itemPrice = parseInt($('#itemprice'+id).val(), 10);
+    itemTotal = itemQty * itemPrice;
+    $('#itemtotalDisplay'+id).html(itemTotal.toFixed(2));
+    $('#itemtotal'+id).val(itemTotal);
+
+    // Calculate finalTotal, subtotal and discounted price if exist
+    /*subTotal = finalTotal = calculateGrandtotal();
+
+    if( $('#discount_value').length )
+    {
+        discountAmount = (subTotal*$('#discount_value').val()/100);
+        finalTotal -= discountAmount;
+
+        $('#discount-amount').html(discountAmount.toFixed(2));
+    }
+
+    $('#sub-total').html(subTotal.toFixed(2));
+    $('#grandTotalDisplay').html(finalTotal.toFixed(2));*/
 }
 
 // Delele last item on cart and redirect
@@ -223,7 +223,7 @@ function onDeleteLastItemFromCart(id = null)
     }
 }
 
-function calculateGrandtotal(){
+/*function calculateGrandtotal(){
     var grandtotal=0;
     var arrayValues = $('input:hidden.itemtotal').map(function(){
         return $(this).val()
@@ -234,41 +234,59 @@ function calculateGrandtotal(){
     }
 
     return grandtotal;
+}*/
+
+// Update cart
+function updateCart(qty,productId,totalProductPrice,grandtotal){
+    var url= $('#baseUrl').val()+"/updateCart";
+    var orderid= $('#orderid').val();
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $("input[name=_token]").val()
+        }
+    });
+
+    $.ajax({
+        url: url,
+        data: {
+            'qty': qty,
+            'productId': productId,
+            'totalProductPrice': totalProductPrice,
+            'grandtotal': grandtotal,
+            'orderid': orderid
+        },
+        type: 'POST',
+        datatype: 'JSON',
+        async: false,
+        success: function (response) {
+            if (response.status) {
+                orderInvoice = response.data.orderInvoice;
+                console.log(orderInvoice);
+
+                // Update total and sub-total
+                $('#sub-total').html(orderInvoice.order_total.toFixed(2));
+                $('#grandTotalDisplay').html(orderInvoice.final_order_total.toFixed(2));
+
+                // Update loyalty if exist
+                $('.loyalty-discount-text').text('');
+                if( typeof orderInvoice.loyalty_quantity_free !== 'undefined' )
+                {
+                    $('.loyalty-discount-text').html(orderInvoice.loyaltyOfferApplied);
+                }
+
+                // Update discount if exist
+                if( typeof orderInvoice.discount !== 'undefined' )
+                {
+                    $('#discount-amount').text(orderInvoice.discount.toFixed(2));
+                }
+            }
+        },
+        error: function (response) {
+            $('#errormessage').html(response.message);
+        }
+    });
 }
-
-  function updateCart(qty,productId,totalProductPrice,grandtotal){
-
-   var url= $('#baseUrl').val()+"/updateCart";
-
-   var orderid= $('#orderid').val();
-
-      $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $("input[name=_token]").val()
-                    }
-                });
-
-      $.ajax({
-                    url: url,
-                    data: {'qty': qty, 'productId':productId, 'totalProductPrice':totalProductPrice,
-                            'grandtotal':grandtotal, 'orderid': orderid},
-                    type: 'POST',
-                    datatype: 'JSON',
-                    async: false,
-                    success: function (response) {
-                        if (response.status === 'success') {
-                            //console.log(response.data);
-                            //$('#myModalCallback').modal('toggle');
-                        } else {
-                            alert('Issue in updating cart please contact admin');
-                        }
-                    },
-                    error: function (response) {
-                        $('#errormessage').html(response.message);
-                    }
-                });
-
-  }
 
 // Delete cart function #It only redirects on other page so need add functionality to delete cart server side
 function deleteFullCart(url,value,msg){

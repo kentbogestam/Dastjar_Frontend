@@ -53,11 +53,11 @@
 @section('footer-script')
 
 <script type="text/javascript">
-
-	$(document).on("scrollstop", function (e) {
-		onscroll("{{url('restro-menu-list/')}}",noImageUrl,"{{Session::get('order_date')}}")
-});
-
+	$(window).load(function() {
+		$(document).on("scrollstop", function (e) {
+			onscroll("{{url('restro-menu-list/')}}",noImageUrl,"{{Session::get('order_date')}}")
+		});
+	})
 </script>
 
 @endsection

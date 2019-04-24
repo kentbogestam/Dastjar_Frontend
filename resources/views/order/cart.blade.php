@@ -1,4 +1,11 @@
 @extends('layouts.master')
+@section('styles')
+	<style>
+		.loyalty-discount-text {
+			color: green;
+		}
+	</style>
+@stop
 @section('content')
 @include('includes.headertemplate')
 <div role="main" data-role="main-content" class="content">
@@ -20,7 +27,7 @@
 				<input type="hidden" name="baseUrl" id="baseUrl" value="{{ url('/')}}"/>
 				{{ csrf_field() }}
 				@php
-					$cntCartItems = 0;
+				$cntCartItems = 0;
 				@endphp
 				@foreach($orderDetails as $value)
 					@php
@@ -48,14 +55,9 @@
 					</tr>	
 					<?php $j=$j+1 ;?>
 				@endforeach
-				<!-- <tr class="last-row" id="last-row">	
-					<td class="cart-total">  TOTAL <span id="grandTotalDisplay"> {{$order->order_total}}</span> {{$order->currencies}}
-						<input type="hidden" name="grandtotal" id="grandtotal" value="{{$order->order_total}}"/>
-					</td>
-				</tr> -->
 			</table>
 			<div class="block-total">
-				<div class="ui-grid-a">
+				<div class="ui-grid-a row-sub-total">
 					<div class="ui-block-a">
 						<div class="ui-bar ui-bar-a">SUB TOTAL</div>
 					</div>
@@ -66,34 +68,26 @@
 					</div>
 				</div>
 				@if($customerDiscount)
-					@php
-						$discountAmount = ($order->order_total*$customerDiscount->discount_value/100);
-					@endphp
-					<div class="ui-grid-a">
+					<div class="ui-grid-a row-discount">
 						<div class="ui-block-a">
 							<div class="ui-bar ui-bar-a">DISCOUNT</div>
 						</div>
 						<div class="ui-block-b">
 							<div class="ui-bar ui-bar-a">
-								<span id="discount-amount">{{ number_format($discountAmount, 2, '.', '') }}</span> {{ $order->currencies }}
-								<input type="hidden" name="discount_value" value="{{ $customerDiscount->discount_value }}" id="discount_value" readonly />
+								<span id="discount-amount">{{ number_format($orderInvoice['discount'], 2, '.', '') }}</span> {{ $order->currencies }}
 							</div>
 						</div>
 					</div>
-				@else
-					@php
-						$discountAmount = 0;
-					@endphp
 				@endif
-				<div class="ui-grid-a">
+				<div class="ui-grid-a row-total">
 					<div class="ui-block-a">
 						<div class="ui-bar ui-bar-a"><strong>TOTAL</strong></div>
 					</div>
 					<div class="ui-block-b">
 						<div class="ui-bar ui-bar-a">
-							<span id="grandTotalDisplay"><strong>{{ number_format(($order->order_total - $discountAmount), 2, '.', '') }}</strong></span>
+							<span id="grandTotalDisplay" style="font-weight: bold;">{{ number_format(($order->final_order_total), 2, '.', '') }}</span>
 							<span><strong>{{$order->currencies}}</strong></span>
-							<input type="hidden" name="grandtotal" id="grandtotal" value="{{$order->order_total}}"/>
+							<input type="hidden" name="grandtotal" id="grandtotal" value="{{$order->final_order_total}}"/>
 						</div>
 					</div>
 				</div>
@@ -119,7 +113,7 @@
 					</div>
 				</div>
 			</div> -->
-			@if(Session::get('paymentmode') !=0)
+			@if(Session::get('paymentmode') !=0 && $order->final_order_total > 0)
 				<form action="{{ url('/payment') }}" class="payment_form_btn" method="POST">
 					{{ csrf_field() }} 
 					<script
@@ -142,6 +136,15 @@
 					<a href="{{url('order-view').'/'.$order->order_id}}" data-ajax="false">{{ __('messages.send order and pay in restaurant') }}</a>
 				</div>
 			@endif
+
+			<!-- Loyalty -->
+			<div class="ui-grid-solo text-center row-loyalty-discount">
+				<div class="ui-block-a">
+					<div class="ui-bar ui-bar-a loyalty-discount-text">
+						{!! isset($orderInvoice['loyalty_quantity_free']) ? $orderInvoice['loyaltyOfferApplied'] : '' !!}
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

@@ -42,6 +42,7 @@ return [
     'Menu' => 'Meny',
     'Order Onsite'  => 'Beställ på Plats',       
     'Amount'  => 'Antal',           
+    'qtyLoyaltyOffer' => 'Antal Gratis',
     'Product'  => 'Produkt',             
     'Comments'  => 'Kommentarer',         
     'Started'  => 'Påbörjad',           
@@ -90,6 +91,9 @@ return [
     'discountAddedSuccessfully' => 'Rabatt tillagd framgångsrikt',
     'avalableDiscount' => 'Tillgänglig rabatt',
     'discountStoreDuplicate' => 'Vill du ersätta din befintliga rabatt med detta för någon restaurang?',
+    'loyaltyOfferMsg' => 'Bara <span class="quantity-to-buy">:quantity_to_buy</span> kvar, få <span class="quantity-get">:quantity_get</span> gratis! Gäller till :valid_till',
+    'loyaltyOfferOnApply' => 'Grattis! Få <span class="quantity-offered">:quantity_offered</span> gratis nu!',
+    'loyaltyOfferApplied' => 'Du får <span class="quantity-offered">:loyalty_quantity_free</span> rätt gratis!',
     'deleteAlert'=>'Är du säker på att du vill radera :item?',
     'Swedish' => 'Svenska',
     'Message' => 'Meddelande',
@@ -121,4 +125,61 @@ return [
     'notificationOrderReceived' => 'Din order är mottaget. Din order nummer är: :order_id',
     'notificationOrderReady' => 'Din Order, :order_id är Klar',
     'notificationOrderDelivered' => 'Din Order, :order_id är Levererad',
+
+    // Store
+    'store' => 'Restaurang',
+    'selectStore' => 'Välj Restaurang',
+
+    // Discount 
+    'listDiscount' => 'Visa Rabatt',
+    'discountCode' => 'Rabattkod',
+    'discountValue' => 'Rabattvärde i %',
+    'discountCreated' => 'Rabatten skapades Framgångsrikt.',
+    'discountValuePlaceholder' => 'Ange rabattvärde i%',
+    'discountStartDatePlaceholder' => 'Skriv in rabattens startdatum',
+    'discountEndDatePlaceholder' => 'Skriv in rabattens slutdatum',
+    'discountCodeFieldRemote' => 'Den här rabattkoden är redan tillagd.',
+    'discountDateAfter' => 'Slutdatum bör vara större än startdatum.',
+
+    // Dish Type
+    'listDishType' => 'Typ av Maträtt',
+    'dishType' => 'Typ av Maträtt',
+    'language' => 'Språk',
+    'dishTypeCreated' => 'Maträtten skapades Framgångsrikt.',
+    'dishTypeUpdated' => 'Maträtten uppdaterades Framgångsrikt.',
+    'dishTypeNotFound' => 'Maträtten hittades inte.',
+    'dishTypeDeleted' => 'Maträtten raderades Framgångsrikt.',
+    'dishTypeUnique' => 'Den här kategorin är redan upptagen.',
+
+    // Loyalty
+    'loyalty' => 'Lojalitet',
+    'listLoyalty' => 'Visa Lojalitet',
+    'quantityToBuy' => 'Kvantitet att Köpa',
+    'quantityGet' => 'Kvantitet att få Gratis',
+    'validity' => 'Gitighet',
+    'once' => 'Endast en gång',
+    'repeatedly' => 'Repeterat',
+    'loyaltyCreated' => 'Lojalitet skapades Framgångsrikt.',
+    'loyaltyExistError' => 'Lojalitet finns redan mellan start och stop dataum för den valda Restaurangen.',
+    'quantityToBuyPlaceholder' => 'Ange kvantitet att köpa',
+    'quantityGetPlaceholder' => 'Ange kvantitet för att få',
+    'quantityGetLessThan' => 'Måste vara mindre än att köpa kvantitet',
+
+    // Validation
+    'fieldRequired' => 'Detta fält är obligatoriskt.',
+
+    // Common
+    'addNew' => 'Lägg till Ny',
+    'select' => 'Välj',
+    'startDate' => 'Startdatum',
+    'endDate' => 'Slutdatum',
+    'noRecordFound' => 'No record found',
+    'description' => 'Beskrivning',
+    'refresh' => 'Hämta igen',
+    'submit' => 'Skicka',
+    'update' => 'Uppdatera',
+    'close' => 'Stäng',
+    'back' => 'Tillbaka',
+    'action' => 'Åtgärd',
+    'pagination' => 'Visar :first av :last av :total antal',
 ];

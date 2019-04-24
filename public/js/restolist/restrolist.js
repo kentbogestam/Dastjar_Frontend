@@ -90,7 +90,6 @@ function getPos(urlLatlng,urlMenulist,noImageUrl){
 
 // Get restaurant list dynamically
 function add(urlLatlng,urlMenulist,noImageUrl){
-	// alert(loc_lat+', '+loc_lng+', '+getCookie("latitude")+', '+getCookie("longitude"));
 	var d = new Date();
 	$("#browserCurrentTime").val(d);
 	
@@ -184,23 +183,10 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 				$("#companyDetailContianer").append(liItem);
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
-				console.log('Something went wrong!');
+				window.location.reload();
 			}
 		});
 	}
-}
-
-// Return the object index by search column name in array
-function searchIndexFromMultiDimArray(columnName, columnValue, arr) {
-	for (var key in arr) {
-		row = JSON.parse(arr[key]);
-		if(row[columnName] === columnValue) {
-			return key;
-			break;
-		}
-	}
-
-	return 'false';
 }
 
 function  addMore(len,url,noImageUrl){

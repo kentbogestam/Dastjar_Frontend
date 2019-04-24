@@ -184,6 +184,18 @@ class AdminController extends Controller
                     Session::put('subscribedPlans.payment', 1);
                 }
 
+                // Discount
+                if( in_array('10', $storePlan) )
+                {
+                    Session::put('subscribedPlans.discount', 1);
+                }
+
+                // Loyalty
+                if( in_array('11', $storePlan) )
+                {
+                    Session::put('subscribedPlans.loyalty', 1);
+                }
+
                 Session::save();
             }
         }
@@ -193,6 +205,8 @@ class AdminController extends Controller
             Session::put('subscribedPlans.orderonsite', 1);
             Session::put('subscribedPlans.catering', 1);
             Session::put('subscribedPlans.payment', 1);
+            Session::put('subscribedPlans.discount', 1);
+            Session::put('subscribedPlans.loyalty', 1);
 
             Session::save();
         }
@@ -950,7 +964,7 @@ class AdminController extends Controller
 
                 // Get current product price detail
                 $data[$key]['current_price'] = null;
-                $current_date = date('Y-m-d H:00:00');
+                $current_date = Carbon::now()->format('Y-m-d h:i:00');
 
                 $currentProductPrice = ProductPriceList::select('id', 'text', 'price', 'publishing_start_date', 'publishing_end_date')
                     ->where('product_id', $value->product_id)
@@ -978,7 +992,7 @@ class AdminController extends Controller
     public function ajaxGetFuturePriceByProduct(Request $request)
     {
         //
-        $current_date = date('Y-m-d H:00:00');
+        $current_date = Carbon::now()->format('Y-m-d h:i:00');
         $data = null;
 
         $futureProductPrices = ProductPriceList::select('id', 'product_id', 'text', 'price', 'publishing_start_date', 'publishing_end_date')
@@ -1213,6 +1227,33 @@ class AdminController extends Controller
 
 
     public function kitchenUpdateMenuPost(Request $request){
+        // Validate if publish start/end datetime shouldn't already exist
+        $publishing_start_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_start_date);
+        $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_end_date);
+
+        $publishing_start_date = $publishing_start_date_time->format('Y-m-d');
+        $publishing_end_date = $publishing_end_date_time->format('Y-m-d');
+        $publishing_start_time = $publishing_start_date_time->format('H:i:00');
+        $publishing_end_time = $publishing_end_date_time->format('H:i:00');
+
+        $product_price_list = new ProductPriceList();
+        $product_price_list = ProductPriceList::where('product_id', $request->product_id)->where('store_id', $request->store_id);
+
+        $product_price = ProductPriceList::where(['id' => $request->price_id])->first();
+
+        if($product_price)
+        {
+            $product_price_list->where('id', '!=', $product_price->id);
+        }
+
+        $product_price_list->whereRaw("( DATE(publishing_start_date) BETWEEN '{$publishing_start_date}' AND '{$publishing_end_date}' OR DATE(publishing_end_date) BETWEEN '{$publishing_start_date}' AND '{$publishing_end_date}' OR (DATE(publishing_start_date) <= '{$publishing_start_date}' AND DATE(publishing_end_date) >= '{$publishing_end_date}') ) AND ( TIME(publishing_start_date) BETWEEN '{$publishing_start_time}' AND '{$publishing_end_time}' OR TIME(publishing_end_date) BETWEEN '{$publishing_start_time}' AND '{$publishing_end_time}' OR (TIME(publishing_start_date) <= '{$publishing_start_time}' AND TIME(publishing_end_date) >= '{$publishing_end_time}') )");
+
+        // Validate
+        if($product_price_list->exists()){
+            return back()->with('error','Invalid date');
+        }
+
+        // 
         $helper = new Helper();
 
         $product_id = $request->product_id;
@@ -1340,6 +1381,7 @@ class AdminController extends Controller
         $langText->lang = $request->dishLang;
         $langText->save();
 
+        // 
         $product_price_list = ProductPriceList::where(['id' => $price_id])->first();
         $product_price_list->store_id = $store_id;
         $product_price_list->text = "Price:" . $request->prodPrice . $request->currency;
@@ -1475,13 +1517,20 @@ class AdminController extends Controller
      */
     public function isFutureDateAvailable(Request $request)
     {
-        $publishing_start_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_start_date);
-        $publishing_end_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_end_date);
+        $publishing_start_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_start_date);
+        $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_end_date);
+
+        $publishing_start_date = $publishing_start_date_time->format('Y-m-d');
+        $publishing_end_date = $publishing_end_date_time->format('Y-m-d');
+        $publishing_start_time = $publishing_start_date_time->format('H:i:00');
+        $publishing_end_time = $publishing_end_date_time->format('H:i:00');
 
         $status = 1;
         $product_price_list = new ProductPriceList();
 
-        if($product_price_list->where('product_id', $request->product_id)->where('store_id', $request->store_id)->where('publishing_start_date','<=',$publishing_start_date)->where('publishing_end_date','>=',$publishing_start_date)->exists() || $product_price_list->where('product_id', $request->product_id)->where('store_id', $request->store_id)->where('publishing_start_date','<=',$publishing_end_date)->where('publishing_end_date','>=',$publishing_end_date)->exists() || $product_price_list->where('product_id', $request->product_id)->where('store_id', $request->store_id)->where('publishing_start_date','>=',$publishing_start_date)->where('publishing_end_date','<=',$publishing_end_date)->exists())
+        // $product_price_list->where('product_id', $request->product_id)->where('store_id', $request->store_id)->where('publishing_start_date','<=',$publishing_start_date)->where('publishing_end_date','>=',$publishing_start_date)->exists() || $product_price_list->where('product_id', $request->product_id)->where('store_id', $request->store_id)->where('publishing_start_date','<=',$publishing_end_date)->where('publishing_end_date','>=',$publishing_end_date)->exists() || $product_price_list->where('product_id', $request->product_id)->where('store_id', $request->store_id)->where('publishing_start_date','>=',$publishing_start_date)->where('publishing_end_date','<=',$publishing_end_date)->exists()
+
+        if($product_price_list->where('product_id', $request->product_id)->where('store_id', $request->store_id)->whereRaw("( DATE(publishing_start_date) BETWEEN '{$publishing_start_date}' AND '{$publishing_end_date}' OR DATE(publishing_end_date) BETWEEN '{$publishing_start_date}' AND '{$publishing_end_date}' OR (DATE(publishing_start_date) <= '{$publishing_start_date}' AND DATE(publishing_end_date) >= '{$publishing_end_date}') ) AND ( TIME(publishing_start_date) BETWEEN '{$publishing_start_time}' AND '{$publishing_end_time}' OR TIME(publishing_end_date) BETWEEN '{$publishing_start_time}' AND '{$publishing_end_time}' OR (TIME(publishing_start_date) <= '{$publishing_start_time}' AND TIME(publishing_end_date) >= '{$publishing_end_time}') )")->exists())
         {
             $status = 0;
         }
@@ -1490,23 +1539,25 @@ class AdminController extends Controller
     }
 
     public function addDishPrice(Request $request){
-        //dd($request->all());
-        // dd($request->publishing_start_date);
-        $publishing_start_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_start_date);
+        $publishing_start_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_start_date);
+        $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_end_date);
 
-        // dd($publishing_start_date);
-        $publishing_end_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_end_date);
+        $publishing_start_date = $publishing_start_date_time->format('Y-m-d');
+        $publishing_end_date = $publishing_end_date_time->format('Y-m-d');
+        $publishing_start_time = $publishing_start_date_time->format('H:i:00');
+        $publishing_end_time = $publishing_end_date_time->format('H:i:00');
 
         $product_price_list = new ProductPriceList();
 
         // dd($publishing_start_date);
 
-        if($product_price_list->where('product_id', $request->product_id)->where('store_id', $request->store_id)->where('publishing_start_date','<=',$publishing_start_date)->where('publishing_end_date','>=',$publishing_start_date)->exists() || $product_price_list->where('product_id', $request->product_id)->where('store_id', $request->store_id)->where('publishing_start_date','<=',$publishing_end_date)->where('publishing_end_date','>=',$publishing_end_date)->exists()){
+        // Validate
+        if($product_price_list->where('product_id', $request->product_id)->where('store_id', $request->store_id)->whereRaw("( DATE(publishing_start_date) BETWEEN '{$publishing_start_date}' AND '{$publishing_end_date}' OR DATE(publishing_end_date) BETWEEN '{$publishing_start_date}' AND '{$publishing_end_date}' OR (DATE(publishing_start_date) <= '{$publishing_start_date}' AND DATE(publishing_end_date) >= '{$publishing_end_date}') ) AND ( TIME(publishing_start_date) BETWEEN '{$publishing_start_time}' AND '{$publishing_end_time}' OR TIME(publishing_end_date) BETWEEN '{$publishing_start_time}' AND '{$publishing_end_time}' OR (TIME(publishing_start_date) <= '{$publishing_start_time}' AND TIME(publishing_end_date) >= '{$publishing_end_time}') )")->exists()){
             return back()->with('error','Invalid date');
         }
 
-        $request->merge(['publishing_start_date' => $publishing_start_date]);
-        $request->merge(['publishing_end_date' => $publishing_end_date]);
+        $request->merge(['publishing_start_date' => $publishing_start_date_time]);
+        $request->merge(['publishing_end_date' => $publishing_end_date_time]);
 
         $employer = new Employer();
         $companyId = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
@@ -1532,7 +1583,7 @@ class AdminController extends Controller
         if($store)
         {
             $openTimeRestaurant = $closeTimeRestaurant = null;
-            $dayOfPriceDate = $publishing_start_date->format('D');
+            $dayOfPriceDate = $publishing_start_date_time->format('D');
             $openCloseList = explode(",", $store->store_open_close_day_time);
             $startTimeFuturePrice = \DateTime::createFromFormat('d/m/Y - H:i', $request->dateStart)->format('H:i:00');
             $endTimeFuturePrice = \DateTime::createFromFormat('d/m/Y - H:i', $request->dateEnd)->format('H:i:00');

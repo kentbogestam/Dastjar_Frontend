@@ -198,6 +198,21 @@
 			left: 50%;
 			z-index: 99999;
 		}
+
+		.loyalty-offer {
+			font-weight: normal; font-size: 11px; display: inline-block; color: #c2444c;
+		}
+
+		.loyalty-offer-apply {
+			color: green;
+		}
+
+		@media only screen and (max-width: 420px) {
+		    .loyalty-offer {
+		    	display: block;
+		    	margin-top: 3px;
+		    }
+		}
 	</style>
 @stop
 
@@ -218,116 +233,160 @@
 			<div class="cat-list-sec single-restro-list-sec">
 				<input type="hidden" id="browserCurrentTime" name="browserCurrentTime" value="" />
 				<input type="hidden" name="storeID" value="{{$storeId}}" />
-					<?php $i =0 ?>
-					<?php $j =1 ?>
-					@foreach($menuTypes as $menuType)
-						@if($i == 0)
-							<div data-role="collapsible" data-iconpos="right" >
-							 <h3>{{$menuType->dish_name}}</h3> <p>
-							@foreach($menuDetails as $productDetail)
-								@foreach($productDetail->storeProduct as $menuDetail)
-									@if($menuType->dish_id == $menuDetail->dish_type)
-								<ul data-role="listview" data-inset="true">
-									<li id="item{{$menuDetail->product_id}}">
-										<img src="{{$menuDetail->small_image}}" onerror="this.src='{{$placeholder}}'">
-													<div class="list-content">
-														<h2>{{$menuDetail->product_name}}</h2>
-													<div class="fulldiscription"><p>{{$menuDetail->product_description}}</p></div>
-													<p class="price">
-														{{number_format((float)$productDetail->price, 2, '.', '')}} 
-														{{$companydetails->currencies}} 
-													</p>
-													</div>
-												<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />
-												<div class="qty-sec">
-													<input type="button" onclick="decrementValue('{{$menuDetail->product_id}}')" value="-"  class="min" />
-													<input type="text" readonly name="product[{{$j}}][prod_quant]" maxlength="2" size="1" value="0" id="{{$menuDetail->product_id}}" />
-													<input type="button" onclick="incrementValue('{{$menuDetail->product_id}}')" value="+" class="max" />
-												</div>
-												
-												<div class="extra-btn">
-														<label><img src="{{asset('images/icons/icon-wait-time.png')}}" width="15px">
-															<?php
-																$time = $menuDetail->preparation_Time;
-																if(isset($storedetails->extra_prep_time)){
-																$time2 = $storedetails->extra_prep_time;
-																}else{
-																$time2 = "00:00:00";
-																}
-																$secs = strtotime($time2)-strtotime("00:00:00");
-																$result = date("H:i:s",strtotime($time)+$secs);
-															?>
-															@if(date_create($result) != false)
-															{{date_format(date_create($result), 'H').':'.date_format(date_create($result), 'i')}}
-															@else
-																{{$result}}
-															@endif
-														</label>
-														<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('images/icons/icon-add-comments.png')}}" width="18px"><span class="add_comment">{{ __('messages.Add Comments') }}</span><span class="edit_comment">{{ __('messages.Edit Comments') }}</span></a></label>
-														<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="product[{{$j}}][prod_desc]" value="" />
-												</div>
-											</li>
-											<?php $j =$j+1 ?>
-										</ul>
-									@endif
-								@endforeach
-							@endforeach
-						</div>
-						<?php $i =1 ?>
-						@else
-							<div data-role="collapsible" data-iconpos="right"> <h3>{{$menuType->dish_name}}</h3> <p>
-							@foreach($menuDetails as $productDetail)
-							
-								@foreach($productDetail->storeProduct as $menuDetail)
-									@if($menuType->dish_id == $menuDetail->dish_type)
-										<ul data-role="listview" data-inset="true">
-											<li id="item{{$menuDetail->product_id}}">
-													<img src="{{$menuDetail->small_image}}" onerror="this.src='{{$placeholder}}'">
-													<div class="list-content">
-														<h2>{{$menuDetail->product_name}}</h2>
-													<div class="fulldiscription"><p>{{$menuDetail->product_description}}</p></div>
-													<p class="price">
-														{{number_format((float)$productDetail->price, 2, '.', '')}} 
-														{{$companydetails->currencies}} 
-													</p>
-													</div>
-												<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />
-												<div class="qty-sec">
-													<input type="button" onclick="decrementValue('{{$menuDetail->product_id}}')" value="-"  class="min" />
-													<input type="text" name="product[{{$j}}][prod_quant]" value="0" maxlength="2" readonly size="1" id="{{$menuDetail->product_id}}" />
-													<input type="button" onclick="incrementValue('{{$menuDetail->product_id}}')" value="+" class="max" />
-												</div>
+				<?php $i =0 ?>
+				<?php $j =1 ?>
+				@foreach($menuTypes as $menuType)
+					@php
+					$strLoyaltyOffer = "";
+					@endphp
 
-												<div class="extra-btn">
-														<label><img src="{{asset('images/icons/icon-wait-time.png')}}" width="15px">
-															<?php
-																$time = $menuDetail->preparation_Time;
-																if(isset($storedetails->extra_prep_time)){
-																$time2 = $storedetails->extra_prep_time;
-																}else{
-																$time2 = "00:00:00";
-																}
-																$secs = strtotime($time2)-strtotime("00:00:00");
-																$result = date("H:i:s",strtotime($time)+$secs);
-															?>
-															@if(date_create($result) != false)
-															{{date_format(date_create($result), 'H').':'.date_format(date_create($result), 'i')}}
-															@else
-																{{$result}}
-															@endif
-														</label>
-														<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('images/icons/icon-add-comments.png')}}" width="18px"><span class="add_comment">{{ __('messages.Add Comments') }}</span><span class="edit_comment">{{ __('messages.Edit Comments') }}</span></a></label>
-														<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="product[{{$j}}][prod_desc]" value="" />
-												</div>
-											</li>
-											<?php $j =$j+1 ?>
-										</ul>
-									@endif
-								@endforeach
-							@endforeach
-						</div>
+					<!-- Logic to calculate loyalty offer -->
+					@if( $promotionLoyalty && in_array($menuType->dish_id, explode(',', $promotionLoyalty->dish_type_ids)) )
+						@php
+						$quantity_to_buy = $promotionLoyalty->quantity_to_buy;
+						$quantity_get = $promotionLoyalty->quantity_get;
+						$end_date = $promotionLoyalty->end_date;
+
+						// If not logged-in or loyalty validity is 0 or customer doesn't get loyalty yet
+						if( !Auth::check() || ((!$promotionLoyalty->validity) || ($promotionLoyalty->validity > $orderCustomerLoyalty->cnt)) )
+						{
+							$strLoyaltyOffer = "<span class='loyalty-offer'>".__('messages.loyaltyOfferMsg', ['quantity_to_buy' => $quantity_to_buy, 'quantity_get' => $quantity_get, 'valid_till' => $end_date])."</span>";
+						}
+						@endphp
+
+						@if(Auth::check())
+							@if($customerLoyalty)
+								@php
+								$quantity_bought = $customerLoyalty->quantity_bought;
+
+								// Calculate if 'loyalty' already have been applied
+								$quantity_bought -= ($quantity_to_buy*$orderCustomerLoyalty->cnt);
+
+								//
+								if($quantity_to_buy > $quantity_bought)
+								{
+									$final_quantity_to_buy = $quantity_to_buy-$quantity_bought;
+
+									$strLoyaltyOffer = "<span class='loyalty-offer'>".__('messages.loyaltyOfferMsg', ['quantity_to_buy' => $final_quantity_to_buy, 'quantity_get' => $quantity_get, 'valid_till' => $end_date])."</span>";
+								}
+								else
+								{
+									$quantity_offered = floor($quantity_bought/$quantity_to_buy)*$quantity_get;
+									
+									$strLoyaltyOffer = "<span class='loyalty-offer loyalty-offer-apply'>".__('messages.loyaltyOfferOnApply', ['quantity_offered' => $quantity_offered])."</span>";
+								}
+								@endphp
+							@endif
 						@endif
-					@endforeach 
+					@endif
+
+					@if($i == 0)
+						<div data-role="collapsible" data-iconpos="right" class="{{ ($strLoyaltyOffer != '') ? 'row-loyalty-offer' : '' }}">
+						<h3>{{$menuType->dish_name}} {!! $strLoyaltyOffer !!}</h3>
+						@foreach($menuDetails as $productDetail)
+							@foreach($productDetail->storeProduct as $menuDetail)
+								@if($menuType->dish_id == $menuDetail->dish_type)
+									<ul data-role="listview" data-inset="true">
+										<li id="item{{$menuDetail->product_id}}">
+											<img src="{{$menuDetail->small_image}}" onerror="this.src='{{$placeholder}}'">
+											<div class="list-content">
+													<h2>{{$menuDetail->product_name}}</h2>
+												<div class="fulldiscription"><p>{{$menuDetail->product_description}}</p></div>
+												<p class="price">
+													{{number_format((float)$productDetail->price, 2, '.', '')}} 
+													{{$companydetails->currencies}} 
+												</p>
+											</div>
+											<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />
+											<div class="qty-sec">
+												<input type="button" onclick="decrementValue('{{$menuDetail->product_id}}')" value="-"  class="min" />
+												<input type="text" readonly name="product[{{$j}}][prod_quant]" maxlength="2" size="1" value="0" id="{{$menuDetail->product_id}}" />
+												<input type="button" onclick="incrementValue('{{$menuDetail->product_id}}')" value="+" class="max" />
+											</div>
+											
+											<div class="extra-btn">
+													<label><img src="{{asset('images/icons/icon-wait-time.png')}}" width="15px">
+														<?php
+															$time = $menuDetail->preparation_Time;
+															if(isset($storedetails->extra_prep_time)){
+															$time2 = $storedetails->extra_prep_time;
+															}else{
+															$time2 = "00:00:00";
+															}
+															$secs = strtotime($time2)-strtotime("00:00:00");
+															$result = date("H:i:s",strtotime($time)+$secs);
+														?>
+														@if(date_create($result) != false)
+														{{date_format(date_create($result), 'H').':'.date_format(date_create($result), 'i')}}
+														@else
+															{{$result}}
+														@endif
+													</label>
+													<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('images/icons/icon-add-comments.png')}}" width="18px"><span class="add_comment">{{ __('messages.Add Comments') }}</span><span class="edit_comment">{{ __('messages.Edit Comments') }}</span></a></label>
+													<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="product[{{$j}}][prod_desc]" value="" />
+											</div>
+										</li>
+										<?php $j =$j+1 ?>
+									</ul>
+								@endif
+							@endforeach
+						@endforeach
+					</div>
+					<?php $i =1 ?>
+					@else
+						<div data-role="collapsible" data-iconpos="right" class="{{ ($strLoyaltyOffer) ? 'row-loyalty-offer' : '' }}">
+						<h3>{{$menuType->dish_name}} {!! $strLoyaltyOffer !!}</h3>
+						@foreach($menuDetails as $productDetail)
+							@foreach($productDetail->storeProduct as $menuDetail)
+								@if($menuType->dish_id == $menuDetail->dish_type)
+									<ul data-role="listview" data-inset="true">
+										<li id="item{{$menuDetail->product_id}}">
+											<img src="{{$menuDetail->small_image}}" onerror="this.src='{{$placeholder}}'">
+											<div class="list-content">
+												<h2>{{$menuDetail->product_name}}</h2>
+												<div class="fulldiscription"><p>{{$menuDetail->product_description}}</p></div>
+												<p class="price">
+													{{number_format((float)$productDetail->price, 2, '.', '')}} 
+													{{$companydetails->currencies}} 
+												</p>
+											</div>
+											<input type="hidden" name="product[{{$j}}][id]" value="{{$menuDetail->product_id}}" />
+											<div class="qty-sec">
+												<input type="button" onclick="decrementValue('{{$menuDetail->product_id}}')" value="-"  class="min" />
+												<input type="text" name="product[{{$j}}][prod_quant]" value="0" maxlength="2" readonly size="1" id="{{$menuDetail->product_id}}" />
+												<input type="button" onclick="incrementValue('{{$menuDetail->product_id}}')" value="+" class="max" />
+											</div>
+
+											<div class="extra-btn">
+													<label><img src="{{asset('images/icons/icon-wait-time.png')}}" width="15px">
+														<?php
+															$time = $menuDetail->preparation_Time;
+															if(isset($storedetails->extra_prep_time)){
+															$time2 = $storedetails->extra_prep_time;
+															}else{
+															$time2 = "00:00:00";
+															}
+															$secs = strtotime($time2)-strtotime("00:00:00");
+															$result = date("H:i:s",strtotime($time)+$secs);
+														?>
+														@if(date_create($result) != false)
+														{{date_format(date_create($result), 'H').':'.date_format(date_create($result), 'i')}}
+														@else
+															{{$result}}
+														@endif
+													</label>
+													<label><a id="{{$menuDetail->product_id}}" href="#transitionExample" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="popup"><img src="{{asset('images/icons/icon-add-comments.png')}}" width="18px"><span class="add_comment">{{ __('messages.Add Comments') }}</span><span class="edit_comment">{{ __('messages.Edit Comments') }}</span></a></label>
+													<input type="hidden" id="orderDetail{{$menuDetail->product_id}}" name="product[{{$j}}][prod_desc]" value="" />
+											</div>
+										</li>
+										<?php $j =$j+1 ?>
+									</ul>
+								@endif
+							@endforeach
+						@endforeach
+					</div>
+					@endif
+				@endforeach 
 			</div>
 				<!-- popup section -->
 

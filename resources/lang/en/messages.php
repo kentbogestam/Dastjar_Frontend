@@ -42,7 +42,8 @@ return [
     'Admin'  => 'Admin',      
     'Menu'  => 'Menu',      
     'Order Onsite'  => 'Order Onsite',         
-    'Amount'  => 'Quantity',         
+    'Amount'  => 'Quantity',
+    'qtyLoyaltyOffer' => 'Qty Free',
     'Product'  => 'Product',         
     'Comment'  => 'Comment',          
     'Started'  => 'Started',           
@@ -90,6 +91,9 @@ return [
     'discountAddedSuccessfully' => 'Discount added successfully.',
     'avalableDiscount' => 'Available Discount',
     'discountStoreDuplicate' => 'Do you want to replace your existing discount with this for some restaurant?',
+    'loyaltyOfferMsg' => 'Only <span class="quantity-to-buy">:quantity_to_buy</span> to go, get <span class="quantity-get">:quantity_get</span> for free! Valid to :valid_till',
+    'loyaltyOfferOnApply' => 'Congratulations! Get <span class="quantity-offered">:quantity_offered</span> for free now!',
+    'loyaltyOfferApplied' => 'You\'re getting <span class="quantity-offered">:loyalty_quantity_free</span> dish(es) for free!',
     'deleteAlert' => 'Are you sure you want to delete this :item?',
     'Message' => 'Message',
     'Contact Us Placeholder' => 'Enter your Message.Add your email for replay',
@@ -119,4 +123,61 @@ return [
     'notificationOrderReceived' => 'Your order has been accepted. Your order number is: :order_id',
     'notificationOrderReady' => 'Your Order :order_id is Ready',
     'notificationOrderDelivered' => 'Your Order :order_id is Delivered',
+
+    // Store
+    'store' => 'Store',
+    'selectStore' => 'Select Store',
+
+    // Discount 
+    'listDiscount' => 'List Discount',
+    'discountCode' => 'Discount Code',
+    'discountValue' => 'Discount Value in %',
+    'discountCreated' => 'Discount created successfully.',
+    'discountValuePlaceholder' => 'Enter discount value in %',
+    'discountStartDatePlaceholder' => 'Enter coupon start date',
+    'discountEndDatePlaceholder' => 'Enter coupon end date',
+    'discountCodeFieldRemote' => 'This discount code is already added.',
+    'discountDateAfter' => 'End date should be greater than start date.',
+
+    // Dish Type
+    'listDishType' => 'List Dish Type',
+    'dishType' => 'Dish Type',
+    'language' => 'language',
+    'dishTypeCreated' => 'Dish type created successfully.',
+    'dishTypeUpdated' => 'Dish type updated successfully.',
+    'dishTypeNotFound' => 'Dish type not found.',
+    'dishTypeDeleted' => 'Dish type deleted successfully.',
+    'dishTypeUnique' => 'This category is already busy.',
+
+    // Loyalty
+    'loyalty' => 'Loyalty',
+    'listLoyalty' => 'List Loyalty',
+    'quantityToBuy' => 'Quantity to Buy',
+    'quantityGet' => 'Quantity to Get for Free',
+    'validity' => 'Validity',
+    'once' => 'Once',
+    'repeatedly' => 'Repeatedly',
+    'loyaltyCreated' => 'Loyalty created successfully.',
+    'loyaltyExistError' => 'Loyalty is already exist between start and end date and for selected store.',
+    'quantityToBuyPlaceholder' => 'Enter quantity to buy',
+    'quantityGetPlaceholder' => 'Enter quantity to get',
+    'quantityGetLessThan' => 'Must be less than to buy quantity',
+
+    // Validation
+    'fieldRequired' => 'This field is required.',
+
+    // Common
+    'addNew' => 'Add New',
+    'select' => 'Select',
+    'startDate' => 'Start Date',
+    'endDate' => 'End Date',
+    'noRecordFound' => 'No record found',
+    'description' => 'Description',
+    'refresh' => 'Refresh',
+    'submit' => 'Submit',
+    'update' => 'Update',
+    'close' => 'Close',
+    'back' => 'Back',
+    'action' => 'Action',
+    'pagination' => 'Showing :first to :last of :total entries',
 ];

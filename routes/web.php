@@ -110,7 +110,8 @@
 		Route::get('withOutLogin', 'OrderController@withOutLogin')->name('withOutLogin');
 		Route::get('checkDistance','DistanceController@checkDistance');
 		Route::post('cart', 'OrderController@cart');
-		Route::get('cart', 'OrderController@cartWithOutLogin')->name('cartWithOutLogin');
+		Route::get('cart', 'OrderController@cart');
+		// Route::get('cart', 'OrderController@cartWithOutLogin')->name('cartWithOutLogin');
 		Route::get('view-cart/{orderId}', 'OrderController@viewCart');
 		// Route::post('apply-promocode', 'OrderController@ajaxApplyPromocode');
 	});
@@ -211,6 +212,32 @@
 		Route::get('order-pay-manually/{order_id}', 'AdminController@orderPayManually');
 
 		Route::get('test-send-notifaction/{order_id}', 'AdminController@testSendNotifaction');
+
+		// Kitchen (admin)
+		Route::group(['namespace' => 'Restaurant'], function() {
+			// Discount
+			Route::group(['prefix' => 'discount', 'middleware' => 'isModuleSubscribed:discount'], function() {
+				Route::get('list', 'DiscountController@index');
+				Route::get('get-discount-code', 'DiscountController@ajaxGetDiscountCode');
+				Route::post('remote-validate-discount', 'DiscountController@remoteValidateDiscount');
+				Route::post('store', 'DiscountController@store');
+			});
+
+			// Loyalty
+			Route::group(['prefix' => 'loyalty', 'middleware' => 'isModuleSubscribed:loyalty'], function() {
+				Route::get('list', 'LoyaltyController@index');
+				Route::post('store', 'LoyaltyController@store');
+			});
+
+			// Dish Type
+			Route::prefix('dishtype')->group(function(){
+				Route::get('list', 'DishTypeController@index');
+				Route::post('store', 'DishTypeController@store');
+				Route::get('get-dish-type/{id}', 'DishTypeController@ajaxGetDishTypeById');
+				Route::post('update', 'DishTypeController@update');
+				Route::get('{id}/delete', 'DishTypeController@destroy');
+			});
+		});
 	});
 
 
