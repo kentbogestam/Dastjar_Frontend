@@ -22,6 +22,7 @@ return [
     'Edit Comments'   => 'Ändra önskemålen',    
     'Cancel'   => 'Avbryt',
     'Submit'   => 'Klar',
+    'Delete' => 'Radera',
     'Menu is not available.'   => 'Menyn är inte tillgänglig.',
     'Thanks for your order'   => 'Tack för din beställning',
     'Order Number'   => 'Order-ID',
@@ -164,6 +165,12 @@ return [
     'quantityToBuyPlaceholder' => 'Ange kvantitet att köpa',
     'quantityGetPlaceholder' => 'Ange kvantitet för att få',
     'quantityGetLessThan' => 'Måste vara mindre än att köpa kvantitet',
+
+    // Store Delivery Type
+    'deliveryOptionDineIn' => 'Dine-in',
+    'deliveryOptionTakeAway' => 'Take Away',
+    'storeDeliveryTypeDineIn' => 'A dine-in restaurant',
+    'storeDeliveryTypeTakeAway' => 'A take away restaurant',
 
     // Validation
     'fieldRequired' => 'Detta fält är obligatoriskt.',

@@ -206,13 +206,6 @@
 		.loyalty-offer-apply {
 			color: green;
 		}
-
-		@media only screen and (max-width: 480px) {
-		    .loyalty-offer {
-		    	display: block;
-		    	margin-top: 3px;
-		    }
-		}
 	</style>
 @stop
 
@@ -233,6 +226,9 @@
 			<div class="cat-list-sec single-restro-list-sec">
 				<input type="hidden" id="browserCurrentTime" name="browserCurrentTime" value="" />
 				<input type="hidden" name="storeID" value="{{$storeId}}" />
+				@if($storedetails->delivery_type != 0)
+					<input type="hidden" name="delivery_type" value="{{ $storedetails->delivery_type }}" />
+				@endif
 				<?php $i =0 ?>
 				<?php $j =1 ?>
 				@foreach($menuTypes as $menuType)

@@ -1056,3 +1056,13 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
     }   
 }
 /* End cart page */
+
+.row-store-delivery-type {
+    text-align: center;
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+    font-size: 13px;
+    padding: 3px 0;
+    font-weight: bold;
+}

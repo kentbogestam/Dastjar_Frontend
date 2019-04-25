@@ -854,7 +854,7 @@ class OrderController extends Controller
             }
 
             // Get store detail
-            $storeDetail = Store::where('store_id', $data['storeID'])->first();
+            $storeDetail = $storedetails = Store::where('store_id', $data['storeID'])->first();
 
             // Get loyalty detail and count of 'loyalty' used by user if exist for store
             $promotionLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
@@ -897,6 +897,11 @@ class OrderController extends Controller
                         $order->deliver_date = $orderDate;
                         $order->deliver_time = $orderTime;
                         $order->check_deliveryDate = $checkOrderDate;
+
+                        if( isset($data['delivery_type']) && is_numeric($data['delivery_type']) )
+                        {
+                            $order->delivery_type = $data['delivery_type'];
+                        }
 
                         if($storeDetail->order_response == 0 && $orderType == 'eat_now')
                         {
@@ -1068,7 +1073,7 @@ class OrderController extends Controller
                 $request->session()->put('paymentmode',0);
             }
 
-            return view('order.cart', compact('order','orderDetails', 'customerDiscount', 'orderInvoice'));
+            return view('order.cart', compact('order','orderDetails', 'customerDiscount', 'orderInvoice', 'storedetails'));
         }
         else
         {
@@ -1113,6 +1118,23 @@ class OrderController extends Controller
     }
 
     /**
+     * Update order delivery type from cart page before make payment or confirm order
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    function orderUpdateDeliveryType(Request $request)
+    {
+        $status = 0;
+
+        if( Order::where('order_id', $request->input('order_id'))->update(['delivery_type' => $request->input('delivery_type')]) )
+        {
+            $status = 1;
+        }
+
+        return response()->json(['status' => $status]);
+    }
+
+    /**
      * View cart function for testing
      */
     function viewCart($orderId)
@@ -1125,6 +1147,8 @@ class OrderController extends Controller
             ->join('product AS P', 'P.product_id', '=', 'OD.product_id')
             ->where(['OD.order_id' => $orderId])
             ->get();
+
+        $storeDetail = $storedetails = Store::where('store_id', Session::get('storeId'))->first();
 
         if($orderDetail)
         {
@@ -1253,7 +1277,7 @@ class OrderController extends Controller
             ->toSql();*/
         // echo '<pre>'; print_r($orderInvoice); exit;
 
-        return view('order.cart', compact('order','orderDetails', 'customerDiscount', 'orderInvoice'));
+        return view('order.cart', compact('order','orderDetails', 'customerDiscount', 'orderInvoice', 'storedetails'));
     }
 
     /**
