@@ -1474,22 +1474,22 @@ class OrderController extends Controller
         return response()->json(['status' => $status, 'response' => true, 'data'=> $data]);
     }
 
- public function emptyCart(Request $request){
+    public function emptyCart(Request $request){
 
-     $data = $request->input();
+        $data = $request->input();
 
-     $this->deleteWholecart($data['orderid']);
-     $url=$request->session()->get('route_url');
+        $this->deleteWholecart($data['orderid']);
+        $url=$request->session()->get('route_url');
 
-    if (strpos($url, 'selectOrder-date') !=false){
-     
-     return redirect()->action('HomeController@selectOrderDate');
-
-    }elseif(strpos($url, 'eat-now') !=false){
-
-         return redirect()->action('HomeController@index');
-    } 
- }
+        if (strpos($url, 'selectOrder-date') !=false){
+            return redirect()->action('HomeController@selectOrderDate');
+        }elseif(strpos($url, 'eat-now') !=false){
+            return redirect()->action('HomeController@index');
+        }
+        else {
+            return redirect()->action('HomeController@eatLater');
+        }
+    }
 
     public function deleteWholecart($orderid){
         DB::table('orders')->where('order_id', $orderid)->delete();
