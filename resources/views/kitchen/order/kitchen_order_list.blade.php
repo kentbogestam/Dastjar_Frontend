@@ -37,6 +37,7 @@
 			     	<th data-priority="3">{{ __('messages.Started') }}</th>
 			      	<th data-priority="3">{{ __('messages.Ready') }}</th>
 			     	<th data-priority="1">{{ __('messages.Pick up Time') }}</th>
+			     	<th data-priority="1">{{ __('messages.deliveryType') }}</th>
 		      	</tr>
 		    </thead>
 		    <tbody id="orderDetailContianer">
@@ -215,7 +216,20 @@
 				          		liItem +="</a></td>";
 			          		}
 			          		liItem += "<td>"+time+"</td>";
-			          		liItem += "</tr>"
+
+			          		var deliveryType = '';
+			          		if( temp[i]['delivery_type'] == 1 )
+			          		{
+			          			deliveryType = 'Dine-in';
+			          		}
+			          		else if( temp[i]['delivery_type'] == 2 )
+			          		{
+			          			deliveryType = 'Take away';
+			          		}
+
+			          		liItem += "<td>"+deliveryType+"</td>";
+			          		
+			          		liItem += "</tr>";
 					    	$("#orderDetailContianer").append(liItem);
 					    	liItem = null;
 						     }, 4000*i);
@@ -340,7 +354,20 @@
 				          		liItem +="</a></td>";
 			          		}
 			          		liItem += "<td>"+time+"</td>";
-			          		liItem += "</tr>"
+
+			          		var deliveryType = '';
+			          		if( temp[i]['delivery_type'] == 1 )
+			          		{
+			          			deliveryType = 'Dine-in';
+			          		}
+			          		else if( temp[i]['delivery_type'] == 2 )
+			          		{
+			          			deliveryType = 'Take away';
+			          		}
+
+			          		liItem += "<td>"+deliveryType+"</td>";
+
+			          		liItem += "</tr>";
 					    	$("#orderDetailContianer").append(liItem);
 					    	var liItem = "";
 						     }, 4000*i);
@@ -497,6 +524,19 @@
 		          		liItem +="</a></td>";
 		      		}
 		      		liItem += "<td>"+time+"</td>";
+
+		      		var deliveryType = '';
+	          		if( temp[i]['delivery_type'] == 1 )
+	          		{
+	          			deliveryType = 'Dine-in';
+	          		}
+	          		else if( temp[i]['delivery_type'] == 2 )
+	          		{
+	          			deliveryType = 'Take away';
+	          		}
+
+	          		liItem += "<td>"+deliveryType+"</td>";
+
 		      		liItem += "</tr>";
 			      	countCheck++;
 			      	$("#orderDetailContianer").append(liItem);

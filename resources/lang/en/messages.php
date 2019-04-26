@@ -169,6 +169,7 @@ return [
     'deliveryOptionTakeAway' => 'Take Away',
     'storeDeliveryTypeDineIn' => 'A dine-in restaurant',
     'storeDeliveryTypeTakeAway' => 'A take away restaurant',
+    'deliveryType' => 'Delivery Type',
 
     // Validation
     'fieldRequired' => 'This field is required.',
