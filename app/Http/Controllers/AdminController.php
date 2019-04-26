@@ -461,11 +461,11 @@ class AdminController extends Controller
                         foreach ($menuDetail->storeProduct as $storeProduct) {
                             $companyId = $storeProduct->company_id;
                             $dish_typeId[] = $storeProduct->dish_type;
-                            try{
+                            /*try{
                                 getimagesize($storeProduct->small_image);
                             } catch (\Exception $ex) {
                                 $storeProduct->small_image = asset('images/placeholder-image.png');
-                            }
+                            }*/
                         }
                 }
 
@@ -578,6 +578,11 @@ class AdminController extends Controller
                             $order->deliver_date = $orderDate;
                             $order->deliver_time = $orderTime;
                             $order->check_deliveryDate = $checkOrderDate;
+
+                            if( isset($data['delivery_type']) && is_numeric($data['delivery_type']) )
+                            {
+                                $order->delivery_type = $data['delivery_type'];
+                            }
 
                             if($storeDetail->order_response == 0 && $orderType == 'eat_now')
                             {

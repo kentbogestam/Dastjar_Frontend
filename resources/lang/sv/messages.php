@@ -167,8 +167,8 @@ return [
     'quantityGetLessThan' => 'Måste vara mindre än att köpa kvantitet',
 
     // Store Delivery Type
-    'deliveryOptionDineIn' => 'Dine-in',
-    'deliveryOptionTakeAway' => 'Take Away',
+    'deliveryOptionDineIn' => 'Ät här',
+    'deliveryOptionTakeAway' => 'Ta med',
     'storeDeliveryTypeDineIn' => 'A dine-in restaurant',
     'storeDeliveryTypeTakeAway' => 'A take away restaurant',
     'deliveryType' => 'Delivery Type',
