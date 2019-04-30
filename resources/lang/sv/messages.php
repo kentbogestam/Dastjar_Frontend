@@ -100,7 +100,7 @@ return [
    'Contact Us Placeholder' => 'Skriv till oss och lägg till din e-mail address.',
     'Terms and Conditions' => 'Villkor',
     'Extra Preparation Time' => 'Öka beredningstid',
-    'Support' => 'Support',
+    'Support' => 'Support/ Hjälp',
     'Thank you for contacting us.' => 'Tack för ditt meddelande.',
     'Remove' => 'Ta bort',
     'Payment Done Successfully' => 'Betalningen genomfördes!',
@@ -182,4 +182,7 @@ return [
     'back' => 'Tillbaka',
     'action' => 'Åtgärd',
     'pagination' => 'Visar :first av :last av :total antal',
+    'aboutDastjarAnar' => 'Om Dastjar RS/Anar',
+    'aboutCompanyAdmin' => 'Ditt Företags Admin',
+    'marketingTools' => 'Marknads Verktyg',
 ];

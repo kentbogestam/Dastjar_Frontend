@@ -99,7 +99,7 @@ return [
     'Contact Us Placeholder' => 'Enter your Message.Add your email for replay',
     'Terms and Conditions' => 'Terms and Conditions',
     'Extra Preparation Time' => 'Extra Preparation Time',
-    'Support' => 'Support',
+    'Support' => 'Support/ Help',
     'Thank you for contacting us.' => 'Thank you for contacting us.',
     'Remove' => 'Remove',
     'Payment Done Successfully' => 'Payment Done Successfully',
@@ -180,4 +180,7 @@ return [
     'back' => 'Back',
     'action' => 'Action',
     'pagination' => 'Showing :first to :last of :total entries',
+    'aboutDastjarAnar' => 'About Dastjar RS/Anar',
+    'aboutCompanyAdmin' => 'Your Company Admin',
+    'marketingTools' => 'Marketing Tools',
 ];
