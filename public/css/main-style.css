@@ -1058,8 +1058,8 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
 /* End cart page */
 
 .alert {
-    padding: 15px;
-    margin-bottom: 20px;
+    padding: 10px;
+    margin-bottom: 0px;
     border: 1px solid transparent;
     border-radius: 4px;
 }
@@ -1086,4 +1086,26 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
     color: #a94442;
     background-color: #f2dede;
     border-color: #ebccd1;
+}
+
+.alert-dismissible .close {
+    position: relative;
+    top: -2px;
+    right: 0px;
+    color: inherit;
+}
+a.close {
+    text-decoration: none !important;
+    font-size: 20px !important;
+    line-height: 1.2;
+}
+.close {
+    float: right;
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    filter: alpha(opacity=20);
+    opacity: .2;
 }

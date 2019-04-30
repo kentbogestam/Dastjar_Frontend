@@ -227,7 +227,19 @@
 		<p>{{ __('messages.Menu is not available.') }}1 </p>
 	</div>
 	@endif
-   <form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('cart') }}">
+	@if(Session::has('class'))
+		<div class="ui-grid-solo text-center">
+			<div class="ui-block-a">
+				<div class="ui-bar ui-bar-a">
+					<div class="alert alert-dismissible alert-{{ Session::get('class') }}">
+						<a href="#" class="close" title="close">×</a>
+						<span>{{ Session::get('msg') }}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	@endif
+   	<form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('cart') }}">
 		{{ csrf_field() }}
 		<div role="main" data-role="main-content" class="content">
 			<div class="cat-list-sec single-restro-list-sec">

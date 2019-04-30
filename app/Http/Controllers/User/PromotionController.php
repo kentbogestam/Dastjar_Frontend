@@ -67,10 +67,16 @@ class PromotionController extends Controller
                         // Add new customer discount
                         CustomerDiscount::create(['customer_id' => Auth::id(), 'discount_id' => $discount->id]);
                     }
+
+                    return redirect('restro-menu-list/'.$storeId)
+                        ->with(['class' => 'success', 'msg' => __('messages.discountAddedSuccessfully')]);
                 }
                 else
                 {
                     $status = 2;
+
+                    return redirect('restro-menu-list/'.$storeId)
+                        ->with(['class' => 'warning', 'msg' => __('messages.discountAlreadyApplied')]);
                 }
             }
             else
