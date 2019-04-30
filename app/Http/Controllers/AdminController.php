@@ -1341,7 +1341,7 @@ class AdminController extends Controller
             $product->small_image = $catImg;
             $product->large_image = $copImg;
         }
-        else
+        elseif(!isset($request->smallImage))
         {
             $product->small_image = 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/category/cat_icon_b738a523d72867d1fc84e1f9d3c18b29.png';
         }
