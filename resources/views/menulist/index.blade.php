@@ -2,7 +2,7 @@
 
 @section('head-scripts')
 	@if(Session::has('msg'))
-		{{-- Add to homescreen script --}}
+		{{-- Add to homescreen script if comes from 'Apply user discount promotion view' --}}
 		<script src="{{asset('notifactionJs/App42-all-3.1.min.js')}}"></script>
 	    <script src="{{asset('notifactionJs/SiteTwo.js')}}"></script>
 	    <script src="{{asset('notifactionJs/serviceWorker.js')}}"></script>
