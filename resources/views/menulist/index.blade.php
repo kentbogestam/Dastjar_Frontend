@@ -1,5 +1,21 @@
 @extends('layouts.master')
 
+@section('head-scripts')
+	@if(Session::has('msg'))
+		{{-- Add to homescreen script --}}
+		<script src="{{asset('notifactionJs/App42-all-3.1.min.js')}}"></script>
+	    <script src="{{asset('notifactionJs/SiteTwo.js')}}"></script>
+	    <script src="{{asset('notifactionJs/serviceWorker.js')}}"></script>
+
+	    <script>
+	    	$(document).ready(function() {
+	    		registerSwjs();
+	    	});
+	    </script>
+	    {{-- End --}}
+	@endif
+@endsection
+
 @section('styles')
 	<style>
 		.submit_btn {
