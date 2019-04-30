@@ -85,7 +85,7 @@ return [
     'Discount' => 'Discount',
     'Add Discount' => 'Add Discount',
     'Enter Discount Code' => 'Enter Discount Code',
-    'invalidDiscount' => 'This code is invalid',
+    'invalidDiscount' => 'This code is invalid.',
     'discountAlreadyApplied' => 'This code has already been applied.',
     'somethingWentWrong' => 'Something went wrong!',
     'discountAddedSuccessfully' => 'Discount added successfully.',
