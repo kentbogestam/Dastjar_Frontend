@@ -1341,7 +1341,7 @@ class AdminController extends Controller
             $product->small_image = $catImg;
             $product->large_image = $copImg;
         }
-        else
+        elseif(!isset($request->smallImage))
         {
             $product->small_image = 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/category/cat_icon_b738a523d72867d1fc84e1f9d3c18b29.png';
         }
@@ -2269,4 +2269,26 @@ class AdminController extends Controller
 
     }
 
+    /**
+     * Return new orders detail that havn't been started yet 
+     * @return [type] [description]
+     */
+    function getNewOrdersDetailToSpeak()
+    {
+        $storeId = Session::get('storeId');
+
+        // 
+        $orderDetail = OrderDetail::select('order_details.id', 'order_details.product_quality', 'order_details.product_description', 'order_details.is_speak', 'product.product_name')
+            ->join('orders', 'orders.order_id', '=', 'order_details.order_id')
+            ->join('product', 'product.product_id', '=', 'order_details.product_id')
+            ->where(['orders.store_id' => $storeId, 'user_type' => 'customer', 'check_deliveryDate' => Carbon::now()->toDateString(), 'orders.order_started' => '0', 'orders.paid' => '0'])
+            ->whereNotIn('orders.online_paid', [2])
+            ->where('orders.cancel','!=', 1)
+            ->get();
+
+        // Logged-in user setting's detail
+        $text_speech = Auth::guard('admin')->user()->text_speech;
+
+        return response()->json(['orderDetail' => $orderDetail, 'text_speech' => $text_speech, 'kitchenTextToSpeechDefault' => __('messages.kitchenTextToSpeechDefault')]);
+    }
 }

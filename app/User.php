@@ -38,6 +38,12 @@ class User extends Authenticatable
 
     public function paidOrderList()
     {
-        return $this->hasMany('App\Order','user_id')->where('paid', 0)->whereNotIn('online_paid', [2])->where('orders.cancel', '!=', 1)->orderBy('order_id', 'desc');
+        // return $this->hasMany('App\Order','user_id')->where('paid', 0)->whereNotIn('online_paid', [2])->where('orders.cancel', '!=', 1)->orderBy('order_id', 'desc');
+        
+        return $this->hasMany('App\Order','user_id')
+            ->where(['paid' => 0, 'orders.check_deliveryDate' => date('Y-m-d')])
+            ->whereNotIn('online_paid', [2])
+            ->where('orders.cancel', '!=', 1)
+            ->orderBy('order_id', 'desc');
     }
 }

@@ -67,6 +67,8 @@ function frmAddManualPrepTime()
 	);
 }
 
+intervalSpeakText = 0;
+
 // Function to speak text once/repeat 
 function speakText(message = null, repeat = 0)
 {
@@ -89,14 +91,12 @@ function clearSpeakTextInterval()
 
 // Update column is DB to speak it once only
 function updateSpeak(id){
-	// var url = '{{url('api/v1/kitchen/updateTextspeach')}}'+'/'+id;
 	var url = BASE_URL_API+'/v1/kitchen/updateTextspeach/'+id;
 
 	$.ajax({
         url: url, //This is the current doc
         type: "GET",//variables should be pass like this
         success: function(data){
-           //console.log('fff');
            clearInterval(intervalSpeakText);
         }
     });
@@ -104,3 +104,86 @@ function updateSpeak(id){
 
 // 
 function confirmDelete(){return confirm("Are you sure you want to delete?")}
+
+// Check if new orders comes and user's is not in Kitchen/Orders
+if(CURRENT_PATH.indexOf('kitchen/store') == -1 && CURRENT_PATH.indexOf('kitchen/kitchen-detail') == -1)
+{
+	setInterval(getNewOrderDetailToSpeak, 10000);
+}
+
+arrSpeakTextQueue = [];
+
+// Get new orders
+function getNewOrderDetailToSpeak()
+{
+	$.ajax({
+		url: RESTAURANT_BASE_URL+'/get-new-orders-detail-to-speak',
+		success: function(data) {
+			if(data['orderDetail'].length)
+			{
+				orderDetail = data['orderDetail'];
+				textSpeech = data['text_speech'];
+
+				// If textSpeech is ON else speak default text
+				if(textSpeech == 1)
+				{
+					var isNew = 0;
+
+					for(var j = 0; j < orderDetail.length; j++)
+					{
+						id = orderDetail[j]['id'];
+
+						var result = $.grep(arrSpeakTextQueue, function(e){ 
+							return e.id == id;
+						});
+
+						if(!result.length)
+						{
+							if(orderDetail[j]['is_speak'] == 0)
+							{
+								isNew = 1;
+
+								if(orderDetail[j]["product_description"] != null){
+			          				var message = orderDetail[j]["product_quality"]+orderDetail[j]["product_name"]+orderDetail[j]["product_description"];
+			          			}else{
+			          				var message = orderDetail[j]["product_quality"]+orderDetail[j]["product_name"];
+			          			}
+
+								arrSpeakTextQueue.push({id: orderDetail[j]['id'], text: message});
+							}
+						}
+					}
+
+					if(isNew)
+					{
+						speakTextQueue();
+					}
+				}
+				else
+				{
+					speakText(data['kitchenTextToSpeechDefault'], 1);
+				}
+			}
+		}
+	});
+}
+
+// Loop array and speak text 
+function speakTextQueue()
+{
+	if(arrSpeakTextQueue.length)
+	{
+		var k = 0;
+		var j = arrSpeakTextQueue.length;
+
+		speakTextInterval = setInterval(function() {
+			speakText(arrSpeakTextQueue[k].text);
+			k++;
+
+			if(k >= j)
+			{
+				clearInterval(speakTextInterval);
+			}
+		}, 4000);
+	}
+}

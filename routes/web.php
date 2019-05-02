@@ -127,11 +127,15 @@
 		Route::get('cancel-order/{order_number}', 'OrderController@cancelOrder')->name('cancel-order');		
 		Route::post('save-order', 'OrderController@saveOrder');
 	    Route::get('save-order', 'OrderController@saveOrder');
-		
-	   
 	    Route::get('emptyCart', 'OrderController@emptyCart');
-		
-	   
+	});
+
+	// Kitchen (admin)
+	Route::group(['namespace' => 'User'], function() {
+		// Promotion
+		Route::group(['prefix' => 'promotion'], function() {
+			Route::get('apply-user-discount/{storeId}/{discountCode}', 'PromotionController@applyUserDiscount');
+		});
 	});
 
 	Route::prefix('admin')->group(function(){
@@ -212,6 +216,8 @@
 		Route::get('order-pay-manually/{order_id}', 'AdminController@orderPayManually');
 
 		Route::get('test-send-notifaction/{order_id}', 'AdminController@testSendNotifaction');
+
+		Route::get('get-new-orders-detail-to-speak', 'AdminController@getNewOrdersDetailToSpeak');
 
 		// Kitchen (admin)
 		Route::group(['namespace' => 'Restaurant'], function() {

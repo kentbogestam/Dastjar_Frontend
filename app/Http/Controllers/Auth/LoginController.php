@@ -227,6 +227,14 @@ class LoginController extends Controller
         {
             Session::put('redirectAfterLogin', 'user-setting');
         }
+        elseif( url()->previous() && strpos(url()->previous(), 'apply-user-discount') )
+        {
+            // If apply promotion discount from URL
+            $baseUrl = url('/');
+            $previousUrl = url()->previous();
+            $url = str_replace($baseUrl.'/', '', $previousUrl);
+            Session::put('redirectAfterLogin', $url);
+        }
         else
         {
             Session::forget('redirectAfterLogin');

@@ -216,6 +216,9 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 					<span class="fa fa-camera camera_icon"></span>
 					<p class="upload_img_txt">Upload Menu Image</p>
 					<input type="file" name="prodImage" id="fileupload" onerror="alert('Image missing')" onchange="readURL(this);"/>
+					@if(isset($product->small_image) && $product->small_image)
+						<input type="hidden" name="smallImage" value="{{ $product->small_image }}">
+					@endif
 				</label>
 			</div>
 		</div>
