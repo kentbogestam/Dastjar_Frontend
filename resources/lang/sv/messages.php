@@ -171,7 +171,7 @@ return [
     'deliveryOptionTakeAway' => 'Ta med',
     'storeDeliveryTypeDineIn' => 'A dine-in restaurant',
     'storeDeliveryTypeTakeAway' => 'A take away restaurant',
-    'deliveryType' => 'Delivery Type',
+    'deliveryType' => 'Leverans Typ',
 
     // Validation
     'fieldRequired' => 'Detta fält är obligatoriskt.',

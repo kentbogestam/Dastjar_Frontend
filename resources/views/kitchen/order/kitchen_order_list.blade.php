@@ -220,11 +220,11 @@
 			          		var deliveryType = '';
 			          		if( temp[i]['delivery_type'] == 1 )
 			          		{
-			          			deliveryType = 'Dine-in';
+			          			deliveryType = '{{ __('messages.deliveryOptionDineIn') }}';
 			          		}
 			          		else if( temp[i]['delivery_type'] == 2 )
 			          		{
-			          			deliveryType = 'Take away';
+			          			deliveryType = '{{ __('messages.deliveryOptionTakeAway') }}';
 			          		}
 
 			          		liItem += "<td>"+deliveryType+"</td>";
@@ -358,11 +358,11 @@
 			          		var deliveryType = '';
 			          		if( temp[i]['delivery_type'] == 1 )
 			          		{
-			          			deliveryType = 'Dine-in';
+			          			deliveryType = '{{ __('messages.deliveryOptionDineIn') }}';
 			          		}
 			          		else if( temp[i]['delivery_type'] == 2 )
 			          		{
-			          			deliveryType = 'Take away';
+			          			deliveryType = '{{ __('messages.deliveryOptionTakeAway') }}';
 			          		}
 
 			          		liItem += "<td>"+deliveryType+"</td>";
@@ -528,11 +528,11 @@
 		      		var deliveryType = '';
 	          		if( temp[i]['delivery_type'] == 1 )
 	          		{
-	          			deliveryType = 'Dine-in';
+	          			deliveryType = '{{ __('messages.deliveryOptionDineIn') }}';
 	          		}
 	          		else if( temp[i]['delivery_type'] == 2 )
 	          		{
-	          			deliveryType = 'Take away';
+	          			deliveryType = '{{ __('messages.deliveryOptionTakeAway') }}';
 	          		}
 
 	          		liItem += "<td>"+deliveryType+"</td>";
