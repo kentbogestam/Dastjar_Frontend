@@ -64,14 +64,14 @@
 	<script type="text/javascript">
 		var list = Array();
 		var totalCount = 0;
-		var textSpeach = 0;
+		var textSpeech = 0;
 		var totallength = 0;
 		//var url = "{{url('kitchen/order-started')}}";
 		var urlReady = "{{url('kitchen/order-readyKitchen')}}";
-		var textSpeachDone = "{{url('kitchen/textSpeachDone')}}";
+		// var textSpeachDone = "{{url('kitchen/textSpeachDone')}}";
 		var lastOrderId;
 		var imageUrl = "{{asset('kitchenImages/right_sign.png')}}";
-		var intervalSpeakText = 0;
+		// var intervalSpeakText = 0;
 
 		function orderReadyStarted(id, This) {
 			$This = $(This);			
@@ -107,10 +107,10 @@
 		$(function(){
 			$.get("{{url('kitchen/kitchen-orders')}}",
 			function(returnedData){
-				// console.log(returnedData["data"]);
-				textSpeach = returnedData["user"];
+				// console.log(returnedData);
+				textSpeech = returnedData["user"];
 				extra_prep_time = returnedData["extra_prep_time"];
-				order_response = returnedData["order_response"];
+				// order_response = returnedData["order_response"];
 				var count = 18;
 				
 				var temp = returnedData["data"];
@@ -143,7 +143,7 @@
 			          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
 			          		liItem += "<td>"+temp[i]["product_name"]+
 			          		"</td>";
-			          		if(textSpeach == 1 && temp[i]['is_speak'] == 0){
+			          		if(textSpeech == 1 && temp[i]['is_speak'] == 0){
 			          			if(temp[i]["product_description"] != null){
 			          				var message = temp[i]["product_quality"]+temp[i]["product_name"]+temp[i]["product_description"];
 			          			}else{
@@ -239,7 +239,7 @@
 				// console.log(returnedData["data"]);
 				var count = 18;
 				var temp = returnedData["data"];
-				textSpeach = returnedData["user"];
+				textSpeech = returnedData["user"];
 				extra_prep_time = returnedData["extra_prep_time"];
 				totallength = temp.length;
 	          	list = temp;
@@ -272,7 +272,7 @@
 			          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
 			          		liItem += "<td>"+temp[i]["product_name"]+
 			          		"</td>";
-			          		if(textSpeach == 1 && temp[i]['is_speak'] == 0){
+			          		if(textSpeech == 1 && temp[i]['is_speak'] == 0){
 			          			if(temp[i]["product_description"] != null){
 			          				var message = temp[i]["product_quality"]+temp[i]["product_name"]+temp[i]["product_description"];
 			          			}else{
@@ -431,7 +431,7 @@
 		      		liItem += "<th>"+list[i]["customer_order_id"]+"</th>";
 		      		liItem += "<td>"+list[i]["product_quality"]+"</td>";
 		      		liItem += "<td>"+list[i]["product_name"]+"</td>";
-		      		if(textSpeach == 1 && list[i]['is_speak'] == 0){
+		      		if(textSpeech == 1 && list[i]['is_speak'] == 0){
 		      			if(list[i]["product_description"] != null){
 	          				var message = list[i]["product_quality"]+list[i]["product_name"]+list[i]["product_description"];
 	          			}else{
@@ -546,5 +546,4 @@
 		  return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2)
 		}
 	</script>
-	<script src="{{asset('kitchenJs/speekJs.js')}}"></script>
 @endsection

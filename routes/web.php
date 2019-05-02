@@ -217,6 +217,8 @@
 
 		Route::get('test-send-notifaction/{order_id}', 'AdminController@testSendNotifaction');
 
+		Route::get('get-new-orders-detail-to-speak', 'AdminController@getNewOrdersDetailToSpeak');
+
 		// Kitchen (admin)
 		Route::group(['namespace' => 'Restaurant'], function() {
 			// Discount

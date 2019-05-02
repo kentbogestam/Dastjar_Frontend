@@ -70,7 +70,7 @@
 	var urldeliver = "{{url('kitchen/order-deliver')}}";
 	var urlReadyOrder = "{{url('kitchen/make-order-ready')}}";
 	var imageUrl = "{{asset('kitchenImages/right_sign.png')}}";
-	var intervalSpeakText = 0;
+	// var intervalSpeakText = 0;
 	var speakOrderItemList = [];
 
 	$(function(){
@@ -756,5 +756,4 @@
 		});
 	}
 </script>
-<script src="{{asset('kitchenJs/speekJs.js')}}"></script>
 @endsection
