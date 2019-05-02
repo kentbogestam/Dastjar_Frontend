@@ -185,4 +185,5 @@ return [
     'aboutDastjarAnar' => 'Om Dastjar RS/Anar',
     'aboutCompanyAdmin' => 'Ditt Företags Admin',
     'marketingTools' => 'Marknads Verktyg',
+    'refund' => 'Återbetalning',
 ];

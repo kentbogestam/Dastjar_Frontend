@@ -183,4 +183,5 @@ return [
     'aboutDastjarAnar' => 'About Dastjar RS/Anar',
     'aboutCompanyAdmin' => 'Your Company Admin',
     'marketingTools' => 'Marketing Tools',
+    'refund' => 'Refund',
 ];
