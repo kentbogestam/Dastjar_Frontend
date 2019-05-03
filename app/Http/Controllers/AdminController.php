@@ -564,87 +564,88 @@ class AdminController extends Controller
 
             //
             foreach ($data['product'] as $key => $value) {
-                    //if commant and quantity require then use condition "$value['prod_quant'] != '0' && $value['prod_desc'] != null"
-                    if($value['prod_quant'] != '0'){
-                        $productTime = Product::select('preparation_Time','company_id')->whereProductId($value['id'])->first();
-                        if($i == 0){
-                            $order =  new Order();
-                            $order->customer_order_id = $this->random_num(6);
-                            $order->user_id = $customer_id;
-                            $order->store_id = Session::get('storeId');
-                            $order->company_id = $productTime->company_id;
-                            $order->order_type = $orderType;
-                            $order->user_type = 'customer';
-                            $order->deliver_date = $orderDate;
-                            $order->deliver_time = $orderTime;
-                            $order->check_deliveryDate = $checkOrderDate;
+                //if commant and quantity require then use condition "$value['prod_quant'] != '0' && $value['prod_desc'] != null"
+                if($value['prod_quant'] != '0'){
+                    $productTime = Product::select('preparation_Time','company_id')->whereProductId($value['id'])->first();
+                    if($i == 0){
+                        $order =  new Order();
+                        $order->customer_order_id = $this->random_num(6);
+                        $order->user_id = $customer_id;
+                        $order->store_id = Session::get('storeId');
+                        $order->company_id = $productTime->company_id;
+                        $order->order_type = $orderType;
+                        $order->user_type = 'customer';
+                        $order->deliver_date = $orderDate;
+                        $order->deliver_time = $orderTime;
+                        $order->check_deliveryDate = $checkOrderDate;
 
-                            if($storeDetail->order_response == 0 && $orderType == 'eat_now')
-                            {
-                                $order->order_accepted = 0;
-                            }
+                        if($storeDetail->order_response == 0 && $orderType == 'eat_now')
+                        {
+                            $order->order_accepted = 0;
+                        }
 
-                            $order->save();
-                            $orders = Order::select('*')->whereUserId($customer_id)->orderBy('order_id', 'DESC')->first();
-                            $orderId = $orders->order_id;
-                            $i = $i+1;
-                        }else{}
+                        $order->save();
+                        $orders = Order::select('*')->whereUserId($customer_id)->orderBy('order_id', 'DESC')->first();
+                        $orderId = $orders->order_id;
+                        $i = $i+1;
+                    }else{}
 
-                        $i = 1;
-                        if($max_time < $productTime->preparation_Time){
-                            $max_time = $productTime->preparation_Time;
-                        }else{}
-                        $productPrice = ProductPriceList::select('price')->whereProductId($value['id'])->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->first();
-                        $total_price = $total_price + ($productPrice->price * $value['prod_quant']); 
-                        $orderDetail =  new OrderDetail();
-                        $orderDetail->order_id = $orders->order_id;
-                        $orderDetail->user_id = $customer_id;
-                        $orderDetail->product_id = $value['id'];
-                        $orderDetail->product_quality = $value['prod_quant'];
-                        $orderDetail->product_description = $value['prod_desc'];
-                        $orderDetail->price = $productPrice->price;
-                        $orderDetail->time = $productTime->preparation_Time;
-                        $orderDetail->company_id = $productTime->company_id;
-                        $orderDetail->store_id = Session::get('storeId');
-                        $orderDetail->delivery_date = $checkOrderDate;
-                        $orderDetail->save();
-                    }
+                    $i = 1;
+                    if($max_time < $productTime->preparation_Time){
+                        $max_time = $productTime->preparation_Time;
+                    }else{}
+                    $productPrice = ProductPriceList::select('price')->whereProductId($value['id'])->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->first();
+                    $total_price = $total_price + ($productPrice->price * $value['prod_quant']); 
+                    $orderDetail =  new OrderDetail();
+                    $orderDetail->order_id = $orders->order_id;
+                    $orderDetail->user_id = $customer_id;
+                    $orderDetail->product_id = $value['id'];
+                    $orderDetail->product_quality = $value['prod_quant'];
+                    $orderDetail->product_description = $value['prod_desc'];
+                    $orderDetail->price = $productPrice->price;
+                    $orderDetail->time = $productTime->preparation_Time;
+                    $orderDetail->company_id = $productTime->company_id;
+                    $orderDetail->store_id = Session::get('storeId');
+                    $orderDetail->delivery_date = $checkOrderDate;
+                    $orderDetail->save();
                 }
+            }
 
-                DB::table('orders')->where('order_id', $orderId)->update([
-                            'order_delivery_time' => $max_time,
-                            'order_total' => $total_price,
-                        ]);
+            DB::table('orders')->where('order_id', $orderId)->update([
+                        'order_delivery_time' => $max_time,
+                        'order_total' => $total_price,
+                    ]);
 
-                $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
+            $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
 
-                $request->session()->put('currentOrderId', $order->order_id);
+            $request->session()->put('currentOrderId', $order->order_id);
 
-                $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
+            $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 
-                    $recipients = ['+'.$data['phone_number_prifix'].$number];
-                    $url = "https://gatewayapi.com/rest/mtsms";
-                    $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
-                    $message = env('APP_URL') . "order/" . $order->customer_order_id . "?m=" . $data['phone_number_prifix'] . "-" . $number;
-                    $json = [
-                        'sender' => 'Dastjar',
-                        'message' => ''.$message.'',
-                        'recipients' => [],
-                    ];
-                    foreach ($recipients as $msisdn) {
-                        $json['recipients'][] = ['msisdn' => $msisdn];
-                    }
+            $recipients = ['+'.$data['phone_number_prifix'].$number];
+            $url = "https://gatewayapi.com/rest/mtsms";
+            $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
+            $message = env('APP_URL') . "order/" . $order->customer_order_id . "?m=" . $data['phone_number_prifix'] . "-" . $number;
+            $json = [
+                'sender' => 'Dastjar',
+                'message' => ''.$message.'',
+                'recipients' => [],
+            ];
+            foreach ($recipients as $msisdn) {
+                $json['recipients'][] = ['msisdn' => $msisdn];
+            }
 
-                    $ch = curl_init();
-                    curl_setopt($ch,CURLOPT_URL, $url);
-                    curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
-                    curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
-                    curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
-                    curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
-                    $result = curl_exec($ch);
-                    curl_close($ch); 
+            $ch = curl_init();
+            curl_setopt($ch,CURLOPT_URL, $url);
+            curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+            curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
+            curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
+            curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+            $result = curl_exec($ch);
+            curl_close($ch);
 
-                return view('kitchen.order.order-detail', compact('order','orderDetails','storeDetail'));
+            return redirect('kitchen/store');
+            // return view('kitchen.order.order-detail', compact('order','orderDetails','storeDetail'));
         }else{
             $menuTypes = null;
             $menuDetails = ProductPriceList::where('store_id',Session::get('storeId'))->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->with('menuPrice')->with('storeProduct')->get();
