@@ -1054,93 +1054,70 @@ class AdminController extends Controller
         $employer = new Employer();
         $company_id = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
 
-        $basePath = app_path();
-        define('FUNCTION_DIR', 'function/');
-        //define('TIME_ZONE','Asia/Calcutta');
-        define('UPLOAD_DIR', public_path() . '/upload/images/');
-
-        /////////// upload image dirctory/////////
-        define('_UPLOAD_IMAGE_', public_path() . '/upload/images/');
-        define('IMAGE_AMAZON_PATH', 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/');
-        define('IMAGE_DIR_PATH', $basePath . '/lib/bin/cumbari_s3.sh ');
-        define('IMAGE_DIR_PATH_DELETE', $basePath . '/lib/bin/cumbari_s3del.sh '); 
-
-        // file_get_contents(IMAGE_DIR_PATH);
-        // die(); 
-        
-        $CategoryIconName = "cat_icon_" . md5(time());
-        $info = pathinfo($_FILES["prodImage"]["name"]);
-        $small_image = null;                
-        $error = "";
-
-        // Opload images related to
-        if (!empty($_FILES["prodImage"]["name"])) {
-            $file_extension = strtolower($info['extension']);
-            if ($file_extension == "png" || $file_extension == "jpg" || $file_extension == "jpeg" || $file_extension == "gif" || $file_extension == "bmp") { 
-                if ($_FILES["prodImage"]["error"] > 0) {
-                    $error.=$_FILES["prodImage"]["error"] . "<br />";
-                } else {
-                    $cat_filename = $CategoryIconName . "." . strtolower($info['extension']);
-                    $fileOriginal = $_FILES['prodImage']['tmp_name'];
-                    $crop = '5';
-                    $size = 'iphone4_cat';
-                    $path = UPLOAD_DIR . "category/";
-
-                    // If doesn't exist directory, create one
-                    if( !file_exists($path) )
-                    {
-                        mkdir($path, 0755, true);
-                    }
-                    
-                    $fileThumbnail = $path . $cat_filename;
-                    $resizer = new Resizer();
-
-                    // move_uploaded_file($fileOriginal,$fileThumbnail);
-
-                    try{
-                        $resizer->createFileThumbnail($fileOriginal, $fileThumbnail, $size, $frontUpload = 0, $crop, $errorMsg);
-            		} catch (\Exception $ex) {
-                        echo $ex->getMessage();
-                        // die();
-                    }
-
-                    $small_image = $cat_filename;
-                }
-            }
-        }
-
+        // 
         $product = new Product();
         $product->product_id = $product_id;        
         $product->u_id = Auth::user()->u_id;
         $product->product_name = $request->prodName;
 
-        if($small_image != null){
-            /////////////////////////// upload smallimages into server///////////////////
-            $file1 = _UPLOAD_IMAGE_ . 'category/' . $small_image;
-            $dir1 = "category";
-            $command = IMAGE_DIR_PATH . $file1 . " " . $dir1;
+        if (!empty($_FILES["prodImage"]["name"]))
+        {
+            // 
+            $basePath = app_path();
+            define('UPLOAD_DIR', public_path() . '/upload/images/');
+            define('IMAGE_AMAZON_PATH', 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/');
+            define('IMAGE_DIR_PATH', $basePath . '/lib/bin/cumbari_s3.sh ');
 
-            $isCLI = exec($command);
-                                             // dd($isCLI);
+            // 
+            $info = pathinfo($_FILES["prodImage"]["name"]);
+            $file_extension = strtolower($info['extension']);
 
-            /////////////////////////// upload largeimages into server///////////////////
-            $file2 = _UPLOAD_IMAGE_ . 'coupon/' . $small_image;
-            $dir2 = "coupon";
-            $command2 = IMAGE_DIR_PATH . $file2 . " " . $dir2;
-            system($command2);
-               
-            $catImg = IMAGE_AMAZON_PATH . 'category/' . $small_image;
-            $copImg = IMAGE_AMAZON_PATH . 'coupon/' . $small_image;
+            if ($file_extension == "png" || $file_extension == "jpg" || $file_extension == "jpeg" || $file_extension == "gif" || $file_extension == "bmp")
+            {
+                if ($_FILES["prodImage"]["error"] > 0)
+                {
+                    $error.=$_FILES["prodImage"]["error"] . "<br />";
+                }
+                else
+                {
+                    try{
+                        $helper = new Helper();
 
-            $product->small_image = $catImg;
-            $product->large_image = $catImg;
+                        $fileOriginal = $_FILES['prodImage']['tmp_name'];
+                        $path = UPLOAD_DIR . "category/";
+
+                        // Resize image (small and large)
+                        $fileName = 'dish-thumbnail-'.time().'.jpg';
+                        $smallImg = $helper->gumletImageResize($fileOriginal, $fileName, $path, 100);
+
+                        $fileName = 'dish-medium-'.time().'.jpg';
+                        $largeImg = $helper->gumletImageResize($fileOriginal, $fileName, $path, 400);
+
+                        // Upload image to AWS
+                        $file1 = UPLOAD_DIR . 'category/' . $smallImg;
+                        $dir1 = "category";
+                        $command = IMAGE_DIR_PATH . $file1 . " " . $dir1;
+                        system($command);
+
+                        $file2 = UPLOAD_DIR . 'coupon/' . $largeImg;
+                        $dir2 = "coupon";
+                        $command2 = IMAGE_DIR_PATH . $file2 . " " . $dir2;
+                        system($command2);
+
+                        // 
+                        $product->small_image = IMAGE_AMAZON_PATH . 'category/' . $smallImg;
+                        $product->large_image = IMAGE_AMAZON_PATH . 'category/' . $largeImg;
+                    } catch (\Exception $ex) {
+                        echo $ex->getMessage();
+                        die();
+                    }
+                }
+            }
         }
         else
         {
-            $product->small_image = 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/category/cat_icon_b738a523d72867d1fc84e1f9d3c18b29.png';
+            $product->small_image = $product->large_image = 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/category/cat_icon_b738a523d72867d1fc84e1f9d3c18b29.png';
         }
-
-        // dd($product->small_image);
 
         $minutes = $request->prepTime;
         $hours = intdiv($minutes, 60).':'. ($minutes % 60).':00';
@@ -1267,84 +1244,67 @@ class AdminController extends Controller
         $employer = new Employer();
         $company_id = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
 
-        $basePath = app_path();
-        define('FUNCTION_DIR', 'function/');
-        //define('TIME_ZONE','Asia/Calcutta');
-        define('UPLOAD_DIR', public_path() . '/upload/images/');
+        // 
+        $product = Product::where(['product_id' => $product_id])->first();
+        $product->product_name = $request->prodName;
 
-        /////////// upload image dirctory/////////
-        define('_UPLOAD_IMAGE_', public_path() . '/upload/images/');
-        define('IMAGE_AMAZON_PATH', 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/');
-        define('IMAGE_DIR_PATH', $basePath . '/lib/bin/cumbari_s3.sh ');
-        define('IMAGE_DIR_PATH_DELETE', $basePath . '/lib/bin/cumbari_s3del.sh ');  
-        
-        $CategoryIconName = "cat_icon_" . md5(time());
-        $info = pathinfo($_FILES["prodImage"]["name"]);
-        $small_image = null;                        
-        $error = "";
+        if (!empty($_FILES["prodImage"]["name"]))
+        {
+            // 
+            $basePath = app_path();
+            define('UPLOAD_DIR', public_path() . '/upload/images/');
+            define('IMAGE_AMAZON_PATH', 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/');
+            define('IMAGE_DIR_PATH', $basePath . '/lib/bin/cumbari_s3.sh ');
 
-        // Opload images related to
-        if (!empty($_FILES["prodImage"]["name"])) {
+            // 
+            $info = pathinfo($_FILES["prodImage"]["name"]);
             $file_extension = strtolower($info['extension']);
-            if ($file_extension == "png" || $file_extension == "jpg" || $file_extension == "jpeg" || $file_extension == "gif" || $file_extension == "bmp") { 
-                if ($_FILES["prodImage"]["error"] > 0) {
+
+            if ($file_extension == "png" || $file_extension == "jpg" || $file_extension == "jpeg" || $file_extension == "gif" || $file_extension == "bmp")
+            {
+                if ($_FILES["prodImage"]["error"] > 0)
+                {
                     $error.=$_FILES["prodImage"]["error"] . "<br />";
-                } else {
-                    $cat_filename = $CategoryIconName . "." . strtolower($info['extension']);
-                    $fileOriginal = $_FILES['prodImage']['tmp_name'];
-                    $crop = '5';
-                    $size = 'iphone4_cat';
-                    $path = UPLOAD_DIR . "category/";
-
-                    // If doesn't exist directory, create one
-                    if( !file_exists($path) )
-                    {
-                        mkdir($path, 0755, true);
-                    }
-
-                    $fileThumbnail = $path . $cat_filename;
-                    $resizer = new Resizer();
-
-                   // move_uploaded_file($fileOriginal,$fileThumbnail);
-
+                }
+                else
+                {
                     try{
-                        $resizer->createFileThumbnail($fileOriginal, $fileThumbnail, $size, 
-                            $frontUpload = 0, $crop, $errorMsg);
+                        $helper = new Helper();
+
+                        $fileOriginal = $_FILES['prodImage']['tmp_name'];
+                        $path = UPLOAD_DIR . "category/";
+
+                        // Resize image (small and large)
+                        $fileName = 'dish-thumbnail-'.time().'.jpg';
+                        $smallImg = $helper->gumletImageResize($fileOriginal, $fileName, $path, 100);
+
+                        $fileName = 'dish-medium-'.time().'.jpg';
+                        $largeImg = $helper->gumletImageResize($fileOriginal, $fileName, $path, 400);
+
+                        // Upload image to AWS
+                        $file1 = UPLOAD_DIR . 'category/' . $smallImg;
+                        $dir1 = "category";
+                        $command = IMAGE_DIR_PATH . $file1 . " " . $dir1;
+                        system($command);
+
+                        $file2 = UPLOAD_DIR . 'coupon/' . $largeImg;
+                        $dir2 = "coupon";
+                        $command2 = IMAGE_DIR_PATH . $file2 . " " . $dir2;
+                        system($command2);
+
+                        // 
+                        $product->small_image = IMAGE_AMAZON_PATH . 'category/' . $smallImg;
+                        $product->large_image = IMAGE_AMAZON_PATH . 'category/' . $largeImg;
                     } catch (\Exception $ex) {
                         echo $ex->getMessage();
                         die();
                     }
-
-                    $small_image = $cat_filename;
                 }
             }
         }
-
-        $product = Product::where(['product_id' => $product_id])->first();
-        $product->product_name = $request->prodName;
-
-        if($small_image != null){
-            /////////////////////////// upload smallimages into server///////////////////
-            $file1 = _UPLOAD_IMAGE_ . 'category/' . $small_image;
-            $dir1 = "category";
-            $command = IMAGE_DIR_PATH . $file1 . " " . $dir1;
-            $isCLI = system($command);
-        
-            /////////////////////////// upload largeimages into server///////////////////
-            $file2 = _UPLOAD_IMAGE_ . 'coupon/' . $small_image;
-            $dir2 = "coupon";
-            $command2 = IMAGE_DIR_PATH . $file2 . " " . $dir2;
-            system($command2);
-               
-            $catImg = IMAGE_AMAZON_PATH . 'category/' . $small_image;
-            $copImg = IMAGE_AMAZON_PATH . 'coupon/' . $small_image;
-
-            $product->small_image = $catImg;
-            $product->large_image = $copImg;
-        }
         elseif(!isset($request->smallImage))
         {
-            $product->small_image = 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/category/cat_icon_b738a523d72867d1fc84e1f9d3c18b29.png';
+            $product->small_image = $product->large_image = 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/category/cat_icon_b738a523d72867d1fc84e1f9d3c18b29.png';
         }
 
         $minutes = $request->prepTime;
