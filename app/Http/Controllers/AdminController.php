@@ -1094,19 +1094,19 @@ class AdminController extends Controller
                         $largeImg = $helper->gumletImageResize($fileOriginal, $fileName, $path, 400);
 
                         // Upload image to AWS
-                        $file1 = UPLOAD_DIR . 'category/' . $smallImg;
+                        $file1 = $path.$smallImg;
                         $dir1 = "category";
                         $command = IMAGE_DIR_PATH . $file1 . " " . $dir1;
                         system($command);
 
-                        $file2 = UPLOAD_DIR . 'coupon/' . $largeImg;
+                        $file2 = $path.$largeImg;
                         $dir2 = "coupon";
                         $command2 = IMAGE_DIR_PATH . $file2 . " " . $dir2;
                         system($command2);
 
                         // 
                         $product->small_image = IMAGE_AMAZON_PATH . 'category/' . $smallImg;
-                        $product->large_image = IMAGE_AMAZON_PATH . 'category/' . $largeImg;
+                        $product->large_image = IMAGE_AMAZON_PATH . 'coupon/' . $largeImg;
                     } catch (\Exception $ex) {
                         echo $ex->getMessage();
                         die();
@@ -1282,19 +1282,19 @@ class AdminController extends Controller
                         $largeImg = $helper->gumletImageResize($fileOriginal, $fileName, $path, 400);
 
                         // Upload image to AWS
-                        $file1 = UPLOAD_DIR . 'category/' . $smallImg;
+                        $file1 = $path.$smallImg;
                         $dir1 = "category";
                         $command = IMAGE_DIR_PATH . $file1 . " " . $dir1;
                         system($command);
 
-                        $file2 = UPLOAD_DIR . 'coupon/' . $largeImg;
+                        $file2 = $path.$largeImg;
                         $dir2 = "coupon";
                         $command2 = IMAGE_DIR_PATH . $file2 . " " . $dir2;
                         system($command2);
 
                         // 
                         $product->small_image = IMAGE_AMAZON_PATH . 'category/' . $smallImg;
-                        $product->large_image = IMAGE_AMAZON_PATH . 'category/' . $largeImg;
+                        $product->large_image = IMAGE_AMAZON_PATH . 'coupon/' . $largeImg;
                     } catch (\Exception $ex) {
                         echo $ex->getMessage();
                         die();
