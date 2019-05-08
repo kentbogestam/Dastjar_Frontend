@@ -518,7 +518,7 @@ class HomeController extends Controller
             }
 
             if(isset($companyId)){
-                $menuTypes = DishType::where('company_id' , $companyId)->whereIn('dish_id', array_unique($dish_typeId))->where('dish_activate','1')->get();
+                $menuTypes = DishType::where('company_id' , $companyId)->whereIn('dish_id', array_unique($dish_typeId))->where('dish_activate','1')->orderBy('rank')->get();
                 
                 $dish_typeId = null;
                 $companydetails = Company::where('company_id' , $companyId)->first();
