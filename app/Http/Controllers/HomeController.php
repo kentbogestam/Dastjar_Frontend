@@ -501,6 +501,7 @@ class HomeController extends Controller
         $menuDetails = ProductPriceList::where('store_id',$storeId)->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->with('menuPrice')->with('storeProduct')
             ->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')
            ->orderBy('product.product_rank', 'ASC')
+           ->orderBy('product.product_id')
             ->get();
 
         // dd($menuDetails->toArray());
@@ -518,7 +519,7 @@ class HomeController extends Controller
             }
 
             if(isset($companyId)){
-                $menuTypes = DishType::where('company_id' , $companyId)->whereIn('dish_id', array_unique($dish_typeId))->where('dish_activate','1')->orderBy('rank')->get();
+                $menuTypes = DishType::where('company_id' , $companyId)->whereIn('dish_id', array_unique($dish_typeId))->where('dish_activate','1')->orderBy('rank')->orderBy('dish_id')->get();
                 
                 $dish_typeId = null;
                 $companydetails = Company::where('company_id' , $companyId)->first();
