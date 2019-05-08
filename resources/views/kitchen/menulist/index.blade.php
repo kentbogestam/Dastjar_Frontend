@@ -585,27 +585,33 @@
 			}
 		 });
 
-		 //
-		 if( $('.menu-sortable').length )
-		 {
-		 	$(".menu-sortable").sortable({
-			 	stop: function(event, ui) {
-			 		index =  ui.item.index();
-			 		dish_type_id = ui.item.attr("id");
-			 		//console.log(index, dish_type_id);
-			 		
-			 		$.post("{{ url('api/v1/kitchen/update-menu-rank') }}", 
+		//
+		if( $('.menu-sortable').length )
+		{
+			/*$('.menu-sortable').sortable({
+				axis: 'y',
+				update: function(event, ui) {
+					var data = $(this).sortable('toArray');
+					console.log(data);
+				}
+			});*/
+
+			$(".menu-sortable").sortable({
+				axis: 'y',
+				update: function(event, ui) {
+					items = JSON.stringify($(this).sortable('toArray'));
+
+					$.post("{{ url('api/v1/kitchen/update-menu-rank') }}", 
 						{
 							u_id: "<?php echo Auth::user()->u_id; ?>",
-							dish_id: dish_type_id,
-							index  : index+1
+							items: items
 						}, function(data, status){
-			        		console.log("Data: " + data['data'] + "\nStatus: " + status);
-				    	}
-				    );
-			 	}
-			 });
-		 }
+							// console.log("Data: " + data + "\nStatus: " + status);
+						}
+					);
+				}
+			});
+		}
 	});
 	</script>
 

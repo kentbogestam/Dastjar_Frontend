@@ -129,12 +129,28 @@ class KitchenController extends Controller
      */
     public function updateMenuRank(Request $request)
     {
-        $dishType = new DishType();
+        $status = 0;
 
-        $dishType->where('u_id', $request->u_id)->where('rank', $request->index)->update(['rank' => ($request->index+1)]);
-        $dishType->where('dish_id', $request->dish_id)->update(['rank' => $request->index]);
+        if($request->has('items'))
+        {
+            $items = json_decode($request->items);
 
-        return response()->json(['status' => 'success', 'response' => true,'data' => "Rank Updated"]);
+            // Update all menu rank belongs to same restaurant
+            if( !empty($items) && is_array($items) )
+            {
+                $status = 1;
+                $i = 1;
+                $dishType = new DishType();
+
+                foreach($items as $id)
+                {
+                    $dishType->where(['dish_id' => $id, 'u_id' => $request->u_id])->update(['rank' => $i]);
+                    $i++;
+                }
+            }
+        }
+
+        return response()->json(['status' => $status]);
     }
 
 }
