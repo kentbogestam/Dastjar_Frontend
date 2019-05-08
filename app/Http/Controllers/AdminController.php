@@ -958,9 +958,13 @@ class AdminController extends Controller
             {
                 $data[$key] = $value;
 
-                if( strpos($value->small_image, '.png') == false )
+                if( strpos($value->small_image, '.png') == false && strpos($value->small_image, '.jpg') == false )
                 {
                     $data[$key]['small_image'] = asset('images/placeholder-image.png');
+                }
+                else
+                {
+                    $data[$key]['small_image'] = $value->small_image;
                 }
 
                 // Get current product price detail
