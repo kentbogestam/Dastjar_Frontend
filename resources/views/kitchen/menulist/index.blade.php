@@ -340,7 +340,7 @@
 						'publishing_end_date': $("#date-end-utc").val()
 					}, 
 					function(data) {
-						console.log(data);
+						// console.log(data);
 
 						if(!data.status)
 						{
@@ -393,7 +393,7 @@
 					data: {"_token": "{{ csrf_token() }}", "dish_id": id},
 					//dataType: 'json',
 					success: function(returnedData) {
-						console.log(returnedData);
+						// console.log(returnedData);
 						var html = '';
 
 				        $.each(returnedData.products, function(i, item) {
@@ -474,7 +474,7 @@
     	
     	//if in future this page will get it, then add this condition in and in below if activePage[0].id == "home" 
     	if (scrolled >= scrollEnd) {
-		        console.log(list);
+		        // console.log(list);
 		        $.mobile.loading("show", {
 		        text: "loading more..",
 		        textVisible: true,
@@ -524,8 +524,8 @@
 			$.post("{{url('kitchen/ajax-get-future-price-by-product')}}",
 				{"_token": "{{ csrf_token() }}", "product_id": product_id},
 				function(returnedData){
-					console.log(returnedData);
-					console.log(returnedData.futureProductPrices.length);
+					// console.log(returnedData);
+					// console.log(returnedData.futureProductPrices.length);
 					var futurePricesHtml = '';
 
 					if(returnedData.futureProductPrices != null && returnedData.futureProductPrices.length)
@@ -568,34 +568,34 @@
 	var lastDishId;
 
 	$(document).ready(function(){
-	
-		 $(".sortable").sortable({
-			stop: function(event, ui) {
-				index =  ui.item.index();
-				product_id = ui.item.attr("data-id");
-				dish_type = event.target.id.replace("demo_","");				
+		$(".sortable").sortable({
+			update: function(event, ui) {
+				dish_type = event.target.id.replace("demo_","");
 
+				// Get products updated order
+				products = [];
+
+				$(this).find('.card').each(function() {
+					products.push($(this).data('id'));
+				});
+
+				products = JSON.stringify(products);
+
+				// Update products order
 				$.post("{{ url('api/v1/kitchen/update-product-rank') }}", 
-					{dish_type: dish_type,
-					product_id: product_id,
-					index: index+1},
-					function(data, status){
-		        	console.log("Data: " + data['data'] + "\nStatus: " + status);
-			    });
+				{
+					dish_type: dish_type,
+					products: products
+				},
+				function(data, status){
+					// console.log("Data: " + data + "\nStatus: " + status);
+				});
 			}
-		 });
+		});
 
 		//
 		if( $('.menu-sortable').length )
 		{
-			/*$('.menu-sortable').sortable({
-				axis: 'y',
-				update: function(event, ui) {
-					var data = $(this).sortable('toArray');
-					console.log(data);
-				}
-			});*/
-
 			$(".menu-sortable").sortable({
 				axis: 'y',
 				update: function(event, ui) {

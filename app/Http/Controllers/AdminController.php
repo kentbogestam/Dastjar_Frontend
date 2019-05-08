@@ -948,6 +948,7 @@ class AdminController extends Controller
             ->where('dish_type.dish_activate',1)
             ->groupBy('product.product_id')
             ->orderBy('product_rank', 'ASC')
+            ->orderBy('product_id')
             ->get();
 
         $data = array();
