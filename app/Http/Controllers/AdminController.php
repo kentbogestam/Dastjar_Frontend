@@ -461,11 +461,11 @@ class AdminController extends Controller
                         foreach ($menuDetail->storeProduct as $storeProduct) {
                             $companyId = $storeProduct->company_id;
                             $dish_typeId[] = $storeProduct->dish_type;
-                            try{
+                            /*try{
                                 getimagesize($storeProduct->small_image);
                             } catch (\Exception $ex) {
                                 $storeProduct->small_image = asset('images/placeholder-image.png');
-                            }
+                            }*/
                         }
                 }
 
@@ -495,7 +495,7 @@ class AdminController extends Controller
     public function kitchenOrders(){
         $reCompanyId = Session::get('storeId');
 
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
 
         $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;
 
@@ -506,7 +506,7 @@ class AdminController extends Controller
     public function kitchenOrdersNew($id){
         $reCompanyId = Session::get('storeId');
 
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->where('order_details.id', '>', $id)->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->where('order_details.id', '>', $id)->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
 
         $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;
         
@@ -578,6 +578,11 @@ class AdminController extends Controller
                         $order->deliver_date = $orderDate;
                         $order->deliver_time = $orderTime;
                         $order->check_deliveryDate = $checkOrderDate;
+
+                        if( isset($data['delivery_type']) && is_numeric($data['delivery_type']) )
+                        {
+                            $order->delivery_type = $data['delivery_type'];
+                        }
 
                         if($storeDetail->order_response == 0 && $orderType == 'eat_now')
                         {

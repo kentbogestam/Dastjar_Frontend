@@ -140,3 +140,15 @@
 		</div>
 
 @endif
+
+@if( (Request::is('restro-menu-list/*') || Request::is('view-cart/*') || Request::is('cart')) && (isset($storedetails) && $storedetails->delivery_type != 0) )
+	<div class="ui-grid-solo row-store-delivery-type">
+		<div class="ui-block-a">
+			@if($storedetails->delivery_type == 1)
+				{{ __('messages.storeDeliveryTypeDineIn') }}
+			@elseif($storedetails->delivery_type == 2)
+				{{ __('messages.storeDeliveryTypeTakeAway') }}
+			@endif
+		</div>
+	</div>
+@endif

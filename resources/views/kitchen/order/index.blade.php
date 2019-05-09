@@ -33,6 +33,7 @@
 			    	<th data-priority="5">{{ __('messages.Delivered') }}</th>
 			    	<th data-priority="3" width="15%">{{ __('messages.Paid') }}</th>
 			     	<th data-priority="1">{{ __('messages.Pick up Time') }}</th>
+			     	<th data-priority="1">{{ __('messages.deliveryType') }}</th>
 			    </tr>
 			</thead>
 		    <tbody id="orderDetailContianer"></tbody>
@@ -207,6 +208,19 @@
 	          		}
 
 	          		liItem += "<td>"+time+"</td>";
+
+	          		var deliveryType = '';
+	          		if( temp[i]['delivery_type'] == 1 )
+	          		{
+	          			deliveryType = '{{ __('messages.deliveryOptionDineIn') }}';
+	          		}
+	          		else if( temp[i]['delivery_type'] == 2 )
+	          		{
+	          			deliveryType = '{{ __('messages.deliveryOptionTakeAway') }}';
+	          		}
+
+	          		liItem += "<td>"+deliveryType+"</td>";
+
 	          		liItem += "</tr>";
 	          	}
 
@@ -436,6 +450,19 @@
 	          		}
 
 	          		liItem += "<td>"+time+"</td>";
+
+	          		var deliveryType = '';
+	          		if( temp[i]['delivery_type'] == 1 )
+	          		{
+	          			deliveryType = '{{ __('messages.deliveryOptionDineIn') }}';
+	          		}
+	          		else if( temp[i]['delivery_type'] == 2 )
+	          		{
+	          			deliveryType = '{{ __('messages.deliveryOptionTakeAway') }}';
+	          		}
+
+	          		liItem += "<td>"+deliveryType+"</td>";
+
 	          		liItem += "</tr>";
 	          	}
 
@@ -662,6 +689,19 @@
   		}
 
   		liItem += "<td>"+time+"</td>";
+
+  		var deliveryType = '';
+  		if( temp[i]['delivery_type'] == 1 )
+  		{
+  			deliveryType = '{{ __('messages.deliveryOptionDineIn') }}';
+  		}
+  		else if( temp[i]['delivery_type'] == 2 )
+  		{
+  			deliveryType = '{{ __('messages.deliveryOptionTakeAway') }}';
+  		}
+
+  		liItem += "<td>"+deliveryType+"</td>";
+  		
   		liItem += "</tr>";
       	countCheck++;
       }

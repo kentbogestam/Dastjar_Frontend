@@ -23,6 +23,7 @@ return [
     'Edit Comments'   => 'Edit Comments',
     'Cancel'   => 'Cancel',
     'Submit'   => 'Submit',
+    'Delete' => 'Delete',
     'Items are not available in your selected Restaurant.'   => 'Items are not available',
     'Thanks for your order'   => 'Thanks for your order',
     'Order Number'   => 'Order Number',
@@ -162,6 +163,13 @@ return [
     'quantityToBuyPlaceholder' => 'Enter quantity to buy',
     'quantityGetPlaceholder' => 'Enter quantity to get',
     'quantityGetLessThan' => 'Must be less than to buy quantity',
+
+    // Store Delivery Type
+    'deliveryOptionDineIn' => 'Dine-in',
+    'deliveryOptionTakeAway' => 'Take Away',
+    'storeDeliveryTypeDineIn' => 'A dine-in restaurant',
+    'storeDeliveryTypeTakeAway' => 'A take away restaurant',
+    'deliveryType' => 'Delivery Type',
 
     // Validation
     'fieldRequired' => 'This field is required.',

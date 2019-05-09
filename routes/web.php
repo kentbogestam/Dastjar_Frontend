@@ -113,6 +113,7 @@
 		Route::get('cart', 'OrderController@cart');
 		// Route::get('cart', 'OrderController@cartWithOutLogin')->name('cartWithOutLogin');
 		Route::get('view-cart/{orderId}', 'OrderController@viewCart');
+		Route::post('order-update-delivery-type', 'OrderController@orderUpdateDeliveryType');
 		// Route::post('apply-promocode', 'OrderController@ajaxApplyPromocode');
 	});
 
