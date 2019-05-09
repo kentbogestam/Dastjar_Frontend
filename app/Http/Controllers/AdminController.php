@@ -1065,6 +1065,7 @@ class AdminController extends Controller
         $product->u_id = Auth::user()->u_id;
         $product->product_name = $request->prodName;
 
+        // Product image
         if (!empty($_FILES["prodImage"]["name"]))
         {
             // 
@@ -1122,6 +1123,18 @@ class AdminController extends Controller
         else
         {
             $product->small_image = $product->large_image = 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/category/cat_icon_b738a523d72867d1fc84e1f9d3c18b29.png';
+        }
+
+        // Set rank
+        $rank = Product::orderBy('product_rank', 'DESC')->where(['dish_type' => $request->dishType, 'u_id' => Auth::user()->u_id, 'company_id' => $company_id, 's_activ' => 0])->first()->product_rank;
+        
+        if($rank)
+        {
+            $product->product_rank = ($rank + 1);
+        }
+        else
+        {
+            $product->product_rank = 1;
         }
 
         $minutes = $request->prepTime;
