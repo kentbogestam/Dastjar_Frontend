@@ -71,6 +71,20 @@ class DishTypeController extends Controller
         // 
         $data['u_id'] = Auth::user()->u_id;
         $data['company_id'] = Company::where('u_id', Auth::user()->u_id)->first()->company_id;
+        
+        // Set rank
+        $rank = DishType::orderBy('rank', 'DESC')->where(['u_id' => Auth::user()->u_id, 'company_id' => $data['company_id'], 'dish_activate' => 1])->first()->rank;
+        
+        if($rank)
+        {
+            $data['rank'] = ($rank + 1);
+        }
+        else
+        {
+            $data['rank'] = 1;
+        }
+
+        // Create DishType
         DishType::create($data);
 
         return redirect('kitchen/dishtype/list')->with('success', __('messages.dishTypeCreated'));
