@@ -42,7 +42,7 @@
                 @csrf
                 @include('kitchen.loyalty.fields')
                 <input type="hidden" name="loyalty_id" id="loyalty_id" value="" data-rule-required="true">
-                <input type="hidden" name="store_id" value="" data-rule-required="true">
+                <input type="hidden" name="e_store_id" id="e_store_id" value="" data-rule-required="true">
                 <button type="submit" class="btn btn-success">{{ __('messages.update') }}</button>
             </form>
         </div>
@@ -118,7 +118,7 @@
 
                     // 
                     $('#loyalty_id').val(response.loyalty.id);
-                    $('#store_id, input[name="store_id"]').val(response.loyalty.store_id);
+                    $('#store_id, #e_store_id').val(response.loyalty.store_id);
                     $('#dish_type_id').val(response.loyalty.dish_type_ids);
                     $('#quantity_to_buy').val(response.loyalty.quantity_to_buy);
                     $('#quantity_get').val(response.loyalty.quantity_get);

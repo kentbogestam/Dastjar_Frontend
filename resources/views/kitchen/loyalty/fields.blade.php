@@ -1,6 +1,6 @@
 <div class="form-group">
     <label for="store_id">{{ __('messages.selectStore') }} <span class='mandatory'>*</span>:</label>
-    <select class="form-control" id="store_id" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
+    <select class="form-control" name="store_id" id="store_id" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
         <option value="">{{ __('messages.select') }}</option>
         @if($store)
             @foreach($store as $row)

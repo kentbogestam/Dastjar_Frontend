@@ -378,9 +378,9 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 				// Get image size
                 img = new Image();
                 img.onload = function () {
-                    if(this.width < 400)
+                    if(this.width < 1024)
                     {
-                        $('#warning-image-upload').html('Image width should be 400px');
+                        $('#warning-image-upload').html('Image width should be 1024px');
                     }
                 };
                 img.src = _URL.createObjectURL(file);

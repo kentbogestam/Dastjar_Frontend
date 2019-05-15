@@ -174,9 +174,10 @@ class LoyaltyController extends Controller
 
         $start_date = \DateTime::createFromFormat('Y/m/d H:i', $request->start_date_utc);
         $end_date = \DateTime::createFromFormat('Y/m/d H:i', $request->end_date_utc);
+        $store_id = $request->e_store_id;
 
         // Check if loyalty already exist
-        if(PromotionLoyalty::where(['store_id' => $request->store_id, 'status' => '1'])->where('start_date','<=',$start_date)->where('end_date','>=',$start_date)->where('id', '!=', $request->loyalty_id)->exists() || PromotionLoyalty::where(['store_id' => $request->store_id, 'status' => '1'])->where('start_date','<=',$end_date)->where('end_date','>=',$end_date)->where('id', '!=', $request->loyalty_id)->exists() || PromotionLoyalty::where(['store_id' => $request->store_id, 'status' => '1'])->where('start_date','>=',$start_date)->where('end_date','<=',$end_date)->where('id', '!=', $request->loyalty_id)->exists())
+        if(PromotionLoyalty::where(['store_id' => $store_id, 'status' => '1'])->where('start_date','<=',$start_date)->where('end_date','>=',$start_date)->where('id', '!=', $request->loyalty_id)->exists() || PromotionLoyalty::where(['store_id' => $store_id, 'status' => '1'])->where('start_date','<=',$end_date)->where('end_date','>=',$end_date)->where('id', '!=', $request->loyalty_id)->exists() || PromotionLoyalty::where(['store_id' => $store_id, 'status' => '1'])->where('start_date','>=',$start_date)->where('end_date','<=',$end_date)->where('id', '!=', $request->loyalty_id)->exists())
         {
             return redirect('kitchen/loyalty/'.$request->loyalty_id.'/edit')->with('error', __('messages.loyaltyExistError'));
         }

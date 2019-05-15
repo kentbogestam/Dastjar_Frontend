@@ -1099,10 +1099,10 @@ class AdminController extends Controller
 
                         // Resize image (small and large)
                         $fileName = 'dish-thumbnail-'.time().'.jpg';
-                        $smallImg = $helper->gumletImageResize($fileOriginal, $fileName, $path, 100);
+                        $smallImg = $helper->gumletImageResize($fileOriginal, $fileName, $path, 256);
 
-                        $fileName = 'dish-medium-'.time().'.jpg';
-                        $largeImg = $helper->gumletImageResize($fileOriginal, $fileName, $path, 400);
+                        $fileName = 'dish-large-'.time().'.jpg';
+                        $largeImg = $helper->gumletImageResize($fileOriginal, $fileName, $path, 1024);
 
                         // Upload image to AWS
                         $file1 = $path.$smallImg;
@@ -1299,10 +1299,10 @@ class AdminController extends Controller
 
                         // Resize image (small and large)
                         $fileName = 'dish-thumbnail-'.time().'.jpg';
-                        $smallImg = $helper->gumletImageResize($fileOriginal, $fileName, $path, 100);
+                        $smallImg = $helper->gumletImageResize($fileOriginal, $fileName, $path, 256);
 
-                        $fileName = 'dish-medium-'.time().'.jpg';
-                        $largeImg = $helper->gumletImageResize($fileOriginal, $fileName, $path, 400);
+                        $fileName = 'dish-large-'.time().'.jpg';
+                        $largeImg = $helper->gumletImageResize($fileOriginal, $fileName, $path, 1024);
 
                         // Upload image to AWS
                         $file1 = $path.$smallImg;
