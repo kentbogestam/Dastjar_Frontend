@@ -234,6 +234,10 @@
 			Route::group(['prefix' => 'loyalty', 'middleware' => 'isModuleSubscribed:loyalty'], function() {
 				Route::get('list', 'LoyaltyController@index');
 				Route::post('store', 'LoyaltyController@store');
+				Route::get('{id}/edit', 'LoyaltyController@edit');
+				Route::get('{id}/delete', 'LoyaltyController@destroy');
+				Route::get('get-loyalty-by-id/{id}', 'LoyaltyController@ajaxGetLoyaltyById');
+				Route::post('update', 'LoyaltyController@update');
 			});
 
 			// Dish Type

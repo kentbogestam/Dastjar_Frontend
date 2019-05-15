@@ -29,11 +29,6 @@
 
 @section('content-bootstrap')
 <div class="container" style="margin-top: 80px;">
-    <!-- <div class="row">
-        <div class="col-md-12">
-            <h1>{{ __('messages.listLoyalty') }}</h1>
-        </div>
-    </div> -->
     <div class="row">
         <div class="col-md-12">
             <hr>
@@ -42,9 +37,6 @@
         </div>
     </div>
     <div class="row" style="margin-bottom: 10px;">
-        <!-- <div class="col-md-6 text-left">
-            <a href="{{ url('kitchen/kitchen-setting') }}" class="btn btn-link" data-ajax="false">{{ __('messages.back') }}</a>
-        </div> -->
         <div class="col-md-12 text-right">
             <button class="btn btn-info" data-toggle="modal" data-target="#add-form-model">{{ __('messages.addNew') }}</button>
         </div>
@@ -60,6 +52,7 @@
                     <th>{{ __('messages.quantityGet') }}</th>
                     <th>{{ __('messages.startDate') }}</th>
                     <th>{{ __('messages.endDate') }}</th>
+                    <th>{{ __('messages.action') }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -76,6 +69,17 @@
                             <td>
                                 {!! "<script type='text/javascript'>document.write(moment.utc('{$row->end_date}').local().format('YYYY/MM/DD HH:mm'))</script>" !!}
                             </td>
+                            <td>
+                                <!-- <snap class="btn-link" onclick="getLoyaltyById({{ $row->id }})"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></snap> -->
+                                <a href="{{ url('kitchen/loyalty/'.$row->id.'/edit') }}" data-ajax="false">
+                                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                </a>
+                                @if(!$row->isLoyaltyUsed)
+                                    <a href="{{ url('kitchen/loyalty/'.$row->id.'/delete') }}" onclick="return confirmDelete()" data-ajax="false">
+                                        <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                    </a>
+                                @endif
+                            </td>
                         </tr>
                     @endforeach
                 @else
@@ -87,66 +91,15 @@
             </table>
         </div>
     </div>
-    <!-- Modal -->
+    
+    <!-- Modal Add -->
     <div class="modal fade" id="add-form-model" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body">
                     <form name="add-form" method="POST" action="{{ url('kitchen/loyalty/store') }}" id="add-form" data-ajax="false">
                         @csrf
-                        <div class="form-group">
-                            <label for="store_id">{{ __('messages.selectStore') }} <span class='mandatory'>*</span>:</label>
-                            <select name="store_id" class="form-control" id="store_id" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
-                                <option value="">{{ __('messages.select') }}</option>
-                                @if($store)
-                                    @foreach($store as $row)
-                                        <option value='{{ $row->store_id }}'>{{ $row->store_name }}</option>
-                                    @endforeach
-                                @endif
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="dish_type_id">{{ __('messages.dishType') }} <span class='mandatory'>*</span>:</label>
-                            <select multiple name="dish_type_id[]" class="form-control" id="dish_type_id" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
-                                <option value="">{{ __('messages.select') }}</option>
-                                @if($dishType)
-                                    @foreach($dishType as $row)
-                                        <option value='{{ $row->dish_id }}'>{{ $row->dish_name }}</option>
-                                    @endforeach
-                                @endif
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="quantity_to_buy">{{ __('messages.quantityToBuy') }} <span class='mandatory'>*</span>:</label>
-                            <input type="number" name="quantity_to_buy" placeholder="{{ __('messages.quantityToBuyPlaceholder') }}" class="form-control" id="quantity_to_buy" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
-                        </div>
-                        <div class="form-group">
-                            <label for="quantity_get">{{ __('messages.quantityGet') }} <span class='mandatory'>*</span>:</label>
-                            <input type="number" name="quantity_get" placeholder="{{ __('messages.quantityGetPlaceholder') }}" class="form-control" id="quantity_get" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
-                        </div>
-                        <div class="form-group">
-                            <label for="validity">{{ __('messages.validity') }} <span class='mandatory'>*</span>:</label>
-                            <select name="validity" class="form-control" id="validity" data-rule-required="true">
-                                <option value="1">{{ __('messages.once') }}</option>
-                                <option value="0">{{ __('messages.repeatedly') }}</option>
-                            </select>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label for="start_date">{{ __('messages.startDate') }} <span class='mandatory'>*</span>:</label>
-                                    <input type="text" name="start_date" placeholder="{{ __('messages.discountStartDatePlaceholder') }}" class="form-control" id="start_date" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
-                                    <input type="hidden" name="start_date_utc" id="start_date_utc">
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label for="end_date">{{ __('messages.endDate') }} <span class='mandatory'>*</span>:</label>
-                                    <input type="text" name="end_date" placeholder="{{ __('messages.discountEndDatePlaceholder') }}" class="form-control" id="end_date" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
-                                    <input type="hidden" name="end_date_utc" id="end_date_utc">
-                                </div>
-                            </div>
-                        </div>
+                        @include('kitchen.loyalty.fields')
                         <button type="submit" class="btn btn-success">{{ __('messages.submit') }}</button>
                     </form>
                 </div>
