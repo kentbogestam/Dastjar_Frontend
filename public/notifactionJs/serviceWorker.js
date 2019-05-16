@@ -62,7 +62,7 @@ function registerSwjs(){
 
         console.log('Service Worker is supported');
  
-        navigator.serviceWorker.register('sw.js?displayMode='+displayMode).then(function() { 
+        navigator.serviceWorker.register(BASE_URL+'/sw.js?displayMode='+displayMode).then(function() { 
             return navigator.serviceWorker.ready;
         }).then(function(reg) {
             console.log('Service Worker is ready :^)', reg);

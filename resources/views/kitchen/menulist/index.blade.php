@@ -168,6 +168,18 @@
 		.ui-state-highlight { height: 1.5em; line-height: 1.2em; }
 
 		.future-prices { display: none; }
+
+		.circle-top {
+			height: 60px;
+		    width: 150px;
+		    border-radius: 90px 90px 0 0 !important;
+		    background: rgba(199,7,17,1) !important;
+		    color: #fff !important;
+		    font-weight: 400 !important;
+		}
+		.circle-top span {
+			line-height: 40px;
+		}
 	</style>
 @stop
 
@@ -212,7 +224,7 @@
 
 	<div id="accordion2" class="container">
 		<p class="menu_txt">
-			<a href="{{ url('kitchen/dishtype/list') }}" data-role="button" data-inline="true" data-ajax="false">Dish Type</a>
+			<a href="{{ url('kitchen/dishtype/list') }}" class="circle-top" data-role="button" data-inline="true" data-ajax="false"><span>Dish Type</span></a>
 		</p>
 		<a href="{{ url('kitchen/create-menu') }}" class="fa fa-plus-circle fa-4x add_menu_btn" data-ajax="false"></a>
 		<hr>
@@ -340,7 +352,7 @@
 						'publishing_end_date': $("#date-end-utc").val()
 					}, 
 					function(data) {
-						console.log(data);
+						// console.log(data);
 
 						if(!data.status)
 						{
@@ -393,7 +405,7 @@
 					data: {"_token": "{{ csrf_token() }}", "dish_id": id},
 					//dataType: 'json',
 					success: function(returnedData) {
-						console.log(returnedData);
+						// console.log(returnedData);
 						var html = '';
 
 				        $.each(returnedData.products, function(i, item) {
@@ -474,7 +486,7 @@
     	
     	//if in future this page will get it, then add this condition in and in below if activePage[0].id == "home" 
     	if (scrolled >= scrollEnd) {
-		        console.log(list);
+		        // console.log(list);
 		        $.mobile.loading("show", {
 		        text: "loading more..",
 		        textVisible: true,
@@ -524,8 +536,8 @@
 			$.post("{{url('kitchen/ajax-get-future-price-by-product')}}",
 				{"_token": "{{ csrf_token() }}", "product_id": product_id},
 				function(returnedData){
-					console.log(returnedData);
-					console.log(returnedData.futureProductPrices.length);
+					// console.log(returnedData);
+					// console.log(returnedData.futureProductPrices.length);
 					var futurePricesHtml = '';
 
 					if(returnedData.futureProductPrices != null && returnedData.futureProductPrices.length)
@@ -568,44 +580,50 @@
 	var lastDishId;
 
 	$(document).ready(function(){
-	
-		 $(".sortable").sortable({
-			stop: function(event, ui) {
-				index =  ui.item.index();
-				product_id = ui.item.attr("data-id");
-				dish_type = event.target.id.replace("demo_","");				
+		$(".sortable").sortable({
+			update: function(event, ui) {
+				dish_type = event.target.id.replace("demo_","");
 
+				// Get products updated order
+				products = [];
+
+				$(this).find('.card').each(function() {
+					products.push($(this).data('id'));
+				});
+
+				products = JSON.stringify(products);
+
+				// Update products order
 				$.post("{{ url('api/v1/kitchen/update-product-rank') }}", 
-					{dish_type: dish_type,
-					product_id: product_id,
-					index: index+1},
-					function(data, status){
-		        	console.log("Data: " + data['data'] + "\nStatus: " + status);
-			    });
+				{
+					dish_type: dish_type,
+					products: products
+				},
+				function(data, status){
+					// console.log("Data: " + data + "\nStatus: " + status);
+				});
 			}
-		 });
+		});
 
-		 //
-		 if( $('.menu-sortable').length )
-		 {
-		 	$(".menu-sortable").sortable({
-			 	stop: function(event, ui) {
-			 		index =  ui.item.index();
-			 		dish_type_id = ui.item.attr("id");
-			 		//console.log(index, dish_type_id);
-			 		
-			 		$.post("{{ url('api/v1/kitchen/update-menu-rank') }}", 
+		//
+		if( $('.menu-sortable').length )
+		{
+			$(".menu-sortable").sortable({
+				axis: 'y',
+				update: function(event, ui) {
+					items = JSON.stringify($(this).sortable('toArray'));
+
+					$.post("{{ url('api/v1/kitchen/update-menu-rank') }}", 
 						{
 							u_id: "<?php echo Auth::user()->u_id; ?>",
-							dish_id: dish_type_id,
-							index  : index+1
+							items: items
 						}, function(data, status){
-			        		console.log("Data: " + data['data'] + "\nStatus: " + status);
-				    	}
-				    );
-			 	}
-			 });
-		 }
+							// console.log("Data: " + data + "\nStatus: " + status);
+						}
+					);
+				}
+			});
+		}
 	});
 	</script>
 

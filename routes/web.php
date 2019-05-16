@@ -113,6 +113,7 @@
 		Route::get('cart', 'OrderController@cart');
 		// Route::get('cart', 'OrderController@cartWithOutLogin')->name('cartWithOutLogin');
 		Route::get('view-cart/{orderId}', 'OrderController@viewCart');
+		Route::post('order-update-delivery-type', 'OrderController@orderUpdateDeliveryType');
 		// Route::post('apply-promocode', 'OrderController@ajaxApplyPromocode');
 	});
 
@@ -127,11 +128,15 @@
 		Route::get('cancel-order/{order_number}', 'OrderController@cancelOrder')->name('cancel-order');		
 		Route::post('save-order', 'OrderController@saveOrder');
 	    Route::get('save-order', 'OrderController@saveOrder');
-		
-	   
 	    Route::get('emptyCart', 'OrderController@emptyCart');
-		
-	   
+	});
+
+	// Kitchen (admin)
+	Route::group(['namespace' => 'User'], function() {
+		// Promotion
+		Route::group(['prefix' => 'promotion'], function() {
+			Route::get('apply-user-discount/{storeId}/{discountCode}', 'PromotionController@applyUserDiscount');
+		});
 	});
 
 	Route::prefix('admin')->group(function(){
@@ -173,6 +178,8 @@
 		Route::post('add-manual-prep-time','AdminController@addManualPrepTime');
 		Route::post('kitchen-order-save','AdminController@kitchenOrderSave');
 		Route::get('kitchen-order-save','AdminController@kitchenOrderSave');
+		Route::post('send-promotional-discount','AdminController@sendPromotionalDiscount');
+		Route::post('send-promotional-app','AdminController@sendPromotionalApp');
 		Route::get('selectOrder-dateKitchen', 'AdminController@selectOrderDateKitchen');
 		Route::post('kitchen-eat-later', 'AdminController@kitchenEatLater');
 		Route::get('kitchen-eat-later', 'AdminController@kitchenEatLater');
@@ -213,6 +220,8 @@
 
 		Route::get('test-send-notifaction/{order_id}', 'AdminController@testSendNotifaction');
 
+		Route::get('get-new-orders-detail-to-speak', 'AdminController@getNewOrdersDetailToSpeak');
+
 		// Kitchen (admin)
 		Route::group(['namespace' => 'Restaurant'], function() {
 			// Discount
@@ -227,6 +236,10 @@
 			Route::group(['prefix' => 'loyalty', 'middleware' => 'isModuleSubscribed:loyalty'], function() {
 				Route::get('list', 'LoyaltyController@index');
 				Route::post('store', 'LoyaltyController@store');
+				Route::get('{id}/edit', 'LoyaltyController@edit');
+				Route::get('{id}/delete', 'LoyaltyController@destroy');
+				Route::get('get-loyalty-by-id/{id}', 'LoyaltyController@ajaxGetLoyaltyById');
+				Route::post('update', 'LoyaltyController@update');
 			});
 
 			// Dish Type

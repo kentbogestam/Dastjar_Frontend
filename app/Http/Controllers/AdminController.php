@@ -51,6 +51,7 @@ use App\PhocaGalleryRenderProcess;
 
 use App\SubscriptionPlan;
 use App\UserPlan;
+use App\PromotionDiscount;
 
 //use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -461,11 +462,11 @@ class AdminController extends Controller
                         foreach ($menuDetail->storeProduct as $storeProduct) {
                             $companyId = $storeProduct->company_id;
                             $dish_typeId[] = $storeProduct->dish_type;
-                            try{
+                            /*try{
                                 getimagesize($storeProduct->small_image);
                             } catch (\Exception $ex) {
                                 $storeProduct->small_image = asset('images/placeholder-image.png');
-                            }
+                            }*/
                         }
                 }
 
@@ -485,7 +486,19 @@ class AdminController extends Controller
             }
 
             $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
-            return view('kitchen.order.kitchen-pre-order', compact('menuDetails','companydetails','menuTypes','storedetails'));
+
+            // Get discount
+            $todayDate = Carbon::now()->format('Y-m-d h:i:00');
+            $discount = PromotionDiscount::from('promotion_discount AS PD')
+                ->select(['PD.id', 'PD.code', 'PD.discount_value', 'PD.start_date', 'PD.description', 'PD.end_date', 'S.store_name'])
+                ->join('store AS S', 'S.store_id', '=', 'PD.store_id')
+                ->where(['PD.store_id' => Session::get('storeId')])
+                ->where(['S.u_id' => Auth::user()->u_id])
+                ->where('PD.start_date', '<=', $todayDate)
+                ->where('PD.end_date', '>=', $todayDate)
+                ->get();
+            
+            return view('kitchen.order.kitchen-pre-order', compact('menuDetails','companydetails','menuTypes','storedetails', 'discount'));
         }else{
             return view('kitchen.order.kitchen-main-admin');
         }
@@ -495,7 +508,7 @@ class AdminController extends Controller
     public function kitchenOrders(){
         $reCompanyId = Session::get('storeId');
 
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
 
         $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;
 
@@ -506,7 +519,7 @@ class AdminController extends Controller
     public function kitchenOrdersNew($id){
         $reCompanyId = Session::get('storeId');
 
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->where('order_details.id', '>', $id)->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->where('order_details.id', '>', $id)->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
 
         $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;
         
@@ -564,87 +577,93 @@ class AdminController extends Controller
 
             //
             foreach ($data['product'] as $key => $value) {
-                    //if commant and quantity require then use condition "$value['prod_quant'] != '0' && $value['prod_desc'] != null"
-                    if($value['prod_quant'] != '0'){
-                        $productTime = Product::select('preparation_Time','company_id')->whereProductId($value['id'])->first();
-                        if($i == 0){
-                            $order =  new Order();
-                            $order->customer_order_id = $this->random_num(6);
-                            $order->user_id = $customer_id;
-                            $order->store_id = Session::get('storeId');
-                            $order->company_id = $productTime->company_id;
-                            $order->order_type = $orderType;
-                            $order->user_type = 'customer';
-                            $order->deliver_date = $orderDate;
-                            $order->deliver_time = $orderTime;
-                            $order->check_deliveryDate = $checkOrderDate;
+                //if commant and quantity require then use condition "$value['prod_quant'] != '0' && $value['prod_desc'] != null"
+                if($value['prod_quant'] != '0'){
+                    $productTime = Product::select('preparation_Time','company_id')->whereProductId($value['id'])->first();
+                    if($i == 0){
+                        $order =  new Order();
+                        $order->customer_order_id = $this->random_num(6);
+                        $order->user_id = $customer_id;
+                        $order->store_id = Session::get('storeId');
+                        $order->company_id = $productTime->company_id;
+                        $order->order_type = $orderType;
+                        $order->user_type = 'customer';
+                        $order->deliver_date = $orderDate;
+                        $order->deliver_time = $orderTime;
+                        $order->check_deliveryDate = $checkOrderDate;
 
-                            if($storeDetail->order_response == 0 && $orderType == 'eat_now')
-                            {
-                                $order->order_accepted = 0;
-                            }
+                        if( isset($data['delivery_type']) && is_numeric($data['delivery_type']) )
+                        {
+                            $order->delivery_type = $data['delivery_type'];
+                        }
 
-                            $order->save();
-                            $orders = Order::select('*')->whereUserId($customer_id)->orderBy('order_id', 'DESC')->first();
-                            $orderId = $orders->order_id;
-                            $i = $i+1;
-                        }else{}
+                        if($storeDetail->order_response == 0 && $orderType == 'eat_now')
+                        {
+                            $order->order_accepted = 0;
+                        }
 
-                        $i = 1;
-                        if($max_time < $productTime->preparation_Time){
-                            $max_time = $productTime->preparation_Time;
-                        }else{}
-                        $productPrice = ProductPriceList::select('price')->whereProductId($value['id'])->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->first();
-                        $total_price = $total_price + ($productPrice->price * $value['prod_quant']); 
-                        $orderDetail =  new OrderDetail();
-                        $orderDetail->order_id = $orders->order_id;
-                        $orderDetail->user_id = $customer_id;
-                        $orderDetail->product_id = $value['id'];
-                        $orderDetail->product_quality = $value['prod_quant'];
-                        $orderDetail->product_description = $value['prod_desc'];
-                        $orderDetail->price = $productPrice->price;
-                        $orderDetail->time = $productTime->preparation_Time;
-                        $orderDetail->company_id = $productTime->company_id;
-                        $orderDetail->store_id = Session::get('storeId');
-                        $orderDetail->delivery_date = $checkOrderDate;
-                        $orderDetail->save();
-                    }
+                        $order->save();
+                        $orders = Order::select('*')->whereUserId($customer_id)->orderBy('order_id', 'DESC')->first();
+                        $orderId = $orders->order_id;
+                        $i = $i+1;
+                    }else{}
+
+                    $i = 1;
+                    if($max_time < $productTime->preparation_Time){
+                        $max_time = $productTime->preparation_Time;
+                    }else{}
+                    $productPrice = ProductPriceList::select('price')->whereProductId($value['id'])->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->first();
+                    $total_price = $total_price + ($productPrice->price * $value['prod_quant']); 
+                    $orderDetail =  new OrderDetail();
+                    $orderDetail->order_id = $orders->order_id;
+                    $orderDetail->user_id = $customer_id;
+                    $orderDetail->product_id = $value['id'];
+                    $orderDetail->product_quality = $value['prod_quant'];
+                    $orderDetail->product_description = $value['prod_desc'];
+                    $orderDetail->price = $productPrice->price;
+                    $orderDetail->time = $productTime->preparation_Time;
+                    $orderDetail->company_id = $productTime->company_id;
+                    $orderDetail->store_id = Session::get('storeId');
+                    $orderDetail->delivery_date = $checkOrderDate;
+                    $orderDetail->save();
                 }
+            }
 
-                DB::table('orders')->where('order_id', $orderId)->update([
-                            'order_delivery_time' => $max_time,
-                            'order_total' => $total_price,
-                        ]);
+            DB::table('orders')->where('order_id', $orderId)->update([
+                        'order_delivery_time' => $max_time,
+                        'order_total' => $total_price,
+                    ]);
 
-                $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
+            $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
 
-                $request->session()->put('currentOrderId', $order->order_id);
+            $request->session()->put('currentOrderId', $order->order_id);
 
-                $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
+            $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 
-                    $recipients = ['+'.$data['phone_number_prifix'].$number];
-                    $url = "https://gatewayapi.com/rest/mtsms";
-                    $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
-                    $message = env('APP_URL') . "order/" . $order->customer_order_id . "?m=" . $data['phone_number_prifix'] . "-" . $number;
-                    $json = [
-                        'sender' => 'Dastjar',
-                        'message' => ''.$message.'',
-                        'recipients' => [],
-                    ];
-                    foreach ($recipients as $msisdn) {
-                        $json['recipients'][] = ['msisdn' => $msisdn];
-                    }
+            $recipients = ['+'.$data['phone_number_prifix'].$number];
+            $url = "https://gatewayapi.com/rest/mtsms";
+            $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
+            $message = env('APP_URL') . "order/" . $order->customer_order_id . "?m=" . $data['phone_number_prifix'] . "-" . $number;
+            $json = [
+                'sender' => 'Dastjar',
+                'message' => ''.$message.'',
+                'recipients' => [],
+            ];
+            foreach ($recipients as $msisdn) {
+                $json['recipients'][] = ['msisdn' => $msisdn];
+            }
 
-                    $ch = curl_init();
-                    curl_setopt($ch,CURLOPT_URL, $url);
-                    curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
-                    curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
-                    curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
-                    curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
-                    $result = curl_exec($ch);
-                    curl_close($ch); 
+            $ch = curl_init();
+            curl_setopt($ch,CURLOPT_URL, $url);
+            curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+            curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
+            curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
+            curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+            $result = curl_exec($ch);
+            curl_close($ch);
 
-                return view('kitchen.order.order-detail', compact('order','orderDetails','storeDetail'));
+            return redirect('kitchen/store');
+            // return view('kitchen.order.order-detail', compact('order','orderDetails','storeDetail'));
         }else{
             $menuTypes = null;
             $menuDetails = ProductPriceList::where('store_id',Session::get('storeId'))->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->with('menuPrice')->with('storeProduct')->get();
@@ -675,6 +694,85 @@ class AdminController extends Controller
             $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
             return view('kitchen.order.kitchen-pre-order', compact('menuDetails','companydetails','menuTypes','storedetails'));
         }
+    }
+
+    /**
+     * Send promotional discount link to user
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function sendPromotionalDiscount(Request $request)
+    {
+        // Validation
+        $validator = \Validator::make($request->all(), [
+            'prefix'        => 'required',
+            'mobile'        => 'required|numeric',
+            'discount_code' => 'required',
+            'store_id'      => 'required'
+        ]);
+
+        $status = 1;
+
+        if($validator->fails())
+        {
+            $status = 0;
+            return response()->json(['status' => $status, 'errors' => $validator->errors()->all()]);
+        }
+
+        // Remove '0' if exist as first digit
+        $mobile = $request->mobile;
+        $firstDigit = substr($mobile, 0, 1);
+
+        if($firstDigit == 0)
+        {
+            $mobile = substr($mobile, -9);
+        }
+
+        // Send promotional link
+        $recipients = ['+'.$request->prefix.$mobile];
+        $message = env('APP_URL') . "promotion/apply-user-discount/{$request->store_id}/{$request->discount_code}";
+        // $message = __('messages.notificationOrderReady', ['order_id' => $OrderId->customer_order_id]);
+        $result = $this->apiSendTextMessage($recipients, $message);
+
+        return response()->json(['status' => $status, 'result' => $result]);
+    }
+
+    /**
+     * Send promotion URL
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    function sendPromotionalApp(Request $request)
+    {
+        // Validation
+        $validator = \Validator::make($request->all(), [
+            'prefix' => 'required',
+            'mobile' => 'required|numeric'
+        ]);
+
+        $status = 1;
+
+        if($validator->fails())
+        {
+            $status = 0;
+            return response()->json(['status' => $status, 'errors' => $validator->errors()->all()]);
+        }
+
+        // Remove '0' if exist as first digit
+        $mobile = $request->mobile;
+        $firstDigit = substr($mobile, 0, 1);
+
+        if($firstDigit == 0)
+        {
+            $mobile = substr($mobile, -9);
+        }
+
+        // Send promotional link
+        $recipients = ['+'.$request->prefix.$mobile];
+        $message = env('APP_URL');
+        $result = $this->apiSendTextMessage($recipients, $message);
+
+        return response()->json(['status' => $status, 'result' => $result]);
     }
 
     public function selectOrderDateKitchen(){
@@ -947,6 +1045,7 @@ class AdminController extends Controller
             ->where('dish_type.dish_activate',1)
             ->groupBy('product.product_id')
             ->orderBy('product_rank', 'ASC')
+            ->orderBy('product_id')
             ->get();
 
         $data = array();
@@ -957,9 +1056,13 @@ class AdminController extends Controller
             {
                 $data[$key] = $value;
 
-                if( strpos($value->small_image, '.png') == false )
+                if( strpos($value->small_image, '.png') == false && strpos($value->small_image, '.jpg') == false )
                 {
                     $data[$key]['small_image'] = asset('images/placeholder-image.png');
+                }
+                else
+                {
+                    $data[$key]['small_image'] = $value->small_image;
                 }
 
                 // Get current product price detail
@@ -1053,93 +1156,83 @@ class AdminController extends Controller
         $employer = new Employer();
         $company_id = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
 
-        $basePath = app_path();
-        define('FUNCTION_DIR', 'function/');
-        //define('TIME_ZONE','Asia/Calcutta');
-        define('UPLOAD_DIR', public_path() . '/upload/images/');
-
-        /////////// upload image dirctory/////////
-        define('_UPLOAD_IMAGE_', public_path() . '/upload/images/');
-        define('IMAGE_AMAZON_PATH', 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/');
-        define('IMAGE_DIR_PATH', $basePath . '/lib/bin/cumbari_s3.sh ');
-        define('IMAGE_DIR_PATH_DELETE', $basePath . '/lib/bin/cumbari_s3del.sh '); 
-
-        // file_get_contents(IMAGE_DIR_PATH);
-        // die(); 
-        
-        $CategoryIconName = "cat_icon_" . md5(time());
-        $info = pathinfo($_FILES["prodImage"]["name"]);
-        $small_image = null;                
-        $error = "";
-
-        // Opload images related to
-        if (!empty($_FILES["prodImage"]["name"])) {
-            $file_extension = strtolower($info['extension']);
-            if ($file_extension == "png" || $file_extension == "jpg" || $file_extension == "jpeg" || $file_extension == "gif" || $file_extension == "bmp") { 
-                if ($_FILES["prodImage"]["error"] > 0) {
-                    $error.=$_FILES["prodImage"]["error"] . "<br />";
-                } else {
-                    $cat_filename = $CategoryIconName . "." . strtolower($info['extension']);
-                    $fileOriginal = $_FILES['prodImage']['tmp_name'];
-                    $crop = '5';
-                    $size = 'iphone4_cat';
-                    $path = UPLOAD_DIR . "category/";
-
-                    // If doesn't exist directory, create one
-                    if( !file_exists($path) )
-                    {
-                        mkdir($path, 0755, true);
-                    }
-                    
-                    $fileThumbnail = $path . $cat_filename;
-                    $resizer = new Resizer();
-
-                    // move_uploaded_file($fileOriginal,$fileThumbnail);
-
-                    try{
-                        $resizer->createFileThumbnail($fileOriginal, $fileThumbnail, $size, $frontUpload = 0, $crop, $errorMsg);
-            		} catch (\Exception $ex) {
-                        echo $ex->getMessage();
-                        // die();
-                    }
-
-                    $small_image = $cat_filename;
-                }
-            }
-        }
-
+        // 
         $product = new Product();
         $product->product_id = $product_id;        
         $product->u_id = Auth::user()->u_id;
         $product->product_name = $request->prodName;
 
-        if($small_image != null){
-            /////////////////////////// upload smallimages into server///////////////////
-            $file1 = _UPLOAD_IMAGE_ . 'category/' . $small_image;
-            $dir1 = "category";
-            $command = IMAGE_DIR_PATH . $file1 . " " . $dir1;
+        // Product image
+        if (!empty($_FILES["prodImage"]["name"]))
+        {
+            // 
+            $basePath = app_path();
+            define('UPLOAD_DIR', public_path() . '/upload/images/');
+            define('IMAGE_AMAZON_PATH', 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/');
+            define('IMAGE_DIR_PATH', $basePath . '/lib/bin/cumbari_s3.sh ');
 
-            $isCLI = exec($command);
-                                             // dd($isCLI);
+            // 
+            $info = pathinfo($_FILES["prodImage"]["name"]);
+            $file_extension = strtolower($info['extension']);
 
-            /////////////////////////// upload largeimages into server///////////////////
-            $file2 = _UPLOAD_IMAGE_ . 'coupon/' . $small_image;
-            $dir2 = "coupon";
-            $command2 = IMAGE_DIR_PATH . $file2 . " " . $dir2;
-            system($command2);
-               
-            $catImg = IMAGE_AMAZON_PATH . 'category/' . $small_image;
-            $copImg = IMAGE_AMAZON_PATH . 'coupon/' . $small_image;
+            if ($file_extension == "png" || $file_extension == "jpg" || $file_extension == "jpeg" || $file_extension == "gif" || $file_extension == "bmp")
+            {
+                if ($_FILES["prodImage"]["error"] > 0)
+                {
+                    $error.=$_FILES["prodImage"]["error"] . "<br />";
+                }
+                else
+                {
+                    try{
+                        $helper = new Helper();
 
-            $product->small_image = $catImg;
-            $product->large_image = $catImg;
+                        $fileOriginal = $_FILES['prodImage']['tmp_name'];
+                        $path = UPLOAD_DIR . "category/";
+
+                        // Resize image (small and large)
+                        $fileName = 'dish-thumbnail-'.time().'.jpg';
+                        $smallImg = $helper->gumletImageResize($fileOriginal, $fileName, $path, 256);
+
+                        $fileName = 'dish-large-'.time().'.jpg';
+                        $largeImg = $helper->gumletImageResize($fileOriginal, $fileName, $path, 1024);
+
+                        // Upload image to AWS
+                        $file1 = $path.$smallImg;
+                        $dir1 = "category";
+                        $command = IMAGE_DIR_PATH . $file1 . " " . $dir1;
+                        system($command);
+
+                        $file2 = $path.$largeImg;
+                        $dir2 = "coupon";
+                        $command2 = IMAGE_DIR_PATH . $file2 . " " . $dir2;
+                        system($command2);
+
+                        // 
+                        $product->small_image = IMAGE_AMAZON_PATH . 'category/' . $smallImg;
+                        $product->large_image = IMAGE_AMAZON_PATH . 'coupon/' . $largeImg;
+                    } catch (\Exception $ex) {
+                        echo $ex->getMessage();
+                        die();
+                    }
+                }
+            }
         }
         else
         {
-            $product->small_image = 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/category/cat_icon_b738a523d72867d1fc84e1f9d3c18b29.png';
+            $product->small_image = $product->large_image = 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/category/cat_icon_b738a523d72867d1fc84e1f9d3c18b29.png';
         }
 
-        // dd($product->small_image);
+        // Set rank
+        $rank = Product::orderBy('product_rank', 'DESC')->where(['dish_type' => $request->dishType, 'u_id' => Auth::user()->u_id, 'company_id' => $company_id, 's_activ' => 0])->first()->product_rank;
+        
+        if($rank)
+        {
+            $product->product_rank = ($rank + 1);
+        }
+        else
+        {
+            $product->product_rank = 1;
+        }
 
         $minutes = $request->prepTime;
         $hours = intdiv($minutes, 60).':'. ($minutes % 60).':00';
@@ -1266,84 +1359,67 @@ class AdminController extends Controller
         $employer = new Employer();
         $company_id = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
 
-        $basePath = app_path();
-        define('FUNCTION_DIR', 'function/');
-        //define('TIME_ZONE','Asia/Calcutta');
-        define('UPLOAD_DIR', public_path() . '/upload/images/');
+        // 
+        $product = Product::where(['product_id' => $product_id])->first();
+        $product->product_name = $request->prodName;
 
-        /////////// upload image dirctory/////////
-        define('_UPLOAD_IMAGE_', public_path() . '/upload/images/');
-        define('IMAGE_AMAZON_PATH', 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/');
-        define('IMAGE_DIR_PATH', $basePath . '/lib/bin/cumbari_s3.sh ');
-        define('IMAGE_DIR_PATH_DELETE', $basePath . '/lib/bin/cumbari_s3del.sh ');  
-        
-        $CategoryIconName = "cat_icon_" . md5(time());
-        $info = pathinfo($_FILES["prodImage"]["name"]);
-        $small_image = null;                        
-        $error = "";
+        if (!empty($_FILES["prodImage"]["name"]))
+        {
+            // 
+            $basePath = app_path();
+            define('UPLOAD_DIR', public_path() . '/upload/images/');
+            define('IMAGE_AMAZON_PATH', 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/');
+            define('IMAGE_DIR_PATH', $basePath . '/lib/bin/cumbari_s3.sh ');
 
-        // Opload images related to
-        if (!empty($_FILES["prodImage"]["name"])) {
+            // 
+            $info = pathinfo($_FILES["prodImage"]["name"]);
             $file_extension = strtolower($info['extension']);
-            if ($file_extension == "png" || $file_extension == "jpg" || $file_extension == "jpeg" || $file_extension == "gif" || $file_extension == "bmp") { 
-                if ($_FILES["prodImage"]["error"] > 0) {
+
+            if ($file_extension == "png" || $file_extension == "jpg" || $file_extension == "jpeg" || $file_extension == "gif" || $file_extension == "bmp")
+            {
+                if ($_FILES["prodImage"]["error"] > 0)
+                {
                     $error.=$_FILES["prodImage"]["error"] . "<br />";
-                } else {
-                    $cat_filename = $CategoryIconName . "." . strtolower($info['extension']);
-                    $fileOriginal = $_FILES['prodImage']['tmp_name'];
-                    $crop = '5';
-                    $size = 'iphone4_cat';
-                    $path = UPLOAD_DIR . "category/";
-
-                    // If doesn't exist directory, create one
-                    if( !file_exists($path) )
-                    {
-                        mkdir($path, 0755, true);
-                    }
-
-                    $fileThumbnail = $path . $cat_filename;
-                    $resizer = new Resizer();
-
-                   // move_uploaded_file($fileOriginal,$fileThumbnail);
-
+                }
+                else
+                {
                     try{
-                        $resizer->createFileThumbnail($fileOriginal, $fileThumbnail, $size, 
-                            $frontUpload = 0, $crop, $errorMsg);
+                        $helper = new Helper();
+
+                        $fileOriginal = $_FILES['prodImage']['tmp_name'];
+                        $path = UPLOAD_DIR . "category/";
+
+                        // Resize image (small and large)
+                        $fileName = 'dish-thumbnail-'.time().'.jpg';
+                        $smallImg = $helper->gumletImageResize($fileOriginal, $fileName, $path, 256);
+
+                        $fileName = 'dish-large-'.time().'.jpg';
+                        $largeImg = $helper->gumletImageResize($fileOriginal, $fileName, $path, 1024);
+
+                        // Upload image to AWS
+                        $file1 = $path.$smallImg;
+                        $dir1 = "category";
+                        $command = IMAGE_DIR_PATH . $file1 . " " . $dir1;
+                        system($command);
+
+                        $file2 = $path.$largeImg;
+                        $dir2 = "coupon";
+                        $command2 = IMAGE_DIR_PATH . $file2 . " " . $dir2;
+                        system($command2);
+
+                        // 
+                        $product->small_image = IMAGE_AMAZON_PATH . 'category/' . $smallImg;
+                        $product->large_image = IMAGE_AMAZON_PATH . 'coupon/' . $largeImg;
                     } catch (\Exception $ex) {
                         echo $ex->getMessage();
                         die();
                     }
-
-                    $small_image = $cat_filename;
                 }
             }
         }
-
-        $product = Product::where(['product_id' => $product_id])->first();
-        $product->product_name = $request->prodName;
-
-        if($small_image != null){
-            /////////////////////////// upload smallimages into server///////////////////
-            $file1 = _UPLOAD_IMAGE_ . 'category/' . $small_image;
-            $dir1 = "category";
-            $command = IMAGE_DIR_PATH . $file1 . " " . $dir1;
-            $isCLI = system($command);
-        
-            /////////////////////////// upload largeimages into server///////////////////
-            $file2 = _UPLOAD_IMAGE_ . 'coupon/' . $small_image;
-            $dir2 = "coupon";
-            $command2 = IMAGE_DIR_PATH . $file2 . " " . $dir2;
-            system($command2);
-               
-            $catImg = IMAGE_AMAZON_PATH . 'category/' . $small_image;
-            $copImg = IMAGE_AMAZON_PATH . 'coupon/' . $small_image;
-
-            $product->small_image = $catImg;
-            $product->large_image = $copImg;
-        }
-        else
+        elseif(!isset($request->smallImage))
         {
-            $product->small_image = 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/category/cat_icon_b738a523d72867d1fc84e1f9d3c18b29.png';
+            $product->small_image = $product->large_image = 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/category/cat_icon_b738a523d72867d1fc84e1f9d3c18b29.png';
         }
 
         $minutes = $request->prepTime;
@@ -2269,4 +2345,26 @@ class AdminController extends Controller
 
     }
 
+    /**
+     * Return new orders detail that havn't been started yet 
+     * @return [type] [description]
+     */
+    function getNewOrdersDetailToSpeak()
+    {
+        $storeId = Session::get('storeId');
+
+        // 
+        $orderDetail = OrderDetail::select('order_details.id', 'order_details.product_quality', 'order_details.product_description', 'order_details.is_speak', 'product.product_name')
+            ->join('orders', 'orders.order_id', '=', 'order_details.order_id')
+            ->join('product', 'product.product_id', '=', 'order_details.product_id')
+            ->where(['orders.store_id' => $storeId, 'user_type' => 'customer', 'check_deliveryDate' => Carbon::now()->toDateString(), 'orders.order_started' => '0', 'orders.paid' => '0'])
+            ->whereNotIn('orders.online_paid', [2])
+            ->where('orders.cancel','!=', 1)
+            ->get();
+
+        // Logged-in user setting's detail
+        $text_speech = Auth::guard('admin')->user()->text_speech;
+
+        return response()->json(['orderDetail' => $orderDetail, 'text_speech' => $text_speech, 'kitchenTextToSpeechDefault' => __('messages.kitchenTextToSpeechDefault')]);
+    }
 }

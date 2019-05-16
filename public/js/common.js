@@ -8,6 +8,11 @@ setInterval(function() {
 
 $(document).ready(function() {
     checkTimeAfterLocationSet();
+
+    // Remove alert
+    $('.alert-dismissible .close').on('click', function() {
+        $(this).closest('.ui-bar-a').remove();
+    })
 });
 
 function reloadRestaurantList(){

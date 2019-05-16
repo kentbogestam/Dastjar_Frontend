@@ -123,49 +123,63 @@ textarea.ui-input-text{
 				        <label for="radio-choice-v-2b">Swedish</label>
 				    </fieldset>
 				</li>
-				<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.Text To Speech") }} <span>
-					@if(Auth::guard('admin')->user()->text_speech == 0)
-					Off
-					@elseif(Auth::guard('admin')->user()->text_speech == 1)
-					On
-					@endif</span></h2>
-				    <fieldset data-role="controlgroup">
-				        <input type="radio" name="text_speech" id="radio-choice-v-2d" value="0" @if(Auth::guard('admin')->user()->text_speech == 0) checked="checked" @else checked="checked" @endif>
-				        <label for="radio-choice-v-2d">Off</label>
-				        <input type="radio" name="text_speech" id="radio-choice-v-2e" value="1" @if(Auth::guard('admin')->user()->text_speech == 1) checked="checked" @endif>
-				        <label for="radio-choice-v-2e">On</label>
-				    </fieldset>
-				</li>
+
 				<li data-role="collapsible" class="range-sec">
 					<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">
 						{{ __("messages.orderResponse") }}
-						<span>
-							@if(!$store->order_response)
-								Manual
-							@else
-								Automatic
-							@endif
-						</span>
 					</h2>
-					<fieldset data-role="controlgroup">
-						<input type="radio" name="order_response" id="order-response-manual" value="0" @if($store->order_response == 0) checked="checked" @endif>
-				        <label for="order-response-manual">Manual</label>
-				        <input type="radio" name="order_response" id="order-response-automatic" value="1" @if($store->order_response == 1) checked="checked" @endif>
-				        <label for="order-response-automatic">Automatic</label>
-					</fieldset>
+					<ul>
+						<li data-role="collapsible" class="range-sec">
+							<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">
+								{{ __("messages.orderResponse") }}
+								<span>
+									@if(!$store->order_response)
+										Manual
+									@else
+										Automatic
+									@endif
+								</span>
+							</h2>
+							<fieldset data-role="controlgroup">
+								<input type="radio" name="order_response" id="order-response-manual" value="0" @if($store->order_response == 0) checked="checked" @endif>
+						        <label for="order-response-manual">Manual</label>
+						        <input type="radio" name="order_response" id="order-response-automatic" value="1" @if($store->order_response == 1) checked="checked" @endif>
+						        <label for="order-response-automatic">Automatic</label>
+							</fieldset>
+						</li>
+						<li id="prep_time" class="range-sec btn_blk">
+							<h2 class="ui-btn">{{ __('messages.Extra Preparation Time') }}</h2>
+						</li>
+						<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.Text To Speech") }} <span>
+							@if(Auth::guard('admin')->user()->text_speech == 0)
+							Off
+							@elseif(Auth::guard('admin')->user()->text_speech == 1)
+							On
+							@endif</span></h2>
+						    <fieldset data-role="controlgroup">
+						        <input type="radio" name="text_speech" id="radio-choice-v-2d" value="0" @if(Auth::guard('admin')->user()->text_speech == 0) checked="checked" @else checked="checked" @endif>
+						        <label for="radio-choice-v-2d">Off</label>
+						        <input type="radio" name="text_speech" id="radio-choice-v-2e" value="1" @if(Auth::guard('admin')->user()->text_speech == 1) checked="checked" @endif>
+						        <label for="radio-choice-v-2e">On</label>
+						    </fieldset>
+						</li>
+					</ul>
 				</li>
 				</form>
-
-				<li id="prep_time" class="range-sec btn_blk">
-					<h2 class="ui-btn">{{ __('messages.Extra Preparation Time') }}</h2>
+				<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.marketingTools") }} <span>
+					</span></h2>
+				    <ul data-role="controlgroup" class="others_tabs">
+						<li id="link-discount" class="range-sec btn_blk {{ !Session::has('subscribedPlans.discount') ? 'ui-state-disabled' : '' }}">
+							<h2 class="ui-btn">{{ __('messages.Discount') }}</h2>
+						</li>
+						<li id="link-loyalty" class="range-sec btn_blk {{ !Session::has('subscribedPlans.loyalty') ? 'ui-state-disabled' : '' }}">
+							<h2 class="ui-btn">{{ __('messages.loyalty') }}</h2>
+						</li>
+				    </ul>
 				</li>
-				
-				<li id="link-discount" class="range-sec btn_blk {{ !Session::has('subscribedPlans.discount') ? 'ui-state-disabled' : '' }}">
-					<h2 class="ui-btn">{{ __('messages.Discount') }}</h2>
-				</li>
 
-				<li id="link-loyalty" class="range-sec btn_blk {{ !Session::has('subscribedPlans.loyalty') ? 'ui-state-disabled' : '' }}">
-					<h2 class="ui-btn">{{ __('messages.loyalty') }}</h2>
+				<li id="link-refund" class="range-sec btn_blk">
+					<h2 class="ui-btn">{{ __('messages.refund') }}</h2>
 				</li>
 
 				<li data-role="collapsible" id="range-sec-controlgroup" class="range-sec">
@@ -192,11 +206,11 @@ textarea.ui-input-text{
 					</span></h2>
 				    <ul data-role="controlgroup" class="others_tabs">
 						 <li id="about_us" class="range-sec btn_blk">
-							<h2 class="ui-btn">{{  __("messages.About Us") }}</h2>
+							<h2 class="ui-btn">{{  __("messages.aboutDastjarAnar") }}</h2>
 						</li>
 
 						<li id="admin" class="range-sec btn_blk">
-							<h2 class="ui-btn">{{  __("messages.Admin") }}</h2>
+							<h2 class="ui-btn">{{  __("messages.aboutCompanyAdmin") }}</h2>
 						</li>
 				    </ul>
 				</li>
@@ -242,6 +256,11 @@ textarea.ui-input-text{
 		// Go to Loyalty
 		$('#link-loyalty').click(function() {
 			window.location = "{{ url('kitchen/loyalty/list') }}";
+		});
+
+		// Go to Loyalty
+		$('#link-refund').click(function() {
+			window.open('https://dashboard.stripe.com/payments', '_blank');
 		});
 
 		$(document).ready(function(){

@@ -31,3 +31,14 @@
         display: none;
     }
 }
+
+ul.pagination {
+    float: right;
+}
+
+label.error {
+    color: red !important;
+}
+.btn-link {
+    cursor: pointer;
+}

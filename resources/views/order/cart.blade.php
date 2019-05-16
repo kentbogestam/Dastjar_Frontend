@@ -4,6 +4,17 @@
 		.loyalty-discount-text {
 			color: green;
 		}
+
+		.row-order-delivery-type .ui-btn {
+			background-color: #f6f6f6 !important;
+		}
+
+		.row-order-delivery-type .ui-btn-active{
+			background-color: #38c !important;
+		    border-color: #38c !important;
+		    color: #fff !important;
+		    text-shadow: 0 1px 0 #059 !important;
+		}
 	</style>
 @stop
 @section('content')
@@ -113,6 +124,24 @@
 					</div>
 				</div>
 			</div> -->
+
+			@if($storedetails->delivery_type == 0)
+				<div class="ui-grid-solo row-order-delivery-type">
+					<div class="ui-block-a">
+						<div class="ui-bar ui-bar-a text-center">
+							<form>
+								<fieldset data-role="controlgroup" data-type="horizontal">
+									<input type="radio" name="delivery_type" id="delivery_typea" value="1" checked="checked">
+									<label for="delivery_typea">{{ __('messages.deliveryOptionDineIn') }}</label>
+									<input type="radio" name="delivery_type" id="delivery_typeb" value="2" checked="">
+									<label for="delivery_typeb">{{ __('messages.deliveryOptionTakeAway') }}</label>
+								</fieldset>
+							</form>
+						</div>
+					</div>
+				</div>
+			@endif
+
 			@if(Session::get('paymentmode') !=0 && $order->final_order_total > 0)
 				<form action="{{ url('/payment') }}" class="payment_form_btn" method="POST">
 					{{ csrf_field() }} 
@@ -157,8 +186,8 @@
 		<div class="mInner">
 			<p>{{ __("messages.Delete Cart Order") }}</p>
 			<div class="btnWrapper">
-				<span class="close">Cancel</span>
-				<span onclick="deleteFullCart('{{ url("emptyCart/") }}','1','{{ __("messages.Delete Cart Order") }}')">Delete</span>
+				<span class="close">{{ __('messages.Cancel') }}</span>
+				<span onclick="deleteFullCart('{{ url("emptyCart/") }}','1','{{ __("messages.Delete Cart Order") }}')">{{ __('messages.Delete') }}</span>
 			</div>
 		</div>
 	</div>
@@ -170,8 +199,8 @@
 		<div class="mInner">
 			<p>{{ __("messages.Delete Product") }}</p>
 			<div class="btnWrapper">
-				<span class="close">Cancel</span>
-				<span class="delete">Delete</span>
+				<span class="close">{{ __('messages.Cancel') }}</span>
+				<span class="delete">{{ __('messages.Delete') }}</span>
 			</div>
 		</div>
 	</div>
@@ -194,6 +223,34 @@
 	$('.actionBox .close').on('click', function() {
 		$(this).closest('.actionBox').hide();
 	});
+
+	// 
+	$('input[name=delivery_type]').on('change', function() {
+		orderUpdateDeliveryType();
+	});
+
+	// Update order delivery type
+	function orderUpdateDeliveryType()
+	{
+		if($('input[name=delivery_type]').length)
+		{
+			$.ajax({
+				type: 'POST',
+				url: "{{ url('order-update-delivery-type') }}",
+				data: {
+					'_token': "{{ csrf_token() }}",
+					'order_id': "{{ $order->order_id }}", 
+					'delivery_type': $('input[name=delivery_type]:checked').val()
+				},
+				dataType: 'json',
+				success: function(response) {
+					console.log(response);
+				}
+			});
+		}
+	}
+
+	orderUpdateDeliveryType();
 
 	// Apply promocode
 	/*$('.btn-apply-promocode').on('click', function() {

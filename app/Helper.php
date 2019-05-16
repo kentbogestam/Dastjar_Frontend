@@ -5,6 +5,8 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 
+use \Gumlet\ImageResize;
+
 class Helper extends Model
 {
     public static function getLocation($address)
@@ -113,5 +115,25 @@ class Helper extends Model
         }
 
         return $alpha_key . $key;
+    }
+
+    /**
+     * Image resize using 'gumlet/php-image-resize' lib
+     * @return [type] [description]
+     */
+    function gumletImageResize($tmpName, $fileName, $path, $w, $h = '', $imgType = IMAGETYPE_JPEG)
+    {
+        // If doesn't exist directory, create one
+        if( !file_exists($path) )
+        {
+            mkdir($path, 0755, true);
+        }
+
+        // 
+        $image = new ImageResize($tmpName);
+        $image->resizeToWidth($w)->save($path.$fileName, $imgType);
+        // ->save(BASEPATH.'upload/store_image/image1.jpg', $imgType);
+        
+        return $fileName;
     }
 }

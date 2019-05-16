@@ -22,6 +22,7 @@ return [
     'Edit Comments'   => 'Ändra önskemålen',    
     'Cancel'   => 'Avbryt',
     'Submit'   => 'Klar',
+    'Delete' => 'Radera',
     'Menu is not available.'   => 'Menyn är inte tillgänglig.',
     'Thanks for your order'   => 'Tack för din beställning',
     'Order Number'   => 'Order-ID',
@@ -85,10 +86,10 @@ return [
     'Discount' => 'Rabatt',
     'Add Discount' => 'Lägg till Rabatt',
     'Enter Discount Code' => 'Skriv din Rabattkod här',
-    'invalidDiscount' => 'Den här koden är inte giltig',
+    'invalidDiscount' => 'Den här koden är inte giltig.',
     'discountAlreadyApplied' => 'Koden har redan tillämpats.',
     'somethingWentWrong' => 'Något gick fel!',
-    'discountAddedSuccessfully' => 'Rabatt tillagd framgångsrikt',
+    'discountAddedSuccessfully' => 'Rabatt tillagd framgångsrikt.',
     'avalableDiscount' => 'Tillgänglig rabatt',
     'discountStoreDuplicate' => 'Vill du ersätta din befintliga rabatt med detta för någon restaurang?',
     'loyaltyOfferMsg' => 'Bara <span class="quantity-to-buy">:quantity_to_buy</span> kvar, få <span class="quantity-get">:quantity_get</span> gratis! Gäller till :valid_till',
@@ -100,7 +101,7 @@ return [
    'Contact Us Placeholder' => 'Skriv till oss och lägg till din e-mail address.',
     'Terms and Conditions' => 'Villkor',
     'Extra Preparation Time' => 'Öka beredningstid',
-    'Support' => 'Support',
+    'Support' => 'Support/ Hjälp',
     'Thank you for contacting us.' => 'Tack för ditt meddelande.',
     'Remove' => 'Ta bort',
     'Payment Done Successfully' => 'Betalningen genomfördes!',
@@ -140,6 +141,7 @@ return [
     'discountEndDatePlaceholder' => 'Skriv in rabattens slutdatum',
     'discountCodeFieldRemote' => 'Den här rabattkoden är redan tillagd.',
     'discountDateAfter' => 'Slutdatum bör vara större än startdatum.',
+    'getDiscount' => 'Få Rabatt',
 
     // Dish Type
     'listDishType' => 'Typ av Maträtt',
@@ -160,10 +162,20 @@ return [
     'once' => 'Endast en gång',
     'repeatedly' => 'Repeterat',
     'loyaltyCreated' => 'Lojalitet skapades Framgångsrikt.',
+    'loyaltyInvalid' => 'Den här Lojalitet är inte giltig.',
+    'loyaltyDeleted' => 'Lojalitet raderades Framgångsrikt.',
     'loyaltyExistError' => 'Lojalitet finns redan mellan start och stop dataum för den valda Restaurangen.',
+    'loyaltyUpdated' => 'Lojalitet uppdaterades Framgångsrikt.',
     'quantityToBuyPlaceholder' => 'Ange kvantitet att köpa',
     'quantityGetPlaceholder' => 'Ange kvantitet för att få',
     'quantityGetLessThan' => 'Måste vara mindre än att köpa kvantitet',
+
+    // Store Delivery Type
+    'deliveryOptionDineIn' => 'Ät här',
+    'deliveryOptionTakeAway' => 'Ta med',
+    'storeDeliveryTypeDineIn' => 'A dine-in restaurant',
+    'storeDeliveryTypeTakeAway' => 'A take away restaurant',
+    'deliveryType' => 'Leverans Typ',
 
     // Validation
     'fieldRequired' => 'Detta fält är obligatoriskt.',
@@ -182,4 +194,9 @@ return [
     'back' => 'Tillbaka',
     'action' => 'Åtgärd',
     'pagination' => 'Visar :first av :last av :total antal',
+    'aboutDastjarAnar' => 'Om Dastjar RS/Anar',
+    'aboutCompanyAdmin' => 'Ditt Företags Admin',
+    'marketingTools' => 'Marknads Verktyg',
+    'refund' => 'Återbetalning',
+    'getTheApp' => 'Get the App',
 ];

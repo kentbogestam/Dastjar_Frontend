@@ -1,5 +1,21 @@
 @extends('layouts.master')
 
+@section('head-scripts')
+	@if(Session::has('msg'))
+		{{-- Add to homescreen script if comes from 'Apply user discount promotion view' --}}
+		<script src="{{asset('notifactionJs/App42-all-3.1.min.js')}}"></script>
+	    <script src="{{asset('notifactionJs/SiteTwo.js')}}"></script>
+	    <script src="{{asset('notifactionJs/serviceWorker.js')}}"></script>
+
+	    <script>
+	    	$(document).ready(function() {
+	    		registerSwjs();
+	    	});
+	    </script>
+	    {{-- End --}}
+	@endif
+@endsection
+
 @section('styles')
 	<style>
 		.submit_btn {
@@ -206,8 +222,8 @@
 		.loyalty-offer-apply {
 			color: green;
 		}
-
-		@media only screen and (max-width: 420px) {
+		
+		@media only screen and (max-width: 480px) {
 		    .loyalty-offer {
 		    	display: block;
 		    	margin-top: 3px;
@@ -227,12 +243,27 @@
 		<p>{{ __('messages.Menu is not available.') }}1 </p>
 	</div>
 	@endif
-   <form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('cart') }}">
+	@if(Session::has('class'))
+		<div class="ui-grid-solo text-center">
+			<div class="ui-block-a">
+				<div class="ui-bar ui-bar-a">
+					<div class="alert alert-dismissible alert-{{ Session::get('class') }}">
+						<a href="#" class="close" title="close">×</a>
+						<span>{{ Session::get('msg') }}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	@endif
+   	<form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('cart') }}">
 		{{ csrf_field() }}
 		<div role="main" data-role="main-content" class="content">
 			<div class="cat-list-sec single-restro-list-sec">
 				<input type="hidden" id="browserCurrentTime" name="browserCurrentTime" value="" />
 				<input type="hidden" name="storeID" value="{{$storeId}}" />
+				@if($storedetails->delivery_type != 0)
+					<input type="hidden" name="delivery_type" value="{{ $storedetails->delivery_type }}" />
+				@endif
 				<?php $i =0 ?>
 				<?php $j =1 ?>
 				@foreach($menuTypes as $menuType)

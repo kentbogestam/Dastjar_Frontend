@@ -92,34 +92,34 @@ class KitchenController extends Controller
         return response()->json(['status' => 'success', 'response' => true,'data'=>$cateringorderDetails]);
     }
 
+    /**
+     * Update product rank belongs to same category
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
     public function updateProductRank(Request $request){
-        $product = new Product();
-/*
-        if($request->index == 0){
-            $product->where('dish_type',$request->dish_type)->where('rank',1)->where('product_id','>',$request->product_id)->limit(1)->update(['rank' => $request->index+1]);
-            $product->where('product_id',$request->product_id)->update(['rank' => $request->index]);
-        }else{
-            $product->where('dish_type',$request->dish_type)->where('rank',$request->index)->update(['rank' => $request->index+1]);
-            $product->where('product_id',$request->product_id)->update(['rank' => $request->index]);
-            $product->where('dish_type',$request->dish_type)->where('rank',1)->where('product_id','>',$request->product_id)->limit(1)->update(['rank' => $request->index+1]);
+        $status = 0;
+
+        if($request->has('products'))
+        {
+            $products = json_decode($request->products);
+            $product = new Product();
+
+            // Update all menu rank belongs to same restaurant
+            if( !empty($products) && is_array($products) )
+            {
+                $status = 1;
+                $i = 1;
+
+                foreach($products as $id)
+                {
+                    $product->where(['product_id' => $id, 'dish_type' => $request->dish_type])->update(['product_rank' => $i]);
+                    $i++;
+                }
+            }
         }
-*/
-/*
-        if($request->index == 1){
-            $product->where('dish_type',$request->dish_type)->where('rank',1)->where('product_id','>',$request->product_id)->update(['rank' => $request->index+1]);
-        }else{
-            $product->where('dish_type',$request->dish_type)->where('rank',$request->index)->update(['rank' => $request->index+1]);            
-            $product->where('product_id',$request->product_id)->update(['rank' => $request->index]);            
-        }
-*/
-
-            $product->where('dish_type',$request->dish_type)->where('product_rank',$request->index)->update(['product_rank' => $request->index+1]);
-
-            $product->where('product_id',$request->product_id)->update(['product_rank' => $request->index]);
-
-            $product->where('dish_type',$request->dish_type)->where('product_rank',1)->where('product_id','>',$request->product_id)->update(['product_rank' => $request->index+1]);
         
-        return response()->json(['status' => 'success', 'response' => true,'data'=>"Rank Updated"]);
+        return response()->json(['status' => $status]);
     }
 
     /**
@@ -129,12 +129,28 @@ class KitchenController extends Controller
      */
     public function updateMenuRank(Request $request)
     {
-        $dishType = new DishType();
+        $status = 0;
 
-        $dishType->where('u_id', $request->u_id)->where('rank', $request->index)->update(['rank' => ($request->index+1)]);
-        $dishType->where('dish_id', $request->dish_id)->update(['rank' => $request->index]);
+        if($request->has('items'))
+        {
+            $items = json_decode($request->items);
 
-        return response()->json(['status' => 'success', 'response' => true,'data' => "Rank Updated"]);
+            // Update all menu rank belongs to same restaurant
+            if( !empty($items) && is_array($items) )
+            {
+                $status = 1;
+                $i = 1;
+                $dishType = new DishType();
+
+                foreach($items as $id)
+                {
+                    $dishType->where(['dish_id' => $id, 'u_id' => $request->u_id])->update(['rank' => $i]);
+                    $i++;
+                }
+            }
+        }
+
+        return response()->json(['status' => $status]);
     }
 
 }

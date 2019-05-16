@@ -69,7 +69,7 @@
 @section('footer-script')
     <script type="text/javascript">
         $(function(){
-            // Check for Geolocation API permissions  
+            // Check for Geolocation API permissions
             navigator.geolocation.getCurrentPosition(function(position) {
                 console.log("latitude=" + position.coords.latitude);
                 console.log("longitude=" + position.coords.longitude);

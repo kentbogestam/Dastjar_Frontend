@@ -143,6 +143,11 @@
     		background: #a72626;
 		}
 
+		.warning {
+			font-size: 11px;
+			color: #8a6d3b;
+		}
+
 		@media only screen and (max-width: 768px) {
 			.upload_img_txt{
 				display: none;
@@ -216,7 +221,11 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 					<span class="fa fa-camera camera_icon"></span>
 					<p class="upload_img_txt">Upload Menu Image</p>
 					<input type="file" name="prodImage" id="fileupload" onerror="alert('Image missing')" onchange="readURL(this);"/>
+					@if(isset($product->small_image) && $product->small_image)
+						<input type="hidden" name="smallImage" value="{{ $product->small_image }}">
+					@endif
 				</label>
+				<div id='warning-image-upload' class="warning"></div>
 			</div>
 		</div>
 
@@ -351,18 +360,35 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 	var fileExt = "";
 	var fileSize=0;
 
+	var _URL = window.URL || window.webkitURL;
     function readURL(input) {
+    	var file, img;
+
         if (input.files && input.files[0]) {
-	        	var reader = new FileReader();
-	            reader.onload = function (e) {
-					$('.camera_icon').hide();
-					$('.upload_img_txt').hide();
-	                $('#blah').attr('src', e.target.result);
-					$('#blah').show();					
-	            }
-	            fileSize = input.files[0].size;
-	            fileExt = input.files[0].name.split('.').pop().toLowerCase();
-	            reader.readAsDataURL(input.files[0]);	
+        	file = input.files[0];
+        	var reader = new FileReader();
+            
+            reader.onload = function (e) {
+            	$('#warning-image-upload').html('');
+				$('.camera_icon').hide();
+				$('.upload_img_txt').hide();
+                $('#blah').attr('src', e.target.result);
+				$('#blah').show();					
+
+				// Get image size
+                img = new Image();
+                img.onload = function () {
+                    if(this.width < 1024)
+                    {
+                        $('#warning-image-upload').html('Image width should be 1024px');
+                    }
+                };
+                img.src = _URL.createObjectURL(file);
+            }
+
+            fileSize = input.files[0].size;
+            fileExt = input.files[0].name.split('.').pop().toLowerCase();
+            reader.readAsDataURL(input.files[0]);	
 	    }
     }
 

@@ -23,6 +23,7 @@ return [
     'Edit Comments'   => 'Edit Comments',
     'Cancel'   => 'Cancel',
     'Submit'   => 'Submit',
+    'Delete' => 'Delete',
     'Items are not available in your selected Restaurant.'   => 'Items are not available',
     'Thanks for your order'   => 'Thanks for your order',
     'Order Number'   => 'Order Number',
@@ -85,7 +86,7 @@ return [
     'Discount' => 'Discount',
     'Add Discount' => 'Add Discount',
     'Enter Discount Code' => 'Enter Discount Code',
-    'invalidDiscount' => 'This code is invalid',
+    'invalidDiscount' => 'This code is invalid.',
     'discountAlreadyApplied' => 'This code has already been applied.',
     'somethingWentWrong' => 'Something went wrong!',
     'discountAddedSuccessfully' => 'Discount added successfully.',
@@ -99,7 +100,7 @@ return [
     'Contact Us Placeholder' => 'Enter your Message.Add your email for replay',
     'Terms and Conditions' => 'Terms and Conditions',
     'Extra Preparation Time' => 'Extra Preparation Time',
-    'Support' => 'Support',
+    'Support' => 'Support/ Help',
     'Thank you for contacting us.' => 'Thank you for contacting us.',
     'Remove' => 'Remove',
     'Payment Done Successfully' => 'Payment Done Successfully',
@@ -138,6 +139,7 @@ return [
     'discountEndDatePlaceholder' => 'Enter coupon end date',
     'discountCodeFieldRemote' => 'This discount code is already added.',
     'discountDateAfter' => 'End date should be greater than start date.',
+    'getDiscount' => 'Get Discount',
 
     // Dish Type
     'listDishType' => 'List Dish Type',
@@ -158,10 +160,20 @@ return [
     'once' => 'Once',
     'repeatedly' => 'Repeatedly',
     'loyaltyCreated' => 'Loyalty created successfully.',
+    'loyaltyInvalid' => 'Invalid loyalty.',
+    'loyaltyDeleted' => 'Loyalty deleted successfully.',
     'loyaltyExistError' => 'Loyalty is already exist between start and end date and for selected store.',
+    'loyaltyUpdated' => 'Loyalty updated successfully.',
     'quantityToBuyPlaceholder' => 'Enter quantity to buy',
     'quantityGetPlaceholder' => 'Enter quantity to get',
     'quantityGetLessThan' => 'Must be less than to buy quantity',
+
+    // Store Delivery Type
+    'deliveryOptionDineIn' => 'Dine-in',
+    'deliveryOptionTakeAway' => 'Take Away',
+    'storeDeliveryTypeDineIn' => 'A dine-in restaurant',
+    'storeDeliveryTypeTakeAway' => 'A take away restaurant',
+    'deliveryType' => 'Delivery Type',
 
     // Validation
     'fieldRequired' => 'This field is required.',
@@ -180,4 +192,9 @@ return [
     'back' => 'Back',
     'action' => 'Action',
     'pagination' => 'Showing :first to :last of :total entries',
+    'aboutDastjarAnar' => 'About Dastjar RS/Anar',
+    'aboutCompanyAdmin' => 'Your Company Admin',
+    'marketingTools' => 'Marketing Tools',
+    'refund' => 'Refund',
+    'getTheApp' => 'Get the App',
 ];
