@@ -168,6 +168,18 @@
 		.ui-state-highlight { height: 1.5em; line-height: 1.2em; }
 
 		.future-prices { display: none; }
+
+		.circle-top {
+			height: 60px;
+		    width: 150px;
+		    border-radius: 90px 90px 0 0 !important;
+		    background: rgba(199,7,17,1) !important;
+		    color: #fff !important;
+		    font-weight: 400 !important;
+		}
+		.circle-top span {
+			line-height: 40px;
+		}
 	</style>
 @stop
 
@@ -212,7 +224,7 @@
 
 	<div id="accordion2" class="container">
 		<p class="menu_txt">
-			<a href="{{ url('kitchen/dishtype/list') }}" data-role="button" data-inline="true" data-ajax="false">Dish Type</a>
+			<a href="{{ url('kitchen/dishtype/list') }}" class="circle-top" data-role="button" data-inline="true" data-ajax="false"><span>Dish Type</span></a>
 		</p>
 		<a href="{{ url('kitchen/create-menu') }}" class="fa fa-plus-circle fa-4x add_menu_btn" data-ajax="false"></a>
 		<hr>
