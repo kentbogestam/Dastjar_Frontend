@@ -141,6 +141,7 @@ return [
     'discountEndDatePlaceholder' => 'Skriv in rabattens slutdatum',
     'discountCodeFieldRemote' => 'Den här rabattkoden är redan tillagd.',
     'discountDateAfter' => 'Slutdatum bör vara större än startdatum.',
+    'getDiscount' => 'Få Rabatt',
 
     // Dish Type
     'listDishType' => 'Typ av Maträtt',
@@ -197,4 +198,5 @@ return [
     'aboutCompanyAdmin' => 'Ditt Företags Admin',
     'marketingTools' => 'Marknads Verktyg',
     'refund' => 'Återbetalning',
+    'getTheApp' => 'Get the App',
 ];

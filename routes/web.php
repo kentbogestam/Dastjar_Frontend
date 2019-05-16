@@ -178,6 +178,8 @@
 		Route::post('add-manual-prep-time','AdminController@addManualPrepTime');
 		Route::post('kitchen-order-save','AdminController@kitchenOrderSave');
 		Route::get('kitchen-order-save','AdminController@kitchenOrderSave');
+		Route::post('send-promotional-discount','AdminController@sendPromotionalDiscount');
+		Route::post('send-promotional-app','AdminController@sendPromotionalApp');
 		Route::get('selectOrder-dateKitchen', 'AdminController@selectOrderDateKitchen');
 		Route::post('kitchen-eat-later', 'AdminController@kitchenEatLater');
 		Route::get('kitchen-eat-later', 'AdminController@kitchenEatLater');

@@ -139,6 +139,7 @@ return [
     'discountEndDatePlaceholder' => 'Enter coupon end date',
     'discountCodeFieldRemote' => 'This discount code is already added.',
     'discountDateAfter' => 'End date should be greater than start date.',
+    'getDiscount' => 'Get Discount',
 
     // Dish Type
     'listDishType' => 'List Dish Type',
@@ -195,4 +196,5 @@ return [
     'aboutCompanyAdmin' => 'Your Company Admin',
     'marketingTools' => 'Marketing Tools',
     'refund' => 'Refund',
+    'getTheApp' => 'Get the App',
 ];

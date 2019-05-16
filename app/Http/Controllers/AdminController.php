@@ -51,6 +51,7 @@ use App\PhocaGalleryRenderProcess;
 
 use App\SubscriptionPlan;
 use App\UserPlan;
+use App\PromotionDiscount;
 
 //use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -485,7 +486,19 @@ class AdminController extends Controller
             }
 
             $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
-            return view('kitchen.order.kitchen-pre-order', compact('menuDetails','companydetails','menuTypes','storedetails'));
+
+            // Get discount
+            $todayDate = Carbon::now()->format('Y-m-d h:i:00');
+            $discount = PromotionDiscount::from('promotion_discount AS PD')
+                ->select(['PD.id', 'PD.code', 'PD.discount_value', 'PD.start_date', 'PD.description', 'PD.end_date', 'S.store_name'])
+                ->join('store AS S', 'S.store_id', '=', 'PD.store_id')
+                ->where(['PD.store_id' => Session::get('storeId')])
+                ->where(['S.u_id' => Auth::user()->u_id])
+                ->where('PD.start_date', '<=', $todayDate)
+                ->where('PD.end_date', '>=', $todayDate)
+                ->get();
+            
+            return view('kitchen.order.kitchen-pre-order', compact('menuDetails','companydetails','menuTypes','storedetails', 'discount'));
         }else{
             return view('kitchen.order.kitchen-main-admin');
         }
@@ -681,6 +694,85 @@ class AdminController extends Controller
             $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
             return view('kitchen.order.kitchen-pre-order', compact('menuDetails','companydetails','menuTypes','storedetails'));
         }
+    }
+
+    /**
+     * Send promotional discount link to user
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function sendPromotionalDiscount(Request $request)
+    {
+        // Validation
+        $validator = \Validator::make($request->all(), [
+            'prefix'        => 'required',
+            'mobile'        => 'required|numeric',
+            'discount_code' => 'required',
+            'store_id'      => 'required'
+        ]);
+
+        $status = 1;
+
+        if($validator->fails())
+        {
+            $status = 0;
+            return response()->json(['status' => $status, 'errors' => $validator->errors()->all()]);
+        }
+
+        // Remove '0' if exist as first digit
+        $mobile = $request->mobile;
+        $firstDigit = substr($mobile, 0, 1);
+
+        if($firstDigit == 0)
+        {
+            $mobile = substr($mobile, -9);
+        }
+
+        // Send promotional link
+        $recipients = ['+'.$request->prefix.$mobile];
+        $message = env('APP_URL') . "promotion/apply-user-discount/{$request->store_id}/{$request->discount_code}";
+        // $message = __('messages.notificationOrderReady', ['order_id' => $OrderId->customer_order_id]);
+        $result = $this->apiSendTextMessage($recipients, $message);
+
+        return response()->json(['status' => $status, 'result' => $result]);
+    }
+
+    /**
+     * Send promotion URL
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    function sendPromotionalApp(Request $request)
+    {
+        // Validation
+        $validator = \Validator::make($request->all(), [
+            'prefix' => 'required',
+            'mobile' => 'required|numeric'
+        ]);
+
+        $status = 1;
+
+        if($validator->fails())
+        {
+            $status = 0;
+            return response()->json(['status' => $status, 'errors' => $validator->errors()->all()]);
+        }
+
+        // Remove '0' if exist as first digit
+        $mobile = $request->mobile;
+        $firstDigit = substr($mobile, 0, 1);
+
+        if($firstDigit == 0)
+        {
+            $mobile = substr($mobile, -9);
+        }
+
+        // Send promotional link
+        $recipients = ['+'.$request->prefix.$mobile];
+        $message = env('APP_URL');
+        $result = $this->apiSendTextMessage($recipients, $message);
+
+        return response()->json(['status' => $status, 'result' => $result]);
     }
 
     public function selectOrderDateKitchen(){
