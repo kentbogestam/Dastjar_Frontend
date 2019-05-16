@@ -30,8 +30,8 @@
 		
     <div class="select-restaurant">
         <ul>
-        	<li><a class="eatnow-btn-df" href="#" data-ajax="false" onclick=setResttype("{{url('setResttype')}}","eatnow")><img src="{{asset('images/icons/icon-eat-now-active.png')}}" />Eat Now</a></li>
-        	<li><a class="eatnow-btn-fg" href="#" data-ajax="false" onclick=setResttype("{{url('setResttype')}}","eatlater")><img src="{{asset('images/icons/icon-eat-later-inactive.png')}}" />Eat Later</a></li>
+        	<li><a class="eatnow-btn-df" href="#" data-ajax="false" onclick=setResttype("{{url('setResttype')}}","eatnow")><img src="{{asset('images/icons/icon-eat-now-active.png')}}" />{{ __('messages.Eat Now') }}</a></li>
+        	<li><a class="eatnow-btn-fg" href="#" data-ajax="false" onclick=setResttype("{{url('setResttype')}}","eatlater")><img src="{{asset('images/icons/icon-eat-later-inactive.png')}}" />{{ __('messages.Eat Later') }}</a></li>
         </ul>
       
      </div>
