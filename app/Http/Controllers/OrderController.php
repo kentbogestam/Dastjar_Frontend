@@ -19,6 +19,7 @@ use App\Store;
 use App\User;
 use App\Company;
 use App\Admin;
+use App\CompanySubscriptionDetail;
 use Session;
 
 class OrderController extends Controller
@@ -1062,8 +1063,9 @@ class OrderController extends Controller
                 $request->session()->put('paymentAmount', $order->final_order_total);
                 $request->session()->put('OrderId', $order->order_id);
 
-                $companyDetail = Company::where('company_id', $productTime->company_id)->first();
-                $companyUserDetail = Admin::where('u_id', $companyDetail->u_id)->first();
+                /*$companyDetail = Company::where('company_id', $productTime->company_id)->first();
+                $companyUserDetail = Admin::where('u_id', $companyDetail->u_id)->first();*/
+                $companyUserDetail = CompanySubscriptionDetail::where('company_id', $productTime->company_id)->first();
 
                 if(isset($companyUserDetail->stripe_user_id))
                 {
