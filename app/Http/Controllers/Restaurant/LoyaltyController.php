@@ -57,7 +57,7 @@ class LoyaltyController extends Controller
     }
 
     /**
-     * Create discount
+     * Create loyalty
      * @param  Request $request [description]
      * @return [type]           [description]
      */
@@ -66,6 +66,7 @@ class LoyaltyController extends Controller
     	// Validation
 		$this->validate($request, [
 			'store_id' => 'required',
+            'dish_type_id' => 'required|array',
 			'quantity_to_buy' => 'required|numeric',
 			'quantity_get' => 'required|numeric|lt:quantity_to_buy',
             'validity' => 'required|numeric',
@@ -79,6 +80,14 @@ class LoyaltyController extends Controller
 		$data['start_date'] = \DateTime::createFromFormat('Y/m/d H:i', $request->start_date_utc);
         $data['end_date'] = \DateTime::createFromFormat('Y/m/d H:i', $request->end_date_utc);
 
+        // Validate if dishtype is not null
+        $dish_type = $request->dish_type_id;
+
+        if( count($dish_type) == 1 && $dish_type[0] == null )
+        {
+            return redirect('kitchen/loyalty/list')->with('error', __('messages.loyaltyDishTypeRequired'));
+        }
+
         // Check if loyalty already exist
         if(PromotionLoyalty::where(['store_id' => $data['store_id'], 'status' => '1'])->where('start_date','<=',$data['start_date'])->where('end_date','>=',$data['start_date'])->exists() || PromotionLoyalty::where(['store_id' => $data['store_id'], 'status' => '1'])->where('start_date','<=',$data['end_date'])->where('end_date','>=',$data['end_date'])->exists() || PromotionLoyalty::where(['store_id' => $data['store_id'], 'status' => '1'])->where('start_date','>=',$data['start_date'])->where('end_date','<=',$data['end_date'])->exists())
         {
@@ -91,11 +100,9 @@ class LoyaltyController extends Controller
         // Add dish_type into 'promotion_loyalty_dish_type'
         if($loyaltyId)
         {
-            $dish_type = $request->dish_type_id;
-
-            if( !empty($dish_type) )
+            foreach($dish_type as $dish_type_id)
             {
-                foreach($dish_type as $dish_type_id)
+                if($dish_type_id != null)
                 {
                     PromotionLoyaltyDishType::create(['loyalty_id' => $loyaltyId, 'dish_type_id' => $dish_type_id]);
                 }
@@ -163,6 +170,7 @@ class LoyaltyController extends Controller
         // Validation
         $this->validate($request, [
             'loyalty_id' => 'required|numeric',
+            'dish_type_id' => 'required|array',
             'quantity_to_buy' => 'required|numeric',
             'quantity_get' => 'required|numeric|lt:quantity_to_buy',
             'validity' => 'required|numeric',
@@ -176,7 +184,15 @@ class LoyaltyController extends Controller
         $end_date = \DateTime::createFromFormat('Y/m/d H:i', $request->end_date_utc);
         $store_id = $request->e_store_id;
 
-        // Check if loyalty already exist
+        // Validate if dishtype is not null
+        $dish_type = $request->dish_type_id;
+
+        if( count($dish_type) == 1 && $dish_type[0] == null )
+        {
+            return redirect('kitchen/loyalty/'.$request->loyalty_id.'/edit')->with('error', __('messages.loyaltyDishTypeRequired'));
+        }
+
+        // Check if loyalty already exist within start/end date
         if(PromotionLoyalty::where(['store_id' => $store_id, 'status' => '1'])->where('start_date','<=',$start_date)->where('end_date','>=',$start_date)->where('id', '!=', $request->loyalty_id)->exists() || PromotionLoyalty::where(['store_id' => $store_id, 'status' => '1'])->where('start_date','<=',$end_date)->where('end_date','>=',$end_date)->where('id', '!=', $request->loyalty_id)->exists() || PromotionLoyalty::where(['store_id' => $store_id, 'status' => '1'])->where('start_date','>=',$start_date)->where('end_date','<=',$end_date)->where('id', '!=', $request->loyalty_id)->exists())
         {
             return redirect('kitchen/loyalty/'.$request->loyalty_id.'/edit')->with('error', __('messages.loyaltyExistError'));
@@ -210,13 +226,11 @@ class LoyaltyController extends Controller
             PromotionLoyalty::where('id', $request->loyalty_id)->update($data);
 
             // Update loyalty dish type
-            $dish_type = $request->dish_type_id;
+            PromotionLoyaltyDishType::where(['loyalty_id' => $request->loyalty_id])->delete();
 
-            if( !empty($dish_type) )
+            foreach($dish_type as $dish_type_id)
             {
-                PromotionLoyaltyDishType::where(['loyalty_id' => $request->loyalty_id])->delete();
-
-                foreach($dish_type as $dish_type_id)
+                if($dish_type_id != null)
                 {
                     PromotionLoyaltyDishType::create(['loyalty_id' => $request->loyalty_id, 'dish_type_id' => $dish_type_id]);
                 }
