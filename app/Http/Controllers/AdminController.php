@@ -1231,11 +1231,11 @@ class AdminController extends Controller
         }
 
         // Set rank
-        $rank = Product::orderBy('product_rank', 'DESC')->where(['dish_type' => $request->dishType, 'u_id' => Auth::user()->u_id, 'company_id' => $company_id, 's_activ' => 0])->first()->product_rank;
+        $rank = Product::orderBy('product_rank', 'DESC')->where(['dish_type' => $request->dishType, 'u_id' => Auth::user()->u_id, 'company_id' => $company_id, 's_activ' => 0])->first();
         
         if($rank)
         {
-            $product->product_rank = ($rank + 1);
+            $product->product_rank = ($rank->product_rank + 1);
         }
         else
         {
