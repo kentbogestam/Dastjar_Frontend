@@ -167,6 +167,7 @@ return [
     'quantityToBuyPlaceholder' => 'Enter quantity to buy',
     'quantityGetPlaceholder' => 'Enter quantity to get',
     'quantityGetLessThan' => 'Must be less than to buy quantity',
+    'loyaltyDishTypeRequired' => 'The dish type field is required.',
 
     // Store Delivery Type
     'deliveryOptionDineIn' => 'Dine-in',

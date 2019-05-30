@@ -73,11 +73,11 @@ class DishTypeController extends Controller
         $data['company_id'] = Company::where('u_id', Auth::user()->u_id)->first()->company_id;
         
         // Set rank
-        $rank = DishType::orderBy('rank', 'DESC')->where(['u_id' => Auth::user()->u_id, 'company_id' => $data['company_id'], 'dish_activate' => 1])->first()->rank;
+        $rank = DishType::orderBy('rank', 'DESC')->where(['u_id' => Auth::user()->u_id, 'company_id' => $data['company_id'], 'dish_activate' => 1])->first();
         
         if($rank)
         {
-            $data['rank'] = ($rank + 1);
+            $data['rank'] = ($rank->rank + 1);
         }
         else
         {

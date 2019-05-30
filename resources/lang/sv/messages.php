@@ -169,6 +169,7 @@ return [
     'quantityToBuyPlaceholder' => 'Ange kvantitet att köpa',
     'quantityGetPlaceholder' => 'Ange kvantitet för att få',
     'quantityGetLessThan' => 'Måste vara mindre än att köpa kvantitet',
+    'loyaltyDishTypeRequired' => 'Typ av Maträtt är obligatoriskt.',
 
     // Store Delivery Type
     'deliveryOptionDineIn' => 'Ät här',

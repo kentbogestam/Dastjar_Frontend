@@ -144,23 +144,31 @@ class AdminController extends Controller
         if($store->check_subscription)
         {
             // Get subscribed plan for store
-            $storePlan = SubscriptionPlan::from('billing_products AS BP')
-                ->select('BP.id', 'BP.package_id', 'UP.plan_id')
-                ->join('anar_packages AS AP', 'AP.id', '=', 'BP.package_id')
+            $storePlanDetail = SubscriptionPlan::from('billing_products AS BP')
+                ->select('BP.id', 'BPP.package_id', 'UP.plan_id')
+                ->join('billing_product_packages AS BPP', 'BP.id', '=', 'BPP.billing_product_id')
+                ->join('anar_packages AS AP', 'AP.id', '=', 'BPP.package_id')
                 ->join('user_plan AS UP', 'BP.plan_id', '=', 'UP.plan_id')
                 ->where('BP.s_activ', 1)
-                ->whereDate('subscription_start_at', '<=', Carbon::parse(Carbon::now())->format('Y-m-d'))
-                ->whereDate('subscription_end_at', '>=', Carbon::parse(Carbon::now())->format('Y-m-d'))
+                ->whereDate('UP.subscription_start_at', '<=', Carbon::parse(Carbon::now())->format('Y-m-d'))
+                ->whereDate('UP.subscription_end_at', '>=', Carbon::parse(Carbon::now())->format('Y-m-d'))
                 ->where('UP.user_id', Auth::user()->u_id)
                 ->where('UP.store_id', Session::get('storeId'))
-                ->pluck('package_id')
-                ->toArray();
-                //->toSql();
+                ->get();
+            // dd($storePlanDetail->toArray());
 
-            //dd($storePlan);
-
-            if($storePlan)
+            if($storePlanDetail)
             {
+                // Get package and associated meta detail
+                $storePlan = array();
+
+                foreach($storePlanDetail as $row)
+                {
+                    $storePlan[] = $row['package_id'];
+                }
+
+                $storePlan = array_unique($storePlan);
+
                 // Kitchen
                 if( in_array('2', $storePlan) )
                 {
@@ -1223,11 +1231,11 @@ class AdminController extends Controller
         }
 
         // Set rank
-        $rank = Product::orderBy('product_rank', 'DESC')->where(['dish_type' => $request->dishType, 'u_id' => Auth::user()->u_id, 'company_id' => $company_id, 's_activ' => 0])->first()->product_rank;
+        $rank = Product::orderBy('product_rank', 'DESC')->where(['dish_type' => $request->dishType, 'u_id' => Auth::user()->u_id, 'company_id' => $company_id, 's_activ' => 0])->first();
         
         if($rank)
         {
-            $product->product_rank = ($rank + 1);
+            $product->product_rank = ($rank->product_rank + 1);
         }
         else
         {
