@@ -141,14 +141,32 @@
 
 @endif
 
-@if( (Request::is('restro-menu-list/*') || Request::is('view-cart/*') || Request::is('cart')) && (isset($storedetails) && $storedetails->delivery_type != 0) )
+@if( (Request::is('restro-menu-list/*') || Request::is('view-cart/*') || Request::is('cart')) && (isset($storedetails) && $storedetails->deliveryType->count() > 0 && $storedetails->deliveryType->count() < 3) )
 	<div class="ui-grid-solo row-store-delivery-type">
 		<div class="ui-block-a">
-			@if($storedetails->delivery_type == 1)
-				{{ __('messages.storeDeliveryTypeDineIn') }}
-			@elseif($storedetails->delivery_type == 2)
-				{{ __('messages.storeDeliveryTypeTakeAway') }}
-			@endif
+			@php
+			$deliveryType = array();
+
+			foreach($storedetails->deliveryType as $row)
+			{
+				if($row->delivery_type == 1)
+				{
+					array_push($deliveryType, __('messages.deliveryOptionDineIn'));
+				}
+				elseif($row->delivery_type == 2)
+				{
+					array_push($deliveryType, __('messages.deliveryOptionTakeAway'));
+				}
+				elseif($row->delivery_type == 3)
+				{
+					array_push($deliveryType, __('messages.deliveryOptionHomeDelivery'));
+				}
+			}
+
+			$deliveryType = implode(', ', $deliveryType)
+			@endphp
+
+			{{ __('messages.storeDeliveryType', ['deliveryType' => $deliveryType]) }}
 		</div>
 	</div>
 @endif

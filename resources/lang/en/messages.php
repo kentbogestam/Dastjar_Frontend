@@ -172,8 +172,10 @@ return [
     // Store Delivery Type
     'deliveryOptionDineIn' => 'Dine-in',
     'deliveryOptionTakeAway' => 'Take Away',
+    'deliveryOptionHomeDelivery' => 'Home Delivery',
     'storeDeliveryTypeDineIn' => 'A dine-in restaurant',
     'storeDeliveryTypeTakeAway' => 'A take away restaurant',
+    'storeDeliveryType' => 'A :deliveryType restaurant',
     'deliveryType' => 'Delivery Type',
 
     // Validation

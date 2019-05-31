@@ -272,4 +272,12 @@ class Store extends Model
     public function publishing_dates2(){
         return $this->hasMany('App\ProductPriceList','product_id','product_id')->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now());
     }
+
+    /**
+     * Get the comments for the blog post.
+     */
+    public function deliveryType()
+    {
+        return $this->hasMany('App\StoreDeliveryType', 'store_id', 'store_id');
+    }
 }

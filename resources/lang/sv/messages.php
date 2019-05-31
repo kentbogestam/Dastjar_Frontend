@@ -174,8 +174,10 @@ return [
     // Store Delivery Type
     'deliveryOptionDineIn' => 'Ät här',
     'deliveryOptionTakeAway' => 'Ta med',
+    'deliveryOptionHomeDelivery' => 'Hemleverans',
     'storeDeliveryTypeDineIn' => 'A dine-in restaurant',
     'storeDeliveryTypeTakeAway' => 'A take away restaurant',
+    'storeDeliveryType' => 'A :deliveryType restaurant',
     'deliveryType' => 'Leverans Typ',
 
     // Validation
