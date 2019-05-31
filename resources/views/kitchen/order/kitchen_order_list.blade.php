@@ -226,6 +226,10 @@
 			          		{
 			          			deliveryType = '{{ __('messages.deliveryOptionTakeAway') }}';
 			          		}
+			          		else if( temp[i]['delivery_type'] == 3 )
+			          		{
+			          			deliveryType = '{{ __('messages.deliveryOptionHomeDelivery') }}';
+			          		}
 
 			          		liItem += "<td>"+deliveryType+"</td>";
 			          		
@@ -363,6 +367,10 @@
 			          		else if( temp[i]['delivery_type'] == 2 )
 			          		{
 			          			deliveryType = '{{ __('messages.deliveryOptionTakeAway') }}';
+			          		}
+			          		else if( temp[i]['delivery_type'] == 3 )
+			          		{
+			          			deliveryType = '{{ __('messages.deliveryOptionHomeDelivery') }}';
 			          		}
 
 			          		liItem += "<td>"+deliveryType+"</td>";
@@ -533,6 +541,10 @@
 	          		else if( temp[i]['delivery_type'] == 2 )
 	          		{
 	          			deliveryType = '{{ __('messages.deliveryOptionTakeAway') }}';
+	          		}
+	          		else if( temp[i]['delivery_type'] == 3 )
+	          		{
+	          			deliveryType = '{{ __('messages.deliveryOptionHomeDelivery') }}';
 	          		}
 
 	          		liItem += "<td>"+deliveryType+"</td>";
