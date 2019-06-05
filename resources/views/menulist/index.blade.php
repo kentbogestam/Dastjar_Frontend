@@ -261,8 +261,8 @@
 			<div class="cat-list-sec single-restro-list-sec">
 				<input type="hidden" id="browserCurrentTime" name="browserCurrentTime" value="" />
 				<input type="hidden" name="storeID" value="{{$storeId}}" />
-				@if($storedetails->delivery_type != 0)
-					<input type="hidden" name="delivery_type" value="{{ $storedetails->delivery_type }}" />
+				@if($storedetails->deliveryType->count() == 1)
+					<input type="hidden" name="delivery_type" value="{{ $storedetails->deliveryType[0]['delivery_type'] }}" />
 				@endif
 				<?php $i =0 ?>
 				<?php $j =1 ?>
