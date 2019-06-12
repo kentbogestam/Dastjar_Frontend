@@ -178,6 +178,10 @@ textarea.ui-input-text{
 				    </ul>
 				</li>
 
+				<li id="link-delivery-price-model" class="range-sec btn_blk">
+					<h2 class="ui-btn">{{ __('messages.deliveryOptionHomeDelivery') }}</h2>
+				</li>
+
 				<li id="link-refund" class="range-sec btn_blk">
 					<h2 class="ui-btn">{{ __('messages.refund') }}</h2>
 				</li>
@@ -256,6 +260,11 @@ textarea.ui-input-text{
 		// Go to Loyalty
 		$('#link-loyalty').click(function() {
 			window.location = "{{ url('kitchen/loyalty/list') }}";
+		});
+
+		// Go to Loyalty
+		$('#link-delivery-price-model').click(function() {
+			window.location = "{{ url('kitchen/delivery-price-model/list') }}";
 		});
 
 		// Go to Loyalty
