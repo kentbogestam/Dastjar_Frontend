@@ -103,38 +103,29 @@
 					</div>
 				</div>
 			</div>
-			<!-- <div class="block-promocode">
-				<div class="ui-grid-solo">
-					<div class="ui-block-a">
-						<div class="ui-bar ui-bar-a">
-							<i class="fa fa-gift"></i> <strong>Apply Promo Code</strong>
-						</div>
-					</div>
-				</div>
-				<div class="ui-grid-a">
-					<div class="ui-block-a">
-						<div class="ui-bar ui-bar-a">
-							<input type="text" name="promocode" id="promocode" placeholder="Enter promocode here" data-mini="true">
-						</div>
-					</div>
-					<div class="ui-block-b">
-						<div class="ui-bar ui-bar-a">
-							<input type="button" data-role="none" value="Apply" class="btn-apply-promocode">
-						</div>
-					</div>
-				</div>
-			</div> -->
 
-			@if($storedetails->delivery_type == 0)
+			@if($storedetails->deliveryType->count() > 1)
 				<div class="ui-grid-solo row-order-delivery-type">
 					<div class="ui-block-a">
 						<div class="ui-bar ui-bar-a text-center">
 							<form>
 								<fieldset data-role="controlgroup" data-type="horizontal">
-									<input type="radio" name="delivery_type" id="delivery_typea" value="1" checked="checked">
-									<label for="delivery_typea">{{ __('messages.deliveryOptionDineIn') }}</label>
-									<input type="radio" name="delivery_type" id="delivery_typeb" value="2" checked="">
-									<label for="delivery_typeb">{{ __('messages.deliveryOptionTakeAway') }}</label>
+									@foreach($storedetails->deliveryType as $row)
+										@if($row->delivery_type == 1)
+											<input type="radio" name="delivery_type" id="delivery_typea" value="1">
+											<label for="delivery_typea">{{ __('messages.deliveryOptionDineIn') }}</label>
+										@endif
+
+										@if($row->delivery_type == 2)
+											<input type="radio" name="delivery_type" id="delivery_typeb" value="2">
+											<label for="delivery_typeb">{{ __('messages.deliveryOptionTakeAway') }}</label>
+										@endif
+
+										@if($row->delivery_type == 3)
+											<input type="radio" name="delivery_type" id="delivery_typec" value="3">
+											<label for="delivery_typec">{{ __('messages.deliveryOptionHomeDelivery') }}</label>
+										@endif
+									@endforeach
 								</fieldset>
 							</form>
 						</div>
@@ -142,27 +133,56 @@
 				</div>
 			@endif
 
+			<div class="block-address hidden">
+				<form method="post" id="frm-user-address" data-ajax="false">
+					@if($user->addresses->count() > 1)
+						<div class="ui-grid-a">
+							@foreach($user->addresses as $address)
+								<div class="{{ ($loop->iteration % 2 != 0) ? "ui-block-a" : "ui-block-b" }}">
+									<div class="ui-bar ui-bar-a">
+										<label for="{{ $address->id }}">{{ Helper::convertAddressToStr($address) }}</label>
+										<input type="radio" name="user_address_id" id="{{ $address->id }}" value="{{ $address->id }}" checked="">
+									</div>
+								</div>
+							@endforeach
+						</div>
+					@endif
+				</form>
+				<div class="ui-grid-solo">
+					<div class="ui-block-a">
+						<div id="add-new-address" data-role="collapsible">
+							<h4>{{ __('messages.addAddress') }}</h4>
+							<div class="add-address-form">
+								<div class="ui-bar ui-bar-a">
+									<form method="post" id="save-address" data-ajax="false">
+										<input type="text" name="full_name" id="full_name" placeholder="{{ __('messages.fullName') }}*" data-mini="true" data-rule-required="true">
+										<input type="number" name="mobile" id="mobile" placeholder="{{ __('messages.mobileNumber') }}*" data-mini="true" data-rule-required="true">
+										<input type="number" name="zipcode" id="zipcode" placeholder="Zipcode" data-mini="true">
+										<input type="text" name="address" id="address" placeholder="{{ __('messages.address1') }}*" data-mini="true" data-rule-required="true">
+										<input type="text" name="street" id="street" placeholder="{{ __('messages.address2') }}*" data-mini="true" data-rule-required="true">
+										<input type="text" name="city" id="city" placeholder="{{ __('messages.city') }}*" data-mini="true" data-rule-required="true">
+										<fieldset data-role="controlgroup">
+											<label for="is_permanent">{{ __('messages.saveAddress') }}</label>
+											<input type="checkbox" name="is_permanent" value="1" checked="" id="is_permanent">
+										</fieldset>
+										<input type="submit" data-inline="true" value="{{ __('messages.save') }}" data-theme="b">
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			@if(Session::get('paymentmode') !=0 && $order->final_order_total > 0)
-				<form action="{{ url('/payment') }}" class="payment_form_btn" method="POST">
+				<form action="{{ url('/payment') }}" class="payment_form_btn" id="orderPaymentForm" method="POST" data-ajax="false">
 					{{ csrf_field() }} 
-					<script
-					src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-					data-key="{{env('STRIPE_PUB_KEY')}}"
-					data-amount=""
-					data-name="Stripe"
-					data-email="{{Auth::user()->email}}"
-					data-description="Dastjar"
-					data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
-					data-token="true"
-					data-locale="auto"
-					data-label="{{__('messages.Pay with card')}}"
-					data-zip-code="false">
-				</script>
+					<input type="hidden" id="stripeToken" name="stripeToken">
+					<button type="button" class="ui-btn ui-mini btn-pay" disabled="">{{__('messages.Pay with card')}}</button>
 				</form>
 			@else
 				<div id="saveorder">
-					<!--<a href="{{url('save-order').'/?orderid='.$order->order_id}}" data-ajax="false">{{ __('messages.Send Order') }}</a>-->
-					<a href="{{url('order-view').'/'.$order->order_id}}" data-ajax="false">{{ __('messages.send order and pay in restaurant') }}</a>
+					<a href="{{url('order-view').'/'.$order->order_id}}" class="send-order" data-ajax="false">{{ __('messages.send order and pay in restaurant') }}</a>
 				</div>
 			@endif
 
@@ -206,7 +226,70 @@
 	</div>
 </div>
 
+<script src="https://checkout.stripe.com/checkout.js"></script>
+<script type="text/javascript" src="{{ asset('plugins/validation/jquery.validate.min.js') }}"></script>
 <script type="text/javascript">
+	// 
+	$.ajaxSetup({
+		headers: {
+			'X-CSRF-TOKEN': "{{ csrf_token() }}"
+		}
+	});
+
+	// 
+	var handler = StripeCheckout.configure({
+		key: '{{env('STRIPE_PUB_KEY')}}',
+		image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+		locale: 'auto',
+		name: 'Stripe',
+		email: '{{Auth::user()->email}}',
+		description: "Dastjar",
+		token: function(token) {
+			$('#stripeToken').val(token.id);
+			$('#orderPaymentForm').submit();
+		}
+	});
+
+	// 
+	$('.btn-pay').on('click', function(e) {
+		if($('#frm-user-address').valid() != false)
+		{
+			var totalAmount = parseFloat('{{ Session::get('paymentAmount') }}');
+
+			handler.open({
+                currency: 'sek',
+                amount: (totalAmount*100)
+            });
+		}
+
+		e.preventDefault();
+	});
+
+	// Close Checkout on page navigation:
+	window.addEventListener('popstate', function() {
+		handler.close();
+	});
+
+	// Delivery address form validation
+	$('#frm-user-address').validate({
+		rules: {
+			user_address_id: {
+				required: true
+			}
+		},
+		messages: {
+			user_address_id: {
+				required: '{{ __('messages.fieldRequired') }}'
+			}
+		},
+		errorPlacement: function (error, element) {
+			if(element.is(':radio'))
+			{
+				error.insertAfter(element.closest('.ui-grid-a'));
+			}
+		}
+	});
+
 	// Update value in basket
 	var cntCartItems = "{{ $cntCartItems }}";
 	$('.cart-badge').html(cntCartItems);
@@ -224,46 +307,95 @@
 		$(this).closest('.actionBox').hide();
 	});
 
-	// 
+	// Update 'delivery_type'
 	$('input[name=delivery_type]').on('change', function() {
 		orderUpdateDeliveryType();
 	});
 
-	// Update order delivery type
-	function orderUpdateDeliveryType()
+	// Update user address
+	$('input[name=user_address_id]').on('change', function() {
+		updateOrderUserAddress();
+	});
+
+	// Check default delivery type on load
+	function checkDefaultDeliveryType()
 	{
 		if($('input[name=delivery_type]').length)
 		{
-			$.ajax({
-				type: 'POST',
-				url: "{{ url('order-update-delivery-type') }}",
-				data: {
-					'_token': "{{ csrf_token() }}",
-					'order_id': "{{ $order->order_id }}", 
-					'delivery_type': $('input[name=delivery_type]:checked').val()
-				},
-				dataType: 'json',
-				success: function(response) {
-					console.log(response);
-				}
+			var deliveryTypes = new Array();
+
+			// 
+			$('input[name=delivery_type]').each(function() {
+				deliveryTypes.push($(this).val());
 			});
+
+			// Dine In/Take Away, Take Away/Home Delivery, Dine In/Take Away/Home Delivery
+			if( (deliveryTypes.indexOf("1") != -1 && deliveryTypes.indexOf("2") != -1) || (deliveryTypes.indexOf("2") != -1 && deliveryTypes.indexOf("3") != -1) || (deliveryTypes.indexOf("1") != -1 && deliveryTypes.indexOf("2") != -1 && deliveryTypes.indexOf("3") != -1) )
+			{
+				$('input[name=delivery_type][value="2"]').prop('checked', true);
+			}
+			// Dine In/Home Delivery
+			else if(deliveryTypes.indexOf("1") != -1 && deliveryTypes.indexOf("3") != -1)
+			{
+				$('input[name=delivery_type][value="3"]').prop('checked', true);
+			}
+
+			orderUpdateDeliveryType();
 		}
 	}
 
-	orderUpdateDeliveryType();
+	// Update order delivery type
+	function orderUpdateDeliveryType()
+	{
+		// 
+		if($('input[name=delivery_type]:checked').val() == '3')
+		{
+			$('.block-address').removeClass('hidden');
+			updateOrderUserAddress();
 
-	// Apply promocode
-	/*$('.btn-apply-promocode').on('click', function() {
-		var code = $('#promocode').val();
+			if($('input[name=user_address_id]:checked').length)
+			{
+				$('.btn-pay').prop('disabled', false);
+			}
+			else
+			{
+				$('.btn-pay').prop('disabled', true);
+			}
+		}
+		else
+		{
+			$('.block-address').addClass('hidden');
+			$('.btn-pay').prop('disabled', false);
+		}
+		
+		// Update 'delivery_type' in DB
+		$.ajax({
+			type: 'POST',
+			url: "{{ url('order-update-delivery-type') }}",
+			data: {
+				'_token': "{{ csrf_token() }}",
+				'order_id': "{{ $order->order_id }}", 
+				'delivery_type': $('input[name=delivery_type]:checked').val()
+			},
+			dataType: 'json',
+			success: function(response) {
+				console.log(response);
+			}
+		});
+	}
 
-		if(code.length)
+	// Update order 'user_address_id'
+	function updateOrderUserAddress()
+	{
+		if($('input[name=user_address_id]:checked').length)
 		{
 			$.ajax({
 				type: 'POST',
-				url: "{{ url('apply-promocode') }}",
+				url: "{{ url('update-order-user-address') }}",
 				data: {
 					'_token': "{{ csrf_token() }}",
-					'code': code
+					'order_id': "{{ $order->order_id }}", 
+					'user_address_id': $('input[name=user_address_id]:checked').val()
 				},
 				dataType: 'json',
 				success: function(response) {
@@ -271,6 +403,61 @@
 				}
 			});
 		}
-	});*/
+		else
+		{
+			console.log('Something went wrong!');
+		}
+	}
+
+	// Save address
+	$('#save-address').on('submit', function(e) {
+		e.preventDefault();
+
+		// Form validate
+		if($('#save-address').valid())
+		{
+			var formData = $(this).serialize();
+
+			// Send data to server through the Ajax call
+			$.ajax({
+				type: 'POST',
+				url: "{{ url('save-user-address') }}",
+				data: formData,
+				async: 'true',
+				dataType: 'json',
+				beforeSend: function() {
+					showLoading();
+				},
+				complete: function() {
+					hideLoading('Processing...');
+				},
+				success: function(result) {
+					if(result.status)
+					{
+						$('form#frm-user-address').html(result.addresses);
+						$('#add-new-address').collapsible('collapse');
+						$('#save-address').trigger('reset');
+						$('.btn-pay').prop('disabled', false);
+						updateOrderUserAddress();
+					}
+				},
+				error: function() {
+					alert('Something went wrong, please try again!');
+				}
+			});
+		}
+
+		return false;
+	});
+
+	// 
+	$('.send-order').on('click', function() {
+		if(!$('#frm-user-address').valid())
+		{
+			return false;
+		}
+	});
+
+	checkDefaultDeliveryType();
 </script>
 @endsection

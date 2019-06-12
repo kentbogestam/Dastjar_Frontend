@@ -17,329 +17,27 @@ use Carbon\Carbon;
 use DB;
 use App\Store;
 use App\User;
+use App\UserAddress;
 use App\Company;
 use App\Admin;
 use App\CompanySubscriptionDetail;
 use Session;
+use App\Helper;
 
 class OrderController extends Controller
 {
-   /* public function saveOrder(Request $request){
-
+    public function saveOrder(Request $request){
         if(Auth::check()){
+            $data = $request->input();
 
-            if(!empty($request->input())){
-
-                $data = $request->input();
-
-                $i = 0;
-                $total_price = 0;
-                $max_time = "00:00:00";
-                $orderType;
-                $orderDate;
-                $orderTime;
-                $checkOrderDate;
-                
-                if($request->session()->get('order_date') != null){
-                    $pieces = explode(" ", $request->session()->get('order_date'));
-                    $date=date_create($pieces[3]."-".$pieces[1]."-".$pieces[2]);
-                    $checkOrderDate = date_format($date,"Y-m-d");
-                    $orderType = 'eat_later';
-                    $orderDate = $pieces[0]." ".$pieces[1]." ".$pieces[2]." ".$pieces[3];
-                    $orderTime = $pieces[4];
-                    $request->session()->forget('order_date');
-                }else{
-                    $pieces = explode(" ", $data['browserCurrentTime']);
-                    $date=date_create($pieces[3]."-".$pieces[1]."-".$pieces[2]);
-                    $checkOrderDate = date_format($date,"Y-m-d");
-                    $orderType = 'eat_now';
-                    $orderDate = $pieces[0]." ".$pieces[1]." ".$pieces[2]." ".$pieces[3];
-                    $orderTime = $pieces[4];
-                }
-
-                // Get store detail
-                $storeDetail = Store::where('store_id', $data['storeID'])->first();
-
-                //
-                foreach ($data['product'] as $key => $value) {
-                    //if commant and quantity require then use condition "$value['prod_quant'] != '0' && $value['prod_desc'] != null"
-                    if($value['prod_quant'] != '0'){
-                        $productTime = Product::select('preparation_Time','company_id')->whereProductId($value['id'])->first();
-                        if($i == 0){
-                            $order =  new Order();
-                            $order->customer_order_id = $this->random_num(6);
-                            $order->user_id = Auth::id();
-                            $order->store_id = $data['storeID'];
-                            $order->company_id = $productTime->company_id;
-                            $order->order_type = $orderType;
-                            $order->user_type = 'customer';
-                            $order->deliver_date = $orderDate;
-                            $order->deliver_time = $orderTime;
-                            $order->check_deliveryDate = $checkOrderDate;
-
-                            if($storeDetail->order_response == 0 && $orderType == 'eat_now')
-                            {
-                                $order->order_accepted = 0;
-                            }
-
-                            $order->save();
-                            $orders = Order::select('*')->whereUserId(Auth::id())->orderBy('order_id', 'DESC')->first();
-                            $orderId = $orders->order_id;
-                            $i = $i+1;
-                        }
-
-                        $i = 1;
-                        if($max_time < $productTime->preparation_Time){
-                            $max_time = $productTime->preparation_Time;
-                        }else{}
-                        $productPrice = ProductPriceList::select('price')
-                            ->whereProductId($value['id'])
-                            ->where('store_id' , $data['storeID'])
-                            ->where('publishing_start_date','<=',Carbon::now())
-                            ->where('publishing_end_date','>=',Carbon::now())
-                            ->first();
-                        $total_price = $total_price + ($productPrice->price * $value['prod_quant']); 
-                        $orderDetail =  new OrderDetail();
-                        $orderDetail->order_id = $orders->order_id;
-                        $orderDetail->user_id = Auth::id();
-                        $orderDetail->product_id = $value['id'];
-                        $orderDetail->product_quality = $value['prod_quant'];
-                        $orderDetail->product_description = $value['prod_desc'];
-                        $orderDetail->price = $productPrice->price;
-                        $orderDetail->time = $productTime->preparation_Time;
-                        $orderDetail->company_id = $productTime->company_id;
-                        $orderDetail->store_id = $data['storeID'];
-                        $orderDetail->delivery_date = $checkOrderDate;
-                        $orderDetail->save();
-                    }
-                }
-
-                DB::table('orders')->where('order_id', $orderId)->update([
-                            'order_delivery_time' => $max_time,
-                            'order_total' => $total_price,
-                        ]);
-
-                User::where('id',Auth::id())->update(['browser' => $data['browser']]);
-
-                $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
-
-                $request->session()->put('currentOrderId', $order->order_id);
-                //$orderDetails = OrderDetail::select('*')->where('order_id',$orderId)->get();
-                $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
-
-                //If store support ontine payment then if condition run.
-                if($storeDetail->online_payment == 1){
-                    $companyDetail = Company::where('company_id', $productTime->company_id)->first();
-                    $companyUserDetail = Admin::where('u_id', $companyDetail->u_id)->first();
+            $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$data['orderid'])->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
 
 
-                    DB::table('orders')->where('order_id', $orderId)->update([
-                            'online_paid' => 2,
-                        ]);
-                    $request->session()->put('paymentAmount', $order->order_total);
-                    $request->session()->put('OrderId', $order->order_id);
+            $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name','order_details.product_id')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$data['orderid'])->get();
 
-                    if(isset($companyUserDetail->stripe_user_id))
-                    $request->session()->put('stripeAccount', $companyUserDetail->stripe_user_id);
-
-                    return view('order.paymentIndex', compact('order','orderDetails'));
-                }else{
-                    $user = User::where('id',$order->user_id)->first();      
-                    // return view('order.index', compact('order','orderDetails','storeDetail','user'));
-
-                    return redirect()->route('order-view', $orderId);
-                }
-            }else{
-                $todayDate = $request->session()->get('browserTodayDate');
-                $currentTime = $request->session()->get('browserTodayTime');
-                $todayDay = $request->session()->get('browserTodayDay');
-                $userDetail = User::whereId(Auth()->id())->first();
-
-                if(!isset($userDetail->range)){
-                  $range = 10;
-                }else{
-                    $range = $userDetail->range;
-                }
-
-                $companydetails = Store::getListRestaurants($request->session()->get('with_login_lat'),$request->session()->get('with_login_lng'),$range,'1','3',$todayDate,$currentTime,$todayDay);
-                
-                return view('index', compact('companydetails'));
-            } 
-        }else{
-
-          $data = $request->input();
-          Session::put('orderData', $data);
-          return redirect()->route('customer-login');
+            return view('order.paymentIndex', compact('order','orderDetails'));
         }
-    }*/
-
- public function saveOrder(Request $request){
-
-   if(Auth::check()){
-
-      $data = $request->input();
-
-     $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$data['orderid'])->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
-
-                
-    $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name','order_details.product_id')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$data['orderid'])->get();
-
-      return view('order.paymentIndex', compact('order','orderDetails'));
-   }   
-        
-}
-
-    /*public function withOutLogin(Request $request){
-        $data = Session::get('orderData');
-        if(!empty($data)){
-            $i = 0;
-            $total_price = 0;
-            $max_time = "00:00:00";
-            $orderType;
-            $orderDate;
-            $orderTime;
-            $checkOrderDate;
-            if($request->session()->get('order_date') != null){
-                $pieces = explode(" ", $request->session()->get('order_date'));
-                $date=date_create($pieces[3]."-".$pieces[1]."-".$pieces[2]);
-                $checkOrderDate = date_format($date,"Y-m-d");
-                $orderType = 'eat_later';
-                $orderDate = $pieces[0]." ".$pieces[1]." ".$pieces[2]." ".$pieces[3];
-                $orderTime = $pieces[4];
-                $request->session()->forget('order_date');
-            }else{
-                $pieces = explode(" ", $data['browserCurrentTime']);
-                $date=date_create($pieces[3]."-".$pieces[1]."-".$pieces[2]);
-                $checkOrderDate = date_format($date,"Y-m-d");
-                $orderType = 'eat_now';
-                $orderDate = $pieces[0]." ".$pieces[1]." ".$pieces[2]." ".$pieces[3];
-                $orderTime = $pieces[4];
-            }
-
-            // Get store detail
-            $storeDetail = Store::where('store_id', $data['storeID'])->first();
-
-            //
-            foreach ($data['product'] as $key => $value) {
-                //if commant and quantity require then use condition "$value['prod_quant'] != '0' && $value['prod_desc'] != null"
-                if($value['prod_quant'] != '0'){
-                    $productTime = Product::select('preparation_Time','company_id')->whereProductId($value['id'])->first();
-                    if($i == 0){
-                        $order =  new Order();
-                        $order->customer_order_id = $this->random_num(6);
-                        $order->user_id = Auth::id();
-                        $order->store_id = $data['storeID'];
-                        $order->company_id = $productTime->company_id;
-                        $order->order_type = $orderType;
-                        $order->user_type = 'customer';
-                        $order->deliver_date = $orderDate;
-                        $order->deliver_time = $orderTime;
-                        $order->check_deliveryDate = $checkOrderDate;
-
-                        if($storeDetail->order_response == 0 && $orderType == 'eat_now')
-                        {
-                            $order->order_accepted = 0;
-                        }
-
-                        $order->save();
-                        $orders = Order::select('*')->whereUserId(Auth::id())->orderBy('order_id', 'DESC')->first();
-                        $orderId = $orders->order_id;
-                        $i = $i+1;
-                    }else{}
-
-                    $i = 1;
-                    if($max_time < $productTime->preparation_Time){
-                        $max_time = $productTime->preparation_Time;
-                    }else{}
-                    $productPrice = ProductPriceList::select('price')
-                        ->whereProductId($value['id'])
-                        ->where('store_id' , $data['storeID'])
-                        ->where('publishing_start_date','<=',Carbon::now())
-                        ->where('publishing_end_date','>=',Carbon::now())
-                        ->first();
-                    $total_price = $total_price + ($productPrice->price * $value['prod_quant']); 
-                    $orderDetail =  new OrderDetail();
-                    $orderDetail->order_id = $orders->order_id;
-                    $orderDetail->user_id = Auth::id();
-                    $orderDetail->product_id = $value['id'];
-                    $orderDetail->product_quality = $value['prod_quant'];
-                    $orderDetail->product_description = $value['prod_desc'];
-                    $orderDetail->price = $productPrice->price;
-                    $orderDetail->time = $productTime->preparation_Time;
-                    $orderDetail->company_id = $productTime->company_id;
-                    $orderDetail->store_id = $data['storeID'];
-                    $orderDetail->delivery_date = $checkOrderDate;
-                    $orderDetail->save();
-                }
-            }
-
-            DB::table('orders')->where('order_id', $orderId)->update([
-                        'order_delivery_time' => $max_time,
-                        'order_total' => $total_price,
-                    ]);
-
-            User::where('id',Auth::id())->update(['browser' => $data['browser']]);
-
-            $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
-
-            $request->session()->put('currentOrderId', $order->order_id);
-            //$orderDetails = OrderDetail::select('*')->where('order_id',$orderId)->get();
-            $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
-
-            //If store support ontine payment then if condition run.
-            if($storeDetail->online_payment == 1){
-                $companyDetail = Company::where('company_id', $productTime->company_id)->first();
-                $companyUserDetail = Admin::where('u_id', $companyDetail->u_id)->first();
-                DB::table('orders')->where('order_id', $orderId)->update([
-                        'online_paid' => 2,
-                    ]);
-                $request->session()->put('paymentAmount', $order->order_total);
-                $request->session()->put('OrderId', $order->order_id);
-                if(isset($companyUserDetail->stripe_user_id)){
-                    $request->session()->put('stripeAccount', $companyUserDetail->stripe_user_id);
-                }
-                Session::forget('orderData');
-                 return view('order.cart', compact('order','orderDetails'));
-            }else{
-                $user = User::where('id',$order->user_id)->first();                      
-                return redirect()->route('order-view', $orderId);
-            }
-        }else{
-            $todayDate = $request->session()->get('browserTodayDate');
-            $currentTime = $request->session()->get('browserTodayTime');
-            $todayDay = $request->session()->get('browserTodayDay');
-
-            $userDetail = User::whereId(Auth()->id())->first();
-
-            
-            if($request->session()->get('with_login_lat') == null){
-                $lat = $request->session()->get('with_out_login_lat');
-            }else{
-                $lat = $request->session()->get('with_login_lat');
-            }
-
-            if($request->session()->get('with_login_lng') == null){
-                $lng = $request->session()->get('with_out_login_lng');
-            }else{
-                $lng = $request->session()->get('with_login_lng');
-            }
-
-            $todayDate = Carbon::now()->format('d-m-Y');
-
-            // dd($userDetail);
-            // dd("lat: " .$lat . ", lng: " . $lng . ", userDetail-range: " . $userDetail->range . ",todayDate: " . $todayDate . ",currentTime: " . $currentTime . ",todayDay: " . $todayDay);
-
-            if(!isset($userDetail->range)){
-                $range = 10;
-            }else{
-                $range = $userDetail->range;
-            }
-            
-            $companydetails = Store::getListRestaurants($lat,$lng,$range,'1','3',$todayDate,$currentTime,$todayDay);
-            
-            return view('index', compact('companydetails'));
-        } 
-    }*/
+    }
 
     public function orderView($orderId){
         if( Session::has('paymentmode') && Session::get('paymentmode') == 0 )
@@ -621,196 +319,6 @@ class OrderController extends Controller
     }
 
     /**
-     * Redirects here right after login if item added into cart
-     * @param  Request $request [description]
-     * @return [type]           [description]
-     */
-    /*public function cartWithOutLogin(Request $request){   
-        $data = Session::get('orderData');
-        if(!empty($data)){
-            $i = 0;
-            $total_price = 0;
-            $max_time = "00:00:00";
-            $orderType;
-            $orderDate;
-            $orderTime;
-            $checkOrderDate;
-
-            if($request->session()->get('order_date') != null){
-                $pieces = explode(" ", $request->session()->get('order_date'));
-                $date=date_create($pieces[3]."-".$pieces[1]."-".$pieces[2]);
-                $checkOrderDate = date_format($date,"Y-m-d");
-                $orderType = 'eat_later';
-                $orderDate = $pieces[0]." ".$pieces[1]." ".$pieces[2]." ".$pieces[3];
-                $orderTime = $pieces[4];
-                $request->session()->forget('order_date');
-            }else{
-                $pieces = explode(" ", $data['browserCurrentTime']);
-                $date=date_create($pieces[3]."-".$pieces[1]."-".$pieces[2]);
-                $checkOrderDate = date_format($date,"Y-m-d");
-                $orderType = 'eat_now';
-                $orderDate = $pieces[0]." ".$pieces[1]." ".$pieces[2]." ".$pieces[3];
-                $orderTime = $pieces[4];
-            }
-
-            // Get store detail
-            $storeDetail = Store::where('store_id', $data['storeID'])->first();
-
-            //
-            foreach ($data['product'] as $key => $value) {
-                //if commant and quantity require then use condition "$value['prod_quant'] != '0' && $value['prod_desc'] != null"
-                if($value['prod_quant'] != '0'){
-                    $productTime = Product::select('preparation_Time','company_id')->whereProductId($value['id'])->first();
-                    if($i == 0){
-                        $order =  new Order();
-                        $order->customer_order_id = $this->random_num(6);
-                        $order->user_id = Auth::id();
-                        $order->store_id = $data['storeID'];
-                        $order->company_id = $productTime->company_id;
-                        $order->order_type = $orderType;
-                        $order->user_type = 'customer';
-                        $order->deliver_date = $orderDate;
-                        $order->deliver_time = $orderTime;
-                        $order->check_deliveryDate = $checkOrderDate;
-
-                        if($storeDetail->order_response == 0 && $orderType == 'eat_now')
-                        {
-                            $order->order_accepted = 0;
-                        }
-
-                        $order->save();
-                        $orders = Order::select('*')->whereUserId(Auth::id())->orderBy('order_id', 'DESC')->first();
-                        $orderId = $orders->order_id;
-                        $i = $i+1;
-                    }
-
-                    $i = 1;
-                    if($max_time < $productTime->preparation_Time){
-                        $max_time = $productTime->preparation_Time;
-                    }
-
-                    $productPrice = ProductPriceList::select('price')
-                        ->whereProductId($value['id'])
-                        ->where('store_id' , $data['storeID'])
-                        ->where('publishing_start_date','<=',Carbon::now())
-                        ->where('publishing_end_date','>=',Carbon::now())
-                        ->first();
-                    $total_price = $total_price + ($productPrice->price * $value['prod_quant']); 
-                    $orderDetail =  new OrderDetail();
-                    $orderDetail->order_id = $orders->order_id;
-                    $orderDetail->user_id = Auth::id();
-                    $orderDetail->product_id = $value['id'];
-                    $orderDetail->product_quality = $value['prod_quant'];
-                    $orderDetail->product_description = $value['prod_desc'];
-                    $orderDetail->price = $productPrice->price;
-                    $orderDetail->time = $productTime->preparation_Time;
-                    $orderDetail->company_id = $productTime->company_id;
-                    $orderDetail->store_id = $data['storeID'];
-                    $orderDetail->delivery_date = $checkOrderDate;
-                    $orderDetail->save();
-                }
-            }
-
-            DB::table('orders')->where('order_id', $orderId)->update([
-                        'order_delivery_time' => $max_time,
-                        'order_total' => $total_price,
-                    ]);
-
-            // Get discount if user has applied
-            $todayDate = Carbon::now()->format('Y-m-d h:i:00');
-            $customerDiscount = PromotionDiscount::from('promotion_discount AS PD')
-                        ->select(['PD.id', 'PD.code', 'PD.discount_value'])
-                        ->join('customer_discount AS CD', 'CD.discount_id', '=', 'PD.id')
-                        ->where(['CD.customer_id' => Auth::id(), 'CD.status' => '1', 'PD.status' => '1', 'PD.store_id' => Session::get('storeId')])
-                        ->where('PD.start_date', '<=', $todayDate)
-                        ->where('PD.end_date', '>=', $todayDate)
-                        ->first();
-
-            if($customerDiscount)
-            {
-                // Apply discount on order
-                if( !OrderCustomerDiscount::where(['order_id' => $orderId])->count() )
-                {
-                    OrderCustomerDiscount::create(['order_id' => $orderId, 'discount_id' =>$customerDiscount->id]);
-                }
-            }
-
-            User::where('id',Auth::id())->update(['browser' => $data['browser']]);
-
-            $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
-
-            $request->session()->put('currentOrderId', $order->order_id);
-           
-            $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name','order_details.product_id')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
-            
-            //If store support ontine payment then if condition run.
-            if($storeDetail->online_payment == 1){
-                $companyDetail = Company::where('company_id', $productTime->company_id)->first();
-                $companyUserDetail = Admin::where('u_id', $companyDetail->u_id)->first();
-
-                DB::table('orders')->where('order_id', $orderId)->update([
-                        'online_paid' => 2,
-                    ]);
-
-                $request->session()->put('paymentAmount', $order->order_total);
-                $request->session()->put('OrderId', $order->order_id);
-                
-                if(isset($companyUserDetail->stripe_user_id))
-                {
-                    $request->session()->put('stripeAccount', $companyUserDetail->stripe_user_id);
-                }
-                
-                Session::forget('orderData');
-                $request->session()->put('paymentmode',1);
-                
-                return view('order.cart', compact('order','orderDetails', 'customerDiscount'));
-            }else{
-                DB::table('orders')->where('order_id', $orderId)->update([
-                    'online_paid' => 2,
-                ]);
-                Session::forget('orderData');
-                $user = User::where('id',$order->user_id)->first(); 
-                $request->session()->put('paymentmode',0);
-                
-                return view('order.cart', compact('order','orderDetails', 'customerDiscount'));                     
-               //return redirect()->route('order-view', $orderId);
-            }
-        }else{
-            $todayDate = $request->session()->get('browserTodayDate');
-            $currentTime = $request->session()->get('browserTodayTime');
-            $todayDay = $request->session()->get('browserTodayDay');
-
-            $userDetail = User::whereId(Auth()->id())->first();
-
-            
-            if($request->session()->get('with_login_lat') == null){
-                $lat = $request->session()->get('with_out_login_lat');
-            }else{
-                $lat = $request->session()->get('with_login_lat');
-            }
-
-            if($request->session()->get('with_login_lng') == null){
-                $lng = $request->session()->get('with_out_login_lng');
-            }else{
-                $lng = $request->session()->get('with_login_lng');
-            }
-
-            $todayDate = Carbon::now()->format('d-m-Y');
-
-
-            if(!isset($userDetail->range)){
-                $range = 10;
-            }else{
-                $range = $userDetail->range;
-            }
-            
-            $companydetails = Store::getListRestaurants($lat,$lng,$range,'1','3',$todayDate,$currentTime,$todayDay);
-            
-            return view('index', compact('companydetails'));
-        } 
-    }*/
-
-    /**
      * Proceed cart if logged-in or data from session else store data into session or show restaurant listing
      * @param  Request $request [description]
      * @return [type]           [description]
@@ -1055,6 +563,8 @@ class OrderController extends Controller
             
             $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name','order_details.product_id')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 
+            $user = User::find(Auth::id());
+
             $request->session()->put('currentOrderId', $order->order_id);
 
             //If store support ontine payment then if condition run.
@@ -1075,7 +585,7 @@ class OrderController extends Controller
                 $request->session()->put('paymentmode',0);
             }
 
-            return view('order.cart', compact('order','orderDetails', 'customerDiscount', 'orderInvoice', 'storedetails'));
+            return view('order.cart', compact('order','orderDetails', 'customerDiscount', 'user', 'orderInvoice', 'storedetails'));
         }
         else
         {
@@ -1129,6 +639,83 @@ class OrderController extends Controller
         $status = 0;
 
         if( Order::where('order_id', $request->input('order_id'))->update(['delivery_type' => $request->input('delivery_type')]) )
+        {
+            $status = 1;
+        }
+
+        return response()->json(['status' => $status]);
+    }
+
+    /**
+     * Save user address
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    function saveUserAddress(Request $request)
+    {
+        // Validation
+        $this->validate($request, [
+            'full_name' => 'required',
+            'mobile'    => 'required|numeric',
+            'zipcode'   => 'required|numeric',
+            'address'   => 'required',
+            'city'      => 'required',
+        ]);
+
+        // Create
+        $status = 0; $addresses = '';
+        $data = $request->only(['full_name', 'mobile', 'zipcode', 'address', 'street', 'city', 'is_permanent']);
+        $data['customer_id'] = Auth::id();
+
+        if(UserAddress::create($data))
+        {
+            $status = 1;
+        }
+
+        // Get user address
+        $userAddresses = UserAddress::where(['customer_id' => Auth::id(), 'is_permanent' => '1'])
+            ->get();
+
+        if($userAddresses)
+        {
+            $addresses .= '<div class="ui-grid-a">';
+            
+            $i = 1;
+            foreach($userAddresses as $address)
+            {
+                $strAddress = Helper::convertAddressToStr($address);
+                $cls = ($i % 2 != 0) ? 'ui-block-a' : 'ui-block-b';
+                
+                $addresses .= "
+                <div class='{$cls}'>
+                    <div class='ui-bar ui-bar-a'>
+                        <div class='ui-radio'>
+                            <label for='{$address->id}' class='ui-btn ui-corner-all ui-btn-inherit ui-btn-icon-left ui-radio-off'>{$strAddress}</label>
+                            <input type='radio' name='user_address_id' id='{$address->id}' value='{$address->id}' checked=''>
+                        </div>
+                    </div>
+                </div>";
+
+                $i++;
+            }
+
+            $addresses .= '</div>';
+        }
+
+        // Return
+        return response()->json(['status' => $status, 'addresses' => $addresses]);
+    }
+
+    /**
+     * Update order user address from cart page (if Home Delivery) before confirm order
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    function updateOrderUserAddress(Request $request)
+    {
+        $status = 0;
+
+        if( Order::where('order_id', $request->input('order_id'))->update(['user_address_id' => $request->input('user_address_id')]) )
         {
             $status = 1;
         }
@@ -1268,6 +855,12 @@ class OrderController extends Controller
             
         $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name','order_details.product_id')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 
+        $user = User::find(Auth::id());
+
+        /*Session::put('paymentmode',1);
+        Session::put('paymentAmount', $order->final_order_total);
+        Session::put('OrderId', $order->order_id);*/
+
         /*$customerLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
             ->select(['OD.loyalty_id', DB::raw('SUM(OD.product_quality) AS quantity_bought')])
             ->join('order_details AS OD', 'OD.loyalty_id', '=', 'PL.id')
@@ -1279,7 +872,7 @@ class OrderController extends Controller
             ->toSql();*/
         // echo '<pre>'; print_r($orderInvoice); exit;
 
-        return view('order.cart', compact('order','orderDetails', 'customerDiscount', 'orderInvoice', 'storedetails'));
+        return view('order.cart', compact('order','orderDetails', 'user', 'customerDiscount', 'orderInvoice', 'storedetails'));
     }
 
     /**

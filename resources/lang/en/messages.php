@@ -181,6 +181,25 @@ return [
     // Validation
     'fieldRequired' => 'This field is required.',
 
+    // Address
+    'addAddress' => 'Add new address',
+    'fullName' => 'Full name',
+    'mobileNumber' => 'Mobile number',
+    'zipcode' => 'Zipcode',
+    'address1' => 'Flat, House no., Building, Company, Apartment',
+    'address2' => 'Area, Colony, Street, Sector',
+    'city' => 'Town/City',
+    'saveAddress' => 'Save this address',
+
+    // Delivery Price Model
+    'delivery_price_model' => 'Delivery Price Model',
+    'delivery_rule_id' => 'Delivery Rule',
+    'delivery_charge' => 'Delivery Charge',
+    'threshold' => 'Threshold',
+    'deliveryPriceCreated' => 'Delivery price created successfully.',
+    'deliveryPriceUpdated' => 'Delivery price updated successfully.',
+    'deliveryPriceDeleted' => 'Delivery price deleted successfully.',
+
     // Common
     'addNew' => 'Add New',
     'select' => 'Select',
@@ -193,6 +212,7 @@ return [
     'update' => 'Update',
     'close' => 'Close',
     'back' => 'Back',
+    'save' => 'Save',
     'action' => 'Action',
     'pagination' => 'Showing :first to :last of :total entries',
     'aboutDastjarAnar' => 'About Dastjar RS/Anar',

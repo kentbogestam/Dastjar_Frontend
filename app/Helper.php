@@ -136,4 +136,42 @@ class Helper extends Model
         
         return $fileName;
     }
+
+    // Return user address
+    public static function convertAddressToStr($address)
+    {
+        $arr = array();
+
+        if( !empty($address->full_name) )
+        {
+            array_push($arr, $address->full_name);
+        }
+
+        if( !empty($address->address) )
+        {
+            array_push($arr, $address->address);
+        }
+
+        if( !empty($address->street) )
+        {
+            array_push($arr, $address->street);
+        }
+
+        if( !empty($address->landmark) )
+        {
+            array_push($arr, $address->landmark);
+        }
+
+        if( !empty($address->city) )
+        {
+            array_push($arr, $address->city);
+        }
+
+        if( !empty($address->zipcode) )
+        {
+            array_push($arr, $address->zipcode);
+        }
+
+        return implode(', ', $arr);
+    }
 }

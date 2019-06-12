@@ -183,6 +183,25 @@ return [
     // Validation
     'fieldRequired' => 'Detta fält är obligatoriskt.',
 
+    // Address
+    'addAddress' => 'Add new address',
+    'fullName' => 'Full name',
+    'mobileNumber' => 'Mobile number',
+    'zipcode' => 'Zipcode',
+    'address1' => 'Flat, House no., Building, Company, Apartment',
+    'address2' => 'Area, Colony, Street, Sector',
+    'city' => 'Town/City',
+    'saveAddress' => 'Save this address',
+
+    // Delivery Price Model
+    'delivery_price_model' => 'Delivery Price Model',
+    'delivery_rule_id' => 'Delivery Rule',
+    'delivery_charge' => 'Delivery Charge',
+    'threshold' => 'Threshold',
+    'deliveryPriceCreated' => 'Delivery price created successfully.',
+    'deliveryPriceUpdated' => 'Delivery price updated successfully.',
+    'deliveryPriceDeleted' => 'Delivery price deleted successfully.',
+
     // Common
     'addNew' => 'Lägg till Ny',
     'select' => 'Välj',
@@ -195,6 +214,7 @@ return [
     'update' => 'Uppdatera',
     'close' => 'Stäng',
     'back' => 'Tillbaka',
+    'save' => 'Save',
     'action' => 'Åtgärd',
     'pagination' => 'Visar :first av :last av :total antal',
     'aboutDastjarAnar' => 'Om Dastjar RS/Anar',
