@@ -30,71 +30,41 @@ function reloadRestaurantList(){
 
 // Reset 'co-ordinate' with currect after 20 minutes
 function getCurrentCoordinates(){
- 
-   var flag=checkTimeAfterLocationSet(); // problem area function called the poisiton itself
+    var flag=checkTimeAfterLocationSet(); // problem area function called the poisiton itself
 
-   if(flag==false){
-   
-   navigator.geolocation.getCurrentPosition(function(position) {
+    if(flag==false){
+        if(ios && (!standalone && !safari))
+        {
+            requestGeoAddressToIosNative('getCurrentCoordinates');
+        }
+        else
+        {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                document.cookie="latitude=" + position.coords.latitude;
+                document.cookie="longitude=" + position.coords.longitude;
 
-	    document.cookie="latitude=" + position.coords.latitude;
-	    document.cookie="longitude=" + position.coords.longitude;
-      //console.log("in getCurrentCoordinates and updating current location ");
-      //console.log(position.coords.latitude+"-------"+position.coords.longitude);
-       $.ajax({
-          url: BASE_URL+"/update-location",
-           type: "GET",
-           data: {lat : position.coords.latitude, long : position.coords.longitude},
-           dataType: "json"
-       });
+                $.ajax({
+                    url: BASE_URL+"/update-location",
+                    type: "GET",
+                    data: {lat : position.coords.latitude, long : position.coords.longitude},
+                    dataType: "json"
+                });
 
-       reloadRestaurantList();
-	
-	},function(error){
-		if (typeof lat === "undefined") {
-		   // $('.login-inner-section a').attr('href','javascript:void(0)');
-		   // $('#login-popup').show();	    			
-		} else {
-		    // document.cookie="latitude=" + lat;
-		    // document.cookie="longitude=" + lng;			
-		} 			    
-	});
-
- }else{
-
-  console.log("Current location not required to update because user set location time is less than 20 min");
- }
-
+                reloadRestaurantList();
+            },function(error){
+                if (typeof lat === "undefined") {
+                    // $('.login-inner-section a').attr('href','javascript:void(0)');
+                    // $('#login-popup').show();                    
+                } else {
+                    // document.cookie="latitude=" + lat;
+                    // document.cookie="longitude=" + lng;          
+                }
+            });
+        }
+    }else{
+        console.log("Current location not required to update because user set location time is less than 20 min");
+    }
 }
-
-/*function setCurrentCoordinates(){
-   
-   navigator.geolocation.getCurrentPosition(function(position) {
-
-      document.cookie="latitude=" + position.coords.latitude;
-      document.cookie="longitude=" + position.coords.longitude;
-      console.log("in getCurrentCoordinates and updating current location ");
-      //console.log(position.coords.latitude+"-------"+position.coords.longitude);
-       $.ajax({
-          url: baseUrl+"/public/update-location", // for local host testing
-         // url: baseUrl+"/update-location", // for live testing
-           type: "GET",
-           data: {lat : position.coords.latitude, long : position.coords.longitude},
-           dataType: "json"
-       });
-
-       reloadRestaurantList();
-  
-  },function(error){
-    if (typeof lat === "undefined") {
-       // $('.login-inner-section a').attr('href','javascript:void(0)');
-       // $('#login-popup').show();           
-    } else {
-        // document.cookie="latitude=" + lat;
-        // document.cookie="longitude=" + lng;      
-    }           
-  });
-}*/
 
 function checkTimeAfterLocationSet(){
     var setLocationTime = getCookie("setLocationTime");

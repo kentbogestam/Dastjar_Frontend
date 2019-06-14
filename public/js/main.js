@@ -9,6 +9,15 @@
 /* 
 -----------------------------------------------------------------------------------------------------------*/
 
+standalone = true;
+if ( ("standalone" in window.navigator) && !window.navigator.standalone ){
+    standalone = window.navigator.standalone;
+}
+userAgent = window.navigator.userAgent.toLowerCase();
+safari = /safari/.test( userAgent );
+ios = /iphone|ipod|ipad/.test( userAgent );
+userAction = 'msg';
+watchPositionAction = '';
 
 $(document).ready(function($) {
 
@@ -80,43 +89,45 @@ function decrementValue(id)
 
 // Call from 'popupSelection' on load and update user location (if type_selection is null)
 function setCurrentLatLong(urllatlng){
+    var userLang = navigator.language || navigator.userLanguage; 
+    
+    if (userLang=='sv'){
+        $("#contentEnglish").hide();
+        $("#contentSwedish").show();
+   
+    }else{
+        $("#contentEnglish").show();
+        $("#contentSwedish").hide();
+    }
 
-      var userLang = navigator.language || navigator.userLanguage; 
-        if (userLang=='sv'){
-            $("#contentEnglish").hide();
-            $("#contentSwedish").show();
-       
-        }else{
+    if(ios && (!standalone && !safari))
+    {
+        requestGeoAddressToIosNative('setCurrentLatLong');
+    }
+    else
+    {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            document.cookie="latitude=" + position.coords.latitude;
+            document.cookie="longitude=" + position.coords.longitude;
 
-            $("#contentEnglish").show();
-            $("#contentSwedish").hide();
-        }
+            $.ajax({
+                url: urllatlng,
+                type: "GET",
+                data: {lat : position.coords.latitude, long : position.coords.longitude},
+                dataType: "json"
+            });
 
-   navigator.geolocation.getCurrentPosition(function(position) {
-
-      document.cookie="latitude=" + position.coords.latitude;
-      document.cookie="longitude=" + position.coords.longitude;
-      console.log("in getCurrentCoordinates and updating current location ");
-      //console.log(position.coords.latitude+"-------"+position.coords.longitude);
-       $.ajax({
-          url: urllatlng,
-           type: "GET",
-           data: {lat : position.coords.latitude, long : position.coords.longitude},
-           dataType: "json"
-       });
-
-      // reloadRestaurantList();
-  
-  },function(error){
-    if (typeof lat === "undefined") {
-       // $('.login-inner-section a').attr('href','javascript:void(0)');
-       // $('#login-popup').show();           
-    } else {
-        // document.cookie="latitude=" + lat;
-        // document.cookie="longitude=" + lng;      
-    }           
-  });
-
+            // reloadRestaurantList();
+        },function(error){
+            if (typeof lat === "undefined") {
+                // $('.login-inner-section a').attr('href','javascript:void(0)');
+                // $('#login-popup').show();           
+            } else {
+                // document.cookie="latitude=" + lat;
+                // document.cookie="longitude=" + lng;      
+            }
+        });
+    }
 }
 
 // Increase quantity of cart item and update price
@@ -347,5 +358,228 @@ function hideLoading()
     $.mobile.loading('hide');
 }
 
+/* Start from currentLocation.js */
+// Update distance while move either to get restaurant list or to update map
+function setDistanceParmeter()
+{
+    // var lat1="28.580830";
+    // var lon1="77.077720";
+    // var lat2="28.585560";
+    // var lon2="77.074809";
+
+    var lat1 = getCookie("latitude");
+    var lon1 = getCookie("longitude");
+
+    var lat2 =  getCookie("everyMinutelatitude");
+    var lon2 =  getCookie("everyMinutelongitude");
+
+    var distance = distanceLatLon(lat1, lon1, lat2, lon2, "K");
+
+    distance = distance*1000;
+
+    if(distance > 100){
+        document.cookie="latitude="  + '';
+        document.cookie="longitude=" + '';
+
+        document.cookie="latitude="  + lat2;
+        document.cookie="longitude=" + lon2;
+
+        checkDistance(lat2,lon2);
+    }
+}
+
+//set geo location data
+function checkDistance(latt, lngg)
+{
+    $.ajax({
+        type: "GET",
+        url: "checkDistance",
+        data: {lat: latt, lng : lngg},
+        success: function( returnedData ) {
+            //alert("in success of alert Distance Executed Distance check parameter");
+            reloadRestaurantList();
+        }
+    });
+}
+/* End from currentLocation.js */
+
+// Make request to return lat/lng from IOS GPS
+function requestGeoAddressToIosNative(action = 'msg')
+{
+    userAction = action;
+    window.webkit.messageHandlers.geoAddress.postMessage(action);
+}
+
+// Get updated lat/lng (response) from IOS native
+function responseGeoAddressFromIosNative(data)
+{
+    if(1)
+    {
+        action = (typeof data['action'] !== 'undefined') ? data['action'] : userAction;
+
+        console.log('Latitude: '+data['lat']+', Longitude: '+data['long']+', action: '+action);
+
+        // If added watch here on position (home page, location, map etc)
+        if(action == 'getLocation')
+        {
+            // Page 'location.blade.php', 'map/index.blade.php'
+            if(watchPositionAction == 'updateLocationOnMap')
+            {
+                //
+                if($('input[name="street_address"]').length && $('input[name="street_address"]').val() != '')
+                {
+                    return false;
+                }
+
+                var lat1 = getCookie("latitude"); var lon1 = getCookie("longitude");
+                var lat2 = data['lat']; var lon2 = data['long'];
+
+                if(typeof changeMarkerPosition == 'function')
+                {
+                    changeMarkerPosition(lat2, lon2);
+                }
+                else
+                {
+                    alert('function \'changeMarkerPosition\' does not exist!');
+                }
+            }
+            // Page 'map/single_res_map.blade.php'
+            else if(watchPositionAction == 'showLocation')
+            {
+                var lat1 = getCookie("latitude"); var lon1 = getCookie("longitude");
+                var lat2 = data['lat']; var lon2 = data['long'];
+                markers[0][0] = lat2; markers[0][1] = lon2;
+
+                if(typeof calculateAndDisplayRoute == 'function')
+                {
+                    calculateAndDisplayRoute();
+                }
+                else
+                {
+                    alert('function \'calculateAndDisplayRoute\' does not exist!');
+                }
+            }
+            else
+            {
+                // Check if function exist
+                if(typeof setDistanceParmeter == 'function')
+                {
+                    if( getCookie('latitude') == '' || getCookie('longitude') == '' )
+                    {
+                        document.cookie = "latitude=" + data['lat'];
+                        document.cookie = "longitude=" + data['long'];
+                    }
+
+                    setMyCookie('everyMinutelatitude', data['lat'], 7);
+                    setMyCookie('everyMinutelongitude', data['long'], 7);
+                    setMyCookie('showError','', 0);
+
+                    var flag=checkTimeAfterLocationSet();
+
+                    if(flag==false){
+                        setDistanceParmeter();
+                    }
+                }
+                else
+                {
+                    alert('function \'setDistanceParmeter\' does not exist!');
+                }
+            }
+        }
+        
+        // On load home page if type_selection is null 'popupSelection'
+        if(action == 'setCurrentLatLong')
+        {
+            // Update Cookie
+            document.cookie="latitude=" + data['lat'];
+            document.cookie="longitude=" + data['long'];
+            
+            // Update Session
+            var latitude  = getCookie("latitude");
+            var longitude = getCookie("longitude");
+
+            $.ajax({
+                url: BASE_URL+"/update-location",
+                type: "GET",
+                data: {lat : latitude, long : longitude},
+                dataType: "json"
+            });
+        }
+        
+        // type_selection is not null, get current position and show restaurant listing on home page
+        if(action == 'getPos')
+        {
+            loc_flag=1;
+            // Update Cookie
+            document.cookie="latitude=" + data['lat'];
+            document.cookie="longitude=" + data['long'];
+
+            loc_lat = data['lat'];
+            loc_lng = data['long'];
+
+            var extraclass = document.body;
+            extraclass.classList.remove('disableClass');
+
+            if(typeof add == 'function')
+            {
+                add(constUrlLatLng,constUrlRestaurantMenu,noImageUrl);
+            }
+            else
+            {
+                alert('function \'add\' does not exist!');
+            }
+        }
+        
+        // Check the position afer 20 min and reset the longitude and latitude
+        if(action == 'getCurrentCoordinates')
+        {
+            // Update Cookie
+            document.cookie="latitude=" + data['lat'];
+            document.cookie="longitude=" + data['long'];
+            
+            // Update Session
+            var latitude  = getCookie("latitude");
+            var longitude = getCookie("longitude");
+
+            $.ajax({
+                url: BASE_URL+"/update-location",
+                type: "GET",
+                data: {lat : latitude, long : longitude},
+                dataType: "json"
+            });
+
+            if(typeof reloadRestaurantList == 'function')
+            {
+                reloadRestaurantList();
+            }
+            else
+            {
+                alert('function \'reloadRestaurantList\' does not exist!');
+            }
+        }
+        
+        // Reset current position from 'Settings'
+        if(action == 'locationSave')
+        {
+            // Update Cookie
+            document.cookie="latitude=" + data['lat'];
+            document.cookie="longitude=" + data['long'];
+            
+            // Update Session
+            var latitude  = getCookie("latitude");
+            var longitude = getCookie("longitude");
+
+            $.get(BASE_URL+'/saveCurrentlat-long', { lat: latitude, lng : longitude}, function(returnedData){
+                console.log(returnedData["data"]);
+                unsetLocationCookieTime();
+                window.location.reload();
+            });
+        }
+    }
+    else
+    {
+        $('#login-popup').show();
+    }
+}
 
 kWindow = window;

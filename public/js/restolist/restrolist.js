@@ -43,42 +43,49 @@ function checkUserLogin(url){
 
 function getPos(urlLatlng,urlMenulist,noImageUrl){
 	if (typeof loc_lat === "undefined" || loc_lat == "") {
-		navigator.geolocation.getCurrentPosition(function(position) { 
-			loc_flag=1;
-		    document.cookie="latitude="  + position.coords.latitude;
-		    document.cookie="longitude=" + position.coords.longitude;
+		if(ios && (!standalone && !safari))
+		{
+			requestGeoAddressToIosNative('getPos');
+		}
+		else
+		{
+			navigator.geolocation.getCurrentPosition(function(position) { 
+				loc_flag=1;
+			    document.cookie="latitude="  + position.coords.latitude;
+			    document.cookie="longitude=" + position.coords.longitude;
 
-		    loc_lat = position.coords.latitude;
-		    loc_lng = position.coords.longitude;
+			    loc_lat = position.coords.latitude;
+			    loc_lng = position.coords.longitude;
 
-		    var extraclass = document.body;
-			extraclass.classList.remove('disableClass');
-			
-			add(urlLatlng,urlMenulist,noImageUrl);
-	   },function(error){
-			// $.get("{{url('writeLogs')}}",{'log':'cookie ' + getCookie("latitude")});
-			if (typeof loc_lat === "undefined" || loc_lat == "") {
-				if (!getCookie("latitude")){
-		    		$("#loading-img").hide();
-		    		$("#overlay").hide();
-				    $('.login-inner-section a').attr('href','javascript:void(0)');
-	 			    $('#login-popup').show();	
-					// $.get("{{url('writeLogs')}}",{'log':'location 2 ' + error + ' ' + loc_lat});
-				} else {
-					loc_flag=2;
-				    document.cookie="latitude=" + getCookie("latitude");
-				    document.cookie="longitude=" + getCookie("longitude");		
-					// $.get("{{url('writeLogs')}}",{'log':'location 3'});
-					add(urlLatlng,urlMenulist,noImageUrl);					
-				}
-			}else{
-				loc_flag=3;
-			    document.cookie="latitude=" + loc_lat;
-			    document.cookie="longitude=" + loc_lng;		
-				// $.get("{{url('writeLogs')}}",{'log':'location 4'});
+			    var extraclass = document.body;
+				extraclass.classList.remove('disableClass');
+				
 				add(urlLatlng,urlMenulist,noImageUrl);
-			} 
-		},{maximumAge:0,timeout:5000});
+		   	},function(error){
+				// $.get("{{url('writeLogs')}}",{'log':'cookie ' + getCookie("latitude")});
+				if (typeof loc_lat === "undefined" || loc_lat == "") {
+					if (!getCookie("latitude")){
+			    		$("#loading-img").hide();
+			    		$("#overlay").hide();
+					    $('.login-inner-section a').attr('href','javascript:void(0)');
+		 			    $('#login-popup').show();	
+						// $.get("{{url('writeLogs')}}",{'log':'location 2 ' + error + ' ' + loc_lat});
+					} else {
+						loc_flag=2;
+					    document.cookie="latitude=" + getCookie("latitude");
+					    document.cookie="longitude=" + getCookie("longitude");		
+						// $.get("{{url('writeLogs')}}",{'log':'location 3'});
+						add(urlLatlng,urlMenulist,noImageUrl);					
+					}
+				}else{
+					loc_flag=3;
+				    document.cookie="latitude=" + loc_lat;
+				    document.cookie="longitude=" + loc_lng;		
+					// $.get("{{url('writeLogs')}}",{'log':'location 4'});
+					add(urlLatlng,urlMenulist,noImageUrl);
+				} 
+			},{maximumAge:0,timeout:5000});
+		}
 	}else{
 		loc_flag=5;
 	    document.cookie="latitude=" + loc_lat;

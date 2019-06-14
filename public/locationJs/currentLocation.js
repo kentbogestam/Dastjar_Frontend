@@ -15,15 +15,22 @@ setTimeout(getLocation, 0);
 
 // Geolocation API is used to locate a user's position.
 function getLocation() {
-    if (navigator.geolocation) 
+	if(ios && (!standalone && !safari))
 	{
-		navigator.geolocation.watchPosition(showPosition, showError, options);
-    } 
-	else 
+		requestGeoAddressToIosNative('getLocation');
+	}
+	else
 	{
-	   	setMyCookie('showError','Geolocation is not supported by this browser.', 7);
-	   	console.log('NOT SUPPORT');
-    }
+		if (navigator.geolocation) 
+		{
+			navigator.geolocation.watchPosition(showPosition, showError, options);
+	    } 
+		else 
+		{
+		   	setMyCookie('showError','Geolocation is not supported by this browser.', 7);
+		   	console.log('NOT SUPPORT');
+	    }
+	}
 }
 
 //get postion
@@ -67,55 +74,6 @@ function showError(error) {
 	setMyCookie('showError',error, 7);
 }
 
-// Update distance while move either to get restaurant list or to update map
-function setDistanceParmeter()
-{
-	/* Testing Data
-
-	var lat1="28.580830";
-	var lon1="77.077720";
-
-	var lat2="28.585560";
-	var lon2="77.074809";
-
-	end of testing data*/
-
-	var lat1 = getCookie("latitude");
-	var lon1 = getCookie("longitude");
-
-	var lat2 =  getCookie("everyMinutelatitude");
-	var lon2 =  getCookie("everyMinutelongitude");
-
-	var distance = distanceLatLon(lat1, lon1, lat2, lon2, "K");
-
-	distance = distance*1000;
-
-	// alert(distance);
-
-	if(distance > 100){
-		document.cookie="latitude="  + '';
-		document.cookie="longitude=" + '';
-
-		document.cookie="latitude="  + lat2;
-		document.cookie="longitude=" + lon2;
-
-		checkDistance(lat2,lon2);
-	}
-}
-
-//set geo location data
-function checkDistance(latt, lngg)
-{
-	$.ajax({
-		type: "GET",
-		url: "checkDistance",
-		data: {lat: latt, lng : lngg},
-		success: function( returnedData ) {
-			//alert("in success of alert Distance Executed Distance check parameter");
-			reloadRestaurantList();
-		}
-	});
-}
 //check empty
 function isEmpty(e) {
   switch (e) {
@@ -155,4 +113,3 @@ if(isEmpty(showErrorThorw))
 
 
 });
-
