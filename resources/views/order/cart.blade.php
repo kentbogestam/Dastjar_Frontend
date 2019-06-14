@@ -90,6 +90,18 @@
 						</div>
 					</div>
 				@endif
+				@if( in_array(3, $store_delivery_type) )
+					<div class="ui-grid-a row-delivery-charge {{ !isset($orderInvoice['homeDelivery']['delivery_charge']) ? 'hidden' : '' }}">
+						<div class="ui-block-a">
+							<div class="ui-bar ui-bar-a">DELIVERY CHARGE</div>
+						</div>
+						<div class="ui-block-b">
+							<div class="ui-bar ui-bar-a">
+								<span id="delivery-charge">{{ isset($orderInvoice['homeDelivery']['delivery_charge']) ? number_format($orderInvoice['homeDelivery']['delivery_charge'], 2, '.', '') : '0.00' }}</span> {{ $order->currencies }}
+							</div>
+						</div>
+					</div>
+				@endif
 				<div class="ui-grid-a row-total">
 					<div class="ui-block-a">
 						<div class="ui-bar ui-bar-a"><strong>TOTAL</strong></div>
@@ -104,13 +116,13 @@
 				</div>
 			</div>
 
-			@if($storedetails->deliveryType->count() > 1)
+			@if($storedetails->deliveryTypes->count() >= 1)
 				<div class="ui-grid-solo row-order-delivery-type">
 					<div class="ui-block-a">
 						<div class="ui-bar ui-bar-a text-center">
 							<form>
 								<fieldset data-role="controlgroup" data-type="horizontal">
-									@foreach($storedetails->deliveryType as $row)
+									@foreach($storedetails->deliveryTypes as $row)
 										@if($row->delivery_type == 1)
 											<input type="radio" name="delivery_type" id="delivery_typea" value="1">
 											<label for="delivery_typea">{{ __('messages.deliveryOptionDineIn') }}</label>
@@ -131,60 +143,33 @@
 						</div>
 					</div>
 				</div>
+			@else
+				@foreach($storedetails->deliveryTypes as $row)
+					<input type="radio" name="delivery_type" value="{{ $row->delivery_type }}" checked="" class="hidden">
+				@endforeach
 			@endif
 
-			<div class="block-address hidden">
-				<form method="post" id="frm-user-address" data-ajax="false">
-					@if($user->addresses->count() > 1)
-						<div class="ui-grid-a">
-							@foreach($user->addresses as $address)
-								<div class="{{ ($loop->iteration % 2 != 0) ? "ui-block-a" : "ui-block-b" }}">
-									<div class="ui-bar ui-bar-a">
-										<label for="{{ $address->id }}">{{ Helper::convertAddressToStr($address) }}</label>
-										<input type="radio" name="user_address_id" id="{{ $address->id }}" value="{{ $address->id }}" checked="">
-									</div>
-								</div>
-							@endforeach
-						</div>
+			{{-- If store support home delivery --}}
+			@if( in_array(3, $store_delivery_type) )
+				<div class="block-address hidden"></div>
+			@endif
+
+			<div class="ui-grid-solo">
+				<div class="ui-block-a">
+					@if(Session::get('paymentmode') !=0 && $order->final_order_total > 0)
+						<form action="{{ url('/payment') }}" class="payment_form_btn" id="orderPaymentForm" method="POST" data-ajax="false">
+							{{ csrf_field() }} 
+							<input type="hidden" id="stripeToken" name="stripeToken">
+							<button type="button" class="ui-btn ui-mini btn-pay" disabled="">{{__('messages.Pay with card')}}</button>
+						</form>
+					@else
+						<!-- <div id="saveorder">
+							<a href="{{url('order-view').'/'.$order->order_id}}" class="send-order" data-ajax="false">{{ __('messages.send order and pay in restaurant') }}</a>
+						</div> -->
+						<button type="button" class="ui-btn ui-mini send-order" disabled="">{{ __('messages.send order and pay in restaurant') }}</button>
 					@endif
-				</form>
-				<div class="ui-grid-solo">
-					<div class="ui-block-a">
-						<div id="add-new-address" data-role="collapsible">
-							<h4>{{ __('messages.addAddress') }}</h4>
-							<div class="add-address-form">
-								<div class="ui-bar ui-bar-a">
-									<form method="post" id="save-address" data-ajax="false">
-										<input type="text" name="full_name" id="full_name" placeholder="{{ __('messages.fullName') }}*" data-mini="true" data-rule-required="true">
-										<input type="number" name="mobile" id="mobile" placeholder="{{ __('messages.mobileNumber') }}*" data-mini="true" data-rule-required="true">
-										<input type="number" name="zipcode" id="zipcode" placeholder="Zipcode" data-mini="true">
-										<input type="text" name="address" id="address" placeholder="{{ __('messages.address1') }}*" data-mini="true" data-rule-required="true">
-										<input type="text" name="street" id="street" placeholder="{{ __('messages.address2') }}*" data-mini="true" data-rule-required="true">
-										<input type="text" name="city" id="city" placeholder="{{ __('messages.city') }}*" data-mini="true" data-rule-required="true">
-										<fieldset data-role="controlgroup">
-											<label for="is_permanent">{{ __('messages.saveAddress') }}</label>
-											<input type="checkbox" name="is_permanent" value="1" checked="" id="is_permanent">
-										</fieldset>
-										<input type="submit" data-inline="true" value="{{ __('messages.save') }}" data-theme="b">
-									</form>
-								</div>
-							</div>
-						</div>
-					</div>
 				</div>
 			</div>
-
-			@if(Session::get('paymentmode') !=0 && $order->final_order_total > 0)
-				<form action="{{ url('/payment') }}" class="payment_form_btn" id="orderPaymentForm" method="POST" data-ajax="false">
-					{{ csrf_field() }} 
-					<input type="hidden" id="stripeToken" name="stripeToken">
-					<button type="button" class="ui-btn ui-mini btn-pay" disabled="">{{__('messages.Pay with card')}}</button>
-				</form>
-			@else
-				<div id="saveorder">
-					<a href="{{url('order-view').'/'.$order->order_id}}" class="send-order" data-ajax="false">{{ __('messages.send order and pay in restaurant') }}</a>
-				</div>
-			@endif
 
 			<!-- Loyalty -->
 			<div class="ui-grid-solo text-center row-loyalty-discount">
@@ -252,15 +237,17 @@
 
 	// 
 	$('.btn-pay').on('click', function(e) {
-		if($('#frm-user-address').valid() != false)
+		if( $('#frm-user-address').length && !$('#frm-user-address').valid())
 		{
-			var totalAmount = parseFloat('{{ Session::get('paymentAmount') }}');
-
-			handler.open({
-                currency: 'sek',
-                amount: (totalAmount*100)
-            });
+			return false;
 		}
+
+		// var totalAmount = parseFloat('{{ Session::get('paymentAmount') }}');
+
+		handler.open({
+            currency: 'sek',
+            // amount: (totalAmount*100)
+        });
 
 		e.preventDefault();
 	});
@@ -308,12 +295,12 @@
 	});
 
 	// Update 'delivery_type'
-	$('input[name=delivery_type]').on('change', function() {
+	$(document).on('change', 'input[name=delivery_type]', function() {
 		orderUpdateDeliveryType();
 	});
 
 	// Update user address
-	$('input[name=user_address_id]').on('change', function() {
+	$(document).on('change', 'input[name=user_address_id]', function() {
 		updateOrderUserAddress();
 	});
 
@@ -329,15 +316,22 @@
 				deliveryTypes.push($(this).val());
 			});
 
-			// Dine In/Take Away, Take Away/Home Delivery, Dine In/Take Away/Home Delivery
-			if( (deliveryTypes.indexOf("1") != -1 && deliveryTypes.indexOf("2") != -1) || (deliveryTypes.indexOf("2") != -1 && deliveryTypes.indexOf("3") != -1) || (deliveryTypes.indexOf("1") != -1 && deliveryTypes.indexOf("2") != -1 && deliveryTypes.indexOf("3") != -1) )
+			if(deliveryTypes.length == 1)
 			{
-				$('input[name=delivery_type][value="2"]').prop('checked', true);
+				$('input[name=delivery_type][value="'+deliveryTypes[0]+'"]').prop('checked', true);
 			}
-			// Dine In/Home Delivery
-			else if(deliveryTypes.indexOf("1") != -1 && deliveryTypes.indexOf("3") != -1)
+			else
 			{
-				$('input[name=delivery_type][value="3"]').prop('checked', true);
+				// Dine In/Take Away, Take Away/Home Delivery, Dine In/Take Away/Home Delivery
+				if( (deliveryTypes.indexOf("1") != -1 && deliveryTypes.indexOf("2") != -1) || (deliveryTypes.indexOf("2") != -1 && deliveryTypes.indexOf("3") != -1) || (deliveryTypes.indexOf("1") != -1 && deliveryTypes.indexOf("2") != -1 && deliveryTypes.indexOf("3") != -1) )
+				{
+					$('input[name=delivery_type][value="2"]').prop('checked', true);
+				}
+				// Dine In/Home Delivery
+				else if(deliveryTypes.indexOf("1") != -1 && deliveryTypes.indexOf("3") != -1)
+				{
+					$('input[name=delivery_type][value="3"]').prop('checked', true);
+				}
 			}
 
 			orderUpdateDeliveryType();
@@ -350,23 +344,20 @@
 		// 
 		if($('input[name=delivery_type]:checked').val() == '3')
 		{
-			$('.block-address').removeClass('hidden');
-			updateOrderUserAddress();
-
-			if($('input[name=user_address_id]:checked').length)
-			{
-				$('.btn-pay').prop('disabled', false);
-			}
-			else
-			{
-				$('.btn-pay').prop('disabled', true);
-			}
+			getHomeDeliveryPartContent($('#orderid').val());
 		}
 		else
 		{
 			$('.block-address').addClass('hidden');
 			$('.btn-pay').prop('disabled', false);
+			$('.send-order').prop('disabled', false);
 		}
+
+		// Start: Just to update cart
+		id = 1;
+		var qty = parseInt($('#qty'+id).val(), 10);
+		var prod = $('#prod'+id).val();
+		// End: Just to update cart
 		
 		// Update 'delivery_type' in DB
 		$.ajax({
@@ -379,7 +370,33 @@
 			},
 			dataType: 'json',
 			success: function(response) {
-				console.log(response);
+				updateCart(qty, prod, 0, 0);
+			}
+		});
+	}
+
+	// Get 'home delivery' content to proceed order
+	function getHomeDeliveryPartContent(order_id)
+	{
+		$.ajax({
+			url: "{{ url('get-home-delivery-part-content') }}/"+order_id,
+			dataType: 'json',
+			success: function(response) {
+				$('.block-address').html(response.html).trigger('create');
+				$('.block-address').removeClass('hidden');
+
+				if($('input[name=user_address_id]:checked').length)
+				{
+					$('.btn-pay').prop('disabled', false);
+					$('.send-order').prop('disabled', false);
+				}
+				else
+				{
+					$('.btn-pay').prop('disabled', true);
+					$('.send-order').prop('disabled', true);
+				}
+
+				updateOrderUserAddress();
 			}
 		});
 	}
@@ -403,14 +420,10 @@
 				}
 			});
 		}
-		else
-		{
-			console.log('Something went wrong!');
-		}
 	}
 
 	// Save address
-	$('#save-address').on('submit', function(e) {
+	$(document).on('submit', '#save-address', function(e) {
 		e.preventDefault();
 
 		// Form validate
@@ -434,11 +447,7 @@
 				success: function(result) {
 					if(result.status)
 					{
-						$('form#frm-user-address').html(result.addresses);
-						$('#add-new-address').collapsible('collapse');
-						$('#save-address').trigger('reset');
-						$('.btn-pay').prop('disabled', false);
-						updateOrderUserAddress();
+						getHomeDeliveryPartContent($('#orderid').val());
 					}
 				},
 				error: function() {
@@ -452,9 +461,16 @@
 
 	// 
 	$('.send-order').on('click', function() {
-		if(!$('#frm-user-address').valid())
+		if($('input[name=delivery_type]:checked').val() == '3')
 		{
-			return false;
+			if($('#frm-user-address').length && $('input[name=user_address_id]:checked').length)
+			{
+				window.location.href = "{{url('order-view').'/'.$order->order_id}}";
+			}
+		}
+		else
+		{
+			window.location.href = "{{url('order-view').'/'.$order->order_id}}";
 		}
 	});
 

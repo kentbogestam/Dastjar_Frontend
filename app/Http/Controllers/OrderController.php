@@ -16,6 +16,8 @@ use App\ProductPriceList;
 use Carbon\Carbon;
 use DB;
 use App\Store;
+use App\StoreDeliveryType;
+use App\StoreDeliveryPriceModel;
 use App\User;
 use App\UserAddress;
 use App\Company;
@@ -548,11 +550,29 @@ class OrderController extends Controller
                 }
             }
             // End apply discount
+            
+            // Start: Home delivery
+            $homeDelivery = array('delivery_charge' => NULL);
+            $store_delivery_type = StoreDeliveryType::where('store_id', Session::get('storeId'))
+                ->pluck('delivery_type')
+                ->toArray();
+            
+            // Check if store support 'home delivery'
+            if( !empty($store_delivery_type) && in_array(3, $store_delivery_type) )
+            {
+                $option = array('final_order_total' => $final_order_total);
+                $homeDelivery = $this->applyHomeDeliveryPriceModel($option);
+                $final_order_total = $homeDelivery['final_order_total'];
+            }
+
+            $orderInvoice['homeDelivery'] = $homeDelivery;
+            // End
 
             // Update final_total for order
             if( $final_order_total != $total_price )
             {
-                Order::where('order_id', $orderId)->update(['final_order_total' => $final_order_total]);
+                Order::where('order_id', $orderId)
+                    ->update(['final_order_total' => $final_order_total, 'delivery_charge' => $homeDelivery['delivery_charge']]);
             }
 
             //
@@ -585,7 +605,7 @@ class OrderController extends Controller
                 $request->session()->put('paymentmode',0);
             }
 
-            return view('order.cart', compact('order','orderDetails', 'customerDiscount', 'user', 'orderInvoice', 'storedetails'));
+            return view('order.cart', compact('order','orderDetails', 'customerDiscount', 'user', 'orderInvoice', 'storedetails', 'store_delivery_type'));
         }
         else
         {
@@ -630,103 +650,9 @@ class OrderController extends Controller
     }
 
     /**
-     * Update order delivery type from cart page before make payment or confirm order
-     * @param  Request $request [description]
-     * @return [type]           [description]
-     */
-    function orderUpdateDeliveryType(Request $request)
-    {
-        $status = 0;
-
-        if( Order::where('order_id', $request->input('order_id'))->update(['delivery_type' => $request->input('delivery_type')]) )
-        {
-            $status = 1;
-        }
-
-        return response()->json(['status' => $status]);
-    }
-
-    /**
-     * Save user address
-     * @param  Request $request [description]
-     * @return [type]           [description]
-     */
-    function saveUserAddress(Request $request)
-    {
-        // Validation
-        $this->validate($request, [
-            'full_name' => 'required',
-            'mobile'    => 'required|numeric',
-            'zipcode'   => 'required|numeric',
-            'address'   => 'required',
-            'city'      => 'required',
-        ]);
-
-        // Create
-        $status = 0; $addresses = '';
-        $data = $request->only(['full_name', 'mobile', 'zipcode', 'address', 'street', 'city', 'is_permanent']);
-        $data['customer_id'] = Auth::id();
-
-        if(UserAddress::create($data))
-        {
-            $status = 1;
-        }
-
-        // Get user address
-        $userAddresses = UserAddress::where(['customer_id' => Auth::id(), 'is_permanent' => '1'])
-            ->get();
-
-        if($userAddresses)
-        {
-            $addresses .= '<div class="ui-grid-a">';
-            
-            $i = 1;
-            foreach($userAddresses as $address)
-            {
-                $strAddress = Helper::convertAddressToStr($address);
-                $cls = ($i % 2 != 0) ? 'ui-block-a' : 'ui-block-b';
-                
-                $addresses .= "
-                <div class='{$cls}'>
-                    <div class='ui-bar ui-bar-a'>
-                        <div class='ui-radio'>
-                            <label for='{$address->id}' class='ui-btn ui-corner-all ui-btn-inherit ui-btn-icon-left ui-radio-off'>{$strAddress}</label>
-                            <input type='radio' name='user_address_id' id='{$address->id}' value='{$address->id}' checked=''>
-                        </div>
-                    </div>
-                </div>";
-
-                $i++;
-            }
-
-            $addresses .= '</div>';
-        }
-
-        // Return
-        return response()->json(['status' => $status, 'addresses' => $addresses]);
-    }
-
-    /**
-     * Update order user address from cart page (if Home Delivery) before confirm order
-     * @param  Request $request [description]
-     * @return [type]           [description]
-     */
-    function updateOrderUserAddress(Request $request)
-    {
-        $status = 0;
-
-        if( Order::where('order_id', $request->input('order_id'))->update(['user_address_id' => $request->input('user_address_id')]) )
-        {
-            $status = 1;
-        }
-
-        return response()->json(['status' => $status]);
-    }
-
-    /**
      * View cart function for testing
      */
-    function viewCart($orderId)
+    function viewCart(Request $request, $orderId)
     {
         $orderInvoice = array();
 
@@ -848,7 +774,22 @@ class OrderController extends Controller
             }
         }
 
-        // echo $final_order_total; exit;
+        // Start: Home delivery
+        $homeDelivery = array('delivery_charge' => NULL);
+        $store_delivery_type = StoreDeliveryType::where('store_id', Session::get('storeId'))
+            ->pluck('delivery_type')
+            ->toArray();
+        
+        // Check if store support 'home delivery'
+        if( !empty($store_delivery_type) && in_array(3, $store_delivery_type) )
+        {
+            $option = array('final_order_total' => $final_order_total);
+            $homeDelivery = $this->applyHomeDeliveryPriceModel($option);
+            $final_order_total = $homeDelivery['final_order_total'];
+        }
+
+        $orderInvoice['homeDelivery'] = $homeDelivery;
+        // End
 
         //
         $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
@@ -860,6 +801,7 @@ class OrderController extends Controller
         /*Session::put('paymentmode',1);
         Session::put('paymentAmount', $order->final_order_total);
         Session::put('OrderId', $order->order_id);*/
+        $request->session()->put('paymentAmount', $final_order_total);
 
         /*$customerLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
             ->select(['OD.loyalty_id', DB::raw('SUM(OD.product_quality) AS quantity_bought')])
@@ -872,7 +814,217 @@ class OrderController extends Controller
             ->toSql();*/
         // echo '<pre>'; print_r($orderInvoice); exit;
 
-        return view('order.cart', compact('order','orderDetails', 'user', 'customerDiscount', 'orderInvoice', 'storedetails'));
+        return view('order.cart', compact('order','orderDetails', 'user', 'customerDiscount', 'orderInvoice', 'storedetails', 'store_delivery_type'));
+    }
+
+    /**
+     * Apply home delivery and return
+     * @param  [type] $option [description]
+     * @return [type]         [description]
+     */
+    function applyHomeDeliveryPriceModel($option)
+    {
+        // Default
+        $homeDelivery = array(
+            'is_home_delivery_eligible' => 1,
+            'delivery_charge' => NULL,
+            'final_order_total' => $option['final_order_total']
+        );
+
+        // Get store 'Delivery price model'
+        $storeDeliveryPrice = StoreDeliveryPriceModel::select(['delivery_rule_id', 'delivery_charge', 'threshold'])
+            ->where(['store_id' => Session::get('storeId'), 'status' => '1'])
+            ->first();
+
+        if($storeDeliveryPrice)
+        {
+            // Fixed 'delivery price'
+            if($storeDeliveryPrice->delivery_rule_id == 1)
+            {
+                $homeDelivery['delivery_charge'] = $storeDeliveryPrice->delivery_charge;
+                $homeDelivery['final_order_total'] = $option['final_order_total'] + $homeDelivery['delivery_charge'];
+            }
+            // delivery price if 'order total' not passes the threshold
+            elseif($storeDeliveryPrice->delivery_rule_id == 2 && $option['final_order_total'] >= $storeDeliveryPrice->threshold)
+            {
+                $homeDelivery['delivery_charge'] = $storeDeliveryPrice->delivery_charge;
+                $homeDelivery['final_order_total'] = $option['final_order_total'] + $homeDelivery['delivery_charge'];
+            }
+            // 
+            elseif($storeDeliveryPrice->delivery_rule_id == 3 && $option['final_order_total'] < $storeDeliveryPrice->threshold)
+            {
+                $homeDelivery['is_home_delivery_eligible'] = 0;
+            }
+        }
+
+        return $homeDelivery;
+    }
+
+    /**
+     * Update order delivery type from cart page before make payment or confirm order
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    function orderUpdateDeliveryType(Request $request)
+    {
+        $status = 0;
+
+        if( Order::where('order_id', $request->input('order_id'))->update(['delivery_type' => $request->input('delivery_type')]) )
+        {
+            $status = 1;
+        }
+
+        return response()->json(['status' => $status]);
+    }
+
+    /**
+     * Get 'home delivery' content (addresses etc. if eligible) on cart page
+     * @param  [type] $order_id [description]
+     * @return [type]           [description]
+     */
+    function getHomeDeliveryPartContent($order_id)
+    {
+        $html = '';
+
+        // Get order
+        $order = Order::select(['final_order_total'])
+            ->where(['order_id' => $order_id])
+            ->first();
+        
+        $is_home_delivery_eligible = 1;
+
+        // Get store 'Delivery price model'
+        $storeDeliveryPrice = StoreDeliveryPriceModel::select(['delivery_rule_id', 'delivery_charge', 'threshold'])
+            ->where(['store_id' => Session::get('storeId'), 'status' => '1'])
+            ->first();
+
+        if($storeDeliveryPrice)
+        {
+            // Add order value when a home delivery is possible
+            if($storeDeliveryPrice->delivery_rule_id == 3 && $order->final_order_total < $storeDeliveryPrice->threshold)
+            {
+                $is_home_delivery_eligible = 0;
+            }
+        }
+
+        // If 'home_delivery eligible'
+        if($is_home_delivery_eligible)
+        {
+            // Get user address
+            $userAddresses = UserAddress::where(['customer_id' => Auth::id(), 'is_permanent' => '1'])
+                ->get();
+
+            if($userAddresses)
+            {
+                $html .= '
+                <form method="post" id="frm-user-address" data-ajax="false">
+                    <div class="ui-grid-a">';
+                
+                $i = 1;
+                foreach($userAddresses as $address)
+                {
+                    $strAddress = Helper::convertAddressToStr($address);
+                    $cls = ($i % 2 != 0) ? 'ui-block-a' : 'ui-block-b';
+                    
+                    $html .= "
+                    <div class='{$cls}'>
+                        <div class='ui-bar ui-bar-a'>
+                            <div class='ui-radio'>
+                                <label for='{$address->id}' class='ui-btn ui-corner-all ui-btn-inherit ui-btn-icon-left ui-radio-off'>{$strAddress}</label>
+                                <input type='radio' name='user_address_id' id='{$address->id}' value='{$address->id}' checked=''>
+                            </div>
+                        </div>
+                    </div>";
+
+                    $i++;
+                }
+
+                $html .= '
+                    </div>
+                </form>';
+            }
+
+            $html .= '
+            <div class="ui-grid-solo">
+                <div class="ui-block-a">
+                    <div id="add-new-address" data-role="collapsible">
+                        <h4>'.__('messages.addAddress').'</h4>
+                        <div class="add-address-form">
+                            <div class="ui-bar ui-bar-a">
+                                <form method="post" id="save-address" data-ajax="false">
+                                    <input type="text" name="full_name" id="full_name" placeholder="'.__('messages.fullName').'*" data-mini="true" data-rule-required="true">
+                                    <input type="number" name="mobile" id="mobile" placeholder="'.__('messages.mobileNumber').'*" data-mini="true" data-rule-required="true">
+                                    <input type="number" name="zipcode" id="zipcode" placeholder="Zipcode" data-mini="true">
+                                    <input type="text" name="address" id="address" placeholder="'.__('messages.address1').'*" data-mini="true" data-rule-required="true">
+                                    <input type="text" name="street" id="street" placeholder="'.__('messages.address2').'*" data-mini="true" data-rule-required="true">
+                                    <input type="text" name="city" id="city" placeholder="'.__('messages.city').'*" data-mini="true" data-rule-required="true">
+                                    <fieldset data-role="controlgroup">
+                                        <label for="is_permanent">'.__('messages.saveAddress').'</label>
+                                        <input type="checkbox" name="is_permanent" value="1" checked="" id="is_permanent">
+                                    </fieldset>
+                                    <input type="submit" data-inline="true" value="'.__('messages.save').'" data-theme="b">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            ';
+        }
+        else
+        {
+            $html .= 'Not eligible';
+        }
+
+        // Return
+        return response()->json(['html' => $html]);
+    }
+
+    /**
+     * Save user address
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    function saveUserAddress(Request $request)
+    {
+        // Validation
+        $this->validate($request, [
+            'full_name' => 'required',
+            'mobile'    => 'required|numeric',
+            'zipcode'   => 'required|numeric',
+            'address'   => 'required',
+            'city'      => 'required',
+        ]);
+
+        // Create
+        $status = 0; $addresses = '';
+        $data = $request->only(['full_name', 'mobile', 'zipcode', 'address', 'street', 'city', 'is_permanent']);
+        $data['customer_id'] = Auth::id();
+
+        if(UserAddress::create($data))
+        {
+            $status = 1;
+        }
+
+        // Return
+        return response()->json(['status' => $status]);
+    }
+
+    /**
+     * Update order user address from cart page (if Home Delivery) before confirm order
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    function updateOrderUserAddress(Request $request)
+    {
+        $status = 0;
+
+        if( Order::where('order_id', $request->input('order_id'))->update(['user_address_id' => $request->input('user_address_id')]) )
+        {
+            $status = 1;
+        }
+
+        return response()->json(['status' => $status]);
     }
 
     /**
@@ -901,6 +1053,11 @@ class OrderController extends Controller
                 OrderDetail::where(['order_id' => $data['orderid'], 'product_id' => $data['productId']])
                     ->delete();
             }
+
+            // Get order
+            $order = Order::select(['delivery_type'])
+                ->where(['order_id' => $data['orderid']])
+                ->first();
 
             // Get order detail and calculate total and other discount
             $orderDetail = OrderDetail::from('order_details AS OD')
@@ -1039,10 +1196,27 @@ class OrderController extends Controller
                     }
                 }
                 // End apply discount
+                
+                // Start: Home delivery
+                $homeDelivery = array('delivery_charge' => NULL);
+                $store_delivery_type = StoreDeliveryType::where('store_id', Session::get('storeId'))
+                    ->pluck('delivery_type')
+                    ->toArray();
+                
+                // Check if store support 'home delivery', and order's 'delivery_type' is 'home delivery'
+                if( !empty($store_delivery_type) && in_array(3, $store_delivery_type) && $order->delivery_type == 3 )
+                {
+                    $option = array('final_order_total' => $final_order_total);
+                    $homeDelivery = $this->applyHomeDeliveryPriceModel($option);
+                    $final_order_total = $homeDelivery['final_order_total'];
+                }
+
+                $orderInvoice['homeDelivery'] = $homeDelivery;
+                // End
 
                 // Update order_total and final_order_total
                 Order::where(['order_id' => $data['orderid']])
-                    ->update(['order_total' => $order_total, 'final_order_total' => $final_order_total]);
+                    ->update(['order_total' => $order_total, 'final_order_total' => $final_order_total, 'delivery_charge' => $homeDelivery['delivery_charge']]);
                 
                 $orderInvoice['order_total'] = $order_total;
                 $orderInvoice['final_order_total'] = $final_order_total;

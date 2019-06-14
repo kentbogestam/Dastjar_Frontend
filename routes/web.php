@@ -116,6 +116,7 @@
 		Route::post('order-update-delivery-type', 'OrderController@orderUpdateDeliveryType');
 		Route::post('save-user-address', 'OrderController@saveUserAddress');
 		Route::post('update-order-user-address', 'OrderController@updateOrderUserAddress');
+		Route::get('get-home-delivery-part-content/{order_id}', 'OrderController@getHomeDeliveryPartContent');
 		// Route::post('apply-promocode', 'OrderController@ajaxApplyPromocode');
 	});
 

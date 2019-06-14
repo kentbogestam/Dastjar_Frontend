@@ -141,13 +141,13 @@
 
 @endif
 
-@if( (Request::is('restro-menu-list/*') || Request::is('view-cart/*') || Request::is('cart')) && (isset($storedetails) && $storedetails->deliveryType->count() > 0 && $storedetails->deliveryType->count() < 3) )
+@if( (Request::is('restro-menu-list/*') || Request::is('view-cart/*') || Request::is('cart')) && (isset($storedetails) && $storedetails->deliveryTypes->count() > 0 && $storedetails->deliveryTypes->count() < 3) )
 	<div class="ui-grid-solo row-store-delivery-type">
 		<div class="ui-block-a">
 			@php
 			$deliveryType = array();
 
-			foreach($storedetails->deliveryType as $row)
+			foreach($storedetails->deliveryTypes as $row)
 			{
 				if($row->delivery_type == 1)
 				{

@@ -276,7 +276,7 @@ class Store extends Model
     /**
      * Get the comments for the blog post.
      */
-    public function deliveryType()
+    public function deliveryTypes()
     {
         return $this->hasMany('App\StoreDeliveryType', 'store_id', 'store_id');
     }

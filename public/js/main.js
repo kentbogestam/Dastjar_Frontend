@@ -280,6 +280,28 @@ function updateCart(qty,productId,totalProductPrice,grandtotal){
                 {
                     $('#discount-amount').text(orderInvoice.discount.toFixed(2));
                 }
+
+                // Home delivery
+                if( typeof orderInvoice.homeDelivery !== 'undefined' )
+                {
+                    if($('.row-delivery-charge').length)
+                    {
+                        if( typeof orderInvoice.homeDelivery.delivery_charge !== 'undefined' && orderInvoice.homeDelivery.delivery_charge != null )
+                        {
+                            $('.row-delivery-charge #delivery-charge').html(orderInvoice.homeDelivery.delivery_charge);
+                            $('.row-delivery-charge').removeClass('hidden');
+                        }
+                        else
+                        {
+                            $('.row-delivery-charge').addClass('hidden');
+                        }
+                    }
+
+                    if($('input[name=delivery_type]:checked').val() == '3')
+                    {
+                        getHomeDeliveryPartContent(orderid);
+                    }
+                }
             }
         },
         error: function (response) {
