@@ -52,7 +52,7 @@
             <table class="table table-bordered">
                 <thead>
                 <tr>
-                    <th>{{ __('messages.delivery_rule_id') }}</th>
+                    <th>{{ __('messages.deliveryType') }}</th>
                     <th>{{ __('messages.delivery_charge') }}</th>
                     <th>{{ __('messages.threshold') }}</th>
                     <th>{{ __('messages.action') }}</th>
@@ -62,7 +62,15 @@
                 @if( !$deliveryPriceModel->isEmpty() )
                     @foreach($deliveryPriceModel as $row)
                         <tr>
-                            <td>{{ $row->deliveryRule->summary }}</td>
+                            <td>
+                                @if($row->delivery_rule_id == 1)
+                                    {{ __('messages.ruleDeliveryType1') }}
+                                @elseif($row->delivery_rule_id == 2)
+                                    {{ __('messages.ruleDeliveryType2') }}
+                                @elseif($row->delivery_rule_id == 3)
+                                    {{ __('messages.ruleDeliveryType3') }}
+                                @endif
+                            </td>
                             <td>{{ $row->delivery_charge }}</td>
                             <td>{{ $row->threshold }}</td>
                             <td>
@@ -91,10 +99,10 @@
                     <form name="add-form" method="POST" action="{{ url('kitchen/delivery-price-model/store') }}" id="add-form" data-ajax="false">
                         @csrf
                         <div class="form-group">
-                            <label for="delivery_rule_id">{{ __('messages.delivery_rule_id') }} <span class='mandatory'>*</span>:</label>
+                            <label for="delivery_rule_id">{{ __('messages.deliveryType') }} <span class='mandatory'>*</span>:</label>
                             <select name="delivery_rule_id" class="form-control" id="delivery_rule_id" data-rule-required="true">
                                 @foreach($deliveryRule as $row)
-                                    <option value="{{ $row->id }}">{{ $row->summary }}</option>
+                                    <option value="{{ $row['id'] }}">{{ $row['summary'] }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -126,7 +134,7 @@
                             <label for="delivery_rule_id_upd">{{ __('messages.delivery_rule_id') }} <span class='mandatory'>*</span>:</label>
                             <select name="delivery_rule_id_upd" class="form-control" id="delivery_rule_id_upd" data-rule-required="true">
                                 @foreach($deliveryRule as $row)
-                                    <option value="{{ $row->id }}">{{ $row->summary }}</option>
+                                    <option value="{{ $row['id'] }}">{{ $row['summary'] }}</option>
                                 @endforeach
                             </select>
                         </div>

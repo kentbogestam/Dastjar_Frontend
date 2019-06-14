@@ -199,6 +199,10 @@ return [
     'deliveryPriceCreated' => 'Delivery price created successfully.',
     'deliveryPriceUpdated' => 'Delivery price updated successfully.',
     'deliveryPriceDeleted' => 'Delivery price deleted successfully.',
+    'addDeliveryType' => 'Add Delivery Type',
+    'ruleDeliveryType1' => 'Add Price for each Delivery',
+    'ruleDeliveryType2' => 'Add Price for Delivery and the minimum Order Value for Free Delivery',
+    'ruleDeliveryType3' => 'Add order value when a home delivery is possible',
 
     // Common
     'addNew' => 'Add New',

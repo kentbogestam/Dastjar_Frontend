@@ -9,7 +9,6 @@ use Auth;
 use Session;
 use App\Helper;
 use App\Store;
-use App\DeliveryRule;
 use App\StoreDeliveryPriceModel;
 
 class DeliveryPriceModelController extends Controller
@@ -31,7 +30,12 @@ class DeliveryPriceModelController extends Controller
 	 */
     public function index()
     {
-        $deliveryRule = DeliveryRule::where('status', '1')->get();
+        $deliveryRule = array(
+            array('id' => 1, 'summary' => __('messages.ruleDeliveryType1')),
+            array('id' => 2, 'summary' => __('messages.ruleDeliveryType2')),
+            array('id' => 3, 'summary' => __('messages.ruleDeliveryType3')),
+        );
+        
         $deliveryPriceModel = StoreDeliveryPriceModel::where(['store_id' => Session::get('storeId'), 'status' => '1'])
             ->get();
     	
@@ -65,7 +69,7 @@ class DeliveryPriceModelController extends Controller
         $data['id'] = $id;
 
         // 
-        if(!StoreDeliveryPriceModel::where(['store_id' => Session::get('storeId')])->first())
+        if(!StoreDeliveryPriceModel::where(['store_id' => Session::get('storeId'), 'status' => '1'])->first())
         {
             StoreDeliveryPriceModel::create($data);
         }

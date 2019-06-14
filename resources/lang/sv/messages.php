@@ -201,6 +201,10 @@ return [
     'deliveryPriceCreated' => 'Delivery price created successfully.',
     'deliveryPriceUpdated' => 'Delivery price updated successfully.',
     'deliveryPriceDeleted' => 'Delivery price deleted successfully.',
+    'addDeliveryType' => 'Lägg till Leveranstyp',
+    'ruleDeliveryType1' => 'Lägg till Pris för varje Leverans',
+    'ruleDeliveryType2' => 'Lägg till pris för leverans och lägsta beställningsvärde för gratis leverans',
+    'ruleDeliveryType3' => 'Lägg till ordervärde när en hemleverans är möjlig',
 
     // Common
     'addNew' => 'Lägg till Ny',

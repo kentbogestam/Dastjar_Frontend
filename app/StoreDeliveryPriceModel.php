@@ -14,12 +14,4 @@ class StoreDeliveryPriceModel extends Model
 	protected $casts = [
 	    'id' => 'string',
 	];
-
-    /**
-     * Get deliveryRule
-     */
-    public function deliveryRule()
-    {
-        return $this->hasOne('App\DeliveryRule', 'id', 'delivery_rule_id');
-    }
 }
