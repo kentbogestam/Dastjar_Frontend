@@ -380,30 +380,34 @@
 						@if( is_numeric($storeDetail->phone) )
 							<p><i class="fa fa-phone" aria-hidden="true"></i> <span>{{ $storeDetail->phone }}</span></p>
 						@endif
-						<p>
-							<?php
-								$time = $order->order_delivery_time;
-								$time2 = $storeDetail->extra_prep_time;
-								$secs = strtotime($time2)-strtotime("00:00:00");
-								$result = date("H:i:s",strtotime($time)+$secs);
-							?>
+						@if($order->delivery_type == 3)
+							<p>{{ __('messages.deliveryOptionHomeDelivery') }}</p>
+						@else
+							<p>
+								<?php
+									$time = $order->order_delivery_time;
+									$time2 = $storeDetail->extra_prep_time;
+									$secs = strtotime($time2)-strtotime("00:00:00");
+									$result = date("H:i:s",strtotime($time)+$secs);
+								?>
 
-							@if($order->order_type == 'eat_later')
-								{{ __('messages.Your order will be ready on') }}
-								{{$order->deliver_date}}
-								{{date_format(date_create($order->deliver_time), 'G:i')}} 
-							@else
-								{{ __('messages.Your order will be ready in about') }}
-								@if(!$storeDetail->order_response && $order->extra_prep_time)
-									{{ $order->extra_prep_time }} mins
+								@if($order->order_type == 'eat_later')
+									{{ __('messages.Your order will be ready on') }}
+									{{$order->deliver_date}}
+									{{date_format(date_create($order->deliver_time), 'G:i')}} 
 								@else
-									@if(date_format(date_create($result), 'H')!="00")
-										{{date_format(date_create($result), 'H')}} hours 						
+									{{ __('messages.Your order will be ready in about') }}
+									@if(!$storeDetail->order_response && $order->extra_prep_time)
+										{{ $order->extra_prep_time }} mins
+									@else
+										@if(date_format(date_create($result), 'H')!="00")
+											{{date_format(date_create($result), 'H')}} hours 						
+										@endif
+										{{date_format(date_create($result), 'i')}} mins
 									@endif
-									{{date_format(date_create($result), 'i')}} mins
 								@endif
-							@endif
-						</p>
+							</p>
+						@endif
 					@else
 						<p>{{ __('messages.waitForOrderConfirmation') }} </p>
 					@endif
@@ -434,9 +438,18 @@
 							$discountAmount = 0;
 						@endphp
 					@endif
+					@if($order->delivery_type == 3 && $order->delivery_charge)
+						@php
+							$delivery_charge = $order->delivery_charge;
+						@endphp
+					@else
+						@php
+							$delivery_charge = 0;
+						@endphp
+					@endif
 					<tr class="last-row">
 						<td colspan="3">
-							TOTAL {{ number_format(($order->order_total - $discountAmount), 2, '.', '') }} {{$order->currencies}}
+							TOTAL {{ number_format((($order->order_total+$delivery_charge) - $discountAmount), 2, '.', '') }} {{$order->currencies}}
 						</td>
 					</tr>
 				</table>
