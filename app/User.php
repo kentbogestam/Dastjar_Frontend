@@ -46,4 +46,14 @@ class User extends Authenticatable
             ->where('orders.cancel', '!=', 1)
             ->orderBy('order_id', 'desc');
     }
+
+    /**
+     * Get user's all addresses
+     * @return [type] [description]
+     */
+    public function addresses()
+    {
+        return $this->hasMany('App\UserAddress', 'customer_id', 'id')
+            ->where(['is_permanent' => '1']);
+    }
 }

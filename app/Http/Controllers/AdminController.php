@@ -348,7 +348,7 @@ class AdminController extends Controller
 
                 // Send message/notification to user
                 // if($pieces[0] == 'Safari')
-                if( ($pieces[0] == 'Safari') || ( isset($adminDetail->browser) && strpos($adminDetail->browser, 'Mobile/') !== false ) )
+                if( ($pieces[0] == 'Safari') || ( isset($adminDetail->browser) && strpos($adminDetail->browser, 'Mobile/') !== false ) || ( isset($adminDetail->browser) && strpos($adminDetail->browser, 'wv') !== false ) )
                 {
                     // $message = "Your Order Ready Please click on Link \n ".env('APP_URL').'ready-notification/'.$order->customer_order_id;
                     $message = __('messages.notificationOrderReady', ['order_id' => $order->customer_order_id]);
@@ -1925,7 +1925,7 @@ class AdminController extends Controller
                     $pieces[0] = '';               
                 }
 
-                if( ($pieces[0] == 'Safari') || ( isset($adminDetail->browser) && strpos($adminDetail->browser, 'Mobile/') !== false ) )
+                if( ($pieces[0] == 'Safari') || ( isset($adminDetail->browser) && strpos($adminDetail->browser, 'Mobile/') !== false ) || ( isset($adminDetail->browser) && strpos($adminDetail->browser, 'wv') !== false ) )
                 {
                     /*$url = "https://gatewayapi.com/rest/mtsms";
                     $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
@@ -2016,7 +2016,7 @@ class AdminController extends Controller
 
                 // Send message/notification to user
                 // if($pieces[0] == 'Safari')
-                if( ($pieces[0] == 'Safari') || ( isset($adminDetail->browser) && strpos($adminDetail->browser, 'Mobile/') !== false ) )
+                if( ($pieces[0] == 'Safari') || ( isset($adminDetail->browser) && strpos($adminDetail->browser, 'Mobile/') !== false ) || ( isset($adminDetail->browser) && strpos($adminDetail->browser, 'wv') !== false ) )
                 {
                     // $message = "Your recent order has been accepted. Your order number is: {$order->customer_order_id}";
                     $message = __('messages.notificationOrderReceived', ['order_id' => $order->customer_order_id]);

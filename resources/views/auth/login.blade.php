@@ -23,7 +23,7 @@
                     <img src="{{asset('images/l-logo.png')}}">
                 </div>
                 <div class="social-sec">
-                    @if( !((strpos($agent, 'Mobile/') !== false) && (strpos($agent, 'Safari/') == false)) )
+                    @if( !((strpos($agent, 'Mobile/') !== false) && (strpos($agent, 'Safari/') == false)) || (strpos($agent, 'wv') == false) )
                         <div id="facebook-hide" class="ui-grid-solo">
                             <div class="ui-block-a"><a href="{{ url('login/facebook')}}" class="ui-btn ui-shadow ui-corner-all" data-ajax="false"><img src="{{asset('images/fb-icon.png')}}"></a></div>
                         </div>

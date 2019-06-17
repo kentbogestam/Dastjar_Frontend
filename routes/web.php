@@ -107,13 +107,16 @@
 		Route::get('eat-later-data', 'HomeController@eatLaterData');
 		Route::get('search-map-eatlater', 'MapController@searchMapEatlater');
 		Route::get('eat-later-map', 'HomeController@eatLaterMap');
-		Route::get('withOutLogin', 'OrderController@withOutLogin')->name('withOutLogin');
+		// Route::get('withOutLogin', 'OrderController@withOutLogin')->name('withOutLogin');
 		Route::get('checkDistance','DistanceController@checkDistance');
 		Route::post('cart', 'OrderController@cart');
 		Route::get('cart', 'OrderController@cart');
 		// Route::get('cart', 'OrderController@cartWithOutLogin')->name('cartWithOutLogin');
 		Route::get('view-cart/{orderId}', 'OrderController@viewCart');
 		Route::post('order-update-delivery-type', 'OrderController@orderUpdateDeliveryType');
+		Route::post('save-user-address', 'OrderController@saveUserAddress');
+		Route::post('update-order-user-address', 'OrderController@updateOrderUserAddress');
+		Route::get('get-home-delivery-part-content/{order_id}', 'OrderController@getHomeDeliveryPartContent');
 		// Route::post('apply-promocode', 'OrderController@ajaxApplyPromocode');
 	});
 
@@ -249,6 +252,15 @@
 				Route::get('get-dish-type/{id}', 'DishTypeController@ajaxGetDishTypeById');
 				Route::post('update', 'DishTypeController@update');
 				Route::get('{id}/delete', 'DishTypeController@destroy');
+			});
+
+			// Delivery price model
+			Route::prefix('delivery-price-model')->group(function(){
+				Route::get('list', 'DeliveryPriceModelController@index');
+				Route::post('store', 'DeliveryPriceModelController@store');
+				Route::get('get-delivery-price/{id}', 'DeliveryPriceModelController@ajaxGetDeliveryPriceById');
+				Route::post('update', 'DeliveryPriceModelController@update');
+				Route::get('{id}/delete', 'DeliveryPriceModelController@destroy');
 			});
 		});
 	});

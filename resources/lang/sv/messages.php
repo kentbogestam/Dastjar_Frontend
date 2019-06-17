@@ -174,12 +174,37 @@ return [
     // Store Delivery Type
     'deliveryOptionDineIn' => 'Ät här',
     'deliveryOptionTakeAway' => 'Ta med',
+    'deliveryOptionHomeDelivery' => 'Hemleverans',
     'storeDeliveryTypeDineIn' => 'A dine-in restaurant',
     'storeDeliveryTypeTakeAway' => 'A take away restaurant',
+    'storeDeliveryType' => 'A :deliveryType restaurant',
     'deliveryType' => 'Leverans Typ',
 
     // Validation
     'fieldRequired' => 'Detta fält är obligatoriskt.',
+
+    // Address
+    'addAddress' => 'Add new address',
+    'fullName' => 'Full name',
+    'mobileNumber' => 'Mobile number',
+    'zipcode' => 'Zipcode',
+    'address1' => 'Flat, House no., Building, Company, Apartment',
+    'address2' => 'Area, Colony, Street, Sector',
+    'city' => 'Town/City',
+    'saveAddress' => 'Save this address',
+
+    // Delivery Price Model
+    'delivery_price_model' => 'Delivery Price Model',
+    'delivery_rule_id' => 'Delivery Rule',
+    'delivery_charge' => 'Delivery Charge',
+    'threshold' => 'Threshold',
+    'deliveryPriceCreated' => 'Delivery price created successfully.',
+    'deliveryPriceUpdated' => 'Delivery price updated successfully.',
+    'deliveryPriceDeleted' => 'Delivery price deleted successfully.',
+    'addDeliveryType' => 'Lägg till Leveranstyp',
+    'ruleDeliveryType1' => 'Lägg till Pris för varje Leverans',
+    'ruleDeliveryType2' => 'Lägg till pris för leverans och lägsta beställningsvärde för gratis leverans',
+    'ruleDeliveryType3' => 'Lägg till ordervärde när en hemleverans är möjlig',
 
     // Common
     'addNew' => 'Lägg till Ny',
@@ -193,6 +218,7 @@ return [
     'update' => 'Uppdatera',
     'close' => 'Stäng',
     'back' => 'Tillbaka',
+    'save' => 'Save',
     'action' => 'Åtgärd',
     'pagination' => 'Visar :first av :last av :total antal',
     'aboutDastjarAnar' => 'Om Dastjar RS/Anar',

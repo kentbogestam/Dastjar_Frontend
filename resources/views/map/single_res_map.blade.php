@@ -111,11 +111,19 @@
 
         if(!flag)
         {
-        	if(navigator.geolocation)
-	        {
-	            var options = {timeout:60000};
-	            watchPosition = navigator.geolocation.watchPosition(showLocation, errorHandler, options);
-	        }
+        	if(ios && (!standalone && !safari))
+        	{
+        		watchPositionAction = 'showLocation';
+                requestGeoAddressToIosNative('getLocation');
+        	}
+        	else
+        	{
+        		if(navigator.geolocation)
+		        {
+		            var options = {timeout:60000};
+		            watchPosition = navigator.geolocation.watchPosition(showLocation, errorHandler, options);
+		        }
+        	}
         }
     });
 </script>

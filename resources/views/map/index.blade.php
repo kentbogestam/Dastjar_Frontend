@@ -100,15 +100,23 @@
 
         if(!flag)
         {
-        	if(navigator.geolocation)
-	        {
-	            var options = {timeout:60000};
-	            watchPosition = navigator.geolocation.watchPosition(updateLocationOnMap, errorHandlerOnMap, options);
-	        }
-	        else
-	        {
-	        	alert('Location not supported');
-	        }
+        	if(ios && (!standalone && !safari))
+        	{
+        		watchPositionAction = 'updateLocationOnMap';
+                requestGeoAddressToIosNative('getLocation');
+        	}
+        	else
+        	{
+        		if(navigator.geolocation)
+		        {
+		            var options = {timeout:60000};
+		            watchPosition = navigator.geolocation.watchPosition(updateLocationOnMap, errorHandlerOnMap, options);
+		        }
+		        else
+		        {
+		        	alert('Location not supported');
+		        }
+        	}
         }
 
         // setTimeout(updateLocationOnMap, 5000);
