@@ -255,7 +255,7 @@
 			});
 
 			// Delivery price model
-			Route::prefix('delivery-price-model')->group(function(){
+			Route::group(['prefix' => 'delivery-price-model', 'middleware' => 'isModuleSubscribed:homedelivery'], function() {
 				Route::get('list', 'DeliveryPriceModelController@index');
 				Route::post('store', 'DeliveryPriceModelController@store');
 				Route::get('get-delivery-price/{id}', 'DeliveryPriceModelController@ajaxGetDeliveryPriceById');

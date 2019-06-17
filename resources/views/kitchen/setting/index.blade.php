@@ -178,7 +178,7 @@ textarea.ui-input-text{
 				    </ul>
 				</li>
 
-				<li id="link-delivery-price-model" class="range-sec btn_blk">
+				<li id="link-delivery-price-model" class="range-sec btn_blk {{ !Session::has('subscribedPlans.homedelivery') ? 'ui-state-disabled' : '' }}">
 					<h2 class="ui-btn">{{ __('messages.deliveryOptionHomeDelivery') }}</h2>
 				</li>
 
