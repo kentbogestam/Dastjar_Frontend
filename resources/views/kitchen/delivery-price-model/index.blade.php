@@ -164,6 +164,24 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+        // 'trigger' on open add modal
+        $('#add-form-model').on('shown.bs.modal', function (e) {
+            modalConditionalFields();
+        });
+
+        // 'trigger' on open edit modal
+        $('#update-form-model').on('shown.bs.modal', function (e) {
+            modalConditionalFields('_upd');
+        });
+
+        $('#delivery_rule_id').on('change', function() {
+            modalConditionalFields();
+        });
+
+        $('#delivery_rule_id_upd').on('change', function() {
+            modalConditionalFields('_upd');
+        });
+
         // Form validation
         $("#add-form").validate({
             rules: {
@@ -210,6 +228,30 @@
                 $('#update-form-model').modal();
             }
         });
+    }
+
+    // Modal show/hide fields
+    function modalConditionalFields(flag = '')
+    {
+        var delivery_rule_id = $('#delivery_rule_id'+flag).val();
+
+        if(delivery_rule_id == '1')
+        {
+            $('#delivery_charge'+flag).closest('.form-group').show();
+            $('#threshold'+flag).val('');
+            $('#threshold'+flag).closest('.form-group').hide();
+        }
+        if(delivery_rule_id == '2')
+        {
+            $('#threshold'+flag).closest('.form-group').show();
+            $('#delivery_charge'+flag).closest('.form-group').show();
+        }
+        if(delivery_rule_id == '3')
+        {
+            $('#threshold'+flag).closest('.form-group').show();
+            $('#delivery_charge'+flag).val('');
+            $('#delivery_charge'+flag).closest('.form-group').hide();
+        }
     }
 </script>
 @endsection
