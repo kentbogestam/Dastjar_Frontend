@@ -959,10 +959,10 @@ class OrderController extends Controller
                             <div class="ui-bar ui-bar-a">
                                 <form method="post" id="save-address" data-ajax="false">
                                     <input type="text" name="full_name" id="full_name" placeholder="'.__('messages.fullName').'*" data-mini="true" data-rule-required="true">
-                                    <input type="number" name="mobile" id="mobile" placeholder="'.__('messages.mobileNumber').'*" data-mini="true" data-rule-required="true">
-                                    <input type="number" name="zipcode" id="zipcode" placeholder="Zipcode" data-mini="true">
-                                    <input type="text" name="address" id="address" placeholder="'.__('messages.address1').'*" data-mini="true" data-rule-required="true">
+                                    <input type="text" name="mobile" id="mobile" placeholder="'.__('messages.mobileNumber').'*" data-mini="true" data-rule-required="true" data-rule-number="true">
+                                    <input type="text" name="address" id="address" placeholder="'.__('messages.address1').'" data-mini="true">
                                     <input type="text" name="street" id="street" placeholder="'.__('messages.address2').'*" data-mini="true" data-rule-required="true">
+                                    <input type="text" name="zipcode" id="zipcode" placeholder="Zipcode" data-mini="true" data-rule-number="true">
                                     <input type="text" name="city" id="city" placeholder="'.__('messages.city').'*" data-mini="true" data-rule-required="true">
                                     <fieldset data-role="controlgroup">
                                         <label for="is_permanent">'.__('messages.saveAddress').'</label>
