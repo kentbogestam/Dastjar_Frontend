@@ -847,16 +847,20 @@ class OrderController extends Controller
                 $homeDelivery['final_order_total'] = $option['final_order_total'] + $homeDelivery['delivery_charge'];
             }
             // delivery price if 'order total' not passes the threshold
-            elseif($storeDeliveryPrice->delivery_rule_id == 2 && $option['final_order_total'] >= $storeDeliveryPrice->threshold)
+            elseif($storeDeliveryPrice->delivery_rule_id == 2 && $option['final_order_total'] < $storeDeliveryPrice->threshold)
             {
                 $homeDelivery['delivery_charge'] = $storeDeliveryPrice->delivery_charge;
                 $homeDelivery['final_order_total'] = $option['final_order_total'] + $homeDelivery['delivery_charge'];
             }
-            // 
+            // Can't deliver if 'order total' not passes the threshold
             elseif($storeDeliveryPrice->delivery_rule_id == 3 && $option['final_order_total'] < $storeDeliveryPrice->threshold)
             {
                 $homeDelivery['is_home_delivery_eligible'] = 0;
             }
+        }
+        else
+        {
+            echo 'jh'; exit;
         }
 
         return $homeDelivery;
