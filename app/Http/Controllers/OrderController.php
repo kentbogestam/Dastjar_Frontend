@@ -576,7 +576,9 @@ class OrderController extends Controller
             }
 
             //
-            User::where('id',Auth::id())->update(['browser' => $data['browser']]);
+            // User::where('id',Auth::id())->update(['browser' => $data['browser']]);
+            $agent = $request->server('HTTP_USER_AGENT');
+            User::where('id',Auth::id())->update(['browser' => $agent]);
 
             //
             $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
