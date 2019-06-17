@@ -16,7 +16,9 @@
 	<script src="{{ asset('locationJs/currentLocation.js') }}"></script>
     
     <script type="text/javascript">
-		var noImageUrl = "{{url('images/placeholder-image.png')}}";
+		var noImageUrl = "{{ url('images/placeholder-image.png') }}";
+		var constUrlLatLng = "{{ url('lat-long') }}";
+		var constUrlRestaurantMenu = "{{ url('restro-menu-list/') }}";
     </script>
     
 @endsection
@@ -102,4 +104,3 @@
 
 
 @endsection
-
