@@ -380,34 +380,30 @@
 						@if( is_numeric($storeDetail->phone) )
 							<p><i class="fa fa-phone" aria-hidden="true"></i> <span>{{ $storeDetail->phone }}</span></p>
 						@endif
-						@if($order->delivery_type == 3)
-							<p>{{ __('messages.deliveryOptionHomeDelivery') }}</p>
-						@else
-							<p>
-								<?php
-									$time = $order->order_delivery_time;
-									$time2 = $storeDetail->extra_prep_time;
-									$secs = strtotime($time2)-strtotime("00:00:00");
-									$result = date("H:i:s",strtotime($time)+$secs);
-								?>
+						<p>
+							<?php
+								$time = $order->order_delivery_time;
+								$time2 = $storeDetail->extra_prep_time;
+								$secs = strtotime($time2)-strtotime("00:00:00");
+								$result = date("H:i:s",strtotime($time)+$secs);
+							?>
 
-								@if($order->order_type == 'eat_later')
-									{{ __('messages.Your order will be ready on') }}
-									{{$order->deliver_date}}
-									{{date_format(date_create($order->deliver_time), 'G:i')}} 
+							@if($order->order_type == 'eat_later')
+								{{ __('messages.Your order will be ready on') }}
+								{{$order->deliver_date}}
+								{{date_format(date_create($order->deliver_time), 'G:i')}} 
+							@else
+								{{ __('messages.Your order will be ready in about') }}
+								@if(!$storeDetail->order_response && $order->extra_prep_time)
+									{{ $order->extra_prep_time }} mins
 								@else
-									{{ __('messages.Your order will be ready in about') }}
-									@if(!$storeDetail->order_response && $order->extra_prep_time)
-										{{ $order->extra_prep_time }} mins
-									@else
-										@if(date_format(date_create($result), 'H')!="00")
-											{{date_format(date_create($result), 'H')}} hours 						
-										@endif
-										{{date_format(date_create($result), 'i')}} mins
+									@if(date_format(date_create($result), 'H')!="00")
+										{{date_format(date_create($result), 'H')}} hours 						
 									@endif
+									{{date_format(date_create($result), 'i')}} mins
 								@endif
-							</p>
-						@endif
+							@endif
+						</p>
 					@else
 						<p>{{ __('messages.waitForOrderConfirmation') }} </p>
 					@endif
