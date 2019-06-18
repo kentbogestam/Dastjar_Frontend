@@ -23,7 +23,14 @@
 			<div class="alt-msg">
 				<img src="{{asset('images/ready-chef.png')}}">
 				<div class="text-msg">
-					<p>{{ __('messages.Your order Number') }} {{$orderID}} {{ __('messages.is') }} <span>{{ __('messages.Order Ready To Pick Up') }}!</span></p>
+					@if($orderDetail->delivery_type == 3)
+						<p>
+							{{ __('messages.Your order Number') }} {{$orderID}}
+							<br><span>{{ __('messages.alertOrderReadyOnHomeDelivery') }}!</span>
+						</p>
+					@else
+						<p>{{ __('messages.Your order Number') }} {{$orderID}} {{ __('messages.is') }} <span>{{ __('messages.Order Ready To Pick Up') }}!</span></p>
+					@endif
 				</div>
 			</div>
 		</div>

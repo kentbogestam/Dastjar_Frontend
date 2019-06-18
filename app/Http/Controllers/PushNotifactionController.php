@@ -55,7 +55,7 @@ class PushNotifactionController extends Controller
                 Session::forget('recentOrderList.'.$orderDetail->order_id);
             }
 
-            return view('order.alert-ready',compact('orderID','companydetails','user'));            
+            return view('order.alert-ready',compact('orderDetail', 'orderID','companydetails','user'));            
         }else{
             return redirect('home');
         }

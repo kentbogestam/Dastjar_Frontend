@@ -64,6 +64,7 @@ return [
     'Your order Number'  => 'Ditt Order-ID',               
     'is'  => 'är',                             
     'Order Ready To Pick Up'  => 'Klar för Avhämtning',                
+    'alertOrderReadyOnHomeDelivery' => 'Din order är klar och på väg till dig!',
     'Thanks for your visit.'  => 'Tack för ditt besök.',               
     'Hope to seen you soon again'  => 'På återseende',               
     'Please log in here!'  => 'Logga in här',                     

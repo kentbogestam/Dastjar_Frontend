@@ -65,6 +65,7 @@ return [
     'Your order Number'  => 'Your order Number',              
     'is'  => 'is',                 
     'Order Ready To Pick Up'  => 'Ready to Pick up',                
+    'alertOrderReadyOnHomeDelivery' => 'Your order is ready and on its way to you!',
     'Thanks for your visit.'  => 'Thanks for your visit.',                
     'Hope to seen you soon again'  => 'Hope to see you soon again',               
     'You are the main admin of company.Please login from any store of that company and then the menu of that store will be appeared'  => 'Please login to the store',          
