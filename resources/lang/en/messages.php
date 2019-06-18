@@ -180,6 +180,7 @@ return [
 
     // Validation
     'fieldRequired' => 'This field is required.',
+    'fieldNumber' => 'Please enter a valid number.',
 
     // Address
     'addAddress' => 'Add new address',

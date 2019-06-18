@@ -182,6 +182,7 @@ return [
 
     // Validation
     'fieldRequired' => 'Detta fält är obligatoriskt.',
+    'fieldNumber' => 'Var vänlig skriv in ett giltigt nummer.',
 
     // Address
     'addAddress' => 'Add new address',
