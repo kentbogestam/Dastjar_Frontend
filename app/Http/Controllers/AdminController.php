@@ -206,7 +206,7 @@ class AdminController extends Controller
                 }
 
                 // Home delivery
-                if( in_array('14', $storePlan) )
+                if( in_array('12', $storePlan) )
                 {
                     Session::put('subscribedPlans.homedelivery', 1);
                 }
