@@ -858,10 +858,6 @@ class OrderController extends Controller
                 $homeDelivery['is_home_delivery_eligible'] = 0;
             }
         }
-        else
-        {
-            echo 'jh'; exit;
-        }
 
         return $homeDelivery;
     }
