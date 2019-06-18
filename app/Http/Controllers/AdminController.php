@@ -74,10 +74,10 @@ class AdminController extends Controller
             $storeDetails = null;
             $companydetails = Company::where('company_id' , Auth::guard('admin')->user()->company_id)->first();
             if($companydetails){
-                $storeDetails = Store::where('u_id' , $companydetails->u_id)->get();
+                $storeDetails = Store::where(['u_id' => $companydetails->u_id, 's_activ' => '1'])->get();
             }else{
                 $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
-                $storeDetails = Store::where('u_id' , $companydetails->u_id)->get();
+                $storeDetails = Store::where(['u_id' => $companydetails->u_id, 's_activ' => '1'])->get();
             }
 
             if(count($storeDetails) == 0){
