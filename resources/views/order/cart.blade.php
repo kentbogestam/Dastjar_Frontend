@@ -235,6 +235,12 @@
 		}
 	});
 
+	// Scroll automatically 'add new address'
+	$(document).on("collapsibleexpand", "#add-new-address[data-role=collapsible]", function () {
+		var position = $(this).offset().top;
+		$.mobile.silentScroll(position-200);
+	});
+
 	// 
 	$('.btn-pay').on('click', function(e) {
 		if( $('#frm-user-address').length && !$('#frm-user-address').valid())
