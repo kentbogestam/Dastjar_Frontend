@@ -260,28 +260,90 @@ function getTimeZone(url){
  }
 
 function checkTime($time){
+	// 
+	var todayDate = new Date();
+	todayDate = (todayDate.getMonth() + 1)+'/'+todayDate.getDate()+'/'+todayDate.getFullYear();
+	var tomorrowDate = new Date();
+	tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+	tomorrowDate = (tomorrowDate.getMonth() + 1)+'/'+tomorrowDate.getDate()+'/'+tomorrowDate.getFullYear();
 
-		var d = new Date();
-		var dd = (d.toString()).split(' ');
-		var currentTime = dd[4];
-		var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-		var todayDay = days[d.getDay()];
-		var time = $time;
-		var day = time.split(' :: ')
-		var checkday = time.split(',')
-		if(day[0] == 'All'){
-			var timeSplit = day[1].split(' to ');
-			var openTime = timeSplit[0];
-			var closeTime = timeSplit[1];
+	// 
+	var d = new Date();
+	var dd = (d.toString()).split(' ');
+	var currentTime = dd[4];
+	var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+	var todayDay = days[d.getDay()];
+	var time = $time;
+	var day = time.split(' :: ')
+	var checkday = time.split(',')
+	if(day[0] == 'All'){
+		var timeSplit = day[1].split(' to ');
+		var openTime = timeSplit[0];
+		var closeTime = timeSplit[1];
+
+		if(openTime > closeTime)
+		{
+			var openDateTime = todayDate + ' ' + openTime;
+			var closeDateTime = tomorrowDate + ' ' + closeTime;
+			var openDateTime = new Date(openDateTime);
+			var closeDateTime = new Date(closeDateTime);
+
+			if(d.getTime() >= openDateTime.getTime() && d.getTime() < closeDateTime.getTime())
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
 			if(openTime < currentTime && closeTime > currentTime){
 				return true;
 			}else{
 				return false;
 			}
+		}
+	}else{
+		if(day.length == 2){
+			if(day[0] == todayDay){
+				var timeSplit = day[1].split(' to ');
+				var openTime = timeSplit[0];
+				var closeTime = timeSplit[1];
+
+				if(openTime > closeTime)
+				{
+					var openDateTime = todayDate + ' ' + openTime;
+					var closeDateTime = tomorrowDate + ' ' + closeTime;
+					var openDateTime = new Date(openDateTime);
+					var closeDateTime = new Date(closeDateTime);
+
+					if(d.getTime() >= openDateTime.getTime() && d.getTime() < closeDateTime.getTime())
+					{
+						return true;
+					}
+					else
+					{
+						return false;
+					}
+				}
+				else
+				{
+					if(openTime < currentTime && closeTime > currentTime){
+						return true;
+					}else{
+						return false;
+					}
+				}
+			}else{
+				return false;
+			}
 		}else{
-			if(day.length == 2){
-				if(day[0] == todayDay){
-					var timeSplit = day[1].split(' to ');
+			for(i=0;i<checkday.length;i++){
+				var getDay = checkday[i].split(' :: ');
+				if(getDay[0] == todayDay){
+					var timeSplit = getDay[1].split(' to ');
 					var openTime = timeSplit[0];
 					var closeTime = timeSplit[1];
 					if(openTime < currentTime && closeTime > currentTime){
@@ -289,27 +351,12 @@ function checkTime($time){
 					}else{
 						return false;
 					}
-				}else{
-					return false;
-				}
-			}else{
-				for(i=0;i<checkday.length;i++){
-					var getDay = checkday[i].split(' :: ');
-					if(getDay[0] == todayDay){
-						var timeSplit = getDay[1].split(' to ');
-						var openTime = timeSplit[0];
-						var closeTime = timeSplit[1];
-						if(openTime < currentTime && closeTime > currentTime){
-							return true;
-						}else{
-							return false;
-						}
-					}
 				}
 			}
 		}
-		return false;
 	}
+	return false;
+}
 
 function onScroll(url){
 
