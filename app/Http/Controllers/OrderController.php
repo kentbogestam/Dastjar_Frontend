@@ -558,7 +558,7 @@ class OrderController extends Controller
                 ->toArray();
             
             // Check if store support 'home delivery'
-            if( !empty($store_delivery_type) && in_array(3, $store_delivery_type) )
+            if( !empty($store_delivery_type) && in_array(3, $store_delivery_type) && Helper::isPackageSubscribed(12) )
             {
                 $option = array('final_order_total' => $final_order_total);
                 $homeDelivery = $this->applyHomeDeliveryPriceModel($option);
@@ -783,7 +783,7 @@ class OrderController extends Controller
             ->toArray();
         
         // Check if store support 'home delivery'
-        if( !empty($store_delivery_type) && in_array(3, $store_delivery_type) )
+        if( !empty($store_delivery_type) && in_array(3, $store_delivery_type) && Helper::isPackageSubscribed(12) )
         {
             $option = array('final_order_total' => $final_order_total);
             $homeDelivery = $this->applyHomeDeliveryPriceModel($option);

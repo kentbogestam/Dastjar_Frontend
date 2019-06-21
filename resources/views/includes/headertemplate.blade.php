@@ -157,7 +157,7 @@
 				{
 					array_push($deliveryType, __('messages.deliveryOptionTakeAway'));
 				}
-				elseif($row->delivery_type == 3)
+				elseif($row->delivery_type == 3 && Helper::isPackageSubscribed(12))
 				{
 					array_push($deliveryType, __('messages.deliveryOptionHomeDelivery'));
 				}

@@ -262,7 +262,11 @@
 				<input type="hidden" id="browserCurrentTime" name="browserCurrentTime" value="" />
 				<input type="hidden" name="storeID" value="{{$storeId}}" />
 				@if($storedetails->deliveryTypes->count() == 1)
-					<input type="hidden" name="delivery_type" value="{{ $storedetails->deliveryTypes[0]['delivery_type'] }}" />
+					@if($storedetails->deliveryTypes[0]['delivery_type'] == 3 && Helper::isPackageSubscribed(12))
+						<input type="hidden" name="delivery_type" value="{{ $storedetails->deliveryTypes[0]['delivery_type'] }}" />
+					@elseif($storedetails->deliveryTypes[0]['delivery_type'] != 3)
+						<input type="hidden" name="delivery_type" value="{{ $storedetails->deliveryTypes[0]['delivery_type'] }}" />
+					@endif
 				@endif
 				<?php $i =0 ?>
 				<?php $j =1 ?>

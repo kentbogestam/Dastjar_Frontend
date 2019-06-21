@@ -90,7 +90,7 @@
 						</div>
 					</div>
 				@endif
-				@if( in_array(3, $store_delivery_type) )
+				@if( in_array(3, $store_delivery_type) && Helper::isPackageSubscribed(12) )
 					<div class="ui-grid-a row-delivery-charge {{ !isset($orderInvoice['homeDelivery']['delivery_charge']) ? 'hidden' : '' }}">
 						<div class="ui-block-a">
 							<div class="ui-bar ui-bar-a">DELIVERY CHARGE</div>
@@ -133,7 +133,7 @@
 											<label for="delivery_typeb">{{ __('messages.deliveryOptionTakeAway') }}</label>
 										@endif
 
-										@if($row->delivery_type == 3)
+										@if($row->delivery_type == 3 && Helper::isPackageSubscribed(12))
 											<input type="radio" name="delivery_type" id="delivery_typec" value="3">
 											<label for="delivery_typec">{{ __('messages.deliveryOptionHomeDelivery') }}</label>
 										@endif
@@ -145,12 +145,14 @@
 				</div>
 			@else
 				@foreach($storedetails->deliveryTypes as $row)
-					<input type="radio" name="delivery_type" value="{{ $row->delivery_type }}" checked="" class="hidden">
+					@if($storedetails->deliveryTypes[0]['delivery_type'] != 3 || Helper::isPackageSubscribed(12))
+						<input type="radio" name="delivery_type" value="{{ $row->delivery_type }}" checked="" class="hidden">
+					@endif
 				@endforeach
 			@endif
 
 			{{-- If store support home delivery --}}
-			@if( in_array(3, $store_delivery_type) )
+			@if( in_array(3, $store_delivery_type) && Helper::isPackageSubscribed(12) )
 				<div class="block-address hidden"></div>
 			@endif
 
