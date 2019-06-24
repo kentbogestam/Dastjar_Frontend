@@ -198,4 +198,42 @@ class Helper extends Model
 
         return $status;
     }
+
+    /**
+     * Send text message to recipients using API
+     * @return [type] [description]
+     */
+    public static function apiSendTextMessage($recipients = array(), $message = '')
+    {
+        if( !is_array($recipients) && empty($recipients) )
+        {
+            return false;
+        }
+
+        //
+        $url = "https://gatewayapi.com/rest/mtsms";
+        $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
+        
+        $json = [
+            'sender' => 'Dastjar',
+            'message' => ''.$message.'',
+            'recipients' => [],
+        ];
+
+        foreach ($recipients as $msisdn)
+        {
+            $json['recipients'][] = ['msisdn' => $msisdn];
+        }
+
+        $ch = curl_init();
+        curl_setopt($ch,CURLOPT_URL, $url);
+        curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+        curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
+        curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        return $result;
+    }
 }

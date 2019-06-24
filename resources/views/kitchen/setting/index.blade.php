@@ -178,8 +178,16 @@ textarea.ui-input-text{
 				    </ul>
 				</li>
 
-				<li id="link-delivery-price-model" class="range-sec btn_blk {{ !Session::has('subscribedPlans.homedelivery') ? 'ui-state-disabled' : '' }}">
-					<h2 class="ui-btn">{{ __('messages.deliveryOptionHomeDelivery') }}</h2>
+				<li data-role="collapsible" class="range-sec {{ !Session::has('subscribedPlans.homedelivery') ? 'ui-state-disabled' : '' }}">
+					<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.deliveryOptionHomeDelivery") }}</h2>
+				    <ul data-role="controlgroup" class="others_tabs">
+						<li id="link-driver" class="range-sec btn_blk">
+							<h2 class="ui-btn">{{ __('messages.driver') }}</h2>
+						</li>
+						<li id="link-delivery-price-model" class="range-sec btn_blk">
+							<h2 class="ui-btn">{{ __('messages.delivery_price_model') }}</h2>
+						</li>
+				    </ul>
 				</li>
 
 				<li id="link-refund" class="range-sec btn_blk">
@@ -262,9 +270,14 @@ textarea.ui-input-text{
 			window.location = "{{ url('kitchen/loyalty/list') }}";
 		});
 
-		// Go to Loyalty
+		// Go to delivery-price
 		$('#link-delivery-price-model').click(function() {
 			window.location = "{{ url('kitchen/delivery-price-model/list') }}";
+		});
+
+		// Go to driver
+		$('#link-driver').click(function() {
+			window.location = "{{ url('kitchen/driver/list') }}";
 		});
 
 		// Go to Loyalty

@@ -182,6 +182,7 @@ return [
     // Validation
     'fieldRequired' => 'This field is required.',
     'fieldNumber' => 'Please enter a valid number.',
+    'fieldEmail' => 'Please enter a valid email address.',
 
     // Address
     'addAddress' => 'Add new address',
@@ -194,7 +195,7 @@ return [
     'saveAddress' => 'Save this address',
 
     // Delivery Price Model
-    'delivery_price_model' => 'Delivery Price Model',
+    'delivery_price_model' => 'Delivery Price',
     'delivery_rule_id' => 'Delivery Rule',
     'delivery_charge' => 'Delivery Charge',
     'threshold' => 'Threshold',
@@ -205,6 +206,9 @@ return [
     'ruleDeliveryType1' => 'Add Price for each Delivery',
     'ruleDeliveryType2' => 'Add Price for Delivery and the minimum Order Value for Free Delivery',
     'ruleDeliveryType3' => 'Add order value when a home delivery is possible',
+
+    // Driver
+    'driver' => 'Driver',
 
     // Common
     'addNew' => 'Add New',
@@ -226,4 +230,13 @@ return [
     'marketingTools' => 'Marketing Tools',
     'refund' => 'Refund',
     'getTheApp' => 'Get the App',
+    'name' => 'Name',
+    'email' => 'Email',
+    'phone' => 'Phone',
+    'status' => 'Status',
+    'active' => 'Active',
+    'inactive' => 'In-active',
+    'moduleCreated' => ':module created successfully.',
+    'moduleUpdated' => ':module updated successfully.',
+    'moduleDeleted' => ':module deleted successfully.',
 ];

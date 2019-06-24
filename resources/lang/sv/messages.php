@@ -184,6 +184,7 @@ return [
     // Validation
     'fieldRequired' => 'Detta fält är obligatoriskt.',
     'fieldNumber' => 'Var vänlig skriv in ett giltigt nummer.',
+    'fieldEmail' => 'Ange en giltig e-postadress.',
 
     // Address
     'addAddress' => 'Lägg till adress',
@@ -208,6 +209,9 @@ return [
     'ruleDeliveryType2' => 'Lägg till pris för leverans och lägsta beställningsvärde för gratis leverans',
     'ruleDeliveryType3' => 'Lägg till ordervärde när en hemleverans är möjlig',
 
+    // Driver
+    'driver' => 'Driver',
+
     // Common
     'addNew' => 'Lägg till Ny',
     'select' => 'Välj',
@@ -228,4 +232,13 @@ return [
     'marketingTools' => 'Marknads Verktyg',
     'refund' => 'Återbetalning',
     'getTheApp' => 'Hämta den här appen',
+    'name' => 'Name',
+    'email' => 'Email',
+    'phone' => 'Phone',
+    'status' => 'Status',
+    'active' => 'Active',
+    'inactive' => 'In-active',
+    'moduleCreated' => ':module skapat.',
+    'moduleUpdated' => ':module updaterat.',
+    'moduleDeleted' => ':module raderat.',
 ];

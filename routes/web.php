@@ -254,13 +254,25 @@
 				Route::get('{id}/delete', 'DishTypeController@destroy');
 			});
 
-			// Delivery price model
-			Route::group(['prefix' => 'delivery-price-model', 'middleware' => 'isModuleSubscribed:homedelivery'], function() {
-				Route::get('list', 'DeliveryPriceModelController@index');
-				Route::post('store', 'DeliveryPriceModelController@store');
-				Route::get('get-delivery-price/{id}', 'DeliveryPriceModelController@ajaxGetDeliveryPriceById');
-				Route::post('update', 'DeliveryPriceModelController@update');
-				Route::get('{id}/delete', 'DeliveryPriceModelController@destroy');
+			// Home delivery
+			Route::group(['middleware' => 'isModuleSubscribed:homedelivery'], function() {
+				// Delivery price model
+				Route::prefix('delivery-price-model')->group(function(){
+					Route::get('list', 'DeliveryPriceModelController@index');
+					Route::post('store', 'DeliveryPriceModelController@store');
+					Route::get('get-delivery-price/{id}', 'DeliveryPriceModelController@ajaxGetDeliveryPriceById');
+					Route::post('update', 'DeliveryPriceModelController@update');
+					Route::get('{id}/delete', 'DeliveryPriceModelController@destroy');
+				});
+
+				// Driver
+				Route::prefix('driver')->group(function(){
+					Route::get('list', 'DriverController@index');
+					Route::post('store', 'DriverController@store');
+					Route::get('get-driver/{id}', 'DriverController@ajaxGetDriver');
+					Route::post('update', 'DriverController@update');
+					Route::get('{id}/delete', 'DriverController@destroy');
+				});
 			});
 		});
 	});
