@@ -1922,6 +1922,25 @@ class AdminController extends Controller
         if(OrderDelivery::create($data))
         {
             $status = 1;
+
+            // Send text message to driver
+            $order = Order::from('orders AS O')
+                ->select(['O.order_id', 'S.store_name', 'D.phone_prefix', 'D.phone'])
+                ->join('store AS S', 'S.store_id', '=', 'O.store_id')
+                ->join('order_delivery AS OD', 'OD.order_id', '=', 'O.order_id')
+                ->join('drivers AS D', 'D.id', '=', 'OD.driver_id')
+                ->where('O.order_id', $data['order_id'])
+                ->first();
+
+            if($order)
+            {
+                $recipients = array();
+                $recipients = [$order['phone_prefix'].$order['phone']];
+                $message = "New delivery!";
+                $message .= "\nRestaurant: ".$order['store_name'];
+                $message .= "\nlink";
+                $result = Helper::apiSendTextMessage($recipients, $message);
+            }
         }
 
         return response()->json(['status' => $status]);
