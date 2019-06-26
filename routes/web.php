@@ -179,6 +179,9 @@
 
 		Route::get('is-manual-prep-time-for-order/{orderId}', 'AdminController@isManualPrepTimeForOrder');
 		Route::post('add-manual-prep-time','AdminController@addManualPrepTime');
+		Route::get('get-available-driver-to-assign/{orderId}', 'AdminController@getAvailableDriverToAssign');
+		Route::get('get-order-delivery-address/{addressId}', 'AdminController@getOrderDeliveryAddress');
+		Route::post('order-assign-driver', 'AdminController@orderAssignDriver');
 		Route::post('kitchen-order-save','AdminController@kitchenOrderSave');
 		Route::get('kitchen-order-save','AdminController@kitchenOrderSave');
 		Route::post('send-promotional-discount','AdminController@sendPromotionalDiscount');

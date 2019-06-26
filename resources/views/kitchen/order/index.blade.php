@@ -75,7 +75,7 @@
 	var speakOrderItemList = [];
 
 	$(function(){
-		$.get("{{url('api/v1/kitchen/order-detail')}}/" + storeId,
+		/*$.get("{{url('api/v1/kitchen/order-detail')}}/" + storeId,
 		function(returnedData){
 			// console.log(returnedData["data"]);
 			var count = 18;
@@ -150,7 +150,7 @@
 			          		liItem +="</a></td>";
 			          	}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
 			          		liItem += "<td>"
-			          		liItem += "<a data-ajax='false' href="+urlReadyOrder+"/"+temp[i]['order_id']+" >"
+			          		liItem += "<a data-ajax='false' href="+urlReadyOrder+"/"+temp[i]['order_id']+">"
 			          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
 			          		liItem +="</a></td>";
 
@@ -275,7 +275,8 @@
 	        	liItem += "</div>";
           	}
           	$("#orderDetailContianer").append(liItem);
-		}); 
+		}); */
+		ajaxCall();
 	});
 
 	function getList(orderId){
@@ -395,11 +396,19 @@
 			          		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 			          		liItem +="</a></td>";
 			          	}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
+			          		if(temp[i]["delivery_type"] == 3)
+			          		{
+		          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", false)'>";
+			          		}
+		          			else
+		          			{
+		          				aString = "<a data-ajax='false' href="+urlReadyOrder+"/"+temp[i]['order_id']+">";
+		          			}
+
 			          		liItem += "<td>"
-			          		liItem += "<a data-ajax='false' href="+urlReadyOrder+"/"+temp[i]['order_id']+" >"
+			          		liItem += aString
 			          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
 			          		liItem +="</a></td>";
-
 			          	}else{
 			          		liItem += "<td>"
 			          		liItem += "<a>"
@@ -419,7 +428,7 @@
 	          		@endif
 	          		
 	          		liItem += "<td>"
-	          		if(list[i]["paid"] == 0 && list[i]["order_ready"] == 0){
+	          		if( (list[i]["paid"] == 0 && list[i]["order_ready"] == 0) || list[i]["delivery_type"] == 3 ){
 		          		liItem += "<a data-ajax='false' >"
 		          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
 	          		}else if(list[i]["paid"] == 0 && list[i]["order_ready"] == 1){
@@ -466,7 +475,8 @@
 	          		}
 	          		else if( temp[i]['delivery_type'] == 3 )
 	          		{
-	          			deliveryType = '{{ __('messages.deliveryOptionHomeDelivery') }}';
+	          			deliveryType = '<span>{{ __('messages.deliveryOptionHomeDelivery') }}</span>';
+	          			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+temp[i]['user_address_id']+')"><span>'+temp[i]['street']+'</span></a>';
 	          		}
 
 	          		liItem += "<td>"+deliveryType+"</td>";
@@ -638,11 +648,19 @@
           		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
           		liItem +="</a></td>";
           	}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
+          		if(temp[i]["delivery_type"] == 3)
+          		{
+      				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", false)'>";
+          		}
+      			else
+      			{
+      				aString = "<a data-ajax='false' href="+urlReadyOrder+"/"+temp[i]['order_id']+">";
+      			}
+
           		liItem += "<td>"
-          		liItem += "<a data-ajax='false' href="+urlReadyOrder+"/"+temp[i]['order_id']+" >"
+          		liItem += aString
           		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
           		liItem +="</a></td>";
-
           	}else{
           		liItem += "<td>"
           		liItem += "<a>"
@@ -710,6 +728,7 @@
   		else if( temp[i]['delivery_type'] == 3 )
   		{
   			deliveryType = '{{ __('messages.deliveryOptionHomeDelivery') }}';
+  			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+temp[i]['user_address_id']+')"><span>'+temp[i]['street']+'</span></a>';
   		}
 
   		liItem += "<td>"+deliveryType+"</td>";
@@ -764,13 +783,22 @@
 		$This = $(This);
 		$.get("{{url('kitchen/start-order')}}/"+id,
 		function(returnedData){
-			// console.log(returnedData["data"]);
-			$('body').find('#'+id).attr('src',imageUrl);
-			$('body').find('#'+id).parent("a").attr('onclick',' ');
-			$('body').find('#'+id+'ready').parent("a").attr('onclick','makeOrderReady('+id+')');
-			$This.closest('tr').removeClass('not-started');
+			if(returnedData.status)
+			{
+				$('body').find('#'+id).attr('src',imageUrl);
+				$('body').find('#'+id).parent("a").attr('onclick',' ');
+				if(returnedData.order.delivery_type == 3)
+				{
+					$('body').find('#'+id+'ready').parent("a").attr('onclick','popupOrderAssignDriver('+id+', false)');
+				}
+				else
+				{
+					$('body').find('#'+id+'ready').parent("a").attr('onclick','makeOrderReady('+id+')');
+				}
+				$This.closest('tr').removeClass('not-started');
 
-			clearSpeakTextInterval();
+				clearSpeakTextInterval();
+			}
 		});
 	}
 
@@ -784,7 +812,6 @@
 			//$('body').find('#'+id+'ready').parents("tr").remove();
 			window.location.reload();
 		});
-
 	}
 
 	// Make payment manually as cash at store;

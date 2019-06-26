@@ -52,6 +52,9 @@ use App\PhocaGalleryRenderProcess;
 use App\SubscriptionPlan;
 use App\UserPlan;
 use App\PromotionDiscount;
+use App\Driver;
+use App\OrderDelivery;
+use App\UserAddress;
 
 //use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -309,7 +312,11 @@ class AdminController extends Controller
             $helper->logs("Order Started: Order ID - " . $id);
         }
 
-        return response()->json(['status' => $status]);
+        $order = Order::select(['delivery_type'])
+            ->where('order_id', $id)
+            ->first();
+
+        return response()->json(['status' => $status, 'order' => $order]);
     }
 
     /**
@@ -523,7 +530,15 @@ class AdminController extends Controller
     public function kitchenOrders(){
         $reCompanyId = Session::get('storeId');
 
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street')
+            ->where(['order_details.store_id' => $reCompanyId])
+            ->where('delivery_date',Carbon::now()->toDateString())
+            ->where('order_details.order_ready', '0')
+            ->whereNotIn('orders.online_paid', [2])
+            ->join('product','product.product_id','=','order_details.product_id')
+            ->join('orders','orders.order_id','=','order_details.order_id')
+            ->leftJoin('customer_addresses AS CA','CA.id','=','orders.user_address_id')
+            ->get();
 
         $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;
 
@@ -534,7 +549,16 @@ class AdminController extends Controller
     public function kitchenOrdersNew($id){
         $reCompanyId = Session::get('storeId');
 
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.store_id' => $reCompanyId])->where('delivery_date',Carbon::now()->toDateString())->where('order_details.order_ready', '0')->where('order_details.id', '>', $id)->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street')
+            ->where(['order_details.store_id' => $reCompanyId])
+            ->where('delivery_date',Carbon::now()->toDateString())
+            ->where('order_details.order_ready', '0')
+            ->where('order_details.id', '>', $id)
+            ->whereNotIn('orders.online_paid', [2])
+            ->join('product','product.product_id','=','order_details.product_id')
+            ->join('orders','orders.order_id','=','order_details.order_id')
+            ->leftJoin('customer_addresses AS CA','CA.id','=','orders.user_address_id')
+            ->get();
 
         $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;
         
@@ -1839,6 +1863,71 @@ class AdminController extends Controller
     }
 
     /**
+     * Get available list of drivers to assign them to order
+     * @return [type] [description]
+     */
+    function getAvailableDriverToAssign($orderId)
+    {
+        $driver = array();
+
+        $company_id = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first()->company_id;
+
+        if($company_id)
+        {
+            $driver = Driver::select(['id', 'name'])
+                ->where(['company_id' => $company_id, 'status' => '1'])
+                ->get();
+        }
+
+        $orderDeliveryCnt = OrderDelivery::where(['order_id' => $orderId])->count();
+
+        return response()->json(['orderDeliveryCnt' => $orderDeliveryCnt, 'driver' => $driver]);
+    }
+
+    /**
+     * [getOrderDeliveryAddress description]
+     * @param  [type] $addressId [description]
+     * @return [type]            [description]
+     */
+    function getOrderDeliveryAddress($addressId)
+    {
+        $strAddress = '';
+        $userAddress = UserAddress::find($addressId);
+
+        if($userAddress)
+        {
+            $strAddress = Helper::convertAddressToStr($userAddress);
+        }
+
+        return response()->json(['strAddress' => $strAddress]);
+    }
+
+    /**
+     * Assign driver to order
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    function orderAssignDriver(Request $request)
+    {
+        // Validation
+        $this->validate($request, [
+            'order_id'  => 'required',
+            'driver_id' => 'required'
+        ]);
+
+        $data = $request->only(['order_id', 'driver_id']);
+
+        $status = 0;
+
+        if(OrderDelivery::create($data))
+        {
+            $status = 1;
+        }
+
+        return response()->json(['status' => $status]);
+    }
+
+    /**
      * Update 'order item' as started from 'Kitchen Menu'
      * @param  Request $request     [description]
      * @param  [type]  $orderItemId [description]
@@ -1863,7 +1952,11 @@ class AdminController extends Controller
                 $arrOrderUpdate['order_accepted'] = 1;
             }
 
-            Order::where('order_id', $orderId)->update($arrOrderUpdate);
+            // Update Order
+            if(isset($arrOrderUpdate))
+            {
+                Order::where('order_id', $orderId)->update($arrOrderUpdate);
+            }
 
             // If order accepted, send 'order accepted' notification
             if( isset($arrOrderUpdate['order_accepted']) )
@@ -1875,7 +1968,11 @@ class AdminController extends Controller
             $helper->logs("Order Item Started: ID - " . $orderItemId);
         }
 
-        return response()->json(['status' => 'success', 'data'=>true]);
+        $order = Order::select(['order_id', 'delivery_type'])
+            ->where('order_id', $orderId)
+            ->first();
+
+        return response()->json(['status' => 'success', 'data'=>true, 'order' => $order]);
     }
 
     /**

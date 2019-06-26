@@ -35,17 +35,17 @@ function isManualPrepTimeForOrder(orderId, itemId, This)
 // Update the manual extra time for order and then start the order/item
 function frmAddManualPrepTime()
 {
+	var orderId = $('#add-manual-prep-time').find('input[name=order_id]').val();
+	var itemId = $('#add-manual-prep-time').find('input[name=item_id]').val();
+
 	$.post(RESTAURANT_BASE_URL+"/add-manual-prep-time",
 		{
 			'_token': $('meta[name="_token"]').attr('content'),
-			'order_id': $('input[name=order_id]').val(),
+			'order_id': orderId,
 			'extra_prep_time': $('input[name="extra_prep_time"]:checked').val()
 		},
 		function(data) {
 			// Start order item or order
-			orderId = $('input[name=order_id]').val();
-			itemId = $('input[name=item_id]').val();
-
 			This = (itemId != 'false') ? 'img#'+itemId : 'img#'+orderId;
 
 			if(itemId != 'false')
@@ -65,6 +65,99 @@ function frmAddManualPrepTime()
 			$( "#add-manual-prep-time" ).popup("close");
 		}
 	);
+}
+
+// Get list of avalable drivers to assign them to order
+function popupOrderAssignDriver(orderId, itemId)
+{
+	$.ajax({
+		url: RESTAURANT_BASE_URL+'/get-available-driver-to-assign/'+orderId,
+		dataType: 'json',
+		success: function(response) {
+			if(!response.orderDeliveryCnt)
+			{
+				if(response.driver.length)
+				{
+					var str = '';
+					for(var i = 0; i < response.driver.length; i++)
+					{
+						str += '<option value="'+response.driver[i].id+'">'+response.driver[i].name+'</option>';
+					}
+
+					$('#popup-order-assign-driver').find('input[name="order_id"]').val(orderId);
+					$('#popup-order-assign-driver').find('input[name="item_id"]').val(itemId);
+					$('#popup-order-assign-driver').find('select[name="driver_id"]').append(str);
+					$('#popup-order-assign-driver').popup('open');
+				}
+				else
+				{
+					alert('No driver found.')
+				}
+			}
+			else
+			{
+				if(itemId)
+				{
+					onReady(itemId);
+				}
+				else
+				{
+					window.location.href = urlReadyOrder+'/'+orderId;
+				}
+			}
+		}
+	});
+}
+
+// Assign driver to order
+function orderAssignDriver()
+{
+	var orderId = $('#popup-order-assign-driver').find('input[name=order_id]').val();
+	var itemId = $('#popup-order-assign-driver').find('input[name=item_id]').val();
+	var driverId = $('#popup-order-assign-driver').find('select[name=driver_id]').val();
+
+	if(driverId != '' && orderId != '')
+	{
+		$.ajax({
+			url: RESTAURANT_BASE_URL+'/order-assign-driver',
+			type: 'POST',
+			data: {
+				'_token': $('meta[name="_token"]').attr('content'),
+				'order_id': orderId,
+				'driver_id': driverId,
+			},
+			dataType: 'json',
+			success: function(response) {
+				$('#popup-order-assign-driver').popup('close');
+
+				if(itemId != 'false')
+				{
+					onReady(itemId);
+				}
+				else
+				{
+					window.location.href = urlReadyOrder+'/'+orderId;
+				}
+			}
+		});
+	}
+	else
+	{
+		alert('Select driver.');
+	}
+}
+
+// 
+function getOrderDeliveryAddress(id)
+{
+	$.ajax({
+		url: RESTAURANT_BASE_URL+'/get-order-delivery-address/'+id,
+		dataType: 'json',
+		success: function(response) {
+			$('#popup-order-delivery-address').find('.addr').text(response.strAddress);
+			$('#popup-order-delivery-address').popup('open');
+		}
+	});
 }
 
 intervalSpeakText = 0;

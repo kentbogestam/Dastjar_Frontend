@@ -81,7 +81,14 @@
 				// console.log(returnedData["data"]);
 				$('body').find('#'+id).attr('src',imageUrl);
 				$('body').find('#'+id).parent("a").attr('onclick',' ');
-				$('body').find('#'+id+'ready').parent("a").attr('onclick','onReady('+id+')');
+				if(returnedData.order.delivery_type == 3)
+				{
+					$('body').find('#'+id+'ready').parent("a").attr('onclick','popupOrderAssignDriver('+returnedData.order.order_id+', '+id+')');
+				}
+				else
+				{
+					$('body').find('#'+id+'ready').parent("a").attr('onclick','onReady('+id+')');
+				}
 				$This.closest('tr').removeClass('not-started');
 
 				// Update item as speak
@@ -97,11 +104,11 @@
 			function(returnedData){
 				// console.log(returnedData["data"]);
 				$('body').find('#'+id+'ready').parents("tr").remove();
-				if(returnedData["status"] == 'ready'){
+				/*if(returnedData["status"] == 'ready'){
 					$("#popupCloseRight").popup("open");
 				}else{
 					$("#popupNotifaction").popup("open");	
-				}
+				}*/
 			});
 		}
 
@@ -203,13 +210,21 @@
 				          		liItem += "<a data-ajax='false' href='javascript:void(0)' >"
 				          		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 				          		liItem +="</a></td>";
-				          		}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
+				          	}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
+				          		if(temp[i]["delivery_type"] == 3)
+				          		{
+				          			aString = "<a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", "+temp[i]['id']+")'>";
+				          		}
+				          		else
+				          		{
+				          			aString = "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+">";
+				          		}
 				          		liItem += "<td>"
-				          		liItem += "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+" >"
-				          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
+				          		// liItem += "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+" >"
+				          		liItem += aString
+				          		liItem += "<img id='"+temp[i]['id']+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 				          		liItem +="</a></td>";
-
-				          		}else{
+				          	}else{
 				          		liItem += "<td>"
 				          		liItem += "<a>"
 				          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
@@ -229,6 +244,7 @@
 			          		else if( temp[i]['delivery_type'] == 3 )
 			          		{
 			          			deliveryType = '{{ __('messages.deliveryOptionHomeDelivery') }}';
+			          			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+temp[i]['user_address_id']+')"><span>'+temp[i]['street']+'</span></a>';
 			          		}
 
 			          		liItem += "<td>"+deliveryType+"</td>";
@@ -282,7 +298,7 @@
 				      	(function (i) {
 						    setTimeout(function () {
 						    // console.log('iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'+i);
-			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time",extra_prep_time]);
+			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"],extra_prep_time);
 			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
 			          		var clsStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
 			          		liItem += "<tr class='"+clsStatus+"'>";
@@ -345,13 +361,20 @@
 				          		liItem += "<a data-ajax='false' href='javascript:void(0)' >"
 				          		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 				          		liItem +="</a></td>";
-				          		}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
+				          	}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
+				          		if(temp[i]["delivery_type"] == 3)
+				          		{
+				          			aString = "<a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", "+temp[i]['id']+")'>";
+				          		}
+				          		else
+				          		{
+				          			aString = "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+">";
+				          		}
 				          		liItem += "<td>"
-				          		liItem += "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+" >"
-				          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
+				          		liItem += aString
+				          		liItem += "<img id='"+temp[i]['id']+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 				          		liItem +="</a></td>";
-
-				          		}else{
+				          	}else{
 				          		liItem += "<td>"
 				          		liItem += "<a>"
 				          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
@@ -371,6 +394,7 @@
 			          		else if( temp[i]['delivery_type'] == 3 )
 			          		{
 			          			deliveryType = '{{ __('messages.deliveryOptionHomeDelivery') }}';
+			          			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+temp[i]['user_address_id']+')"><span>'+temp[i]['street']+'</span></a>';
 			          		}
 
 			          		liItem += "<td>"+deliveryType+"</td>";
@@ -519,13 +543,20 @@
 		          		liItem += "<a data-ajax='false' >"
 		          		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 		          		liItem +="</a></td>";
-		          		}else if(list[i]["order_ready"] == 0 && list[i]["order_started"] == 1){
+		          	}else if(list[i]["order_ready"] == 0 && list[i]["order_started"] == 1){
+		          		if(list[i]["delivery_type"] == 3)
+		          		{
+		          			aString = "<a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+list[i]['order_id']+", "+list[i]['id']+")'>";
+		          		}
+		          		else
+		          		{
+		          			aString = "<a data-ajax='false' href="+urlReady+"/"+list[i]['id']+">";
+		          		}
 		          		liItem += "<td>"
-		          		liItem += "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+" >"
-		          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
+		          		liItem += aString
+		          		liItem += "<img id='"+list[i]['id']+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 		          		liItem +="</a></td>";
-
-		          		}else{
+		          	}else{
 		          		liItem += "<td>"
 		          		liItem += "<a>"
 		          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
@@ -545,6 +576,7 @@
 	          		else if( temp[i]['delivery_type'] == 3 )
 	          		{
 	          			deliveryType = '{{ __('messages.deliveryOptionHomeDelivery') }}';
+	          			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+temp[i]['user_address_id']+')"><span>'+temp[i]['street']+'</span></a>';
 	          		}
 
 	          		liItem += "<td>"+deliveryType+"</td>";

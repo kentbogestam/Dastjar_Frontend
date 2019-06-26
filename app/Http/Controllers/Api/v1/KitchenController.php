@@ -32,7 +32,7 @@ class KitchenController extends Controller
     }
 
    public function orderDetail($reCompanyId){
-        $orderDetailscustomer = Order::select(['orders.*','customer.name as name', 'OCD.discount_id', 'PD.discount_value', DB::raw('COUNT(OCL.id) AS cntLoyaltyUsed')])
+        $orderDetailscustomer = Order::select(['orders.*','customer.name as name', 'OCD.discount_id', 'PD.discount_value', DB::raw('COUNT(OCL.id) AS cntLoyaltyUsed'), 'CA.street'])
             ->where(['orders.store_id' => $reCompanyId])
             ->where('user_type','=','customer')
             ->where('check_deliveryDate',Carbon::now()->toDateString())
@@ -40,6 +40,7 @@ class KitchenController extends Controller
             ->whereNotIn('orders.online_paid', [2])
             ->where('orders.cancel','!=', 1)
             ->leftJoin('customer','orders.user_id','=','customer.id')
+            ->leftJoin('customer_addresses AS CA','CA.id','=','orders.user_address_id')
             ->leftJoin('order_customer_discount AS OCD', 'orders.order_id', '=', 'OCD.order_id')
             ->leftJoin('promotion_discount AS PD', 'OCD.discount_id', '=', 'PD.id')
             ->leftJoin('order_customer_loyalty AS OCL', 'OCL.order_id', '=', 'orders.order_id')
