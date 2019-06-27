@@ -10,7 +10,7 @@
 	<link href="{{ url('assets/css/fontawesome/fontawesome.css') }}" rel="stylesheet">
 	<link href="{{ url('assets/css/fontawesome/brands.css') }}" rel="stylesheet">
 	<link href="{{ url('assets/css/fontawesome/solid.css') }}" rel="stylesheet">
-	<!-- <link href="{{ url('assets/css/custom.css') }}" rel="stylesheet"> -->
+	<link href="{{ url('assets/css/custom.css') }}" rel="stylesheet">
 
 	<!-- Fonts -->
 	<link href='//fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
@@ -21,46 +21,6 @@
 		<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
 		<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 	<![endif]-->
-	<style>
-		.container-fluid.full {
-			margin: 0 auto;
-  			width: 100%;
-		}
-		.navbar-brand {
-			transform: translateX(-50%);
-			left: 50%;
-			position: absolute;
-		}
-		.navbar-brand {
-			padding: 0px;
-		}
-		.navbar-brand>img {
-			height: 100%;
-			width: auto;
-			padding: 7px 14px;
-		}
-		footer {
-			position: fixed;
-			bottom: 0;
-			width: 100%;
-		}
-		.navbar-collapse.collapse {
-			display: block!important;
-		}
-		.navbar-nav>li, .navbar-nav {
-			float: left !important;
-		}
-		.navbar-nav.navbar-right:last-child {
-			margin-right: -15px !important;
-		}
-		.navbar-right {
-			float: right!important;
-		}
-
-		.navbar-header-custom {
-			margin-bottom: 0;
-		}
-	</style>
 </head>
 <body>
 	<nav class="navbar navbar-default navbar-header-custom">
@@ -73,7 +33,7 @@
 			<div class="collapse navbar-collapse">
 				<ul class="nav navbar-nav navbar-right">
 					<li>
-						<a href="javascript:void(0)">{{ __('messages.Logout') }}</a>
+						<a href="{{ url('driver/logout') }}">{{ __('messages.Logout') }}</a>
 					</li>
 				</ul>
 			</div>
@@ -82,8 +42,8 @@
 
 	@yield('content')
 
-	<footer id="footer">
-		<!-- <nav class="navbar navbar-default navbar-footer-custom" style="margin: 0">
+	<footer id="footer" class="footer-fixed-bottom">
+		<nav class="navbar navbar-default navbar-footer-custom" style="margin: 0">
 			<div class="container-fluid">
 				<div class="collapse navbar-collapse">
 					<ul class="nav navbar-nav navbar-left">
@@ -92,7 +52,7 @@
 					</ul>
 				</div>
 			</div>
-		</nav> -->
+		</nav>
 	</footer>
 
 	<!-- Scripts -->

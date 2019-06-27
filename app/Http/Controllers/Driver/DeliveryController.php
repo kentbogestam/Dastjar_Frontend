@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Driver;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Auth;
 
+// use App\Driver;
 use App\Order;
 use App\OrderDetail;
 use App\OrderDelivery;
@@ -12,11 +14,28 @@ use App\OrderDelivery;
 class DeliveryController extends Controller
 {
 	/**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth:driver');
+    }
+
+    /*public function index()
+    {
+    	return redirect('driver/list-delivery');
+    }*/
+
+	/**
 	 * Show list of delivery to driver
 	 * @return [type] [description]
 	 */
-	public function listDelivery($driverId)
+	public function listDelivery()
 	{
+		$driverId = Auth::guard('driver')->user()->id;
+
 		$orderDelivery = OrderDelivery::from('order_delivery AS OD')
 			->select(['OD.id', 'O.order_id', 'O.customer_order_id', 'CA.full_name', 'CA.mobile', 'CA.address', 'CA.street', 'CA.landmark', 'CA.city', 'CA.state'])
 			->join('orders AS O', 'O.order_id', '=', 'OD.order_id')
