@@ -80,7 +80,7 @@ class DriverController extends Controller
         {
             $recipients = array();
             $recipients = [$data['phone_prefix'].$data['phone']];
-            $message = 'Username: '.$data['phone'].', Password: '.$password;
+            $message = "You are now assigned as delivery person in Dastjar Driver.";
             $result = Helper::apiSendTextMessage($recipients, $message);
         }
 
