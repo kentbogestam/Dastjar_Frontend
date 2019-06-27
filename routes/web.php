@@ -280,8 +280,19 @@ Route::group(['prefix' => 'kitchen'], function(){
 });
 
 // Driver
-Route::group(['namespace' => 'Driver', 'prefix' => 'driver'], function() {
-	Route::get('list-delivery/{driverId}', 'DeliveryController@listDelivery');
-	Route::get('order-deliver/{orderId}', 'DeliveryController@orderDeliver');
-	Route::get('get-order-detail/{orderId}', 'DeliveryController@getOrderDetail');
+Route::group(['prefix' => 'driver'], function() {
+	// Login
+	Route::group(['namespace' => 'Auth'], function() {
+		Route::get('/', 'DriverLoginController@index');
+		Route::get('login', 'DriverLoginController@showLoginForm')->name('driver.login');
+		Route::post('login', 'DriverLoginController@login')->name('driver.login.submit');
+		Route::get('logout', 'DriverLoginController@logout')->name('driver.logout');
+	});
+
+	// After login
+	Route::group(['namespace' => 'Driver'], function() {
+		Route::get('list-delivery', 'DeliveryController@listDelivery');
+		Route::get('order-deliver/{orderId}', 'DeliveryController@orderDeliver');
+		Route::get('get-order-detail/{orderId}', 'DeliveryController@getOrderDetail');
+	});
 });

@@ -21,13 +21,21 @@ class RedirectIfAuthenticated
             case 'admin':
                 $link = "/admin";
                 break;
-            
+            case 'driver':
+                if (Auth::guard($guard)->check()) {
+                    return redirect('driver/list-delivery');
+                }
+                break;
             default:
                 $link = "/home";
                 break;
         }
-        if (Auth::guard($guard)->check()) {
-            return redirect($link);
+
+        if( isset($link) )
+        {
+            if (Auth::guard($guard)->check()) {
+                return redirect($link);
+            }
         }
 
         return $next($request);
