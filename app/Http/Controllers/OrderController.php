@@ -889,8 +889,9 @@ class OrderController extends Controller
         $html = '';
 
         // Get order
-        $order = Order::select(['final_order_total'])
-            ->where(['order_id' => $order_id])
+        $order = Order::select(['orders.final_order_total', 'company.currencies'])
+            ->join('company','orders.company_id', '=', 'company.company_id')
+            ->where(['orders.order_id' => $order_id])
             ->first();
         
         $is_home_delivery_eligible = 1;
@@ -975,7 +976,8 @@ class OrderController extends Controller
         }
         else
         {
-            $html .= __('messages.homeDeliveryNotEligible', ['threshold' => $storeDeliveryPrice->threshold]);
+            $threshold = $storeDeliveryPrice->threshold.' '.$order->currencies;
+            $html .= __('messages.homeDeliveryNotEligible', ['threshold' => $threshold]);
         }
 
         // Return
