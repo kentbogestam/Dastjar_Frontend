@@ -20,7 +20,7 @@ class DeliveryController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:driver', ['except' => ['listDelivery']]);
+        $this->middleware('auth:driver', ['except' => ['listDelivery', 'getOrderDetail', 'orderDeliver']]);
     }
 
     /*public function index()
