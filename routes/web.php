@@ -296,5 +296,6 @@ Route::group(['prefix' => 'driver'], function() {
 		Route::get('get-order-detail/{orderId}', 'DeliveryController@getOrderDetail');
 		Route::get('pickup', 'DeliveryController@orderPickup');
 		Route::get('get-pickup-order-list', 'DeliveryController@getPickupOrderList');
+		Route::get('update-status/{currentStatus}', 'DeliveryController@updateStatus');
 	});
 });

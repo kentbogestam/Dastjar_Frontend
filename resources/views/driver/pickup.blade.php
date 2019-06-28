@@ -3,7 +3,7 @@
 @section('content')
 	<div class="container-fluid full">
 		<div class="row">
-			<div class="col-md-12 text-center"><h2>T2 Restaurant</h2></div>
+			<div class="col-md-12 text-center"><h2>{{ $company->company_name }}</h2></div>
 		</div>
 		<table class="table table-bordered">
 			<thead>

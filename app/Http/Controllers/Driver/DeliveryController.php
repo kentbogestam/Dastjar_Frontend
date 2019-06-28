@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Auth;
 
-// use App\Driver;
+use App\Driver;
+use App\Company;
 use App\Order;
 use App\OrderDetail;
 use App\OrderDelivery;
@@ -105,7 +106,14 @@ class DeliveryController extends Controller
 	 */
 	function orderPickup()
 	{
-		return view('driver.pickup');
+		// dd(Auth::user()->toArray());
+		$companyId = Auth::guard('driver')->user()->company_id;
+		$company = Company::select(['company_name'])
+			->where(['company_id' => $companyId])
+			// ->where('c_activ', '!=', null)
+			->first();
+		
+		return view('driver.pickup', compact('company'));
 	}
 
 	/**
@@ -125,5 +133,25 @@ class DeliveryController extends Controller
 			->get();
 
 		return response()->json(['orderDelivery' => $orderDelivery]);
+	}
+
+	/**
+	 * Update drive status 'active/inactive'
+	 * @param  Request $request [description]
+	 * @return [type]           [description]
+	 */
+	function updateStatus($currentStatus)
+	{
+		$status = 0;
+
+		$res = Driver::where(['id' => Auth::guard('driver')->user()->id])
+			->update(['status' => $currentStatus]);
+
+		if($res)
+		{
+			$status = 1;
+		}
+
+		return response()->json(['status' => $status]);
 	}
 }

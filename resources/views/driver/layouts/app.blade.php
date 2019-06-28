@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="_token" content="{{ csrf_token() }}">
 	<title>Anar - Delivery App</title>
 
 	<link href="{{ url('assets/css/bootstrap.css') }}" rel="stylesheet">
@@ -32,6 +33,13 @@
 			</div>
 			@if(Auth::guard('driver')->check())
 				<div class="collapse navbar-collapse">
+					<ul class="nav navbar-nav">
+						<li>
+							<div class="checkbox">
+								<label><input type="checkbox" name="status" {{ Auth::user()->status ? 'checked' : '' }}>Active</label>
+							</div>
+						</li>
+					</ul>
 					<ul class="nav navbar-nav navbar-right">
 						<li>
 							<a href="{{ url('driver/logout') }}">{{ __('messages.Logout') }}</a>
@@ -63,6 +71,22 @@
 	<script src="{{ url('assets/js/jquery.min.js') }}"></script>
 	<script src="{{ url('assets/js/bootstrap.min.js') }}"></script>
 	<!-- <script src="{{ url('assets/js/init.js') }}"></script> -->
+
+	<script type="text/javascript">
+		$(function() {
+			// Update driver status
+			$('input[name=status]').on('change', function() {
+				var status = $(this).is(':checked') ? 1 : 0;
+
+				$.ajax({
+					url: '{{ url('driver/update-status') }}/'+status,
+					success: function() {
+
+					}
+				});
+			});
+		});
+	</script>
 
 	@yield('scripts')
 </body>
