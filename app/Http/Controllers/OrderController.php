@@ -995,8 +995,8 @@ class OrderController extends Controller
         $this->validate($request, [
             'full_name' => 'required',
             'mobile'    => 'required|numeric',
-            'zipcode'   => 'required|numeric',
-            'address'   => 'required',
+            'street'   => 'required',
+            'zipcode'   => 'numeric',
             'city'      => 'required',
         ]);
 
