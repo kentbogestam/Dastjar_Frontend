@@ -178,7 +178,7 @@ return [
     'deliveryOptionHomeDelivery' => 'Hemleverans',
     'storeDeliveryTypeDineIn' => 'A dine-in restaurant',
     'storeDeliveryTypeTakeAway' => 'A take away restaurant',
-    'storeDeliveryType' => 'A :deliveryType restaurant',
+    'storeDeliveryType' => ':deliveryType restaurant',
     'deliveryType' => 'Leverans Typ',
 
     // Validation

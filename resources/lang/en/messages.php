@@ -176,7 +176,7 @@ return [
     'deliveryOptionHomeDelivery' => 'Home Delivery',
     'storeDeliveryTypeDineIn' => 'A dine-in restaurant',
     'storeDeliveryTypeTakeAway' => 'A take away restaurant',
-    'storeDeliveryType' => 'A :deliveryType restaurant',
+    'storeDeliveryType' => ':deliveryType restaurant',
     'deliveryType' => 'Delivery Type',
 
     // Validation
