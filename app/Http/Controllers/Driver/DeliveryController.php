@@ -20,7 +20,7 @@ class DeliveryController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:driver');
+        $this->middleware('auth:driver', ['except' => ['listDelivery']]);
     }
 
     /*public function index()
@@ -32,9 +32,15 @@ class DeliveryController extends Controller
 	 * Show list of delivery to driver
 	 * @return [type] [description]
 	 */
-	public function listDelivery()
+	public function listDelivery($driverId = null)
 	{
-		$driverId = Auth::guard('driver')->user()->id;
+		if(!$driverId)
+		{
+			if(Auth::guard('driver')->check())
+			{
+				$driverId = Auth::guard('driver')->user()->id;
+			}
+		}
 
 		$orderDelivery = OrderDelivery::from('order_delivery AS OD')
 			->select(['OD.id', 'O.order_id', 'O.customer_order_id', 'CA.full_name', 'CA.mobile', 'CA.address', 'CA.street', 'CA.landmark', 'CA.city', 'CA.state'])
@@ -91,5 +97,33 @@ class DeliveryController extends Controller
 			->update(['paid' => 1]);
         
         return redirect()->back();
+	}
+
+	/**
+	 * List of orders to pickup from restaurant
+	 * @return [type] [description]
+	 */
+	function orderPickup()
+	{
+		return view('driver.pickup');
+	}
+
+	/**
+	 * Get order list needs to be picked-up from restaurant
+	 * @return [type] [description]
+	 */
+	function getPickupOrderList()
+	{
+		$driverId = Auth::guard('driver')->user()->id;
+
+		$orderDelivery = OrderDelivery::from('order_delivery AS OD')
+			->select(['OD.id', 'O.order_id', 'O.customer_order_id', 'O.online_paid', 'S.store_name', 'S.phone', 'CA.full_name', 'CA.mobile', 'CA.address', 'CA.street', 'CA.landmark', 'CA.city', 'CA.state'])
+			->join('orders AS O', 'O.order_id', '=', 'OD.order_id')
+			->join('customer_addresses AS CA', 'CA.id', '=', 'O.user_address_id')
+			->join('store AS S', 'S.store_id', '=', 'O.store_id')
+			->where(['OD.driver_id' => $driverId, 'paid' => 0])
+			->get();
+
+		return response()->json(['orderDelivery' => $orderDelivery]);
 	}
 }

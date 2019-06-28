@@ -30,29 +30,33 @@
 					<img src="{{ asset('images/logo.png') }}" alt="">
 				</a>
 			</div>
-			<div class="collapse navbar-collapse">
-				<ul class="nav navbar-nav navbar-right">
-					<li>
-						<a href="{{ url('driver/logout') }}">{{ __('messages.Logout') }}</a>
-					</li>
-				</ul>
-			</div>
+			@if(Auth::guard('driver')->check())
+				<div class="collapse navbar-collapse">
+					<ul class="nav navbar-nav navbar-right">
+						<li>
+							<a href="{{ url('driver/logout') }}">{{ __('messages.Logout') }}</a>
+						</li>
+					</ul>
+				</div>
+			@endif
 		</div>
 	</nav>
 
 	@yield('content')
 
 	<footer id="footer" class="footer-fixed-bottom">
-		<nav class="navbar navbar-default navbar-footer-custom" style="margin: 0">
-			<div class="container-fluid">
-				<div class="collapse navbar-collapse">
-					<ul class="nav navbar-nav navbar-left">
-						<li class="active"><a href="#">Orders</a></li>
-						<li><a href="#">Pickups</a></li>
-					</ul>
+		@if(Auth::guard('driver')->check())
+			<nav class="navbar navbar-default navbar-footer-custom" style="margin: 0">
+				<div class="container-fluid">
+					<div class="collapse navbar-collapse">
+						<ul class="nav navbar-nav navbar-left">
+							<li class="{{ request()->is('driver/orders') ? 'active' : '' }}"><a href="{{ url('driver/deliver') }}"">Orders</a></li>
+							<li class="{{ request()->is('driver/pickup') ? 'active' : '' }}"><a href="{{ url('driver/pickup') }}">Pickups</a></li>
+						</ul>
+					</div>
 				</div>
-			</div>
-		</nav>
+			</nav>
+		@endif
 	</footer>
 
 	<!-- Scripts -->

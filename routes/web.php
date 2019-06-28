@@ -291,8 +291,10 @@ Route::group(['prefix' => 'driver'], function() {
 
 	// After login
 	Route::group(['namespace' => 'Driver'], function() {
-		Route::get('list-delivery', 'DeliveryController@listDelivery');
+		Route::get('list-delivery/{orderId?}', 'DeliveryController@listDelivery');
 		Route::get('order-deliver/{orderId}', 'DeliveryController@orderDeliver');
 		Route::get('get-order-detail/{orderId}', 'DeliveryController@getOrderDetail');
+		Route::get('pickup', 'DeliveryController@orderPickup');
+		Route::get('get-pickup-order-list', 'DeliveryController@getPickupOrderList');
 	});
 });
