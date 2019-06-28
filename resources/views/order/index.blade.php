@@ -438,6 +438,12 @@
 						@php
 							$delivery_charge = $order->delivery_charge;
 						@endphp
+
+						<tr>
+							<td colspan="3">
+								DELIVERY CHARGE {{ number_format($delivery_charge, 2, '.', '') }} {{$order->currencies}}
+							</td>
+						</tr>
 					@else
 						@php
 							$delivery_charge = 0;
