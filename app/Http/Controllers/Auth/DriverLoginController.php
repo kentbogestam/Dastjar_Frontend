@@ -43,7 +43,7 @@ class DriverLoginController extends Controller
         //
         if(Auth::guard('driver')->attempt(['email' => $request->email, 'password' => $request->password]))
         {
-            return redirect('driver/list-delivery');
+            return redirect('driver/pickup');
         }
         
         return redirect()->back()->withInput($request->only('email'))->withErrors(['email' => trans('auth.failed')]);

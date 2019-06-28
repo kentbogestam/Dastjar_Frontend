@@ -23,7 +23,7 @@ class RedirectIfAuthenticated
                 break;
             case 'driver':
                 if (Auth::guard($guard)->check()) {
-                    return redirect('driver/list-delivery');
+                    return redirect('driver/pickup');
                 }
                 break;
             default:
