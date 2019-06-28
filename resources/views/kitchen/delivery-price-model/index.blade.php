@@ -114,7 +114,7 @@
                             <label for="threshold">{{ __('messages.threshold') }} :</label>
                             <input type="text" name="threshold" class="form-control" id="threshold" data-msg-required="{{ __('messages.fieldRequired') }}">
                         </div>
-                        <button type="submit" class="btn btn-success">{{ __('messages.submit') }}</button>
+                        <button type="submit" class="btn btn-success">{{ __('messages.save') }}</button>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -147,7 +147,7 @@
                             <input type="text" name="threshold_upd" class="form-control" id="threshold_upd" data-msg-required="{{ __('messages.fieldRequired') }}">
                         </div>
                         <input type="hidden" name="id" id="id" data-rule-required="true">
-                        <button type="submit" class="btn btn-success">{{ __('messages.update') }}</button>
+                        <button type="submit" class="btn btn-success">{{ __('messages.save') }}</button>
                     </form>
                 </div>
                 <div class="modal-footer">

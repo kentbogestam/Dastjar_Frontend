@@ -118,7 +118,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-success">{{ __('messages.submit') }}</button>
+                        <button type="submit" class="btn btn-success">{{ __('messages.save') }}</button>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -158,7 +158,7 @@
                             </div>
                         </div>
                         <input type="hidden" name="id" id="id" data-rule-required="true">
-                        <button type="submit" class="btn btn-success">{{ __('messages.update') }}</button>
+                        <button type="submit" class="btn btn-success">{{ __('messages.save') }}</button>
                     </form>
                 </div>
                 <div class="modal-footer">
