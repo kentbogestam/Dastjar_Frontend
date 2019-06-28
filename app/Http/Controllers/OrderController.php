@@ -975,7 +975,7 @@ class OrderController extends Controller
         }
         else
         {
-            $html .= 'Not eligible';
+            $html .= __('messages.homeDeliveryNotEligible', ['threshold' => $storeDeliveryPrice->threshold]);
         }
 
         // Return

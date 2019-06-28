@@ -178,6 +178,7 @@ return [
     'storeDeliveryTypeTakeAway' => 'A take away restaurant',
     'storeDeliveryType' => ':deliveryType restaurant',
     'deliveryType' => 'Delivery Type',
+    'homeDeliveryNotEligible' => 'Minimum Order value is :threshold',
 
     // Validation
     'fieldRequired' => 'This field is required.',

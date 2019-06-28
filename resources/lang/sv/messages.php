@@ -180,6 +180,7 @@ return [
     'storeDeliveryTypeTakeAway' => 'A take away restaurant',
     'storeDeliveryType' => ':deliveryType restaurant',
     'deliveryType' => 'Leverans Typ',
+    'homeDeliveryNotEligible' => 'Minsta beställningsvärde är :threshold',
 
     // Validation
     'fieldRequired' => 'Detta fält är obligatoriskt.',
