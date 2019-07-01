@@ -128,4 +128,24 @@ class PickupController extends Controller
 
 		return response()->json(['status' => $status]);
 	}
+
+	/**
+	 * Update driver current position
+	 * @param  Request $request [description]
+	 * @return [type]           [description]
+	 */
+	function updateDriverPosition(Request $request)
+	{
+		$status = 0;
+		$data = $request->input();
+
+		// 
+		$driverId = Auth::guard('driver')->user()->id;
+		if(Driver::where(['id' => $driverId])->update(['latitude' => $data['latitude'], 'longitude' => $data['longitude']]))
+		{
+			$status = 1;
+		}
+
+		return response()->json(['status' => $status]);
+	}
 }

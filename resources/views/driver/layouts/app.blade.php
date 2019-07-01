@@ -27,8 +27,8 @@
 	<nav class="navbar navbar-default navbar-header-custom">
 		<div class="container-fluid">
 			<div class="navbar-header">
-				<a class="navbar-brand" href="javascript:void(0)">
-					<img src="{{ asset('images/logo.png') }}" alt="">
+				<a class="navbar-brand" href="javascript:void(0)" title="">
+					<img src="{{ asset('images/logo.png') }}" alt="" class="img-responsive">
 				</a>
 			</div>
 			@if(Auth::guard('driver')->check())
@@ -97,7 +97,7 @@
 	<!-- Scripts -->
 	<script src="{{ url('assets/js/jquery.min.js') }}"></script>
 	<script src="{{ url('assets/js/bootstrap.min.js') }}"></script>
-	<!-- <script src="{{ url('assets/js/init.js') }}"></script> -->
+	<script src="{{ url('assets/js/init.js') }}"></script>
 
 	<script type="text/javascript">
 		$(function() {
@@ -114,7 +114,7 @@
 			});
 		});
 
-		// 
+		// Get order detail
 		function getOrderDetail(customerOrderId)
 		{
 			// $('#modal-order-detail').modal('show');
@@ -131,6 +131,69 @@
 				}
 			});
 		}
+
+		// Goelocation add watch
+		function getLocationUpdate()
+		{
+		    if(navigator.geolocation)
+		    {
+		        // navigator.geolocation.getCurrentPosition(showPosition);
+		        var options = {timeout:60000};
+		        geoLoc = navigator.geolocation;
+		        watchID = geoLoc.watchPosition(showLocationUpdate, errorHandler, options);
+		    }
+		    else
+		    {
+		        console.log('Geolocation is not supported by this browser.');
+		    }
+		}
+
+		// Current position
+		function showLocationUpdate(position)
+		{
+		    var lat2 = position.coords.latitude;
+		    var lon2 = position.coords.longitude;
+
+			var lat1 = getCookie("latitude");
+			var lon1 = getCookie("longitude");
+
+			var distance = getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2, 'K');
+
+			distance = distance*1000;
+
+			if(distance > 0)
+			{
+				updateDriverPosition(lat2, lon2);
+			}
+		}
+
+		function errorHandler()
+		{
+
+		}
+
+		// Update driver current position
+		function updateDriverPosition(lat2, lon2)
+		{
+			$.ajax({
+				url: '{{ url('driver/update-driver-position') }}',
+				type: 'POST',
+				data: {
+					'_token': $('meta[name=_token]').attr('content'),
+					'latitude': lat2,
+					'longitude': lon2
+				},
+				success: function(response) {
+					if(response.status)
+					{
+						document.cookie="latitude="+lat2;
+						document.cookie="longitude="+lon2;
+					}
+				}
+			});
+		}
+
+		getLocationUpdate();
 	</script>
 
 	@yield('scripts')
