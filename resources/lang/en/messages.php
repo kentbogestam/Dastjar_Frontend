@@ -230,6 +230,7 @@ return [
     'aboutCompanyAdmin' => 'Your Company Admin',
     'marketingTools' => 'Marketing Tools',
     'range' => 'Range (In km)',
+    'buffer_time' => 'Buffer Time (In min)',
     'refund' => 'Refund',
     'getTheApp' => 'Get the App',
     'name' => 'Name',

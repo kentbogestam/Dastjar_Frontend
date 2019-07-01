@@ -232,6 +232,7 @@ return [
     'aboutCompanyAdmin' => 'Ditt Företags Admin',
     'marketingTools' => 'Marknads Verktyg',
     'range' => 'Range (In km)',
+    'buffer_time' => 'Buffer Time (In min)',
     'refund' => 'Återbetalning',
     'getTheApp' => 'Hämta den här appen',
     'name' => 'Name',

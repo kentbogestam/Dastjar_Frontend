@@ -196,7 +196,7 @@ textarea.ui-input-text{
 						</li>
 						<li class="range-sec">
 							<div data-role="rangeslider">
-								<label for="buffer_time">{{ __('messages.range') }}</label>
+								<label for="buffer_time">{{ __('messages.buffer_time') }}</label>
 								<input type="range" name="buffer_time" id="buffer_time" min="0" max="50" value="{{ $store->buffer_time }}">
 							</div>
 						</li>
