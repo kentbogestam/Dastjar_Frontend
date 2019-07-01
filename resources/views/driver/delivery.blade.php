@@ -3,7 +3,7 @@
 @section('content')
 	<div class="container-fluid full">
 		<div class="row">
-			<div class="col-md-12 text-center"><h2>Delivery</h2></div>
+			<div class="col-md-12 text-center"><h2>{{ $company->company_name }}</h2></div>
 		</div>
 		<table class="table table-bordered">
 			<thead>
@@ -15,74 +15,48 @@
 					<th>Delivered</th>
 				</tr>
 			</thead>
-			<tbody>
-				@if(!$orderDelivery->isEmpty())
-					@foreach($orderDelivery as $row)
-						<tr>
-							<td><a href="javascript:getOrderDetail({{ $row->order_id }})" class="link">{{ $row->customer_order_id }}</a></td>
-							<td>{{ $row->full_name }}</td>
-							<td><a href="javascript:void(0)" target="_blank" class="link">{{ $row->street.', '.$row->city }}</a></td>
-							<td><a href="tel:{{ $row->mobile }}"><i class="fas fa-phone-square-alt fa-2x"></i></a></td>
-							<td>
-								<a href="{{ url('driver/order-deliver/'.$row->customer_order_id) }}"><i class="fas fa-minus-circle fa-2x"></i></a>
-							</td>
-						</tr>
-					@endforeach
-				@else
-					<tr>
-						<td colspan="6" class="text-center">No more order to deliver.</td>
-					</tr>
-				@endif
-			</tbody>
+			<tbody></tbody>
 		</table>
-	</div>
-
-	<!-- Modal: order detail -->
-	<div id="modal-order-detail" class="modal fade" role="dialog">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h4 class="modal-title">Order Detail</h4>
-				</div>
-				<div class="modal-body">
-					<table class="table">
-						<thead>
-							<tr>
-								<th>Order ID</th>
-								<th>Product</th>
-								<th>Quantity</th>
-							</tr>
-						</thead>
-						<tbody></tbody>
-					</table>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
 	</div>
 @endsection
 
 @section('scripts')
 	<script type="text/javascript">
+		getDeliverOrderList();
+
 		// 
-		function getOrderDetail(orderId)
+		function getDeliverOrderList()
 		{
-			// $('#modal-order-detail').modal('show');
 			$.ajax({
-				url: '{{ url('driver/get-order-detail') }}/'+orderId,
+				url: '{{ url('driver/get-deliver-order-list') }}',
 				dataType: 'json',
 				success: function(response) {
-					if(response.html)
+					if(response.orderDelivery.length)
 					{
-						$('#modal-order-detail').find('.table tbody').html(response.html);
-					}
+						var html = '';
+						for(var i = 0; i < response.orderDelivery.length; i++)
+						{
+							customer_order_id = response.orderDelivery[i]['customer_order_id'];
 
-					$('#modal-order-detail').modal('show');
+							html += '<tr>'+
+								'<td><a href="javascript:getOrderDetail(\''+customer_order_id+'\')" class="link">'+customer_order_id+'</a></td>'+
+								'<td>'+response.orderDelivery[i]['full_name']+'</td>'+
+								'<td><a href="javascript:void(0)" target="_blank" class="link">'+response.orderDelivery[i]['street']+'<br>'+response.orderDelivery[i]['city']+'</a></td>'+
+								'<td><a href="tel:'+response.orderDelivery[i]['mobile']+'"><i class="fas fa-phone-square-alt fa-2x"></i></a></td>'+
+								'<td><a href="{{ url('driver/order-deliver') }}/'+response.orderDelivery[i]['customer_order_id']+'"><i class="fas fa-minus-circle fa-2x"></i></a></td>'
+							'</tr>';
+						}
+
+						$('.table').find('tbody').html(html);
+					}
+					else
+					{
+						$('.table').find('tbody').html('<tr><td colspan="5" class="text-center">{{ __('messages.noRecordFound') }}</td></tr>');
+					}
 				}
 			});
 		}
+
+		setInterval(getDeliverOrderList, 30000);
 	</script>
 @endsection

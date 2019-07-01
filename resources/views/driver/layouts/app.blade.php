@@ -52,13 +52,40 @@
 
 	@yield('content')
 
+	<!-- Modal: order detail -->
+	<div id="modal-order-detail" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Order Detail</h4>
+				</div>
+				<div class="modal-body">
+					<table class="table list-table-modal">
+						<thead>
+							<tr>
+								<th>Order ID</th>
+								<th>Product</th>
+								<th>Quantity</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<footer id="footer" class="footer-fixed-bottom">
 		@if(Auth::guard('driver')->check())
 			<nav class="navbar navbar-default navbar-footer-custom" style="margin: 0">
 				<div class="container-fluid">
 					<div class="collapse navbar-collapse">
 						<ul class="nav navbar-nav navbar-left">
-							<li class="{{ request()->is('driver/orders') ? 'active' : '' }}"><a href="{{ url('driver/deliver') }}"">Orders</a></li>
+							<li class="{{ request()->is('driver/delivery') ? 'active' : '' }}"><a href="{{ url('driver/delivery') }}"">Orders</a></li>
 							<li class="{{ request()->is('driver/pickup') ? 'active' : '' }}"><a href="{{ url('driver/pickup') }}">Pickups</a></li>
 						</ul>
 					</div>
@@ -86,6 +113,24 @@
 				});
 			});
 		});
+
+		// 
+		function getOrderDetail(customerOrderId)
+		{
+			// $('#modal-order-detail').modal('show');
+			$.ajax({
+				url: '{{ url('driver/get-order-detail') }}/'+customerOrderId,
+				dataType: 'json',
+				success: function(response) {
+					if(response.html)
+					{
+						$('#modal-order-detail').find('.list-table-modal tbody').html(response.html);
+					}
+
+					$('#modal-order-detail').modal('show');
+				}
+			});
+		}
 	</script>
 
 	@yield('scripts')

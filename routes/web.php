@@ -291,11 +291,14 @@ Route::group(['prefix' => 'driver'], function() {
 
 	// After login
 	Route::group(['namespace' => 'Driver'], function() {
-		Route::get('list-delivery/{orderId?}', 'DeliveryController@listDelivery');
+		Route::get('pickup', 'PickupController@orderPickup');
+		Route::get('get-pickup-order-list', 'PickupController@getPickupOrderList');
+		Route::get('order-pickup-accept/{orderDeliveryId}', 'PickupController@orderPickupAccept');
+		Route::get('update-status/{currentStatus}', 'PickupController@updateStatus');
+		Route::get('get-order-detail/{customerOrderId}', 'PickupController@getOrderDetail');
+
+		Route::get('delivery/{orderId?}', 'DeliveryController@delivery');
+		Route::get('get-deliver-order-list', 'DeliveryController@getDeliverOrderList');
 		Route::get('order-deliver/{orderId}', 'DeliveryController@orderDeliver');
-		Route::get('get-order-detail/{orderId}', 'DeliveryController@getOrderDetail');
-		Route::get('pickup', 'DeliveryController@orderPickup');
-		Route::get('get-pickup-order-list', 'DeliveryController@getPickupOrderList');
-		Route::get('update-status/{currentStatus}', 'DeliveryController@updateStatus');
 	});
 });
