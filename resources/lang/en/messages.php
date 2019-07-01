@@ -229,6 +229,7 @@ return [
     'aboutDastjarAnar' => 'About Dastjar RS/Anar',
     'aboutCompanyAdmin' => 'Your Company Admin',
     'marketingTools' => 'Marketing Tools',
+    'range' => 'Range (In km)',
     'refund' => 'Refund',
     'getTheApp' => 'Get the App',
     'name' => 'Name',

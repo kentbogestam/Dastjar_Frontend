@@ -878,7 +878,7 @@ class AdminController extends Controller
 
     public function kitchenSetting(){
         // Get logged-in store detail
-        $store = Store::select(['order_response'])
+        $store = Store::select(['order_response', 'range', 'buffer_time'])
             ->where('store_id' , Session::get('storeId'))->first();
 
         return view('kitchen.setting.index', compact('store'));
@@ -898,7 +898,7 @@ class AdminController extends Controller
 
         // Update store setting
         Store::where('store_id', Session::get('storeId'))
-            ->update(['order_response' => $data['order_response']]);
+            ->update(['order_response' => $data['order_response'], 'range' => $data['range'], 'buffer_time' => $data['buffer_time']]);
 
         return redirect()->back()->with('success', 'Setting updated successfully.');
     }

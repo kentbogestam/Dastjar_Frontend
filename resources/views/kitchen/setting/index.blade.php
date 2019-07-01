@@ -165,7 +165,6 @@ textarea.ui-input-text{
 						</li>
 					</ul>
 				</li>
-				</form>
 				<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.marketingTools") }} <span>
 					</span></h2>
 				    <ul data-role="controlgroup" class="others_tabs">
@@ -186,6 +185,20 @@ textarea.ui-input-text{
 						</li>
 						<li id="link-delivery-price-model" class="range-sec btn_blk">
 							<h2 class="ui-btn">{{ __('messages.delivery_price_model') }}</h2>
+						</li>
+				    </ul>
+				    <ul>
+				    	<li class="range-sec btn_blk">
+							<div data-role="rangeslider">
+								<label for="range">{{ __('messages.range') }}</label>
+								<input type="range" name="range" id="range" min="0" max="20" value="{{ $store->range }}">
+							</div>
+						</li>
+						<li class="range-sec">
+							<div data-role="rangeslider">
+								<label for="buffer_time">{{ __('messages.range') }}</label>
+								<input type="range" name="buffer_time" id="buffer_time" min="0" max="50" value="{{ $store->buffer_time }}">
+							</div>
 						</li>
 				    </ul>
 				</li>
@@ -226,7 +239,7 @@ textarea.ui-input-text{
 						</li>
 				    </ul>
 				</li>
-				
+				</form>
 			</div>
 		</div>
 </div>

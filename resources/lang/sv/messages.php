@@ -231,6 +231,7 @@ return [
     'aboutDastjarAnar' => 'Om Dastjar RS/Anar',
     'aboutCompanyAdmin' => 'Ditt Företags Admin',
     'marketingTools' => 'Marknads Verktyg',
+    'range' => 'Range (In km)',
     'refund' => 'Återbetalning',
     'getTheApp' => 'Hämta den här appen',
     'name' => 'Name',
