@@ -413,7 +413,9 @@ function requestGeoAddressToIosNative(action = 'msg')
 // Get updated lat/lng (response) from IOS native
 function responseGeoAddressFromIosNative(data)
 {
-    if(1)
+    locationPermission = (typeof data['locationPermission'] !== 'undefined') ? data['locationPermission'] : '0';
+
+    if(locationPermission == '1')
     {
         action = (typeof data['action'] !== 'undefined') ? data['action'] : userAction;
 
