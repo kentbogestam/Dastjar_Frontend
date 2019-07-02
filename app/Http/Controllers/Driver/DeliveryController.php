@@ -69,8 +69,24 @@ class DeliveryController extends Controller
 	 */
 	function orderDeliver($orderId)
 	{
-		Order::where(['customer_order_id' => $orderId])
-			->update(['paid' => 1]);
+		// Check driver engage status
+		$driverId = Auth::guard('driver')->user()->id;
+
+		if(Order::where(['customer_order_id' => $orderId])->update(['paid' => 1]))
+		{
+			// Check and update driver engage status
+			$driverId = Auth::guard('driver')->user()->id;
+
+			$orderDelivery = OrderDelivery::from('order_delivery AS OD')
+				->join('orders AS O', 'O.order_id', '=', 'OD.order_id')
+				->where(['OD.driver_id' => $driverId, 'OD.status' => '1', 'paid' => 0])
+				->count();
+
+			if($orderDelivery == 0)
+			{
+				Driver::where(['id' => $driverId])->update(['is_engaged' => '0']);
+			}
+		}
         
         return redirect()->back();
 	}

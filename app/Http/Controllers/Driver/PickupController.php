@@ -66,10 +66,14 @@ class PickupController extends Controller
 	function orderPickupAccept($orderDeliveryId)
 	{
 		$status = 0;
+		$driverId = Auth::guard('driver')->user()->id;
 
 		if(OrderDelivery::where(['id' => $orderDeliveryId])->update(['status' => '1']))
 		{
 			$status = 1;
+
+			// Update driver as engaged
+			Driver::where(['id' => $driverId])->update(['is_engaged' => '1']);
 		}
 
 		return response()->json(['status' => $status]);
