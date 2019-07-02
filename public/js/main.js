@@ -534,7 +534,11 @@ function responseGeoAddressFromIosNative(data)
             {
                 if (typeof loc_lat === "undefined" || loc_lat == "")
                 {
-                    if (!getCookie("latitude"))
+                    $("#loading-img").hide();
+                    $("#overlay").hide();
+                    $('.login-inner-section a').attr('href','javascript:void(0)');
+                    $('#login-popup').show();
+                    /*if (!getCookie("latitude"))
                     {
                         $("#loading-img").hide();
                         $("#overlay").hide();
@@ -547,7 +551,7 @@ function responseGeoAddressFromIosNative(data)
                         document.cookie="latitude=" + getCookie("latitude");
                         document.cookie="longitude=" + getCookie("longitude");
                         add(constUrlLatLng,constUrlRestaurantMenu,noImageUrl);
-                    }
+                    }*/
                 }
                 else
                 {
