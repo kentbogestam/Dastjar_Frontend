@@ -421,6 +421,16 @@ function responseGeoAddressFromIosNative(data)
         // If added watch here on position (home page, location, map etc)
         if(action == 'getLocation')
         {
+            //
+            if(locationPermission == '1')
+            {
+                if(data['lat'] == '0.00' || data['long'] == '0.00')
+                {
+                    requestGeoAddressToIosNative('getLocation');
+                    return false;
+                }
+            }
+
             // Page 'location.blade.php', 'map/index.blade.php'
             if(watchPositionAction == 'updateLocationOnMap')
             {
@@ -510,6 +520,13 @@ function responseGeoAddressFromIosNative(data)
         {
             if(locationPermission == '1')
             {
+                // 
+                if(data['lat'] == '0.00' || data['long'] == '0.00')
+                {
+                    requestGeoAddressToIosNative('getPos');
+                    return false;
+                }
+
                 loc_flag=1;
                 // Update Cookie
                 document.cookie="latitude=" + data['lat'];
