@@ -78,15 +78,9 @@ function popupOrderAssignDriver(orderId, itemId)
 			{
 				if(response.driver.length)
 				{
-					var str = '';
-					for(var i = 0; i < response.driver.length; i++)
-					{
-						str += '<option value="'+response.driver[i].id+'">'+response.driver[i].name+'</option>';
-					}
-
 					$('#popup-order-assign-driver').find('input[name="order_id"]').val(orderId);
 					$('#popup-order-assign-driver').find('input[name="item_id"]').val(itemId);
-					$('#popup-order-assign-driver').find('select[name="driver_id"]').append(str);
+					$('#popup-order-assign-driver').find('table#list-driver tbody').html(response.html);
 					$('#popup-order-assign-driver').popup('open');
 				}
 				else
@@ -114,7 +108,7 @@ function orderAssignDriver()
 {
 	var orderId = $('#popup-order-assign-driver').find('input[name=order_id]').val();
 	var itemId = $('#popup-order-assign-driver').find('input[name=item_id]').val();
-	var driverId = $('#popup-order-assign-driver').find('select[name=driver_id]').val();
+	var driverId = $('#popup-order-assign-driver').find('input[name=driver_id]:checked').val();
 
 	if(driverId != '' && orderId != '')
 	{

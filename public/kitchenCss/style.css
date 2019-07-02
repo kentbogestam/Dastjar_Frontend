@@ -585,3 +585,7 @@ input[type=number]::-webkit-outer-spin-button {
 .select_store{    background-color: #b8bcb8;border-color: #b8bcb8;
     text-shadow: none;
     color: #000;}
+
+#list-driver .engaged {
+    background: #F2DEDE;
+}

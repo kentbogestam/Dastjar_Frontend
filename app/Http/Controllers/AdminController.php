@@ -1868,20 +1868,66 @@ class AdminController extends Controller
      */
     function getAvailableDriverToAssign($orderId)
     {
+        $html = '';
         $driver = array();
 
-        $company_id = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first()->company_id;
-
-        if($company_id)
+        // Get store
+        $store = Store::where('store_id' , Session::get('storeId'))->first();
+        $address = $store->street.' '.$store->city.' '.$store->zip;
+        $address = Helper::getLocation($address);
+        // dd($address);
+        
+        if($address['latitude'] != null && $address['longitude'] != null)
         {
-            $driver = Driver::select(['id', 'name'])
-                ->where(['company_id' => $company_id, 'status' => '1'])
-                ->get();
+            $company_id = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first()->company_id;
+
+            if($company_id)
+            {
+                $haversine = "(6371 * acos(cos(radians({$address['latitude']})) * cos(radians(latitude)) * cos(radians(longitude) - radians({$address['longitude']})) + sin(radians({$address['latitude']})) * sin(radians(latitude)))) AS distance";
+                
+                if($store->range)
+                {
+                    $driver = Driver::select(['id', 'name', 'is_engaged', DB::raw($haversine)])
+                        ->where(['company_id' => $company_id, 'status' => '1'])
+                        ->having('distance', '<=', $store->range)
+                        ->orderBy('is_engaged')
+                        ->orderBy('distance')
+                        ->get();
+                }
+                else
+                {
+                    $driver = Driver::select(['id', 'name', 'is_engaged', DB::raw($haversine)])
+                        ->where(['company_id' => $company_id, 'status' => '1'])
+                        ->orderBy('is_engaged')
+                        ->orderBy('distance')
+                        ->get();
+                }
+
+                if($driver)
+                {
+                    foreach($driver as $row)
+                    {
+                        $class = $row->is_engaged == '1' ? 'engaged' : '';
+                        
+                        $html .= "<tr class='{$class}'>
+                            <td>{$row->name}</td>
+                            <td>".number_format($row->distance, 2)."</td>
+                            <td><div class='ui-radio'><input type='radio' name='driver_id' value='{$row->id}'></div></td>
+                        </tr>";
+                    }
+                }
+                else
+                {
+                    $html .= "<tr>
+                        <td colspan='3'>".__('messages.noRecordFound')."</td>
+                    </tr>";
+                }
+            }
         }
 
         $orderDeliveryCnt = OrderDelivery::where(['order_id' => $orderId])->count();
 
-        return response()->json(['orderDeliveryCnt' => $orderDeliveryCnt, 'driver' => $driver]);
+        return response()->json(['orderDeliveryCnt' => $orderDeliveryCnt, 'driver' => $driver, 'html' => $html]);
     }
 
     /**
@@ -1936,9 +1982,9 @@ class AdminController extends Controller
             {
                 $recipients = array();
                 $recipients = [$order['phone_prefix'].$order['phone']];
-                $message = "New delivery!";
+                $message = "New order to deliver!";
                 $message .= "\nRestaurant: ".$order['store_name'];
-                $message .= "\n".url('driver/list-delivery/'.$order['id']);
+                $message .= "\n".url('driver/pickup');
                 $result = Helper::apiSendTextMessage($recipients, $message);
             }
         }
