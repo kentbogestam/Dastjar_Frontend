@@ -546,7 +546,7 @@ function responseGeoAddressFromIosNative(data)
                         loc_flag=2;
                         document.cookie="latitude=" + getCookie("latitude");
                         document.cookie="longitude=" + getCookie("longitude");
-                        add(urlLatlng,urlMenulist,noImageUrl);
+                        add(constUrlLatLng,constUrlRestaurantMenu,noImageUrl);
                     }
                 }
                 else
@@ -554,7 +554,7 @@ function responseGeoAddressFromIosNative(data)
                     loc_flag=3;
                     document.cookie="latitude=" + loc_lat;
                     document.cookie="longitude=" + loc_lng;
-                    add(urlLatlng,urlMenulist,noImageUrl);
+                    add(constUrlLatLng,constUrlRestaurantMenu,noImageUrl);
                 }
             }
         }
