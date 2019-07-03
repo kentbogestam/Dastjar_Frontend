@@ -473,20 +473,23 @@ function responseGeoAddressFromIosNative(data)
                 // Check if function exist
                 if(typeof setDistanceParmeter == 'function')
                 {
-                    if( getCookie('latitude') == '' || getCookie('longitude') == '' )
+                    if(data['lat'] != '0.00' && data['long'] != '0.00')
                     {
-                        document.cookie = "latitude=" + data['lat'];
-                        document.cookie = "longitude=" + data['long'];
-                    }
+                        if( getCookie('latitude') == '' || getCookie('longitude') == '' )
+                        {
+                            document.cookie = "latitude=" + data['lat'];
+                            document.cookie = "longitude=" + data['long'];
+                        }
 
-                    setMyCookie('everyMinutelatitude', data['lat'], 7);
-                    setMyCookie('everyMinutelongitude', data['long'], 7);
-                    setMyCookie('showError','', 0);
+                        setMyCookie('everyMinutelatitude', data['lat'], 7);
+                        setMyCookie('everyMinutelongitude', data['long'], 7);
+                        setMyCookie('showError','', 0);
 
-                    var flag=checkTimeAfterLocationSet();
+                        var flag=checkTimeAfterLocationSet();
 
-                    if(flag==false){
-                        setDistanceParmeter();
+                        if(flag==false){
+                            setDistanceParmeter();
+                        }
                     }
                 }
                 else
@@ -499,20 +502,23 @@ function responseGeoAddressFromIosNative(data)
         // On load home page if type_selection is null 'popupSelection'
         if(action == 'setCurrentLatLong')
         {
-            // Update Cookie
-            document.cookie="latitude=" + data['lat'];
-            document.cookie="longitude=" + data['long'];
-            
-            // Update Session
-            var latitude  = getCookie("latitude");
-            var longitude = getCookie("longitude");
+            if(data['lat'] != '0.00' && data['long'] != '0.00')
+            {
+                // Update Cookie
+                document.cookie="latitude=" + data['lat'];
+                document.cookie="longitude=" + data['long'];
+                
+                // Update Session
+                var latitude  = getCookie("latitude");
+                var longitude = getCookie("longitude");
 
-            $.ajax({
-                url: BASE_URL+"/update-location",
-                type: "GET",
-                data: {lat : latitude, long : longitude},
-                dataType: "json"
-            });
+                $.ajax({
+                    url: BASE_URL+"/update-location",
+                    type: "GET",
+                    data: {lat : latitude, long : longitude},
+                    dataType: "json"
+                });
+            }
         }
         
         // type_selection is not null, get current position and show restaurant listing on home page
@@ -583,35 +589,7 @@ function responseGeoAddressFromIosNative(data)
         // Check the position afer 20 min and reset the longitude and latitude
         if(action == 'getCurrentCoordinates')
         {
-            // Update Cookie
-            document.cookie="latitude=" + data['lat'];
-            document.cookie="longitude=" + data['long'];
-            
-            // Update Session
-            var latitude  = getCookie("latitude");
-            var longitude = getCookie("longitude");
-
-            $.ajax({
-                url: BASE_URL+"/update-location",
-                type: "GET",
-                data: {lat : latitude, long : longitude},
-                dataType: "json"
-            });
-
-            if(typeof reloadRestaurantList == 'function')
-            {
-                reloadRestaurantList();
-            }
-            else
-            {
-                alert('function \'reloadRestaurantList\' does not exist!');
-            }
-        }
-        
-        // Reset current position from 'Settings'
-        if(action == 'locationSave')
-        {
-            if(locationPermission == '1')
+            if(data['lat'] != '0.00' && data['long'] != '0.00')
             {
                 // Update Cookie
                 document.cookie="latitude=" + data['lat'];
@@ -621,11 +599,45 @@ function responseGeoAddressFromIosNative(data)
                 var latitude  = getCookie("latitude");
                 var longitude = getCookie("longitude");
 
-                $.get(BASE_URL+'/saveCurrentlat-long', { lat: latitude, lng : longitude}, function(returnedData){
-                    console.log(returnedData["data"]);
-                    unsetLocationCookieTime();
-                    window.location.reload();
+                $.ajax({
+                    url: BASE_URL+"/update-location",
+                    type: "GET",
+                    data: {lat : latitude, long : longitude},
+                    dataType: "json"
                 });
+
+                if(typeof reloadRestaurantList == 'function')
+                {
+                    reloadRestaurantList();
+                }
+                else
+                {
+                    alert('function \'reloadRestaurantList\' does not exist!');
+                }
+            }
+        }
+        
+        // Reset current position from 'Settings'
+        if(action == 'locationSave')
+        {
+            if(locationPermission == '1')
+            {
+                if(data['lat'] != '0.00' && data['long'] != '0.00')
+                {
+                    // Update Cookie
+                    document.cookie="latitude=" + data['lat'];
+                    document.cookie="longitude=" + data['long'];
+                    
+                    // Update Session
+                    var latitude  = getCookie("latitude");
+                    var longitude = getCookie("longitude");
+
+                    $.get(BASE_URL+'/saveCurrentlat-long', { lat: latitude, lng : longitude}, function(returnedData){
+                        console.log(returnedData["data"]);
+                        unsetLocationCookieTime();
+                        window.location.reload();
+                    });
+                }
             }
             else
             {
