@@ -28,6 +28,12 @@
 <link type="text/css" href="{{asset('css/dateandtime/jquery.simple-dtpicker.css')}}" rel="stylesheet" />
 <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 <script type="text/javascript">
+	// 
+	if(ios && (!standalone && !safari))
+	{
+		requestGeoAddressToIosNative('setCurrentLatLong');
+	}
+
 	window.addEventListener('load', function(){ setTimeout(function(){ window.scrollTo(0,0); }, 100); }, true);
 </script>
 @endsection
