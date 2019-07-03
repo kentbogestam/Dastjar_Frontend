@@ -96,12 +96,13 @@ Route::get('404', 'HomeController@page_404')->name('page_404');
 
 	Route::get('pretty-session-cookie', 'HomeController@prettySessionCookie');
 
+Route::get('selectOrder-date', 'HomeController@selectOrderDate');
 Route::group(['middleware' => ['latlng']], function(){
 	Route::get('search-map-eatnow', 'MapController@searchMapEatnow');
 	Route::get('eat-now', 'HomeController@index');
 	Route::resource('customer', 'CustomerController');
 	Route::get('saveCurrentlat-long', 'HomeController@saveCurrentLatLong');
-	Route::get('selectOrder-date', 'HomeController@selectOrderDate');
+	// Route::get('selectOrder-date', 'HomeController@selectOrderDate');
 	Route::post('eat-later', 'HomeController@eatLater');
 	Route::get('eat-later', 'HomeController@eatLater');
 	Route::get('eat-later-data', 'HomeController@eatLaterData');
