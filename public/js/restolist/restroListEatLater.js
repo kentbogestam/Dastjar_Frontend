@@ -147,48 +147,100 @@ function  addMore(len,url,noImageUrl,sessionTime){
 	  }
 }
 
+function checkTime($time,sessionTime){
+	// 
+	var todayDate = new Date(sessionTime);
+	todayDate = (todayDate.getMonth() + 1)+'/'+todayDate.getDate()+'/'+todayDate.getFullYear();
+	var tomorrowDate = new Date(sessionTime);
+	tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+	tomorrowDate = (tomorrowDate.getMonth() + 1)+'/'+tomorrowDate.getDate()+'/'+tomorrowDate.getFullYear();
 
+ 	if(sessionTime){
+ 		var d = new Date(sessionTime);
+		var dd = (d.toString()).split(' ');
+		var currentTime = dd[4];
+		var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+		var todayDay = days[d.getDay()];
 
- function checkTime($time,sessionTime){
-	 	if(sessionTime){	 
-	 		var d = new Date(sessionTime);
-			var dd = (d.toString()).split(' ');
-			var currentTime = dd[4];
-			var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-			var todayDay = days[d.getDay()];
+ 	}else{
+		var d = new Date();
+		var dd = (d.toString()).split(' ');
+		var currentTime = dd[4];
+		var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+		var todayDay = days[d.getDay()];
+ 	}
 
-	 	}else{
-			var d = new Date();
-			var dd = (d.toString()).split(' ');
-			var currentTime = dd[4];
-			var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-			var todayDay = days[d.getDay()];
-	 	}
+	var time = $time;
+	var day = time.split(' :: ')
+	var checkday = time.split(',')
+	if(day[0] == 'All'){
+		var timeSplit = day[1].split(' to ');
+		var openTime = timeSplit[0];
+		var closeTime = timeSplit[1];
 
+		if(openTime > closeTime)
+		{
+			var openDateTime = todayDate + ' ' + openTime;
+			var closeDateTime = tomorrowDate + ' ' + closeTime;
+			var openDateTime = new Date(openDateTime);
+			var closeDateTime = new Date(closeDateTime);
 
-		var time = $time;
-		var day = time.split(' :: ')
-		var checkday = time.split(',')
-		if(day[0] == 'All'){
-			var timeSplit = day[1].split(' to ');
-			var openTime = timeSplit[0];
-			var closeTime = timeSplit[1];
-
-			// console.log('currentTime '+currentTime);
-			// console.log('openTime ' + openTime);
-			// console.log('closeTime ' + closeTime);
-			// console.log('todayDay '+todayDay);
-			// console.log('$time '+$time);
-
+			if(d.getTime() >= openDateTime.getTime() && d.getTime() < closeDateTime.getTime())
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
 			if(openTime <= currentTime && closeTime >= currentTime){
 				return true;
 			}else{
 				return false;
 			}
+		}
+	}else{
+		if(day.length == 2){
+			if(day[0] == todayDay){
+				var timeSplit = day[1].split(' to ');
+				var openTime = timeSplit[0];
+				var closeTime = timeSplit[1];
+
+				if(openTime > closeTime)
+				{
+					var openDateTime = todayDate + ' ' + openTime;
+					var closeDateTime = tomorrowDate + ' ' + closeTime;
+					var openDateTime = new Date(openDateTime);
+					var closeDateTime = new Date(closeDateTime);
+
+					if(d.getTime() >= openDateTime.getTime() && d.getTime() < closeDateTime.getTime())
+					{
+						return true;
+					}
+					else
+					{
+						return false;
+					}
+				}
+				else
+				{
+					if(openTime <= currentTime && closeTime >= currentTime){
+						return true;
+					}else{
+						return false;
+					}
+				}
+			}else{
+				return false;
+			}
 		}else{
-			if(day.length == 2){
-				if(day[0] == todayDay){
-					var timeSplit = day[1].split(' to ');
+			for(i=0;i<checkday.length;i++){
+				var getDay = checkday[i].split(' :: ');
+				if(getDay[0] == todayDay){
+					var timeSplit = getDay[1].split(' to ');
 					var openTime = timeSplit[0];
 					var closeTime = timeSplit[1];
 					if(openTime <= currentTime && closeTime >= currentTime){
@@ -196,27 +248,12 @@ function  addMore(len,url,noImageUrl,sessionTime){
 					}else{
 						return false;
 					}
-				}else{
-					return false;
-				}
-			}else{
-				for(i=0;i<checkday.length;i++){
-					var getDay = checkday[i].split(' :: ');
-					if(getDay[0] == todayDay){
-						var timeSplit = getDay[1].split(' to ');
-						var openTime = timeSplit[0];
-						var closeTime = timeSplit[1];
-						if(openTime <= currentTime && closeTime >= currentTime){
-							return true;
-						}else{
-							return false;
-						}
-					}
 				}
 			}
 		}
-		return false;
 	}
+	return false;
+}
 
 	function onScroll(urlRestroMenuList,noImageUrl,sessionOrderDate){
         var tempCount = list.length
