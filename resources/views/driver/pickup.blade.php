@@ -1,23 +1,25 @@
 @extends('driver.layouts.app')
 
 @section('content')
-	<div class="container-fluid full">
+	<div class="container-fluid">
 		<div class="row">
 			<div class="col-md-12 text-center"><h2>{{ $company->company_name }}</h2></div>
 		</div>
-		<table class="table table-bordered">
-			<thead>
-				<tr>
-					<th>Order</th>
-					<th>Restaurant</th>
-					<th>Address</th>
-					<th>Phone</th>
-					<th>Accept</th>
-					<th>Pick-up Time</th>
-				</tr>
-			</thead>
-			<tbody></tbody>
-		</table>
+		<div class="table-responsive">
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th>Order</th>
+						<th>Restaurant</th>
+						<th>Address</th>
+						<th>Phone</th>
+						<th>Accept</th>
+						<th>Pick-up Time</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
 	</div>
 @endsection
 
@@ -30,9 +32,7 @@
 			});
 		});
 
-		getPickupOrderList();
-
-		// 
+		// Get pickup order detail
 		function getPickupOrderList()
 		{
 			$.ajax({
@@ -45,14 +45,15 @@
 						for(var i = 0; i < response.orderDelivery.length; i++)
 						{
 							customer_order_id = response.orderDelivery[i]['customer_order_id'];
+							pickupTime = addTimes(response.orderDelivery[i]['deliver_time'], response.orderDelivery[i]['order_delivery_time'], response.orderDelivery[i]['extra_prep_time']);
 							
 							html += "<tr>"+
-								"<td><a href='javascript:getOrderDetail(\""+customer_order_id+"\")' class='link'>"+customer_order_id+"</a></td>"+
+								"<td>"+customer_order_id+"</td>"+
 								"<td>"+response.orderDelivery[i]['store_name']+"</td>"+
-								"<td><a href='javascript:void(0)' target='_blank' class='link'>"+response.orderDelivery[i]['street']+"<br>"+response.orderDelivery[i]['city']+"</a></td>"+
-								"<td><a href='tel:"+response.orderDelivery[i]['phone']+"'><i class='fas fa-phone-square-alt fa-2x'></i></a></td>"+
+								"<td><a href='https://www.google.com/maps/place/"+response.orderDelivery[i]['store_address']+"' target='_blank' class='link'>"+response.orderDelivery[i]['street']+"<br>"+response.orderDelivery[i]['city']+" <i class='fas fa-directions'></i></a></td>"+
+								"<td><a href='tel:"+response.orderDelivery[i]['phone']+"'><i class='fas fa-phone-alt fa-2x'></i></a></td>"+
 								"<td><a href='javascript:void(0)' class='order-pickup-accept' data-id='"+response.orderDelivery[i]['id']+"'><i class='fas fa-minus-circle fa-2x'></i></a></td>"+
-								"<td>00:00</td>"+
+								"<td>"+pickupTime+"</td>"+
 							+"</tr>";
 						}
 
@@ -66,6 +67,8 @@
 			});
 		}
 
+		// 
+		getPickupOrderList();
 		setInterval(getPickupOrderList, 30000);
 
 		// Accept order pickup

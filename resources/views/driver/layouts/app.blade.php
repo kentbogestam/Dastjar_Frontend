@@ -22,6 +22,11 @@
 		<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
 		<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 	<![endif]-->
+
+	<script type="text/javascript">
+		var BASE_URL = "{{ url('/') }}";
+		var BASE_URL_DRIVER = "{{ url('driver') }}";
+	</script>
 </head>
 <body>
 	<nav class="navbar navbar-default navbar-header-custom">
@@ -36,7 +41,7 @@
 					<ul class="nav navbar-nav">
 						<li>
 							<div class="checkbox">
-								<label><input type="checkbox" name="status" {{ Auth::user()->status ? 'checked' : '' }}>Active</label>
+								<label><input type="checkbox" name="status" onchange="updateStatus(this)" {{ Auth::user()->status ? 'checked' : '' }}>Active</label>
 							</div>
 						</li>
 					</ul>
@@ -101,99 +106,8 @@
 
 	<script type="text/javascript">
 		$(function() {
-			// Update driver status
-			$('input[name=status]').on('change', function() {
-				var status = $(this).is(':checked') ? 1 : 0;
-
-				$.ajax({
-					url: '{{ url('driver/update-status') }}/'+status,
-					success: function() {
-
-					}
-				});
-			});
+			
 		});
-
-		// Get order detail
-		function getOrderDetail(customerOrderId)
-		{
-			// $('#modal-order-detail').modal('show');
-			$.ajax({
-				url: '{{ url('driver/get-order-detail') }}/'+customerOrderId,
-				dataType: 'json',
-				success: function(response) {
-					if(response.html)
-					{
-						$('#modal-order-detail').find('.list-table-modal tbody').html(response.html);
-					}
-
-					$('#modal-order-detail').modal('show');
-				}
-			});
-		}
-
-		// Goelocation add watch
-		function getLocationUpdate()
-		{
-		    if(navigator.geolocation)
-		    {
-		        // navigator.geolocation.getCurrentPosition(showPosition);
-		        var options = {timeout:60000};
-		        geoLoc = navigator.geolocation;
-		        watchID = geoLoc.watchPosition(showLocationUpdate, errorHandler, options);
-		    }
-		    else
-		    {
-		        console.log('Geolocation is not supported by this browser.');
-		    }
-		}
-
-		// Current position
-		function showLocationUpdate(position)
-		{
-		    var lat2 = position.coords.latitude;
-		    var lon2 = position.coords.longitude;
-
-			var lat1 = getCookie("latitude");
-			var lon1 = getCookie("longitude");
-
-			var distance = getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2, 'K');
-
-			distance = distance*1000;
-
-			if(distance > 0)
-			{
-				updateDriverPosition(lat2, lon2);
-			}
-		}
-
-		function errorHandler()
-		{
-
-		}
-
-		// Update driver current position
-		function updateDriverPosition(lat2, lon2)
-		{
-			$.ajax({
-				url: '{{ url('driver/update-driver-position') }}',
-				type: 'POST',
-				data: {
-					'_token': $('meta[name=_token]').attr('content'),
-					'latitude': lat2,
-					'longitude': lon2
-				},
-				success: function(response) {
-					if(response.status)
-					{
-						document.cookie="latitude="+lat2;
-						document.cookie="longitude="+lon2;
-					}
-				}
-			});
-		}
-
-		getLocationUpdate();
 	</script>
 
 	@yield('scripts')
