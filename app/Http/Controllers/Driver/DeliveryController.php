@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Driver;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Auth;
+use DB;
 
 use App\Driver;
 use App\Company;
@@ -53,7 +54,7 @@ class DeliveryController extends Controller
 		$driverId = Auth::guard('driver')->user()->id;
 
 		$orderDelivery = OrderDelivery::from('order_delivery AS OD')
-			->select(['OD.id', 'O.order_id', 'O.customer_order_id', 'CA.full_name', 'CA.mobile', 'CA.address', 'CA.street', 'CA.landmark', 'CA.city', 'CA.state'])
+			->select(['OD.id', 'O.order_id', 'O.customer_order_id', 'O.online_paid', 'CA.full_name', 'CA.mobile', 'CA.address', 'CA.street', 'CA.city', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.state, ", ", CA.zipcode) AS full_address')])
 			->join('orders AS O', 'O.order_id', '=', 'OD.order_id')
 			->join('customer_addresses AS CA', 'CA.id', '=', 'O.user_address_id')
 			->where(['OD.driver_id' => $driverId, 'OD.status' => '1', 'paid' => 0])
