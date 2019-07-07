@@ -881,6 +881,15 @@ class AdminController extends Controller
         $store = Store::select(['order_response', 'range', 'buffer_time'])
             ->where('store_id' , Session::get('storeId'))->first();
 
+        if($store['buffer_time'] != NULL && $store['buffer_time'] != '00:00:00')
+        {
+            $store['buffer_time'] = date('i', strtotime($store['buffer_time']));
+        }
+        else
+        {
+            $store['buffer_time'] = 0;
+        }
+
         return view('kitchen.setting.index', compact('store'));
     }
 
@@ -891,14 +900,17 @@ class AdminController extends Controller
         }else{
             Session::put('applocale', 'sv');
         }
+        
+        // 
         DB::table('user')->where('id', Auth::guard('admin')->id())->update([
-                    'language' => $data['radio-choice-v-2'],
-                    'text_speech' => $data['text_speech'],
-                ]);
+            'language' => $data['radio-choice-v-2'],
+            'text_speech' => $data['text_speech'],
+        ]);
 
         // Update store setting
+        $buffer_time = '00:'.($data['buffer_time'] % 60).':00';
         Store::where('store_id', Session::get('storeId'))
-            ->update(['order_response' => $data['order_response'], 'range' => $data['range'], 'buffer_time' => $data['buffer_time']]);
+            ->update(['order_response' => $data['order_response'], 'range' => $data['range'], 'buffer_time' => $buffer_time]);
 
         return redirect()->back()->with('success', 'Setting updated successfully.');
     }
