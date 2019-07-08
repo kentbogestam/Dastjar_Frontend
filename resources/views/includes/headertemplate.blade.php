@@ -46,7 +46,6 @@
 	<div data-role="header" class="header" id="nav-header"  data-position="fixed">
 			<div class="nav_fixed">
 				<div class="logo">
-					
 					<div class="inner-logo">
 						<img src="{{asset('images/logo.png')}}">
 						@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
@@ -73,7 +72,9 @@
 
  	<div data-role="header" class="header" data-position="fixed" id="nav-header"  data-position="fixed" data-tap-toggle="false"> 
 			<div class="nav_fixed">
-				<a href="{{Session::get('route_url')}}" data-ajax="false" class="ui-btn-left text-left backarrow-btn"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a>
+				<a href="{{Session::get('route_url')}}" data-ajax="false" class="ui-btn-left text-left backarrow-btn">
+					<img src="{{asset('images/icons/backarrow.png')}}" width="11px">
+				</a>
 				<div class="logo">
 					
 					<div class="inner-logo">
@@ -89,15 +90,15 @@
  @elseif($map=='true')
  <div data-role="header" class="header" id="nav-header"  data-position="fixed" >
  	<div class="nav_fixed">
-          
-          @if($storeMap=='true')
-          <a href="{{url('restro-menu-list/'.$storedetails->store_id)}}" data-ajax="false" class="ui-btn-left text-left backarrow-btn"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a>
-
-           
-           @else
-
-			<a href="{{Session::get('route_url')}}" data-ajax="false" class="ui-btn-left text-left backarrow-btn"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a>
-		  @endif
+		@if($storeMap=='true')
+			<a href="{{url('restro-menu-list/'.$storedetails->store_id)}}" data-ajax="false" class="ui-btn-left text-left backarrow-btn">
+				<img src="{{asset('images/icons/backarrow.png')}}" width="11px">
+			</a>
+		@else
+			<a href="{{Session::get('route_url')}}" data-ajax="false" class="ui-btn-left text-left backarrow-btn">
+				<img src="{{asset('images/icons/backarrow.png')}}" width="11px">
+			</a>
+		@endif
 
 		<div class="logo">
 			<div class="inner-logo">
@@ -114,9 +115,6 @@
 	 <div data-role="header" class="header" id="nav-header"  data-position="fixed">
 			<div class="nav_fixed">
 				<div class="logo">
-					<!--<a href="#" data-ajax="false" class="ui-btn-left text-left backarrow-btn">
-
-						<img src="{{asset('images/icons/backarrow.png')}}" width="11px" ></a>-->
 					<div class="inner-logo">
 						<img src="{{asset('images/logo.png')}}">
 						@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
@@ -129,7 +127,6 @@
 	<div data-role="header" class="header" id="nav-header"  data-position="fixed">
 			<div class="nav_fixed">
 				<div class="logo">
-					
 					<div class="inner-logo">
 						<img src="{{asset('images/logo.png')}}">
 						@if(Auth::check())<span>{{ Auth::user()->name}}</span>@endif
