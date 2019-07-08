@@ -43,7 +43,7 @@
     	markers = {!! $latLngList !!};
     	// console.log(markers);
 
-    	var nearbyRestaurantDetail = {!! json_encode($nearbyRestaurantDetail) !!};
+    	// var nearbyRestaurantDetail = {!! json_encode($nearbyRestaurantDetail) !!};
 
 	    var infowindow = new google.maps.InfoWindow();
 	    
@@ -51,7 +51,7 @@
 	    // Loop through our array of markers & place each one on the map  
 	    for( i = 0; i < markers.length; i++ ) {
 	    	if( i == 0){
-		        var position = new google.maps.LatLng(markers[i][0], markers[i][1]);
+		        var position = new google.maps.LatLng(markers[i]['latitude'], markers[i]['longitude']);
 		        bounds.extend(position);
 		        myMarker = marker = new google.maps.Marker({
 		            position: position,
@@ -66,12 +66,13 @@
                 	anchorPoint: new google.maps.Point(0, -29)
 		        });
 	    	}else{
-		        var position = new google.maps.LatLng(markers[i][0], markers[i][1]);
+		        var position = new google.maps.LatLng(markers[i]['latitude'], markers[i]['longitude']);
 		        bounds.extend(position);
 		        marker = new google.maps.Marker({
 		            position: position,
 		            map: map,
-		            info: nearbyRestaurantDetail[(i-1)]['store_name']
+		            info: markers[i]['nearbyRestaurantDetail']['store_name']
+		            // info: nearbyRestaurantDetail[(i-1)]['store_name']
 		        });
 	    	}
 
