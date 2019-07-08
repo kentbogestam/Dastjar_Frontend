@@ -65,8 +65,9 @@ class MapController extends Controller
                 $storeTime = explode('to', $getTime[1]);
                 $storeOpenTime = str_replace(':', '', str_replace(' ', '', $storeTime[0]));
                 $storeCloseTime = str_replace(':', '', str_replace(' ', '', $storeTime[1]));
-                $rightNowTime = str_replace(':', '', $currentTime);
-                if($storeOpenTime < $currentTime && $storeCloseTime > $currentTime){
+                $rightNowTime = $currentTime = str_replace(':', '', $currentTime);
+                // if($storeOpenTime < $currentTime && $storeCloseTime > $currentTime){
+                if( ($storeOpenTime > $storeCloseTime) || ($storeOpenTime < $currentTime && $storeCloseTime > $currentTime) ){
                     // Array have variable details
                     $restaurantDetail = array(
                         'store_id' => $restaurantLatLng['store_id'],
@@ -85,8 +86,9 @@ class MapController extends Controller
                         $storeTime = explode('to', $getTime[1]);
                         $storeOpenTime = str_replace(':', '', str_replace(' ', '', $storeTime[0]));
                         $storeCloseTime = str_replace(':', '', str_replace(' ', '', $storeTime[1]));
-                        $rightNowTime = str_replace(':', '', $currentTime);
-                        if($storeOpenTime < $currentTime && $storeCloseTime > $currentTime){
+                        $rightNowTime = $currentTime = str_replace(':', '', $currentTime);
+                        // if($storeOpenTime < $currentTime && $storeCloseTime > $currentTime){
+                        if( ($storeOpenTime > $storeCloseTime) || ($storeOpenTime < $currentTime && $storeCloseTime > $currentTime) ){
                             // Array have variable details
                             $restaurantDetail = array(
                                 'store_id' => $restaurantLatLng['store_id'],
@@ -102,7 +104,7 @@ class MapController extends Controller
             }
         }
 
-        // dd($latLng);
+        // echo '<pre>'; print_r($latLng); exit;
         $latLngList = json_encode($latLng);
         return view('map.index', compact('latLngList', 'nearbyRestaurantDetail'));
     }
