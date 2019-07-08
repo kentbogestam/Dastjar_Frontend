@@ -43,10 +43,21 @@
 							let address = (response.orderDelivery[i]['address']) ? response.orderDelivery[i]['address']+', ' : '';
 							address += response.orderDelivery[i]['street']+'<br>'+response.orderDelivery[i]['city'];
 
+							let delivered = '';
+							if(response.orderDelivery[i]['paid'])
+							{
+								delivered += '<span class="label label-success">{{ __('messages.yes') }}</span>&nbsp;'+
+								'<a href="{{ url('driver/order-deliver') }}/'+response.orderDelivery[i]['customer_order_id']+'"><i class="fas fa-undo" title="Undo"></i></a>';
+							}
+							else
+							{
+								delivered += '<a href="{{ url('driver/order-deliver') }}/'+response.orderDelivery[i]['customer_order_id']+'"><i class="fas fa-minus-circle fa-2x"></i></a>';
+							}
+
 							let paid = '';
 							if(response.orderDelivery[i]['online_paid'] == 1 || response.orderDelivery[i]['online_paid'] == 3)
 							{
-								paid = '<span class="label label-success">Yes</span>';
+								paid = '<span class="label label-success">{{ __('messages.yes') }}</span>';
 							}
 							else if(response.orderDelivery[i]['online_paid'] == 0)
 							{
@@ -68,7 +79,7 @@
 										'<td>'+response.orderDelivery[i]['full_name']+'</td>'+
 										"<td><a href='https://www.google.com/maps/place/"+response.orderDelivery[i]['full_address']+"' target='_blank' class='link'>"+address+" <i class='fas fa-directions'></i></a></td>"+
 										'<td><a href="tel:'+response.orderDelivery[i]['mobile']+'"><i class="fas fa-phone-alt fa-2x"></i></a></td>'+
-										'<td><a href="{{ url('driver/order-deliver') }}/'+response.orderDelivery[i]['customer_order_id']+'"><i class="fas fa-minus-circle fa-2x"></i></a></td>'+
+										'<td>'+delivered+'</td>'+
 										'<td>'+paid+'</td>'+
 										'<td>'+time+'</td>'
 									'</tr>';

@@ -52,13 +52,18 @@ class DeliveryController extends Controller
 	function getDeliverOrderList()
 	{
 		$driverId = Auth::guard('driver')->user()->id;
+		$dateTime = date('Y-m-d H:i:s', strtotime('-5 minutes'));
 
+		// Get deliver order list
 		$orderDelivery = OrderDelivery::from('order_delivery AS OD')
-			->select(['OD.id', 'O.order_id', 'O.customer_order_id', 'O.online_paid', 'O.deliver_time', 'O.order_delivery_time', 'CA.full_name', 'CA.mobile', 'CA.address', 'CA.street', 'CA.city', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), 'S.store_name', 'S.phone', 'S.extra_prep_time', 'S.buffer_time', DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
+			->select(['OD.id', 'O.order_id', 'O.customer_order_id', 'O.online_paid', 'O.deliver_time', 'O.order_delivery_time', 'O.paid', 'CA.full_name', 'CA.mobile', 'CA.address', 'CA.street', 'CA.city', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), 'S.store_name', 'S.phone', 'S.extra_prep_time', 'S.buffer_time', DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
 			->join('orders AS O', 'O.order_id', '=', 'OD.order_id')
 			->join('customer_addresses AS CA', 'CA.id', '=', 'O.user_address_id')
 			->join('store AS S', 'S.store_id', '=', 'O.store_id')
-			->where(['OD.driver_id' => $driverId, 'OD.status' => '1', 'paid' => 0])
+			->where(['OD.driver_id' => $driverId, 'OD.status' => '1'])
+			->where(function($query) use ($dateTime) {
+				$query->where('O.paid', 0)->orWhere('O.updated_at', '>=', $dateTime);
+			})
 			->get();
 
 		return response()->json(['orderDelivery' => $orderDelivery]);
@@ -74,7 +79,16 @@ class DeliveryController extends Controller
 		// Check driver engage status
 		$driverId = Auth::guard('driver')->user()->id;
 
-		if(Order::where(['customer_order_id' => $orderId])->update(['paid' => 1]))
+		// Get order deliver status
+		$paid = 1;
+		$order = Order::select(['paid'])->where(['customer_order_id' => $orderId])->first();
+		if($order->paid)
+		{
+			$paid = 0;
+		}
+
+		// Update order deliver status
+		if(Order::where(['customer_order_id' => $orderId])->update(['paid' => $paid]))
 		{
 			// Check and update driver engage status
 			$driverId = Auth::guard('driver')->user()->id;
