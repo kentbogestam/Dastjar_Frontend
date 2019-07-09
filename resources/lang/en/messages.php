@@ -214,6 +214,13 @@ return [
     'driver' => 'Driver',
     'driverLogin' => 'Driver Login',
     'passwordResetSuccessfully' => 'Password reset successfully.',
+    'passwordUpdatedSuccessfully' => 'Password updated successfully.',
+    'driverUpdatedSuccessfully' => 'Updated successfully.',
+    'personalInformation' => 'Personal Information',
+    'phEnterMobile' => 'Enter mobile no.',
+    'phEnterEmail' => 'Enter email',
+    'phPassword' => 'New Password',
+    'phConfirmPassword' => 'Confirm Password',
 
     // Common
     'addNew' => 'Add New',
@@ -246,6 +253,7 @@ return [
     'login' => 'Login',
     'forgetPassword' => 'Forgot your password?',
     'resetPassword' => 'Reset Password',
+    'changePassword' => 'Change Password',
     'click_here' => 'click here',
     'status' => 'Status',
     'active' => 'Active',

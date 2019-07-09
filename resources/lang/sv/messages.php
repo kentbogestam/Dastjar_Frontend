@@ -216,6 +216,11 @@ return [
     'driver' => 'Driver',
     'driverLogin' => 'Driver Login',
     'passwordResetSuccessfully' => 'Password reset successfully.',
+    'passwordUpdatedSuccessfully' => 'Password updated successfully.',
+    'driverUpdatedSuccessfully' => 'Updated successfully.',
+    'personalInformation' => 'Personal Information',
+    'enterMobile' => 'Enter mobile no.',
+    'enterEmail' => 'Enter email',
 
     // Common
     'addNew' => 'Lägg till Ny',
@@ -248,6 +253,7 @@ return [
     'login' => 'Login',
     'forgetPassword' => 'Forgot your password?',
     'resetPassword' => 'Reset Password',
+    'changePassword' => 'Change Password',
     'click_here' => 'click here',
     'status' => 'Status',
     'active' => 'Active',

@@ -93,6 +93,9 @@
 							<li class="{{ request()->is('driver/delivery') ? 'active' : '' }}"><a href="{{ url('driver/delivery') }}"">Orders</a></li>
 							<li class="{{ request()->is('driver/pickup') ? 'active' : '' }}"><a href="{{ url('driver/pickup') }}">Pickups</a></li>
 						</ul>
+						<ul class="nav navbar-nav navbar-right">
+							<li><a href="{{ url('driver/setting') }}"><img src="{{ url('kitchenImages/icon-6.png') }}" width="20" alt="Setting"></a></li>
+						</ul>
 					</div>
 				</div>
 			</nav>
