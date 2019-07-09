@@ -71,13 +71,20 @@
 							getDistanceMatrix(response.orderDelivery[i]['store_address'], response.orderDelivery[i]['customer_address'])
 								.then(duration => {
 									// Add travelling time (driving)
-									time = moment(time, 'HH:mm:ss').add(duration, 'seconds').format('HH:mm');
+									if(duration == null)
+									{
+										time = '';
+									}
+									else
+									{
+										time = moment(time, 'HH:mm:ss').add(duration, 'seconds').format('HH:mm');
+									}
 
 									// Draw HTML
 									html = '<tr>'+
 										'<td><a href="javascript:getOrderDetail(\''+customer_order_id+'\')" class="link">'+customer_order_id+'</a></td>'+
 										'<td>'+response.orderDelivery[i]['full_name']+'</td>'+
-										"<td><a href='https://www.google.com/maps/place/"+response.orderDelivery[i]['full_address']+"' target='_blank' class='link'>"+address+" <i class='fas fa-directions'></i></a></td>"+
+										"<td><a href='https://www.google.com/maps/place/"+response.orderDelivery[i]['customer_address']+"' target='_blank' class='link'>"+address+" <i class='fas fa-directions'></i></a></td>"+
 										'<td><a href="tel:'+response.orderDelivery[i]['mobile']+'"><i class="fas fa-phone-alt fa-2x"></i></a></td>'+
 										'<td>'+delivered+'</td>'+
 										'<td>'+paid+'</td>'+
@@ -160,6 +167,10 @@
 							if(response.rows[0].elements[0].status !== 'undefined' && response.rows[0].elements[0].status == 'OK')
 							{
 								return resolve(response.rows[0].elements[0].duration.value)
+							}
+							else
+							{
+								return resolve(null);
 							}
 						}
 					});

@@ -49,7 +49,7 @@ class PickupController extends Controller
 		$driverId = Auth::guard('driver')->user()->id;
 
 		$orderDelivery = OrderDelivery::from('order_delivery AS OD')
-			->select(['OD.id', 'O.order_id', 'O.customer_order_id', 'O.deliver_time', 'O.order_delivery_time', 'O.online_paid', 'S.store_name', 'S.phone', DB::raw('CONCAT(S.street, " ", S.city, " ", S.country, " ", S.zip) AS store_address'), 'S.extra_prep_time', 'S.street', 'S.city'])
+			->select(['OD.id', 'O.order_id', 'O.customer_order_id', 'O.deliver_time', 'O.order_delivery_time', 'O.online_paid', 'S.store_name', 'S.phone', DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address'), 'S.extra_prep_time', 'S.street', 'S.city'])
 			->join('orders AS O', 'O.order_id', '=', 'OD.order_id')
 			// ->join('customer_addresses AS CA', 'CA.id', '=', 'O.user_address_id')
 			->join('store AS S', 'S.store_id', '=', 'O.store_id')
