@@ -214,6 +214,8 @@ return [
 
     // Driver
     'driver' => 'Driver',
+    'driverLogin' => 'Driver Login',
+    'passwordResetSuccessfully' => 'Password reset successfully.',
 
     // Common
     'addNew' => 'Lägg till Ny',
@@ -242,6 +244,11 @@ return [
     'name' => 'Name',
     'email' => 'Email',
     'phone' => 'Phone',
+    'password' => 'Password',
+    'login' => 'Login',
+    'forgetPassword' => 'Forgot your password?',
+    'resetPassword' => 'Reset Password',
+    'click_here' => 'click here',
     'status' => 'Status',
     'active' => 'Active',
     'address' => 'Address',

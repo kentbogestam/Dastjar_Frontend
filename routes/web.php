@@ -288,6 +288,8 @@ Route::group(['prefix' => 'driver'], function() {
 		Route::get('login', 'DriverLoginController@showLoginForm')->name('driver.login');
 		Route::post('login', 'DriverLoginController@login')->name('driver.login.submit');
 		Route::get('logout', 'DriverLoginController@logout')->name('driver.logout');
+		Route::get('forget-password', 'DriverLoginController@forgetPassword');
+		Route::post('reset-password', 'DriverLoginController@resetPassword');
 	});
 
 	// After login
