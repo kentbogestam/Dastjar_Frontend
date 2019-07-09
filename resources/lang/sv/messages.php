@@ -219,8 +219,10 @@ return [
     'passwordUpdatedSuccessfully' => 'Password updated successfully.',
     'driverUpdatedSuccessfully' => 'Updated successfully.',
     'personalInformation' => 'Personal Information',
-    'enterMobile' => 'Enter mobile no.',
-    'enterEmail' => 'Enter email',
+    'phEnterMobile' => 'Enter mobile no.',
+    'phEnterEmail' => 'Enter email',
+    'phPassword' => 'New Password',
+    'phConfirmPassword' => 'Confirm Password',
 
     // Common
     'addNew' => 'Lägg till Ny',
