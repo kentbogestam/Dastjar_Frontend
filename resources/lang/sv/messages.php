@@ -129,6 +129,7 @@ return [
     'notificationOrderReceived' => 'Din order är mottaget. Din order nummer är: :order_id',
     'notificationOrderReady' => 'Din Order, :order_id är Klar',
     'notificationOrderDelivered' => 'Din Order, :order_id är Levererad',
+    'notificationOrderAcceptedHomeDelivery' => 'Order :order_id has been loaded into car',
 
     // Store
     'store' => 'Restaurang',

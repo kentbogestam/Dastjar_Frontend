@@ -9,6 +9,8 @@ use Session;
 
 use \Gumlet\ImageResize;
 
+use App\Order;
+
 // 
 use App\App42\PushNotificationService;
 use App\App42\DeviceType;
@@ -251,7 +253,7 @@ class Helper extends Model
     }
 
     // 
-    public static function sendNotifaction($orderId, $message)
+    public static function sendNotifaction($userName, $message)
     {
         try{
             App42API::initialize(env('APP42_API_KEY'),env('APP42_API_SECRET'));

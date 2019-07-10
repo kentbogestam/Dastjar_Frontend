@@ -127,6 +127,7 @@ return [
     'notificationOrderReceived' => 'Your order has been accepted. Your order number is: :order_id',
     'notificationOrderReady' => 'Your Order :order_id is Ready',
     'notificationOrderDelivered' => 'Your Order :order_id is Delivered',
+    'notificationOrderAcceptedHomeDelivery' => 'Order :order_id has been loaded into car',
 
     // Store
     'store' => 'Store',

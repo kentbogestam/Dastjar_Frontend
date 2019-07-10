@@ -102,15 +102,18 @@ class PickupController extends Controller
 
                     if( !empty($recipients) )
                     {
-                    	// $message = __('messages.notificationOrderReceived', ['order_id' => $order->customer_order_id]);
-                    	$message = 'SMS: Order loaded into car';
+                    	$messageDelever = __('messages.notificationOrderAcceptedHomeDelivery', ['order_id' => $order->customer_order_id]);
+                    	$url = env('APP_URL').'order-view/'.$orderId;
+                    	$message = $messageDelever."\n".$url;
 						$result = Helper::apiSendTextMessage($recipients, $message);
                     }
 				}
 				else
 				{
-					$message = 'Push: Order loaded into car';
-					$result = Helper::sendNotifaction($order->customer_order_id , $message);
+					$messageDelever = __('messages.notificationOrderAcceptedHomeDelivery', ['order_id' => $order->customer_order_id]);
+					$url = env('APP_URL').'order-view/'.$orderId;
+					$message = "{'alert': '".$messageDelever."','_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': '".$messageDelever."','type':'openUrl','content':" ."'". $url."'" . "}}";
+					$result = Helper::sendNotifaction($customer->email , $message);
 				}
 			}
 		}
