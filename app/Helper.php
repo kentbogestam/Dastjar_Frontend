@@ -9,6 +9,19 @@ use Session;
 
 use \Gumlet\ImageResize;
 
+// 
+use App\App42\PushNotificationService;
+use App\App42\DeviceType;
+use App\App42\App42Log;
+use App\App42\App42Exception;
+use App\App42\App42NotFoundException;
+use App\App42\App42BadParameterException;
+use App\App42\StorageService;
+use App\App42\QueryBuilder;
+use App\App42\Query;
+use App\App42\App42API;
+use App\App42\Util;
+
 class Helper extends Model
 {
     public static function getLocation($address)
@@ -235,5 +248,19 @@ class Helper extends Model
         curl_close($ch);
 
         return $result;
+    }
+
+    // 
+    public static function sendNotifaction($orderId, $message)
+    {
+        try{
+            App42API::initialize(env('APP42_API_KEY'),env('APP42_API_SECRET'));
+            $pushNotificationService = App42API::buildPushNotificationService();
+            $pushNotification = $pushNotificationService->sendPushMessageToUser($userName, $message);
+
+            return $pushNotification;
+        } catch(\Exception $e){
+            return $e->getMessage();
+        }
     }
 }

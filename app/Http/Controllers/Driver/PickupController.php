@@ -6,12 +6,14 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Auth;
 
+use App\Helper;
 use DB;
 use App\Driver;
 use App\Company;
 use App\Order;
 use App\OrderDetail;
 use App\OrderDelivery;
+use App\User;
 
 class PickupController extends Controller
 {
@@ -75,9 +77,45 @@ class PickupController extends Controller
 
 			// Update driver as engaged
 			Driver::where(['id' => $driverId])->update(['is_engaged' => '1']);
+
+			// Get order detail and send 'order pickup' text/notification
+			$orderId = OrderDelivery::where(['id' => $orderDeliveryId])->first()->order_id;
+
+			$order = Order::select(['user_id', 'user_type', 'customer_order_id'])
+				->where('order_id' , $orderId)
+				->first();
+
+			if($order)
+			{
+				// Get customer
+				$customer = User::where('id' , $order->user_id)->first();
+				$browser = explode(" ", $customer->browser);
+
+				// Check if need to send SMS/notification
+				if( ($browser == 'Safari') || ( isset($customer->browser) && strpos($customer->browser, 'Mobile/') !== false ) || ( isset($customer->browser) && strpos($customer->browser, 'wv') !== false ) )
+				{
+					$recipients = array();
+					if(isset($customer->phone_number_prifix) && isset($customer->phone_number))
+					{
+                        $recipients = ['+'.$customer->phone_number_prifix.$customer->phone_number];
+                    }
+
+                    if( !empty($recipients) )
+                    {
+                    	// $message = __('messages.notificationOrderReceived', ['order_id' => $order->customer_order_id]);
+                    	$message = 'SMS: Order loaded into car';
+						$result = Helper::apiSendTextMessage($recipients, $message);
+                    }
+				}
+				else
+				{
+					$message = 'Push: Order loaded into car';
+					$result = Helper::sendNotifaction($order->customer_order_id , $message);
+				}
+			}
 		}
 
-		return response()->json(['status' => $status]);
+		return response()->json(['status' => $status, 'message' => $message]);
 	}
 
 	/**
