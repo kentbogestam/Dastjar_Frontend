@@ -35,14 +35,14 @@ function showLocationUpdate(position)
     var lat2 = position.coords.latitude;
     var lon2 = position.coords.longitude;
 
-    var lat1 = getCookie("latitude");
-    var lon1 = getCookie("longitude");
+    var lat1 = getCookie("driver-latitude");
+    var lon1 = getCookie("driver-longitude");
 
     var distance = getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2, 'K');
 
     distance = distance*1000;
 
-    if(distance > 100)
+    if( !lat1 || (distance > 100) )
     {
         updateDriverPosition(lat2, lon2);
     }
@@ -67,8 +67,8 @@ function updateDriverPosition(lat2, lon2)
         success: function(response) {
             if(response.status)
             {
-                document.cookie="latitude="+lat2;
-                document.cookie="longitude="+lon2;
+                document.cookie="driver-latitude="+lat2;
+                document.cookie="driver-longitude="+lon2;
             }
         }
     });
