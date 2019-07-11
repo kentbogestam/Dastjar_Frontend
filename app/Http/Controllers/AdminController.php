@@ -878,7 +878,7 @@ class AdminController extends Controller
 
     public function kitchenSetting(){
         // Get logged-in store detail
-        $store = Store::select(['order_response', 'range', 'buffer_time'])
+        $store = Store::select(['order_response', 'driver_range', 'delivery_range', 'buffer_time'])
             ->where('store_id' , Session::get('storeId'))->first();
 
         if($store['buffer_time'] != NULL && $store['buffer_time'] != '00:00:00')
@@ -910,7 +910,7 @@ class AdminController extends Controller
         // Update store setting
         $buffer_time = '00:'.($data['buffer_time'] % 60).':00';
         Store::where('store_id', Session::get('storeId'))
-            ->update(['order_response' => $data['order_response'], 'range' => $data['range'], 'buffer_time' => $buffer_time]);
+            ->update(['order_response' => $data['order_response'], 'driver_range' => $data['driver_range'], 'delivery_range' => $data['delivery_range'], 'buffer_time' => $buffer_time]);
 
         return redirect()->back()->with('success', 'Setting updated successfully.');
     }
@@ -1897,11 +1897,11 @@ class AdminController extends Controller
             {
                 $haversine = "(6371 * acos(cos(radians({$address['latitude']})) * cos(radians(latitude)) * cos(radians(longitude) - radians({$address['longitude']})) + sin(radians({$address['latitude']})) * sin(radians(latitude)))) AS distance";
                 
-                if($store->range)
+                if($store->driver_range)
                 {
                     $driver = Driver::select(['id', 'name', 'is_engaged', DB::raw($haversine)])
                         ->where(['company_id' => $company_id, 'status' => '1'])
-                        ->having('distance', '<=', $store->range)
+                        ->having('distance', '<=', $store->driver_range)
                         ->orderBy('is_engaged')
                         ->orderBy('distance')
                         ->get();

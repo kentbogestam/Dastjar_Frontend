@@ -190,8 +190,14 @@ textarea.ui-input-text{
 				    <ul>
 				    	<li class="range-sec btn_blk">
 							<div data-role="rangeslider">
-								<label for="range">{{ __('messages.range') }}</label>
-								<input type="range" name="range" id="range" min="0" max="20" value="{{ $store->range }}">
+								<label for="driver_range">{{ __('messages.driverRange') }}</label>
+								<input type="range" name="driver_range" id="driver_range" min="0" max="20" value="{{ $store->driver_range }}">
+							</div>
+						</li>
+						<li class="range-sec btn_blk">
+							<div data-role="rangeslider">
+								<label for="delivery_range">{{ __('messages.deliveryRange') }}</label>
+								<input type="range" name="delivery_range" id="delivery_range" min="0" max="20" value="{{ $store->delivery_range }}">
 							</div>
 						</li>
 						<li class="range-sec">
