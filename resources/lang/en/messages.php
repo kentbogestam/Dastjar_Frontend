@@ -182,6 +182,7 @@ return [
     'storeDeliveryType' => ':deliveryType restaurant',
     'deliveryType' => 'Delivery Type',
     'homeDeliveryNotEligible' => 'Minimum Order value is :threshold',
+    'homeDeliveryNotInRange' => 'Address is not in range to deliver!',
 
     // Validation
     'fieldRequired' => 'This field is required.',
@@ -196,6 +197,7 @@ return [
     'address1' => 'Flat, House no., Building, Company, Apartment',
     'address2' => 'Area, Colony, Street, Sector',
     'city' => 'Town/City',
+    'country' => 'Country',
     'saveAddress' => 'Save this address',
 
     // Delivery Price Model

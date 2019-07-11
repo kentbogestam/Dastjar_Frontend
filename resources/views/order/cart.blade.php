@@ -393,17 +393,6 @@
 				$('.block-address').html(response.html).trigger('create');
 				$('.block-address').removeClass('hidden');
 
-				if($('input[name=user_address_id]:checked').length)
-				{
-					$('.btn-pay').prop('disabled', false);
-					$('.send-order').prop('disabled', false);
-				}
-				else
-				{
-					$('.btn-pay').prop('disabled', true);
-					$('.send-order').prop('disabled', true);
-				}
-
 				updateOrderUserAddress();
 			}
 		});
@@ -412,6 +401,12 @@
 	// Update order 'user_address_id'
 	function updateOrderUserAddress()
 	{
+		// 
+		$('.block-address').find('p.error').remove();
+		$('.btn-pay').prop('disabled', true);
+		$('.send-order').prop('disabled', true);
+
+		// 
 		if($('input[name=user_address_id]:checked').length)
 		{
 			$.ajax({
@@ -424,7 +419,16 @@
 				},
 				dataType: 'json',
 				success: function(response) {
-					console.log(response);
+					if(!response.status)
+					{
+						// $('input[name=user_address_id]').prop('checked', false);
+						$('.block-address form').after('<p class="error">'+response.msg+'</p>');
+					}
+					else
+					{
+						$('.btn-pay').prop('disabled', false);
+						$('.send-order').prop('disabled', false);
+					}
 				}
 			});
 		}

@@ -914,7 +914,7 @@ class OrderController extends Controller
         if($is_home_delivery_eligible)
         {
             // Get user address
-            $userAddresses = UserAddress::where(['customer_id' => Auth::id(), 'is_permanent' => '1'])
+            $userAddresses = UserAddress::where(['customer_id' => Auth::id()])
                 ->get();
 
             if($userAddresses)
@@ -934,7 +934,7 @@ class OrderController extends Controller
                         <div class='ui-bar ui-bar-a'>
                             <div class='ui-radio'>
                                 <label for='{$address->id}' class='ui-btn ui-corner-all ui-btn-inherit ui-btn-icon-left ui-radio-off'>{$strAddress}</label>
-                                <input type='radio' name='user_address_id' id='{$address->id}' value='{$address->id}' checked=''>
+                                <input type='radio' name='user_address_id' id='{$address->id}' value='{$address->id}'>
                             </div>
                         </div>
                     </div>";
@@ -961,6 +961,7 @@ class OrderController extends Controller
                                     <input type="text" name="street" id="street" placeholder="'.__('messages.address2').'*" data-mini="true" data-rule-required="true" data-msg-required="'.__('messages.fieldRequired').'">
                                     <input type="text" name="zipcode" id="zipcode" placeholder="Zipcode" data-mini="true" data-rule-number="true" data-msg-number="'.__('messages.fieldNumber').'">
                                     <input type="text" name="city" id="city" placeholder="'.__('messages.city').'*" data-mini="true" data-rule-required="true" data-msg-required="'.__('messages.fieldRequired').'">
+                                    <input type="text" name="country" id="country" placeholder="'.__('messages.country').'*" data-mini="true" data-rule-required="true" data-msg-required="'.__('messages.fieldRequired').'">
                                     <fieldset data-role="controlgroup">
                                         <label for="is_permanent">'.__('messages.saveAddress').'</label>
                                         <input type="checkbox" name="is_permanent" value="1" checked="" id="is_permanent">
@@ -995,14 +996,15 @@ class OrderController extends Controller
         $this->validate($request, [
             'full_name' => 'required',
             'mobile'    => 'required|numeric',
-            'street'   => 'required',
+            'street'    => 'required',
             'zipcode'   => 'numeric',
             'city'      => 'required',
+            'country'   => 'required',
         ]);
 
         // Create
         $status = 0; $addresses = '';
-        $data = $request->only(['full_name', 'mobile', 'zipcode', 'address', 'street', 'city', 'is_permanent']);
+        $data = $request->only(['full_name', 'mobile', 'zipcode', 'address', 'street', 'city', 'country', 'is_permanent']);
         $data['customer_id'] = Auth::id();
 
         if(UserAddress::create($data))
@@ -1022,13 +1024,32 @@ class OrderController extends Controller
     function updateOrderUserAddress(Request $request)
     {
         $status = 0;
+        $msg = __('messages.homeDeliveryNotInRange');
 
-        if( Order::where('order_id', $request->input('order_id'))->update(['user_address_id' => $request->input('user_address_id')]) )
+        // Check if delivery address is in store delivery range
+        $store = Store::select(['street', 'city', 'zip', 'country', 'delivery_range'])
+            ->where('store_id', Session::get('storeId'))->first();
+        $origin = $store->street.', '.$store->city.', '.$store->zip.', '.$store->country;
+
+        $userAddress = UserAddress::where('id', $request->input('user_address_id'))
+            ->first();
+        $destination = $userAddress->street.', '.$userAddress->city.', '.$userAddress->zipcode.', '.$userAddress->country;
+
+        // Get distance b/w origin and destination
+        $response = Helper::getDrivingDistance($origin, $destination, 'address');
+        
+        if($response['status'] == 'OK')
         {
-            $status = 1;
+            $distance = (int)$response['distance']['text'];
+
+            if($store->delivery_range > $distance)
+            {
+                Order::where('order_id', $request->input('order_id'))->update(['user_address_id' => $request->input('user_address_id')]);
+                $status = 1;
+            }
         }
 
-        return response()->json(['status' => $status]);
+        return response()->json(['status' => $status, 'msg' => $msg, 'response' => $response]);
     }
 
     /**

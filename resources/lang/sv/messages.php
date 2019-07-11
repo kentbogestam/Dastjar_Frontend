@@ -184,6 +184,7 @@ return [
     'storeDeliveryType' => ':deliveryType restaurant',
     'deliveryType' => 'Leverans Typ',
     'homeDeliveryNotEligible' => 'Minsta beställningsvärde är :threshold',
+    'homeDeliveryNotInRange' => 'Address is not in range to deliver!',
 
     // Validation
     'fieldRequired' => 'Detta fält är obligatoriskt.',
@@ -198,6 +199,7 @@ return [
     'address1' => 'Portkod, Lägenhetsnummer eller Företag',
     'address2' => 'Gata och nummer',
     'city' => 'Stad/Ort',
+    'country' => 'Land',
     'saveAddress' => 'Spara den här adressen',
 
     // Delivery Price Model
