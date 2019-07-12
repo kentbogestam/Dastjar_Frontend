@@ -422,7 +422,7 @@
 					if(!response.status)
 					{
 						// $('input[name=user_address_id]').prop('checked', false);
-						$('.block-address form').after('<p class="error">'+response.msg+'</p>');
+						$('.block-address form#frm-user-address').after('<p class="error">'+response.msg+'</p>');
 					}
 					else
 					{

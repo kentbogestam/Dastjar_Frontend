@@ -124,6 +124,8 @@ Route::group(['middleware' => ['latlng']], function(){
 Route::group(['middleware' => ['auth']], function(){
 	Route::get('blank-view', 'HomeController@blankView');
 	Route::get('order-view/{OrderId}', 'OrderController@orderView')->name('order-view');
+	Route::get('track-order/{orderId}', 'OrderController@trackOrder');
+	Route::get('get-driver-position/{orderId}', 'OrderController@getDriverPosition');
 	Route::get('check-if-order-accepted/{orderId}', 'OrderController@checkIfOrderAccepted');
 	Route::get('check-if-order-ready', 'OrderController@checkIfOrderReady');
 	Route::post('payment', 'PaymentController@payment');

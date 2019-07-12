@@ -23,6 +23,7 @@ use App\UserAddress;
 use App\Company;
 use App\Admin;
 use App\CompanySubscriptionDetail;
+use App\Driver;
 use Session;
 use App\Helper;
 
@@ -50,18 +51,16 @@ class OrderController extends Controller
         }
 
         $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
-
         $storeDetail = Store::where('store_id', $order->store_id)->first();
         $user = User::where('id',$order->user_id)->first();
-
         $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 
         // Get order discount if applied
         $orderDiscount = PromotionDiscount::from('promotion_discount AS PD')
-                    ->select(['PD.discount_value'])
-                    ->join('order_customer_discount AS OCD', 'OCD.discount_id', '=', 'PD.id')
-                    ->where(['OCD.order_id' => $orderId])
-                    ->first();
+            ->select(['PD.discount_value'])
+            ->join('order_customer_discount AS OCD', 'OCD.discount_id', '=', 'PD.id')
+            ->where(['OCD.order_id' => $orderId])
+            ->first();
 
         Session::forget('paymentmode');
 
@@ -89,6 +88,77 @@ class OrderController extends Controller
         // dd(Session::all());
 
         return view('order.index', compact('order','orderDetails', 'orderDiscount','storeDetail','user'));
+    }
+
+    /**
+     * Track order origin (driver) to destination (user) using map
+     * @param  [type] $orderId [description]
+     * @return [type]          [description]
+     */
+    function trackOrder($orderId)
+    {
+        $markerArray = array();
+        $order = Order::where('order_id', $orderId)->first();
+
+        // If order type 'home delivery'
+        if($order && $order->delivery_type == 3)
+        {   
+            // Get driver address
+            $driver = Driver::from('drivers AS D')
+                ->select(['D.latitude', 'D.longitude'])
+                ->join('order_delivery AS OD', 'OD.driver_id', '=', 'D.id')
+                ->join('orders AS O', 'O.order_id', '=', 'OD.order_id')
+                ->where(['O.order_id' => $orderId])
+                ->first();
+
+            $markerArray[] = array('lat' => $driver->latitude, 'lng' => $driver->longitude);
+            // $markerArray[] = array('lat' => 41.878113, 'lng' => -87.629799); // chicago, il
+            
+            // get order address
+            $orderAddress = UserAddress::select(['street', 'city', 'zipcode', 'country'])
+                ->join('orders', 'orders.user_address_id', '=', 'customer_addresses.id')
+                ->where(['order_id' => $orderId])
+                ->first();
+
+            $address = $orderAddress->street.', '.$orderAddress->city.', '.$orderAddress->zipcode.', '.$orderAddress->country;
+            $address = Helper::getCoordinates($address);
+
+            if($address)
+            {
+                $markerArray[] = $address;
+                // $markerArray[] = array('lat' => 38.627003, 'lng' => -90.199402); // st louis, mo
+            }
+
+            // Encode array
+            if(!empty($markerArray))
+            {
+                $markerArray = json_encode($markerArray);
+                // dd($markerArray);
+            }
+
+            return view('order.track-order', compact('order', 'markerArray'));
+        }
+
+        return redirect('order-view/'.$order->order_id);
+    }
+
+    /**
+     * Get driver position
+     * @param  [type] $orderId [description]
+     * @return [type]          [description]
+     */
+    function getDriverPosition($orderId)
+    {
+        // Get driver address
+        $driver = Driver::from('drivers AS D')
+            ->select(['D.latitude', 'D.longitude'])
+            ->join('order_delivery AS OD', 'OD.driver_id', '=', 'D.id')
+            ->join('orders AS O', 'O.order_id', '=', 'OD.order_id')
+            ->where(['O.order_id' => $orderId])
+            ->first();
+
+        // array('lat' => $driver->latitude, 'lng' => $driver->longitude);
+        return response()->json(['status' => 1, 'driver' => $driver]);
     }
 
     /**
