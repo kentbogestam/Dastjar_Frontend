@@ -114,9 +114,11 @@
 
 			for(let i = 0; i < timeObj.length; i++)
 			{
-				arrTime = timeObj[i].split(':');
-
-				time = time.add(arrTime[0], 'hours').add(arrTime[1], 'minutes');
+				if(timeObj[i] != null)
+				{
+					arrTime = timeObj[i].split(':');
+					time = time.add(arrTime[0], 'hours').add(arrTime[1], 'minutes');
+				}
 			}
 
 			return time.format('HH:mm');
