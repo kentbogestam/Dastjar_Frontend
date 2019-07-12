@@ -382,8 +382,28 @@
 						@endif
 
 						@if($order->delivery_type == 3)
+							@php
+							$times = array($order->order_delivery_time, $order->deliver_time, $storeDetail->extra_prep_time);
+							$time = Helper::addTimes($times);
+
+							// Add 'travelling time'
+							if($order->distanceInSec)
+							{
+								$time = date("H:i", strtotime($time)+$order->distanceInSec);
+							}
+
+							$dateTime = date('Y-m-d H:i:s', strtotime($order->deliver_date.' '.$time));
+							@endphp
+							
 							<p>
-								<a href="{{ url('track-order/'.$order->order_id) }}" class="ui-btn ui-btn-inline" data-ajax="false">Track Order</a>
+								@if($order->order_type == 'eat_later')
+									{{ __('messages.deliveryDateTimeEatLater') }}
+									{!! "<script type='text/javascript'>document.write(moment.utc('{$dateTime}').local().format('YYYY/MM/DD HH:mm'))</script>" !!}
+								@else
+									{{ __('messages.deliveryDateTimeEatNow') }}
+									{!! "<script type='text/javascript'>document.write(moment.utc('{$dateTime}').local().format('HH:mm'))</script>" !!}
+								@endif
+								<br><a href="{{ url('track-order/'.$order->order_id) }}" class="ui-btn ui-btn-inline" data-ajax="false">{{ __('messages.trackOrder') }}</a>
 							</p>
 						@else
 							<p>

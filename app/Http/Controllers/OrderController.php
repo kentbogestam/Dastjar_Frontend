@@ -50,7 +50,29 @@ class OrderController extends Controller
             ]);
         }
 
-        $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
+        /*$order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();*/
+
+        $order = Order::from('orders AS O')
+            ->select(['O.order_id', 'O.customer_order_id', 'O.store_id', 'O.user_id', 'O.order_type', 'O.delivery_type', 'O.deliver_date', 'O.deliver_time', 'O.order_total', 'O.delivery_charge', 'O.final_order_total', 'O.order_delivery_time', 'O.order_accepted', 'O.extra_prep_time','S.store_name','company.currencies', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
+            ->join('store AS S','O.store_id', '=', 'S.store_id')
+            ->join('company','O.company_id', '=', 'company.company_id')
+            ->leftJoin('customer_addresses AS CA', 'CA.id', '=', 'O.user_address_id')
+            ->where('order_id', $orderId)
+            ->first();
+
+        // If order type is 'home delivery', get driving distance time
+        if($order->delivery_type == 3)
+        {
+            // Get distance b/w origin and destination
+            $response = Helper::getDrivingDistance($order->store_address, $order->customer_address, 'address');
+            
+            if($response['status'] == 'OK')
+            {
+                $distanceInSec = (int)$response['duration']['value'];
+                $order['distanceInSec'] = $distanceInSec;
+            }
+        }
+
         $storeDetail = Store::where('store_id', $order->store_id)->first();
         $user = User::where('id',$order->user_id)->first();
         $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();

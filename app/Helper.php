@@ -340,4 +340,23 @@ class Helper extends Model
 
         return $response;
     }
+
+    /**
+     * Add multiple time and return format 'H:i:s'
+     * @param [type] $times [description]
+     */
+    public static function addTimes($times)
+    {
+        $seconds = 0;
+
+        if(is_array($times) && !empty($times))
+        {
+            foreach($times as $time)
+            {
+                $seconds += strtotime("1970-01-01 $time UTC");
+            }
+        }
+
+        return gmdate("H:i", $seconds);
+    }
 }
