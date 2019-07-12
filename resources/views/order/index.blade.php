@@ -398,10 +398,12 @@
 							<p>
 								@if($order->order_type == 'eat_later')
 									{{ __('messages.deliveryDateTimeEatLater') }}
-									{!! "<script type='text/javascript'>document.write(moment.utc('{$dateTime}').local().format('YYYY/MM/DD HH:mm'))</script>" !!}
+									{{-- {!! "<script type='text/javascript'>document.write(moment.utc('{$dateTime}').local().format('YYYY/MM/DD HH:mm'))</script>" !!} --}}
+									{{ date('Y-m-d H:i:s', strtotime($dateTime)) }}
 								@else
 									{{ __('messages.deliveryDateTimeEatNow') }}
-									{!! "<script type='text/javascript'>document.write(moment.utc('{$dateTime}').local().format('HH:mm'))</script>" !!}
+									{{-- {!! "<script type='text/javascript'>document.write(moment.utc('{$dateTime}').local().format('HH:mm'))</script>" !!} --}}
+									{{ date('H:i', strtotime($dateTime)) }}
 								@endif
 								<br><a href="{{ url('track-order/'.$order->order_id) }}" class="ui-btn ui-btn-inline" data-ajax="false">{{ __('messages.trackOrder') }}</a>
 							</p>
