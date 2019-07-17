@@ -12,6 +12,8 @@ use App\Company;
 use App\Order;
 use App\OrderDetail;
 use App\OrderDelivery;
+use App\UserAddress;
+use App\Helper;
 
 class DeliveryController extends Controller
 {
@@ -67,6 +69,48 @@ class DeliveryController extends Controller
 			->get();
 
 		return response()->json(['orderDelivery' => $orderDelivery]);
+	}
+
+	/**
+	 * Show driving direction to delivery
+	 * @return [type] [description]
+	 */
+	function deliveryDirection($orderId)
+	{
+		$driverId = Auth::guard('driver')->user()->id;
+
+		// Get order
+		$order = Order::select(['user_address_id'])
+			->where(['order_id' => $orderId])
+			->first();
+		
+		// 
+		$driver = Driver::select(['latitude', 'longitude'])
+			->where(['id' => $driverId])
+			->first();
+		
+		$markerArray = array();
+		$markerArray[] = array('lat' => $driver->latitude, 'lng' => $driver->longitude);
+		// $markerArray[] = array('lat' => 59.3150, 'lng' => 17.9999);
+
+		$userAddress = UserAddress::from('customer_addresses AS CA')
+			->select([DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address')])
+			->where('id' , $order->user_address_id)
+			->first();
+		$address = Helper::getCoordinates($userAddress->customer_address);
+
+		if($address)
+		{
+			$markerArray[] = $address;
+		}
+
+		// Encode array
+        if(!empty($markerArray))
+        {
+            $markerArray = json_encode($markerArray);
+        }
+		// dd($markerArray);
+		return view('driver.pickup-direction', compact('markerArray'));
 	}
 
 	/**

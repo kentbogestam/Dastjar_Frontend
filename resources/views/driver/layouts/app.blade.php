@@ -40,7 +40,7 @@
 				<div class="collapse navbar-collapse">
 					<ul class="nav navbar-nav">
 						<li>
-							@if( strpos($_SERVER['REQUEST_URI'], 'pickup-direction') !== false )
+							@if( strpos($_SERVER['REQUEST_URI'], 'pickup-direction') !== false || strpos($_SERVER['REQUEST_URI'], 'delivery-direction') !== false )
 								<a href="{{ url('driver/pickup') }}" class="text-left">
 									<img src="{{asset('images/icons/backarrow.png')}}" width="11px">
 								</a>

@@ -62,6 +62,11 @@ class PickupController extends Controller
 		return response()->json(['orderDelivery' => $orderDelivery]);
 	}
 
+	/**
+	 * Show driving direction to restaurant
+	 * @param  [type] $orderId [description]
+	 * @return [type]          [description]
+	 */
 	function pickupDirection($orderId)
 	{
 		$driverId = Auth::guard('driver')->user()->id;
@@ -77,8 +82,8 @@ class PickupController extends Controller
 			->first();
 		
 		$markerArray = array();
-		// $markerArray[] = array('lat' => $driver->latitude, 'lng' => $driver->longitude);
-		$markerArray[] = array('lat' => 59.3150, 'lng' => 17.9999);
+		$markerArray[] = array('lat' => $driver->latitude, 'lng' => $driver->longitude);
+		// $markerArray[] = array('lat' => 59.3150, 'lng' => 17.9999);
 
 		$store = Store::select(['latitude', 'longitude'])
 			->where('store_id' , $order->store_id)->first();
