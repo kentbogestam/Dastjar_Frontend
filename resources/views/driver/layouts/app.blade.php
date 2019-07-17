@@ -40,9 +40,15 @@
 				<div class="collapse navbar-collapse">
 					<ul class="nav navbar-nav">
 						<li>
-							<div class="checkbox">
-								<label><input type="checkbox" name="status" onchange="updateStatus(this)" {{ Auth::user()->status ? 'checked' : '' }}>Active</label>
-							</div>
+							@if( strpos($_SERVER['REQUEST_URI'], 'pickup-direction') !== false )
+								<a href="{{ url('driver/pickup') }}" class="text-left">
+									<img src="{{asset('images/icons/backarrow.png')}}" width="11px">
+								</a>
+							@else
+								<div class="checkbox">
+									<label><input type="checkbox" name="status" onchange="updateStatus(this)" {{ Auth::user()->status ? 'checked' : '' }}>Active</label>
+								</div>
+							@endif
 						</li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">

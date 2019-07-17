@@ -9,12 +9,12 @@
 			<table class="table table-bordered">
 				<thead>
 					<tr>
-						<th>Order</th>
-						<th>Restaurant</th>
-						<th>Address</th>
-						<th>Phone</th>
-						<th>Accept</th>
-						<th>Pick-up Time</th>
+						<th>{{ __('messages.Orders') }}</th>
+						<th>{{ __('messages.Restaurant') }}</th>
+						<th>{{ __('messages.address') }}</th>
+						<th>{{ __('messages.phone') }}</th>
+						<th>{{ __('messages.accept') }}</th>
+						<th>{{ __('messages.Pick up Time') }}</th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -50,7 +50,8 @@
 							html += "<tr>"+
 								"<td>"+customer_order_id+"</td>"+
 								"<td>"+response.orderDelivery[i]['store_name']+"</td>"+
-								"<td><a href='https://www.google.com/maps/place/"+response.orderDelivery[i]['store_address']+"' target='_blank' class='link'>"+response.orderDelivery[i]['street']+"<br>"+response.orderDelivery[i]['city']+" <i class='fas fa-directions'></i></a></td>"+
+								/*"<td><a href='https://www.google.com/maps/place/"+response.orderDelivery[i]['store_address']+"' target='_blank' class='link'>"+response.orderDelivery[i]['street']+"<br>"+response.orderDelivery[i]['city']+" <i class='fas fa-directions'></i></a></td>"+*/
+								"<td><a href='{{ url('driver/pickup-direction') }}/"+response.orderDelivery[i]['order_id']+"' class='link'>"+response.orderDelivery[i]['street']+"<br>"+response.orderDelivery[i]['city']+" <i class='fas fa-directions'></i></a></td>"+
 								"<td><a href='tel:"+response.orderDelivery[i]['phone']+"'><i class='fas fa-phone-alt fa-2x'></i></a></td>"+
 								"<td><a href='javascript:void(0)' class='order-pickup-accept' data-id='"+response.orderDelivery[i]['id']+"'><i class='fas fa-minus-circle fa-2x'></i></a></td>"+
 								"<td>"+pickupTime+"</td>"+

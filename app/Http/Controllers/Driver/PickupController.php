@@ -14,6 +14,7 @@ use App\Order;
 use App\OrderDetail;
 use App\OrderDelivery;
 use App\User;
+use App\Store;
 
 class PickupController extends Controller
 {
@@ -59,6 +60,38 @@ class PickupController extends Controller
 			->get();
 
 		return response()->json(['orderDelivery' => $orderDelivery]);
+	}
+
+	function pickupDirection($orderId)
+	{
+		$driverId = Auth::guard('driver')->user()->id;
+
+		// Get order
+		$order = Order::select(['store_id'])
+			->where(['order_id' => $orderId])
+			->first();
+		
+		// 
+		$driver = Driver::select(['latitude', 'longitude'])
+			->where(['id' => $driverId])
+			->first();
+		
+		$markerArray = array();
+		// $markerArray[] = array('lat' => $driver->latitude, 'lng' => $driver->longitude);
+		$markerArray[] = array('lat' => 59.3150, 'lng' => 17.9999);
+
+		$store = Store::select(['latitude', 'longitude'])
+			->where('store_id' , $order->store_id)->first();
+
+		$markerArray[] = array('lat' => $store->latitude, 'lng' => $store->longitude);
+
+		// Encode array
+        if(!empty($markerArray))
+        {
+            $markerArray = json_encode($markerArray);
+        }
+		// dd($markerArray);
+		return view('driver.pickup-direction', compact('markerArray'));
 	}
 
 	/**
