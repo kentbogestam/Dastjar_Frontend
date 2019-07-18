@@ -68,7 +68,7 @@ function frmAddManualPrepTime()
 }
 
 // Get list of avalable drivers to assign them to order
-function popupOrderAssignDriver(orderId, itemId)
+function popupOrderAssignDriver(orderId, itemId, isReady = true)
 {
 	$.ajax({
 		url: RESTAURANT_BASE_URL+'/get-available-driver-to-assign/'+orderId,
@@ -80,6 +80,7 @@ function popupOrderAssignDriver(orderId, itemId)
 				{
 					$('#popup-order-assign-driver').find('input[name="order_id"]').val(orderId);
 					$('#popup-order-assign-driver').find('input[name="item_id"]').val(itemId);
+					$('#popup-order-assign-driver').find('input[name="is_ready"]').val(isReady);
 					$('#popup-order-assign-driver').find('table#list-driver tbody').html(response.html);
 					$('#popup-order-assign-driver').popup('open');
 				}
@@ -88,7 +89,7 @@ function popupOrderAssignDriver(orderId, itemId)
 					alert('No driver found.')
 				}
 			}
-			else
+			else if(isReady)
 			{
 				if(itemId)
 				{
@@ -108,6 +109,7 @@ function orderAssignDriver()
 {
 	var orderId = $('#popup-order-assign-driver').find('input[name=order_id]').val();
 	var itemId = $('#popup-order-assign-driver').find('input[name=item_id]').val();
+	var isReady = $('#popup-order-assign-driver').find('input[name=is_ready]').val();
 	var driverId = $('#popup-order-assign-driver').find('input[name=driver_id]:checked').val();
 
 	if(driverId != '' && orderId != '')
@@ -124,13 +126,16 @@ function orderAssignDriver()
 			success: function(response) {
 				$('#popup-order-assign-driver').popup('close');
 
-				if(itemId != 'false')
+				if(isReady)
 				{
-					onReady(itemId);
-				}
-				else
-				{
-					window.location.href = urlReadyOrder+'/'+orderId;
+					if(itemId != 'false')
+					{
+						onReady(itemId);
+					}
+					else
+					{
+						window.location.href = urlReadyOrder+'/'+orderId;
+					}
 				}
 			}
 		});

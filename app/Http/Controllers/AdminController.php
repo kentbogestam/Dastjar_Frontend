@@ -1885,7 +1885,7 @@ class AdminController extends Controller
 
         // Get store
         $store = Store::where('store_id' , Session::get('storeId'))->first();
-        $address = $store->street.' '.$store->city.' '.$store->zip;
+        $address = $store->street.', '.$store->city.', '.$store->zip;
         $address = Helper::getLocation($address);
         // dd($address);
         
@@ -1901,6 +1901,8 @@ class AdminController extends Controller
                 {
                     $driver = Driver::select(['id', 'name', 'is_engaged', DB::raw($haversine)])
                         ->where(['company_id' => $company_id, 'status' => '1'])
+                        ->where('latitude', '!=', null)
+                        ->where('longitude', '!=', null)
                         ->having('distance', '<=', $store->driver_range)
                         ->orderBy('is_engaged')
                         ->orderBy('distance')
@@ -1910,6 +1912,8 @@ class AdminController extends Controller
                 {
                     $driver = Driver::select(['id', 'name', 'is_engaged', DB::raw($haversine)])
                         ->where(['company_id' => $company_id, 'status' => '1'])
+                        ->where('latitude', '!=', null)
+                        ->where('longitude', '!=', null)
                         ->orderBy('is_engaged')
                         ->orderBy('distance')
                         ->get();
@@ -1936,6 +1940,8 @@ class AdminController extends Controller
                 }
             }
         }
+
+        // $order = Order::select([''])
 
         $orderDeliveryCnt = OrderDelivery::where(['order_id' => $orderId])->count();
 

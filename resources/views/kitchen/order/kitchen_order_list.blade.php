@@ -102,13 +102,7 @@
 
 			$.get("{{url('kitchen/order-readyKitchen')}}/"+id,
 			function(returnedData){
-				// console.log(returnedData["data"]);
 				$('body').find('#'+id+'ready').parents("tr").remove();
-				/*if(returnedData["status"] == 'ready'){
-					$("#popupCloseRight").popup("open");
-				}else{
-					$("#popupNotifaction").popup("open");	
-				}*/
 			});
 		}
 
@@ -245,6 +239,7 @@
 			          		{
 			          			deliveryType = '{{ __('messages.deliveryOptionHomeDelivery') }}';
 			          			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+temp[i]['user_address_id']+')"><span>'+temp[i]['street']+'</span></a>';
+			          			deliveryType += "<br><a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", "+temp[i]['id']+", false)'>Assign Driver</a>";
 			          		}
 
 			          		liItem += "<td>"+deliveryType+"</td>";
@@ -395,6 +390,7 @@
 			          		{
 			          			deliveryType = '{{ __('messages.deliveryOptionHomeDelivery') }}';
 			          			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+temp[i]['user_address_id']+')"><span>'+temp[i]['street']+'</span></a>';
+			          			deliveryType += "<br><a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", "+temp[i]['id']+", false)'>Assign Driver</a>";
 			          		}
 
 			          		liItem += "<td>"+deliveryType+"</td>";
@@ -577,6 +573,7 @@
 	          		{
 	          			deliveryType = '{{ __('messages.deliveryOptionHomeDelivery') }}';
 	          			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+temp[i]['user_address_id']+')"><span>'+temp[i]['street']+'</span></a>';
+	          			deliveryType += "<br><a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", "+temp[i]['id']+", false)'>Assign Driver</a>";
 	          		}
 
 	          		liItem += "<td>"+deliveryType+"</td>";

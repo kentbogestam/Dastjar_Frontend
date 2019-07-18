@@ -477,6 +477,7 @@
 	          		{
 	          			deliveryType = '<span>{{ __('messages.deliveryOptionHomeDelivery') }}</span>';
 	          			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+temp[i]['user_address_id']+')"><span>'+temp[i]['street']+'</span></a>';
+	          			deliveryType += "<br><a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", false, false)'>Assign Driver</a>";
 	          		}
 
 	          		liItem += "<td>"+deliveryType+"</td>";
@@ -729,6 +730,7 @@
   		{
   			deliveryType = '{{ __('messages.deliveryOptionHomeDelivery') }}';
   			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+temp[i]['user_address_id']+')"><span>'+temp[i]['street']+'</span></a>';
+  			deliveryType += "<br><a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", false, false)'>Assign Driver</a>";
   		}
 
   		liItem += "<td>"+deliveryType+"</td>";

@@ -47,6 +47,7 @@
 			</table>
 			<input type="hidden" name="order_id">
 			<input type="hidden" name="item_id">
+			<input type="hidden" name="is_ready">
 			<button type="button" onclick="orderAssignDriver()" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left">Update</button>
 			<a href="javascript:void(0)" class="ui-btn ui-corner-all ui-btn-b" data-rel="back">Cancel</a>
 		</form>
