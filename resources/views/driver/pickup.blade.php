@@ -26,9 +26,19 @@
 @section('scripts')
 	<script type="text/javascript">
 		$(function() {
+			// On order accept
 			$(document).on('click', '.order-pickup-accept', function() {
 				var orderDeliveryId = $(this).data('id');
 				orderPickupAccept(orderDeliveryId, $(this));
+			});
+
+			// On order picked-up
+			$(document).on('click', '.order-pickup-pickedup', function() {
+				if( !$(this).hasClass('disabled') )
+				{
+					var orderDeliveryId = $(this).data('id');
+					orderPickupPickedup(orderDeliveryId, $(this));
+				}
 			});
 		});
 
@@ -50,12 +60,23 @@
 							html += "<tr>"+
 								"<td>"+customer_order_id+"</td>"+
 								"<td>"+response.orderDelivery[i]['store_name']+"</td>"+
-								/*"<td><a href='https://www.google.com/maps/place/"+response.orderDelivery[i]['store_address']+"' target='_blank' class='link'>"+response.orderDelivery[i]['street']+"<br>"+response.orderDelivery[i]['city']+" <i class='fas fa-directions'></i></a></td>"+*/
 								"<td><a href='{{ url('driver/pickup-direction') }}/"+response.orderDelivery[i]['order_id']+"' class='link'>"+response.orderDelivery[i]['street']+"<br>"+response.orderDelivery[i]['city']+" <i class='fas fa-directions'></i></a></td>"+
-								"<td><a href='tel:"+response.orderDelivery[i]['phone']+"'><i class='fas fa-phone-alt fa-2x'></i></a></td>"+
-								"<td><a href='javascript:void(0)' class='order-pickup-accept' data-id='"+response.orderDelivery[i]['id']+"'><i class='fas fa-minus-circle fa-2x'></i></a></td>"+
-								"<td>"+pickupTime+"</td>"+
-							+"</tr>";
+								"<td><a href='tel:"+response.orderDelivery[i]['phone']+"'><i class='fas fa-phone-alt fa-2x'></i></a></td>";
+
+							if(response.orderDelivery[i]['status'] == '0')
+							{
+								html += 
+									"<td><a href='javascript:void(0)' class='order-pickup-accept' data-id='"+response.orderDelivery[i]['id']+"'><i class='fas fa-minus-circle fa-2x'></i></a></td>"+
+									"<td><a href='javascript:void(0)' class='order-pickup-pickedup disabled' data-id='"+response.orderDelivery[i]['id']+"'><i class='fas fa-minus-circle fa-2x'></i></a><br>"+pickupTime+"</td>";
+							}
+							else
+							{
+								html +=
+									"<td><i class='fas fa-check-circle fa-2x'></i></td>"+
+									"<td><a href='javascript:void(0)' class='order-pickup-pickedup' data-id='"+response.orderDelivery[i]['id']+"'><i class='fas fa-minus-circle fa-2x'></i></a><br>"+pickupTime+"</td>";
+							}
+							
+							html += "</tr>";
 						}
 
 						$('.table').find('tbody').html(html);
@@ -79,6 +100,23 @@
 
 			$.ajax({
 				url: '{{ url('driver/order-pickup-accept') }}/'+orderDeliveryId,
+				success: function(response) {
+					if(response.status)
+					{
+						$This.closest('tr').find('.order-pickup-pickedup').removeClass('disabled');
+						$This.replaceWith("<i class='fas fa-check-circle fa-2x'></i>");
+					}
+				}
+			});
+		}
+
+		// Order picked-up from store
+		function orderPickupPickedup(orderDeliveryId, This)
+		{
+			$This = $(This);
+
+			$.ajax({
+				url: '{{ url('driver/order-pickup-pickedup') }}/'+orderDeliveryId,
 				success: function(response) {
 					if(response.status)
 					{

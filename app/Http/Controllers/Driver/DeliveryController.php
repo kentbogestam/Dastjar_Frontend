@@ -62,7 +62,7 @@ class DeliveryController extends Controller
 			->join('orders AS O', 'O.order_id', '=', 'OD.order_id')
 			->join('customer_addresses AS CA', 'CA.id', '=', 'O.user_address_id')
 			->join('store AS S', 'S.store_id', '=', 'O.store_id')
-			->where(['OD.driver_id' => $driverId, 'OD.status' => '1'])
+			->where(['OD.driver_id' => $driverId, 'OD.status' => '2'])
 			->where(function($query) use ($dateTime) {
 				$query->where('O.paid', 0)->orWhere('O.updated_at', '>=', $dateTime);
 			})
@@ -139,7 +139,7 @@ class DeliveryController extends Controller
 
 			$orderDelivery = OrderDelivery::from('order_delivery AS OD')
 				->join('orders AS O', 'O.order_id', '=', 'OD.order_id')
-				->where(['OD.driver_id' => $driverId, 'OD.status' => '1', 'paid' => 0])
+				->where(['OD.driver_id' => $driverId, 'OD.status' => '2', 'paid' => 0])
 				->count();
 
 			if($orderDelivery == 0)

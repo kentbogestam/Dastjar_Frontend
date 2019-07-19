@@ -52,11 +52,12 @@ class PickupController extends Controller
 		$driverId = Auth::guard('driver')->user()->id;
 
 		$orderDelivery = OrderDelivery::from('order_delivery AS OD')
-			->select(['OD.id', 'O.order_id', 'O.customer_order_id', 'O.deliver_time', 'O.order_delivery_time', 'O.online_paid', 'S.store_name', 'S.phone', DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address'), 'S.extra_prep_time', 'S.street', 'S.city'])
+			->select(['OD.id', 'OD.status', 'O.order_id', 'O.customer_order_id', 'O.deliver_time', 'O.order_delivery_time', 'O.online_paid', 'S.store_name', 'S.phone', DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address'), 'S.extra_prep_time', 'S.street', 'S.city'])
 			->join('orders AS O', 'O.order_id', '=', 'OD.order_id')
 			// ->join('customer_addresses AS CA', 'CA.id', '=', 'O.user_address_id')
 			->join('store AS S', 'S.store_id', '=', 'O.store_id')
-			->where(['OD.driver_id' => $driverId, 'OD.status' => '0', 'O.paid' => 0])
+			->where(['OD.driver_id' => $driverId, 'O.paid' => 0])
+			->whereIn('OD.status', ['0', '1'])
 			->get();
 
 		return response()->json(['orderDelivery' => $orderDelivery]);
@@ -115,48 +116,66 @@ class PickupController extends Controller
 
 			// Update driver as engaged
 			Driver::where(['id' => $driverId])->update(['is_engaged' => '1']);
+		}
 
-			// Get order detail and send 'order pickup' text/notification
-			$orderId = OrderDelivery::where(['id' => $orderDeliveryId])->first()->order_id;
+		return response()->json(['status' => $status]);
+	}
 
-			$order = Order::select(['user_id', 'user_type', 'customer_order_id'])
-				->where('order_id' , $orderId)
-				->first();
+	function orderPickupPickedup($orderDeliveryId)
+	{
+		$status = 0;
+		$driverId = Auth::guard('driver')->user()->id;
 
-			if($order)
+		// 
+		$orderDelivery = OrderDelivery::where(['id' => $orderDeliveryId])->first();
+
+		if($orderDelivery->status == '1')
+		{
+			// Mark as 'picked-up'
+			if(OrderDelivery::where(['id' => $orderDeliveryId])->update(['status' => '2', 'accept_datetime' => date('Y-m-d H:i:s')]))
 			{
-				// Get customer
-				$customer = User::where('id' , $order->user_id)->first();
-				$browser = explode(" ", $customer->browser);
+				$status = 1;
 
-				// Check if need to send SMS/notification
-				if( ($browser == 'Safari') || ( isset($customer->browser) && strpos($customer->browser, 'Mobile/') !== false ) || ( isset($customer->browser) && strpos($customer->browser, 'wv') !== false ) )
+				// Get order detail and send 'order pickup' text/notification
+				$order = Order::select(['user_id', 'user_type', 'customer_order_id'])
+					->where('order_id' , $orderDelivery->order_id)
+					->first();
+
+				if($order)
 				{
-					$recipients = array();
-					if(isset($customer->phone_number_prifix) && isset($customer->phone_number))
+					// Get customer
+					$customer = User::where('id' , $order->user_id)->first();
+					$browser = explode(" ", $customer->browser);
+
+					// Check if need to send SMS/notification
+					if( ($browser == 'Safari') || ( isset($customer->browser) && strpos($customer->browser, 'Mobile/') !== false ) || ( isset($customer->browser) && strpos($customer->browser, 'wv') !== false ) )
 					{
-                        $recipients = ['+'.$customer->phone_number_prifix.$customer->phone_number];
-                    }
+						$recipients = array();
+						if(isset($customer->phone_number_prifix) && isset($customer->phone_number))
+						{
+	                        $recipients = ['+'.$customer->phone_number_prifix.$customer->phone_number];
+	                    }
 
-                    if( !empty($recipients) )
-                    {
-                    	$messageDelever = __('messages.notificationOrderAcceptedHomeDelivery', ['order_id' => $order->customer_order_id]);
-                    	$url = env('APP_URL').'order-view/'.$orderId;
-                    	$message = $messageDelever."\n".$url;
-						$result = Helper::apiSendTextMessage($recipients, $message);
-                    }
-				}
-				else
-				{
-					$messageDelever = __('messages.notificationOrderAcceptedHomeDelivery', ['order_id' => $order->customer_order_id]);
-					$url = env('APP_URL').'order-view/'.$orderId;
-					$message = "{'alert': '".$messageDelever."','_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': '".$messageDelever."','type':'openUrl','content':" ."'". $url."'" . "}}";
-					$result = Helper::sendNotifaction($customer->email , $message);
+	                    if( !empty($recipients) )
+	                    {
+	                    	$messageDelever = __('messages.notificationOrderAcceptedHomeDelivery', ['order_id' => $order->customer_order_id]);
+	                    	$url = env('APP_URL').'order-view/'.$orderDelivery->order_id;
+	                    	$message = $messageDelever."\n".$url;
+							$result = Helper::apiSendTextMessage($recipients, $message);
+	                    }
+					}
+					else
+					{
+						$messageDelever = __('messages.notificationOrderAcceptedHomeDelivery', ['order_id' => $order->customer_order_id]);
+						$url = env('APP_URL').'order-view/'.$orderDelivery->order_id;
+						$message = "{'alert': '".$messageDelever."','_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': '".$messageDelever."','type':'openUrl','content':" ."'". $url."'" . "}}";
+						$result = Helper::sendNotifaction($customer->email , $message);
+					}
 				}
 			}
 		}
 
-		return response()->json(['status' => $status, 'message' => $message]);
+		return response()->json(['status' => $status]);
 	}
 
 	/**

@@ -299,6 +299,7 @@ Route::group(['prefix' => 'driver'], function() {
 		Route::get('pickup', 'PickupController@orderPickup');
 		Route::get('get-pickup-order-list', 'PickupController@getPickupOrderList');
 		Route::get('order-pickup-accept/{orderDeliveryId}', 'PickupController@orderPickupAccept');
+		Route::get('order-pickup-pickedup/{orderDeliveryId}', 'PickupController@orderPickupPickedup');
 		Route::get('get-order-detail/{customerOrderId}', 'PickupController@getOrderDetail');
 		Route::get('update-status/{currentStatus}', 'PickupController@updateStatus');
 		Route::post('update-driver-position', 'PickupController@updateDriverPosition');
