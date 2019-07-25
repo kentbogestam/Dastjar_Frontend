@@ -257,7 +257,7 @@ return [
     'buffer_time' => 'Buffertid (In min)',
     'refund' => 'Återbetalning',
     'getTheApp' => 'Hämta den här appen',
-    'name' => 'Name',
+    'name' => 'Namn',
     'email' => 'Email',
     'phone' => 'Mobil',
     'password' => 'Password',
