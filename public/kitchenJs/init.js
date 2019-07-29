@@ -126,7 +126,7 @@ function orderAssignDriver()
 			success: function(response) {
 				$('#popup-order-assign-driver').popup('close');
 
-				if(isReady)
+				if(isReady && isReady != 'false')
 				{
 					if(itemId != 'false')
 					{
