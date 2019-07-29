@@ -530,7 +530,7 @@ class AdminController extends Controller
     public function kitchenOrders(){
         $reCompanyId = Session::get('storeId');
 
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street')
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
             ->where(['order_details.store_id' => $reCompanyId])
             ->where('delivery_date',Carbon::now()->toDateString())
             ->where('order_details.order_ready', '0')
@@ -538,6 +538,7 @@ class AdminController extends Controller
             ->join('product','product.product_id','=','order_details.product_id')
             ->join('orders','orders.order_id','=','order_details.order_id')
             ->leftJoin('customer_addresses AS CA','CA.id','=','orders.user_address_id')
+            ->leftJoin('order_delivery AS OD', 'OD.order_id', '=', 'orders.order_id')
             ->get();
 
         $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;
@@ -549,7 +550,7 @@ class AdminController extends Controller
     public function kitchenOrdersNew($id){
         $reCompanyId = Session::get('storeId');
 
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street')
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
             ->where(['order_details.store_id' => $reCompanyId])
             ->where('delivery_date',Carbon::now()->toDateString())
             ->where('order_details.order_ready', '0')
@@ -558,6 +559,7 @@ class AdminController extends Controller
             ->join('product','product.product_id','=','order_details.product_id')
             ->join('orders','orders.order_id','=','order_details.order_id')
             ->leftJoin('customer_addresses AS CA','CA.id','=','orders.user_address_id')
+            ->leftJoin('order_delivery AS OD', 'OD.order_id', '=', 'orders.order_id')
             ->get();
 
         $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;

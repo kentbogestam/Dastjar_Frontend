@@ -352,6 +352,11 @@
 	          		var orderIdSpecific = temp[i]["order_id"] ;
 	          		var orderStatus = temp[i]["order_started"] == 0 ? 'new' : ''; // Add class 'new' until order 'started'
 
+	          		if(temp[i]['orderDeliveryStatus'] == '0')
+	          		{
+	          			orderStatus += orderStatus.length ? ' not-accepted' : 'not-accepted';
+	          		}
+
 	          		liItem += "<tr class='"+orderStatus+"'>";
 	          		liItem += "<th>"
 	          		liItem += "<a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>"
@@ -601,6 +606,11 @@
       	var timeOrder = addTimes("00:00:00",list[i]["deliver_time"]);
       	var orderIdSpecific = list[i]["order_id"] ;
       	var orderStatus = temp[i]["order_started"] == 0 ? 'new' : ''; // Add class 'new' until order 'started'
+
+      	if(temp[i]['orderDeliveryStatus'] == '0')
+  		{
+  			orderStatus += orderStatus.length ? ' not-accepted' : 'not-accepted';
+  		}
 
       	liItem += "<tr class='"+orderStatus+"'>";
   		liItem += "<th>"

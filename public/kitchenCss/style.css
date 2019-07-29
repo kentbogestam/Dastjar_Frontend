@@ -79,6 +79,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c70711', end
 .table-stripe tbody#orderDetailContianer tr.new th, .table-stripe tbody#orderDetailContianer tr.new td {
     background-color: #EBF8A4 !important;
 }
+.table-stripe tbody#orderDetailContianer tr.not-accepted th, .table-stripe tbody#orderDetailContianer tr.not-accepted td {
+    background-color: #f2dede !important;
+}
 .table_size .ui-bar-d th{border-right: 1px solid rgba(0, 0, 0, 0.5); font-family: "MavenPro-Regular";font-size: .9em;text-align: center;vertical-align: middle;padding: .4em .4em;line-height: 1.3em;}
 .table_size tbody th,.table_size tbody td{ font-family: "MavenPro-Regular";font-size: .8em;   padding: .6em .3em;border-right: 1px solid #c2c2c2;border-bottom:1px solid #c2c2c2;text-align: center;vertical-align: middle;}
 .table_size a img{height: 25px;width: 25px;max-width: 100%;}

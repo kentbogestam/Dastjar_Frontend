@@ -140,6 +140,12 @@
 			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"],extra_prep_time);
 			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
 			          		var clsStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
+
+			          		if(temp[i]['orderDeliveryStatus'] == '0')
+					  		{
+					  			clsStatus += clsStatus.length ? ' not-accepted' : 'not-accepted';
+					  		}
+
 			          		liItem += "<tr class='"+clsStatus+"'>";
 			          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 			          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
@@ -296,6 +302,12 @@
 			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"],extra_prep_time);
 			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
 			          		var clsStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
+
+			          		if(temp[i]['orderDeliveryStatus'] == '0')
+					  		{
+					  			clsStatus += clsStatus.length ? ' not-accepted' : 'not-accepted';
+					  		}
+
 			          		liItem += "<tr class='"+clsStatus+"'>";
 			          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 			          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
