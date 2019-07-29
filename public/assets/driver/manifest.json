@@ -1,12 +1,12 @@
 {
-    "name": "Anar Driver App",
-    "short_name": "Anar Driver App",
+    "name": "Dastjar DS",
+    "short_name": "Dastjar DS",
     "theme_color": "#673ab6",
     "background_color": "#C00000",
     "display": "standalone",
     "scope": "/",
     "start_url": "/driver/login",
-    "description": "Anar delivery application",
+    "description": "Dastjar food delivery application",
     "icons": [
         {
             "src": "touch/Dastjar_128.png",
