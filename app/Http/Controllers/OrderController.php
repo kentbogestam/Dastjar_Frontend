@@ -1089,7 +1089,7 @@ class OrderController extends Controller
             'full_name' => 'required',
             'mobile'    => 'required|numeric',
             'street'    => 'required',
-            'zipcode'   => 'sometimes|numeric',
+            'zipcode'   => 'nullable|numeric',
             'city'      => 'required',
             'country'   => 'required',
         ]);
