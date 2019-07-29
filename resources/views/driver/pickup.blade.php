@@ -14,7 +14,7 @@
 						<th>{{ __('messages.address') }}</th>
 						<th>{{ __('messages.phone') }}</th>
 						<th>{{ __('messages.accept') }}</th>
-						<th>{{ __('messages.Pick up Time') }}</th>
+						<th>{{ __('messages.pickup') }}</th>
 					</tr>
 				</thead>
 				<tbody></tbody>
