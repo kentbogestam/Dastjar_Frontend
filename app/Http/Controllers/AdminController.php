@@ -1887,6 +1887,11 @@ class AdminController extends Controller
         $html = '';
         $driver = array();
 
+        // 
+        $orderDelivery = OrderDelivery::select(['status', 'driver_id'])
+            ->where(['order_id' => $orderId])
+            ->first();
+
         // Get store
         $store = Store::where('store_id' , Session::get('storeId'))->first();
         $address = $store->street.', '.$store->city.', '.$store->zip;
@@ -1927,12 +1932,18 @@ class AdminController extends Controller
                 {
                     foreach($driver as $row)
                     {
+                        $isChecked = '';
                         $class = $row->is_engaged == '1' ? 'engaged' : '';
+
+                        if($orderDelivery && $orderDelivery->driver_id == $row->id)
+                        {
+                            $isChecked = 'checked';
+                        }
                         
                         $html .= "<tr class='{$class}'>
                             <td>{$row->name}</td>
                             <td>".number_format($row->distance, 2)."</td>
-                            <td><div class='ui-radio'><input type='radio' name='driver_id' value='{$row->id}'></div></td>
+                            <td><div class='ui-radio'><input type='radio' name='driver_id' value='{$row->id}' ".$isChecked."></div></td>
                         </tr>";
                     }
                 }
@@ -1945,11 +1956,7 @@ class AdminController extends Controller
             }
         }
 
-        // $order = Order::select([''])
-
-        $orderDeliveryCnt = OrderDelivery::where(['order_id' => $orderId])->count();
-
-        return response()->json(['orderDeliveryCnt' => $orderDeliveryCnt, 'driver' => $driver, 'html' => $html]);
+        return response()->json(['orderDelivery' => $orderDelivery, 'driver' => $driver, 'html' => $html]);
     }
 
     /**
@@ -1987,7 +1994,22 @@ class AdminController extends Controller
 
         $status = 0;
 
-        if(OrderDelivery::create($data))
+        // Check if orderId already exist in OrderDelivery and then, assign/update driver to order
+        $orderDelivery = OrderDelivery::where('order_id', $data['order_id'])
+            ->first();
+        
+        if($orderDelivery)
+        {
+            $result = OrderDelivery::where('order_id', $data['order_id'])
+                ->update(['driver_id' => $data['driver_id']]);
+        }
+        else
+        {
+            $result = OrderDelivery::create($data);
+        }
+
+        // Send SMS on assign driver
+        if($result)
         {
             $status = 1;
 

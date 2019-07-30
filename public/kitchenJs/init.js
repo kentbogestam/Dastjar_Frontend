@@ -74,7 +74,7 @@ function popupOrderAssignDriver(orderId, itemId, isReady = true)
 		url: RESTAURANT_BASE_URL+'/get-available-driver-to-assign/'+orderId,
 		dataType: 'json',
 		success: function(response) {
-			if(!response.orderDeliveryCnt)
+			if(!response.orderDelivery || response.orderDelivery.status == 0)
 			{
 				if(response.driver.length)
 				{
