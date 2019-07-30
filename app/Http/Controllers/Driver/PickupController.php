@@ -110,7 +110,7 @@ class PickupController extends Controller
 		$status = 0;
 		$driverId = Auth::guard('driver')->user()->id;
 
-		if(OrderDelivery::where(['id' => $orderDeliveryId])->update(['status' => '1', 'accept_datetime' => date('Y-m-d H:i:s')]))
+		if(OrderDelivery::where(['id' => $orderDeliveryId, 'driver_id' => $driverId])->update(['status' => '1', 'accept_datetime' => date('Y-m-d H:i:s')]))
 		{
 			$status = 1;
 
