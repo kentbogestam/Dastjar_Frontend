@@ -206,13 +206,15 @@ class OrderController extends Controller
         // If accepted prepare string to show end-user
         if(Order::where(['order_id' => $orderId, 'order_accepted' => 1])->count())
         {
-            // Get order and associated store detail
-            $order = Order::select('orders.customer_order_id', 'orders.order_type', 'orders.deliver_date', 'orders.order_delivery_time', 'orders.order_accepted', 'orders.extra_prep_time', 'store.store_name', 'store.phone', 'store.extra_prep_time AS extra_prep_time_store', 'store.order_response')
-            ->join('store', 'store.store_id', '=', 'orders.store_id')
-            ->where('orders.order_id', $orderId)
-            ->first();
-
             $status = true;
+            
+            // Get order and associated store detail
+            $order = Order::from('orders AS O')
+                ->select(['O.order_id', 'O.customer_order_id', 'O.order_type', 'O.delivery_type', 'O.deliver_date', 'O.deliver_time', 'O.order_delivery_time', 'O.order_accepted', 'O.extra_prep_time', 'S.store_name', 'S.phone', 'S.extra_prep_time AS extra_prep_time_store', 'S.order_response', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
+                ->join('store AS S', 'S.store_id', '=', 'O.store_id')
+                ->leftJoin('customer_addresses AS CA', 'CA.id', '=', 'O.user_address_id')
+                ->where('O.order_id', $orderId)
+                ->first();
 
             //
             $responseStr .= '<p>'.__('messages.Thanks for your order').'</p>';
@@ -225,35 +227,73 @@ class OrderController extends Controller
                 $responseStr .= "<p><i class='fa fa-phone' aria-hidden='true'></i> <span>{$order->phone}</span></p>";
             }
 
-            $time = $order->order_delivery_time;
-            $time2 = $order->extra_prep_time_store;
-            $secs = strtotime($time2)-strtotime("00:00:00");
-            $result = date("H:i:s",strtotime($time)+$secs);
-
-            $responseStr .= '<p>';
-            if($order->order_type == 'eat_later')
+            if($order->delivery_type == 3)
             {
-                $responseStr .= __('messages.Your order will be ready on').' '.$order->deliver_date.' '.date_format(date_create($order->deliver_time), 'G:i');;
-            }
-            else
-            {
-                $responseStr .= __('messages.Your order will be ready in about').' ';
+                $times = array($order->order_delivery_time, $order->deliver_time, $order->extra_prep_time_store);
+                $time = Helper::addTimes($times);
 
-                if(!$order->order_response && $order->extra_prep_time)
+                // Get distance b/w origin and destination
+                $response = Helper::getDrivingDistance($order->store_address, $order->customer_address, 'address');
+                
+                if($response['status'] == 'OK')
                 {
-                    $responseStr .= $order->extra_prep_time.' mins';
+                    $distanceInSec = (int)$response['duration']['value'];
+                    $order['distanceInSec'] = $distanceInSec;
+                }
+                
+                // Add 'travelling time'
+                if($distanceInSec)
+                {
+                    $time = date("H:i", strtotime($time)+$distanceInSec);
+                }
+
+                $dateTime = date('Y-m-d H:i:s', strtotime($order->deliver_date.' '.$time));
+
+                $responseStr .= '<p>';
+                if($order->order_type == 'eat_later')
+                {
+                    $responseStr .= __('messages.deliveryDateTimeEatLater').' '.date('Y-m-d H:i:s', strtotime($dateTime));
                 }
                 else
                 {
-                    if(date_format(date_create($result), 'H')!="00")
-                    {
-                        $responseStr .= date_format(date_create($result), 'H').' hours ';
-                    }
-
-                    $responseStr .= date_format(date_create($result), 'i').' mins';
+                    $responseStr .= __('messages.deliveryDateTimeEatNow').' '.date('H:i', strtotime($dateTime));
                 }
+
+                $responseStr .= '<br><a href="'.url('track-order/'.$order->order_id).'" class="ui-btn ui-btn-inline track-order" data-ajax="false">'.__('messages.trackOrder').'</a>';
+                $responseStr .= '</p>';
             }
-            $responseStr .= '</p>';
+            else
+            {
+                $time = $order->order_delivery_time;
+                $time2 = $order->extra_prep_time_store;
+                $secs = strtotime($time2)-strtotime("00:00:00");
+                $result = date("H:i:s",strtotime($time)+$secs);
+
+                $responseStr .= '<p>';
+                if($order->order_type == 'eat_later')
+                {
+                    $responseStr .= __('messages.Your order will be ready on').' '.$order->deliver_date.' '.date_format(date_create($order->deliver_time), 'G:i');
+                }
+                else
+                {
+                    $responseStr .= __('messages.Your order will be ready in about').' ';
+
+                    if(!$order->order_response && $order->extra_prep_time)
+                    {
+                        $responseStr .= $order->extra_prep_time.' mins';
+                    }
+                    else
+                    {
+                        if(date_format(date_create($result), 'H')!="00")
+                        {
+                            $responseStr .= date_format(date_create($result), 'H').' hours ';
+                        }
+
+                        $responseStr .= date_format(date_create($result), 'i').' mins';
+                    }
+                }
+                $responseStr .= '</p>';
+            }
         }
 
         // Return response data
