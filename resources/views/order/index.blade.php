@@ -240,6 +240,11 @@
 		transform: translate(-50%);
 		z-index: 99999;
 	}
+
+	.track-order {
+		color: #EDEBE8 !important;
+		text-shadow: none !important;
+	}
 	</style>
 
 	@if(Request::server('HTTP_REFERER'))
@@ -405,7 +410,7 @@
 									{{-- {!! "<script type='text/javascript'>document.write(moment.utc('{$dateTime}').local().format('HH:mm'))</script>" !!} --}}
 									{{ date('H:i', strtotime($dateTime)) }}
 								@endif
-								<br><a href="{{ url('track-order/'.$order->order_id) }}" class="ui-btn ui-btn-inline" data-ajax="false">{{ __('messages.trackOrder') }}</a>
+								<br><a href="{{ url('track-order/'.$order->order_id) }}" class="ui-btn ui-btn-inline track-order" data-ajax="false">{{ __('messages.trackOrder') }}</a>
 							</p>
 						@else
 							<p>
