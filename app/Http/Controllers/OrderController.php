@@ -133,8 +133,19 @@ class OrderController extends Controller
                 ->where(['O.order_id' => $orderId])
                 ->first();
 
-            $markerArray[] = array('lat' => $driver->latitude, 'lng' => $driver->longitude);
-            // $markerArray[] = array('lat' => 41.878113, 'lng' => -87.629799); // chicago, il
+            if($driver)
+            {
+                $markerArray[] = array('lat' => $driver->latitude, 'lng' => $driver->longitude);
+                // $markerArray[] = array('lat' => 41.878113, 'lng' => -87.629799); // chicago, il
+            }
+            else
+            {
+                $store = Store::select(['latitude', 'longitude'])
+                    ->where('store_id', $order->store_id)
+                    ->first();
+                
+                $markerArray[] = array('lat' => $store->latitude, 'lng' => $store->longitude);
+            }
             
             // get order address
             $orderAddress = UserAddress::select(['street', 'city', 'zipcode', 'country'])
