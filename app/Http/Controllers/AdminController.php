@@ -529,10 +529,11 @@ class AdminController extends Controller
     
     public function kitchenOrders(){
         $reCompanyId = Session::get('storeId');
+        $deliveryDate = Carbon::now()->subDays(1)->toDateString();
 
         $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
             ->where(['order_details.store_id' => $reCompanyId])
-            ->where('delivery_date',Carbon::now()->toDateString())
+            ->where('delivery_date', '>=', $deliveryDate)
             ->where('order_details.order_ready', '0')
             ->whereNotIn('orders.online_paid', [2])
             ->join('product','product.product_id','=','order_details.product_id')
@@ -549,10 +550,11 @@ class AdminController extends Controller
 
     public function kitchenOrdersNew($id){
         $reCompanyId = Session::get('storeId');
+        $deliveryDate = Carbon::now()->subDays(1)->toDateString();
 
         $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
             ->where(['order_details.store_id' => $reCompanyId])
-            ->where('delivery_date',Carbon::now()->toDateString())
+            ->where('delivery_date', '>=', $deliveryDate)
             ->where('order_details.order_ready', '0')
             ->where('order_details.id', '>', $id)
             ->whereNotIn('orders.online_paid', [2])
@@ -2549,12 +2551,14 @@ class AdminController extends Controller
     function getNewOrdersDetailToSpeak()
     {
         $storeId = Session::get('storeId');
+        $deliveryDate = Carbon::now()->subDays(1)->toDateString();
 
         // 
         $orderDetail = OrderDetail::select('order_details.id', 'order_details.product_quality', 'order_details.product_description', 'order_details.is_speak', 'product.product_name')
             ->join('orders', 'orders.order_id', '=', 'order_details.order_id')
             ->join('product', 'product.product_id', '=', 'order_details.product_id')
-            ->where(['orders.store_id' => $storeId, 'user_type' => 'customer', 'check_deliveryDate' => Carbon::now()->toDateString(), 'orders.order_started' => '0', 'orders.paid' => '0'])
+            ->where(['orders.store_id' => $storeId, 'user_type' => 'customer', 'orders.order_started' => '0', 'orders.paid' => '0'])
+            ->where('check_deliveryDate', '>=', $deliveryDate)
             ->whereNotIn('orders.online_paid', [2])
             ->where('orders.cancel','!=', 1)
             ->get();

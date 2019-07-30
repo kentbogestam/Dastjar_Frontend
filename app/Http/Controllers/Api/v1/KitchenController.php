@@ -32,10 +32,12 @@ class KitchenController extends Controller
     }
 
    public function orderDetail($reCompanyId){
+        $deliveryDate = Carbon::now()->subDays(1)->toDateString();
+        
         $orderDetailscustomer = Order::select(['orders.*','customer.name as name', 'OCD.discount_id', 'PD.discount_value', DB::raw('COUNT(OCL.id) AS cntLoyaltyUsed'), 'OD.status AS orderDeliveryStatus', 'CA.street'])
             ->where(['orders.store_id' => $reCompanyId])
             ->where('user_type','=','customer')
-            ->where('check_deliveryDate',Carbon::now()->toDateString())
+            ->where('check_deliveryDate', '>=', $deliveryDate)
             ->where('orders.paid', '0')
             ->whereNotIn('orders.online_paid', [2])
             ->where('orders.cancel','!=', 1)
@@ -61,7 +63,8 @@ class KitchenController extends Controller
             $orderItems = OrderDetail::select('order_details.id', 'order_details.product_quality', 'order_details.product_description', 'product.product_name')
                 ->join('orders', 'orders.order_id', '=', 'order_details.order_id')
                 ->join('product', 'product.product_id', '=', 'order_details.product_id')
-                ->where(['orders.store_id' => $reCompanyId, 'user_type' => 'customer', 'check_deliveryDate' => Carbon::now()->toDateString(), 'orders.order_started' => '0', 'orders.paid' => '0'])
+                ->where(['orders.store_id' => $reCompanyId, 'user_type' => 'customer', 'orders.order_started' => '0', 'orders.paid' => '0'])
+                ->where('check_deliveryDate', '>=', $deliveryDate)
                 ->whereNotIn('orders.online_paid', [2])
                 ->where('orders.cancel','!=', 1)
                 ->get();
