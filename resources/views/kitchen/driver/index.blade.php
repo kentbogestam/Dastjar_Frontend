@@ -110,7 +110,7 @@
                                     <select name="phone_prefix" class="form-control" id="phone_prefix" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
                                         <option value="">Select</option>
                                         <option value="+91">+91</option>
-                                        <option value="+46">+46</option>
+                                        <option value="+46" selected="">+46</option>
                                     </select>
                                 </div>
                                 <div class="col-md-9">
