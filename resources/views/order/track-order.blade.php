@@ -42,7 +42,7 @@
 						"{{ url('images/cabs.png') }}",
 					),
 					end: new google.maps.MarkerImage(
-						"{{ url('images/blue-dot.png') }}",
+						"{{ url('images/delivery-destination.png') }}",
 					)
 				};
 
