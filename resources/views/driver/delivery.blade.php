@@ -64,8 +64,17 @@
 								paid = '<button type="button" class="btn btn-warning" onclick="orderPayManually('+response.orderDelivery[i]['order_id']+', this)">{{ __('messages.pay_manual') }}</button>';
 							}
 
+							let timeObj;
+
 							// let time = addTimes(response.orderDelivery[i]['order_delivery_time'], response.orderDelivery[i]['deliver_time'], response.orderDelivery[i]['extra_prep_time']);
-							let timeObj = new Array(response.orderDelivery[i]['order_delivery_time'], response.orderDelivery[i]['deliver_time'], response.orderDelivery[i]['extra_prep_time']);
+							if(response.orderDelivery[i]['order_response'])
+							{
+								timeObj = new Array(response.orderDelivery[i]['order_delivery_time'], response.orderDelivery[i]['deliver_time'], response.orderDelivery[i]['extra_prep_time']);
+							}
+							else
+							{
+								timeObj = new Array(response.orderDelivery[i]['deliver_time'], response.orderDelivery[i]['o_extra_prep_time']);
+							}
 							let time = addTimeByMoment(timeObj);
 							
 							getDistanceMatrix(response.orderDelivery[i]['store_address'], response.orderDelivery[i]['customer_address'])

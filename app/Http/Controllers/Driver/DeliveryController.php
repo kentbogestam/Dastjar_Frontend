@@ -58,7 +58,7 @@ class DeliveryController extends Controller
 
 		// Get deliver order list
 		$orderDelivery = OrderDelivery::from('order_delivery AS OD')
-			->select(['OD.id', 'O.order_id', 'O.customer_order_id', 'O.online_paid', 'O.deliver_time', 'O.order_delivery_time', 'O.paid', 'CA.full_name', 'CA.mobile', 'CA.address', 'CA.street', 'CA.city', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), 'S.store_name', 'S.phone', 'S.extra_prep_time', 'S.buffer_time', DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
+			->select(['OD.id', 'O.order_id', 'O.customer_order_id', 'O.online_paid', 'O.deliver_time', 'O.order_delivery_time', 'O.order_response', 'O.extra_prep_time AS o_extra_prep_time', 'O.paid', 'CA.full_name', 'CA.mobile', 'CA.address', 'CA.street', 'CA.city', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), 'S.store_name', 'S.phone', 'S.extra_prep_time', 'S.buffer_time', DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
 			->join('orders AS O', 'O.order_id', '=', 'OD.order_id')
 			->join('customer_addresses AS CA', 'CA.id', '=', 'O.user_address_id')
 			->join('store AS S', 'S.store_id', '=', 'O.store_id')

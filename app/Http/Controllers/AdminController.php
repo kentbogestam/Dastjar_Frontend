@@ -531,7 +531,7 @@ class AdminController extends Controller
         $reCompanyId = Session::get('storeId');
         $deliveryDate = Carbon::now()->subDays(1)->toDateString();
 
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time','orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
             ->where(['order_details.store_id' => $reCompanyId])
             ->where('delivery_date', '>=', $deliveryDate)
             ->where('order_details.order_ready', '0')
@@ -642,6 +642,7 @@ class AdminController extends Controller
 
                         if($storeDetail->order_response == 0 && $orderType == 'eat_now')
                         {
+                            $order->order_response = 0;
                             $order->order_accepted = 0;
                         }
 
@@ -649,7 +650,7 @@ class AdminController extends Controller
                         $orders = Order::select('*')->whereUserId($customer_id)->orderBy('order_id', 'DESC')->first();
                         $orderId = $orders->order_id;
                         $i = $i+1;
-                    }else{}
+                    }
 
                     $i = 1;
                     if($max_time < $productTime->preparation_Time){
@@ -1866,9 +1867,12 @@ class AdminController extends Controller
     {
         $status = 0;
 
+        $minutes = $request->extra_prep_time;
+        $extra_prep_time = intdiv($minutes, 60).':'. ($minutes % 60).':00';
+
         // Update extra preparation time
         $result = Order::where('order_id', $request->order_id)
-            ->update(['extra_prep_time' => $request->extra_prep_time]);
+            ->update(['extra_prep_time' => $extra_prep_time]);
 
         if($result)
         {

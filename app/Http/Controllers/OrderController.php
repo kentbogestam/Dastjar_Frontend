@@ -53,7 +53,7 @@ class OrderController extends Controller
         /*$order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();*/
 
         $order = Order::from('orders AS O')
-            ->select(['O.order_id', 'O.customer_order_id', 'O.store_id', 'O.user_id', 'O.order_type', 'O.delivery_type', 'O.deliver_date', 'O.deliver_time', 'O.order_total', 'O.delivery_charge', 'O.final_order_total', 'O.order_delivery_time', 'O.order_accepted', 'O.extra_prep_time','S.store_name','company.currencies', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
+            ->select(['O.order_id', 'O.customer_order_id', 'O.store_id', 'O.user_id', 'O.order_type', 'O.delivery_type', 'O.deliver_date', 'O.deliver_time', 'O.order_total', 'O.delivery_charge', 'O.final_order_total', 'O.order_delivery_time', 'O.order_response', 'O.order_accepted', 'O.extra_prep_time','S.store_name','company.currencies', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
             ->join('store AS S','O.store_id', '=', 'S.store_id')
             ->join('company','O.company_id', '=', 'company.company_id')
             ->leftJoin('customer_addresses AS CA', 'CA.id', '=', 'O.user_address_id')
@@ -110,6 +110,159 @@ class OrderController extends Controller
         // dd(Session::all());
 
         return view('order.index', compact('order','orderDetails', 'orderDiscount','storeDetail','user'));
+    }
+
+    /**
+     * Check if order accepted, return the text along with order number to show end-user
+     * @param  [type] $orderId [description]
+     * @return [type]          [description]
+     */
+    function checkIfOrderAccepted($orderId)
+    {
+        $status = false; $responseStr ='';
+
+        // If accepted prepare string to show end-user
+        if(Order::where(['order_id' => $orderId, 'order_accepted' => 1])->count())
+        {
+            $status = true;
+            
+            // Get order and associated store detail
+            $order = Order::from('orders AS O')
+                ->select(['O.order_id', 'O.customer_order_id', 'O.order_type', 'O.delivery_type', 'O.deliver_date', 'O.deliver_time', 'O.order_delivery_time', 'O.order_response', 'O.order_accepted', 'O.extra_prep_time', 'S.store_name', 'S.phone', 'S.extra_prep_time AS extra_prep_time_store', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
+                ->join('store AS S', 'S.store_id', '=', 'O.store_id')
+                ->leftJoin('customer_addresses AS CA', 'CA.id', '=', 'O.user_address_id')
+                ->where('O.order_id', $orderId)
+                ->first();
+
+            //
+            $responseStr .= '<p>'.__('messages.Thanks for your order').'</p>';
+            $responseStr .= '<p>'.__('messages.Order Number').'</p>';
+            $responseStr .= "<p class='large-text'>{$order->customer_order_id}</p>";
+            $responseStr .= "<p>({$order->store_name})</p>";
+
+            if( is_numeric($order->phone) )
+            {
+                $responseStr .= "<p><i class='fa fa-phone' aria-hidden='true'></i> <span>{$order->phone}</span></p>";
+            }
+
+            if($order->delivery_type == 3)
+            {
+                if($order->order_response)
+                {
+                    $times = array($order->order_delivery_time, $order->deliver_time, $order->extra_prep_time_store);
+                }
+                else
+                {
+                    $times = array($order->deliver_time, $order->extra_prep_time);
+                }
+
+                $time = Helper::addTimes($times);
+
+                // Get distance b/w origin and destination
+                $response = Helper::getDrivingDistance($order->store_address, $order->customer_address, 'address');
+                
+                if($response['status'] == 'OK')
+                {
+                    $distanceInSec = (int)$response['duration']['value'];
+                    $order['distanceInSec'] = $distanceInSec;
+                }
+                
+                // Add 'travelling time'
+                if($distanceInSec)
+                {
+                    $time = date("H:i", strtotime($time)+$distanceInSec);
+                }
+
+                $dateTime = date('Y-m-d H:i:s', strtotime($order->deliver_date.' '.$time));
+
+                $responseStr .= '<p>';
+                if($order->order_type == 'eat_later')
+                {
+                    $responseStr .= __('messages.deliveryDateTimeEatLater').' '.date('Y-m-d H:i:s', strtotime($dateTime));
+                }
+                else
+                {
+                    $responseStr .= __('messages.deliveryDateTimeEatNow').' '.date('H:i', strtotime($dateTime));
+                }
+
+                $responseStr .= '<br><a href="'.url('track-order/'.$order->order_id).'" class="ui-btn ui-btn-inline track-order" data-ajax="false">'.__('messages.trackOrder').'</a>';
+                $responseStr .= '</p>';
+            }
+            else
+            {
+                if($order->order_response)
+                {
+                    $time = $order->order_delivery_time;
+                    $time2 = $order->extra_prep_time_store;
+                }
+                else
+                {
+                    $time = $order->deliver_time;
+                    $time2 = $order->extra_prep_time;
+                }
+                
+                $secs = strtotime($time2)-strtotime("00:00:00");
+                $result = date("H:i:s",strtotime($time)+$secs);
+
+                $responseStr .= '<p>';
+                if($order->order_type == 'eat_later')
+                {
+                    $responseStr .= __('messages.Your order will be ready on').' '.$order->deliver_date.' '.date_format(date_create($order->deliver_time), 'G:i');
+                }
+                else
+                {
+                    $responseStr .= __('messages.Your order will be ready in about').' ';
+
+                    if($order->order_response) // Automatic
+                    {
+                        if(date_format(date_create($result), 'H')!="00")
+                        {
+                            $responseStr .= date_format(date_create($result), 'H').' hours ';
+                        }
+
+                        $responseStr .= date_format(date_create($result), 'i').' mins';
+                    }
+                    else // Manual
+                    {
+                        $responseStr .= date_format(date_create($order->extra_prep_time), 'i').' mins';
+                    }
+                }
+                $responseStr .= '</p>';
+            }
+        }
+
+        // Return response data
+        return response()->json(['status' => $status, 'responseStr' => $responseStr]);
+    }
+
+    /**
+     * Check if order is ready from session 'recentOrderList'
+     * @return [json]
+     */
+    function checkIfOrderReady()
+    {
+        $status = false; $order = null;
+
+        $recentOrderList = Session::get('recentOrderList');
+
+        if( !empty($recentOrderList) )
+        {
+            $orderList = array_keys($recentOrderList);
+            
+            $order = Order::select('order_id', 'customer_order_id')
+                ->where(['user_id' => Auth::id(), 'order_ready' => 1])
+                ->whereIn('order_id', $orderList)
+                ->orderBy('order_id')
+                ->first();
+
+            if($order)
+            {
+                $status = true;
+            }
+        }
+
+        // Return response data
+        return response()->json(['status' => $status, 'order' => $order]);
     }
 
     /**
@@ -192,142 +345,6 @@ class OrderController extends Controller
 
         // array('lat' => $driver->latitude, 'lng' => $driver->longitude);
         return response()->json(['status' => 1, 'driver' => $driver]);
-    }
-
-    /**
-     * Check if order accepted, return the text along with order number to show end-user
-     * @param  [type] $orderId [description]
-     * @return [type]          [description]
-     */
-    function checkIfOrderAccepted($orderId)
-    {
-        $status = false; $responseStr ='';
-
-        // If accepted prepare string to show end-user
-        if(Order::where(['order_id' => $orderId, 'order_accepted' => 1])->count())
-        {
-            $status = true;
-            
-            // Get order and associated store detail
-            $order = Order::from('orders AS O')
-                ->select(['O.order_id', 'O.customer_order_id', 'O.order_type', 'O.delivery_type', 'O.deliver_date', 'O.deliver_time', 'O.order_delivery_time', 'O.order_accepted', 'O.extra_prep_time', 'S.store_name', 'S.phone', 'S.extra_prep_time AS extra_prep_time_store', 'S.order_response', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
-                ->join('store AS S', 'S.store_id', '=', 'O.store_id')
-                ->leftJoin('customer_addresses AS CA', 'CA.id', '=', 'O.user_address_id')
-                ->where('O.order_id', $orderId)
-                ->first();
-
-            //
-            $responseStr .= '<p>'.__('messages.Thanks for your order').'</p>';
-            $responseStr .= '<p>'.__('messages.Order Number').'</p>';
-            $responseStr .= "<p class='large-text'>{$order->customer_order_id}</p>";
-            $responseStr .= "<p>({$order->store_name})</p>";
-
-            if( is_numeric($order->phone) )
-            {
-                $responseStr .= "<p><i class='fa fa-phone' aria-hidden='true'></i> <span>{$order->phone}</span></p>";
-            }
-
-            if($order->delivery_type == 3)
-            {
-                $times = array($order->order_delivery_time, $order->deliver_time, $order->extra_prep_time_store);
-                $time = Helper::addTimes($times);
-
-                // Get distance b/w origin and destination
-                $response = Helper::getDrivingDistance($order->store_address, $order->customer_address, 'address');
-                
-                if($response['status'] == 'OK')
-                {
-                    $distanceInSec = (int)$response['duration']['value'];
-                    $order['distanceInSec'] = $distanceInSec;
-                }
-                
-                // Add 'travelling time'
-                if($distanceInSec)
-                {
-                    $time = date("H:i", strtotime($time)+$distanceInSec);
-                }
-
-                $dateTime = date('Y-m-d H:i:s', strtotime($order->deliver_date.' '.$time));
-
-                $responseStr .= '<p>';
-                if($order->order_type == 'eat_later')
-                {
-                    $responseStr .= __('messages.deliveryDateTimeEatLater').' '.date('Y-m-d H:i:s', strtotime($dateTime));
-                }
-                else
-                {
-                    $responseStr .= __('messages.deliveryDateTimeEatNow').' '.date('H:i', strtotime($dateTime));
-                }
-
-                $responseStr .= '<br><a href="'.url('track-order/'.$order->order_id).'" class="ui-btn ui-btn-inline track-order" data-ajax="false">'.__('messages.trackOrder').'</a>';
-                $responseStr .= '</p>';
-            }
-            else
-            {
-                $time = $order->order_delivery_time;
-                $time2 = $order->extra_prep_time_store;
-                $secs = strtotime($time2)-strtotime("00:00:00");
-                $result = date("H:i:s",strtotime($time)+$secs);
-
-                $responseStr .= '<p>';
-                if($order->order_type == 'eat_later')
-                {
-                    $responseStr .= __('messages.Your order will be ready on').' '.$order->deliver_date.' '.date_format(date_create($order->deliver_time), 'G:i');
-                }
-                else
-                {
-                    $responseStr .= __('messages.Your order will be ready in about').' ';
-
-                    if(!$order->order_response && $order->extra_prep_time)
-                    {
-                        $responseStr .= $order->extra_prep_time.' mins';
-                    }
-                    else
-                    {
-                        if(date_format(date_create($result), 'H')!="00")
-                        {
-                            $responseStr .= date_format(date_create($result), 'H').' hours ';
-                        }
-
-                        $responseStr .= date_format(date_create($result), 'i').' mins';
-                    }
-                }
-                $responseStr .= '</p>';
-            }
-        }
-
-        // Return response data
-        return response()->json(['status' => $status, 'responseStr' => $responseStr]);
-    }
-
-    /**
-     * Check if order is ready from session 'recentOrderList'
-     * @return [json]
-     */
-    function checkIfOrderReady()
-    {
-        $status = false; $order = null;
-
-        $recentOrderList = Session::get('recentOrderList');
-
-        if( !empty($recentOrderList) )
-        {
-            $orderList = array_keys($recentOrderList);
-            
-            $order = Order::select('order_id', 'customer_order_id')
-                ->where(['user_id' => Auth::id(), 'order_ready' => 1])
-                ->whereIn('order_id', $orderList)
-                ->orderBy('order_id')
-                ->first();
-
-            if($order)
-            {
-                $status = true;
-            }
-        }
-
-        // Return response data
-        return response()->json(['status' => $status, 'order' => $order]);
     }
 
     public function random_num($size) {
@@ -559,6 +576,7 @@ class OrderController extends Controller
 
                         if($storeDetail->order_response == 0 && $orderType == 'eat_now')
                         {
+                            $order->order_response = 0;
                             $order->order_accepted = 0;
                         }
 

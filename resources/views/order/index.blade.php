@@ -388,7 +388,15 @@
 
 						@if($order->delivery_type == 3)
 							@php
-							$times = array($order->order_delivery_time, $order->deliver_time, $storeDetail->extra_prep_time);
+							if($order->order_response)
+							{
+								$times = array($order->order_delivery_time, $order->deliver_time, $storeDetail->extra_prep_time);
+							}
+							else
+							{
+								$times = array($order->deliver_time, $order->extra_prep_time);
+							}
+							
 							$time = Helper::addTimes($times);
 
 							// Add 'travelling time'
@@ -403,11 +411,9 @@
 							<p>
 								@if($order->order_type == 'eat_later')
 									{{ __('messages.deliveryDateTimeEatLater') }}
-									{{-- {!! "<script type='text/javascript'>document.write(moment.utc('{$dateTime}').local().format('YYYY/MM/DD HH:mm'))</script>" !!} --}}
 									{{ date('Y-m-d H:i:s', strtotime($dateTime)) }}
 								@else
 									{{ __('messages.deliveryDateTimeEatNow') }}
-									{{-- {!! "<script type='text/javascript'>document.write(moment.utc('{$dateTime}').local().format('HH:mm'))</script>" !!} --}}
 									{{ date('H:i', strtotime($dateTime)) }}
 								@endif
 								<br><a href="{{ url('track-order/'.$order->order_id) }}" class="ui-btn ui-btn-inline track-order" data-ajax="false">{{ __('messages.trackOrder') }}</a>
@@ -415,8 +421,17 @@
 						@else
 							<p>
 								@php
-								$time = $order->order_delivery_time;
-								$time2 = $storeDetail->extra_prep_time;
+								if($order->order_response)
+								{
+									$time = $order->order_delivery_time;
+									$time2 = $storeDetail->extra_prep_time;
+								}
+								else
+								{
+									$time = $order->deliver_time;
+									$time2 = $order->extra_prep_time;
+								}
+								
 								$secs = strtotime($time2)-strtotime("00:00:00");
 								$result = date("H:i:s",strtotime($time)+$secs);
 								@endphp
@@ -427,13 +442,13 @@
 									{{date_format(date_create($order->deliver_time), 'G:i')}} 
 								@else
 									{{ __('messages.Your order will be ready in about') }}
-									@if(!$storeDetail->order_response && $order->extra_prep_time)
-										{{ $order->extra_prep_time }} mins
-									@else
+									@if($order->order_response) {{-- Automatic --}}
 										@if(date_format(date_create($result), 'H')!="00")
 											{{date_format(date_create($result), 'H')}} hours 						
 										@endif
 										{{date_format(date_create($result), 'i')}} mins
+									@else {{-- Manual --}}
+										{{ date_format(date_create($order->extra_prep_time), 'i') }} mins
 									@endif
 								@endif
 							</p>

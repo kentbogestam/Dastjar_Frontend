@@ -137,7 +137,15 @@
 				      	lastOrderId = temp[i]["id"];
 				      	(function (i) {
 						    setTimeout(function () {
-			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"],extra_prep_time);
+			          		if(temp[i]['order_response'])
+			          		{
+			          			var time = addTimes(temp[i]['order_delivery_time'], temp[i]['deliver_time'], extra_prep_time);
+			          		}
+			          		else
+			          		{
+			          			var time = addTimes(temp[i]['deliver_time'], temp[i]['extra_prep_time']);
+			          		}
+			          		
 			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
 			          		var clsStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
 
@@ -186,11 +194,14 @@
 			          		if(temp[i]["order_started"] == 0){
 			          			ids = temp[i]['id'];
 
-			          			@if($store->order_response)
+			          			if(temp[i]['order_response'])
+			          			{
 			          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='orderReadyStarted("+ids+", this)'>";
-			          			@else
+			          			}
+			          			else
+			          			{
 			          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='isManualPrepTimeForOrder("+temp[i]['order_id']+", "+ids+", this)'>";
-			          			@endif
+			          			}
 
 				          		liItem += "<td >"
 				          		liItem += aString
@@ -298,8 +309,15 @@
 				      	
 				      	(function (i) {
 						    setTimeout(function () {
-						    // console.log('iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'+i);
-			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"],extra_prep_time);
+						    if(temp[i]['order_response'])
+			          		{
+			          			var time = addTimes(temp[i]['order_delivery_time'], temp[i]['deliver_time'], extra_prep_time);
+			          		}
+			          		else
+			          		{
+			          			var time = addTimes(temp[i]['deliver_time'], temp[i]['extra_prep_time']);
+			          		}
+
 			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
 			          		var clsStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
 
@@ -345,11 +363,14 @@
 			          		if(temp[i]["order_started"] == 0){
 				          		ids = temp[i]['id'];
 
-				          		@if($store->order_response)
+				          		if(temp[i]['order_response'])
+				          		{
 			          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='orderReadyStarted("+ids+", this)'>";
-			          			@else
+				          		}
+			          			else
+			          			{
 			          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='isManualPrepTimeForOrder("+temp[i]['order_id']+", "+ids+", this)'>";
-			          			@endif
+			          			}
 
 				          		liItem += "<td >"
 				          		liItem += aString
@@ -492,7 +513,15 @@
 	      	// console.log('iiiiiiiiissssssssssssssssss'+i);
 	      	 (function (i) {
 			    setTimeout(function () {
-			      	var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
+			    	if(list[i]['order_response'])
+	          		{
+	          			var time = addTimes(list[i]['order_delivery_time'], list[i]['deliver_time']);
+	          		}
+	          		else
+	          		{
+	          			var time = addTimes(list[i]['deliver_time'], list[i]['extra_prep_time']);
+	          		}
+			      	// var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
 			      	var timeOrder = addTimes("00:00::",list[i]["deliver_time"]);
 		      		liItem += "<tr>";
 		      		liItem += "<th>"+list[i]["customer_order_id"]+"</th>";
@@ -529,11 +558,14 @@
 		      		if(list[i]["order_started"] == 0){
 		      			ids = list[i]['id'];
 
-		      			@if($store->order_response)
+		      			if(list[i]['order_response'])
+		      			{
 	          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='orderReadyStarted("+ids+", this)'>";
-	          			@else
+		      			}
+	          			else
+	          			{
 	          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='isManualPrepTimeForOrder("+temp[i]['order_id']+", "+ids+", this)'>";
-	          			@endif
+	          			}
 
 		          		liItem += "<td >"
 		          		liItem += aString

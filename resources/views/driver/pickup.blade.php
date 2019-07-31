@@ -55,7 +55,15 @@
 						for(var i = 0; i < response.orderDelivery.length; i++)
 						{
 							customer_order_id = response.orderDelivery[i]['customer_order_id'];
-							pickupTime = addTimes(response.orderDelivery[i]['deliver_time'], response.orderDelivery[i]['order_delivery_time'], response.orderDelivery[i]['extra_prep_time']);
+
+							if(response.orderDelivery[i]['order_response'])
+							{
+								pickupTime = addTimes(response.orderDelivery[i]['deliver_time'], response.orderDelivery[i]['order_delivery_time'], response.orderDelivery[i]['extra_prep_time']);
+							}
+							else
+							{
+								pickupTime = addTimes(response.orderDelivery[i]['deliver_time'], response.orderDelivery[i]['o_extra_prep_time']);
+							}
 							
 							html += "<tr>"+
 								'<td><a href="javascript:getOrderDetail(\''+customer_order_id+'\')" class="link">'+customer_order_id+'</a></td>'+

@@ -75,207 +75,6 @@
 	var speakOrderItemList = [];
 
 	$(function(){
-		/*$.get("{{url('api/v1/kitchen/order-detail')}}/" + storeId,
-		function(returnedData){
-			// console.log(returnedData["data"]);
-			var count = 18;
-			var temp = returnedData["data"];
-			var orderItems = returnedData['orderItems'];
-			extra_prep_time = returnedData["extra_prep_time"];
-          	list = temp;
-          	// console.log(temp.length);
-          	var liItem = "";
-          	var aString = '';
-          	totallength = temp.length;
-          	if(temp.length != 0){
-          		totalCount = temp.length;
-
-	          	if(temp.length < count){
-	          		count = temp.length
-	          	}
-
-	          	totalCount -= 10;
-	          	// console.log();
-	          	for (var i=0;i<count;i++){
-	          		if(i>=totallength){
-			      		break;
-			      	}
-	          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"],extra_prep_time);
-	          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
-	          		var orderIdSpecific = temp[i]["order_id"] ;
-	          		var orderStatus = temp[i]["order_started"] == 0 ? 'new' : ''; // Add class 'new' until order 'started'
-
-	          		liItem += "<tr class='"+orderStatus+"'>";
-	          		liItem += "<th>";
-	          		liItem += "<a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>";
-	          		liItem += temp[i]["customer_order_id"]; 
-	          		liItem += "</a></th>";
-
-	          		if (temp[i]["name"] == null){
-	          			temp[i]["name"] = "";
-	          		}
-
-	          		liItem += "<td>"+temp[i]["name"]+"</td>";
-	          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
-
-	          		// Add additional column if 'kitchen' module not subscribed
-	          		@if( !Session::has('subscribedPlans.kitchen') )
-	          			// Order Started
-	          			if(temp[i]["order_started"] == 0){
-		          			ids = temp[i]['order_id'];
-
-		          			@if($storedetails->order_response)
-		          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='startOrder("+ids+", this)'>";
-		          			@else
-		          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='isManualPrepTimeForOrder("+ids+", false, this)'>";
-		          			@endif
-
-			          		liItem += "<td>"
-			          		liItem += aString
-			          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/subs_sign.png')}}'>"
-			          		liItem +="</a></td>";
-		          		}else{
-		          			liItem += "<td>"
-			          		liItem += "<a>"
-			          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
-			          		liItem +="</a></td>";
-		          		}
-
-		          		// Order Ready
-		          		if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 0){
-		          			ids = temp[i]['order_id'];
-			          		liItem += "<td>"
-			          		liItem += "<a data-ajax='false' href='javascript:void(0)' >"
-			          		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
-			          		liItem +="</a></td>";
-			          	}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
-			          		liItem += "<td>"
-			          		liItem += "<a data-ajax='false' href="+urlReadyOrder+"/"+temp[i]['order_id']+">"
-			          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
-			          		liItem +="</a></td>";
-
-			          	}else{
-			          		liItem += "<td>"
-			          		liItem += "<a>"
-			          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
-			          		liItem +="</a></td>";
-		          		}
-		          	@else
-		          		liItem += "<td>"
-				  		if(list[i]["order_ready"] == 0){
-		          			liItem += "<a data-ajax='false'>"
-				  				liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
-				  		}else{
-		          			liItem += "<a data-ajax='false'>"
-				  				liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
-				  		}
-		          		liItem +="</a></td>";
-	          		@endif
-	          		
-	          		liItem += "<td>"
-	          		if(list[i]["paid"] == 0 && list[i]["order_ready"] == 0){
-		          		liItem += "<a data-ajax='false' >"
-		          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
-	          		}else if(list[i]["paid"] == 0 && list[i]["order_ready"] == 1){
-		          		liItem += "<a data-ajax='false' href="+urldeliver+"/"+list[i]['customer_order_id']+" >"
-		          		liItem += "<img src='{{asset('kitchenImages/yellow_right_sign.png')}}'>"
-	          		}
-	          		else{
-		          		liItem += "<a data-ajax='false'>"
-		          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
-	          		}
-	          		liItem +="</a></td>";
-	          		liItem += "<td>"
-	          		if(list[i]["paid"] == 1 || list[i]["online_paid"] == 1 || list[i]["online_paid"] == 3){
-	          			liItem += "<input class='yes_check'  type='button' data-role='none' value='yes' name=''>"
-	          		}else if(list[i]["online_paid"] == 0){
-	          			liItem += "<input class='no_check' type='button' value='Pay Manual' data-role='none' onclick='orderPayManually("+list[i]["order_id"]+", this);'>";
-
-	          			// Check if discount applied on order
-	          			if( list[i]["discount_id"] )
-	          			{
-	          				discountAmount = (list[i]["order_total"] * list[i]['discount_value']) / 100;
-	          				liItem += '<div class="show-total"><strong><span class="discounted-total">'+(list[i]["order_total"] - discountAmount).toFixed(2)+' (SEK)</span></strong></div>';
-	          			}
-	          		}else{
-	          			liItem += "<input class='no_check'  type='button' data-role='none' value='no' name=''>"
-	          		}
-
-	          		// If order belongs to 'Loyalty'
-	          		if(list[i]['cntLoyaltyUsed'])
-	          		{
-	          			liItem += '<div class="show-total"><strong>Loyalty</strong></div>';
-	          		}
-
-	          		liItem += "<td>"+time+"</td>";
-
-	          		var deliveryType = '';
-	          		if( temp[i]['delivery_type'] == 1 )
-	          		{
-	          			deliveryType = '{{ __('messages.deliveryOptionDineIn') }}';
-	          		}
-	          		else if( temp[i]['delivery_type'] == 2 )
-	          		{
-	          			deliveryType = '{{ __('messages.deliveryOptionTakeAway') }}';
-	          		}
-	          		else if( temp[i]['delivery_type'] == 3 )
-	          		{
-	          			deliveryType = '{{ __('messages.deliveryOptionHomeDelivery') }}';
-	          		}
-
-	          		liItem += "<td>"+deliveryType+"</td>";
-
-	          		liItem += "</tr>";
-	          	}
-
-	          	// Speech text
-	          	@if( !Session::has('subscribedPlans.kitchen') )
-	          		if(orderItems.length)
-	          		{
-	          			var message = [];
-
-	          			for(var j = 0; j < orderItems.length; j++)
-	          			{
-	          				speakOrderItemList.push(orderItems[j]['id']);
-
-	          				@if($textSpeech)
-	          					if(orderItems[j]["product_description"] != null){
-			          				message[j] = orderItems[j]["product_quality"]+orderItems[j]["product_name"]+orderItems[j]["product_description"];
-			          			}else{
-			          				message[j] = orderItems[j]["product_quality"]+orderItems[j]["product_name"];
-			          			}
-
-			          			// speakText(message)
-			          		@else
-			          			speakText("{{ __('messages.kitchenTextToSpeechDefault') }}", 1);
-	          				@endif
-	          			}
-
-	          			// Loop speech
-	          			if(message.length)
-	          			{
-	          				var k = 0;
-		          			speakTextInterval = setInterval(function() {
-		          				speakText(message[k]);
-		          				k++;
-
-		          				if(k >= j)
-		          				{
-		          					clearInterval(speakTextInterval);
-		          				}
-		          			}, 4000);
-	          			}
-	          		}
-	          	@endif
-          	}else{
-          		liItem += "<div class='table-content'>";
-	        	liItem += "<p>";
-	        	//liItem += '{{ __('messages.Order is not available.') }}';
-	        	liItem += "</p>";
-	        	liItem += "</div>";
-          	}
-          	$("#orderDetailContianer").append(liItem);
-		}); */
 		ajaxCall();
 	});
 
@@ -347,7 +146,16 @@
 	          		if(i>totallength){
 			      		break;
 			      	}
-	          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"],extra_prep_time);
+
+			      	if(temp[i]['order_response'])
+			      	{
+			      		var time = addTimes(temp[i]['order_delivery_time'],temp[i]['deliver_time'],extra_prep_time);
+			      	}
+			      	else
+			      	{
+			      		var time = addTimes(temp[i]['deliver_time'], temp[i]['extra_prep_time']);
+			      	}
+
 	          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
 	          		var orderIdSpecific = temp[i]["order_id"] ;
 	          		var orderStatus = temp[i]["order_started"] == 0 ? 'new' : ''; // Add class 'new' until order 'started'
@@ -376,11 +184,14 @@
 	          			if(temp[i]["order_started"] == 0){
 		          			ids = temp[i]['order_id'];
 
-		          			@if($storedetails->order_response)
+		          			if(temp[i]['order_response'])
+		          			{
 		          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='startOrder("+ids+", this)'>";
-		          			@else
+		          			}
+		          			else
+		          			{
 		          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='isManualPrepTimeForOrder("+ids+", false, this)'>";
-		          			@endif
+		          			}
 
 			          		liItem += "<td>"
 			          		liItem += aString
@@ -602,12 +413,21 @@
       	if(countCheck>limit){
       		break;
       	}
-      	var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
+      	if(list[i]['order_response'])
+      	{
+      		var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
+      	}
+      	else
+      	{
+      		var time = addTimes(list[i]["deliver_time"], list[i]['extra_prep_time']);
+      	}
+
+      	// var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
       	var timeOrder = addTimes("00:00:00",list[i]["deliver_time"]);
       	var orderIdSpecific = list[i]["order_id"] ;
-      	var orderStatus = temp[i]["order_started"] == 0 ? 'new' : ''; // Add class 'new' until order 'started'
+      	var orderStatus = list[i]["order_started"] == 0 ? 'new' : ''; // Add class 'new' until order 'started'
 
-      	if(temp[i]['orderDeliveryStatus'] == '0')
+      	if(list[i]['orderDeliveryStatus'] == '0')
   		{
   			orderStatus += orderStatus.length ? ' not-accepted' : 'not-accepted';
   		}
@@ -615,7 +435,7 @@
       	liItem += "<tr class='"+orderStatus+"'>";
   		liItem += "<th>"
   		liItem += "<a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>"
-  		liItem += temp[i]["customer_order_id"]
+  		liItem += list[i]["customer_order_id"]
   		liItem += "</a></th>";
   		liItem += "<td>"+list[i]["name"]+"</td>";
   		liItem += "<td>"+list[i]["deliver_date"]+' '+timeOrder+"</td>";
@@ -623,7 +443,7 @@
   		// Add additional column if 'kitchen' module not subscribed
   		@if( !Session::has('subscribedPlans.kitchen') )
   			// Order Started
-  			if(temp[i]["order_started"] == 0){
+  			if(list[i]["order_started"] == 0){
   				// Speech text
   				@if($textSpeech)
       				speakText("{{ __('messages.kitchenTextToSpeechDefault') }}");
@@ -632,13 +452,16 @@
       			@endif
 
   				//
-      			ids = temp[i]['order_id'];
+      			ids = list[i]['order_id'];
 
-      			@if($storedetails->order_response)
+      			if(list[i]['order_response'])
+      			{
 	  				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='startOrder("+ids+", this)'>";
-	  			@else
+      			}
+	  			else
+	  			{
 	  				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='isManualPrepTimeForOrder("+ids+", false, this)'>";
-	  			@endif
+	  			}
 
           		liItem += "<td>"
           		liItem += aString
@@ -652,20 +475,20 @@
       		}
 
       		// Order Ready
-      		if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 0){
-      			ids = temp[i]['order_id'];
+      		if(list[i]["order_ready"] == 0 && list[i]["order_started"] == 0){
+      			ids = list[i]['order_id'];
           		liItem += "<td>"
           		liItem += "<a data-ajax='false' href='javascript:void(0)' >"
           		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
           		liItem +="</a></td>";
-          	}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
-          		if(temp[i]["delivery_type"] == 3)
+          	}else if(list[i]["order_ready"] == 0 && list[i]["order_started"] == 1){
+          		if(list[i]["delivery_type"] == 3)
           		{
-      				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", false)'>";
+      				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+list[i]['order_id']+", false)'>";
           		}
       			else
       			{
-      				aString = "<a data-ajax='false' href="+urlReadyOrder+"/"+temp[i]['order_id']+">";
+      				aString = "<a data-ajax='false' href="+urlReadyOrder+"/"+list[i]['order_id']+">";
       			}
 
           		liItem += "<td>"
@@ -728,19 +551,19 @@
   		liItem += "<td>"+time+"</td>";
 
   		var deliveryType = '';
-  		if( temp[i]['delivery_type'] == 1 )
+  		if( list[i]['delivery_type'] == 1 )
   		{
   			deliveryType = '{{ __('messages.deliveryOptionDineIn') }}';
   		}
-  		else if( temp[i]['delivery_type'] == 2 )
+  		else if( list[i]['delivery_type'] == 2 )
   		{
   			deliveryType = '{{ __('messages.deliveryOptionTakeAway') }}';
   		}
-  		else if( temp[i]['delivery_type'] == 3 )
+  		else if( list[i]['delivery_type'] == 3 )
   		{
   			deliveryType = '{{ __('messages.deliveryOptionHomeDelivery') }}';
-  			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+temp[i]['user_address_id']+')"><span>'+temp[i]['street']+'</span></a>';
-  			deliveryType += "<br><a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", false, false)'>Assign Driver</a>";
+  			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+list[i]['user_address_id']+')"><span>'+list[i]['street']+'</span></a>';
+  			deliveryType += "<br><a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+list[i]['order_id']+", false, false)'>Assign Driver</a>";
   		}
 
   		liItem += "<td>"+deliveryType+"</td>";
