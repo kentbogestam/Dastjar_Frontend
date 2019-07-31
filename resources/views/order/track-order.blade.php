@@ -34,7 +34,17 @@
 				directionsService = new google.maps.DirectionsService;
 
 				// Create a renderer for directions and bind it to the map.
-				directionsDisplay = new google.maps.DirectionsRenderer({map: map});
+				directionsDisplay = new google.maps.DirectionsRenderer({map: map, suppressMarkers: true});
+
+				// Start/Finish icons
+				icons = {
+					start: new google.maps.MarkerImage(
+						"{{ url('images/cabs.png') }}",
+					),
+					end: new google.maps.MarkerImage(
+						"{{ url('images/blue-dot.png') }}",
+					)
+				};
 
 	    		// Display the route between the initial start and end selections.
 				calculateAndDisplayRoute();
@@ -58,9 +68,23 @@
 			}, function(response, status) {
 				if (status === 'OK') {
 					directionsDisplay.setDirections(response);
+
+					var leg = response.routes[0].legs[0];
+					makeMarker(leg.start_location, icons.start, "Driver");
+					makeMarker(leg.end_location, icons.end, 'Destination');
 				} else {
 					window.alert('Directions request failed due to ' + status);
 				}
+			});
+		}
+
+		// Draw custom icon
+		function makeMarker(position, icon, title) {
+			new google.maps.Marker({
+				position: position,
+				map: map,
+				icon: icon,
+				title: title
 			});
 		}
 
