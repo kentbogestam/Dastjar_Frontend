@@ -16,6 +16,10 @@
 		var height = maincontent - (headerHeight + footerHeight);
 		$( '.content' ).height( height );
 
+		// 
+		var markers = [];
+
+		// 
 		function initMap()
 		{
 			markerArray = [];
@@ -30,12 +34,6 @@
 					center: {lat: parseFloat(markerArray[1]['lat']), lng: parseFloat(markerArray[1]['lng'])}
 				});
 
-				// Instantiate a directions service.
-				directionsService = new google.maps.DirectionsService;
-
-				// Create a renderer for directions and bind it to the map.
-				directionsDisplay = new google.maps.DirectionsRenderer({map: map, suppressMarkers: true});
-
 				// Start/Finish icons
 				icons = {
 					start: new google.maps.MarkerImage(
@@ -45,6 +43,12 @@
 						"{{ url('images/delivery-destination.png') }}",
 					)
 				};
+
+				// Instantiate a directions service.
+				directionsService = new google.maps.DirectionsService;
+
+				// Create a renderer for directions and bind it to the map.
+				directionsDisplay = new google.maps.DirectionsRenderer({map: map, suppressMarkers: true});
 
 	    		// Display the route between the initial start and end selections.
 				calculateAndDisplayRoute();
@@ -70,6 +74,7 @@
 					directionsDisplay.setDirections(response);
 
 					var leg = response.routes[0].legs[0];
+					clearMarkers();
 					makeMarker(leg.start_location, icons.start, "Driver");
 					makeMarker(leg.end_location, icons.end, 'Destination');
 				} else {
@@ -80,12 +85,29 @@
 
 		// Draw custom icon
 		function makeMarker(position, icon, title) {
-			new google.maps.Marker({
+			var marker = new google.maps.Marker({
 				position: position,
 				map: map,
 				icon: icon,
 				title: title
 			});
+
+			if(title == 'Driver')
+			{
+				markers.push(marker);
+			}
+		}
+
+		// Sets the map on all markers in the array.
+		function setMapOnAll(map) {
+			for (var i = 0; i < markers.length; i++) {
+				markers[i].setMap(map);
+			}
+		}
+
+		// Removes the markers from the map, but keeps them in the array.
+		function clearMarkers() {
+			setMapOnAll(null);
 		}
 
 		// Get driver updated position and update map marker
