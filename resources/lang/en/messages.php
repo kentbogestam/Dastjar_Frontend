@@ -88,7 +88,7 @@ return [
     'About Us' => 'About Anar',
     'trackOrder' => 'Track Order',
     'deliveryDateTimeEatLater' => 'Your order will be delivered on ',
-    'deliveryDateTimeEatNow' => 'Your order will be delivered in around ',
+    'deliveryDateTimeEatNow' => 'Your order will be delivered in about ',
     'Send' => 'Send',
     'Contact Us' => 'Contact Us',
     'Discount' => 'Discount',
