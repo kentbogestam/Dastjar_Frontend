@@ -74,9 +74,11 @@ class DriverLoginController extends Controller
             'phone' => 'required'
         ]);
 
+        $phone = ltrim($request->input('phone'), '0');
+
         // Get driver
         $driver = Driver::select(['id', 'phone_prefix', 'phone'])
-            ->where('phone', $request->input('phone'))
+            ->where('phone', $phone)
             ->first();
 
         if($driver)
@@ -93,7 +95,7 @@ class DriverLoginController extends Controller
                 $message .= "New password is: {$password}";
                 $result = Helper::apiSendTextMessage($recipients, $message);
 
-                return redirect('driver/forget-password')->with('success', __('messages.passwordResetSuccessfully'));
+                return redirect('driver/login')->with('success', __('messages.passwordResetSuccessfully'));
             }
         }
         else

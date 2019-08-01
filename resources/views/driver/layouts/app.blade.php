@@ -68,7 +68,7 @@
 		<div class="container-fluid">
 			<div class="navbar-header">
 				<a class="navbar-brand" href="javascript:void(0)" title="">
-					<img src="{{ asset('images/logo.png') }}" alt="" class="img-responsive">
+					<img src="{{ asset('assets/driver/touch/dastjar-ds-logo-128.png') }}" alt="" class="img-responsive">
 				</a>
 			</div>
 			@if(Auth::guard('driver')->check())

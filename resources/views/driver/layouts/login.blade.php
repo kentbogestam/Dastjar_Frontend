@@ -67,7 +67,7 @@
 		<div class="container-fluid">
 			<div class="navbar-header">
 				<a class="navbar-brand" href="javascript:void(0)">
-					<img src="{{ asset('kitchenImages/logo.png') }}" alt="">
+					<img src="{{ asset('assets/driver/touch/dastjar-ds-logo-128.png') }}" alt="">
 				</a>
 			</div>
 		</div>

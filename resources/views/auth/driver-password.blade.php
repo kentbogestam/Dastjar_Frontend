@@ -13,5 +13,7 @@
         </div>
         <button type="submit" class="btn btn-primary btn-block">{{ __('messages.submit') }}</button>
     </form>
+    <p></p>
+    <p>{{ __('messages.login') }}? <a href="{{ url('driver/login') }}">{{ __('messages.click_here') }}
 </div>
 @endsection

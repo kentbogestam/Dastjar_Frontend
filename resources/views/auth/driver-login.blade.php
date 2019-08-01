@@ -3,6 +3,7 @@
 @section('content')
 <div class="container">
     <h2>{{ __('messages.driverLogin') }}</h2><br>
+    @include('common.flash')
     <form method="POST" action="{{ route('driver.login.submit') }}">
         {{ csrf_field() }}
 
