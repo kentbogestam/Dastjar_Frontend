@@ -1,6 +1,9 @@
 <?php
 
 return [
+    /**
+     * User
+     */
     'Eat Now' => 'Ät nu',
     'Eat Later'  => 'Ät senare',
     'Restaurant'  => 'Restaurang',
@@ -9,6 +12,9 @@ return [
     'Orders'  => 'Ordrar', 
     'Settings'  => 'ooo', 
     'Terms' => 'ALLMÄNNA VILLKOR OCH INTEGRITETSPOLITIK',
+    'eatLaterTimeError1' => 'Ange en hämttid i 24-timmarsformat.',
+    'eatLaterTimeError2' => 'Datum och tid är inte giltiga.',
+    'eatLaterTimeError3' => 'Beställningsdatum måste vara minst 2 timmar senare än aktuell tid',
     'Order id'  => 'Order-ID',
     'Done'  => 'OK',
     'Setting updated successfully.'   => 'Uppdaterat.',

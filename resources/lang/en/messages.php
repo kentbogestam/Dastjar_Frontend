@@ -1,6 +1,9 @@
 <?php
 
 return [
+    /**
+     * User
+     */
     'Eat Now' => 'Eat Now',
     'Eat Later'  => 'Eat Later',
     'Restaurant'  => 'Restaurant',
@@ -9,6 +12,9 @@ return [
     'Order'  => 'Order',
     'Settings'  => 'ooo',
     'Terms' => 'GENERAL TERMS & INTEGRITY POLICY',
+    'eatLaterTimeError1' => 'Please enter pick-up time in 24 hours format.',
+    'eatLaterTimeError2' => 'Date and time is not valid.',
+    'eatLaterTimeError3' => 'Order date must be minimum 2 hours later from current date time.',
     'Order id'  => 'Order id',
     'Done'  => 'Done',
     'Setting updated successfully.'   => 'Setting updated successfully.',
