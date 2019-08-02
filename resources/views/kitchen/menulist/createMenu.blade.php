@@ -212,11 +212,10 @@
 		<div class="row">
 			<div class="col-10 dish_name_col">
 				<a href="{{ url('kitchen/menu') }}" class="menu_back_btn" data-ajax="false"><span class="fa fa-chevron-left"></span>Back</a>
-				<input type="text" name="prodName" placeholder="Dish Name" class="dish_name" value="{{ $product->product_name ?? "" }}" maxlength="24" title="The name of your product. 
-Due to the size of the text only 19 characters may be displayed, so try to shorten down your message." required/>
+				<input type="text" name="prodName" placeholder="Dish Name" class="dish_name" value="{{ $product->product_name ?? "" }}" maxlength="24" title="{{ __('messages.iDishName') }}" required/>
 			</div>
 			<div class="col-2 menu_image_col">
-				<label class="upload_menu" for="fileupload">
+				<label class="upload_menu" for="fileupload" title="{{ __('messages.iDishImage') }}">
 					<img src="{{ $product->small_image ?? "" }}" id="blah"/>
 					<span class="fa fa-camera camera_icon"></span>
 					<p class="upload_img_txt">Upload Menu Image</p>
@@ -233,7 +232,7 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 
 		<div class="row">
 			<div class="col-12">
-				<select id="dishLang" name="dishLang" required>
+				<select id="dishLang" name="dishLang" required title="{{ __('messages.iDishLanguage') }}">
 					<option value="" selected disabled>Dish Language</option>
 					@if(isset($product->lang))
 						<option <?php if ($product->lang == "SWE")echo "selected='selected'"; ?> value="SWE">Swedish</option>
@@ -248,7 +247,7 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 
 		<div class="row">
 			<div class="col-12">
-				<select id="dishType" name="dishType" required>
+				<select id="dishType" name="dishType" required title="{{ __('messages.iDishType') }}">
 					<option value="" selected disabled>Dish Type</option>
 					@foreach($listDishes as $key =>$value)
 					@if(isset($product->dish_type))
@@ -267,19 +266,19 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 
 		<div class="row">
 			<div class="col-12">
-				<input type="text" name="prodDesc" placeholder="Description" value="{{ $product->product_description ?? "" }}" maxlength="50" title="Describes the offer itself on max two lines below the title in the list view.  Max 50 characters will fit into the 2 lines." required/>
+				<input type="text" name="prodDesc" placeholder="Description" value="{{ $product->product_description ?? "" }}" maxlength="50" title="{{ __('messages.iDishDescription') }}" required/>
 			</div>
 		</div>
 
 		<div class="row">
 			<div class="col-12">
-				<input type="number" id="prep-time" name="prepTime" placeholder="Prep. Time (mins)" value="{{ $product->preparation_Time ?? "" }}" required/>
+				<input type="number" id="prep-time" name="prepTime" placeholder="Prep. Time (mins)" value="{{ $product->preparation_Time ?? "" }}" required title="{{ __('messages.iDishPrepTime') }}" />
 			</div>
 		</div>
 
 		<div class="row">
 			<div class="col-12">
-				<input type="number" name="prodPrice" placeholder="Price ({{$currency}})" value="{{ $product_price_list->price ?? "" }}" required/>
+				<input type="number" name="prodPrice" placeholder="Price ({{$currency}})" value="{{ $product_price_list->price ?? "" }}" required title="{{ __('messages.iDishPrice') }}" />
 			</div>
 		</div>
 
@@ -287,7 +286,7 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 
 		<div class="row">
 			<div class="col-12">
-				<input type="text" id="date-start" name="" placeholder="Publishing Start Date" value="" required/>
+				<input type="text" id="date-start" name="" placeholder="Publishing Start Date" value="" required title="{{ __('messages.iDishStartPublishDate') }}" />
 				<input type="hidden" id="date-start-utc" name="publish_start_date">
 				<span class="fa fa-calendar cal_icon"></span>
 			</div>
@@ -295,7 +294,7 @@ Due to the size of the text only 19 characters may be displayed, so try to short
 
 		<div class="row">
 			<div class="col-12">
-				<input type="text" id="date-end" name="" placeholder="Publishing End Date" value="" required/>
+				<input type="text" id="date-end" name="" placeholder="Publishing End Date" value="" required title="{{ __('messages.iDishEndPublishDate') }}" />
 				<input type="hidden" id="date-end-utc" name="publish_end_date">				
 				<span class="fa fa-calendar cal_icon"></span>
 			</div>

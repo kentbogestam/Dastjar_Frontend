@@ -272,4 +272,41 @@ return [
     'moduleCreated' => ':module created successfully.',
     'moduleUpdated' => ':module updated successfully.',
     'moduleDeleted' => ':module deleted successfully.',
+
+    /**
+     * Restaurant's placeholder goes here
+     */
+
+    // Menu
+    'iDishName' => 'Add the name of a dish. Due to the size of the screen of a mobile the text can only be max 19 characters, so try to shorten down the name.',
+    'iDishImage' => 'Add an image of the dish to help your customer to make a choice.',
+    'iDishLanguage' => 'This lists the languages available for the customers.  You can create more than one language. The menu will be available in all selected  languages. Which language that is displayed depending on the client\'s language settings.',
+    'iDishDescription' => 'Describe, the  dish and what’s included. Due to the size of mobile screens max 50 characters will fit in 2 lines.',
+    'iDishPrepTime' => 'Add the time you want the consumer to see as the minimum time it takes to prepare this meal. This time will be displayed in the menu to give your customer a first hint of the waiting time. Later a  message that the order is ready will be sent to the customer when you click on the “Ready” button.',
+    'iDishPrice' => "Add the price of the dish.\nYou can use “ADD NEW Price” in the menu tab to add different prices for different time of the day to increase the number of customers during the time of day when you don’t have that much business.",
+    'iDishStartPublishDate' => "The date is be the first day the product is visible for the customers.\nAdd your upcoming price changes as they will be published automatic and get rid if the stress of doing this the last minute.",
+    'iDishEndPublishDate' => 'The day that the dish is no longer valid or price will change. If you don’t know when this is just set a time a couple of years in the future for example 10 year from now.',
+    'iDishAddNewPrice' => 'Add upcoming prices and publish them automatically\nor\nYou can add different prices for different time of the day to increase the number of customers during the time of day when you don’t have that much business.',
+    'iDishRemove' => 'Remove the product from the menu',
+    'iDishRemovePrice' => 'Remove this price',
+    'iDishUpdatePrice' => 'Change the data for this price',
+    'iDishTypeLanguage' => 'This lists the languages available for the clients. You can create more than one language The menu will be available in all selected languages. Which language that is displayed depending on the client\'s language settings.',
+    'iDishType' => 'This is the category of dish you want your dish to appear under.',
+
+    // Settings
+    'iStoreSettingLanguage' => 'This is the language you like to use in this app. Select a language from the list',
+    'iStoreSettingOrderResponse' => "If you want the response to you customer, when the customer is sending the order, to be set to automatic, the the response to the customer will be set that the order is accepted  and be ready for pickup around to the largest preparation time of the dishes in the order that you have set in your menu.\n\nIf you set it to manual you will be given the opportunity to set when around what time the order will be ready for pickup when clicking on started",
+    'iStoreSettingExtraPrepTime' => 'This option gives you the opportunity to temporary add an extra time to the ready time in the order response to the automatic answer when you get to much to do. Don’t forget to deactivate when your workload is down again.',
+    'iStoreSettingTextToSpeech' => "You can set it to On if you want the order content to be read automatically when a new order arrive\n\nYou set it to Off if you prefer to read the order content on screen instead. This option will also invoke a alarm saying New order every 10 seconds.",
+    'iStoreSettingRefund' => 'This button will take you to Stripe (your payment provider) order page from where you can refund a card payment',
+    'iStoreSettingDiscount' => "Market your restaurant and increase your sales by giving discount to example groups of customers under a period . You can for example use this function to get employers at a company to select your restaurant.\n\nWhen you have a discount code you can give the code to the enterprise(s)  you selected so they in there turn can distribute them to their employers.\nYour customers adds it then in under … Discount in there app\nYou can also send it directly to a   person with the help of the discount function in “Order on Site”\n\nDiscount is valid for all product available throw the app",
+    'iStoreSettingLoyalty' => "Create a loyalty offer for your customers to return to you An example can be buy 9 o get the 10th for free. Your loyalty offers are visible in the customer's app and are also counted up when the customer makes purchases to make the offer even more attractive\n\nLoyalty is created per category",
+
+    // Driver
+    'iDriverName' => 'The name of the driver',
+    'iDriverEmail' => 'The driver email (will be used for authentication)',
+    'iDriverPhone' => 'The number to the mobile used by the driver',
+
+    // delivery-price-model
+    'iDeliveryType' => "Select the price rule  you want shall be applied. You can select between: <ul><li>Add Price for each Delivery<ul><li>Have a simple single price to each delivery independent of order value.</li><li>Then do also add the value you want to charge for each delivery under Delivery Charge</li></ul></li><li>Add Price for Delivery and the minimum Order value for Free Delivery<ul><li>Use a single price to each delivery up to a Threshold value, that is the order value without delivery cost, after this the delivery is free.</li><li>Then do also add the value you want to charge for each delivery up to the Threshold under Delivery Charge</li></ul></li><li>Add order value when a home delivery is possible:<ul><li>Select this option if you only do delivery when the order value passas a certain amount. Add this amount in Threshold.</li></ul></li></ul>",
 ];

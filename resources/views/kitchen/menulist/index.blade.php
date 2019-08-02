@@ -427,10 +427,10 @@
 				        		currentPrice += '<div class="menu_icons row">'+
 				        			'<div class="col-sm-12">'+
 				        				'<span style="margin-right: 10px; color: rgba(199,7,17,1)">SEK '+item.current_price.price+'</span><span class="fa fa-calendar"></span><span>'+formattedFromToDate+'</span>'+
-					        			'<a href="javascript:void(0)" onClick="deleteDishPrice(\'{{url('kitchen/delete-dish-price?price_id=')}}'+item.current_price.id+'\')" data-ajax="false">'+
+					        			'<a href="javascript:void(0)" title="{{ __('messages.iDishRemovePrice') }}" onClick="deleteDishPrice(\'{{url('kitchen/delete-dish-price?price_id=')}}'+item.current_price.id+'\')" data-ajax="false">'+
 					        				'<span class="fa fa-trash" style="margin-left: 15px"></span>'+
 					        			'</a>'+
-					        			'<a href="{{url('kitchen/edit-menu-dish?product_id=')}}'+item.product_id+'&store_id={{ Session::get('storeId') }}&price_id='+item.current_price.id+'" data-ajax="false"><span class="fa fa-edit" style="margin-left: 5px"></span>'+
+					        			'<a href="{{url('kitchen/edit-menu-dish?product_id=')}}'+item.product_id+'&store_id={{ Session::get('storeId') }}&price_id='+item.current_price.id+'" title="{{ __('messages.iDishUpdatePrice') }}" data-ajax="false"><span class="fa fa-edit" style="margin-left: 5px"></span>'+
 					        			'</a>'+
 				        			'</div>'+
 				        		'</div>';
@@ -453,7 +453,7 @@
 				            			'<a href="javascript:void(0)" onClick="delete_dish(\'{{url('kitchen/delete-menu-dish?product_id=')}}'+item.product_id+'\')" data-ajax="false">'+
 					        				'<span class="fa fa-trash fa-2x" style="margin-left: 15px"></span>'+
 					        			'</a>'+
-				            			'<a href="javascript:void(0)" onClick="add_dish_price(\''+item.product_id+'\', \'{{Session::get('storeId')}}\')" class="btn waves-effect add-price-btn" data-ajax="false">Add New Price</a>'+
+				            			'<a href="javascript:void(0)" title="{{ __('messages.iDishAddNewPrice') }}" onClick="add_dish_price(\''+item.product_id+'\', \'{{Session::get('storeId')}}\')" class="btn waves-effect add-price-btn" data-ajax="false">Add New Price</a>'+
 				            		'</div>'+
 				            	'</div>'+
 				            '</div>';
@@ -556,10 +556,10 @@
 				        	futurePricesHtml += '<div class="menu_icons row">'+
 				        		'<div class="col-sm-12">'+
 				        			'<span style="margin-right: 10px; color: rgba(199,7,17,1)">SEK '+item.price+'</span><span class="fa fa-calendar"></span><span>'+formattedFromToDate+'</span>'+
-				        			'<a href="javascript:void(0)" onClick="deleteDishPrice(\'{{url('kitchen/delete-dish-price?price_id=')}}'+item.id+'&price_id='+item.id+'\')" data-ajax="false">'+
+				        			'<a href="javascript:void(0)" title="{{ __('messages.iDishRemovePrice') }}" onClick="deleteDishPrice(\'{{url('kitchen/delete-dish-price?price_id=')}}'+item.id+'&price_id='+item.id+'\')" data-ajax="false">'+
 				        				'<span class="fa fa-trash" style="margin-left: 15px"></span>'+
 				        			'</a>'+
-				        			'<a href="{{url('kitchen/edit-menu-dish?product_id=')}}'+item.product_id+'&store_id={{ Session::get('storeId') }}&price_id='+item.id+'" data-ajax="false"><span class="fa fa-edit" style="margin-left: 5px"></span>'+
+				        			'<a href="{{url('kitchen/edit-menu-dish?product_id=')}}'+item.product_id+'&store_id={{ Session::get('storeId') }}&price_id='+item.id+'" title="{{ __('messages.iDishUpdatePrice') }}" data-ajax="false"><span class="fa fa-edit" style="margin-left: 5px"></span>'+
 				        			'</a>'+
 				        		'</div>'+
 			        		'</div>';

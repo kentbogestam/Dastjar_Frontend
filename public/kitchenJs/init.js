@@ -1,5 +1,9 @@
 $(function() {
-
+	// Bootstrap tooltip
+	if( $('[data-toggle="tooltip"]').length )
+	{
+		$('[data-toggle="tooltip"]').tooltip();
+	}
 });
 
 // Check if order qualified to show popup to add manual extra time

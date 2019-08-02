@@ -12,6 +12,12 @@
     .btn-link {
         cursor: pointer;
     }
+
+    .tooltip-inner {
+        max-width: 600px !important;
+        width: 600px !important;
+        text-align: left;
+    }
     </style>
 @stop
 
@@ -100,11 +106,20 @@
                         @csrf
                         <div class="form-group">
                             <label for="delivery_rule_id">{{ __('messages.deliveryType') }} <span class='mandatory'>*</span>:</label>
-                            <select name="delivery_rule_id" class="form-control" id="delivery_rule_id" data-rule-required="true">
-                                @foreach($deliveryRule as $row)
-                                    <option value="{{ $row['id'] }}">{{ $row['summary'] }}</option>
-                                @endforeach
-                            </select>
+                            <div class="input-group">
+                                <select name="delivery_rule_id" class="form-control" id="delivery_rule_id" data-rule-required="true">
+                                    @foreach($deliveryRule as $row)
+                                        <option value="{{ $row['id'] }}">{{ $row['summary'] }}</option>
+                                    @endforeach
+                                </select>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">
+                                        <a href="javascript:void(0)" data-toggle="tooltip" data-html="true" title="{{ __('messages.iDeliveryType') }}">
+                                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                        </a>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="delivery_charge">{{ __('messages.delivery_charge') }} :</label>
@@ -132,11 +147,20 @@
                         @csrf
                         <div class="form-group">
                             <label for="delivery_rule_id_upd">{{ __('messages.delivery_rule_id') }} <span class='mandatory'>*</span>:</label>
-                            <select name="delivery_rule_id_upd" class="form-control" id="delivery_rule_id_upd" data-rule-required="true">
-                                @foreach($deliveryRule as $row)
-                                    <option value="{{ $row['id'] }}">{{ $row['summary'] }}</option>
-                                @endforeach
-                            </select>
+                            <div class="input-group">
+                                <select name="delivery_rule_id_upd" class="form-control" id="delivery_rule_id_upd" data-rule-required="true">
+                                    @foreach($deliveryRule as $row)
+                                        <option value="{{ $row['id'] }}">{{ $row['summary'] }}</option>
+                                    @endforeach
+                                </select>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">
+                                        <a href="javascript:void(0)" data-toggle="tooltip" data-html="true" title="{{ __('messages.iDeliveryType') }}">
+                                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                        </a>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="delivery_charge_upd">{{ __('messages.delivery_charge') }} :</label>
