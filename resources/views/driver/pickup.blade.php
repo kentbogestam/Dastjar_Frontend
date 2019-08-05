@@ -6,15 +6,15 @@
 			<div class="col-md-12 text-center"><h2>{{ $company->company_name }}</h2></div>
 		</div>
 		<div class="table-responsive">
-			<table class="table table-bordered">
+			<table class="table table-bordered table-listing">
 				<thead>
 					<tr>
-						<th>{{ __('messages.Orders') }}</th>
-						<th>{{ __('messages.Restaurant') }}</th>
-						<th>{{ __('messages.address') }}</th>
-						<th>{{ __('messages.phone') }}</th>
-						<th>{{ __('messages.accept') }}</th>
-						<th>{{ __('messages.pickup') }}</th>
+						<th><i class="fas fa-list-alt" data-toggle="tooltip" title="{{ __('messages.Orders') }}"></i></th>
+						<th><i class="fas fa-utensils" data-toggle="tooltip" title="{{ __('messages.Restaurant') }}"></i></th>
+						<th><i class="fas fa-map-marked-alt" data-toggle="tooltip" title="{{ __('messages.address') }}"></i></th>
+						<th><i class="fas fa-phone" data-toggle="tooltip" title="{{ __('messages.phone') }}"></i></th>
+						<th><i class="fas fa-check-circle" data-toggle="tooltip" title="{{ __('messages.accept') }}"></i></th>
+						<th><i class="fas fa-stopwatch" data-toggle="tooltip" title="{{ __('messages.pickup') }}"></i></th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -69,19 +69,19 @@
 								'<td><a href="javascript:getOrderDetail(\''+customer_order_id+'\')" class="link">'+customer_order_id+'</a></td>'+
 								"<td>"+response.orderDelivery[i]['store_name']+"</td>"+
 								"<td><a href='{{ url('driver/pickup-direction') }}/"+response.orderDelivery[i]['order_id']+"' class='link'>"+response.orderDelivery[i]['street']+"<br>"+response.orderDelivery[i]['city']+" <i class='fas fa-directions'></i></a></td>"+
-								"<td><a href='tel:"+response.orderDelivery[i]['phone']+"'><i class='fas fa-phone-alt fa-2x'></i></a></td>";
+								"<td class='text-center'><a href='tel:"+response.orderDelivery[i]['phone']+"'><i class='fas fa-phone-volume'></i></a></td>";
 
 							if(response.orderDelivery[i]['status'] == '0')
 							{
 								html += 
-									"<td><a href='javascript:void(0)' class='order-pickup-accept' data-id='"+response.orderDelivery[i]['id']+"'><i class='fas fa-minus-circle fa-2x'></i></a></td>"+
-									"<td><a href='javascript:void(0)' class='order-pickup-pickedup disabled' data-id='"+response.orderDelivery[i]['id']+"'><i class='fas fa-minus-circle fa-2x'></i></a><br>"+pickupTime+"</td>";
+									"<td class='text-center'><a href='javascript:void(0)' class='order-pickup-accept' data-id='"+response.orderDelivery[i]['id']+"'><i class='fas fa-minus-circle'></i></a></td>"+
+									"<td class='text-center'><a href='javascript:void(0)' class='order-pickup-pickedup disabled' data-id='"+response.orderDelivery[i]['id']+"'><i class='fas fa-minus-circle'></i></a><br>"+pickupTime+"</td>";
 							}
 							else
 							{
 								html +=
-									"<td><i class='fas fa-check-circle fa-2x'></i></td>"+
-									"<td><a href='javascript:void(0)' class='order-pickup-pickedup' data-id='"+response.orderDelivery[i]['id']+"'><i class='fas fa-minus-circle fa-2x'></i></a><br>"+pickupTime+"</td>";
+									"<td class='text-center'><i class='fas fa-check-circle'></i></td>"+
+									"<td class='text-center'><a href='javascript:void(0)' class='order-pickup-pickedup' data-id='"+response.orderDelivery[i]['id']+"'><i class='fas fa-minus-circle'></i></a><br>"+pickupTime+"</td>";
 							}
 							
 							html += "</tr>";
@@ -112,7 +112,7 @@
 					if(response.status)
 					{
 						$This.closest('tr').find('.order-pickup-pickedup').removeClass('disabled');
-						$This.replaceWith("<i class='fas fa-check-circle fa-2x'></i>");
+						$This.replaceWith("<i class='fas fa-check-circle'></i>");
 					}
 				}
 			});

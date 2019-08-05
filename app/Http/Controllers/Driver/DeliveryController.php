@@ -114,6 +114,24 @@ class DeliveryController extends Controller
 	}
 
 	/**
+     * [Update order payment manually from 'Orders' page]
+     * @param  [type] $order_id [primary key of table 'order']
+     * @return [type]           [status]
+     */
+    function orderPayManually($orderId)
+    {
+        $status = false;
+        $order = Order::findOrFail($orderId);
+
+        if( $order->where('order_id', $orderId)->update(['online_paid' => 3]) )
+        {
+           $status = true;
+        }
+
+        return response()->json(['status' => $status, 'order' => $order]);
+    }
+
+	/**
 	 * Mark order delivered
 	 * @param  [type] $orderId [description]
 	 * @return [type]          [description]

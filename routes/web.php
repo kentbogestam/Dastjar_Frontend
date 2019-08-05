@@ -308,6 +308,7 @@ Route::group(['prefix' => 'driver'], function() {
 		Route::get('delivery/{orderId?}', 'DeliveryController@delivery');
 		Route::get('get-deliver-order-list', 'DeliveryController@getDeliverOrderList');
 		Route::get('order-deliver/{orderId}', 'DeliveryController@orderDeliver');
+		Route::get('order-pay-manually/{orderId}', 'DeliveryController@orderPayManually');
 		Route::get('delivery-direction/{orderId}', 'DeliveryController@deliveryDirection');
 		
 		Route::get('setting', 'SettingController@setting');

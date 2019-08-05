@@ -5,16 +5,16 @@
 		<div class="row">
 			<div class="col-md-12 text-center"><h2>{{ $company->company_name }}</h2></div>
 		</div>
-		<table class="table table-bordered">
+		<table class="table table-bordered table-listing">
 			<thead>
 				<tr>
-					<th>{{ __('messages.Orders') }}</th>
-					<th>{{ __('messages.name') }}</th>
-					<th>{{ __('messages.address') }}</th>
-					<th>{{ __('messages.phone') }}</th>
-					<th>{{ __('messages.Delivered') }}</th>
-					<th>{{ __('messages.Paid') }}</th>
-					<th>{{ __('messages.wanted_time') }}</th>
+					<th><i class="fas fa-list-alt" data-toggle="tooltip" title="{{ __('messages.Orders') }}"></i></th>
+					<th><i class="fas fa-user" data-toggle="tooltip" title="{{ __('messages.name') }}"></i></th>
+					<th><i class="fas fa-map-marked-alt" data-toggle="tooltip" title="{{ __('messages.address') }}"></i></th>
+					<th><i class="fas fa-phone" data-toggle="tooltip" title="{{ __('messages.phone') }}"></i></th>
+					<th><i class="fas fa-check-circle" data-toggle="tooltip" title="{{ __('messages.Delivered') }}"></i></th>
+					<th><i class="fas fa-credit-card" data-toggle="tooltip" title="{{ __('messages.Paid') }}"></i></th>
+					<th><i class="fas fa-user-clock" data-toggle="tooltip" title="{{ __('messages.wanted_time') }}"></i></th>
 				</tr>
 			</thead>
 			<tbody></tbody>
@@ -61,7 +61,7 @@
 							}
 							else if(response.orderDelivery[i]['online_paid'] == 0)
 							{
-								paid = '<button type="button" class="btn btn-warning" onclick="orderPayManually('+response.orderDelivery[i]['order_id']+', this)">{{ __('messages.pay_manual') }}</button>';
+								paid = '<button type="button" class="btn btn-warning btn-xs" onclick="orderPayManually('+response.orderDelivery[i]['order_id']+', this)">{{ __('messages.pay_manual') }}</button>';
 							}
 
 							let timeObj;
@@ -95,9 +95,9 @@
 										'<td>'+response.orderDelivery[i]['full_name']+'</td>'+
 										// "<td><a href='https://www.google.com/maps/place/"+response.orderDelivery[i]['customer_address']+"' target='_blank' class='link'>"+address+" <i class='fas fa-directions'></i></a></td>"+
 										"<td><a href='{{ url('driver/delivery-direction') }}/"+response.orderDelivery[i]['order_id']+"' class='link'>"+address+" <i class='fas fa-directions'></i></a></td>"+
-										'<td><a href="tel:'+response.orderDelivery[i]['mobile']+'"><i class="fas fa-phone-alt fa-2x"></i></a></td>'+
-										'<td>'+delivered+'</td>'+
-										'<td>'+paid+'</td>'+
+										'<td class="text-center"><a href="tel:'+response.orderDelivery[i]['mobile']+'"><i class="fas fa-phone-volume"></i></a></td>'+
+										'<td class="text-center">'+delivered+'</td>'+
+										'<td class="text-center">'+paid+'</td>'+
 										'<td>'+time+'</td>'
 									'</tr>';
 
@@ -139,7 +139,7 @@
 		{
 			This = $(This);
 
-			$.get("{{url('kitchen/order-pay-manually')}}/"+orderId,
+			$.get("{{url('driver/order-pay-manually')}}/"+orderId,
 			function(returnedData){
 				console.log(returnedData);
 				if(returnedData["status"])

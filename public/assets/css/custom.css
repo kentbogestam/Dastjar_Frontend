@@ -42,3 +42,15 @@ a.disabled {
     opacity: 0.5;
     text-decoration: none;
 }
+
+.table-listing th {
+    text-align: center;
+}
+
+.table-listing th i {
+    font-size: 16px;
+}
+
+.table-listing td i {
+    font-size: 16px;
+}
