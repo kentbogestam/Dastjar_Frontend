@@ -74,6 +74,7 @@ class PaymentController extends Controller
 			}
     	}
 
+		// return response()->json($intent);
 		return response()->json($response);
     }
 
@@ -86,7 +87,7 @@ class PaymentController extends Controller
     {
 		# Note that if your API version is before 2019-02-11, 'requires_action'
 		# appears as 'requires_source_action'.
-		if ($intent->status == 'requires_action' && $intent->next_action->type == 'use_stripe_sdk') {
+		if ($intent->status == 'requires_source_action' && $intent->next_action->type == 'use_stripe_sdk') {
 			# Tell the client to handle the action
 			$data = array(
 				'requires_action' => true,
