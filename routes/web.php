@@ -112,6 +112,10 @@ Route::group(['middleware' => ['latlng']], function(){
 	Route::get('checkDistance','DistanceController@checkDistance');
 	Route::post('cart', 'OrderController@cart');
 	Route::get('cart', 'OrderController@cart');
+	Route::get('cart-sca-test', 'OrderController@cartScaTest');
+	Route::group(['namespace' => 'User'], function() {
+		Route::post('confirm-payment', 'PaymentController@confirmPayment');
+	});
 	// Route::get('cart', 'OrderController@cartWithOutLogin')->name('cartWithOutLogin');
 	Route::get('view-cart/{orderId}', 'OrderController@viewCart');
 	Route::post('order-update-delivery-type', 'OrderController@orderUpdateDeliveryType');

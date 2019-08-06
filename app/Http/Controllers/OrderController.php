@@ -26,6 +26,7 @@ use App\CompanySubscriptionDetail;
 use App\Driver;
 use Session;
 use App\Helper;
+use Stripe;
 
 class OrderController extends Controller
 {
@@ -810,6 +811,11 @@ class OrderController extends Controller
                 return view('index', compact('companydetails'));
             }
         }
+    }
+
+    function cartScaTest()
+    {
+        return view('order.cart-sca-test');
     }
 
     /**
