@@ -159,15 +159,21 @@
 			<div class="ui-grid-solo">
 				<div class="ui-block-a">
 					@if(Session::get('paymentmode') !=0 && $order->final_order_total > 0)
-						<form action="{{ url('/payment') }}" class="payment_form_btn" id="orderPaymentForm" method="POST" data-ajax="false">
-							{{ csrf_field() }} 
-							<input type="hidden" id="stripeToken" name="stripeToken">
-							<button type="button" class="ui-btn ui-mini btn-pay" disabled="">{{__('messages.Pay with card')}}</button>
-						</form>
+						<button type="button" class="ui-btn ui-btn-inline ui-mini btn-pay" disabled="">{{__('messages.Pay with card')}}</button>
+						<div class="ui-grid-solo row-confirm-payment hidden">
+							<div class="ui-block-a">
+								<div class="ui-bar ui-bar-a">
+									<form id="payment-form" method="POST" action="{{ url('confirm-payment') }}" data-ajax="false">
+										<input id="cardholder-name" type="text" placeholder="Cardholder name">
+										<!-- placeholder for Elements -->
+										<div id="card-element"></div>
+										<div class="card-errors"></div>
+										<button type="button" id="card-button" class="ui-btn ui-mini">{{__('messages.Pay with card')}}</button>
+									</form>
+								</div>
+							</div>
+						</div>
 					@else
-						<!-- <div id="saveorder">
-							<a href="{{url('order-view').'/'.$order->order_id}}" class="send-order" data-ajax="false">{{ __('messages.send order and pay in restaurant') }}</a>
-						</div> -->
 						<button type="button" class="ui-btn ui-mini send-order" disabled="">{{ __('messages.send order and pay in restaurant') }}</button>
 					@endif
 				</div>
@@ -213,7 +219,7 @@
 	</div>
 </div>
 
-<script src="https://checkout.stripe.com/checkout.js"></script>
+<script src="https://js.stripe.com/v3/"></script>
 <script type="text/javascript" src="{{ asset('plugins/validation/jquery.validate.min.js') }}"></script>
 <script type="text/javascript">
 	// 
@@ -223,19 +229,100 @@
 		}
 	});
 
-	// 
-	var handler = StripeCheckout.configure({
-		key: '{{env('STRIPE_PUB_KEY')}}',
-		image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
-		locale: 'auto',
-		name: 'Stripe',
-		email: '{{Auth::user()->email}}',
-		description: "Dastjar",
-		token: function(token) {
-			$('#stripeToken').val(token.id);
-			$('#orderPaymentForm').submit();
+	@if(Session::get('paymentmode') !=0 && $order->final_order_total > 0)
+		// Initialize Stripe and card element
+		var stripe = Stripe('{{ env('STRIPE_PUB_KEY') }}');
+
+		var elements = stripe.elements();
+		var cardElement = elements.create('card', {
+			hidePostalCode: true
+		});
+		cardElement.mount('#card-element');
+
+		//
+		var cardholderName = document.getElementById('cardholder-name');
+		var cardButton = document.getElementById('card-button');
+
+		cardButton.addEventListener('click', function(ev) {
+			$('#card-button').prop('disabled', true);
+			$('.row-confirm-payment').find('div.card-errors').html('');
+
+			stripe.createPaymentMethod('card', cardElement, {
+				billing_details: {name: cardholderName.value}
+			}).then(function(result) {
+				if (result.error) {
+					// Show error in payment form
+					$('#card-button').prop('disabled', false);
+				} else {
+					let data = {
+						'_token': "{{ csrf_token() }}",
+						'payment_method_id': result.paymentMethod.id
+					}
+					// Otherwise send paymentMethod.id to your server (see Step 2)
+					fetch('{{ url('confirm-payment') }}', {
+						method: 'POST',
+						body: JSON.stringify(data),
+						headers: {
+							'Content-Type': 'application/json'
+						}
+					}).then(function(result) {
+						// Handle server response (see Step 3)
+						result.json().then(function(json) {
+							handleServerResponse(json);
+							$('#card-button').prop('disabled', false);
+						})
+					});
+				}
+			});
+
+			ev.preventDefault();
+		});
+
+		function handleServerResponse(response) {
+			if (response.error) {
+				// Show error from server on payment form
+				let message = response.error;
+				if( typeof(response.error) == 'object' ) {
+					message = response.error.message;
+				}
+				$('.row-confirm-payment').find('div.card-errors').html(message);
+			} else if (response.requires_action) {
+				// Use Stripe.js to handle required card action
+				stripe.handleCardAction(
+					response.payment_intent_client_secret
+				).then(function(result) {
+					if (result.error) {
+						// Show error in payment form
+						let message = result.error;
+						if( typeof(result.error) == 'object' ) {
+							message = result.error.message;
+						}
+						$('.row-confirm-payment').find('div.card-errors').html(message);
+					} else {
+						let data = {
+							'_token': "{{ csrf_token() }}",
+							'payment_intent_id': result.paymentIntent.id
+						}
+						// The card action has been handled
+						// The PaymentIntent can be confirmed again on the server
+						fetch('{{ url('confirm-payment') }}', {
+							method: 'POST',
+							body: JSON.stringify(data),
+							headers: {
+								'Content-Type': 'application/json'
+							}
+						}).then(function(confirmResult) {
+							return confirmResult.json();
+						}).then(handleServerResponse);
+					}
+				});
+			} else {
+				// Show success message
+				$('.row-confirm-payment').find('div.card-errors').html('');
+				window.location.href = "{{ url('order-view/'.$order->order_id) }}";
+			}
 		}
-	});
+	@endif
 
 	// Scroll automatically 'add new address'
 	$(document).on("collapsibleexpand", "#add-new-address[data-role=collapsible]", function () {
@@ -245,24 +332,14 @@
 
 	// 
 	$('.btn-pay').on('click', function(e) {
+		// 
 		if( $('#frm-user-address').length && !$('#frm-user-address').valid())
 		{
 			return false;
 		}
 
-		// var totalAmount = parseFloat('{{ Session::get('paymentAmount') }}');
-
-		handler.open({
-            currency: 'sek',
-            // amount: (totalAmount*100)
-        });
-
-		e.preventDefault();
-	});
-
-	// Close Checkout on page navigation:
-	window.addEventListener('popstate', function() {
-		handler.close();
+		//
+		$('.row-confirm-payment').removeClass('hidden'); 
 	});
 
 	// Delivery address form validation
@@ -404,6 +481,7 @@
 		// 
 		$('.block-address').find('p.error').remove();
 		$('.btn-pay').prop('disabled', true);
+		$('.row-confirm-payment').addClass('hidden');
 		$('.send-order').prop('disabled', true);
 
 		// 

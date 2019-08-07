@@ -813,6 +813,7 @@ class OrderController extends Controller
         }
     }
 
+    // Page to test Stripe SCA
     function cartScaTest()
     {
         return view('order.cart-sca-test');
