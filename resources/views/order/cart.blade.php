@@ -163,13 +163,37 @@
 						<div class="ui-grid-solo row-confirm-payment hidden">
 							<div class="ui-block-a">
 								<div class="ui-bar ui-bar-a">
-									<form id="payment-form" method="POST" action="{{ url('confirm-payment') }}" data-ajax="false">
-										<input id="cardholder-name" type="text" placeholder="Cardholder name">
-										<!-- placeholder for Elements -->
-										<div id="card-element"></div>
-										<div class="card-errors"></div>
-										<button type="button" id="card-button" class="ui-btn ui-mini">{{__('messages.Pay with card')}}</button>
-									</form>
+									@if(isset($paymentMethod->data))
+										<div class="row-saved-cards">
+											<form id="list-saved-cards" method="POST" action="{{ url('confirm-payment') }}" data-ajax="false">
+												<fieldset data-role="controlgroup">
+													@foreach($paymentMethod->data as $row)
+														<input type="radio" name="payment_method_id" id="payment-method-{{ $row->card->last4 }}" value="{{ $row->id }}" checked="checked">
+														<label for="payment-method-{{ $row->card->last4 }}">
+															<i class="fa fa-cc-visa" aria-hidden="true"></i>
+															<i class="fa fa-circle" aria-hidden="true" style="font-size: 9px;"></i><i class="fa fa-circle" aria-hidden="true" style="font-size: 9px;"></i><i class="fa fa-circle" aria-hidden="true" style="font-size: 9px;"></i><i class="fa fa-circle" aria-hidden="true" style="font-size: 9px;"></i>
+															{{ $row->card->last4 }}
+														</label>
+													@endforeach
+												</fieldset>
+												<div class="card-errors"></div>
+												<button type="button" id="charging-saved-cards" class="ui-btn ui-mini">Pay Securely</button>
+											</form>
+										</div>
+									@endif
+									<div class="row-new-card">
+										<form id="payment-form" method="POST" action="{{ url('confirm-payment') }}" data-ajax="false">
+											<input id="cardholder-name" type="text" placeholder="Cardholder name">
+											<!-- placeholder for Elements -->
+											<div id="card-element"></div>
+											<div class="card-errors"></div>
+											<label>
+												<input type="checkbox" name="isSaveCard" id="isSaveCard" checked="">
+												Save card for later use
+											</label>
+											<button type="button" id="card-button" class="ui-btn ui-mini">Pay Securely</button>
+										</form>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -239,23 +263,23 @@
 		});
 		cardElement.mount('#card-element');
 
-		//
+		// Pay with Card
 		var cardholderName = document.getElementById('cardholder-name');
 		var cardButton = document.getElementById('card-button');
 
 		cardButton.addEventListener('click', function(ev) {
 			$('#card-button').prop('disabled', true);
-			$('.row-confirm-payment').find('div.card-errors').html('');
+			$('.row-new-card').find('div.card-errors').html('');
 
-			stripe.createPaymentMethod('card', cardElement, {
-				billing_details: {name: cardholderName.value}
-			}).then(function(result) {
+			stripe.createPaymentMethod('card', cardElement).then(function(result) {
 				if (result.error) {
 					// Show error in payment form
 					$('#card-button').prop('disabled', false);
 				} else {
+					let isSaveCard = $('#isSaveCard').is(':checked') ? 1 : 0;
 					let data = {
 						'_token': "{{ csrf_token() }}",
+						'isSaveCard': isSaveCard,
 						'payment_method_id': result.paymentMethod.id
 					}
 					// Otherwise send paymentMethod.id to your server (see Step 2)
@@ -278,6 +302,7 @@
 			ev.preventDefault();
 		});
 
+		// Handle response when 'Pay with card'
 		function handleServerResponse(response) {
 			if (response.error) {
 				// Show error from server on payment form
@@ -285,7 +310,7 @@
 				if( typeof(response.error) == 'object' ) {
 					message = response.error.message;
 				}
-				$('.row-confirm-payment').find('div.card-errors').html(message);
+				$('.row-new-card').find('div.card-errors').html(message);
 			} else if (response.requires_action) {
 				// Use Stripe.js to handle required card action
 				stripe.handleCardAction(
@@ -297,7 +322,91 @@
 						if( typeof(result.error) == 'object' ) {
 							message = result.error.message;
 						}
-						$('.row-confirm-payment').find('div.card-errors').html(message);
+						else
+						{
+							message = result.error;
+						}
+						$('.row-new-card').find('div.card-errors').html(message);
+					} else {
+						let isSaveCard = $('#isSaveCard').is(':checked') ? 1 : 0;
+						
+						let data = {
+							'_token': "{{ csrf_token() }}",
+							'isSaveCard': isSaveCard,
+							'payment_intent_id': result.paymentIntent.id
+						}
+						// The card action has been handled
+						// The PaymentIntent can be confirmed again on the server
+						fetch('{{ url('confirm-payment') }}', {
+							method: 'POST',
+							body: JSON.stringify(data),
+							headers: {
+								'Content-Type': 'application/json'
+							}
+						}).then(function(confirmResult) {
+							return confirmResult.json();
+						}).then(handleServerResponse);
+					}
+				});
+			} else {
+				// Show success message
+				$('.row-new-card').find('div.card-errors').html('');
+				window.location.href = "{{ url('order-view/'.$order->order_id) }}";
+			}
+		}
+
+		// Pay with PaymentMethod
+		$('#charging-saved-cards').on('click', function(ev) {
+			$('#charging-saved-cards').prop('disabled', true);
+			let payment_method_id = $('input[name=payment_method_id]:checked').val();
+			let data = {
+				'_token': "{{ csrf_token() }}",
+				'chargingSavedCard': true,
+				'payment_method_id': payment_method_id
+			}
+			// Otherwise send paymentMethod.id to your server (see Step 2)
+			fetch('{{ url('confirm-payment') }}', {
+				method: 'POST',
+				body: JSON.stringify(data),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			}).then(function(result) {
+				// Handle server response (see Step 3)
+				result.json().then(function(json) {
+					handleServerResponseSavedCard(json);
+					$('#charging-saved-cards').prop('disabled', false);
+				})
+			});
+
+			ev.preventDefault();
+		});
+		
+		// Handle response when pay with 'saved card' 
+		function handleServerResponseSavedCard(response) {
+			if (response.error) {
+				// Show error from server on payment form
+				let message = response.error;
+				if( typeof(response.error) == 'object' ) {
+					message = response.error.message;
+				}
+				$('.row-saved-cards').find('div.card-errors').html(message);
+			} else if (response.requires_action) {
+				// Use Stripe.js to handle required card action
+				stripe.handleCardAction(
+					response.payment_intent_client_secret
+				).then(function(result) {
+					if (result.error) {
+						// Show error in payment form
+						let message = result.error;
+						if( typeof(result.error) == 'object' ) {
+							message = result.error.message;
+						}
+						else
+						{
+							message = result.error;
+						}
+						$('.row-saved-cards').find('div.card-errors').html(message);
 					} else {
 						let data = {
 							'_token': "{{ csrf_token() }}",
@@ -318,7 +427,7 @@
 				});
 			} else {
 				// Show success message
-				$('.row-confirm-payment').find('div.card-errors').html('');
+				$('.row-saved-cards').find('div.card-errors').html('');
 				window.location.href = "{{ url('order-view/'.$order->order_id) }}";
 			}
 		}

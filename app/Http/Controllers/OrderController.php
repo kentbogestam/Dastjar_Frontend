@@ -769,7 +769,15 @@ class OrderController extends Controller
                 $request->session()->put('paymentmode',0);
             }
 
-            return view('order.cart', compact('order','orderDetails', 'customerDiscount', 'user', 'orderInvoice', 'storedetails', 'store_delivery_type'));
+            // Get customer's Stripe 'PaymentMethod'
+            $paymentMethod = array();
+            if( !is_null($user->stripe_customer_id) )
+            {
+                \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+                $paymentMethod = \Stripe\PaymentMethod::all(["customer" => $user->stripe_customer_id, "type" => "card"]);
+            }
+
+            return view('order.cart', compact('order','orderDetails', 'customerDiscount', 'user', 'orderInvoice', 'storedetails', 'store_delivery_type', 'paymentMethod'));
         }
         else
         {
@@ -824,6 +832,7 @@ class OrderController extends Controller
      */
     function viewCart(Request $request, $orderId)
     {
+        // 
         $orderInvoice = array();
 
         // Get order detail and calculate total and other discount
@@ -968,10 +977,32 @@ class OrderController extends Controller
 
         $user = User::find(Auth::id());
 
-        /*Session::put('paymentmode',1);
-        Session::put('paymentAmount', $order->final_order_total);
-        Session::put('OrderId', $order->order_id);*/
-        $request->session()->put('paymentAmount', $final_order_total);
+        //If store support ontine payment then if condition run.
+        if( isset($storeDetail->online_payment) && $storeDetail->online_payment == 1 ){
+            $request->session()->put('paymentmode',1);
+            $request->session()->put('paymentAmount', $order->final_order_total);
+            $request->session()->put('OrderId', $order->order_id);
+            $request->session()->put('paymentAmount', $final_order_total);
+
+            /*$companyUserDetail = CompanySubscriptionDetail::where('company_id', $productTime->company_id)->first();
+
+            if(isset($companyUserDetail->stripe_user_id))
+            {
+                $request->session()->put('stripeAccount', $companyUserDetail->stripe_user_id);
+            }*/
+        }
+        else
+        {
+            $request->session()->put('paymentmode',0);
+        }
+
+        // Get customer's Stripe 'PaymentMethod'
+        $paymentMethod = array();
+        if( !is_null($user->stripe_customer_id) )
+        {
+            \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+            $paymentMethod = \Stripe\PaymentMethod::all(["customer" => $user->stripe_customer_id, "type" => "card"]);
+        }
 
         /*$customerLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
             ->select(['OD.loyalty_id', DB::raw('SUM(OD.product_quality) AS quantity_bought')])
@@ -984,7 +1015,7 @@ class OrderController extends Controller
             ->toSql();*/
         // echo '<pre>'; print_r($orderInvoice); exit;
 
-        return view('order.cart', compact('order','orderDetails', 'user', 'customerDiscount', 'orderInvoice', 'storedetails', 'store_delivery_type'));
+        return view('order.cart', compact('order','orderDetails', 'user', 'customerDiscount', 'orderInvoice', 'storedetails', 'store_delivery_type', 'paymentMethod'));
     }
 
     /**
