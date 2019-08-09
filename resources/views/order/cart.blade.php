@@ -274,6 +274,11 @@
 			stripe.createPaymentMethod('card', cardElement).then(function(result) {
 				if (result.error) {
 					// Show error in payment form
+					let message = result.error;
+					if( typeof(result.error) == 'object' ) {
+						message = result.error.message;
+					}
+					$('.row-new-card').find('div.card-errors').html(message);
 					$('#card-button').prop('disabled', false);
 				} else {
 					let isSaveCard = $('#isSaveCard').is(':checked') ? 1 : 0;
@@ -321,10 +326,6 @@
 						let message = result.error;
 						if( typeof(result.error) == 'object' ) {
 							message = result.error.message;
-						}
-						else
-						{
-							message = result.error;
 						}
 						$('.row-new-card').find('div.card-errors').html(message);
 					} else {
@@ -401,10 +402,6 @@
 						let message = result.error;
 						if( typeof(result.error) == 'object' ) {
 							message = result.error.message;
-						}
-						else
-						{
-							message = result.error;
 						}
 						$('.row-saved-cards').find('div.card-errors').html(message);
 					} else {
