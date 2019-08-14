@@ -235,14 +235,17 @@
         $.ajax({
             url: '{{ url('kitchen/dishtype/remove-subcategory') }}/'+parentId+'/'+dishId,
             dataType: 'json',
-            success: function() {
-                $('#update-form-model').find('.input-group-'+dishId).remove();
-
-                if(!$('#update-form-model').find('.input-group').length)
+            success: function(response) {
+                if(response.status)
                 {
-                    $('#update-form-model').find('.form-group label').last().after('<div class="input-group mb-3 input-group-sm">'+
-                        '<input type="text" name="sub_category[]" placeholder="Enter sub-category" class="form-control">'+
-                    '</div>');
+                    $('#update-form-model').find('.input-group-'+dishId).remove();
+
+                    if(!$('#update-form-model').find('.input-group').length)
+                    {
+                        $('#update-form-model').find('.form-group label').last().after('<div class="input-group mb-3 input-group-sm">'+
+                            '<input type="text" name="sub_category[]" placeholder="Enter sub-category" class="form-control">'+
+                        '</div>');
+                    }
                 }
             }
         });

@@ -266,6 +266,19 @@
 
 		<div class="row">
 			<div class="col-12">
+				<select name="sub_category" id="sub_category" title="{{ __('messages.iSubCategory') }}">
+					<option value="" selected>{{ __('messages.subCategory') }}</option>
+					@if(isset($listSubCategory) && !empty($listSubCategory))
+						@foreach($listSubCategory as $key => $value)
+							<option value="{{ $key }}" {{ $product->sub_category == $key ? 'selected' : '' }}>{{ $value }}</option>
+						@endforeach
+					@endif
+				</select>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-12">
 				<input type="text" name="prodDesc" placeholder="Description" value="{{ $product->product_description ?? "" }}" maxlength="50" title="{{ __('messages.iDishDescription') }}" required/>
 			</div>
 		</div>
@@ -345,11 +358,11 @@
 @endsection
 
 @section('footer-script')
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<!-- <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
 <script src="//stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.5.10/js/ripples.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.5.10/js/material.min.js"></script>
-<script type="text/javascript" src="//rawgit.com/FezVrasta/bootstrap-material-design/master/dist/js/material.min.js"></script>
+<!-- <script type="text/javascript" src="//rawgit.com/FezVrasta/bootstrap-material-design/master/dist/js/material.min.js"></script> -->
 <script type="text/javascript" src="//momentjs.com/downloads/moment-with-locales.min.js"></script>
 <script type="text/javascript" src="{{ asset('js/bootstrap-material-datetimepicker.js') }}"></script>
 
@@ -390,6 +403,34 @@
             reader.readAsDataURL(input.files[0]);	
 	    }
     }
+
+    // Let sub-category of selected category
+    $('#dishType').on('change', function() {
+    	dishId = $(this).val();
+    	let select = $('select#sub_category');
+
+    	$.ajax({
+            url: '{{ url('kitchen/dishtype/get-subcategories') }}/'+dishId,
+            dataType: 'json',
+            success: function(response) {
+                let str = '<option value="" selected disabled>{{ __('messages.subCategory') }}</option>';
+
+                if(response.subCategory.length)
+                {
+                	let isSelected = "selected";
+
+                	for(let i = 0; i < response.subCategory.length; i++)
+                	{
+                		str += '<option value="'+response.subCategory[i]['dish_id']+'" '+isSelected+'>'+response.subCategory[i]['dish_name']+'</option>';
+                		isSelected = '';
+                	}
+                }
+
+                select.html(str);
+                select.selectmenu('refresh');
+            }
+        });
+    });
 
     $('.create-menu-form').submit(function(e){     
     	dkS = moment($("#date-start").val(),'DD/MM/YYYY HH:mm').toDate();
@@ -483,7 +524,7 @@
     	//$(".ui-btn-right", activePage).text("ScrollEnd: " + scrollEnd);
     	
     	//if in future this page will get it, then add this condition in and in below if activePage[0].id == "home" 
-    	if (scrolled >= scrollEnd) {
+    	/*if (scrolled >= scrollEnd) {
 		        console.log(list);
 		        $.mobile.loading("show", {
 		        text: "loading more..",
@@ -495,7 +536,7 @@
 		         tempCount += 10;
 		         $.mobile.loading("hide");
 		     },500);
-    	}
+    	}*/
 	});
 
 </script>

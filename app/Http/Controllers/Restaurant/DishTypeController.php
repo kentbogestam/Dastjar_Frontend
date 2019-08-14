@@ -223,4 +223,18 @@ class DishTypeController extends Controller
 
         return response()->json(['status' => $status]);
     }
+
+    /**
+     * Get subcategory of selected category
+     * @param  [type] $parentId [description]
+     * @return [type]           [description]
+     */
+    function getSubcategories($dishId)
+    {
+        // Get category
+        $subCategory = DishType::select(['dish_id', 'dish_name'])
+            ->where(['parent_id' => $dishId, 'dish_activate' => 1])->get();
+
+        return response()->json(['subCategory' => $subCategory]);
+    }
 }
