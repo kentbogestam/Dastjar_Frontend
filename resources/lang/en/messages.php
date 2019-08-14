@@ -159,6 +159,8 @@ return [
     // Dish Type
     'listDishType' => 'List Dish Type',
     'dishType' => 'Dish Type',
+    'category' => 'Category',
+    'subCategory' => 'Sub Category',
     'language' => 'language',
     'dishTypeCreated' => 'Dish type created successfully.',
     'dishTypeUpdated' => 'Dish type updated successfully.',
@@ -252,6 +254,7 @@ return [
     'back' => 'Back',
     'save' => 'Save',
     'action' => 'Action',
+    'optional' => 'Optional',
     'pagination' => 'Showing :first to :last of :total entries',
     'aboutDastjarAnar' => 'About Dastjar RS/Anar',
     'aboutCompanyAdmin' => 'Your Company Admin',

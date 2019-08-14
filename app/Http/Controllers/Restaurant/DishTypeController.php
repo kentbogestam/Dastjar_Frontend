@@ -34,9 +34,9 @@ class DishTypeController extends Controller
     {
     	// Get
     	$dishType = DishType::select(['dish_id', 'dish_lang', 'dish_name'])
-    		->where(['u_id' => Auth::user()->u_id, 'dish_activate' => 1])
+    		->where(['u_id' => Auth::user()->u_id, 'dish_activate' => 1, 'parent_id' => null])
             ->orderBy('rank')
-    		->paginate(5);
+    		->paginate(10);
 
         // Add custom link in pagination
         $links = $dishType->links();
@@ -66,14 +66,14 @@ class DishTypeController extends Controller
             'dish_name.unique' => __('messages.dishTypeUnique'),
         ]);
 
-        $data = $request->except(['_token']);
+        $data = $request->except(['_token', 'parent_id']);
 
         // 
         $data['u_id'] = Auth::user()->u_id;
         $data['company_id'] = Company::where('u_id', Auth::user()->u_id)->first()->company_id;
         
         // Set rank
-        $rank = DishType::orderBy('rank', 'DESC')->where(['u_id' => Auth::user()->u_id, 'company_id' => $data['company_id'], 'dish_activate' => 1])->first();
+        $rank = DishType::orderBy('rank', 'DESC')->where(['u_id' => Auth::user()->u_id, 'company_id' => $data['company_id'], 'dish_activate' => 1, 'parent_id' => null])->first();
         
         if($rank)
         {
@@ -85,7 +85,28 @@ class DishTypeController extends Controller
         }
 
         // Create DishType
-        DishType::create($data);
+        $dishId = DishType::create($data)->id;
+
+        // Create sub-category
+        if($dishId)
+        {
+            $data['sub_category'] = array_filter($request->input('sub_category'));
+
+            if(!empty($data['sub_category']))
+            {
+                $arrSubCat = array();
+                foreach($data['sub_category'] as $row)
+                {
+                    $arrSubCat[] = array(
+                        'dish_lang' => $data['dish_lang'],
+                        'dish_name' => $row,
+                        'parent_id' => $dishId
+                    );
+                }
+
+                DishType::insert($arrSubCat);
+            }
+        }
 
         return redirect('kitchen/dishtype/list')->with('success', __('messages.dishTypeCreated'));
     }
@@ -97,8 +118,19 @@ class DishTypeController extends Controller
      */
     function ajaxGetDishTypeById($id)
     {
+        // Get category
         $dishType = DishType::select(['dish_id', 'dish_lang', 'dish_name'])
             ->where(['dish_id' => $id, 'dish_activate' => 1])->first();
+
+        // Get sub-category
+        $dishType['subcategory'] = null;
+        if($dishType)
+        {
+            $dishType['subcategory'] = DishType::select(['dish_id', 'dish_name'])
+                ->where(['parent_id' => $dishType->dish_id, 'dish_activate' => 1])
+                ->get();
+        }
+
 
         return response()->json(['dishType' => $dishType]);
     }
@@ -126,15 +158,36 @@ class DishTypeController extends Controller
 
         $data = $request->except(['_token']);
 
-        // 
+        // Update category
         DishType::where('dish_id', $request->dish_id)
             ->update(['dish_lang' => $request->dish_lang, 'dish_name' => $request->dish_name]);
 
+        // Update existing or create new sub-category
+        $data['sub_category'] = array_filter($request->input('sub_category'));
+        if(!empty($data['sub_category']))
+        {
+            foreach($data['sub_category'] as $key => $value)
+            {
+                if(DishType::where(['dish_id' => $key, 'parent_id' => $data['dish_id']])->count())
+                {
+                    DishType::where('dish_id', $key)->update(['dish_lang' => $data['dish_lang'], 'dish_name' => $value]);
+                }
+                else
+                {
+                    DishType::create(array(
+                        'dish_lang' => $data['dish_lang'],
+                        'dish_name' => $value,
+                        'parent_id' => $data['dish_id']
+                    ));
+                }
+            }
+        }
+        
         return redirect('kitchen/dishtype/list')->with('success', __('messages.dishTypeUpdated'));
     }
 
     /**
-     * [destroy description]
+     * Remove category
      * @param  [type] $id [description]
      * @return [type]     [description]
      */
@@ -149,5 +202,25 @@ class DishTypeController extends Controller
 
         DishType::where('dish_id', $id)->update(['dish_activate' => 0]);
         return redirect('kitchen/dishtype/list')->with('success', __('messages.dishTypeDeleted'));
+    }
+
+    /**
+     * Remove subcategory
+     * @param  [type] $parentId [description]
+     * @param  [type] $dishId   [description]
+     * @return [type]           [description]
+     */
+    function removeSubcategory($parentId, $dishId)
+    {
+        $status = 0;
+        $dishType = DishType::where(['dish_id' => $dishId, 'parent_id' => $parentId])->get();
+
+        if($dishType)
+        {
+            DishType::where('dish_id', $dishId)->update(['dish_activate' => 0]);
+            $status = 1;
+        }
+
+        return response()->json(['status' => $status]);
     }
 }

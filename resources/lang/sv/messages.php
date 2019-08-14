@@ -161,6 +161,8 @@ return [
     // Dish Type
     'listDishType' => 'Typ av Maträtt',
     'dishType' => 'Typ av Maträtt',
+    'category' => 'Kategori',
+    'subCategory' => 'Underkategori',
     'language' => 'Språk',
     'dishTypeCreated' => 'Maträtten skapades Framgångsrikt.',
     'dishTypeUpdated' => 'Maträtten uppdaterades Framgångsrikt.',
@@ -254,6 +256,7 @@ return [
     'back' => 'Tillbaka',
     'save' => 'Spara',
     'action' => 'Åtgärd',
+    'optional' => 'Valfri',
     'pagination' => 'Visar :first av :last av :total antal',
     'aboutDastjarAnar' => 'Om Dastjar RS/Anar',
     'aboutCompanyAdmin' => 'Ditt Företags Admin',

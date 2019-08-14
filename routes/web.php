@@ -257,6 +257,7 @@ Route::group(['prefix' => 'kitchen'], function(){
 			Route::get('get-dish-type/{id}', 'DishTypeController@ajaxGetDishTypeById');
 			Route::post('update', 'DishTypeController@update');
 			Route::get('{id}/delete', 'DishTypeController@destroy');
+			Route::get('remove-subcategory/{parentId}/{dishId}', 'DishTypeController@removeSubcategory');
 		});
 
 		// Home delivery
