@@ -1295,6 +1295,12 @@ class AdminController extends Controller
 
         $product->lang = $request->dishLang;
         $product->dish_type = $request->dishType;
+
+        if($request->has('sub_category'))
+        {
+            $product->sub_category = $request->sub_category;
+        }
+
         $product->product_description = $request->prodDesc;
         $product->preparation_Time = $hours;
         $product->category = "7099ead0-8d47-102e-9bd4-12313b062day";
@@ -1483,6 +1489,12 @@ class AdminController extends Controller
 
         $product->lang = $request->dishLang;
         $product->dish_type = $request->dishType;
+
+        if($request->has('sub_category'))
+        {
+            $product->sub_category = $request->sub_category;
+        }
+
         $product->product_description = $request->prodDesc;
         $product->preparation_Time = $hours;
         $product->category = "7099ead0-8d47-102e-9bd4-12313b062day";
@@ -1555,6 +1567,8 @@ class AdminController extends Controller
 
         $listDishes = $dishType->where('u_id' , '=', Auth::user()->u_id)->where('dish_activate', '=', '1')->pluck('dish_name','dish_id');
 
+        $listSubCategory = $dishType->where('parent_id' , '=', $product->dish_type)->where('dish_activate', '=', '1')->pluck('dish_name','dish_id');
+
         $employer = new Employer();
         $companyId = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
 
@@ -1567,7 +1581,7 @@ class AdminController extends Controller
 
         $product->preparation_Time = $time;
 
-        return view('kitchen.menulist.createMenu',compact('product', 'product_price_list', 'store_id', 'storeName', 'listDishes', 'currency'));
+        return view('kitchen.menulist.createMenu',compact('product', 'product_price_list', 'store_id', 'storeName', 'listDishes', 'currency', 'listSubCategory'));
     }
 
     /**

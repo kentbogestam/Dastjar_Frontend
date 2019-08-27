@@ -111,6 +111,15 @@
                             <label for="dish_name">{{ __('messages.dishType') }} <span class='mandatory'>*</span>:</label>
                             <input type="text" name="dish_name" placeholder="Enter title" class="form-control" id="dish_name" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
                         </div>
+                        <div class="form-group form-group-sm">
+                            <label for="sub_category">{{ __('messages.subCategory') }} ({{ __('messages.optional') }}):</label>
+                            <div class="input-group mb-3 input-group-sm">
+                                <input type="text" name="sub_category[]" placeholder="Enter sub-category" class="form-control">
+                            </div>
+                            <p class="text-right">
+                                <button type="button" class="btn btn-link add-subcat">Add more</button>
+                            </p>
+                        </div>
                         <button type="submit" class="btn btn-success">{{ __('messages.submit') }}</button>
                     </form>
                 </div>
@@ -138,6 +147,12 @@
                             <label for="dish_name">{{ __('messages.dishType') }} <span class='mandatory'>*</span>:</label>
                             <input type="text" name="dish_name" placeholder="Enter title" class="form-control" id="dish_name" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
                         </div>
+                        <div class="form-group form-group-sm">
+                            <label for="sub_category">{{ __('messages.subCategory') }} ({{ __('messages.optional') }}):</label>
+                            <p class="text-right">
+                                <button type="button" class="btn btn-link add-subcat">Add more</button>
+                            </p>
+                        </div>
                         <input type="hidden" name="dish_id" id="dish_id" data-rule-required="true">
                         <button type="submit" class="btn btn-success">{{ __('messages.update') }}</button>
                     </form>
@@ -156,6 +171,21 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+        // Add sub-category
+        $('.add-subcat').on('click', function() {
+            $(this).closest('.form-group').find('.input-group').last().after('<div class="input-group mb-3 input-group-sm">'+
+                '<input type="text" name="sub_category[]" placeholder="Enter sub-category" class="form-control">'+
+                '<div class="input-group-append">'+
+                    '<button type="button" class="btn remove-subcat"><i class="fa fa-minus" aria-hidden="true"></i></button>'+
+                '</div>'+
+            '</div>');
+        });
+
+        // Remove sub-category
+        $(document).on('click', '.remove-subcat', function() {
+            $(this).closest('.input-group').remove();
+        });
+
         // Form validation
         // $("#add-form").validate();
         $("#update-form").validate();
@@ -171,7 +201,52 @@
                 $('#update-form-model').find('#dish_id').val(response.dishType.dish_id);
                 $('#update-form-model').find('#dish_lang').val(response.dishType.dish_lang);
                 $('#update-form-model').find('#dish_name').val(response.dishType.dish_name);
+                $('#update-form-model').find('.input-group').remove();
+
+                let strSubcategory = '';
+                if(response.dishType.subcategory.length)
+                {
+                    for(let i = 0; i < response.dishType.subcategory.length; i++)
+                    {
+                        strSubcategory += '<div class="input-group mb-3 input-group-sm input-group-'+response.dishType.subcategory[i].dish_id+'">'+
+                            '<input type="text" name="sub_category['+response.dishType.subcategory[i].dish_id+']" value="'+response.dishType.subcategory[i].dish_name+'" placeholder="Enter sub-category" class="form-control">'+
+                            '<div class="input-group-append">'+
+                                '<button type="button" class="btn" onclick="removeSubcategory('+id+', '+response.dishType.subcategory[i].dish_id+')"><i class="fa fa-minus" aria-hidden="true"></i></button>'+
+                            '</div>'+
+                        '</div>';
+                    }
+                }
+                else
+                {
+                    strSubcategory += '<div class="input-group mb-3 input-group-sm">'+
+                        '<input type="text" name="sub_category[]" placeholder="Enter sub-category" class="form-control">'+
+                    '</div>';
+                }
+
+                $('#update-form-model').find('.form-group label').last().after(strSubcategory);
                 $('#update-form-model').modal();
+            }
+        });
+    }
+
+    // Remove sub-category
+    function removeSubcategory(parentId, dishId)
+    {
+        $.ajax({
+            url: '{{ url('kitchen/dishtype/remove-subcategory') }}/'+parentId+'/'+dishId,
+            dataType: 'json',
+            success: function(response) {
+                if(response.status)
+                {
+                    $('#update-form-model').find('.input-group-'+dishId).remove();
+
+                    if(!$('#update-form-model').find('.input-group').length)
+                    {
+                        $('#update-form-model').find('.form-group label').last().after('<div class="input-group mb-3 input-group-sm">'+
+                            '<input type="text" name="sub_category[]" placeholder="Enter sub-category" class="form-control">'+
+                        '</div>');
+                    }
+                }
             }
         });
     }
