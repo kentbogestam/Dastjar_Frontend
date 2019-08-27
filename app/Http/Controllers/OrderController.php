@@ -777,7 +777,8 @@ class OrderController extends Controller
                 $paymentMethod = \Stripe\PaymentMethod::all(["customer" => $user->stripe_customer_id, "type" => "card"]);
             }
 
-            return view('order.cart', compact('order','orderDetails', 'customerDiscount', 'user', 'orderInvoice', 'storedetails', 'store_delivery_type', 'paymentMethod'));
+            // return view('order.cart', compact('order','orderDetails', 'customerDiscount', 'user', 'orderInvoice', 'storedetails', 'store_delivery_type', 'paymentMethod'));
+            return view('v1.user.pages.cart', compact('order','orderDetails', 'customerDiscount', 'user', 'orderInvoice', 'storedetails', 'store_delivery_type', 'paymentMethod'));
         }
         else
         {
@@ -790,33 +791,7 @@ class OrderController extends Controller
             }
             else
             {
-                $todayDate = $request->session()->get('browserTodayDate');
-                $currentTime = $request->session()->get('browserTodayTime');
-                $todayDay = $request->session()->get('browserTodayDay');
-
-                if($request->session()->get('with_login_lat') == null){
-                    $lat = $request->session()->get('with_out_login_lat');
-                }else{
-                    $lat = $request->session()->get('with_login_lat');
-                }
-
-                if($request->session()->get('with_login_lng') == null){
-                    $lng = $request->session()->get('with_out_login_lng');
-                }else{
-                    $lng = $request->session()->get('with_login_lng');
-                }
-                
-                $userDetail = User::whereId(Auth()->id())->first();
-
-                if(!isset($userDetail->range)){
-                  $range = 10;
-                }else{
-                    $range = $userDetail->range;
-                }
-
-                $companydetails = Store::getListRestaurants($lat,$lng,$range,'1','3',$todayDate,$currentTime,$todayDay);
-                
-                return view('index', compact('companydetails'));
+                return redirect('eat-now');
             }
         }
     }
@@ -1015,7 +990,8 @@ class OrderController extends Controller
             ->toSql();*/
         // echo '<pre>'; print_r($orderInvoice); exit;
 
-        return view('order.cart', compact('order','orderDetails', 'user', 'customerDiscount', 'orderInvoice', 'storedetails', 'store_delivery_type', 'paymentMethod'));
+        // return view('order.cart', compact('order','orderDetails', 'customerDiscount', 'user', 'orderInvoice', 'storedetails', 'store_delivery_type', 'paymentMethod'));
+        return view('v1.user.pages.cart', compact('order','orderDetails', 'customerDiscount', 'user', 'orderInvoice', 'storedetails', 'store_delivery_type', 'paymentMethod'));
     }
 
     /**
@@ -1119,22 +1095,18 @@ class OrderController extends Controller
             if($userAddresses)
             {
                 $html .= '
-                <form method="post" id="frm-user-address" data-ajax="false">
-                    <div class="ui-grid-a">';
+                <div class="col-md-12 added-address-sec">
+                    <form id="frm-user-address" method="post">';
                 
                 $i = 1;
                 foreach($userAddresses as $address)
                 {
                     $strAddress = Helper::convertAddressToStr($address);
-                    $cls = ($i % 2 != 0) ? 'ui-block-a' : 'ui-block-b';
                     
                     $html .= "
-                    <div class='{$cls}'>
-                        <div class='ui-bar ui-bar-a'>
-                            <div class='ui-radio'>
-                                <label for='{$address->id}' class='ui-btn ui-corner-all ui-btn-inherit ui-btn-icon-left ui-radio-off'>{$strAddress}</label>
-                                <input type='radio' name='user_address_id' id='{$address->id}' value='{$address->id}'>
-                            </div>
+                    <div class='col-sm-6'>
+                        <div class='added-address'>
+                            <label><input type='radio' name='user_address_id' value='{$address->id}'>{$strAddress}</label>
                         </div>
                     </div>";
 
@@ -1142,34 +1114,43 @@ class OrderController extends Controller
                 }
 
                 $html .= '
-                    </div>
-                </form>';
+                    </form>
+                </div>';
             }
 
             $html .= '
-            <div class="ui-grid-solo">
-                <div class="ui-block-a">
-                    <div id="add-new-address" data-role="collapsible">
-                        <h4>'.__('messages.addAddress').'</h4>
-                        <div class="add-address-form">
-                            <div class="ui-bar ui-bar-a">
-                                <form method="post" id="save-address" data-ajax="false">
-                                    <input type="text" name="full_name" id="full_name" placeholder="'.__('messages.fullName').'*" data-mini="true" data-rule-required="true" data-msg-required="'.__('messages.fieldRequired').'">
-                                    <input type="text" name="mobile" id="mobile" placeholder="'.__('messages.mobileNumber').'*" data-mini="true" data-rule-required="true" data-rule-number="true" data-msg-required="'.__('messages.fieldRequired').'" data-msg-number="'.__('messages.fieldNumber').'">
-                                    <input type="text" name="address" id="address" placeholder="'.__('messages.address1').'" data-mini="true">
-                                    <input type="text" name="street" id="street" placeholder="'.__('messages.address2').'*" data-mini="true" data-rule-required="true" data-msg-required="'.__('messages.fieldRequired').'">
-                                    <input type="text" name="zipcode" id="zipcode" placeholder="Zipcode" data-mini="true" data-rule-number="true" data-msg-number="'.__('messages.fieldNumber').'">
-                                    <input type="text" name="city" id="city" placeholder="'.__('messages.city').'*" data-mini="true" data-rule-required="true" data-msg-required="'.__('messages.fieldRequired').'">
-                                    <input type="text" name="country" id="country" placeholder="'.__('messages.country').'*" data-mini="true" data-rule-required="true" data-msg-required="'.__('messages.fieldRequired').'">
-                                    <fieldset data-role="controlgroup">
-                                        <label for="is_permanent">'.__('messages.saveAddress').'</label>
-                                        <input type="checkbox" name="is_permanent" value="1" checked="" id="is_permanent">
-                                    </fieldset>
-                                    <input type="submit" data-inline="true" value="'.__('messages.save').'" data-theme="b">
-                                </form>
-                            </div>
+            <div class="col-md-12" id="add-new-address">
+                <div class="text-center">
+                    <button type="button" class="btn" data-toggle="collapse" data-target=".add-address-form">'.__('messages.addAddress').'</button>
+                </div>
+                <div class="collapse add-address-form contact-info">
+                    <form id="save-address">
+                        <div class="form-group">
+                            <input type="text" name="full_name" id="full_name" placeholder="'.__('messages.fullName').'*" class="form-control" data-rule-required="true" data-msg-required="'.__('messages.fieldRequired').'">
                         </div>
-                    </div>
+                        <div class="form-group">
+                            <input type="text" name="mobile" id="mobile" placeholder="'.__('messages.mobileNumber').'*" class="form-control" data-rule-required="true" data-rule-number="true" data-msg-required="'.__('messages.fieldRequired').'" data-msg-number="'.__('messages.fieldNumber').'">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="address" id="address" placeholder="'.__('messages.address1').'" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="street" id="street" placeholder="'.__('messages.address2').'*" class="form-control" data-rule-required="true" data-msg-required="'.__('messages.fieldRequired').'">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="zipcode" id="zipcode" placeholder="Zipcode" class="form-control" data-rule-number="true" data-msg-number="'.__('messages.fieldNumber').'">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="city" id="city" placeholder="'.__('messages.city').'*" class="form-control" data-rule-required="true" data-msg-required="'.__('messages.fieldRequired').'">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="country" id="country" placeholder="'.__('messages.country').'*" class="form-control" data-rule-required="true" data-msg-required="'.__('messages.fieldRequired').'">
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="is_permanent" value="1" checked="" id="is_permanent"> '.__('messages.saveAddress').'</label>
+                        </div>
+                        <input type="submit" value="'.__('messages.save').'" class="btn btn-default">
+                    </form>
                 </div>
             </div>
             ';

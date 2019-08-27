@@ -18,7 +18,7 @@ function add(urlEatLater,urlMenulist,noImageUrl,sessionTime){
 			async: false,
 			success: function(returnedData) {
 				loc_flag=4;
-	    		$('#login-popup').hide();
+				$('#login-popup').modal("hide");
 				$("#loading-img").hide();
 	    		$("#overlay").hide();
 
@@ -28,6 +28,7 @@ function add(urlEatLater,urlMenulist,noImageUrl,sessionTime){
 				var customerDiscount = (returnedData['customerDiscount']) ? returnedData['customerDiscount'] : {};
 				var discountIndex;
 				var isFindDiscount;
+				let storeClass;
 
 				list = temp;
 				var liItem = "";
@@ -37,6 +38,7 @@ function add(urlEatLater,urlMenulist,noImageUrl,sessionTime){
 					}
 
 					for (var i=0;i<count;i++){
+						storeClass = '';
 						if(checkTime(temp[i]["store_open_close_day_time"],sessionTime)){
 							// Check if discount is applying on restaurant
 							isFindDiscount = false;
@@ -54,47 +56,46 @@ function add(urlEatLater,urlMenulist,noImageUrl,sessionTime){
 							// Code added to display tagline of restaurant	
 							subStr = '';
 							if(temp[i]["tagline"]){
-								subStr = '<p>'+temp[i]["tagline"]+'</p>';
+								subStr = '<p class="info-hotel">'+temp[i]["tagline"]+'</p>';
 							}
 							// End of code added to dispaly tagline of restaurant
 							
 							// If found discount
 							if(isFindDiscount)
 							{
+								storeClass = ' li-has-discount';
+
 								if( customerDiscount[discountIndex] )
 								{
 									customerDiscountParsed = JSON.parse(customerDiscount[discountIndex]);
-									subStr += '<p><span>'+customerDiscountParsed.discount_value+'% OFF</span></p>';
+									subStr += '<p class="text-success"><span>'+customerDiscountParsed.discount_value+'% OFF</span></p>';
 								}
+							}
 
-								liItem += '<li class="ui-li-has-count ui-li-has-thumb li-has-discount ui-first-child">'+
-									'<a class="ui-btn ui-btn-icon-right ui-icon-carat-r" href="'+url+'/'+temp[i]['store_id']+'" data-ajax="false">'+
-										'<img src="'+temp[i]['store_image']+'" onerror="this.src=\''+noImageUrl+'\'">'+
-										'<h2>'+temp[i]["store_name"]+'</h2>'+subStr+
-										'<div class="ui-li-count ui-body-inherit">'+
-											'<span>'+temp[i]["distance"].toFixed(1)+'&nbsp;Km</span>'+
+							liItem += '<div class="row-hotel'+storeClass+'">'+
+								'<a href="'+url+'/'+temp[i]['store_id']+'">'+
+									'<div class="col-sm-8 col-xs-8">'+
+										'<div class="hotel-icon">'+
+											'<img src="'+temp[i]['store_image']+'" alt="" onerror="this.src=\''+noImageUrl+'\'" width="120">'+
+											'<div class="title-with-des">'+
+												'<p>'+temp[i]["store_name"]+'</p>'+subStr+
+											'</div>'+
 										'</div>'+
-									'</a>'+
-								'</li>';
-							}
-							else
-							{
-								liItem += '<li class="ui-li-has-count ui-li-has-thumb ui-first-child">'+
-									'<a class="ui-btn ui-btn-icon-right ui-icon-carat-r" href="'+url+'/'+temp[i]['store_id']+'" data-ajax="false">'+
-										'<img src="'+temp[i]['store_image']+'" onerror="this.src=\''+noImageUrl+'\'">'+
-										'<h2>'+temp[i]["store_name"]+'</h2>'+subStr+
-										'<div class="ui-li-count ui-body-inherit">'+
-											'<span>'+temp[i]["distance"].toFixed(1)+'&nbsp;Km</span>'+
+									'</div>'+
+									'<div class="col-sm-4 col-xs-4">'+
+										'<div class="hotel-distance">'+
+											'<a href="javascript">'+temp[i]["distance"].toFixed(1)+' KM. <i class="fa fa-angle-right"></i></a>'+
 										'</div>'+
-									'</a>'+
-								'</li>';
-							}
+									'</div>'+
+								'</a>'+
+								'<div class="clearfix"></div>'+
+							'</div>';
 
 							totalCount= i;
 						}
 					}
 				}else{
-					liItem += "<div class='table-content'><p>"+returnedData['restaurantStatusMsg']+"</p></div>";
+					liItem += "<div class='col-sm-8 col-xs-8'><p>"+returnedData['restaurantStatusMsg']+"</p></div>";
 				}
 
 				$("#companyDetailContianer").append(liItem);

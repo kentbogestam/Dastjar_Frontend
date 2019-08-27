@@ -303,8 +303,7 @@ class HomeController extends Controller
 
     public function index(Request $request)
     {
-        Artisan::call('view:clear');
-
+        // Artisan::call('view:clear');
         // dd(Session::all());
        
        if($request->session()->get('type_selection') == null){ //code added by saurabh to render the view for the selection of eat later nd eat now
@@ -317,16 +316,19 @@ class HomeController extends Controller
             $userDetail = User::whereId(Auth()->id())->first();
             if($userDetail->web_version == null){
                 DB::table('customer')->where('id', Auth::id())->update(['web_version' => $versionDetail->version,]);
-                return view('index', compact(''));
+                // return view('index', compact(''));
+                return view('v1.user.pages.eat-now');
             }else if($userDetail->web_version != $versionDetail->version){
                 DB::table('customer')->where('id', Auth::id())->update(['web_version' => $versionDetail->version,]);
                 Auth::logout();
                 return redirect('/login')->with('success', 'App version is updated.Please login again');
             }else{
-                return view('index', compact(''));
+                // return view('index', compact(''));
+                return view('v1.user.pages.eat-now');
             }
         }else{
-            return view('index', compact(''));
+            // return view('index', compact(''));
+            return view('v1.user.pages.eat-now');
         }
     }
 }
@@ -438,7 +440,8 @@ class HomeController extends Controller
 
             $data = $request->input();
             $request->session()->put('order_date', $data['dateorder']);
-            return view('eat_later', compact(''));
+            // return view('eat_later', compact(''));
+            return view('v1.user.pages.eat-later');
             
         } else {
             if(Auth::check()){
@@ -464,8 +467,8 @@ class HomeController extends Controller
                 } 
                 $companydetails = Store::getEatLaterListRestaurants($lat,$lng,$rang,'1','3',$todayDate,$currentTime,$todayDay);
             }
-             return view('eat_later', compact(''));
-            //return view('index', compact('companydetails')); //commeted by saurabh to stop the redirection of et later
+             // return view('eat_later', compact(''));
+             return view('v1.user.pages.eat-later');
         }
     }
 
@@ -489,11 +492,85 @@ class HomeController extends Controller
         }else{
             $companydetails = Store::getEatLaterListRestaurants($request->session()->get('with_out_login_lat'),$request->session()->get('with_out_login_lng'),$request->session()->get('rang'),'2','3',$todayDate,$currentTime,$todayDay);
         }
-        return view('eat_later', compact('companydetails'));
+        // return view('eat_later', compact('companydetails'));
+        return view('v1.user.pages.eat-later', compact('companydetails'));
     }
 
     public function menuList(Request $request, $storeId){
-        if(!Store::where('store_id' , $storeId)->exists()){
+        // Get store detail
+        $request->session()->put('storeId', $storeId);
+        $storedetails = Store::where('store_id' , $storeId)->first();
+
+        // Get the dish_type ids have products available
+        $dish_ids = array();
+        $productPriceList = ProductPriceList::where('store_id',$storeId)->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->with('menuPrice')->with('storeProduct')->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')->orderBy('product.product_rank', 'ASC')->orderBy('product.product_id')->get();
+
+        if($productPriceList->count())
+        {
+            foreach ($productPriceList as $row) {
+                foreach ($row->storeProduct as $storeProduct) {
+                    $dish_ids[] = $storeProduct->dish_type;
+                }
+            }
+        }
+
+        // 
+        if( !empty($dish_ids) )
+        {
+            $menuTypes = DishType::from('dish_type')
+                ->where('u_id' , $storedetails->u_id)
+                ->where('parent_id', null)
+                ->where('dish_activate','1')
+                ->whereIn('dish_id', array_unique($dish_ids))
+                ->orderBy('rank')
+                ->orderBy('dish_id')
+                ->get();
+
+            if($menuTypes->count())
+            {
+                // Get loyalty offer
+                $promotionLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
+                    ->select(['PL.id', 'PL.quantity_to_buy', 'PL.quantity_get', 'PL.validity', DB::raw('DATE_FORMAT(PL.end_date, "%d/%m-%Y") AS end_date'), DB::raw('GROUP_CONCAT(dish_type_id) AS dish_type_ids')])
+                    ->join('promotion_loyalty_dish_type AS PLDT', 'PLDT.loyalty_id', '=', 'PL.id')
+                    ->where(['PL.store_id' => $storedetails->store_id, 'PL.status' => '1'])
+                    ->where('PL.start_date', '<=', Carbon::now()->format('Y-m-d h:i:00'))
+                    ->where('PL.end_date', '>=', Carbon::now()->format('Y-m-d h:i:00'))
+                    ->groupBy('PL.id')
+                    ->first();
+                
+                $customerLoyalty = null;
+                
+                if( Auth::check() && $promotionLoyalty )
+                {
+                    // Get count of 'loyalty' used number of times
+                    $orderCustomerLoyalty = OrderCustomerLoyalty::from('order_customer_loyalty AS OCL')
+                        ->select([DB::raw('COUNT(OCL.id) AS cnt')])
+                        ->join('orders', 'orders.order_id', '=', 'OCL.order_id')
+                        ->where(['OCL.customer_id' => Auth::id(), 'OCL.loyalty_id' => $promotionLoyalty->id])
+                        ->where('orders.online_paid', '!=', 2)
+                        ->first();
+
+                    // Check if loyalty validity is 'false' so user can use n number of times or, validity should be greater than used validity of user
+                    if( (!$promotionLoyalty->validity) || ($promotionLoyalty->validity > $orderCustomerLoyalty->cnt) )
+                    {
+                        // Get customer loyalty
+                        $customerLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
+                            ->select(['OD.loyalty_id', DB::raw('SUM(OD.product_quality) AS quantity_bought')])
+                            ->join('order_details AS OD', 'OD.loyalty_id', '=', 'PL.id')
+                            ->join('orders', 'orders.order_id', '=', 'OD.order_id')
+                            ->where(['PL.id' => $promotionLoyalty->id, 'OD.user_id' => Auth::id()])
+                            ->where('orders.online_paid', '!=', 2)
+                            ->where('OD.loyalty_id', '!=', null)
+                            ->groupBy('OD.loyalty_id')
+                            ->first();
+                    }
+                }
+            }
+        }
+
+        return view('v1.user.pages.store-menu-list', compact('storedetails', 'menuTypes', 'promotionLoyalty', 'customerLoyalty', 'orderCustomerLoyalty'));
+        
+        /*if(!Store::where('store_id' , $storeId)->exists()){
             return redirect()->route('home');
         }
 
@@ -569,7 +646,137 @@ class HomeController extends Controller
 
         }else{
             return view('menulist.blankMenu', compact('storedetails'));
+        }*/
+    }
+
+    function getMenuDetail($catLevel1, $catLevel2 = null)
+    {
+        $status = false;
+        $html = '';
+
+        // Check if sub-menu exist, or get products belongs to dish_id
+        if( is_null($catLevel2) )
+        {
+            $subMenu = DishType::select(['dish_id', 'dish_name'])
+                ->where(['parent_id' => $catLevel1, 'dish_activate' => '1'])
+                ->orderBy('dish_id')
+                ->get();
+
+            if($subMenu->count())
+            {
+                $status = true;
+                $html .= '<div class="hotel-ser-sub">';
+
+                foreach($subMenu as $row)
+                {
+                    $html .= "
+                        <div class='product-sub'>
+                            <a href='#sub-menu-{$row->dish_id}' onclick='getMenuDetail(this, {$catLevel1}, {$row->dish_id})' data-toggle='collapse'>
+                                <span>{$row->dish_name} </span>
+                                <span><i class='fa fa-angle-right'></i></span>
+                            </a>
+                            <div class='collapse sub-menu-detail' id='sub-menu-{$row->dish_id}'>
+                                <div class='text-center'><i class='fa fa-spinner' aria-hidden='true'></i></div>
+                            </div>
+                        </div>
+                    ";
+                }
+
+                $html .= '</div>';
+            }
         }
+
+        // If no 'sub-cat' found or request has and cat and subcat both
+        if($status == false)
+        {
+            $products = Product::from('product AS P')
+                ->select(['P.product_id', 'P.product_name', 'P.product_description', 'P.preparation_Time', 'P.small_image', 'PPL.price', 'S.extra_prep_time'])
+                ->join('product_price_list AS PPL', 'P.product_id', '=', 'PPL.product_id')
+                ->join('store AS S', 'S.store_id', '=', 'PPL.store_id')
+                ->where(['P.dish_type' => $catLevel1, 'PPL.store_id' => Session::get('storeId')])
+                ->where('PPL.publishing_start_date','<=',Carbon::now())
+                ->where('PPL.publishing_end_date','>=',Carbon::now())
+                ->groupBy('P.product_id')
+                ->orderBy('P.product_rank', 'ASC')
+                ->orderBy('P.product_id');
+
+            if( !is_null($catLevel2) )
+            {
+                $products->where('P.sub_category', $catLevel2);
+            }
+
+            $products = $products->get();
+
+            if($products->count())
+            {
+                $status = true;
+                $html .= '<div class="list-menu-items">';
+                
+                foreach($products as $row)
+                {
+                    // 
+                    $time = $row->preparation_Time;
+                    if(!is_null($row->extra_prep_time)){
+                        $time2 = $row->extra_prep_time;
+                    }else{
+                        $time2 = "00:00:00";
+                    }
+                    $secs = strtotime($time2)-strtotime("00:00:00");
+                    $result = date("H:i:s",strtotime($time)+$secs);
+
+                    if(date_create($result) != false)
+                    {
+                        $result = date_format(date_create($result), 'H').':'.date_format(date_create($result), 'i');
+                    }
+
+                    // 
+                    $html .= "
+                        <div class='hotel-product' id='item{$row->product_id}'>
+                            <div class='product'>
+                                <div class='col-sm-11'>
+                                    <div class='product-detail'>
+                                        <img src='{$row->small_image}' alt='' onerror='this.src=\"".url('images/placeholder-image.png')."\"'>
+                                    </div>
+                                    <div class='discription'>
+                                        <h3>{$row->product_name}</h3>
+                                        <p>{$row->product_description}</p>
+                                        <p class='price'>".number_format((float)$row->price, 2, '.', '')." SEK</p>
+                                    </div>
+                                </div>
+                                <div class='col-sm-1'>
+                                    <div class='quantity'>
+                                        <span class='minus min' onclick='decrementValue(\"{$row->product_id}\")'><i class='fa fa-minus'></i></span>
+                                        <span class='inputBox'>
+                                            <input type='text' name='product[{$row->product_id}][prod_quant]' maxlength='2' size='1' value='0' readonly id='{$row->product_id}' />
+                                        </span>
+                                        <span class='plus max' onclick='incrementValue(\"{$row->product_id}\")'><i class='fa fa-plus'></i></span>
+                                    </div>
+                                    <input type='hidden' name='product[{$row->product_id}][id]' value='{$row->product_id}' />
+                                </div>
+                                <div class='additional-set extra-btn'>
+                                    <a href='javascript:void(0)'><i class='fa fa-clock-o'></i> {$result}</a>
+                                    <a href='#transitionExample' id='{$row->product_id}' data-toggle='modal'>
+                                        <span class='add_comment'><i class='fa fa-comments-o'></i>".__('messages.Add Comments')."</span>
+                                        <span class='edit_comment' style='display: none;'><i class='fa fa-comments-o'></i>".__('messages.Edit Comments')."</span>
+                                    </a>
+                                    <input type='hidden' id='orderDetail{$row->product_id}' name='product[{$row->product_id}][prod_desc]' value='' />
+                                </div>
+                                <div class='clearfix'></div>
+                            </div>
+                        </div>
+                    ";
+                }
+
+                $html .= '</div>';
+            }
+            else
+            {
+                $status = 1;
+                $html .= "<div class='text-center'>No product found.</div>";
+            }
+        }
+
+        return response()->json(['status' => $status, 'html' => $html]);
     }
 
     public function selectOrderDate(){
