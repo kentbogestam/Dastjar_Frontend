@@ -186,7 +186,7 @@
 													@endforeach
 												</fieldset>
 												<div class="card-errors"></div>
-												<button type="button" id="charging-saved-cards" class="ui-btn ui-mini">{{ __('messages.paySecurely') }}</button>
+												<button type="button" id="charging-saved-cards" class="ui-btn ui-mini" style="display: none">{{ __('messages.paySecurely') }}</button>
 											</form>
 										</div>
 									@endif
@@ -453,6 +453,7 @@
 
 		// 
 		$('input[name=payment_method_id]').on('click', function() {
+			$('#charging-saved-cards').show();
 			// Hide 'pay with card'
 			$('#pay-options').prop('checked', false);
 			$('.section-pay-with-card').addClass('hidden');
@@ -461,6 +462,7 @@
 		// 
 		$('#pay-options').on('click', function() {
 			$('input[name=payment_method_id]').prop('checked', false);
+			$('#charging-saved-cards').hide();
 			$('.section-pay-with-card').removeClass('hidden');
 		});
 	@endif
