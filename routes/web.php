@@ -284,6 +284,8 @@ Route::group(['prefix' => 'kitchen'], function(){
 				Route::get('{id}/delete', 'DriverController@destroy');
 			});
 		});
+
+		Route::get('test-bong', 'PrintController@index');
 	});
 });
 
