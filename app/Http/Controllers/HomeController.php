@@ -307,7 +307,8 @@ class HomeController extends Controller
         // dd(Session::all());
        
        if($request->session()->get('type_selection') == null){ //code added by saurabh to render the view for the selection of eat later nd eat now
-         return view('includes.popupSelection', compact(''));
+         // return view('includes.popupSelection', compact(''));
+         return view('v1.user.pages.home');
        }else{
 
        $request->session()->put('route_url', url('/').'/eat-now'); // code added by saurabh to update correct url for eat-later and eat-now
