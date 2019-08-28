@@ -11,4 +11,9 @@ class PrintController extends Controller
     {
         return view('kitchen.print.receipt1');
     }
+
+    function printAuth()
+    {
+        return view('kitchen.print.receipt1');
+    }
 }
