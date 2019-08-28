@@ -285,7 +285,7 @@ Route::group(['prefix' => 'kitchen'], function(){
 			});
 		});
 
-		Route::get('test-bong', 'PrintController@index');
+		Route::get('print', 'PrintController@print');
 	});
 });
 
