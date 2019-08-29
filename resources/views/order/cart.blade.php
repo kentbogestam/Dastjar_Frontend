@@ -15,6 +15,70 @@
 		    color: #fff !important;
 		    text-shadow: 0 1px 0 #059 !important;
 		}
+
+		button.btn-pay.ui-btn.ui-btn-inline.ui-mini {
+		    background: #d9edf7;
+		    border: none;
+		    padding: 6px 12px;
+		    display: inline-block;
+		    width: 300px;
+		    height: 40px;
+		    font-size: 15px;
+		}
+
+		button.send-order.ui-btn.ui-mini {
+			background: #d9edf7;
+			border: none;
+			padding: 6px 12px;
+			display: inline-block;
+			width: 300px;
+			height: 40px;
+			font-size: 15px;
+		}
+
+	.section-pay-with-card {
+	    max-width: 500px;
+	    margin: 0 auto;
+	    padding: 30px;
+	    box-shadow: 0px 0px 15px rgba(0,0,0,0.2);
+	}
+
+	.section-pay-with-card button#card-button {
+	    background-color: #38c;
+	    border: none;
+	    color: #fff;
+	    font-weight: normal;
+	    font-size: 15px;
+	    border-radius: 5px;
+	}
+
+	.section-pay-with-card .ui-input-text, 
+	.section-pay-with-card .ui-input-search {
+	    margin: .5em 0;
+	    border-width: 1px;
+	    border-style: solid;
+	    border-color: #ddd;
+	}
+
+	.ui-controlgroup-controls {
+	    text-align: center;
+	}
+
+	.ui-controlgroup-controls>div {
+		display: inline-block;
+	}
+	.section-pay-with-card ul {
+	    padding: 0;
+	    margin: 0;
+	    list-style: none;
+	    text-align: center;
+	    padding-top: 20px;
+	}
+	.section-pay-with-card ul li {
+	    display: inline-block;
+	    font-size: 30px;
+	    color: #ddd;
+	}
 	</style>
 @stop
 @section('content')
@@ -206,6 +270,12 @@
 													{{ __('messages.saveCardInfo') }}
 												</label>
 												<button type="button" id="card-button" class="ui-btn ui-mini">{{__('messages.Pay with card')}}</button>
+												<ul>
+													<li><i class="fa fa-cc-stripe" aria-hidden="true"></i></li>
+													<li><i class="fa fa-cc-amex" aria-hidden="true"></i></li>
+													<li><i class="fa fa-cc-mastercard" aria-hidden="true"></i></li>
+													<li><i class="fa fa-cc-visa" aria-hidden="true"></i></li>
+												</ul>
 											</form>
 										</div>
 									</div>
