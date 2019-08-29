@@ -241,8 +241,8 @@
 											<form id="list-saved-cards" method="POST" action="{{ url('confirm-payment') }}" data-ajax="false">
 												<fieldset data-role="controlgroup">
 													@foreach($paymentMethod->data as $row)
-														<input type="radio" name="payment_method_id" id="payment-method-{{ $row->card->last4 }}" value="{{ $row->id }}">
-														<label for="payment-method-{{ $row->card->last4 }}">
+														<input type="radio" name="payment_method_id" id="payment-method-{{ $loop->index }}" value="{{ $row->id }}">
+														<label for="payment-method-{{ $loop->index }}">
 															<i class="fa fa-cc-visa" aria-hidden="true"></i>
 															<i class="fa fa-circle" aria-hidden="true" style="font-size: 9px;"></i><i class="fa fa-circle" aria-hidden="true" style="font-size: 9px;"></i><i class="fa fa-circle" aria-hidden="true" style="font-size: 9px;"></i><i class="fa fa-circle" aria-hidden="true" style="font-size: 9px;"></i>
 															{{ $row->card->last4 }}
@@ -353,6 +353,7 @@
 		var cardButton = document.getElementById('card-button');
 
 		cardButton.addEventListener('click', function(ev) {
+			showLoading();
 			$('#card-button').prop('disabled', true);
 			$('.row-new-card').find('div.card-errors').html('');
 
@@ -365,6 +366,7 @@
 					}
 					$('.row-new-card').find('div.card-errors').html(message);
 					$('#card-button').prop('disabled', false);
+					hideLoading('Processing...');
 				} else {
 					let isSaveCard = $('#isSaveCard').is(':checked') ? 1 : 0;
 					let data = {
@@ -377,13 +379,15 @@
 						method: 'POST',
 						body: JSON.stringify(data),
 						headers: {
-							'Content-Type': 'application/json'
+							'Content-Type': 'application/json',
+							'X-CSRF-TOKEN': '{{ csrf_token() }}'
 						}
 					}).then(function(result) {
 						// Handle server response (see Step 3)
 						result.json().then(function(json) {
 							handleServerResponse(json);
 							$('#card-button').prop('disabled', false);
+							hideLoading('Processing...');
 						})
 					});
 				}
@@ -427,7 +431,8 @@
 							method: 'POST',
 							body: JSON.stringify(data),
 							headers: {
-								'Content-Type': 'application/json'
+								'Content-Type': 'application/json',
+								'X-CSRF-TOKEN': '{{ csrf_token() }}'
 							}
 						}).then(function(confirmResult) {
 							return confirmResult.json();
@@ -445,6 +450,7 @@
 		$('#charging-saved-cards').on('click', function(ev) {
 			if( $('input[name=payment_method_id]:checked').length )
 			{
+				showLoading();
 				$('#charging-saved-cards').prop('disabled', true);
 				let payment_method_id = $('input[name=payment_method_id]:checked').val();
 				let data = {
@@ -457,13 +463,15 @@
 					method: 'POST',
 					body: JSON.stringify(data),
 					headers: {
-						'Content-Type': 'application/json'
+						'Content-Type': 'application/json',
+						'X-CSRF-TOKEN': '{{ csrf_token() }}'
 					}
 				}).then(function(result) {
 					// Handle server response (see Step 3)
 					result.json().then(function(json) {
 						handleServerResponseSavedCard(json);
 						$('#charging-saved-cards').prop('disabled', false);
+						hideLoading('Processing...');
 					})
 				});
 			}
@@ -507,7 +515,8 @@
 							method: 'POST',
 							body: JSON.stringify(data),
 							headers: {
-								'Content-Type': 'application/json'
+								'Content-Type': 'application/json',
+								'X-CSRF-TOKEN': '{{ csrf_token() }}'
 							}
 						}).then(function(confirmResult) {
 							return confirmResult.json();
