@@ -115,6 +115,20 @@
 							@endif
 						@endforeach
 					</ul>
+					<ul>
+						<li>
+							<input type="radio" name="name" id="takeAway">
+							<label for="takeAway"><img src="images/car.png" alt="">Take Away</label>
+						</li>
+						<li>
+							<input type="radio" name="name" id="homeDelivery">
+							<label for="homeDelivery"><img src="images/dinner-1.png" alt="">Home Delivery</label>
+						</li>
+						<li>
+							<input type="radio" name="name" id="dineIn">
+							<label for="dineIn"><img src="images/dine.png" alt="">Dine In</label>
+						</li>
+					</ul>
 				</div>
 			@else
 				@foreach($storedetails->deliveryTypes as $row)
