@@ -222,7 +222,7 @@
 
 			<div class="ui-grid-solo">
 				<div class="ui-block-a">
-					@if(Session::get('paymentmode') !=0 && $order->final_order_total > 0)
+					@if(Session::get('paymentmode') !=0 && Session::has('stripeAccount') && $order->final_order_total > 0)
 						<div class="ui-grid-solo">
 							<div class="ui-block-a">
 								<div class="ui-bar ui-bar-a text-center">
@@ -233,15 +233,16 @@
 						<div class="ui-grid-solo row-confirm-payment hidden">
 							<div class="ui-block-a">
 								<div class="ui-bar ui-bar-a">
-									@php
-
-									@endphp
+									@php $isCardDefault = false; @endphp
 									@if(isset($paymentMethod->data))
+										@if( count($paymentMethod->data) == 1 )
+                                        	@php $isCardDefault = true; @endphp
+                                        @endif
 										<div class="row-saved-cards">
 											<form id="list-saved-cards" method="POST" action="{{ url('confirm-payment') }}" data-ajax="false">
 												<fieldset data-role="controlgroup">
 													@foreach($paymentMethod->data as $row)
-														<input type="radio" name="payment_method_id" id="payment-method-{{ $loop->index }}" value="{{ $row->id }}">
+														<input type="radio" name="payment_method_id" id="payment-method-{{ $loop->index }}" value="{{ $row->id }}" <?php echo ($isCardDefault) ? 'checked' : ''; ?>>
 														<label for="payment-method-{{ $loop->index }}">
 															<i class="fa fa-cc-visa" aria-hidden="true"></i>
 															<i class="fa fa-circle" aria-hidden="true" style="font-size: 9px;"></i><i class="fa fa-circle" aria-hidden="true" style="font-size: 9px;"></i><i class="fa fa-circle" aria-hidden="true" style="font-size: 9px;"></i><i class="fa fa-circle" aria-hidden="true" style="font-size: 9px;"></i>
@@ -250,16 +251,16 @@
 													@endforeach
 												</fieldset>
 												<div class="card-errors"></div>
-												<button type="button" id="charging-saved-cards" class="ui-btn ui-mini" style="display: none">{{ __('messages.paySecurely') }}</button>
+												<button type="button" id="charging-saved-cards" class="ui-btn ui-mini" <?php echo ($isCardDefault == false) ? 'style="display: none"' : ''; ?>>{{ __('messages.paySecurely') }}</button>
 											</form>
 										</div>
 									@endif
 									<div class="row-new-card">
 										<fieldset data-role="controlgroup">
-											<input type="radio" name="pay-options" id="pay-options">
+											<input type="radio" name="pay-options" id="pay-options" <?php echo ($isCardDefault == false) ? 'checked' : ''; ?>>
 											<label for="pay-options">{{ __('messages.payOptions') }}</label>
 										</fieldset>
-										<div class="section-pay-with-card hidden">
+										<div class="section-pay-with-card<?php echo ($isCardDefault == false) ? '' : ' hidden'; ?>">
 											<form id="payment-form" method="POST" action="{{ url('confirm-payment') }}" data-ajax="false">
 												<!-- <input id="cardholder-name" type="text" placeholder="Cardholder name"> -->
 												<!-- placeholder for Elements -->
@@ -338,7 +339,7 @@
 		}
 	});
 
-	@if(Session::get('paymentmode') !=0 && $order->final_order_total > 0)
+	@if(Session::get('paymentmode') !=0 && Session::has('stripeAccount') && $order->final_order_total > 0)
 		// Initialize Stripe and card element
 		var stripe = Stripe('{{ env('STRIPE_PUB_KEY') }}');
 

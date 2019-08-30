@@ -761,7 +761,7 @@ class OrderController extends Controller
                 $companyUserDetail = Admin::where('u_id', $companyDetail->u_id)->first();*/
                 $companyUserDetail = CompanySubscriptionDetail::where('company_id', $productTime->company_id)->first();
 
-                if(isset($companyUserDetail->stripe_user_id))
+                if(isset($companyUserDetail->stripe_user_id) && !is_null($companyUserDetail->stripe_user_id))
                 {
                     $request->session()->put('stripeAccount', $companyUserDetail->stripe_user_id);
                 }
@@ -971,7 +971,7 @@ class OrderController extends Controller
         // End
 
         //
-        $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
+        $order = Order::select('orders.*','store.store_name','company.currencies', 'company.company_id')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
             
         $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name','order_details.product_id')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 
@@ -984,16 +984,17 @@ class OrderController extends Controller
             $request->session()->put('OrderId', $order->order_id);
             $request->session()->put('paymentAmount', $final_order_total);
 
-            /*$companyUserDetail = CompanySubscriptionDetail::where('company_id', $productTime->company_id)->first();
+            $companyUserDetail = CompanySubscriptionDetail::where('company_id', $order->company_id)->first();
 
             if(isset($companyUserDetail->stripe_user_id))
             {
                 $request->session()->put('stripeAccount', $companyUserDetail->stripe_user_id);
-            }*/
+            }
         }
         else
         {
             $request->session()->put('paymentmode',0);
+            // $request->session()->put('paymentmode',1);
         }
 
         // Get customer's Stripe 'PaymentMethod'
