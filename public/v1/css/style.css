@@ -13,6 +13,8 @@ html {
 	color: #333;
 	margin: 0;
 	padding: 0;
+	position: relative;
+	padding-bottom: 100px;
 }
 
 *:after,
@@ -77,6 +79,7 @@ img {
 .head-section .logo-with-map {
 	width: 100%;
 	position: relative;
+	height: 60px;
 }
 
 .head-section .logo-with-map .logo {
@@ -104,7 +107,8 @@ img {
 }
 
 .mid-section {
-	margin-top: 50px;
+	margin-top: 60px;
+	padding-bottom: 60px;
 }
 
 .button-section {
@@ -240,6 +244,7 @@ img {
 	width: 100%;
 	bottom: 0;
 	left: 0;
+	right:0;
 }
 
 .footer-section ul {
@@ -258,6 +263,10 @@ img {
 	color: #fff;
 	font-size: 22px;
 	text-decoration: none;
+}
+
+.footer-section .ui-block-c a {
+	color: #fff;
 }
 
 /* ----------------------------------------------------------------------- 
@@ -441,6 +450,16 @@ img {
 	box-shadow: none;
 	font-size: 12px;
 	padding: 0 5px;
+	vertical-align: middle;
+}
+
+.additional-set span.add_comment {
+    width: auto;
+    display: inline-block;
+}
+
+.additional-set span.add_comment i {
+	margin-right: 5px;
 }
 
 /* --------------------------------------------------------------------
@@ -452,10 +471,6 @@ Cart
 	color: #c00000;
 	text-decoration: none;
 	font-size: 12px;
-}
-
-#cart-wrapper .mid-section {
-    margin-top: 66px;
 }
 
 .cart-list {
@@ -513,23 +528,33 @@ Cart
 	display: inline-block;
 }
 
-.contact-form-section ul li a {
+.contact-form-section ul li input[type="radio"] {
+	display: none;
+}
+
+.contact-form-section ul li input[type="radio"] + label {
 	display: block;
 	padding: 6px 12px;
 	text-align: center;
 	color: #333;
+	font-weight: normal;
 	text-decoration: none;
 	font-size: 15px;
 	background: #eee;
 }
 
-.contact-form-section ul li a img {
+.contact-form-section ul li input[type="radio"]:checked + label {
+	background: #38c;
+	color: #fff;
+}
+
+.contact-form-section ul li input[type="radio"] + label img {
 	margin-right: 5px;
 }
 
-.contact-form-section ul li a:hover,
-.contact-form-section ul li a:focus,
-.contact-form-section ul li a.current {
+.contact-form-section ul li input[type="radio"] + label:hover,
+.contact-form-section ul li input[type="radio"] + label:focus,
+.contact-form-section ul li input[type="radio"] + label.current {
 	background: #38c;
 	color: #fff;
 }
