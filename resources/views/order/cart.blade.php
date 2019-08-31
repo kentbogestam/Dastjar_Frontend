@@ -36,6 +36,24 @@
 			font-size: 15px;
 		}
 
+		.ui-grid-solo>.ui-block-a {
+		    text-align: center;
+		}
+
+		.row-saved-cards {
+		    text-align: center;
+		}
+
+		button#charging-saved-cards {
+			background: #d9edf7;
+			border: none;
+			padding: 6px 12px;
+			display: inline-block;
+			width: 300px;
+			height: 40px;
+			font-size: 15px;
+		}
+
 	.section-pay-with-card {
 	    max-width: 500px;
 	    margin: 0 auto;
@@ -62,11 +80,10 @@
 
 	.ui-controlgroup-controls {
 	    text-align: center;
+	    max-width: 320px;
+	    margin: 0 auto;
 	}
 
-	.ui-controlgroup-controls>div {
-		display: inline-block;
-	}
 	.section-pay-with-card ul {
 	    padding: 0;
 	    margin: 0;
@@ -78,6 +95,17 @@
 	    display: inline-block;
 	    font-size: 30px;
 	    color: #ddd;
+	}
+
+	p.error {
+	    text-align: center;
+	    font-size: 13px;
+	    background: #fb4949;
+	    padding: 8px;
+	    color: #fff;
+	    max-width: 270px;
+	    margin: 0 auto;
+	    border-radius: 5px;
 	}
 	</style>
 @stop
