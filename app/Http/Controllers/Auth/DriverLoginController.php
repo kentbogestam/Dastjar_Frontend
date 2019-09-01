@@ -78,7 +78,7 @@ class DriverLoginController extends Controller
 
         // Get driver
         $driver = Driver::select(['id', 'phone_prefix', 'phone'])
-            ->where('phone', $phone)
+            ->where(['phone' => $phone, 'status' => '1'])
             ->first();
 
         if($driver)
