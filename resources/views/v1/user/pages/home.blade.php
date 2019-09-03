@@ -12,6 +12,7 @@
 @endsection
 
 @section('content')
+<div class="welcome-anar">
 	<div class="container-fluid text-center">
 		<h1>{{ __('messages.Welcome To Anar') }}</h1>
 		<p>{{ __('messages.Select Restaurant') }}</p>
@@ -28,6 +29,7 @@
 			</div>
 		</div>
 	</div>
+</div>
 @endsection
 
 @section('footer-script')

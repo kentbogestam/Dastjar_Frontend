@@ -670,3 +670,48 @@ Cart
 	vertical-align: middle;
 }
 /* End modal */
+
+/* HOME page -------------------------------------------------------- */
+
+
+.welcome-anar {
+	position: absolute;
+	top:50%;
+	left:50%;
+	transform: translate(-50%, -50%);
+	-webkit-transform: translate(-50%, -50%);
+	max-width: 930px;
+	padding:20px;
+	box-shadow: 0 0 12px rgba(0,0,0,.6);
+	-webkit-box-shadow: 0 0 12px rgba(0,0,0,.6);
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	width: 100%;
+}
+
+.welcome-anar h1 {
+	font-size: 20px;
+	color: #333;
+	font-weight: bold;
+	padding:10px 0;
+}
+
+.welcome-anar p {
+	font-size: 14px;
+	margin-bottom: 20px;
+}
+
+.welcome-anar .btn {
+	background: #cde9f3;
+	border-color: #cde9f3;
+	font-weight: bold;
+	color: #333;
+	box-shadow: none;
+	outline: none;
+}
+
+.welcome-anar .btn img {
+	margin-right: 5px;
+}
+
+/* HOME page -------------------------------------------------------- */
