@@ -284,6 +284,9 @@ Route::group(['prefix' => 'kitchen'], function(){
 				Route::get('{id}/delete', 'DriverController@destroy');
 			});
 		});
+
+		Route::get('print', 'PrintController@print');
+		Route::get('print-auth', 'PrintController@printAuth')->middleware('auth:admin');
 	});
 });
 
