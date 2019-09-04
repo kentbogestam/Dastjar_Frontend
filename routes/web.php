@@ -287,6 +287,10 @@ Route::group(['prefix' => 'kitchen'], function(){
 
 		Route::get('print', 'PrintController@print');
 		Route::get('print-auth', 'PrintController@printAuth')->middleware('auth:admin');
+
+		Route::post('pos-print', 'PosPrintController@printPost');
+		Route::get('pos-print', 'PosPrintController@printGet');
+		Route::delete('pos-print', 'PosPrintController@printDelete');
 	});
 });
 
