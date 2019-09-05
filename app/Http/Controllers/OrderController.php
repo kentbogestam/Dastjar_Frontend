@@ -27,9 +27,12 @@ use App\Driver;
 use Session;
 use App\Helper;
 use Stripe;
+use App\Traits\PosReceipt;
 
 class OrderController extends Controller
 {
+    use PosReceipt;
+
     public function saveOrder(Request $request){
         if(Auth::check()){
             $data = $request->input();
@@ -109,6 +112,8 @@ class OrderController extends Controller
             }
         }
         // dd(Session::all());
+        
+        $this->createPOSReceipt($storeDetail, $order, $orderDetails);
 
         return view('order.index', compact('order','orderDetails', 'orderDiscount','storeDetail','user'));
     }
