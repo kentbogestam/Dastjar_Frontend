@@ -76,19 +76,6 @@ class StarCloudPrintStarLineModeJob
 	{
 		$printJobBuilder = $this->printJobBuilder.self::SLM_FEED_PARTIAL_CUT_ASC;
 		Storage::put($this->filePath.$this->fileName, $printJobBuilder);
-
-		/*$fh = fopen($this->fileName, 'w');
-		fwrite($fh, $printJobBuilder);
-		fclose($fh);*/
-	}
-
-	public function printjob()
-	{
-		/*$fh = fopen($this->fileName, 'w');
-		fwrite($fh, hex2bin($this->printJobBuilder.self::SLM_FEED_PARTIAL_CUT_ASC."07"));
-		fclose($fh);
-		queue_addPrintJob($this->printerMac, $this->fileName);
-		unlink($this->fileName);*/
 	}
 }
 ?>

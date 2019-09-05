@@ -113,7 +113,8 @@ class OrderController extends Controller
         }
         // dd(Session::all());
         
-        $this->createPOSReceipt($storeDetail, $order, $orderDetails);
+        // Create bong receipt to print
+        $this->createPOSReceipt($orderId);
 
         return view('order.index', compact('order','orderDetails', 'orderDiscount','storeDetail','user'));
     }

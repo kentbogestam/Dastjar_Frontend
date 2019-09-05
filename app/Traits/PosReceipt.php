@@ -1,60 +1,101 @@
 <?php
 namespace App\Traits;
 
+use App\Order;
+use App\OrderDetail;
+use App\PromotionDiscount;
 use App\Libraries\StarCloudPrintStarLineModeJob;
 
 trait PosReceipt {
 	private $MAX_CHARS = 32;
 
-	function createPOSReceipt($storeDetail, $order, $orderDetails)
+	function createPOSReceipt($orderId)
     {
-        $printerMac = '00.11.62.1b.e3.53';
-
-        // 
-        $fileName = "{$printerMac}-{$order->order_id}.txt";
-        $printer = new StarCloudPrintStarLineModeJob($printerMac, $fileName);
-
-        // Header
-        $printer->set_codepage("\x20\n");
-        $printer->set_text_center_align();
-        $printer->add_text_line($storeDetail->store_name);
-        $printer->add_text_line("TEL: {$storeDetail->phone}\n");
-        $printer->add_text_line("Order no.: #{$order->customer_order_id}");
-        $printer->add_text_line($this->get_seperator());
-
-        // Cart Item
-        if($orderDetails)
+        // Get order/store/company detail
+        $order = Order::from('orders as O')
+            ->select(['O.order_id', 'O.customer_order_id', 'C.currencies', 'O.order_total', 'O.delivery_type', 'O.delivery_charge', 'S.store_name', 'S.phone'])
+            ->join('store AS S', 'S.store_id', '=', 'O.store_id')
+            ->join('company AS C','C.company_id', '=', 'O.company_id')
+            ->where(['O.order_id' => $orderId])
+            ->first();
+        
+        if($order)
         {
-            $printer->set_text_right_align();
+            // Get order item details belongs to order
+            $orderDetail = OrderDetail::from('order_details AS OD')
+                ->select(['OD.product_quality', 'OD.price', 'P.product_name'])
+                ->join('product AS P', 'P.product_id', '=', 'OD.product_id')
+                ->where('OD.order_id', $orderId)
+                ->get();
+            
+            // Get order discount if applied
+            $orderDiscount = PromotionDiscount::from('promotion_discount AS PD')
+                ->select(['PD.discount_value'])
+                ->join('order_customer_discount AS OCD', 'OCD.discount_id', '=', 'PD.id')
+                ->where(['OCD.order_id' => $orderId])
+                ->first();
+
+            $printerMac = '00.11.62.1b.e3.53';
+
+            // 
+            $fileName = "{$printerMac}-{$order->order_id}.txt";
+            $printer = new StarCloudPrintStarLineModeJob($printerMac, $fileName);
+
+            // Header
+            $printer->set_codepage("\x20\n");
+            $printer->set_text_center_align();
+            $printer->add_text_line($order->store_name);
+            $printer->add_text_line("TEL: {$order->phone}\n");
             $printer->set_text_emphasized();
-            foreach($orderDetails as $row)
-            {
-                $arrIndex1 = "{$row->product_quality} {$row->product_name}";
-                $arrIndex2 = number_format(($row->product_quality*$row->price), 2, '.', '')." ".$order->currencies;
-                $printer->add_text_line($this->get_column_separated_data(array($arrIndex1, $arrIndex2)));
-            }
-            $printer->add_text_line($this->get_column_separated_data(array("2 Savenska kottbullar Kramig", "100.00 kr")));
-
+            $printer->add_text_line("Order no.: #{$order->customer_order_id}");
             $printer->cancel_text_emphasized();
-            $printer->add_text_line($this->get_seperator());
+            $printer->add_text_line($this->get_seperator_dashed());
+
+            // Cart Item
+            if($orderDetail)
+            {
+                $printer->set_text_right_align();
+                foreach($orderDetail as $row)
+                {
+                    $arrIndex1 = "{$row->product_quality} {$row->product_name}";
+                    $arrIndex2 = number_format(($row->product_quality*$row->price), 2, '.', '')." ".$order->currencies;
+                    $printer->add_text_line($this->get_column_separated_data(array($arrIndex1, $arrIndex2)));
+                }
+                // $printer->add_text_line($this->get_column_separated_data(array("2 Savenska kottbullar Kramig", "100.00 kr")));
+                $printer->add_text_line($this->get_seperator_dashed());
+            }
+
+            // Total
+            $printer->set_text_right_align();
+            $subTotal = $order->order_total;
+            $printer->add_text_line($this->get_padded_text("SUB TOTAL", number_format($subTotal, 2, '.', '').' '.$order->currencies));
+            $discountAmount = 0;
+            if($orderDiscount)
+            {
+                $discountAmount = ($order->order_total*$orderDiscount->discount_value/100);
+                $printer->add_text_line($this->get_padded_text("DISCOUNT", number_format($discountAmount, 2, '.', '')." ".$order->currencies));
+            }
+            $delivery_charge = 0;
+            if($order->delivery_type == 3 && $order->delivery_charge)
+            {
+                $delivery_charge = $order->delivery_charge;
+                $printer->add_text_line($this->get_padded_text("DELIVERY CHARGE", number_format($delivery_charge, 2, '.', '')." ".$order->currencies));
+            }
+            $total = number_format((($order->order_total+$delivery_charge) - $discountAmount), 2, '.', '')." ".$order->currencies;
+            $printer->set_text_emphasized();
+            $printer->add_text_line($this->get_padded_text("TOTAL", $total));
+            $printer->cancel_text_emphasized();
+            $printer->add_text_line($this->get_seperator_dashed());
+
+            // Footer
+            $printer->set_text_center_align();
+            $printer->add_text_line("Thank you for order at {$order->store_name}. Visit again!");
+            $printer->add_text_line($this->get_seperator_dashed());
+            // $printer->add_text_line("");
+            $printer->add_text_line("\n".date("d M Y").", ".date("H:i")."\n");
+
+            $printer->saveJob();
         }
-
-        // Total
-        $total = number_format($order->order_total, 2, '.', '')." ".$order->currencies;
-        $printer->set_text_right_align();
-        $printer->set_text_emphasized();
-        $printer->add_text_line($this->get_padded_text("TOTAL", $total));
-        $printer->cancel_text_emphasized();
-        $printer->add_text_line($this->get_seperator());
-
-        // Footer
-        $printer->set_text_center_align();
-        $printer->add_text_line("Thank you for shopping at {$storeDetail->store_name}");
-        $printer->add_text_line($this->get_seperator());
-        // $printer->add_text_line("");
-        $printer->add_text_line("\n".date("d M Y")."\n".date("H:i")."\n");
-
-        $printer->saveJob();
     }
 
     function get_column_separated_data($columns)
@@ -99,6 +140,11 @@ trait PosReceipt {
     function get_seperator()
     {
         return str_repeat('_', $this->MAX_CHARS);
+    }
+
+    function get_seperator_dashed()
+    {
+        return str_repeat('-', $this->MAX_CHARS);
     }
 
     function get_padded_text($left_text, $right_text)
