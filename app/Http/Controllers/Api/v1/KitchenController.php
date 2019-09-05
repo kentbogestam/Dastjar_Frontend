@@ -34,7 +34,7 @@ class KitchenController extends Controller
    public function orderDetail($reCompanyId){
         $deliveryDate = Carbon::now()->subDays(1)->toDateString();
         
-        $orderDetailscustomer = Order::select(['orders.*','customer.name as name', 'OCD.discount_id', 'PD.discount_value', DB::raw('COUNT(OCL.id) AS cntLoyaltyUsed'), 'CA.street'])
+        $orderDetailscustomer = Order::select(['orders.*','customer.name as name', 'OCD.discount_id', 'PD.discount_value', DB::raw('COUNT(OCL.id) AS cntLoyaltyUsed'), 'OD.status AS orderDeliveryStatus', 'CA.street'])
             ->where(['orders.store_id' => $reCompanyId])
             ->where('user_type','=','customer')
             ->where('check_deliveryDate', '>=', $deliveryDate)
@@ -46,6 +46,7 @@ class KitchenController extends Controller
             ->leftJoin('order_customer_discount AS OCD', 'orders.order_id', '=', 'OCD.order_id')
             ->leftJoin('promotion_discount AS PD', 'OCD.discount_id', '=', 'PD.id')
             ->leftJoin('order_customer_loyalty AS OCL', 'OCL.order_id', '=', 'orders.order_id')
+            ->leftJoin('order_delivery AS OD', 'OD.order_id', '=', 'orders.order_id')
             ->groupBy('orders.order_id');
 
         $store = Store::select(['extra_prep_time', 'order_response'])->where('store_id', $reCompanyId)->first();

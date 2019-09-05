@@ -23,8 +23,10 @@ use App\UserAddress;
 use App\Company;
 use App\Admin;
 use App\CompanySubscriptionDetail;
+use App\Driver;
 use Session;
 use App\Helper;
+use Stripe;
 
 class OrderController extends Controller
 {
@@ -49,19 +51,39 @@ class OrderController extends Controller
             ]);
         }
 
-        $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
+        /*$order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();*/
+
+        $order = Order::from('orders AS O')
+            ->select(['O.order_id', 'O.customer_order_id', 'O.store_id', 'O.user_id', 'O.order_type', 'O.delivery_type', 'O.deliver_date', 'O.deliver_time', 'O.order_total', 'O.delivery_charge', 'O.final_order_total', 'O.order_delivery_time', 'O.order_response', 'O.order_accepted', 'O.extra_prep_time','S.store_name','company.currencies', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
+            ->join('store AS S','O.store_id', '=', 'S.store_id')
+            ->join('company','O.company_id', '=', 'company.company_id')
+            ->leftJoin('customer_addresses AS CA', 'CA.id', '=', 'O.user_address_id')
+            ->where('order_id', $orderId)
+            ->first();
+
+        // If order type is 'home delivery', get driving distance time
+        if($order->delivery_type == 3)
+        {
+            // Get distance b/w origin and destination
+            $response = Helper::getDrivingDistance($order->store_address, $order->customer_address, 'address');
+            
+            if($response['status'] == 'OK')
+            {
+                $distanceInSec = (int)$response['duration']['value'];
+                $order['distanceInSec'] = $distanceInSec;
+            }
+        }
 
         $storeDetail = Store::where('store_id', $order->store_id)->first();
         $user = User::where('id',$order->user_id)->first();
-
         $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 
         // Get order discount if applied
         $orderDiscount = PromotionDiscount::from('promotion_discount AS PD')
-                    ->select(['PD.discount_value'])
-                    ->join('order_customer_discount AS OCD', 'OCD.discount_id', '=', 'PD.id')
-                    ->where(['OCD.order_id' => $orderId])
-                    ->first();
+            ->select(['PD.discount_value'])
+            ->join('order_customer_discount AS OCD', 'OCD.discount_id', '=', 'PD.id')
+            ->where(['OCD.order_id' => $orderId])
+            ->first();
 
         Session::forget('paymentmode');
 
@@ -103,13 +125,15 @@ class OrderController extends Controller
         // If accepted prepare string to show end-user
         if(Order::where(['order_id' => $orderId, 'order_accepted' => 1])->count())
         {
-            // Get order and associated store detail
-            $order = Order::select('orders.customer_order_id', 'orders.order_type', 'orders.deliver_date', 'orders.order_delivery_time', 'orders.order_accepted', 'orders.extra_prep_time', 'store.store_name', 'store.phone', 'store.extra_prep_time AS extra_prep_time_store', 'store.order_response')
-            ->join('store', 'store.store_id', '=', 'orders.store_id')
-            ->where('orders.order_id', $orderId)
-            ->first();
-
             $status = true;
+            
+            // Get order and associated store detail
+            $order = Order::from('orders AS O')
+                ->select(['O.order_id', 'O.customer_order_id', 'O.order_type', 'O.delivery_type', 'O.deliver_date', 'O.deliver_time', 'O.order_delivery_time', 'O.order_response', 'O.order_accepted', 'O.extra_prep_time', 'S.store_name', 'S.phone', 'S.extra_prep_time AS extra_prep_time_store', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
+                ->join('store AS S', 'S.store_id', '=', 'O.store_id')
+                ->leftJoin('customer_addresses AS CA', 'CA.id', '=', 'O.user_address_id')
+                ->where('O.order_id', $orderId)
+                ->first();
 
             //
             $responseStr .= '<p>'.__('messages.Thanks for your order').'</p>';
@@ -122,35 +146,90 @@ class OrderController extends Controller
                 $responseStr .= "<p><i class='fa fa-phone' aria-hidden='true'></i> <span>{$order->phone}</span></p>";
             }
 
-            $time = $order->order_delivery_time;
-            $time2 = $order->extra_prep_time_store;
-            $secs = strtotime($time2)-strtotime("00:00:00");
-            $result = date("H:i:s",strtotime($time)+$secs);
-
-            $responseStr .= '<p>';
-            if($order->order_type == 'eat_later')
+            if($order->delivery_type == 3)
             {
-                $responseStr .= __('messages.Your order will be ready on').' '.$order->deliver_date.' '.date_format(date_create($order->deliver_time), 'G:i');;
-            }
-            else
-            {
-                $responseStr .= __('messages.Your order will be ready in about').' ';
-
-                if(!$order->order_response && $order->extra_prep_time)
+                if($order->order_response)
                 {
-                    $responseStr .= $order->extra_prep_time.' mins';
+                    $times = array($order->order_delivery_time, $order->deliver_time, $order->extra_prep_time_store);
                 }
                 else
                 {
-                    if(date_format(date_create($result), 'H')!="00")
-                    {
-                        $responseStr .= date_format(date_create($result), 'H').' hours ';
-                    }
-
-                    $responseStr .= date_format(date_create($result), 'i').' mins';
+                    $times = array($order->deliver_time, $order->extra_prep_time);
                 }
+
+                $time = Helper::addTimes($times);
+
+                // Get distance b/w origin and destination
+                $response = Helper::getDrivingDistance($order->store_address, $order->customer_address, 'address');
+                
+                if($response['status'] == 'OK')
+                {
+                    $distanceInSec = (int)$response['duration']['value'];
+                    $order['distanceInSec'] = $distanceInSec;
+                }
+                
+                // Add 'travelling time'
+                if($distanceInSec)
+                {
+                    $time = date("H:i", strtotime($time)+$distanceInSec);
+                }
+
+                $dateTime = date('Y-m-d H:i:s', strtotime($order->deliver_date.' '.$time));
+
+                $responseStr .= '<p>';
+                if($order->order_type == 'eat_later')
+                {
+                    $responseStr .= __('messages.deliveryDateTimeEatLater').' '.date('Y-m-d H:i:s', strtotime($dateTime));
+                }
+                else
+                {
+                    $responseStr .= __('messages.deliveryDateTimeEatNow').' '.date('H:i', strtotime($dateTime));
+                }
+
+                $responseStr .= '<br><a href="'.url('track-order/'.$order->order_id).'" class="ui-btn ui-btn-inline track-order" data-ajax="false">'.__('messages.trackOrder').'</a>';
+                $responseStr .= '</p>';
             }
-            $responseStr .= '</p>';
+            else
+            {
+                if($order->order_response)
+                {
+                    $time = $order->order_delivery_time;
+                    $time2 = $order->extra_prep_time_store;
+                }
+                else
+                {
+                    $time = $order->deliver_time;
+                    $time2 = $order->extra_prep_time;
+                }
+                
+                $secs = strtotime($time2)-strtotime("00:00:00");
+                $result = date("H:i:s",strtotime($time)+$secs);
+
+                $responseStr .= '<p>';
+                if($order->order_type == 'eat_later')
+                {
+                    $responseStr .= __('messages.Your order will be ready on').' '.$order->deliver_date.' '.date_format(date_create($order->deliver_time), 'G:i');
+                }
+                else
+                {
+                    $responseStr .= __('messages.Your order will be ready in about').' ';
+
+                    if($order->order_response) // Automatic
+                    {
+                        if(date_format(date_create($result), 'H')!="00")
+                        {
+                            $responseStr .= date_format(date_create($result), 'H').' hours ';
+                        }
+
+                        $responseStr .= date_format(date_create($result), 'i').' mins';
+                    }
+                    else // Manual
+                    {
+                        $responseStr .= date_format(date_create($order->extra_prep_time), 'i').' mins';
+                    }
+                }
+                $responseStr .= '</p>';
+            }
         }
 
         // Return response data
@@ -185,6 +264,88 @@ class OrderController extends Controller
 
         // Return response data
         return response()->json(['status' => $status, 'order' => $order]);
+    }
+
+    /**
+     * Track order origin (driver) to destination (user) using map
+     * @param  [type] $orderId [description]
+     * @return [type]          [description]
+     */
+    function trackOrder($orderId)
+    {
+        $markerArray = array();
+        $order = Order::where('order_id', $orderId)->first();
+
+        // If order type 'home delivery'
+        if($order && $order->delivery_type == 3)
+        {   
+            // Get driver address
+            $driver = Driver::from('drivers AS D')
+                ->select(['D.latitude', 'D.longitude'])
+                ->join('order_delivery AS OD', 'OD.driver_id', '=', 'D.id')
+                ->join('orders AS O', 'O.order_id', '=', 'OD.order_id')
+                ->where(['O.order_id' => $orderId])
+                ->first();
+
+            if($driver)
+            {
+                $markerArray[] = array('lat' => $driver->latitude, 'lng' => $driver->longitude);
+                // $markerArray[] = array('lat' => 41.878113, 'lng' => -87.629799); // chicago, il
+            }
+            else
+            {
+                $store = Store::select(['latitude', 'longitude'])
+                    ->where('store_id', $order->store_id)
+                    ->first();
+                
+                $markerArray[] = array('lat' => $store->latitude, 'lng' => $store->longitude);
+            }
+            
+            // get order address
+            $orderAddress = UserAddress::select(['street', 'city', 'zipcode', 'country'])
+                ->join('orders', 'orders.user_address_id', '=', 'customer_addresses.id')
+                ->where(['order_id' => $orderId])
+                ->first();
+
+            $address = $orderAddress->street.', '.$orderAddress->city.', '.$orderAddress->zipcode.', '.$orderAddress->country;
+            $address = Helper::getCoordinates($address);
+
+            if($address)
+            {
+                $markerArray[] = $address;
+                // $markerArray[] = array('lat' => 38.627003, 'lng' => -90.199402); // st louis, mo
+            }
+
+            // Encode array
+            if(!empty($markerArray))
+            {
+                $markerArray = json_encode($markerArray);
+                // dd($markerArray);
+            }
+
+            return view('order.track-order', compact('order', 'markerArray'));
+        }
+
+        return redirect('order-view/'.$order->order_id);
+    }
+
+    /**
+     * Get driver position
+     * @param  [type] $orderId [description]
+     * @return [type]          [description]
+     */
+    function getDriverPosition($orderId)
+    {
+        // Get driver address
+        $driver = Driver::from('drivers AS D')
+            ->select(['D.latitude', 'D.longitude'])
+            ->join('order_delivery AS OD', 'OD.driver_id', '=', 'D.id')
+            ->join('orders AS O', 'O.order_id', '=', 'OD.order_id')
+            ->where(['O.order_id' => $orderId])
+            ->first();
+
+        // array('lat' => $driver->latitude, 'lng' => $driver->longitude);
+        return response()->json(['status' => 1, 'driver' => $driver]);
     }
 
     public function random_num($size) {
@@ -416,6 +577,7 @@ class OrderController extends Controller
 
                         if($storeDetail->order_response == 0 && $orderType == 'eat_now')
                         {
+                            $order->order_response = 0;
                             $order->order_accepted = 0;
                         }
 
@@ -599,7 +761,7 @@ class OrderController extends Controller
                 $companyUserDetail = Admin::where('u_id', $companyDetail->u_id)->first();*/
                 $companyUserDetail = CompanySubscriptionDetail::where('company_id', $productTime->company_id)->first();
 
-                if(isset($companyUserDetail->stripe_user_id))
+                if(isset($companyUserDetail->stripe_user_id) && !is_null($companyUserDetail->stripe_user_id))
                 {
                     $request->session()->put('stripeAccount', $companyUserDetail->stripe_user_id);
                 }
@@ -607,7 +769,15 @@ class OrderController extends Controller
                 $request->session()->put('paymentmode',0);
             }
 
-            return view('order.cart', compact('order','orderDetails', 'customerDiscount', 'user', 'orderInvoice', 'storedetails', 'store_delivery_type'));
+            // Get customer's Stripe 'PaymentMethod'
+            $paymentMethod = array();
+            if( !is_null($user->stripe_customer_id) )
+            {
+                \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+                $paymentMethod = \Stripe\PaymentMethod::all(["customer" => $user->stripe_customer_id, "type" => "card"]);
+            }
+
+            return view('order.cart', compact('order','orderDetails', 'customerDiscount', 'user', 'orderInvoice', 'storedetails', 'store_delivery_type', 'paymentMethod'));
         }
         else
         {
@@ -651,11 +821,18 @@ class OrderController extends Controller
         }
     }
 
+    // Page to test Stripe SCA
+    function cartScaTest()
+    {
+        return view('order.cart-sca-test');
+    }
+
     /**
      * View cart function for testing
      */
     function viewCart(Request $request, $orderId)
     {
+        // 
         $orderInvoice = array();
 
         // Get order detail and calculate total and other discount
@@ -794,16 +971,39 @@ class OrderController extends Controller
         // End
 
         //
-        $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
+        $order = Order::select('orders.*','store.store_name','company.currencies', 'company.company_id')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
             
         $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name','order_details.product_id')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 
         $user = User::find(Auth::id());
 
-        /*Session::put('paymentmode',1);
-        Session::put('paymentAmount', $order->final_order_total);
-        Session::put('OrderId', $order->order_id);*/
-        $request->session()->put('paymentAmount', $final_order_total);
+        //If store support ontine payment then if condition run.
+        if( isset($storeDetail->online_payment) && $storeDetail->online_payment == 1 ){
+            $request->session()->put('paymentmode',1);
+            $request->session()->put('paymentAmount', $order->final_order_total);
+            $request->session()->put('OrderId', $order->order_id);
+            $request->session()->put('paymentAmount', $final_order_total);
+
+            $companyUserDetail = CompanySubscriptionDetail::where('company_id', $order->company_id)->first();
+
+            if(isset($companyUserDetail->stripe_user_id))
+            {
+                $request->session()->put('stripeAccount', $companyUserDetail->stripe_user_id);
+            }
+        }
+        else
+        {
+            $request->session()->put('paymentmode',0);
+            // $request->session()->put('paymentmode',1);
+        }
+
+        // Get customer's Stripe 'PaymentMethod'
+        $paymentMethod = array();
+        if( !is_null($user->stripe_customer_id) )
+        {
+            \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+            $paymentMethod = \Stripe\PaymentMethod::all(["customer" => $user->stripe_customer_id, "type" => "card"]);
+        }
 
         /*$customerLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
             ->select(['OD.loyalty_id', DB::raw('SUM(OD.product_quality) AS quantity_bought')])
@@ -816,7 +1016,7 @@ class OrderController extends Controller
             ->toSql();*/
         // echo '<pre>'; print_r($orderInvoice); exit;
 
-        return view('order.cart', compact('order','orderDetails', 'user', 'customerDiscount', 'orderInvoice', 'storedetails', 'store_delivery_type'));
+        return view('order.cart', compact('order','orderDetails', 'user', 'customerDiscount', 'orderInvoice', 'storedetails', 'store_delivery_type', 'paymentMethod'));
     }
 
     /**
@@ -914,7 +1114,7 @@ class OrderController extends Controller
         if($is_home_delivery_eligible)
         {
             // Get user address
-            $userAddresses = UserAddress::where(['customer_id' => Auth::id(), 'is_permanent' => '1'])
+            $userAddresses = UserAddress::where(['customer_id' => Auth::id()])
                 ->get();
 
             if($userAddresses)
@@ -934,7 +1134,7 @@ class OrderController extends Controller
                         <div class='ui-bar ui-bar-a'>
                             <div class='ui-radio'>
                                 <label for='{$address->id}' class='ui-btn ui-corner-all ui-btn-inherit ui-btn-icon-left ui-radio-off'>{$strAddress}</label>
-                                <input type='radio' name='user_address_id' id='{$address->id}' value='{$address->id}' checked=''>
+                                <input type='radio' name='user_address_id' id='{$address->id}' value='{$address->id}'>
                             </div>
                         </div>
                     </div>";
@@ -961,6 +1161,7 @@ class OrderController extends Controller
                                     <input type="text" name="street" id="street" placeholder="'.__('messages.address2').'*" data-mini="true" data-rule-required="true" data-msg-required="'.__('messages.fieldRequired').'">
                                     <input type="text" name="zipcode" id="zipcode" placeholder="Zipcode" data-mini="true" data-rule-number="true" data-msg-number="'.__('messages.fieldNumber').'">
                                     <input type="text" name="city" id="city" placeholder="'.__('messages.city').'*" data-mini="true" data-rule-required="true" data-msg-required="'.__('messages.fieldRequired').'">
+                                    <input type="text" name="country" id="country" placeholder="'.__('messages.country').'*" data-mini="true" data-rule-required="true" data-msg-required="'.__('messages.fieldRequired').'">
                                     <fieldset data-role="controlgroup">
                                         <label for="is_permanent">'.__('messages.saveAddress').'</label>
                                         <input type="checkbox" name="is_permanent" value="1" checked="" id="is_permanent">
@@ -995,14 +1196,15 @@ class OrderController extends Controller
         $this->validate($request, [
             'full_name' => 'required',
             'mobile'    => 'required|numeric',
-            'zipcode'   => 'required|numeric',
-            'address'   => 'required',
+            'street'    => 'required',
+            'zipcode'   => 'nullable|numeric',
             'city'      => 'required',
+            'country'   => 'required',
         ]);
 
         // Create
         $status = 0; $addresses = '';
-        $data = $request->only(['full_name', 'mobile', 'zipcode', 'address', 'street', 'city', 'is_permanent']);
+        $data = $request->only(['full_name', 'mobile', 'zipcode', 'address', 'street', 'city', 'country', 'is_permanent']);
         $data['customer_id'] = Auth::id();
 
         if(UserAddress::create($data))
@@ -1022,13 +1224,32 @@ class OrderController extends Controller
     function updateOrderUserAddress(Request $request)
     {
         $status = 0;
+        $msg = __('messages.homeDeliveryNotInRange');
 
-        if( Order::where('order_id', $request->input('order_id'))->update(['user_address_id' => $request->input('user_address_id')]) )
+        // Check if delivery address is in store delivery range
+        $store = Store::select(['street', 'city', 'zip', 'country', 'delivery_range'])
+            ->where('store_id', Session::get('storeId'))->first();
+        $origin = $store->street.', '.$store->city.', '.$store->zip.', '.$store->country;
+
+        $userAddress = UserAddress::where('id', $request->input('user_address_id'))
+            ->first();
+        $destination = $userAddress->street.', '.$userAddress->city.', '.$userAddress->zipcode.', '.$userAddress->country;
+
+        // Get distance b/w origin and destination
+        $response = Helper::getDrivingDistance($origin, $destination, 'address');
+        
+        if($response['status'] == 'OK')
         {
-            $status = 1;
+            $distance = (int)$response['distance']['text'];
+
+            if($store->delivery_range > $distance)
+            {
+                Order::where('order_id', $request->input('order_id'))->update(['user_address_id' => $request->input('user_address_id')]);
+                $status = 1;
+            }
         }
 
-        return response()->json(['status' => $status]);
+        return response()->json(['status' => $status, 'msg' => $msg, 'response' => $response]);
     }
 
     /**

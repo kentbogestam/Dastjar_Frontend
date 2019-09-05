@@ -1,5 +1,9 @@
 $(function() {
-
+	// Bootstrap tooltip
+	if( $('[data-toggle="tooltip"]').length )
+	{
+		$('[data-toggle="tooltip"]').tooltip();
+	}
 });
 
 // Check if order qualified to show popup to add manual extra time
@@ -68,25 +72,20 @@ function frmAddManualPrepTime()
 }
 
 // Get list of avalable drivers to assign them to order
-function popupOrderAssignDriver(orderId, itemId)
+function popupOrderAssignDriver(orderId, itemId, isReady = true)
 {
 	$.ajax({
 		url: RESTAURANT_BASE_URL+'/get-available-driver-to-assign/'+orderId,
 		dataType: 'json',
 		success: function(response) {
-			if(!response.orderDeliveryCnt)
+			if(!response.orderDelivery || response.orderDelivery.status == 0)
 			{
 				if(response.driver.length)
 				{
-					var str = '';
-					for(var i = 0; i < response.driver.length; i++)
-					{
-						str += '<option value="'+response.driver[i].id+'">'+response.driver[i].name+'</option>';
-					}
-
 					$('#popup-order-assign-driver').find('input[name="order_id"]').val(orderId);
 					$('#popup-order-assign-driver').find('input[name="item_id"]').val(itemId);
-					$('#popup-order-assign-driver').find('select[name="driver_id"]').append(str);
+					$('#popup-order-assign-driver').find('input[name="is_ready"]').val(isReady);
+					$('#popup-order-assign-driver').find('table#list-driver tbody').html(response.html);
 					$('#popup-order-assign-driver').popup('open');
 				}
 				else
@@ -94,7 +93,7 @@ function popupOrderAssignDriver(orderId, itemId)
 					alert('No driver found.')
 				}
 			}
-			else
+			else if(isReady)
 			{
 				if(itemId)
 				{
@@ -114,7 +113,8 @@ function orderAssignDriver()
 {
 	var orderId = $('#popup-order-assign-driver').find('input[name=order_id]').val();
 	var itemId = $('#popup-order-assign-driver').find('input[name=item_id]').val();
-	var driverId = $('#popup-order-assign-driver').find('select[name=driver_id]').val();
+	var isReady = $('#popup-order-assign-driver').find('input[name=is_ready]').val();
+	var driverId = $('#popup-order-assign-driver').find('input[name=driver_id]:checked').val();
 
 	if(driverId != '' && orderId != '')
 	{
@@ -130,13 +130,16 @@ function orderAssignDriver()
 			success: function(response) {
 				$('#popup-order-assign-driver').popup('close');
 
-				if(itemId != 'false')
+				if(isReady && isReady != 'false')
 				{
-					onReady(itemId);
-				}
-				else
-				{
-					window.location.href = urlReadyOrder+'/'+orderId;
+					if(itemId != 'false')
+					{
+						onReady(itemId);
+					}
+					else
+					{
+						window.location.href = urlReadyOrder+'/'+orderId;
+					}
 				}
 			}
 		});

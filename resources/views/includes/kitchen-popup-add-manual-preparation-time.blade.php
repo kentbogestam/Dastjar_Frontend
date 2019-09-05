@@ -35,15 +35,21 @@
 	<div data-role="header"><h2>Assign Driver</h2></div>
 	<div class="ui-content" style="padding: 15px;">
 		<form name="frm-order-assign-driver">
-			<div class="ui-field-contain">
-				<label for="select-native-2">Select driver:</label>
-				<select name="driver_id" id="driver_id" data-mini="true">
-					<option value="">Select</option>
-				</select>
-			</div>
+			<table data-role="table" id="list-driver" data-mode="reflow" class="ui-responsive table-stroke">
+				<thead>
+					<tr>
+						<th data-priority="1">Name</th>
+						<th data-priority="2">Distance</th>
+						<th data-priority="3">&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
 			<input type="hidden" name="order_id">
 			<input type="hidden" name="item_id">
+			<input type="hidden" name="is_ready">
 			<button type="button" onclick="orderAssignDriver()" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left">Update</button>
+			<a href="javascript:void(0)" class="ui-btn ui-corner-all ui-btn-b" data-rel="back">Cancel</a>
 		</form>
 	</div>
 </div>

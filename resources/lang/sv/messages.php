@@ -1,6 +1,9 @@
 <?php
 
 return [
+    /**
+     * User
+     */
     'Eat Now' => 'Ät nu',
     'Eat Later'  => 'Ät senare',
     'Restaurant'  => 'Restaurang',
@@ -9,6 +12,9 @@ return [
     'Orders'  => 'Ordrar', 
     'Settings'  => 'ooo', 
     'Terms' => 'ALLMÄNNA VILLKOR OCH INTEGRITETSPOLITIK',
+    'eatLaterTimeError1' => 'Ange en hämttid i 24-timmarsformat.',
+    'eatLaterTimeError2' => 'Datum och tid är inte giltiga.',
+    'eatLaterTimeError3' => 'Beställningsdatum måste vara minst 2 timmar senare än aktuell tid',
     'Order id'  => 'Order-ID',
     'Done'  => 'OK',
     'Setting updated successfully.'   => 'Uppdaterat.',
@@ -34,9 +40,13 @@ return [
     'Alias'  => 'Namn',  
     'Date and Time'  => 'Datum och tid',  
     'Ready'  => 'Klar',    
-    'Delivered'  => 'Levererad',    
+    'Delivered'  => 'Levererad',
+    'accept' => 'Acceptera',
     'Paid'  => 'Betald',    
-    'Pick up Time'  => 'Upphämtningstid',    
+    'Pick up Time'  => 'Upphämtningstid',
+    'pickup' => 'Pick up',
+    'wanted_time' => 'Önskad Tid',
+    'pay_manual' => 'Betalas på Plats',
     'Kitchen'  => 'Kök',      
     'Catering'  => 'Catering',      
     'Admin'  => 'Admin',      
@@ -82,6 +92,9 @@ return [
     'and get the benefites'  => 'och få fördelarna',
     'Please activate Location Services in your mobile' => 'Skriv in  platsen du nu befinner dig på och klick "OK". OBS: Du måste alltid göra detta så länge du inte har aktiverat platstjänster.',
     'About Us' => 'Om Anar',
+    'trackOrder' => 'Track Order',
+    'deliveryDateTimeEatLater' => 'Your order will be delivered on ',
+    'deliveryDateTimeEatNow' => 'Your order will be delivered in around ',
     'Send' => 'Skicka',
     'Contact Us' => 'Kontakta oss',
     'Discount' => 'Rabatt',
@@ -111,7 +124,7 @@ return [
     'dateTimeAlert'=>'Både tid och datum måste anges för att gå vidare',
     'kitchenTextToSpeechDefault' => 'Ny Order',
     'warningAddProductFuturePrice' => 'Den föreslagna tiden överensstämmer inte med butikens öppettider!',
-    'orderResponse' => 'Order Respons',
+    'orderResponse' => 'Order Svar',
     'textAddManualPrepTime' => 'Välj antal minuter till leverans för hela ordern!',
     'waitForOrderConfirmation' => 'Din order är mottagen. Var vänlig invänta konfirmationen på ordern.',
     'noRestaurantFound' => 'Det finns vid den här tiden inga öppna restauranger i detta område.',
@@ -123,10 +136,15 @@ return [
     'Welcome To Anar'=>'Välkommen till anar!',
     'Select Restaurant'=>'Välj mellan "Ät nu eller Senare"!',
     'Pay with card'=>'Betala med kort',
+    'proceedToPay' => 'Fortsätt att betala',
+    'paySecurely' => 'Betala säkert',
+    'saveCardInfo' => 'Spara kort för senare användning',
+    'payOptions' => 'Credit card / Debit card',
     'continue' => 'Fortsätt',
     'notificationOrderReceived' => 'Din order är mottaget. Din order nummer är: :order_id',
     'notificationOrderReady' => 'Din Order, :order_id är Klar',
     'notificationOrderDelivered' => 'Din Order, :order_id är Levererad',
+    'notificationOrderAcceptedHomeDelivery' => 'Order :order_id has been loaded into car',
 
     // Store
     'store' => 'Restaurang',
@@ -181,6 +199,7 @@ return [
     'storeDeliveryType' => ':deliveryType restaurant',
     'deliveryType' => 'Leverans Typ',
     'homeDeliveryNotEligible' => 'Minsta beställningsvärde är :threshold',
+    'homeDeliveryNotInRange' => 'Address is not in range to deliver!',
 
     // Validation
     'fieldRequired' => 'Detta fält är obligatoriskt.',
@@ -195,6 +214,7 @@ return [
     'address1' => 'Portkod, Lägenhetsnummer eller Företag',
     'address2' => 'Gata och nummer',
     'city' => 'Stad/Ort',
+    'country' => 'Land',
     'saveAddress' => 'Spara den här adressen',
 
     // Delivery Price Model
@@ -211,7 +231,16 @@ return [
     'ruleDeliveryType3' => 'Lägg till ordervärde när en hemleverans är möjlig',
 
     // Driver
-    'driver' => 'Driver',
+    'driver' => 'Förare',
+    'driverLogin' => 'Förares Login',
+    'passwordResetSuccessfully' => 'Passordet är återställt.',
+    'passwordUpdatedSuccessfully' => 'Passordet är updateret .',
+    'driverUpdatedSuccessfully' => 'Updated successfully.',
+    'personalInformation' => 'Personlig Information',
+    'phEnterMobile' => 'Skriv mobilnummer.',
+    'phEnterEmail' => 'Skriv email',
+    'phPassword' => 'Nytt Passord',
+    'phConfirmPassword' => 'Konfirmera Passord',
 
     // Common
     'addNew' => 'Lägg till Ny',
@@ -223,6 +252,8 @@ return [
     'refresh' => 'Hämta igen',
     'submit' => 'Skicka',
     'update' => 'Uppdatera',
+    'yes' => 'Ja',
+    'no' => 'Nr',
     'close' => 'Stäng',
     'back' => 'Tillbaka',
     'save' => 'Spara',
@@ -231,15 +262,63 @@ return [
     'aboutDastjarAnar' => 'Om Dastjar RS/Anar',
     'aboutCompanyAdmin' => 'Ditt Företags Admin',
     'marketingTools' => 'Marknads Verktyg',
+    'range' => 'Räckvidd (In km)',
+    'driverRange' => 'Förares nåbarhet (In km)',
+    'deliveryRange' => 'Utkörningsområde (In km)',
+    'buffer_time' => 'Buffertid (In min)',
     'refund' => 'Återbetalning',
     'getTheApp' => 'Hämta den här appen',
-    'name' => 'Name',
+    'name' => 'Namn',
     'email' => 'Email',
-    'phone' => 'Phone',
+    'phone' => 'Mobil',
+    'password' => 'Password',
+    'login' => 'Login',
+    'forgetPassword' => 'Glömt ditt passord?',
+    'resetPassword' => 'Reset Password',
+    'changePassword' => 'Ändra Passord',
+    'click_here' => 'klicka här',
     'status' => 'Status',
     'active' => 'Active',
+    'address' => 'Adress',
     'inactive' => 'In-active',
     'moduleCreated' => ':module skapat.',
     'moduleUpdated' => ':module updaterat.',
     'moduleDeleted' => ':module raderat.',
+
+    /**
+     * Restaurant's placeholder goes here
+     */
+
+    // Menu
+    'iDishName' => 'Lägg till namnet på en maträtt. På grund av storleken på skärmen på en mobil kan texten bara uppgå till max 19 tecken, så försök att förkorta namnet.',
+    'iDishImage' => 'Lägg till en bild på maträtten för att hjälpa din kund att göra ett val',
+    'iDishLanguage' => 'Här listas de språk som är tillgängliga för kunderna. Du kan skapa mer än ett språk. Menyn kommer att finnas tillgänglig på alla valda språk. Vilket språk som visas beroende på kundens språkinställningar.',
+    'iDishDescription' => 'Beskriv, maträtten och innehållet. På grund av storleken på mobila skärmar passar max 50 tecken i 2 linjer.',
+    'iDishPrepTime' => 'Lägg till den tid du vill att konsumenten ska se som minsta tid det tar för att förbereda denna måltid. Denna tid visas i menyn för att ge kunden en första aning om väntetiden. Senare kommer ett meddelande om att beställningen är klar, skickas till kunden när du klickar på  knappen “Klar”.',
+    'iDishPrice' => "Lägg till priset på Maträtten.\nDu kan använda \"ADD NEW Price\" i menyfliken för att lägga till olika priser för olika tidpunkter på dagen för att öka antalet kunder under tiden då du inte har så mycket affärer.",
+    'iDishStartPublishDate' => "Datum för publicering - (Lägg till som grå text efter kalendern)\nDatumet är den första dagen som produkten är synlig för kunderna.\nLägg till dina kommande prisändringar eftersom de kommer att publiceras automatiskt och bli av om stressen gör det här i sista minuten.",
+    'iDishEndPublishDate' => "Slut på publicering - (Lägg till som grå text efter kalendern)\nDagen då denna maträtt inte längre är giltig eller priset kommer att ändras. Om du inte vet när det är, bara välj en tid ett par år i framtiden, t ex 10 år från nu.",
+    'iDishAddNewPrice' => 'Lägg till kommande priser och publicera dem automatiskt\neller\nDu kan lägger till olika priser för olika tidpunkter på dagen för att öka antalet kunder under tiden då du inte har så mycket affärer.',
+    'iDishRemove' => 'Ta bort produkten från menyn',
+    'iDishRemovePrice' => 'Ta bort det här priset',
+    'iDishUpdatePrice' => 'Ändra uppgifter för detta pris',
+    'iDishTypeLanguage' => 'Här listas de språk som är tillgängliga för kunderna. Du kan skapa mer än ett språk Menyn kommer att finnas tillgänglig på alla valda språk. Vilket språk som visas beroende på kundens språkinställningar.',
+    'iDishType' => 'Det här är kategorin av maträtt du vill att din maträtt ska visas under',
+
+    // Settings
+    'iStoreSettingLanguage' => 'Det här är språket du använder i den här appen. Välj ett språk från listan',
+    'iStoreSettingOrderResponse' => "Om du vill att svaret till din kund, när kunden skickar sin order, att sättas till automatiskt så kommer kunden att få som svar på sin order att ordern är klar för avhämtning runt den längsta förberedelsetiden som du satt i menyn av rätterna  i denna ordern.\n\nOm du sätter den till  manuell så kommer du att få möjligheten att själv sätta runt vilken tid ordern kommer att bli klar när du klickar på Påbörjad",
+    'iStoreSettingExtraPrepTime' => 'Den här optionen ger dig en möjlighet att temporärt  lägga till en extra tid när du har automatiskt order respons Glöm inte att slå av den när arbetsbelastningen minskar igen',
+    'iStoreSettingTextToSpeech' => "Du sätter den till On om du vill ha order innehållet  uppläst automatiskt\n\nDu sätter den till Off om du vill läsa order innehållet på skärmen istället. Den här optionen kommer också att starta ett alarm som säger Ny Order varje tionde sekund",
+    'iStoreSettingRefund' => 'Den här knappen tar dig till Stripes (din betalningsleverantör) order sida där du kan återbetala ett kortköp',
+    'iStoreSettingDiscount' => "Marknadsför din restaurang och öka din försäljning med rabatter ex ge grupper av kunder rabatt under en period. Du kan använda denna funktion för att få anställda på företag att välja din restaurang.\n\nNär du har en rabattkod kan du ge koden till företaget(en) du valt för att de sen ska distribuera dem till sina anställda.\nDina kunder lägger då in den under … Rabatt i sin app\nDu kan också välja att skicka den direkt till en person med hjälp av rabattfunktionen på “Beställ på Plats”\n\nRabatten gäller på all produkter som säljs i appen",
+    'iStoreSettingLoyalty' => "Skapa ett lojalitetserbjudande till dina kunder för att komma tillbaka till dig Ett exempel kan vara  köp 9 o få den 10:onde gratis. Dina lojalitserbjudanen syns i kundens app och räknas även upp när kunden handlar för att på så sätt göra erbjudandet ännu attraktivare\n\nLojalitets erbjudanden skapas per kategori",
+
+    // Driver
+    'iDriverName' => 'Namnet på föraren',
+    'iDriverEmail' => 'Förarens email (kommer att användas för autentisering senare)',
+    'iDriverPhone' => 'Numret till den mobil som föraren använder',
+
+    // delivery-price-model
+    'iDeliveryType' => "Välj vilken prismodell du ska använda. Du kan välja mellan: <ul><li>Lägg till Pris för varje Leverans<ul><li>Använd en enkel prismodell där varje leverans oberoende av ordervärde har ett och samma pris</li><li>Därefter lägg också till kostnaden för varje enskild leverans</li></ul></li><li>Lägg till ett pris för leverans och lägsta beställningsvärde för gratis leverans<ul><li>Använd en prismodell där varje leverans har ett och samma pris upp till ett Minimum Ordervärde. Därutöver är leveransen gratis.</li><li>Därefter lägg också till kostnaden för enskild leverans</li></ul></li><li>Lägg till ordervärde när en hemleverans är möjlig<ul><li>Välj den här optionen om du bara vill leverera om ordervärdet passerat en viss summa som du anger i Minimum Ordervärde</li></ul></li></ul>",
 ];

@@ -1012,7 +1012,7 @@ table tr .ui-input-text,table tr .ui-input-search{ border: none !important;}
 .customHdr{padding:15px 0 5px 0}
 .customHdr .rest-title{margin: 0 0 10px 0 !important}
 /************ Action Box********************/
-.actionBox {display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;top: 0;width: 100%; height: 100%;overflow: auto;background-color: rgb(0,0,0); background-color: rgba(0,0,0,0.4);}
+.actionBox {display: none;position: fixed;z-index: 2;padding-top: 100px;left: 0;top: 0;width: 100%; height: 100%;overflow: auto;background-color: rgb(0,0,0); background-color: rgba(0,0,0,0.4);}
 .actionBox-content {display: flex;background-color: #fff;border-color: #ccc;;margin: auto;padding: 20px;border: 1px solid #888;width: 450px; border-radius:5px; color:#fff;-webkit-transform:scale(1);-webkit-animation-name:popin;-webkit-animation-duration:350ms;-moz-transform:scale(1);-moz-animation-name:popin;-moz-animation-duration:350ms;transform:scale(1);animation-name:popin;animation-duration:350ms;opacity:1}
 .actionBox-content .mInner{float:left;width:100%}
 .actionBox-content p{width:100%;font-size: 18px; color: #2a2a2a; font-family: "ProximaNova-Regular"; font-weight: normal; text-align: center;}
@@ -1109,6 +1109,10 @@ a.close {
     text-shadow: 0 1px 0 #fff;
     filter: alpha(opacity=20);
     opacity: .2;
+}
+span.close {
+    float: none !important;
+    font-size: 16px !important;
 }
 .row-store-delivery-type {
     text-align: center;

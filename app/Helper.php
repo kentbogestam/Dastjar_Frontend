@@ -9,6 +9,21 @@ use Session;
 
 use \Gumlet\ImageResize;
 
+use App\Order;
+
+// 
+use App\App42\PushNotificationService;
+use App\App42\DeviceType;
+use App\App42\App42Log;
+use App\App42\App42Exception;
+use App\App42\App42NotFoundException;
+use App\App42\App42BadParameterException;
+use App\App42\StorageService;
+use App\App42\QueryBuilder;
+use App\App42\Query;
+use App\App42\App42API;
+use App\App42\Util;
+
 class Helper extends Model
 {
     public static function getLocation($address)
@@ -235,5 +250,113 @@ class Helper extends Model
         curl_close($ch);
 
         return $result;
+    }
+
+    // 
+    public static function sendNotifaction($userName, $message)
+    {
+        try{
+            App42API::initialize(env('APP42_API_KEY'),env('APP42_API_SECRET'));
+            $pushNotificationService = App42API::buildPushNotificationService();
+            $pushNotification = $pushNotificationService->sendPushMessageToUser($userName, $message);
+
+            return $pushNotification;
+        } catch(\Exception $e){
+            return $e->getMessage();
+        }
+    }
+
+    /**
+     * Get co-ordinate from address
+     * @param  [type] $address [description]
+     * @return [type]          [description]
+     */
+    public static function getCoordinates($address)
+    {
+        $url = "https://maps.googleapis.com/maps/api/geocode/json?address=".urlencode($address)."&key=".'AIzaSyByLiizP2XW9JUAiD92x57u7lFvU3pS630';
+
+        $response = Helper::getCurl($url);
+        $response = json_decode($response);
+
+        if($response->status == 'ZERO_RESULTS')
+        {
+            $data = false;
+        }
+        else
+        {
+            $data = array('lat' => $response->results[0]->geometry->location->lat, 'lng' => $response->results[0]->geometry->location->lng);
+        }
+
+        return $data;
+    }
+
+    /**
+     * Get driving distance using address/latlng
+     * @param  [type] $origin      [description]
+     * @param  [type] $destination [description]
+     * @param  string $from        [description]
+     * @return [type]              [description]
+     */
+    public static function getDrivingDistance($origin, $destination, $from = 'address')
+    {
+        if($from == 'address')
+        {
+            $url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=".urlencode($origin)."&destinations=".urlencode($destination)."&mode=driving&language=pl-PL&key=".'AIzaSyByLiizP2XW9JUAiD92x57u7lFvU3pS630';
+        }
+        elseif($from == 'latlng')
+        {
+            $url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=".$origin['lat'].",".$origin['lng']."&destinations=".$origin['lat'].",".$origin['lng']."&mode=driving&language=pl-PL&key=".'AIzaSyByLiizP2XW9JUAiD92x57u7lFvU3pS630';
+        }
+
+        $response = Helper::getCurl($url);
+        $response = json_decode($response, true);
+
+        if($response['status'] == 'OK')
+        {
+            $data = $response['rows'][0]['elements'][0];
+        }
+        else
+        {
+            $data = false;
+        }
+
+        return $data;
+    }
+
+    /**
+     * Call url using curl and return result
+     * @param  [type] $url [description]
+     * @return [type]      [description]
+     */
+    public static function getCurl($url)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        return $response;
+    }
+
+    /**
+     * Add multiple time and return format 'H:i:s'
+     * @param [type] $times [description]
+     */
+    public static function addTimes($times)
+    {
+        $seconds = 0;
+
+        if(is_array($times) && !empty($times))
+        {
+            foreach($times as $time)
+            {
+                $seconds += strtotime("1970-01-01 $time UTC");
+            }
+        }
+
+        return gmdate("H:i", $seconds);
     }
 }

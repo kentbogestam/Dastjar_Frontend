@@ -102,13 +102,7 @@
 
 			$.get("{{url('kitchen/order-readyKitchen')}}/"+id,
 			function(returnedData){
-				// console.log(returnedData["data"]);
 				$('body').find('#'+id+'ready').parents("tr").remove();
-				/*if(returnedData["status"] == 'ready'){
-					$("#popupCloseRight").popup("open");
-				}else{
-					$("#popupNotifaction").popup("open");	
-				}*/
 			});
 		}
 
@@ -143,9 +137,23 @@
 				      	lastOrderId = temp[i]["id"];
 				      	(function (i) {
 						    setTimeout(function () {
-			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"],extra_prep_time);
+			          		if(temp[i]['order_response'])
+			          		{
+			          			var time = addTimes(temp[i]['order_delivery_time'], temp[i]['deliver_time'], extra_prep_time);
+			          		}
+			          		else
+			          		{
+			          			var time = addTimes(temp[i]['deliver_time'], temp[i]['extra_prep_time']);
+			          		}
+			          		
 			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
 			          		var clsStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
+
+			          		if(temp[i]['orderDeliveryStatus'] == '0')
+					  		{
+					  			clsStatus += clsStatus.length ? ' not-accepted' : 'not-accepted';
+					  		}
+
 			          		liItem += "<tr class='"+clsStatus+"'>";
 			          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 			          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
@@ -186,11 +194,14 @@
 			          		if(temp[i]["order_started"] == 0){
 			          			ids = temp[i]['id'];
 
-			          			@if($store->order_response)
+			          			if(temp[i]['order_response'])
+			          			{
 			          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='orderReadyStarted("+ids+", this)'>";
-			          			@else
+			          			}
+			          			else
+			          			{
 			          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='isManualPrepTimeForOrder("+temp[i]['order_id']+", "+ids+", this)'>";
-			          			@endif
+			          			}
 
 				          		liItem += "<td >"
 				          		liItem += aString
@@ -245,6 +256,7 @@
 			          		{
 			          			deliveryType = '{{ __('messages.deliveryOptionHomeDelivery') }}';
 			          			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+temp[i]['user_address_id']+')"><span>'+temp[i]['street']+'</span></a>';
+			          			deliveryType += "<br><a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", "+temp[i]['id']+", false)'>Assign Driver</a>";
 			          		}
 
 			          		liItem += "<td>"+deliveryType+"</td>";
@@ -297,10 +309,23 @@
 				      	
 				      	(function (i) {
 						    setTimeout(function () {
-						    // console.log('iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'+i);
-			          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"],extra_prep_time);
+						    if(temp[i]['order_response'])
+			          		{
+			          			var time = addTimes(temp[i]['order_delivery_time'], temp[i]['deliver_time'], extra_prep_time);
+			          		}
+			          		else
+			          		{
+			          			var time = addTimes(temp[i]['deliver_time'], temp[i]['extra_prep_time']);
+			          		}
+
 			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
 			          		var clsStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
+
+			          		if(temp[i]['orderDeliveryStatus'] == '0')
+					  		{
+					  			clsStatus += clsStatus.length ? ' not-accepted' : 'not-accepted';
+					  		}
+
 			          		liItem += "<tr class='"+clsStatus+"'>";
 			          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 			          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
@@ -338,11 +363,14 @@
 			          		if(temp[i]["order_started"] == 0){
 				          		ids = temp[i]['id'];
 
-				          		@if($store->order_response)
+				          		if(temp[i]['order_response'])
+				          		{
 			          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='orderReadyStarted("+ids+", this)'>";
-			          			@else
+				          		}
+			          			else
+			          			{
 			          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='isManualPrepTimeForOrder("+temp[i]['order_id']+", "+ids+", this)'>";
-			          			@endif
+			          			}
 
 				          		liItem += "<td >"
 				          		liItem += aString
@@ -395,6 +423,7 @@
 			          		{
 			          			deliveryType = '{{ __('messages.deliveryOptionHomeDelivery') }}';
 			          			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+temp[i]['user_address_id']+')"><span>'+temp[i]['street']+'</span></a>';
+			          			deliveryType += "<br><a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", "+temp[i]['id']+", false)'>Assign Driver</a>";
 			          		}
 
 			          		liItem += "<td>"+deliveryType+"</td>";
@@ -484,7 +513,15 @@
 	      	// console.log('iiiiiiiiissssssssssssssssss'+i);
 	      	 (function (i) {
 			    setTimeout(function () {
-			      	var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
+			    	if(list[i]['order_response'])
+	          		{
+	          			var time = addTimes(list[i]['order_delivery_time'], list[i]['deliver_time']);
+	          		}
+	          		else
+	          		{
+	          			var time = addTimes(list[i]['deliver_time'], list[i]['extra_prep_time']);
+	          		}
+			      	// var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
 			      	var timeOrder = addTimes("00:00::",list[i]["deliver_time"]);
 		      		liItem += "<tr>";
 		      		liItem += "<th>"+list[i]["customer_order_id"]+"</th>";
@@ -521,11 +558,14 @@
 		      		if(list[i]["order_started"] == 0){
 		      			ids = list[i]['id'];
 
-		      			@if($store->order_response)
+		      			if(list[i]['order_response'])
+		      			{
 	          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='orderReadyStarted("+ids+", this)'>";
-	          			@else
+		      			}
+	          			else
+	          			{
 	          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='isManualPrepTimeForOrder("+temp[i]['order_id']+", "+ids+", this)'>";
-	          			@endif
+	          			}
 
 		          		liItem += "<td >"
 		          		liItem += aString
@@ -577,6 +617,7 @@
 	          		{
 	          			deliveryType = '{{ __('messages.deliveryOptionHomeDelivery') }}';
 	          			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+temp[i]['user_address_id']+')"><span>'+temp[i]['street']+'</span></a>';
+	          			deliveryType += "<br><a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", "+temp[i]['id']+", false)'>Assign Driver</a>";
 	          		}
 
 	          		liItem += "<td>"+deliveryType+"</td>";

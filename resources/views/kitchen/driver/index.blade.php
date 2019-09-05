@@ -97,11 +97,11 @@
                         @csrf
                         <div class="form-group">
                             <label for="name">{{ __('messages.name') }} :</label>
-                            <input type="text" name="name" class="form-control" id="name" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
+                            <input type="text" name="name" class="form-control" id="name" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}" title="{{ __('messages.iDriverName') }}">
                         </div>
                         <div class="form-group">
                             <label for="email">{{ __('messages.email') }} :</label>
-                            <input type="text" name="email" class="form-control" id="email" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}" data-rule-email="true" data-msg-email="{{ __('messages.fieldEmail') }}">
+                            <input type="text" name="email" class="form-control" id="email" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}" data-rule-email="true" data-msg-email="{{ __('messages.fieldEmail') }}" title="{{ __('messages.iDriverEmail') }}">
                         </div>
                         <div class="form-group">
                             <label for="phone">{{ __('messages.phone') }} :</label>
@@ -110,11 +110,11 @@
                                     <select name="phone_prefix" class="form-control" id="phone_prefix" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
                                         <option value="">Select</option>
                                         <option value="+91">+91</option>
-                                        <option value="+46">+46</option>
+                                        <option value="+46" selected="">+46</option>
                                     </select>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" name="phone" class="form-control" id="phone" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}" data-rule-number="true" data-msg-number="{{ __('messages.fieldNumber') }}">
+                                    <input type="text" name="phone" class="form-control" id="phone" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}" data-rule-number="true" data-msg-number="{{ __('messages.fieldNumber') }}" title="{{ __('messages.iDriverPhone') }}">
                                 </div>
                             </div>
                         </div>
@@ -136,11 +136,11 @@
                         @csrf
                         <div class="form-group">
                             <label for="name_upd">{{ __('messages.name') }} :</label>
-                            <input type="text" name="name_upd" class="form-control" id="name_upd" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
+                            <input type="text" name="name_upd" class="form-control" id="name_upd" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}" title="{{ __('messages.iDriverName') }}">
                         </div>
                         <div class="form-group">
                             <label for="email_upd">{{ __('messages.email') }} :</label>
-                            <input type="text" name="email_upd" class="form-control" id="email_upd" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}" data-rule-email="true" data-msg-email="{{ __('messages.fieldEmail') }}">
+                            <input type="text" name="email_upd" class="form-control" id="email_upd" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}" data-rule-email="true" data-msg-email="{{ __('messages.fieldEmail') }}" title="{{ __('messages.iDriverEmail') }}">
                         </div>
                         <div class="form-group">
                             <label for="phone">{{ __('messages.phone') }} :</label>
@@ -153,7 +153,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" name="phone_upd" class="form-control" id="phone_upd" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}" data-rule-number="true" data-msg-number="{{ __('messages.fieldNumber') }}">
+                                    <input type="text" name="phone_upd" class="form-control" id="phone_upd" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}" data-rule-number="true" data-msg-number="{{ __('messages.fieldNumber') }}" title="{{ __('messages.iDriverPhone') }}">
                                 </div>
                             </div>
                         </div>

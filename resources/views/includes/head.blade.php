@@ -50,5 +50,6 @@
     <!-- <script src = "{{ asset('js/common.js').'?v='.$RAND_APP_VERSION }}"></script> -->
     <script src = "{{ asset('js/common.js') }}"></script>
 	<link rel="stylesheet" href="{{asset('css/jquery.datetimepicker.min.css')}}">
+    <script type="text/javascript" src="https://momentjs.com/downloads/moment.js"></script>
 	@yield('head-scripts')
 </head>

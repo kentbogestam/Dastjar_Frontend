@@ -108,7 +108,7 @@ textarea.ui-input-text{
 			<div class="setting-list">
 				<form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('kitchen/save-kitchenSetting') }}">
 				{{ csrf_field() }}
-				<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.Language") }} <span>
+				<li data-role="collapsible" class="range-sec" title="{{ __('messages.iStoreSettingLanguage') }}"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.Language") }} <span>
 					@if(Auth::guard('admin')->user()->language == 'ENG')
 					English
 					@elseif(Auth::guard('admin')->user()->language == 'SWE')
@@ -129,7 +129,7 @@ textarea.ui-input-text{
 						{{ __("messages.orderResponse") }}
 					</h2>
 					<ul>
-						<li data-role="collapsible" class="range-sec">
+						<li data-role="collapsible" class="range-sec" title="{{ __('messages.iStoreSettingOrderResponse') }}">
 							<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">
 								{{ __("messages.orderResponse") }}
 								<span>
@@ -147,10 +147,10 @@ textarea.ui-input-text{
 						        <label for="order-response-automatic">Automatic</label>
 							</fieldset>
 						</li>
-						<li id="prep_time" class="range-sec btn_blk">
+						<li id="prep_time" class="range-sec btn_blk" title="{{ __('messages.iStoreSettingExtraPrepTime') }}">
 							<h2 class="ui-btn">{{ __('messages.Extra Preparation Time') }}</h2>
 						</li>
-						<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.Text To Speech") }} <span>
+						<li data-role="collapsible" class="range-sec" title="{{ __('messages.iStoreSettingTextToSpeech') }}"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.Text To Speech") }} <span>
 							@if(Auth::guard('admin')->user()->text_speech == 0)
 							Off
 							@elseif(Auth::guard('admin')->user()->text_speech == 1)
@@ -165,14 +165,13 @@ textarea.ui-input-text{
 						</li>
 					</ul>
 				</li>
-				</form>
 				<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.marketingTools") }} <span>
 					</span></h2>
 				    <ul data-role="controlgroup" class="others_tabs">
-						<li id="link-discount" class="range-sec btn_blk {{ !Session::has('subscribedPlans.discount') ? 'ui-state-disabled' : '' }}">
+						<li id="link-discount" class="range-sec btn_blk {{ !Session::has('subscribedPlans.discount') ? 'ui-state-disabled' : '' }}" title="{{ __('messages.iStoreSettingDiscount') }}">
 							<h2 class="ui-btn">{{ __('messages.Discount') }}</h2>
 						</li>
-						<li id="link-loyalty" class="range-sec btn_blk {{ !Session::has('subscribedPlans.loyalty') ? 'ui-state-disabled' : '' }}">
+						<li id="link-loyalty" class="range-sec btn_blk {{ !Session::has('subscribedPlans.loyalty') ? 'ui-state-disabled' : '' }}" title="{{ __('messages.iStoreSettingLoyalty') }}">
 							<h2 class="ui-btn">{{ __('messages.loyalty') }}</h2>
 						</li>
 				    </ul>
@@ -188,9 +187,29 @@ textarea.ui-input-text{
 							<h2 class="ui-btn">{{ __('messages.delivery_price_model') }}</h2>
 						</li>
 				    </ul>
+				    <ul>
+				    	<li class="range-sec btn_blk">
+							<div data-role="rangeslider">
+								<label for="driver_range">{{ __('messages.driverRange') }}</label>
+								<input type="range" name="driver_range" id="driver_range" min="0" max="20" value="{{ $store->driver_range }}">
+							</div>
+						</li>
+						<li class="range-sec btn_blk">
+							<div data-role="rangeslider">
+								<label for="delivery_range">{{ __('messages.deliveryRange') }}</label>
+								<input type="range" name="delivery_range" id="delivery_range" min="0" max="20" value="{{ $store->delivery_range }}">
+							</div>
+						</li>
+						<li class="range-sec">
+							<div data-role="rangeslider">
+								<label for="buffer_time">{{ __('messages.buffer_time') }}</label>
+								<input type="range" name="buffer_time" id="buffer_time" min="0" max="50" value="{{ $store->buffer_time }}">
+							</div>
+						</li>
+				    </ul>
 				</li>
 
-				<li id="link-refund" class="range-sec btn_blk">
+				<li id="link-refund" class="range-sec btn_blk" title="{{ __('messages.iStoreSettingRefund') }}">
 					<h2 class="ui-btn">{{ __('messages.refund') }}</h2>
 				</li>
 
@@ -226,7 +245,7 @@ textarea.ui-input-text{
 						</li>
 				    </ul>
 				</li>
-				
+				</form>
 			</div>
 		</div>
 </div>

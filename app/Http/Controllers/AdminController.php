@@ -531,7 +531,7 @@ class AdminController extends Controller
         $reCompanyId = Session::get('storeId');
         $deliveryDate = Carbon::now()->subDays(1)->toDateString();
 
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street')
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time','orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
             ->where(['order_details.store_id' => $reCompanyId])
             ->where('delivery_date', '>=', $deliveryDate)
             ->where('order_details.order_ready', '0')
@@ -539,6 +539,7 @@ class AdminController extends Controller
             ->join('product','product.product_id','=','order_details.product_id')
             ->join('orders','orders.order_id','=','order_details.order_id')
             ->leftJoin('customer_addresses AS CA','CA.id','=','orders.user_address_id')
+            ->leftJoin('order_delivery AS OD', 'OD.order_id', '=', 'orders.order_id')
             ->get();
 
         $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;
@@ -551,7 +552,7 @@ class AdminController extends Controller
         $reCompanyId = Session::get('storeId');
         $deliveryDate = Carbon::now()->subDays(1)->toDateString();
 
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street')
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
             ->where(['order_details.store_id' => $reCompanyId])
             ->where('delivery_date', '>=', $deliveryDate)
             ->where('order_details.order_ready', '0')
@@ -560,6 +561,7 @@ class AdminController extends Controller
             ->join('product','product.product_id','=','order_details.product_id')
             ->join('orders','orders.order_id','=','order_details.order_id')
             ->leftJoin('customer_addresses AS CA','CA.id','=','orders.user_address_id')
+            ->leftJoin('order_delivery AS OD', 'OD.order_id', '=', 'orders.order_id')
             ->get();
 
         $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;
@@ -640,6 +642,7 @@ class AdminController extends Controller
 
                         if($storeDetail->order_response == 0 && $orderType == 'eat_now')
                         {
+                            $order->order_response = 0;
                             $order->order_accepted = 0;
                         }
 
@@ -647,7 +650,7 @@ class AdminController extends Controller
                         $orders = Order::select('*')->whereUserId($customer_id)->orderBy('order_id', 'DESC')->first();
                         $orderId = $orders->order_id;
                         $i = $i+1;
-                    }else{}
+                    }
 
                     $i = 1;
                     if($max_time < $productTime->preparation_Time){
@@ -880,8 +883,17 @@ class AdminController extends Controller
 
     public function kitchenSetting(){
         // Get logged-in store detail
-        $store = Store::select(['order_response'])
+        $store = Store::select(['order_response', 'driver_range', 'delivery_range', 'buffer_time'])
             ->where('store_id' , Session::get('storeId'))->first();
+
+        if($store['buffer_time'] != NULL && $store['buffer_time'] != '00:00:00')
+        {
+            $store['buffer_time'] = date('i', strtotime($store['buffer_time']));
+        }
+        else
+        {
+            $store['buffer_time'] = 0;
+        }
 
         return view('kitchen.setting.index', compact('store'));
     }
@@ -893,14 +905,17 @@ class AdminController extends Controller
         }else{
             Session::put('applocale', 'sv');
         }
+        
+        // 
         DB::table('user')->where('id', Auth::guard('admin')->id())->update([
-                    'language' => $data['radio-choice-v-2'],
-                    'text_speech' => $data['text_speech'],
-                ]);
+            'language' => $data['radio-choice-v-2'],
+            'text_speech' => $data['text_speech'],
+        ]);
 
         // Update store setting
+        $buffer_time = '00:'.($data['buffer_time'] % 60).':00';
         Store::where('store_id', Session::get('storeId'))
-            ->update(['order_response' => $data['order_response']]);
+            ->update(['order_response' => $data['order_response'], 'driver_range' => $data['driver_range'], 'delivery_range' => $data['delivery_range'], 'buffer_time' => $buffer_time]);
 
         return redirect()->back()->with('success', 'Setting updated successfully.');
     }
@@ -1852,9 +1867,12 @@ class AdminController extends Controller
     {
         $status = 0;
 
+        $minutes = $request->extra_prep_time;
+        $extra_prep_time = intdiv($minutes, 60).':'. ($minutes % 60).':00';
+
         // Update extra preparation time
         $result = Order::where('order_id', $request->order_id)
-            ->update(['extra_prep_time' => $request->extra_prep_time]);
+            ->update(['extra_prep_time' => $extra_prep_time]);
 
         if($result)
         {
@@ -1870,20 +1888,79 @@ class AdminController extends Controller
      */
     function getAvailableDriverToAssign($orderId)
     {
+        $html = '';
         $driver = array();
 
-        $company_id = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first()->company_id;
+        // 
+        $orderDelivery = OrderDelivery::select(['status', 'driver_id'])
+            ->where(['order_id' => $orderId])
+            ->first();
 
-        if($company_id)
+        // Get store
+        $store = Store::where('store_id' , Session::get('storeId'))->first();
+        $address = $store->street.', '.$store->city.', '.$store->zip;
+        $address = Helper::getLocation($address);
+        // dd($address);
+        
+        if($address['latitude'] != null && $address['longitude'] != null)
         {
-            $driver = Driver::select(['id', 'name'])
-                ->where(['company_id' => $company_id, 'status' => '1'])
-                ->get();
+            $company_id = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first()->company_id;
+
+            if($company_id)
+            {
+                $haversine = "(6371 * acos(cos(radians({$address['latitude']})) * cos(radians(latitude)) * cos(radians(longitude) - radians({$address['longitude']})) + sin(radians({$address['latitude']})) * sin(radians(latitude)))) AS distance";
+                
+                if($store->driver_range)
+                {
+                    $driver = Driver::select(['id', 'name', 'is_engaged', DB::raw($haversine)])
+                        ->where(['company_id' => $company_id, 'status' => '1'])
+                        ->where('latitude', '!=', null)
+                        ->where('longitude', '!=', null)
+                        ->having('distance', '<=', $store->driver_range)
+                        ->orderBy('is_engaged')
+                        ->orderBy('distance')
+                        ->get();
+                }
+                else
+                {
+                    $driver = Driver::select(['id', 'name', 'is_engaged', DB::raw($haversine)])
+                        ->where(['company_id' => $company_id, 'status' => '1'])
+                        ->where('latitude', '!=', null)
+                        ->where('longitude', '!=', null)
+                        ->orderBy('is_engaged')
+                        ->orderBy('distance')
+                        ->get();
+                }
+
+                if($driver)
+                {
+                    foreach($driver as $row)
+                    {
+                        $isChecked = '';
+                        $class = $row->is_engaged == '1' ? 'engaged' : '';
+
+                        if($orderDelivery && $orderDelivery->driver_id == $row->id)
+                        {
+                            $isChecked = 'checked';
+                        }
+                        
+                        $html .= "<tr class='{$class}'>
+                            <td>{$row->name}</td>
+                            <td>".number_format($row->distance, 2)."</td>
+                            <td><div class='ui-radio'><input type='radio' name='driver_id' value='{$row->id}' ".$isChecked."></div></td>
+                        </tr>";
+                    }
+                }
+                else
+                {
+                    $html .= "<tr>
+                        <td colspan='3'>".__('messages.noRecordFound')."</td>
+                    </tr>";
+                }
+            }
         }
 
-        $orderDeliveryCnt = OrderDelivery::where(['order_id' => $orderId])->count();
-
-        return response()->json(['orderDeliveryCnt' => $orderDeliveryCnt, 'driver' => $driver]);
+        return response()->json(['orderDelivery' => $orderDelivery, 'driver' => $driver, 'html' => $html]);
     }
 
     /**
@@ -1921,7 +1998,22 @@ class AdminController extends Controller
 
         $status = 0;
 
-        if(OrderDelivery::create($data))
+        // Check if orderId already exist in OrderDelivery and then, assign/update driver to order
+        $orderDelivery = OrderDelivery::where('order_id', $data['order_id'])
+            ->first();
+        
+        if($orderDelivery)
+        {
+            $result = OrderDelivery::where('order_id', $data['order_id'])
+                ->update(['driver_id' => $data['driver_id']]);
+        }
+        else
+        {
+            $result = OrderDelivery::create($data);
+        }
+
+        // Send SMS on assign driver
+        if($result)
         {
             $status = 1;
 
@@ -1938,9 +2030,9 @@ class AdminController extends Controller
             {
                 $recipients = array();
                 $recipients = [$order['phone_prefix'].$order['phone']];
-                $message = "New delivery!";
+                $message = "New order to deliver!";
                 $message .= "\nRestaurant: ".$order['store_name'];
-                $message .= "\n".url('driver/list-delivery/'.$order['id']);
+                $message .= "\n".url('driver/pickup');
                 $result = Helper::apiSendTextMessage($recipients, $message);
             }
         }

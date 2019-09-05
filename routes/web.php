@@ -112,6 +112,11 @@ Route::group(['middleware' => ['latlng']], function(){
 	Route::get('checkDistance','DistanceController@checkDistance');
 	Route::post('cart', 'OrderController@cart');
 	Route::get('cart', 'OrderController@cart');
+	Route::get('cart-sca-test', 'OrderController@cartScaTest');
+	Route::group(['namespace' => 'User'], function() {
+		Route::post('confirm-payment', 'PaymentController@confirmPayment');
+		Route::post('confirm-payment-test', 'PaymentController@confirmPaymentTest');
+	});
 	// Route::get('cart', 'OrderController@cartWithOutLogin')->name('cartWithOutLogin');
 	Route::get('view-cart/{orderId}', 'OrderController@viewCart');
 	Route::post('order-update-delivery-type', 'OrderController@orderUpdateDeliveryType');
@@ -124,6 +129,8 @@ Route::group(['middleware' => ['latlng']], function(){
 Route::group(['middleware' => ['auth']], function(){
 	Route::get('blank-view', 'HomeController@blankView');
 	Route::get('order-view/{OrderId}', 'OrderController@orderView')->name('order-view');
+	Route::get('track-order/{orderId}', 'OrderController@trackOrder');
+	Route::get('get-driver-position/{orderId}', 'OrderController@getDriverPosition');
 	Route::get('check-if-order-accepted/{orderId}', 'OrderController@checkIfOrderAccepted');
 	Route::get('check-if-order-ready', 'OrderController@checkIfOrderReady');
 	Route::post('payment', 'PaymentController@payment');
@@ -277,6 +284,9 @@ Route::group(['prefix' => 'kitchen'], function(){
 				Route::get('{id}/delete', 'DriverController@destroy');
 			});
 		});
+
+		Route::get('print', 'PrintController@print');
+		Route::get('print-auth', 'PrintController@printAuth')->middleware('auth:admin');
 	});
 });
 
@@ -288,14 +298,29 @@ Route::group(['prefix' => 'driver'], function() {
 		Route::get('login', 'DriverLoginController@showLoginForm')->name('driver.login');
 		Route::post('login', 'DriverLoginController@login')->name('driver.login.submit');
 		Route::get('logout', 'DriverLoginController@logout')->name('driver.logout');
+		Route::get('forget-password', 'DriverLoginController@forgetPassword');
+		Route::post('reset-password', 'DriverLoginController@resetPassword');
 	});
 
 	// After login
 	Route::group(['namespace' => 'Driver'], function() {
-		Route::get('list-delivery/{orderId?}', 'DeliveryController@listDelivery');
+		Route::get('pickup', 'PickupController@orderPickup');
+		Route::get('get-pickup-order-list', 'PickupController@getPickupOrderList');
+		Route::get('order-pickup-accept/{orderDeliveryId}', 'PickupController@orderPickupAccept');
+		Route::get('order-pickup-pickedup/{orderDeliveryId}', 'PickupController@orderPickupPickedup');
+		Route::get('get-order-detail/{customerOrderId}', 'PickupController@getOrderDetail');
+		Route::get('update-status/{currentStatus}', 'PickupController@updateStatus');
+		Route::post('update-driver-position', 'PickupController@updateDriverPosition');
+		Route::get('pickup-direction/{orderId}', 'PickupController@pickupDirection');
+
+		Route::get('delivery/{orderId?}', 'DeliveryController@delivery');
+		Route::get('get-deliver-order-list', 'DeliveryController@getDeliverOrderList');
 		Route::get('order-deliver/{orderId}', 'DeliveryController@orderDeliver');
-		Route::get('get-order-detail/{orderId}', 'DeliveryController@getOrderDetail');
-		Route::get('pickup', 'DeliveryController@orderPickup');
-		Route::get('get-pickup-order-list', 'DeliveryController@getPickupOrderList');
+		Route::get('order-pay-manually/{orderId}', 'DeliveryController@orderPayManually');
+		Route::get('delivery-direction/{orderId}', 'DeliveryController@deliveryDirection');
+		
+		Route::get('setting', 'SettingController@setting');
+		Route::post('update-driver', 'SettingController@updateDriver');
+		Route::post('change-password', 'SettingController@changePassword');
 	});
 });

@@ -52,12 +52,22 @@
 		    				<button type="button" id="ss" class="fa fa-chevron-right" onclick="checkDate()"></button>
 		    			</div> -->
 		    		</div>
-	    		 	<div class="error-show" id="error-show"></div>
+	    		 	<div class="error-show" id="error-show">
+	    		 		<p class="error_time">{{ __('messages.eatLaterTimeError1') }}</p>
+	    		 		<p class="error_time2">{{ __('messages.eatLaterTimeError2') }}</p>
+	    		 		<p class="error_time3">{{ __('messages.eatLaterTimeError3') }}</p>
+	    		 	</div>
              	 	<div class="dateandtime" id="dateandtime">
              	 		<script type="text/javascript">
 							// Create date object 
 							var todayDate = eatLaterDate = new Date();
-							eatLaterDate.setDate(todayDate.getDate() + 1);
+							// eatLaterDate.setDate(todayDate.getDate() + 1); // Add 1 day in current date
+							eatLaterDate.setHours(eatLaterDate.getHours()+2);
+							// Get minutes in 15 min of interval
+							minutes = eatLaterDate.getMinutes();
+							interval = 15;
+							minutes = Math.ceil(minutes/interval)*interval;
+							eatLaterDate.setMinutes(minutes);
 							
 							$(function(){
 								// Initialize datepicker
@@ -69,7 +79,8 @@
 									"locale": "{{ (Session::get('applocale') === 'sv') ? 'sv' : 'en' }}",
 									"dateFormat": "DD.MM.YY H:mmTT",
 									"onInit": function(handler) {
-										handler.setDate(new Date(eatLaterDate.getFullYear(), eatLaterDate.getMonth(), eatLaterDate.getDate(), 12, 30, 0, 0));
+										// handler.setDate(new Date(eatLaterDate.getFullYear(), eatLaterDate.getMonth(), eatLaterDate.getDate(), 12, 30, 0, 0));
+										handler.setDate(new Date(eatLaterDate.getFullYear(), eatLaterDate.getMonth(), eatLaterDate.getDate(), eatLaterDate.getHours(), eatLaterDate.getMinutes(), 0, 0));
 									}
 								});
 							});
@@ -93,7 +104,7 @@
 			$("#order-popup").toggleClass("hide-popup");
 		});*/
 
-		$('.error-show').append("<p class='error_time'>Please enter PickUp time in 24 hours format. </p>"+"<p class='error_time2'>Date and Time is not valid. </p>"+"<p class='error_time3'>Order Date Cannot be Current Date </p>");
+		// $('.error-show').append("<p class='error_time'>Please enter PickUp time in 24 hours format. </p>"+"<p class='error_time2'>Date and Time is not valid. </p>"+"<p class='error_time3'>Order Date must be minimum 2 hours later from current date time.</p>");
 	</script>
 	<style type="text/css">
 		.error_time{color: red; font-size: 14px; text-align: center;margin-top: 15px; display: none;}

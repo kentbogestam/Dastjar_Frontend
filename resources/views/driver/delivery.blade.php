@@ -3,86 +3,195 @@
 @section('content')
 	<div class="container-fluid full">
 		<div class="row">
-			<div class="col-md-12 text-center"><h2>Delivery</h2></div>
+			<div class="col-md-12 text-center"><h2>{{ $company->company_name }}</h2></div>
 		</div>
-		<table class="table table-bordered">
+		<table class="table table-bordered table-listing">
 			<thead>
 				<tr>
-					<th>Order</th>
-					<th>Name</th>
-					<th>Address</th>
-					<th>Phone</th>
-					<th>Delivered</th>
+					<th><i class="fas fa-list-alt" data-toggle="tooltip" title="{{ __('messages.Orders') }}"></i></th>
+					<th><i class="fas fa-user" data-toggle="tooltip" title="{{ __('messages.name') }}"></i></th>
+					<th><i class="fas fa-map-marked-alt" data-toggle="tooltip" title="{{ __('messages.address') }}"></i></th>
+					<th><i class="fas fa-phone" data-toggle="tooltip" title="{{ __('messages.phone') }}"></i></th>
+					<th><i class="fas fa-check-circle" data-toggle="tooltip" title="{{ __('messages.Delivered') }}"></i></th>
+					<th><i class="fas fa-credit-card" data-toggle="tooltip" title="{{ __('messages.Paid') }}"></i></th>
+					<th><i class="fas fa-user-clock" data-toggle="tooltip" title="{{ __('messages.wanted_time') }}"></i></th>
 				</tr>
 			</thead>
-			<tbody>
-				@if(!$orderDelivery->isEmpty())
-					@foreach($orderDelivery as $row)
-						<tr>
-							<td><a href="javascript:getOrderDetail({{ $row->order_id }})" class="link">{{ $row->customer_order_id }}</a></td>
-							<td>{{ $row->full_name }}</td>
-							<td><a href="javascript:void(0)" target="_blank" class="link">{{ $row->street.', '.$row->city }}</a></td>
-							<td><a href="tel:{{ $row->mobile }}"><i class="fas fa-phone-square-alt fa-2x"></i></a></td>
-							<td>
-								<a href="{{ url('driver/order-deliver/'.$row->customer_order_id) }}"><i class="fas fa-minus-circle fa-2x"></i></a>
-							</td>
-						</tr>
-					@endforeach
-				@else
-					<tr>
-						<td colspan="6" class="text-center">No more order to deliver.</td>
-					</tr>
-				@endif
-			</tbody>
+			<tbody></tbody>
 		</table>
-	</div>
-
-	<!-- Modal: order detail -->
-	<div id="modal-order-detail" class="modal fade" role="dialog">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h4 class="modal-title">Order Detail</h4>
-				</div>
-				<div class="modal-body">
-					<table class="table">
-						<thead>
-							<tr>
-								<th>Order ID</th>
-								<th>Product</th>
-								<th>Quantity</th>
-							</tr>
-						</thead>
-						<tbody></tbody>
-					</table>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
 	</div>
 @endsection
 
 @section('scripts')
+	<script type="text/javascript" src="https://momentjs.com/downloads/moment.js"></script>
 	<script type="text/javascript">
 		// 
-		function getOrderDetail(orderId)
+		async function getDeliverOrderList()
 		{
-			// $('#modal-order-detail').modal('show');
 			$.ajax({
-				url: '{{ url('driver/get-order-detail') }}/'+orderId,
+				url: '{{ url('driver/get-deliver-order-list') }}',
 				dataType: 'json',
 				success: function(response) {
-					if(response.html)
+					if(response.orderDelivery.length)
 					{
-						$('#modal-order-detail').find('.table tbody').html(response.html);
-					}
+						// console.log('start');
+						let html = '';
+						for(let i = 0; i < response.orderDelivery.length; i++)
+						{
+							// console.log(i);
+							let customer_order_id = response.orderDelivery[i]['customer_order_id'];
+							let address = (response.orderDelivery[i]['address']) ? response.orderDelivery[i]['address']+', ' : '';
+							address += response.orderDelivery[i]['street']+'<br>'+response.orderDelivery[i]['city'];
 
-					$('#modal-order-detail').modal('show');
+							let delivered = '';
+							if(response.orderDelivery[i]['paid'])
+							{
+								delivered += '<span class="label label-success">{{ __('messages.yes') }}</span>&nbsp;'+
+								'<a href="{{ url('driver/order-deliver') }}/'+response.orderDelivery[i]['customer_order_id']+'"><i class="fas fa-undo" title="Undo"></i></a>';
+							}
+							else
+							{
+								delivered += '<a href="{{ url('driver/order-deliver') }}/'+response.orderDelivery[i]['customer_order_id']+'"><i class="fas fa-minus-circle fa-2x"></i></a>';
+							}
+
+							let paid = '';
+							if(response.orderDelivery[i]['online_paid'] == 1 || response.orderDelivery[i]['online_paid'] == 3)
+							{
+								paid = '<span class="label label-success">{{ __('messages.yes') }}</span>';
+							}
+							else if(response.orderDelivery[i]['online_paid'] == 0)
+							{
+								paid = '<button type="button" class="btn btn-warning btn-xs" onclick="orderPayManually('+response.orderDelivery[i]['order_id']+', this)">{{ __('messages.pay_manual') }}</button>';
+							}
+
+							let timeObj;
+
+							// let time = addTimes(response.orderDelivery[i]['order_delivery_time'], response.orderDelivery[i]['deliver_time'], response.orderDelivery[i]['extra_prep_time']);
+							if(response.orderDelivery[i]['order_response'])
+							{
+								timeObj = new Array(response.orderDelivery[i]['order_delivery_time'], response.orderDelivery[i]['deliver_time'], response.orderDelivery[i]['extra_prep_time']);
+							}
+							else
+							{
+								timeObj = new Array(response.orderDelivery[i]['deliver_time'], response.orderDelivery[i]['o_extra_prep_time']);
+							}
+							let time = addTimeByMoment(timeObj);
+							
+							getDistanceMatrix(response.orderDelivery[i]['store_address'], response.orderDelivery[i]['customer_address'])
+								.then(duration => {
+									// Add travelling time (driving)
+									if(duration == null)
+									{
+										time = '';
+									}
+									else
+									{
+										time = moment(time, 'HH:mm:ss').add(duration, 'seconds').format('HH:mm');
+									}
+
+									// Draw HTML
+									html = '<tr>'+
+										'<td><a href="javascript:getOrderDetail(\''+customer_order_id+'\')" class="link">'+customer_order_id+'</a></td>'+
+										'<td>'+response.orderDelivery[i]['full_name']+'</td>'+
+										// "<td><a href='https://www.google.com/maps/place/"+response.orderDelivery[i]['customer_address']+"' target='_blank' class='link'>"+address+" <i class='fas fa-directions'></i></a></td>"+
+										"<td><a href='{{ url('driver/delivery-direction') }}/"+response.orderDelivery[i]['order_id']+"' class='link'>"+address+" <i class='fas fa-directions'></i></a></td>"+
+										'<td class="text-center"><a href="tel:'+response.orderDelivery[i]['mobile']+'"><i class="fas fa-phone-volume"></i></a></td>'+
+										'<td class="text-center">'+delivered+'</td>'+
+										'<td class="text-center">'+paid+'</td>'+
+										'<td>'+time+'</td>'
+									'</tr>';
+
+									$('.table').find('tbody').append(html);
+								});
+						}
+						// console.log('finished');
+					}
+					else
+					{
+						$('.table').find('tbody').html('<tr><td colspan="7" class="text-center">{{ __('messages.noRecordFound') }}</td></tr>');
+					}
 				}
 			});
 		}
+
+		getDeliverOrderList();
+		// setInterval(getDeliverOrderList, 30000);
+		
+		// Add times
+		function addTimeByMoment(timeObj)
+		{
+			var time = moment('00:00:00', 'HH:mm:ss');
+
+			for(let i = 0; i < timeObj.length; i++)
+			{
+				if(timeObj[i] != null)
+				{
+					arrTime = timeObj[i].split(':');
+					time = time.add(arrTime[0], 'hours').add(arrTime[1], 'minutes');
+				}
+			}
+
+			return time.format('HH:mm');
+		}
+
+		// 
+		function orderPayManually(orderId, This)
+		{
+			This = $(This);
+
+			$.get("{{url('driver/order-pay-manually')}}/"+orderId,
+			function(returnedData){
+				console.log(returnedData);
+				if(returnedData["status"])
+				{
+					This.replaceWith('<span class="label label-success">{{ __('messages.yes') }}</span>');
+				}
+				else
+				{
+					alert('{{ __('messages.somethingWentWrong') }}');
+				}
+			});
+		}
+
+		// 
+		async function getDistanceMatrix(origin, destination)
+		{
+		   	return new Promise((resolve, reject) => {
+		   		setTimeout(() => {
+		   			// return resolve(27)
+		   			service = new google.maps.DistanceMatrixService;
+
+					service.getDistanceMatrix({
+						origins: [origin],
+						destinations: [destination],
+						travelMode: 'DRIVING',
+						unitSystem: google.maps.UnitSystem.METRIC,
+						avoidHighways: false,
+						avoidTolls: false
+					}, function(response, status) {
+						// console.log(response);
+						if(status !== 'OK')
+						{
+							alert('Error was: ' + status);
+						}
+						else
+						{
+							if(response.rows[0].elements[0].status !== 'undefined' && response.rows[0].elements[0].status == 'OK')
+							{
+								return resolve(response.rows[0].elements[0].duration.value)
+							}
+							else
+							{
+								return resolve(null);
+							}
+						}
+					});
+		   		}, 10)
+		   	})
+		}
 	</script>
+	<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD2sOhO6FvI99miUsi_ukqvn3u3XVO4JLg">
+    </script>
+	<!-- <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script> -->
 @endsection
