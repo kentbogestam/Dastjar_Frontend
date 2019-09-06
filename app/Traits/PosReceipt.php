@@ -13,7 +13,7 @@ trait PosReceipt {
     {
         // Get order/store/company detail
         $order = Order::from('orders as O')
-            ->select(['O.order_id', 'O.customer_order_id', 'C.currencies', 'O.order_total', 'O.delivery_type', 'O.delivery_charge', 'S.store_name', 'S.phone'])
+            ->select(['O.order_id', 'O.customer_order_id', 'C.currencies', 'O.order_total', 'O.final_order_total', 'O.delivery_type', 'O.delivery_charge', 'S.store_name', 'S.phone'])
             ->join('store AS S', 'S.store_id', '=', 'O.store_id')
             ->join('company AS C','C.company_id', '=', 'O.company_id')
             ->where(['O.order_id' => $orderId])
@@ -47,51 +47,49 @@ trait PosReceipt {
             $printer->add_text_line($order->store_name);
             $printer->add_text_line("TEL: {$order->phone}\n");
             $printer->set_text_emphasized();
-            $printer->add_text_line("Order no.: #{$order->customer_order_id}");
+            $printer->add_text_line("{$order->customer_order_id}");
             $printer->cancel_text_emphasized();
             $printer->add_text_line($this->get_seperator_dashed());
 
             // Cart Item
+            $printer->set_text_right_align();
             if($orderDetail)
             {
-                $printer->set_text_right_align();
                 foreach($orderDetail as $row)
                 {
                     $arrIndex1 = "{$row->product_quality} {$row->product_name}";
                     $arrIndex2 = number_format(($row->product_quality*$row->price), 2, '.', '')." ".$order->currencies;
                     $printer->add_text_line($this->get_column_separated_data(array($arrIndex1, $arrIndex2)));
                 }
-                // $printer->add_text_line($this->get_column_separated_data(array("2 Savenska kottbullar Kramig", "100.00 kr")));
                 $printer->add_text_line($this->get_seperator_dashed());
             }
 
             // Total
-            $printer->set_text_right_align();
             $subTotal = $order->order_total;
-            $printer->add_text_line($this->get_padded_text("SUB TOTAL", number_format($subTotal, 2, '.', '').' '.$order->currencies));
-            $discountAmount = 0;
+            // $printer->add_text_line($this->get_padded_text(__('messages.subTotal'), number_format($subTotal, 2, '.', '').' '.$order->currencies));
+            // $printer->add_text_line($this->get_column_separated_data(array(__('messages.subTotal'), number_format($subTotal, 2, '.', '').' '.$order->currencies)));
             if($orderDiscount)
             {
-                $discountAmount = ($order->order_total*$orderDiscount->discount_value/100);
-                $printer->add_text_line($this->get_padded_text("DISCOUNT", number_format($discountAmount, 2, '.', '')." ".$order->currencies));
+                $discountAmount = ($order->final_order_total*$orderDiscount->discount_value/100);
+                $printer->add_text_line($this->get_column_separated_data(array(__('messages.discount'), number_format($discountAmount, 2, '.', '')." ".$order->currencies)));
             }
-            $delivery_charge = 0;
             if($order->delivery_type == 3 && $order->delivery_charge)
             {
                 $delivery_charge = $order->delivery_charge;
-                $printer->add_text_line($this->get_padded_text("DELIVERY CHARGE", number_format($delivery_charge, 2, '.', '')." ".$order->currencies));
+                $printer->add_text_line($this->get_column_separated_data(array(__('messages.delivery_charge'), number_format($delivery_charge, 2, '.', '')." ".$order->currencies)));
             }
-            $total = number_format((($order->order_total+$delivery_charge) - $discountAmount), 2, '.', '')." ".$order->currencies;
+            $vat = number_format(($order->final_order_total*12/100), 2, '.', '')." ".$order->currencies;
+            $printer->add_text_line($this->get_column_separated_data(array(__('messages.vat'), $vat)));
+            $total = number_format(($order->final_order_total), 2, '.', '')." ".$order->currencies;
             $printer->set_text_emphasized();
-            $printer->add_text_line($this->get_padded_text("TOTAL", $total));
+            $printer->add_text_line($this->get_column_separated_data(array(__('messages.TOTAL'), $total)));
             $printer->cancel_text_emphasized();
             $printer->add_text_line($this->get_seperator_dashed());
 
             // Footer
             $printer->set_text_center_align();
-            $printer->add_text_line("Thank you for order at {$order->store_name}. Visit again!");
+            $printer->add_text_line(__('messages.printFooterText'));
             $printer->add_text_line($this->get_seperator_dashed());
-            // $printer->add_text_line("");
             $printer->add_text_line("\n".date("d M Y").", ".date("H:i")."\n");
 
             $printer->saveJob();
