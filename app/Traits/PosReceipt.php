@@ -13,16 +13,17 @@ trait PosReceipt {
     {
         // Get order/store/company detail
         $order = Order::from('orders as O')
-            ->select(['O.order_id', 'O.customer_order_id', 'O.delivery_type', 'O.check_deliveryDate', 'O.deliver_time', 'O.order_total', 'O.final_order_total', 'O.delivery_charge', 'O.online_paid', 'C.currencies', 'S.store_name', 'S.phone', 'CA.full_name', 'CA.mobile', 'CA.street', 'CA.city'])
+            ->select(['O.order_id', 'O.customer_order_id', 'O.delivery_type', 'O.check_deliveryDate', 'O.deliver_time', 'O.order_total', 'O.final_order_total', 'O.delivery_charge', 'O.online_paid', 'C.currencies', 'S.store_name', 'S.phone', 'SP.mac_address', 'CA.full_name', 'CA.mobile', 'CA.street', 'CA.city'])
             ->join('store AS S', 'S.store_id', '=', 'O.store_id')
             ->join('company AS C','C.company_id', '=', 'O.company_id')
+            ->leftJoin('store_printers AS SP', 'SP.store_id', '=', 'S.store_id')
             ->leftJoin('customer_addresses AS CA', 'CA.id', '=', 'O.user_address_id')
             ->where(['O.order_id' => $orderId])
             ->first();
         
-        if($order)
+        // Check if printer settings exist
+        if($order && (isset($order->mac_address) && $order->mac_address != null))
         {
-            // dd($order->toArray());
             // Get order item details belongs to order
             $orderDetail = OrderDetail::from('order_details AS OD')
                 ->select(['OD.product_quality', 'OD.price', 'P.product_name'])
@@ -37,10 +38,10 @@ trait PosReceipt {
                 ->where(['OCD.order_id' => $orderId])
                 ->first();
 
-            $printerMac = '00.11.62.1b.e3.53';
+            $printerMac = $this->getPrinterFolder($order->mac_address);
 
             // 
-            $fileName = "{$printerMac}-{$order->order_id}.txt";
+            $fileName = "{$printerMac}-{$orderId}.txt";
             $printer = new StarCloudPrintStarLineModeJob($printerMac, $fileName);
 
             // Header
@@ -172,6 +173,16 @@ trait PosReceipt {
             $spaces .= " ";
         }
         return $left_text . $spaces . $right_text;
+    }
+
+    function getPrinterFolder($printerMac)
+    {
+        return str_replace(":", ".", $printerMac);
+    }
+    
+    function getPrinterMac($printerFolder)
+    {
+        return str_replace(".", ":", $printerFolder);
     }
 }
 ?>
