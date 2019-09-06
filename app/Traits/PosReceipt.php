@@ -13,14 +13,16 @@ trait PosReceipt {
     {
         // Get order/store/company detail
         $order = Order::from('orders as O')
-            ->select(['O.order_id', 'O.customer_order_id', 'C.currencies', 'O.order_total', 'O.final_order_total', 'O.delivery_type', 'O.delivery_charge', 'S.store_name', 'S.phone'])
+            ->select(['O.order_id', 'O.customer_order_id', 'O.delivery_type', 'O.check_deliveryDate', 'O.deliver_time', 'O.order_total', 'O.final_order_total', 'O.delivery_charge', 'O.online_paid', 'C.currencies', 'S.store_name', 'S.phone', 'CA.full_name', 'CA.mobile', 'CA.street', 'CA.city'])
             ->join('store AS S', 'S.store_id', '=', 'O.store_id')
             ->join('company AS C','C.company_id', '=', 'O.company_id')
+            ->leftJoin('customer_addresses AS CA', 'CA.id', '=', 'O.user_address_id')
             ->where(['O.order_id' => $orderId])
             ->first();
         
         if($order)
         {
+            // dd($order->toArray());
             // Get order item details belongs to order
             $orderDetail = OrderDetail::from('order_details AS OD')
                 ->select(['OD.product_quality', 'OD.price', 'P.product_name'])
@@ -44,8 +46,19 @@ trait PosReceipt {
             // Header
             $printer->set_codepage("\x20\n");
             $printer->set_text_center_align();
+            $printer->set_text_emphasized();
             $printer->add_text_line($order->store_name);
+            $printer->cancel_text_emphasized();
             $printer->add_text_line("TEL: {$order->phone}\n");
+            if($order->delivery_type == 3)
+            {
+                $printer->set_text_right_align();
+                $printer->set_text_emphasized();
+                $printer->add_text_line(__('messages.deliverTo')."\n");
+                $printer->cancel_text_emphasized();
+                $printer->add_text_line("{$order->full_name}\n{$order->street}\n{$order->city}\n".__('messages.phone').": {$order->mobile}");
+                $printer->set_text_center_align();
+            }
             $printer->set_text_emphasized();
             $printer->add_text_line("{$order->customer_order_id}");
             $printer->cancel_text_emphasized();
@@ -65,9 +78,6 @@ trait PosReceipt {
             }
 
             // Total
-            $subTotal = $order->order_total;
-            // $printer->add_text_line($this->get_padded_text(__('messages.subTotal'), number_format($subTotal, 2, '.', '').' '.$order->currencies));
-            // $printer->add_text_line($this->get_column_separated_data(array(__('messages.subTotal'), number_format($subTotal, 2, '.', '').' '.$order->currencies)));
             if($orderDiscount)
             {
                 $discountAmount = ($order->final_order_total*$orderDiscount->discount_value/100);
@@ -86,11 +96,19 @@ trait PosReceipt {
             $printer->cancel_text_emphasized();
             $printer->add_text_line($this->get_seperator_dashed());
 
+            if($order->online_paid == 1)
+            {
+                $printer->set_text_emphasized();
+                $printer->add_text_line(__('messages.Paid'));
+                $printer->cancel_text_emphasized();
+            }
+
             // Footer
             $printer->set_text_center_align();
             $printer->add_text_line(__('messages.printFooterText'));
             $printer->add_text_line($this->get_seperator_dashed());
-            $printer->add_text_line("\n".date("d M Y").", ".date("H:i")."\n");
+            $orderDateTime = $order->check_deliveryDate.' '.$order->deliver_time;
+            $printer->add_text_line("\n".date("d M Y, H:i", strtotime($orderDateTime))."\n");
 
             $printer->saveJob();
         }
