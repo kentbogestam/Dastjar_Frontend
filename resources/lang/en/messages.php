@@ -322,6 +322,10 @@ return [
     'iDeliveryType' => "Select the price rule  you want shall be applied. You can select between: <ul><li>Add Price for each Delivery<ul><li>Have a simple single price to each delivery independent of order value.</li><li>Then do also add the value you want to charge for each delivery under Delivery Charge</li></ul></li><li>Add Price for Delivery and the minimum Order value for Free Delivery<ul><li>Use a single price to each delivery up to a Threshold value, that is the order value without delivery cost, after this the delivery is free.</li><li>Then do also add the value you want to charge for each delivery up to the Threshold under Delivery Charge</li></ul></li><li>Add order value when a home delivery is possible:<ul><li>Select this option if you only do delivery when the order value passas a certain amount. Add this amount in Threshold.</li></ul></li></ul>",
 
     // POS printer
+    'printerSetup' => 'Printer Setup',
+    'macAddress' => 'Mac Address',
+    'printCopy' => 'Print Copy',
+    'printSound' => 'Print Sound',
     'printFooterText' => "Recommend \x1B\x45\"Anar Find&Eat\"\x1B\x46 to your friends too! Easy to download the app from \x1B\x45Google Play\x1B\x46 or \x1B\x45AppStore!\x1B\x46",
     'vat' => 'VAT (12%)',
     'deliverTo' => 'Deliver to',

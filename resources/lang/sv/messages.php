@@ -324,6 +324,10 @@ return [
     'iDeliveryType' => "Välj vilken prismodell du ska använda. Du kan välja mellan: <ul><li>Lägg till Pris för varje Leverans<ul><li>Använd en enkel prismodell där varje leverans oberoende av ordervärde har ett och samma pris</li><li>Därefter lägg också till kostnaden för varje enskild leverans</li></ul></li><li>Lägg till ett pris för leverans och lägsta beställningsvärde för gratis leverans<ul><li>Använd en prismodell där varje leverans har ett och samma pris upp till ett Minimum Ordervärde. Därutöver är leveransen gratis.</li><li>Därefter lägg också till kostnaden för enskild leverans</li></ul></li><li>Lägg till ordervärde när en hemleverans är möjlig<ul><li>Välj den här optionen om du bara vill leverera om ordervärdet passerat en viss summa som du anger i Minimum Ordervärde</li></ul></li></ul>",
 
     // POS printer
+    'printerSetup' => 'Printer Setup',
+    'macAddress' => 'Mac Address',
+    'printCopy' => 'Print Copy',
+    'printSound' => 'Print Sound',
     'printFooterText' => "Rekommedera gärna \x1B\x45\"Anar Find&Eat\"\x1B\x46 till dina vänner också! Det är lätt att ladda ner den från \x1B\x45Google Play\x1B\x46 eller \x1B\x45AppStore!\x1B\x46",
     'vat' => 'VAT (12%)',
     'deliverTo' => 'Deliver to',
