@@ -51,22 +51,20 @@ trait PosReceipt {
             $printer->add_text_line($order->store_name);
             $printer->cancel_text_emphasized();
             $printer->add_text_line("TEL: {$order->phone}\n");
-            if($order->delivery_type == 3)
-            {
-                $printer->set_text_right_align();
-                $printer->set_text_emphasized();
-                $printer->add_text_line(__('messages.deliverTo')."\n");
-                $printer->cancel_text_emphasized();
-                $printer->add_text_line("{$order->full_name}\n{$order->street}\n{$order->city}\n".__('messages.phone').": {$order->mobile}");
-                $printer->set_text_center_align();
-            }
             $printer->set_text_emphasized();
             $printer->add_text_line("{$order->customer_order_id}");
             $printer->cancel_text_emphasized();
+            $printer->set_text_right_align();
+            if($order->delivery_type == 3)
+            {
+                $printer->set_text_emphasized();
+                $printer->add_text_line(__('messages.deliverTo'));
+                $printer->cancel_text_emphasized();
+                $printer->add_text_line("{$order->full_name}\n{$order->street}\n{$order->city}\n".__('messages.phone').": {$order->mobile}");
+            }
             $printer->add_text_line($this->get_seperator_dashed());
 
             // Cart Item
-            $printer->set_text_right_align();
             if($orderDetail)
             {
                 foreach($orderDetail as $row)
@@ -82,34 +80,35 @@ trait PosReceipt {
             if($orderDiscount)
             {
                 $discountAmount = ($order->final_order_total*$orderDiscount->discount_value/100);
-                $printer->add_text_line($this->get_column_separated_data(array(__('messages.discount'), number_format($discountAmount, 2, '.', '')." ".$order->currencies)));
+                $printer->add_text_line($this->get_column_separated_data(array(__('messages.Discount'), number_format($discountAmount, 2, '.', '')." ".$order->currencies)));
             }
             if($order->delivery_type == 3 && $order->delivery_charge)
             {
                 $delivery_charge = $order->delivery_charge;
                 $printer->add_text_line($this->get_column_separated_data(array(__('messages.delivery_charge'), number_format($delivery_charge, 2, '.', '')." ".$order->currencies)));
             }
-            $vat = number_format(($order->final_order_total*12/100), 2, '.', '')." ".$order->currencies;
-            $printer->add_text_line($this->get_column_separated_data(array(__('messages.vat'), $vat)));
             $total = number_format(($order->final_order_total), 2, '.', '')." ".$order->currencies;
             $printer->set_text_emphasized();
             $printer->add_text_line($this->get_column_separated_data(array(__('messages.TOTAL'), $total)));
             $printer->cancel_text_emphasized();
+            $vat = number_format(($order->final_order_total*12/100), 2, '.', '')." ".$order->currencies;
+            $printer->add_text_line($this->get_column_separated_data(array(__('messages.vat'), $vat)));
             $printer->add_text_line($this->get_seperator_dashed());
+            $printer->set_text_center_align();
 
             if($order->online_paid == 1)
             {
                 $printer->set_text_emphasized();
-                $printer->add_text_line(__('messages.Paid'));
+                $printer->add_text_line(strtoupper(__('messages.Paid')));
                 $printer->cancel_text_emphasized();
+                $printer->add_text_line($this->get_seperator_dashed());
             }
 
             // Footer
-            $printer->set_text_center_align();
             $printer->add_text_line(__('messages.printFooterText'));
             $printer->add_text_line($this->get_seperator_dashed());
             $orderDateTime = $order->check_deliveryDate.' '.$order->deliver_time;
-            $printer->add_text_line("\n".date("d M Y, H:i", strtotime($orderDateTime))."\n");
+            $printer->add_text_line("\n".date("d M Y, H:i", strtotime($orderDateTime)));
 
             $printer->saveJob();
         }
