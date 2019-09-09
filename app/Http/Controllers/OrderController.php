@@ -673,6 +673,11 @@ class OrderController extends Controller
                         // Get offered quantity on applied loyalty
                         $quantity_offered = floor($quantity_bought/$quantity_to_buy)*$quantity_get;
 
+                        if( count($loyaltyProducts) < $quantity_offered )
+                        {
+                            $quantity_offered = count($loyaltyProducts);
+                        }
+
                         // Calculate min price to be deducted and update final_total
                         $productPrices = array_column($loyaltyProducts, 'price');
                         $index = array_search(min($productPrices), $productPrices, true);
@@ -925,6 +930,11 @@ class OrderController extends Controller
                     {
                         // Get offered quantity on applied loyalty
                         $quantity_offered = floor($quantity_bought/$quantity_to_buy)*$quantity_get;
+
+                        if( count($loyaltyProducts) < $quantity_offered )
+                        {
+                            $quantity_offered = count($loyaltyProducts);
+                        }
 
                         // Calculate min price to be deducted and update final_total
                         $productPrices = array_column($loyaltyProducts, 'price');
@@ -1373,6 +1383,11 @@ class OrderController extends Controller
                         {
                             // Get offered quantity on applied loyalty
                             $quantity_offered = floor($quantity_bought/$quantity_to_buy)*$quantity_get;
+
+                            if( count($loyaltyProducts) < $quantity_offered )
+                            {
+                                $quantity_offered = count($loyaltyProducts);
+                            }
 
                             // Calculate min price to be deducted and update final_total
                             $productPrices = array_column($loyaltyProducts, 'price');

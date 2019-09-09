@@ -47,13 +47,13 @@ trait PosReceipt {
             // Header
             $printer->set_codepage("\x20\n");
             $printer->set_text_center_align();
+            $printer->add_text_line(__('messages.Order Number'));
             $printer->set_text_emphasized();
+            $printer->add_text_line("{$order->customer_order_id}\n");
             $printer->add_text_line($order->store_name);
-            $printer->cancel_text_emphasized();
             $printer->add_text_line("TEL: {$order->phone}\n");
-            $printer->set_text_emphasized();
-            $printer->add_text_line("{$order->customer_order_id}");
             $printer->cancel_text_emphasized();
+            
             $printer->set_text_right_align();
             if($order->delivery_type == 3)
             {
@@ -105,10 +105,10 @@ trait PosReceipt {
             }
 
             // Footer
-            $printer->add_text_line(__('messages.printFooterText'));
-            $printer->add_text_line($this->get_seperator_dashed());
             $orderDateTime = $order->check_deliveryDate.' '.$order->deliver_time;
-            $printer->add_text_line("\n".date("d M Y, H:i", strtotime($orderDateTime)));
+            $printer->add_text_line(date("d M Y, H:i", strtotime($orderDateTime))."\n");
+            // $printer->add_text_line($this->get_seperator_dashed());
+            $printer->add_text_line(__('messages.printFooterText'));
 
             $printer->saveJob();
         }
