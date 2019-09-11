@@ -15,6 +15,98 @@
 		    color: #fff !important;
 		    text-shadow: 0 1px 0 #059 !important;
 		}
+
+		button.btn-pay.ui-btn.ui-btn-inline.ui-mini {
+		    background: #d9edf7;
+		    border: none;
+		    padding: 6px 12px;
+		    display: inline-block;
+		    width: 300px;
+		    height: 40px;
+		    font-size: 15px;
+		}
+
+		button.send-order.ui-btn.ui-mini {
+			background: #d9edf7;
+			border: none;
+			padding: 6px 12px;
+			display: inline-block;
+			width: 300px;
+			height: 40px;
+			font-size: 15px;
+		}
+
+		.ui-grid-solo>.ui-block-a {
+		    text-align: center;
+		}
+
+		.row-saved-cards {
+		    text-align: center;
+		}
+
+		button#charging-saved-cards {
+			background: #d9edf7;
+			border: none;
+			padding: 6px 12px;
+			display: inline-block;
+			width: 300px;
+			height: 40px;
+			font-size: 15px;
+		}
+
+	.section-pay-with-card {
+	    max-width: 500px;
+	    margin: 0 auto;
+	    padding: 30px;
+	    box-shadow: 0px 0px 15px rgba(0,0,0,0.2);
+	}
+
+	.section-pay-with-card button#card-button {
+	    background-color: #38c;
+	    border: none;
+	    color: #fff;
+	    font-weight: normal;
+	    font-size: 15px;
+	    border-radius: 5px;
+	}
+
+	.section-pay-with-card .ui-input-text, 
+	.section-pay-with-card .ui-input-search {
+	    margin: .5em 0;
+	    border-width: 1px;
+	    border-style: solid;
+	    border-color: #ddd;
+	}
+
+	.ui-controlgroup-controls {
+	    text-align: center;
+	    max-width: 320px;
+	    margin: 0 auto;
+	}
+
+	.section-pay-with-card ul {
+	    padding: 0;
+	    margin: 0;
+	    list-style: none;
+	    text-align: center;
+	    padding-top: 20px;
+	}
+	.section-pay-with-card ul li {
+	    display: inline-block;
+	    font-size: 30px;
+	    color: #ddd;
+	}
+
+	p.error {
+	    text-align: center;
+	    font-size: 13px;
+	    background: #fb4949;
+	    padding: 8px;
+	    color: #fff;
+	    max-width: 270px;
+	    margin: 0 auto;
+	    border-radius: 5px;
+	}
 	</style>
 @stop
 @section('content')
@@ -158,7 +250,7 @@
 
 			<div class="ui-grid-solo">
 				<div class="ui-block-a">
-					@if(Session::get('paymentmode') !=0 && $order->final_order_total > 0)
+					@if(Session::get('paymentmode') !=0 && Session::has('stripeAccount') && $order->final_order_total > 0)
 						<div class="ui-grid-solo">
 							<div class="ui-block-a">
 								<div class="ui-bar ui-bar-a text-center">
@@ -169,16 +261,17 @@
 						<div class="ui-grid-solo row-confirm-payment hidden">
 							<div class="ui-block-a">
 								<div class="ui-bar ui-bar-a">
-									@php
-
-									@endphp
+									@php $isCardDefault = false; @endphp
 									@if(isset($paymentMethod->data))
+										@if( count($paymentMethod->data) == 1 )
+                                        	@php $isCardDefault = true; @endphp
+                                        @endif
 										<div class="row-saved-cards">
 											<form id="list-saved-cards" method="POST" action="{{ url('confirm-payment') }}" data-ajax="false">
 												<fieldset data-role="controlgroup">
 													@foreach($paymentMethod->data as $row)
-														<input type="radio" name="payment_method_id" id="payment-method-{{ $row->card->last4 }}" value="{{ $row->id }}">
-														<label for="payment-method-{{ $row->card->last4 }}">
+														<input type="radio" name="payment_method_id" id="payment-method-{{ $loop->index }}" value="{{ $row->id }}" <?php echo ($isCardDefault) ? 'checked' : ''; ?>>
+														<label for="payment-method-{{ $loop->index }}">
 															<i class="fa fa-cc-visa" aria-hidden="true"></i>
 															<i class="fa fa-circle" aria-hidden="true" style="font-size: 9px;"></i><i class="fa fa-circle" aria-hidden="true" style="font-size: 9px;"></i><i class="fa fa-circle" aria-hidden="true" style="font-size: 9px;"></i><i class="fa fa-circle" aria-hidden="true" style="font-size: 9px;"></i>
 															{{ $row->card->last4 }}
@@ -186,16 +279,16 @@
 													@endforeach
 												</fieldset>
 												<div class="card-errors"></div>
-												<button type="button" id="charging-saved-cards" class="ui-btn ui-mini" style="display: none">{{ __('messages.paySecurely') }}</button>
+												<button type="button" id="charging-saved-cards" class="ui-btn ui-mini" <?php echo ($isCardDefault == false) ? 'style="display: none"' : ''; ?>>{{ __('messages.paySecurely') }}</button>
 											</form>
 										</div>
 									@endif
 									<div class="row-new-card">
 										<fieldset data-role="controlgroup">
-											<input type="radio" name="pay-options" id="pay-options">
+											<input type="radio" name="pay-options" id="pay-options" <?php echo ($isCardDefault == false) ? 'checked' : ''; ?>>
 											<label for="pay-options">{{ __('messages.payOptions') }}</label>
 										</fieldset>
-										<div class="section-pay-with-card hidden">
+										<div class="section-pay-with-card<?php echo ($isCardDefault == false) ? '' : ' hidden'; ?>">
 											<form id="payment-form" method="POST" action="{{ url('confirm-payment') }}" data-ajax="false">
 												<!-- <input id="cardholder-name" type="text" placeholder="Cardholder name"> -->
 												<!-- placeholder for Elements -->
@@ -206,6 +299,12 @@
 													{{ __('messages.saveCardInfo') }}
 												</label>
 												<button type="button" id="card-button" class="ui-btn ui-mini">{{__('messages.Pay with card')}}</button>
+												<ul>
+													<li><i class="fa fa-cc-stripe" aria-hidden="true"></i></li>
+													<li><i class="fa fa-cc-amex" aria-hidden="true"></i></li>
+													<li><i class="fa fa-cc-mastercard" aria-hidden="true"></i></li>
+													<li><i class="fa fa-cc-visa" aria-hidden="true"></i></li>
+												</ul>
 											</form>
 										</div>
 									</div>
@@ -268,7 +367,7 @@
 		}
 	});
 
-	@if(Session::get('paymentmode') !=0 && $order->final_order_total > 0)
+	@if(Session::get('paymentmode') !=0 && Session::has('stripeAccount') && $order->final_order_total > 0)
 		// Initialize Stripe and card element
 		var stripe = Stripe('{{ env('STRIPE_PUB_KEY') }}');
 
@@ -283,6 +382,7 @@
 		var cardButton = document.getElementById('card-button');
 
 		cardButton.addEventListener('click', function(ev) {
+			showLoading();
 			$('#card-button').prop('disabled', true);
 			$('.row-new-card').find('div.card-errors').html('');
 
@@ -295,6 +395,7 @@
 					}
 					$('.row-new-card').find('div.card-errors').html(message);
 					$('#card-button').prop('disabled', false);
+					hideLoading('Processing...');
 				} else {
 					let isSaveCard = $('#isSaveCard').is(':checked') ? 1 : 0;
 					let data = {
@@ -307,13 +408,15 @@
 						method: 'POST',
 						body: JSON.stringify(data),
 						headers: {
-							'Content-Type': 'application/json'
+							'Content-Type': 'application/json',
+							'X-CSRF-TOKEN': '{{ csrf_token() }}'
 						}
 					}).then(function(result) {
 						// Handle server response (see Step 3)
 						result.json().then(function(json) {
 							handleServerResponse(json);
 							$('#card-button').prop('disabled', false);
+							hideLoading('Processing...');
 						})
 					});
 				}
@@ -357,7 +460,8 @@
 							method: 'POST',
 							body: JSON.stringify(data),
 							headers: {
-								'Content-Type': 'application/json'
+								'Content-Type': 'application/json',
+								'X-CSRF-TOKEN': '{{ csrf_token() }}'
 							}
 						}).then(function(confirmResult) {
 							return confirmResult.json();
@@ -375,6 +479,7 @@
 		$('#charging-saved-cards').on('click', function(ev) {
 			if( $('input[name=payment_method_id]:checked').length )
 			{
+				showLoading();
 				$('#charging-saved-cards').prop('disabled', true);
 				let payment_method_id = $('input[name=payment_method_id]:checked').val();
 				let data = {
@@ -387,13 +492,15 @@
 					method: 'POST',
 					body: JSON.stringify(data),
 					headers: {
-						'Content-Type': 'application/json'
+						'Content-Type': 'application/json',
+						'X-CSRF-TOKEN': '{{ csrf_token() }}'
 					}
 				}).then(function(result) {
 					// Handle server response (see Step 3)
 					result.json().then(function(json) {
 						handleServerResponseSavedCard(json);
 						$('#charging-saved-cards').prop('disabled', false);
+						hideLoading('Processing...');
 					})
 				});
 			}
@@ -437,7 +544,8 @@
 							method: 'POST',
 							body: JSON.stringify(data),
 							headers: {
-								'Content-Type': 'application/json'
+								'Content-Type': 'application/json',
+								'X-CSRF-TOKEN': '{{ csrf_token() }}'
 							}
 						}).then(function(confirmResult) {
 							return confirmResult.json();

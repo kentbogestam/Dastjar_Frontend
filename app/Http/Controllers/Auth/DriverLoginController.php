@@ -45,7 +45,7 @@ class DriverLoginController extends Controller
         ]);
 
         //
-        if(Auth::guard('driver')->attempt(['email' => $request->email, 'password' => $request->password]))
+        if(Auth::guard('driver')->attempt(['email' => $request->email, 'password' => $request->password, 'status' => '1']))
         {
             return redirect('driver/pickup');
         }
@@ -78,7 +78,7 @@ class DriverLoginController extends Controller
 
         // Get driver
         $driver = Driver::select(['id', 'phone_prefix', 'phone'])
-            ->where('phone', $phone)
+            ->where(['phone' => $phone, 'status' => '1'])
             ->first();
 
         if($driver)
