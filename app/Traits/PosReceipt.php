@@ -74,10 +74,8 @@ trait PosReceipt {
                 $printer->set_text_emphasized();
                 $printer->add_text_line(__('messages.deliverTo'));
                 $printer->cancel_text_emphasized();
-                $full_name = $this->replaceAsciiToHex($order->full_name);
-                $street = $this->replaceAsciiToHex($order->street);
-                $city = $this->replaceAsciiToHex($order->city);
-                $printer->add_text_line("{$full_name}\n{$street}\n{$city}\n".__('messages.phone').": {$order->mobile}");
+                $address = $this->replaceAsciiToHex($order->full_name)."\n".$this->replaceAsciiToHex($order->street)."\n".$this->replaceAsciiToHex($order->city)."\n".__('messages.phone').": {$order->mobile}";
+                $printer->add_text_line($address);
             }
             $printer->add_text_line($this->get_seperator_dashed());
 
@@ -180,8 +178,8 @@ trait PosReceipt {
     // Search and replace ASCII to HEX
     function replaceAsciiToHex($str)
     {
-        $search = array('Ä', 'Å', 'å', 'ä', 'Ö', 'ö');
-        $replace = array('\xC4', '\xC5', '\xE5', '\xE4', '\xD6', '\xF6');
+        $search = array("Ä", "Å", "å", "ä", "Ö", "ö");
+        $replace = array("\xC4", "\xC5", "\xE5", "\xE4", "\xD6", "\xF6");
         return str_replace($search, $replace, $str);
     }
 
