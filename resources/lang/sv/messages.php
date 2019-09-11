@@ -328,7 +328,8 @@ return [
     'macAddress' => 'Mac Address',
     'printCopy' => 'Print Copy',
     'printSound' => 'Print Sound',
-    'printFooterText' => "Rekommedera gärna\n\x1B\x45\"Anar Find&Eat\"\x1B\x46 till dina vänner\nockså! Det är lätt att ladda ner\nden från \x1B\x45Google Play\x1B\x46 eller\n\x1B\x45AppStore!\x1B\x46",
+    // 'printFooterText' => "Rekommedera gärna\n\x1B\x45\"Anar Find&Eat\"\x1B\x46 till dina vänner\nockså! Det är lätt att ladda ner\nden från \x1B\x45Google Play\x1B\x46 eller\n\x1B\x45AppStore!\x1B\x46",
+    'printFooterText' => "Rekommedera g\xE4rna\n\x1B\x45\"Anar Find&Eat\"\x1B\x46 till dina v\xE4nner\nocks\xE5! Det \xE4r l\xE4tt att ladda ner\nden fr\xE5n \x1B\x45Google Play\x1B\x46 eller\n\x1B\x45AppStore!\x1B\x46",
     'vat' => 'VAT (12%)',
     'deliverTo' => 'Deliver to',
 ];

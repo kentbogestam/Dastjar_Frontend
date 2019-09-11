@@ -138,6 +138,7 @@ class OrderController extends Controller
             }
             
             // Check if subscription exist, create bong receipt to print 
+            // if(1)
             if(Helper::isPackageSubscribed(13))
             {
                 $this->createPOSReceipt($orderId);
