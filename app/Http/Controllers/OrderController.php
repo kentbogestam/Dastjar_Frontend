@@ -169,7 +169,7 @@ class OrderController extends Controller
                 }
                 
                 // Add 'travelling time'
-                if($distanceInSec)
+                if( isset($distanceInSec) && $distanceInSec )
                 {
                     $time = date("H:i", strtotime($time)+$distanceInSec);
                 }
