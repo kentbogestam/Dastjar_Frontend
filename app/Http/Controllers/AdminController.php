@@ -15,6 +15,7 @@ use App\Helper;
 use DB;
 use Carbon\Carbon;
 use App\Store;
+use App\StorePrinter;
 use App\Employer;
 use Session;
 use App\User;
@@ -214,6 +215,12 @@ class AdminController extends Controller
                     Session::put('subscribedPlans.homedelivery', 1);
                 }
 
+                // Printer
+                if( in_array('13', $storePlan) )
+                {
+                    Session::put('subscribedPlans.printer', 1);
+                }
+
                 Session::save();
             }
         }
@@ -226,6 +233,7 @@ class AdminController extends Controller
             Session::put('subscribedPlans.discount', 1);
             Session::put('subscribedPlans.loyalty', 1);
             Session::put('subscribedPlans.homedelivery', 1);
+            Session::put('subscribedPlans.printer', 1);
 
             Session::save();
         }
@@ -883,8 +891,11 @@ class AdminController extends Controller
 
     public function kitchenSetting(){
         // Get logged-in store detail
-        $store = Store::select(['order_response', 'driver_range', 'delivery_range', 'buffer_time'])
-            ->where('store_id' , Session::get('storeId'))->first();
+        $store = Store::from('store AS S')
+            ->select(['S.order_response', 'S.driver_range', 'S.delivery_range', 'S.buffer_time', 'SP.mac_address', 'SP.print_copy', 'SP.print_sound'])
+            ->leftJoin('store_printers AS SP', 'SP.store_id', '=', 'S.store_id')
+            ->where('S.store_id' , Session::get('storeId'))
+            ->first();
 
         if($store['buffer_time'] != NULL && $store['buffer_time'] != '00:00:00')
         {
@@ -916,6 +927,35 @@ class AdminController extends Controller
         $buffer_time = '00:'.($data['buffer_time'] % 60).':00';
         Store::where('store_id', Session::get('storeId'))
             ->update(['order_response' => $data['order_response'], 'driver_range' => $data['driver_range'], 'delivery_range' => $data['delivery_range'], 'buffer_time' => $buffer_time]);
+
+        // Store printer setting
+        if($data['mac_address'] && $data['mac_address'] != null)
+        {
+            if(StorePrinter::where(['store_id' => Session::get('storeId'), 'status' => '1'])->count())
+            {
+                // Update printer setting
+                StorePrinter::where(['store_id' => Session::get('storeId'), 'status' => '1'])
+                    ->update(['mac_address' => $data['mac_address'], 'print_copy' => $data['print_copy'], 'print_sound' => $data['print_sound']]);
+            }
+            else
+            {
+                // Create printer
+                $helper = new Helper();
+                $id = $helper->uuid();
+
+                while(StorePrinter::where('id', $id)->exists()){
+                    $id = $helper->uuid();
+                }
+
+                StorePrinter::create(array(
+                    'id' => $id,
+                    'store_id' => Session::get('storeId'),
+                    'mac_address' => $data['mac_address'],
+                    'print_copy' => $data['print_copy'],
+                    'print_sound' => $data['print_sound'],
+                ));
+            }
+        }
 
         return redirect()->back()->with('success', 'Setting updated successfully.');
     }
