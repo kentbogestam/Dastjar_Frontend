@@ -47,14 +47,14 @@ class OrderController extends Controller
     }
 
     public function orderView($orderId){
+        $orderInvoice = array();
+
         if( Session::has('paymentmode') && Session::get('paymentmode') == 0 )
         {
             DB::table('orders')->where('order_id', $orderId)->update([
                 'online_paid' => 0,
             ]);
         }
-
-        /*$order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();*/
 
         $order = Order::from('orders AS O')
             ->select(['O.order_id', 'O.customer_order_id', 'O.store_id', 'O.user_id', 'O.order_type', 'O.delivery_type', 'O.deliver_date', 'O.deliver_time', 'O.order_total', 'O.delivery_charge', 'O.final_order_total', 'O.order_delivery_time', 'O.order_response', 'O.order_accepted', 'O.extra_prep_time','S.store_name','company.currencies', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
@@ -64,62 +64,87 @@ class OrderController extends Controller
             ->where('order_id', $orderId)
             ->first();
 
-        // If order type is 'home delivery', get driving distance time
-        if($order->delivery_type == 3)
+        if($order)
         {
-            // Get distance b/w origin and destination
-            $response = Helper::getDrivingDistance($order->store_address, $order->customer_address, 'address');
-            
-            if($response['status'] == 'OK')
+            // If order type is 'home delivery', get driving distance time
+            if($order->delivery_type == 3)
             {
-                $distanceInSec = (int)$response['duration']['value'];
-                $order['distanceInSec'] = $distanceInSec;
-            }
-        }
-
-        $storeDetail = Store::where('store_id', $order->store_id)->first();
-        $user = User::where('id',$order->user_id)->first();
-        $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
-
-        // Get order discount if applied
-        $orderDiscount = PromotionDiscount::from('promotion_discount AS PD')
-            ->select(['PD.discount_value'])
-            ->join('order_customer_discount AS OCD', 'OCD.discount_id', '=', 'PD.id')
-            ->where(['OCD.order_id' => $orderId])
-            ->first();
-
-        Session::forget('paymentmode');
-
-        // Put order in session 'recentOrderList' until its ready
-        // Session::forget('recentOrderList'); Session::save();
-        $recentOrder = Order::select('order_id')->where(['order_id' => $orderId, 'order_ready' => 0])->first();
-
-        if($recentOrder)
-        {
-            $recentOrderList = Session::get('recentOrderList');
-
-            if( !empty($recentOrderList) )
-            {
-                if( !array_key_exists($recentOrder->order_id, $recentOrderList) )
+                if($order->delivery_charge)
                 {
-                    $recentOrderList[$recentOrder->order_id] = 1;
-                    Session::put('recentOrderList', $recentOrderList);
+                    $orderInvoice['homeDelivery'] = $order->delivery_charge;
+                }
+
+                // Get distance b/w origin and destination
+                $response = Helper::getDrivingDistance($order->store_address, $order->customer_address, 'address');
+                
+                if($response['status'] == 'OK')
+                {
+                    $distanceInSec = (int)$response['duration']['value'];
+                    $order['distanceInSec'] = $distanceInSec;
                 }
             }
-            else
-            {
-                Session::put('recentOrderList', array($recentOrder->order_id => 1));
-            }
-        }
-        // dd(Session::all());
-        
-        // Check if subscription exist, create bong receipt to print 
-        if(Helper::isPackageSubscribed(13))
-        {
-            $this->createPOSReceipt($orderId);
-        }
 
-        return view('order.index', compact('order','orderDetails', 'orderDiscount','storeDetail','user'));
+            $storeDetail = Store::where('store_id', $order->store_id)->first();
+            $user = User::where('id',$order->user_id)->first();
+            $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
+
+            // Check if loyalty exist for order
+            $orderCustomerLoyalty = OrderCustomerLoyalty::select()
+                ->where(['order_id' => $orderId])
+                ->first();
+
+            if($orderCustomerLoyalty)
+            {
+                $quantity_offered = OrderDetail::select([DB::raw('SUM(quantity_free) AS quantity_offered')])
+                    ->where(['order_id' => $orderId])
+                    ->first()->quantity_offered;
+                $orderInvoice['loyaltyOfferApplied'] = __('messages.loyaltyOfferApplied', ['loyalty_quantity_free' => $quantity_offered]);
+            }
+
+            // Get order discount if applied
+            $orderDiscount = PromotionDiscount::from('promotion_discount AS PD')
+                ->select(['PD.discount_value'])
+                ->join('order_customer_discount AS OCD', 'OCD.discount_id', '=', 'PD.id')
+                ->where(['OCD.order_id' => $orderId])
+                ->first();
+            
+            if($orderDiscount)
+            {
+                $orderInvoice['discount'] =  ($order->order_total*$orderDiscount->discount_value/100);
+            }
+
+            Session::forget('paymentmode');
+
+            // Put order in session 'recentOrderList' until its ready
+            // Session::forget('recentOrderList'); Session::save();
+            $recentOrder = Order::select('order_id')->where(['order_id' => $orderId, 'order_ready' => 0])->first();
+
+            if($recentOrder)
+            {
+                $recentOrderList = Session::get('recentOrderList');
+
+                if( !empty($recentOrderList) )
+                {
+                    if( !array_key_exists($recentOrder->order_id, $recentOrderList) )
+                    {
+                        $recentOrderList[$recentOrder->order_id] = 1;
+                        Session::put('recentOrderList', $recentOrderList);
+                    }
+                }
+                else
+                {
+                    Session::put('recentOrderList', array($recentOrder->order_id => 1));
+                }
+            }
+            
+            // Check if subscription exist, create bong receipt to print 
+            if(Helper::isPackageSubscribed(13))
+            {
+                $this->createPOSReceipt($orderId);
+            }
+
+            return view('order.index', compact('order','orderDetails', 'orderInvoice','storeDetail','user'));
+        }
     }
 
     /**
@@ -913,8 +938,6 @@ class OrderController extends Controller
                     ->where('OD.user_id', Auth::id())
                     ->whereRaw("(orders.online_paid != 2 OR orders.order_id = {$orderId})")
                     ->first();
-
-                // echo '<pre>'; print_r($customerLoyalty->toArray()); exit;
 
                 if($customerLoyalty)
                 {
