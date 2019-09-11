@@ -144,7 +144,8 @@ class OrderController extends Controller
                 $this->createPOSReceipt($orderId);
             }
 
-            return view('order.index', compact('order','orderDetails', 'orderInvoice','storeDetail','user'));
+            // return view('order.index', compact('order','orderDetails', 'orderInvoice','storeDetail','user'));
+            return view('v1.user.pages.view-order', compact('order','orderDetails', 'orderInvoice','storeDetail','user'));
         }
     }
 

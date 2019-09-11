@@ -646,6 +646,82 @@ Cart
 	border-color: #bce8f1;
 }
 
+/* View order ---------------------------------- */
+
+
+.order-summery {
+	background: url('../../images/img-wait-for-ready.png') center center no-repeat;
+	background-size: cover;
+	padding:15px 0;
+	text-align: center;
+}
+
+.order-summery p {
+	color: #ffac00;
+	font-size: 16px;
+	margin-bottom: 10px;
+}
+
+.order-summery p.large-text {
+	font-size: 4em;
+	color: #fff;
+	font-weight: bold;
+}
+
+.table-borderless td, .table-borderless th {
+    border: none !important;
+}
+
+/* View order ---------------------------------- */
+
+/* Location header ---------------------------------- */
+
+.logo-with-map ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: table;
+  width: 100%;
+  padding: 10px 15px;
+}
+
+.logo-with-map ul li {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.logo-with-map ul li.arrow {
+	width: 30px;
+	font-size: 30px;
+}
+
+.logo-with-map ul li.location {
+	width: 80%;
+	text-align: center;
+	padding-left: 15%;
+	font-size: 20px;
+}
+
+.logo-with-map ul li.location-cur {
+	text-align: center;
+	width: 120px;
+}
+
+.logo-with-map ul li.location-cur img {
+	max-width: 20px;
+}
+
+.logo-with-map ul li.done {
+	text-align: right;
+}
+
+.logo-with-map ul li a {
+	color: #333;
+	text-decoration: none;
+}
+
+/* Location header ---------------------------------- */
+
 .error {
 	color: #a94442;
 }
