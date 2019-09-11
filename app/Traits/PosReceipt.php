@@ -5,6 +5,7 @@ use App\Order;
 use App\OrderDetail;
 use App\PromotionDiscount;
 use App\OrderCustomerLoyalty;
+use DB;
 use App\Libraries\StarCloudPrintStarLineModeJob;
 
 trait PosReceipt {
@@ -43,6 +44,7 @@ trait PosReceipt {
                     ->where(['order_id' => $orderId])
                     ->first()->quantity_offered;
                 $loyaltyOfferApplied = __('messages.loyaltyOfferApplied', ['loyalty_quantity_free' => $quantity_offered]);
+                $loyaltyOfferApplied = $this->replaceAsciiToHex($loyaltyOfferApplied);
             }
             
             // Get order discount if applied
@@ -178,6 +180,7 @@ trait PosReceipt {
     // Search and replace ASCII to HEX
     function replaceAsciiToHex($str)
     {
+        $str = strip_tags($str);
         $search = array("Ä", "Å", "å", "ä", "Ö", "ö");
         $replace = array("\xC4", "\xC5", "\xE5", "\xE4", "\xD6", "\xF6");
         return str_replace($search, $replace, $str);
