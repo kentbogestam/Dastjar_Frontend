@@ -288,8 +288,9 @@ Route::group(['prefix' => 'kitchen'], function(){
 			});
 		});
 
-		Route::get('print', 'PrintController@print');
-		Route::get('print-auth', 'PrintController@printAuth')->middleware('auth:admin');
+		Route::post('pos-print', 'PosPrintController@handlePost');
+		Route::get('pos-print', 'PosPrintController@handleGet');
+		Route::delete('pos-print', 'PosPrintController@handleDeleteMethod');
 	});
 });
 

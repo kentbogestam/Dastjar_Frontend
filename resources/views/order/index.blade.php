@@ -468,50 +468,44 @@
 							<td>{{ number_format(($orderDetail->product_quality*$orderDetail->price), 2, '.', '') }}  {{$order->currencies}}</td>
 						</tr>
 					@endforeach
-					@if($orderDiscount)
-						@php
-							$discountAmount = ($order->order_total*$orderDiscount->discount_value/100);
-						@endphp
-
+					@if( isset($orderInvoice['discount']) )
 						<tr>
 							<td colspan="3">
-								DISCOUNT {{ number_format($discountAmount, 2, '.', '') }} {{$order->currencies}}
+								DISCOUNT {{ number_format($orderInvoice['discount'], 2, '.', '') }} {{$order->currencies}}
 							</td>
 						</tr>
-					@else
-						@php
-							$discountAmount = 0;
-						@endphp
 					@endif
-					@if($order->delivery_type == 3 && $order->delivery_charge)
-						@php
-							$delivery_charge = $order->delivery_charge;
-						@endphp
-
+					@if( isset($orderInvoice['homeDelivery']) )
 						<tr>
 							<td colspan="3">
-								DELIVERY CHARGE {{ number_format($delivery_charge, 2, '.', '') }} {{$order->currencies}}
+								DELIVERY CHARGE {{ number_format($orderInvoice['homeDelivery'], 2, '.', '') }} {{$order->currencies}}
 							</td>
 						</tr>
-					@else
-						@php
-							$delivery_charge = 0;
-						@endphp
 					@endif
 					<tr class="last-row">
 						<td colspan="3">
-							TOTAL {{ number_format((($order->order_total+$delivery_charge) - $discountAmount), 2, '.', '') }} {{$order->currencies}}
+							TOTAL {{ number_format((($order->final_order_total)), 2, '.', '') }} {{$order->currencies}}
 						</td>
 					</tr>
 				</table>
 			</div>
 
-			@if($order->order_type=="eat_later")
-			<div>
-				<button style="" class="cancel-order-btn">Cancel Order Request</button>
-			</div>	
+			<!-- Loyalty -->
+			@if( isset($orderInvoice['loyaltyOfferApplied']) )
+				<div class="ui-grid-solo text-center row-loyalty-discount">
+					<div class="ui-block-a">
+						<div class="ui-bar ui-bar-a loyalty-discount-text">
+							{!! $orderInvoice['loyaltyOfferApplied'] !!}
+						</div>
+					</div>
+				</div>
 			@endif
 
+			@if($order->order_type=="eat_later")
+				<div>
+					<button style="" class="cancel-order-btn">Cancel Order Request</button>
+				</div>
+			@endif
 		</div>
 	</div>
 	
