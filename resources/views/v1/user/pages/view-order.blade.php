@@ -246,7 +246,7 @@
 			@endif
 
 			<!-- Modal delete cart item -->
-			<div id="delete-cart-item-alert" class="modal fade pop_up" role="dialog">
+			<div class="modal fade pop_up" role="dialog">
 				<div class='modal-dialog modal-lg'>
 					<div class="modal-content">
 						<div class="modal-body">

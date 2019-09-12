@@ -58,13 +58,17 @@
 </head>
 <body>
 	<div id="main-wrapper">
-		@includeIf('v1.user.elements.header')
+		@section('header')
+            @includeIf('v1.user.elements.header')
+        @show
 
 		<div class="mid-section">
 			@yield('content')
 		</div>
 		
-		@includeIf('v1.user.elements.footer')
+		@section('footer')
+			@includeIf('v1.user.elements.footer')
+		@show
 	</div>
 
 	@yield('footer-script')

@@ -359,7 +359,8 @@ class OrderController extends Controller
                 // dd($markerArray);
             }
 
-            return view('order.track-order', compact('order', 'markerArray'));
+            // return view('order.track-order', compact('order', 'markerArray'));
+            return view('v1.user.pages.track-order', compact('order', 'markerArray'));
         }
 
         return redirect('order-view/'.$order->order_id);

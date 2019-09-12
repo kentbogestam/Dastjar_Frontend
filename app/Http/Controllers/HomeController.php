@@ -780,9 +780,10 @@ class HomeController extends Controller
         return response()->json(['status' => $status, 'html' => $html]);
     }
 
-    public function selectOrderDate(){
-        
-        return view('select-datetime', compact('')); 
+    public function selectOrderDate()
+    {
+        // return view('select-datetime', compact('')); 
+        return view('v1.user.pages.select-datetime');
     }
 	
 	public function contact_us(Request $request){        

@@ -106,6 +106,18 @@ img {
 	max-width: 30px;
 }
 
+.head-section .logo-with-map a.arrow {
+	width: 30px;
+    font-size: 30px;
+    text-align: center;
+    vertical-align: middle;
+    position: absolute;
+    left: 5px;
+    top: 11px;
+    color: #333;
+    text-decoration: none;
+}
+
 .mid-section {
 	margin-top: 60px;
 	padding-bottom: 60px;

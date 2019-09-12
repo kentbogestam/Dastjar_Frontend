@@ -256,7 +256,8 @@ class CustomerController extends Controller
     }
 
     public function selectLocation(){
-        return view('settings.location', compact(''));
+        // return view('settings.location', compact(''));
+        return view('v1.user.pages.location');
     }
 
     public function saveLocation(Request $request){
