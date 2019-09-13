@@ -892,7 +892,7 @@ class AdminController extends Controller
     public function kitchenSetting(){
         // Get logged-in store detail
         $store = Store::from('store AS S')
-            ->select(['S.order_response', 'S.driver_range', 'S.delivery_range', 'S.buffer_time', 'SP.mac_address', 'SP.print_copy', 'SP.print_sound'])
+            ->select(['S.order_response', 'S.driver_range', 'S.delivery_range', 'S.buffer_time', 'SP.mac_address', 'SP.print_copy'])
             ->leftJoin('store_printers AS SP', 'SP.store_id', '=', 'S.store_id')
             ->where('S.store_id' , Session::get('storeId'))
             ->first();
@@ -935,7 +935,7 @@ class AdminController extends Controller
             {
                 // Update printer setting
                 StorePrinter::where(['store_id' => Session::get('storeId'), 'status' => '1'])
-                    ->update(['mac_address' => $data['mac_address'], 'print_copy' => $data['print_copy'], 'print_sound' => $data['print_sound']]);
+                    ->update(['mac_address' => $data['mac_address'], 'print_copy' => $data['print_copy']]);
             }
             else
             {
@@ -952,7 +952,6 @@ class AdminController extends Controller
                     'store_id' => Session::get('storeId'),
                     'mac_address' => $data['mac_address'],
                     'print_copy' => $data['print_copy'],
-                    'print_sound' => $data['print_sound'],
                 ));
             }
         }

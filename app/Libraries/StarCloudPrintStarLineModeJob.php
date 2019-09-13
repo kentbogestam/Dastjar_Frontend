@@ -18,7 +18,7 @@ class StarCloudPrintStarLineModeJob
 	
 	private $printerMac;
 	private $filePath;
-	private $fileName;
+	private $fileName = array();
 	private $printJobBuilder = "";
 
 	public function __construct($printerMac, $fileName)
@@ -72,10 +72,18 @@ class StarCloudPrintStarLineModeJob
 		}
 	}
 
+	// 
 	public function saveJob()
 	{
 		$printJobBuilder = $this->printJobBuilder.self::SLM_FEED_PARTIAL_CUT_ASC;
-		Storage::put($this->filePath.$this->fileName, $printJobBuilder);
+
+		if( !empty($this->fileName) )
+		{
+			foreach($this->fileName as $file)
+			{
+				Storage::put($this->filePath.$file, $printJobBuilder);
+			}
+		}
 	}
 }
 ?>
