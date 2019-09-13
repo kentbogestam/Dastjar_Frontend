@@ -221,24 +221,6 @@ textarea.ui-input-text{
 						<li>
 							<input type="text" name="print_copy" value="{{ ($store->print_copy != null) ? $store->print_copy : '1' }}" placeholder="{{ __('messages.printCopy') }}" id="print_copy" class="msg-txt">
 						</li>
-						<li data-role="collapsible" class="range-sec" title="{{ __('messages.printSound') }}">
-							<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">
-								{{ __("messages.printSound") }}
-								<span>
-									@if($store->print_sound == '1')
-										On
-									@else
-										Off
-									@endif
-								</span>
-							</h2>
-							<fieldset data-role="controlgroup">
-								<input type="radio" name="print_sound" id="print_sound-off" value="0" @if($store->print_sound == '0' || $store->print_sound == null) checked="checked" @endif>
-						        <label for="print_sound-off">Off</label>
-						        <input type="radio" name="print_sound" id="print_sound-on" value="1" @if($store->print_sound == '1') checked="checked" @endif>
-						        <label for="print_sound-on">On</label>
-							</fieldset>
-						</li>
 					</ul>
 				</li>
 

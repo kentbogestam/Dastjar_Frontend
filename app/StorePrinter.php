@@ -8,7 +8,7 @@ class StorePrinter extends Model
 {
 	protected $table = 'store_printers';
 
-	protected $fillable = ['id', 'store_id', 'mac_address', 'print_copy', 'print_sound', 'status'];
+	protected $fillable = ['id', 'store_id', 'mac_address', 'print_copy', 'status'];
 
 	// public $incrementing = false;
 	protected $casts = [

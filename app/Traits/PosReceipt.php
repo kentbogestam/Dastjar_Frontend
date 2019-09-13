@@ -15,7 +15,7 @@ trait PosReceipt {
     {
         // Get order/store/company detail
         $order = Order::from('orders as O')
-            ->select(['O.order_id', 'O.customer_order_id', 'O.delivery_type', 'O.check_deliveryDate', 'O.deliver_time', 'O.order_total', 'O.final_order_total', 'O.delivery_charge', 'O.online_paid', 'C.currencies', 'S.store_name', 'S.phone', 'SP.mac_address', 'CA.full_name', 'CA.mobile', 'CA.street', 'CA.city'])
+            ->select(['O.order_id', 'O.customer_order_id', 'O.delivery_type', 'O.check_deliveryDate', 'O.deliver_time', 'O.order_total', 'O.final_order_total', 'O.delivery_charge', 'O.online_paid', 'C.currencies', 'S.store_name', 'S.phone', 'SP.mac_address', 'SP.print_copy', 'CA.full_name', 'CA.mobile', 'CA.street', 'CA.city'])
             ->join('store AS S', 'S.store_id', '=', 'O.store_id')
             ->join('company AS C','C.company_id', '=', 'O.company_id')
             ->leftJoin('store_printers AS SP', 'SP.store_id', '=', 'S.store_id')
@@ -24,7 +24,7 @@ trait PosReceipt {
             ->first();
         
         // Check if printer settings exist
-        if($order && (isset($order->mac_address) && $order->mac_address != null))
+        if($order && (isset($order->mac_address) && $order->mac_address != null && $order->print_copy != null))
         {
             // Get order item details belongs to order
             $orderDetail = OrderDetail::from('order_details AS OD')
@@ -55,87 +55,96 @@ trait PosReceipt {
                 ->first();
 
             $printerMac = $this->getPrinterFolder($order->mac_address);
+            $printerMac = strtolower($printerMac);
 
             // 
-            $fileName = "{$printerMac}-{$orderId}.txt";
-            $printer = new StarCloudPrintStarLineModeJob($printerMac, $fileName);
-
-            // Header
-            $printer->set_codepage("\x20\n");
-            $printer->set_text_center_align();
-            $printer->add_text_line(__('messages.Order Number'));
-            $printer->set_text_emphasized();
-            $printer->add_text_line("{$order->customer_order_id}\n");
-            $printer->add_text_line($this->replaceAsciiToHex($order->store_name));
-            $printer->add_text_line("TEL: {$order->phone}\n");
-            $printer->cancel_text_emphasized();
-            
-            $printer->set_text_right_align();
-            if($order->delivery_type == 3)
+            $fileName = array();
+            for($i = $order->print_copy; $i >= 1; $i--)
             {
-                $printer->set_text_emphasized();
-                $printer->add_text_line(__('messages.deliverTo'));
-                $printer->cancel_text_emphasized();
-                $address = $this->replaceAsciiToHex($order->full_name)."\n".$this->replaceAsciiToHex($order->street)."\n".$this->replaceAsciiToHex($order->city)."\n".__('messages.phone').": {$order->mobile}";
-                $printer->add_text_line($address);
+                $fileName[] = "{$printerMac}-{$orderId}-{$i}.txt";
             }
-            $printer->add_text_line($this->get_seperator_dashed());
 
-            // Cart Item
-            if($orderDetail)
+            if( !empty($fileName) )
             {
-                foreach($orderDetail as $row)
+                $printer = new StarCloudPrintStarLineModeJob($printerMac, $fileName);
+
+                // Header
+                $printer->set_codepage("\x20\n");
+                $printer->set_text_center_align();
+                $printer->add_text_line(__('messages.Order Number'));
+                $printer->set_text_emphasized();
+                $printer->add_text_line("{$order->customer_order_id}\n");
+                $printer->add_text_line($this->replaceAsciiToHex($order->store_name));
+                $printer->add_text_line("TEL: {$order->phone}\n");
+                $printer->cancel_text_emphasized();
+                
+                $printer->set_text_right_align();
+                if($order->delivery_type == 3)
                 {
-                    $product_name = $this->replaceAsciiToHex($row->product_name);
-                    $arrIndex1 = "{$row->product_quality} {$product_name}";
-                    $arrIndex2 = number_format(($row->product_quality*$row->price), 2, '.', '')." ".$order->currencies;
-                    $printer->add_text_line($this->get_column_separated_data(array($arrIndex1, $arrIndex2)));
+                    $printer->set_text_emphasized();
+                    $printer->add_text_line(__('messages.deliverTo'));
+                    $printer->cancel_text_emphasized();
+                    $address = $this->replaceAsciiToHex($order->full_name)."\n".$this->replaceAsciiToHex($order->street)."\n".$this->replaceAsciiToHex($order->city)."\n".__('messages.phone').": {$order->mobile}";
+                    $printer->add_text_line($address);
                 }
                 $printer->add_text_line($this->get_seperator_dashed());
-            }
 
-            // Discount
-            if($orderDiscount)
-            {
-                $discountAmount = ($order->final_order_total*$orderDiscount->discount_value/100);
-                $printer->add_text_line($this->get_column_separated_data(array(__('messages.Discount'), number_format($discountAmount, 2, '.', '')." ".$order->currencies)));
-            }
-            // Delivery Charge
-            if($order->delivery_type == 3 && $order->delivery_charge)
-            {
-                $delivery_charge = $order->delivery_charge;
-                $printer->add_text_line($this->get_column_separated_data(array(__('messages.delivery_charge'), number_format($delivery_charge, 2, '.', '')." ".$order->currencies)));
-            }
-            // Total
-            $total = number_format(($order->final_order_total), 2, '.', '')." ".$order->currencies;
-            $printer->set_text_emphasized();
-            $printer->add_text_line($this->get_column_separated_data(array(__('messages.TOTAL'), $total)));
-            $printer->cancel_text_emphasized();
-            // Vat
-            $vat = number_format(($order->final_order_total*12/100), 2, '.', '')." ".$order->currencies;
-            $printer->add_text_line($this->get_column_separated_data(array(__('messages.vat'), $vat)));
-            $printer->set_text_center_align();
-            // Loyalty
-            if($orderCustomerLoyalty)
-            {
-                $printer->add_text_line($loyaltyOfferApplied);
-            }
-            $printer->add_text_line($this->get_seperator_dashed());
+                // Cart Item
+                if($orderDetail)
+                {
+                    foreach($orderDetail as $row)
+                    {
+                        $product_name = $this->replaceAsciiToHex($row->product_name);
+                        $arrIndex1 = "{$row->product_quality} {$product_name}";
+                        $arrIndex2 = number_format(($row->product_quality*$row->price), 2, '.', '')." ".$order->currencies;
+                        $printer->add_text_line($this->get_column_separated_data(array($arrIndex1, $arrIndex2)));
+                    }
+                    $printer->add_text_line($this->get_seperator_dashed());
+                }
 
-            if($order->online_paid == 1)
-            {
+                // Discount
+                if($orderDiscount)
+                {
+                    $discountAmount = ($order->final_order_total*$orderDiscount->discount_value/100);
+                    $printer->add_text_line($this->get_column_separated_data(array(__('messages.Discount'), number_format($discountAmount, 2, '.', '')." ".$order->currencies)));
+                }
+                // Delivery Charge
+                if($order->delivery_type == 3 && $order->delivery_charge)
+                {
+                    $delivery_charge = $order->delivery_charge;
+                    $printer->add_text_line($this->get_column_separated_data(array(__('messages.delivery_charge'), number_format($delivery_charge, 2, '.', '')." ".$order->currencies)));
+                }
+                // Total
+                $total = number_format(($order->final_order_total), 2, '.', '')." ".$order->currencies;
                 $printer->set_text_emphasized();
-                $printer->add_text_line(strtoupper(__('messages.Paid')));
+                $printer->add_text_line($this->get_column_separated_data(array(__('messages.TOTAL'), $total)));
                 $printer->cancel_text_emphasized();
+                // Vat
+                $vat = number_format(($order->final_order_total*12/100), 2, '.', '')." ".$order->currencies;
+                $printer->add_text_line($this->get_column_separated_data(array(__('messages.vat'), $vat)));
+                $printer->set_text_center_align();
+                // Loyalty
+                if($orderCustomerLoyalty)
+                {
+                    $printer->add_text_line($loyaltyOfferApplied);
+                }
                 $printer->add_text_line($this->get_seperator_dashed());
+
+                if($order->online_paid == 1)
+                {
+                    $printer->set_text_emphasized();
+                    $printer->add_text_line(strtoupper(__('messages.Paid')));
+                    $printer->cancel_text_emphasized();
+                    $printer->add_text_line($this->get_seperator_dashed());
+                }
+
+                // Footer
+                $orderDateTime = $order->check_deliveryDate.' '.$order->deliver_time;
+                $printer->add_text_line(date("d M Y, H:i", strtotime($orderDateTime))."\n");
+                $printer->add_text_line(__('messages.printFooterText'));
+
+                $printer->saveJob();
             }
-
-            // Footer
-            $orderDateTime = $order->check_deliveryDate.' '.$order->deliver_time;
-            $printer->add_text_line(date("d M Y, H:i", strtotime($orderDateTime))."\n");
-            $printer->add_text_line(__('messages.printFooterText'));
-
-            $printer->saveJob();
         }
     }
 
