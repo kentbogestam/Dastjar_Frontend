@@ -335,7 +335,8 @@ class HomeController extends Controller
 }
 
     public function blankView(){
-      return view('blankPage');    
+        // return view('blankPage');
+        return view('v1.user.pages.blank-page');
     }
 
     public function page_404(){

@@ -99,35 +99,22 @@
 						@foreach($storedetails->deliveryTypes as $row)
 							@if($row->delivery_type == 1 || $row->delivery_type == 2 || ($row->delivery_type == 3 && Helper::isPackageSubscribed(12)))
 								<li>
-									<div class="radio">
-										<label>
-											<input type="radio" name="delivery_type" value="{{ $row->delivery_type }}">
-											@if($row->delivery_type == 1)
-												{{ __('messages.deliveryOptionDineIn') }}
-											@elseif($row->delivery_type == 2)
-												{{ __('messages.deliveryOptionTakeAway') }}
-											@elseif($row->delivery_type == 3 && Helper::isPackageSubscribed(12))
-												{{ __('messages.deliveryOptionHomeDelivery') }}
-											@endif
-										</label>
-									</div>
+									<input type="radio" name="delivery_type" value="{{ $row->delivery_type }}" id="delivery_type{{ $row->delivery_type }}">
+									<label for="delivery_type{{ $row->delivery_type }}">
+										@if($row->delivery_type == 1)
+											<img src="{{ asset('v1/images/dine.png') }}" alt="">
+											{{ __('messages.deliveryOptionDineIn') }}
+										@elseif($row->delivery_type == 2)
+											<img src="{{ asset('v1/images/car.png') }}" alt="">
+											{{ __('messages.deliveryOptionTakeAway') }}
+										@elseif($row->delivery_type == 3 && Helper::isPackageSubscribed(12))
+											<img src="{{ asset('v1/images/dinner-1.png') }}" alt="">
+											{{ __('messages.deliveryOptionHomeDelivery') }}
+										@endif
+									</label>
 								</li>
 							@endif
 						@endforeach
-					</ul>
-					<ul>
-						<li>
-							<input type="radio" name="name" id="takeAway">
-							<label for="takeAway"><img src="images/car.png" alt="">Take Away</label>
-						</li>
-						<li>
-							<input type="radio" name="name" id="homeDelivery">
-							<label for="homeDelivery"><img src="images/dinner-1.png" alt="">Home Delivery</label>
-						</li>
-						<li>
-							<input type="radio" name="name" id="dineIn">
-							<label for="dineIn"><img src="images/dine.png" alt="">Dine In</label>
-						</li>
 					</ul>
 				</div>
 			@else
