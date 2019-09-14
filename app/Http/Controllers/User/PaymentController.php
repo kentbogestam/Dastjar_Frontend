@@ -107,7 +107,7 @@ class PaymentController extends Controller
 					}
 
 					$intent = \Stripe\PaymentIntent::create($arrPaymentIntent, ['stripe_account' => $stripeAccount]);
-					// $intent = \Stripe\PaymentIntent::create($arrPaymentIntent, ['stripe_account' => 'acct_1BUfj3ISb6cUe2dL']);
+					// $intent = \Stripe\PaymentIntent::create($arrPaymentIntent, ['stripe_account' => 'acct_1CZMp0DLCQiTSrbX']);
 				}
 				if ($request->has('payment_intent_id')) {
 					$intent = \Stripe\PaymentIntent::retrieve(
@@ -184,15 +184,6 @@ class PaymentController extends Controller
     {
     	$response = array();
 
-    	// Get subscription detail
-        /*$storeId = Session::get('storeId');
-        $companySubscriptionDetail = CompanySubscriptionDetail::from('company_subscription_detail AS CSD')
-            ->select('CSD.stripe_user_id')
-            ->join('company AS C', 'C.company_id', '=', 'CSD.company_id')
-            ->join('store AS S', 'S.u_id', '=', 'C.u_id')
-            ->where('S.store_id', $storeId)->first();*/
-    	
-    	// if(isset($companySubscriptionDetail->stripe_user_id))
     	if(1)
     	{
     		// 
@@ -202,14 +193,22 @@ class PaymentController extends Controller
 	    	$intent = null;
 			try {
 				if ($request->has('payment_method_id')) {
+					$payment_method = \Stripe\PaymentMethod::create([
+						'customer' => 'cus_Faiavj2b8XHnCN',
+						'payment_method' => $request->input('payment_method_id'),
+					], ['stripe_account' => 'acct_1CZMp0DLCQiTSrbX']);
+
 					# Create the PaymentIntent
 					$intent = \Stripe\PaymentIntent::create([
-						'payment_method' => $request->input('payment_method_id'),
+						'payment_method' => $payment_method->id,
 						'amount' => 2100,
 						'currency' => 'sek',
+						'description' => 'description',
+						'receipt_email' => 'ajit.singh@ampliedtech.com',
 						'confirmation_method' => 'manual',
 						'confirm' => true,
-					], ['stripe_account' => 'acct_1BUfj3ISb6cUe2dL']);
+						'setup_future_usage' => 'on_session',
+					], ['stripe_account' => 'acct_1CZMp0DLCQiTSrbX']);
 				}
 				if ($request->has('payment_intent_id')) {
 					$intent = \Stripe\PaymentIntent::retrieve(

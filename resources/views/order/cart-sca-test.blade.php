@@ -18,7 +18,7 @@
 @section('footer-script')
 <script src="https://js.stripe.com/v3/"></script>
 <script type="text/javascript">
-	// 
+	// Initialize Stripe and card element
 	var stripe = Stripe('{{ env('STRIPE_PUB_KEY') }}');
 
 	var elements = stripe.elements();
@@ -28,16 +28,14 @@
 	cardElement.mount('#card-element');
 
 	//
-	var cardholderName = document.getElementById('cardholder-name');
+	// var cardholderName = document.getElementById('cardholder-name');
 	var cardButton = document.getElementById('card-button');
 
 	cardButton.addEventListener('click', function(ev) {
 		$('#card-button').prop('disabled', true);
 		$('.row-confirm-payment').find('div.card-errors').html('');
 
-		stripe.createPaymentMethod('card', cardElement, {
-			billing_details: {name: cardholderName.value}
-		}).then(function(result) {
+		stripe.createPaymentMethod('card', cardElement).then(function(result) {
 			if (result.error) {
 				// Show error in payment form
 				$('#card-button').prop('disabled', false);
@@ -51,7 +49,8 @@
 					method: 'POST',
 					body: JSON.stringify(data),
 					headers: {
-						'Content-Type': 'application/json'
+						'Content-Type': 'application/json',
+						'X-CSRF-TOKEN': '{{ csrf_token() }}'
 					}
 				}).then(function(result) {
 					// Handle server response (see Step 3)
@@ -97,7 +96,8 @@
 						method: 'POST',
 						body: JSON.stringify(data),
 						headers: {
-							'Content-Type': 'application/json'
+							'Content-Type': 'application/json',
+							'X-CSRF-TOKEN': '{{ csrf_token() }}'
 						}
 					}).then(function(confirmResult) {
 						return confirmResult.json();
