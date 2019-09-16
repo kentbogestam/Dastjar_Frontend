@@ -196,7 +196,7 @@ class PaymentController extends Controller
 				if ($request->has('payment_method_id')) {
 					$customer = \Stripe\Customer::create([
 					    'email' => 'ajit.singh@ampliedtech.com',
-					    // 'payment_method' => $request->has('payment_method_id'),
+					    'payment_method' => $request->has('payment_method_id'),
 					]);
 
 					$payment_method = \Stripe\PaymentMethod::create([
@@ -206,9 +206,7 @@ class PaymentController extends Controller
 
 					# Create the PaymentIntent
 					$intent = \Stripe\PaymentIntent::create([
-						// 'payment_method' => $request->input('payment_method_id'),
 						'payment_method' => $payment_method->id,
-						'customer' => $customer->id,
 						'amount' => 2100,
 						'currency' => 'sek',
 						'description' => 'description',
