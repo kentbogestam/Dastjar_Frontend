@@ -19,7 +19,9 @@
 <script src="https://js.stripe.com/v3/"></script>
 <script type="text/javascript">
 	// Initialize Stripe and card element
-	var stripe = Stripe('{{ env('STRIPE_PUB_KEY') }}');
+	var stripe = Stripe('{{ env('STRIPE_PUB_KEY') }}', {
+		stripeAccount: 'acct_1CZMp0DLCQiTSrbX'
+	});
 
 	var elements = stripe.elements();
 	var cardElement = elements.create('card', {
