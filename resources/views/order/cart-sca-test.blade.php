@@ -66,6 +66,7 @@
 	});
 
 	function handleServerResponse(response) {
+		console.log(response);
 		if (response.error) {
 			// Show error from server on payment form
 			let message = response.error;

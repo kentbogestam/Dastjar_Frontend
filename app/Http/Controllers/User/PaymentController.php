@@ -108,6 +108,7 @@ class PaymentController extends Controller
 
 					$intent = \Stripe\PaymentIntent::create($arrPaymentIntent, ['stripe_account' => $stripeAccount]);
 					// $intent = \Stripe\PaymentIntent::create($arrPaymentIntent, ['stripe_account' => 'acct_1CZMp0DLCQiTSrbX']);
+					// $intent = \Stripe\PaymentIntent::create($arrPaymentIntent, ['stripe_account' => 'acct_1BUfj3ISb6cUe2dL']);
 				}
 				if ($request->has('payment_intent_id')) {
 					$intent = \Stripe\PaymentIntent::retrieve(
@@ -193,21 +194,28 @@ class PaymentController extends Controller
 	    	$intent = null;
 			try {
 				if ($request->has('payment_method_id')) {
+					$customer = \Stripe\Customer::create([
+					    'email' => 'ajit.singh@ampliedtech.com',
+					    // 'payment_method' => $request->has('payment_method_id'),
+					]);
+
 					$payment_method = \Stripe\PaymentMethod::create([
-						'customer' => 'cus_Faiavj2b8XHnCN',
+						'customer' => $customer->id,
 						'payment_method' => $request->input('payment_method_id'),
 					], ['stripe_account' => 'acct_1CZMp0DLCQiTSrbX']);
 
 					# Create the PaymentIntent
 					$intent = \Stripe\PaymentIntent::create([
+						// 'payment_method' => $request->input('payment_method_id'),
 						'payment_method' => $payment_method->id,
+						'customer' => $customer->id,
 						'amount' => 2100,
 						'currency' => 'sek',
 						'description' => 'description',
 						'receipt_email' => 'ajit.singh@ampliedtech.com',
 						'confirmation_method' => 'manual',
 						'confirm' => true,
-						'setup_future_usage' => 'on_session',
+						'setup_future_usage' => 'off_session',
 					], ['stripe_account' => 'acct_1CZMp0DLCQiTSrbX']);
 				}
 				if ($request->has('payment_intent_id')) {
