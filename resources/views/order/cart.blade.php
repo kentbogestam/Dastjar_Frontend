@@ -370,6 +370,7 @@
 	@if(Session::get('paymentmode') !=0 && Session::has('stripeAccount') && $order->final_order_total > 0)
 		// Initialize Stripe and card element
 		var stripe = Stripe('{{ env('STRIPE_PUB_KEY') }}');
+		var stripe2;
 
 		var elements = stripe.elements();
 		var cardElement = elements.create('card', {
@@ -436,7 +437,11 @@
 				$('.row-new-card').find('div.card-errors').html(message);
 			} else if (response.requires_action) {
 				// Use Stripe.js to handle required card action
-				stripe.handleCardAction(
+				stripe2 = Stripe('{{ env('STRIPE_PUB_KEY') }}', {
+					stripeAccount: response.stripeAccount
+				});
+
+				stripe2.handleCardAction(
 					response.payment_intent_client_secret
 				).then(function(result) {
 					if (result.error) {
@@ -523,7 +528,11 @@
 				$('.row-saved-cards').find('div.card-errors').html(message);
 			} else if (response.requires_action) {
 				// Use Stripe.js to handle required card action
-				stripe.handleCardAction(
+				stripe2 = Stripe('{{ env('STRIPE_PUB_KEY') }}', {
+					stripeAccount: response.stripeAccount
+				});
+
+				stripe2.handleCardAction(
 					response.payment_intent_client_secret
 				).then(function(result) {
 					if (result.error) {
@@ -549,7 +558,7 @@
 							}
 						}).then(function(confirmResult) {
 							return confirmResult.json();
-						}).then(handleServerResponse);
+						}).then(handleServerResponseSavedCard);
 					}
 				});
 			} else {
