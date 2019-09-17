@@ -19,9 +19,8 @@
 <script src="https://js.stripe.com/v3/"></script>
 <script type="text/javascript">
 	// Initialize Stripe and card element
-	var stripe = Stripe('{{ env('STRIPE_PUB_KEY') }}', {
-		stripeAccount: 'acct_1CZMp0DLCQiTSrbX'
-	});
+	var stripe = Stripe('{{ env('STRIPE_PUB_KEY') }}');
+	var stripe2;
 
 	var elements = stripe.elements();
 	var cardElement = elements.create('card', {
@@ -68,7 +67,6 @@
 	});
 
 	function handleServerResponse(response) {
-		console.log(response);
 		if (response.error) {
 			// Show error from server on payment form
 			let message = response.error;
@@ -78,7 +76,11 @@
 			$('.row-confirm-payment').find('div.card-errors').html(message);
 		} else if (response.requires_action) {
 			// Use Stripe.js to handle required card action
-			stripe.handleCardAction(
+			stripe2 = Stripe('{{ env('STRIPE_PUB_KEY') }}', {
+				stripeAccount: response.stripeAccount
+			});
+
+			stripe2.handleCardAction(
 				response.payment_intent_client_secret
 			).then(function(result) {
 				if (result.error) {
