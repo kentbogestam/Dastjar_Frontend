@@ -28,7 +28,7 @@ $requestPath = Request::path();
 			</li>
 		@endif
 
-		@include('orderQuantity')
+		@include('v1.user.elements.orderQuantity')
 
 		<li>
 			<a href="{{ url('user-setting') }}">
