@@ -735,7 +735,7 @@ class HomeController extends Controller
                     $html .= "
                         <div class='hotel-product' id='item{$row->product_id}'>
                             <div class='product'>
-                                <div class='col-sm-11'>
+                                <div class='col-sm-10 col-md-10 col-xs-8'>
                                     <div class='product-detail'>
                                         <img src='{$row->small_image}' alt='' onerror='this.src=\"".url('images/placeholder-image.png')."\"'>
                                     </div>
@@ -745,7 +745,7 @@ class HomeController extends Controller
                                         <p class='price'>".number_format((float)$row->price, 2, '.', '')." SEK</p>
                                     </div>
                                 </div>
-                                <div class='col-sm-1'>
+                                <div class='col-md-2 col-sm-2 col-xs-4 quantity-sec'>
                                     <div class='quantity'>
                                         <span class='minus min' onclick='decrementValue(\"{$row->product_id}\")'><i class='fa fa-minus'></i></span>
                                         <span class='inputBox'>
