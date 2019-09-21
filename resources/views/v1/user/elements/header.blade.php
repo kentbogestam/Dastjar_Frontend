@@ -60,7 +60,7 @@ $requestPath = Request::path();
 				<img src="{{ asset('v1/images/map-icon.png') }}" alt="">
 			</a>
 		</div>
-	@elseif(Request::is('cart'))
+	@elseif(Request::is('cart') || Request::is('view-cart/*'))
 		<div class="logo-with-map">
 			<a class="logo" href="javascript:void(0);">
 				<h1>{{ $storedetails->store_name }}</h1>
@@ -68,8 +68,14 @@ $requestPath = Request::path();
 					<span>{{ Auth::user()->name}}</span>
 				@endauth
 			</a>
-			<a class="map-icon map-btn user-link" href="{{ url('search-map-eatnow') }}">
-				<img src="{{ asset('v1/images/map-icon.png') }}" alt="">
+		</div>
+	@elseif(Request::is('order-view/*'))
+		<div class="logo-with-map">
+			<a class="logo" href="javascript:void(0);">
+				<img src="{{ asset('v1/images/logo.png') }}" alt="">
+				@auth
+					<span>{{ Auth::user()->name}}</span>
+				@endauth
 			</a>
 		</div>
 	@elseif(Request::is('select-location'))
