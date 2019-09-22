@@ -154,6 +154,10 @@
 		font-size: 18px;
 	}
 
+	.order-summery p.large-text {
+		font-size: 2em;
+	}
+
 }
 
 @media screen and (max-width: 576px) {
