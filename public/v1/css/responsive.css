@@ -91,7 +91,7 @@
 
 	.button-section a,
 	.footer-section ul li a {
-		font-size: 22px;
+		font-size: 23px;
 	}
 }
 
@@ -152,6 +152,10 @@
 	.button-section a,
 	.footer-section ul li a {
 		font-size: 18px;
+	}
+
+	.order-summery p.large-text {
+		font-size: 2em;
 	}
 
 }

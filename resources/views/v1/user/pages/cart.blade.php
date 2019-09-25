@@ -173,6 +173,12 @@
 										</label>
 									</div>
 									<button type="button" id="card-button" class="btn">{{__('messages.Pay with card')}}</button>
+									<ul>
+										<li><i class="fa fa-cc-stripe" aria-hidden="true"></i></li>
+										<li><i class="fa fa-cc-amex" aria-hidden="true"></i></li>
+										<li><i class="fa fa-cc-mastercard" aria-hidden="true"></i></li>
+										<li><i class="fa fa-cc-visa" aria-hidden="true"></i></li>
+									</ul>
 								</form>
 							</div>
 						</div>
