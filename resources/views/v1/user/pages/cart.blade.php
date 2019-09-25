@@ -105,10 +105,10 @@
 											<img src="{{ asset('v1/images/dine.png') }}" alt="">
 											{{ __('messages.deliveryOptionDineIn') }}
 										@elseif($row->delivery_type == 2)
-											<img src="{{ asset('v1/images/car.png') }}" alt="">
+											<img src="{{ asset('v1/images/dinner-1.png') }}" alt="">
 											{{ __('messages.deliveryOptionTakeAway') }}
 										@elseif($row->delivery_type == 3 && Helper::isPackageSubscribed(12))
-											<img src="{{ asset('v1/images/dinner-1.png') }}" alt="">
+											<img src="{{ asset('v1/images/car.png') }}" alt="">
 											{{ __('messages.deliveryOptionHomeDelivery') }}
 										@endif
 									</label>
