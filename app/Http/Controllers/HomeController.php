@@ -733,8 +733,8 @@ class HomeController extends Controller
 
                     // 
                     $html .= "
-                        <div class='hotel-product' id='item{$row->product_id}'>
-                            <div class='product'>
+                        <div class='hotel-product'>
+                            <div class='product' id='item{$row->product_id}'>
                                 <div class='col-sm-10 col-md-10 col-xs-8'>
                                     <div class='product-detail'>
                                         <img src='{$row->small_image}' alt='' onerror='this.src=\"".url('images/placeholder-image.png')."\"'>

@@ -38,3 +38,29 @@ $requestPath = Request::path();
 		</li>
 	</ul>
 </div>
+
+<!-- Popup 'orderQuantity' -->
+@if(Auth::check())
+	@if(count(Auth::user()->paidOrderList))
+		<div id="order-popup" class="modal fade" role="dialog">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="row">
+							@foreach(Auth::user()->paidOrderList as $order)
+								<div class="col-md-12">
+									<a href="{{ url('order-view/'.$order->order_id) }}" data-ajax="false">
+										{{ __('messages.Order id') }} - {{$order->customer_order_id}}
+									</a>
+								</div>
+							@endforeach
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	@endif
+@endif
