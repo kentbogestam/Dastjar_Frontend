@@ -4,16 +4,6 @@ $requestPath = Request::path();
 
 <div class="footer-section">
 	<ul>
-		@if(Request::is('/') || Request::is('home') || Request::is('eat-now') || Request::is('eat-later'))
-			<li class="active"><a href="javascript:void(0)"><i class="fa fa-cutlery"></i></a></li>
-		@else
-			@if(Request::is('cart') || Request::is('save-order'))
-				<li><a href="javascript:void(0)" id="leave-cart" data-content="{{ __("messages.Leave Cart Page") }}"><i class="fa fa-cutlery"></i></a></li>
-			@else
-				<li><a href="{{ Session::get('route_url') }}"><i class="fa fa-cutlery"></i></a></li>
-			@endif
-		@endif
-
 		@if(Request::is('restro-menu-list/*'))
 			<li class="active">
 				<a href="javascript:void(0)" id="menudataSave">
