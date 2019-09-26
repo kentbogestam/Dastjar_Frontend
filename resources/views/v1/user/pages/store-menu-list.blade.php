@@ -19,7 +19,7 @@
 @section('content')
 	@include('v1.user.elements.store-delivery-service')
 
-	@if( isset($menuTypes) && !$menuTypes->isEmpty() )
+	@if( !empty($menuTypes) )
 		<form id="form" class="form-horizontal" method="post" action="{{ url('cart') }}">
 			{{ csrf_field() }}
 			<div class="hotel-service-list">
@@ -69,7 +69,7 @@
 					@endif
 
 					<div class="hotel-ser{{ ($strLoyaltyOffer != '') ? ' row-loyalty-offer' : '' }}">
-						<a href="#menu-{{ $menuType->dish_id }}" onclick="getMenuDetail(this, {{ $menuType->dish_id }})" data-toggle="collapse">
+						<a href="#menu-{{ $menuType->dish_id }}" onclick="getMenuDetail(this, {{ $menuType->dish_id }}, 1)" data-toggle="collapse">
 							<span>
 								{{ $menuType->dish_name }} 
 								{!! $strLoyaltyOffer !!}
@@ -227,7 +227,7 @@
 	});
 
 	// 
-	function getMenuDetail(This, catLevel1, catLevel2 = null)
+	function getMenuDetail(This, dishType, level)
 	{
 		// 
 		This = $(This);
@@ -239,12 +239,7 @@
 		}
 
 		// 
-		let url = '{{ url('get-menu-detail') }}/'+catLevel1; 
-
-		if(catLevel2 != null)
-		{
-			url += '/'+catLevel2;
-		}
+		let url = '{{ url('get-menu-detail') }}/'+dishType+'/'+level;
 
 		$.ajax({
 			url: url,
@@ -252,7 +247,7 @@
 			success: function(response) {
 				if(response.status)
 				{
-					if(catLevel2 == null)
+					if(level == 1)
 					{
 						This.next('.menu-detail').html(response.html);
 					}

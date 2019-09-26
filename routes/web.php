@@ -89,7 +89,7 @@ Route::post('store-device-token', 'CustomerController@storeDeviceToken');
 Route::post('store-device-token-order-view', 'CustomerController@storeDeviceTokenOrderView');	
 
 Route::get('restro-menu-list/{storeID}', 'HomeController@menuList');
-Route::get('get-menu-detail/{catLevel1}/{catLevel2?}', 'HomeController@getMenuDetail');
+Route::get('get-menu-detail/{dishType}/{level}', 'HomeController@getMenuDetail');
 
 Route::get('search-store-map', 'MapController@searchStoreMap');
 Route::get('404', 'HomeController@page_404')->name('page_404');

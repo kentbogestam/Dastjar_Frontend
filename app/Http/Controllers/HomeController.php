@@ -505,8 +505,7 @@ class HomeController extends Controller
 
         // Get the dish_type ids have products available
         $dish_ids = array();
-        $productPriceList = ProductPriceList::where('store_id',$storeId)->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->with('menuPrice')->with('storeProduct')->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')->orderBy('product.product_rank', 'ASC')->orderBy('product.product_id')->get();
-
+        /*$productPriceList = ProductPriceList::where('store_id',$storeId)->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->with('menuPrice')->with('storeProduct')->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')->orderBy('product.product_rank', 'ASC')->orderBy('product.product_id')->get();
         if($productPriceList->count())
         {
             foreach ($productPriceList as $row) {
@@ -514,21 +513,72 @@ class HomeController extends Controller
                     $dish_ids[] = $storeProduct->dish_type;
                 }
             }
+        }*/
+        $productPriceList = ProductPriceList::select('dish_type')
+            ->where('store_id',$storeId)
+            ->where('publishing_start_date','<=',Carbon::now())
+            ->where('publishing_end_date','>=',Carbon::now())
+            ->where('dish_type', '!=', null)
+            ->join('product', 'product_price_list.product_id', '=', 'product.product_id')
+            ->orderBy('product.product_rank', 'ASC')
+            ->orderBy('product.product_id')
+            ->get();
+
+        if($productPriceList->count())
+        {
+            foreach ($productPriceList as $row) {
+                $dish_ids[] = $row->dish_type;
+            }
+
+            $dish_ids = array_unique($dish_ids);
         }
 
         // 
         if( !empty($dish_ids) )
         {
-            $menuTypes = DishType::from('dish_type')
+            $menuTypes = array();
+
+            $dishType = DishType::from('dish_type')
                 ->where('u_id' , $storedetails->u_id)
-                ->where('parent_id', null)
+                // ->where('parent_id', null)
                 ->where('dish_activate','1')
-                ->whereIn('dish_id', array_unique($dish_ids))
+                ->whereIn('dish_id', $dish_ids)
                 ->orderBy('rank')
                 ->orderBy('dish_id')
                 ->get();
 
-            if($menuTypes->count())
+            if($dishType)
+            {
+                foreach($dishType as $dish)
+                {
+                    if( !is_null($dish->parent_id) )
+                    {
+                        // Get 'dish id' from parent ID
+                        $dishTypeLevel0 = DishType::from('dish_type AS DT1')
+                            ->select(['DT1.dish_id', 'DT1.dish_name'])
+                            ->leftJoin('dish_type AS DT2', 'DT2.parent_id', '=', 'DT1.dish_id')
+                            ->leftJoin('dish_type AS DT3', 'DT3.parent_id', '=', 'DT2.dish_id')
+                            ->whereRaw("(DT1.dish_id = '{$dish->dish_id}' OR DT2.dish_id = '{$dish->dish_id}' OR DT3.dish_id = '{$dish->dish_id}') AND DT1.parent_id IS NULL")
+                            ->groupBy('DT1.dish_id')
+                            ->first();
+                        
+                        $menuTypes[] = (object) array(
+                            'dish_id' => $dishTypeLevel0->dish_id,
+                            'dish_name' => $dishTypeLevel0->dish_name
+                        );
+                    }
+                    else
+                    {
+                        $menuTypes[] = (object) array(
+                            'dish_id' => $dish->dish_id,
+                            'dish_name' => $dish->dish_name
+                        );
+                    }
+                }
+            }
+            // echo '<pre>'; print_r($menuTypes); exit;
+
+            if( !empty($menuTypes) )
             {
                 // Get loyalty offer
                 $promotionLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
@@ -651,63 +701,55 @@ class HomeController extends Controller
         }*/
     }
 
-    function getMenuDetail($catLevel1, $catLevel2 = null)
+    function getMenuDetail($dishType, $level)
     {
         $status = false;
         $html = '';
 
         // Check if sub-menu exist, or get products belongs to dish_id
-        if( is_null($catLevel2) )
-        {
-            $subMenu = DishType::select(['dish_id', 'dish_name'])
-                ->where(['parent_id' => $catLevel1, 'dish_activate' => '1'])
+        $subMenu = DishType::select(['dish_id', 'dish_name'])
+                ->where(['parent_id' => $dishType, 'dish_activate' => '1'])
                 ->orderBy('dish_id')
                 ->get();
+        
+        if($subMenu->count())
+        {
+            $status = true;
+            $html .= '<div class="hotel-ser-sub">';
 
-            if($subMenu->count())
+            foreach($subMenu as $row)
             {
-                $status = true;
-                $html .= '<div class="hotel-ser-sub">';
-
-                foreach($subMenu as $row)
-                {
-                    $html .= "
-                        <div class='product-sub'>
-                            <a href='#sub-menu-{$row->dish_id}' onclick='getMenuDetail(this, {$catLevel1}, {$row->dish_id})' data-toggle='collapse'>
-                                <span>{$row->dish_name} </span>
-                                <span><i class='fa fa-angle-right'></i></span>
-                            </a>
-                            <div class='collapse sub-menu-detail' id='sub-menu-{$row->dish_id}'>
-                                <div class='text-center'><i class='fa fa-spinner' aria-hidden='true'></i></div>
-                            </div>
+                $level++;
+                $html .= "
+                    <div class='product-sub'>
+                        <a href='#sub-menu-{$row->dish_id}' onclick='getMenuDetail(this, {$row->dish_id}, {$level})' data-toggle='collapse'>
+                            <span>{$row->dish_name} </span>
+                            <span><i class='fa fa-angle-right'></i></span>
+                        </a>
+                        <div class='collapse sub-menu-detail' id='sub-menu-{$row->dish_id}'>
+                            <div class='text-center'><i class='fa fa-spinner' aria-hidden='true'></i></div>
                         </div>
-                    ";
-                }
-
-                $html .= '</div>';
+                    </div>
+                ";
             }
+
+            $html .= '</div>';
         }
 
-        // If no 'sub-cat' found or request has and cat and subcat both
+        // If no 'sub-cat' found
         if($status == false)
         {
             $products = Product::from('product AS P')
                 ->select(['P.product_id', 'P.product_name', 'P.product_description', 'P.preparation_Time', 'P.small_image', 'PPL.price', 'S.extra_prep_time'])
                 ->join('product_price_list AS PPL', 'P.product_id', '=', 'PPL.product_id')
                 ->join('store AS S', 'S.store_id', '=', 'PPL.store_id')
-                ->where(['P.dish_type' => $catLevel1, 'PPL.store_id' => Session::get('storeId')])
+                ->where(['P.dish_type' => $dishType, 'PPL.store_id' => Session::get('storeId')])
                 ->where('PPL.publishing_start_date','<=',Carbon::now())
                 ->where('PPL.publishing_end_date','>=',Carbon::now())
                 ->groupBy('P.product_id')
                 ->orderBy('P.product_rank', 'ASC')
-                ->orderBy('P.product_id');
-
-            if( !is_null($catLevel2) )
-            {
-                $products->where('P.sub_category', $catLevel2);
-            }
-
-            $products = $products->get();
+                ->orderBy('P.product_id')
+                ->get();
 
             if($products->count())
             {
