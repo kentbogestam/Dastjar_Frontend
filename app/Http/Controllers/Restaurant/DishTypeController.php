@@ -32,85 +32,10 @@ class DishTypeController extends Controller
 	 */
     public function index()
     {
-    	$dishType = array();
-
-        // Level1
-        $dishTypeLevel1 = $this->getdDishTypeBy(Auth::user()->u_id, null, 'rank');
-
-        if($dishTypeLevel1)
-        {
-            foreach($dishTypeLevel1 as $level1)
-            {
-                $dishType[] = array(
-                    'dish_id' => $level1->dish_id,
-                    'dish_lang' => $level1->dish_lang,
-                    'dish_name' => $level1->dish_name,
-                    'level' => 0
-                );
-
-                // Level2
-                $dishTypeLevel2 = $this->getdDishTypeBy(null, $level1->dish_id);
-                
-                if($dishTypeLevel2)
-                {
-                    foreach($dishTypeLevel2 as $level2)
-                    {
-                        $dishType[] = array(
-                            'dish_id' => $level2->dish_id,
-                            'dish_lang' => $level2->dish_lang,
-                            'dish_name' => $level2->dish_name,
-                            'level' => 1
-                        );
-
-                        // Level3
-                        $dishTypeLevel3 = $this->getdDishTypeBy(null, $level2->dish_id);
-                        
-                        if($dishTypeLevel3)
-                        {
-                            foreach($dishTypeLevel3 as $level3)
-                            {
-                                $dishType[] = array(
-                                    'dish_id' => $level3->dish_id,
-                                    'dish_lang' => $level3->dish_lang,
-                                    'dish_name' => $level3->dish_name,
-                                    'level' => 2
-                                );
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        $helper = new Helper();
+        $dishType = $helper->getDishTypeTree(Auth::user()->u_id);
 
     	return view('kitchen.dishType.index', compact('dishType'));
-    }
-
-    // 
-    function getdDishTypeBy($uId = null, $parentId = null, $orderBy = null)
-    {
-        $dishType = DishType::select(['dish_id', 'dish_lang', 'dish_name'])
-            ->where(['dish_activate' => 1]);
-
-        if( !is_null($uId) )
-        {
-            $dishType->where('u_id', $uId);
-        }
-
-        if( is_null($parentId) )
-        {
-            $dishType->where('parent_id', null);
-        }
-        else
-        {
-            $dishType->where('parent_id', $parentId);
-        }
-
-        if( !is_null($orderBy) )
-        {
-            $dishType->orderBy($orderBy);
-        }
-
-        return $dishType->get();
     }
 
     /**
@@ -255,19 +180,5 @@ class DishTypeController extends Controller
         }
 
         return redirect('kitchen/dishtype/list')->with('success', __('messages.dishTypeDeleted'));
-    }
-
-    /**
-     * Get subcategory of selected category
-     * @param  [type] $parentId [description]
-     * @return [type]           [description]
-     */
-    function getSubcategories($dishId)
-    {
-        // Get category
-        $subCategory = DishType::select(['dish_id', 'dish_name'])
-            ->where(['parent_id' => $dishId, 'dish_activate' => 1])->get();
-
-        return response()->json(['subCategory' => $subCategory]);
     }
 }
