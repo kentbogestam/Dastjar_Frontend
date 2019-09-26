@@ -33,11 +33,6 @@
 
 @section('content-bootstrap')
 <div class="container" style="margin-top: 80px;">
-    <!-- <div class="row">
-        <div class="col-md-12">
-            <h1>{{ __('messages.listDishType') }}</h1>
-        </div>
-    </div> -->
     <div class="row">
         <div class="col-md-12">
             <hr>
@@ -46,16 +41,13 @@
         </div>
     </div>
     <div class="row" style="margin-bottom: 10px;">
-        <!-- <div class="col-md-6 text-left">
-            <a href="{{ url('kitchen/menu') }}" class="btn btn-link" data-ajax="false">{{ __('messages.back') }}</a>
-        </div> -->
         <div class="col-md-12 text-right">
             <button class="btn btn-info" data-toggle="modal" data-target="#add-form-model">{{ __('messages.addNew') }}</button>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
-            <table class="table table-bordered">
+            <table class="table table-striped">
                 <thead>
                 <tr>
                     <th>{{ __('messages.dishType') }}</th>
@@ -64,14 +56,14 @@
                 </tr>
                 </thead>
                 <tbody>
-                @if( !$dishType->isEmpty() )
+                @if( !empty($dishType) )
                     @foreach($dishType as $row)
-                        <tr>
-                            <td>{{ $row->dish_name }}</td>
-                            <td>{{ $row->dish_lang }}</td>
+                        <tr class="level-{{ $row['level'] }}">
+                            <td>{!! Helper::strReplaceBy($row['dish_name'], $row['level'], '— ') !!}</td>
+                            <td>{{ $row['dish_lang'] }}</td>
                             <td>
-                                <snap class="btn-link" onclick="getDishType({{ $row->dish_id }})"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></snap>
-                                <a href="{{ url('kitchen/dishtype/'.$row->dish_id.'/delete') }}" onclick="return confirmDelete()" data-ajax="false">
+                                <snap class="btn-link" onclick="getDishType({{ $row['dish_id'] }})"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></snap>
+                                <a href="{{ url('kitchen/dishtype/'.$row['dish_id'].'/delete') }}" onclick="return confirmDelete()" data-ajax="false">
                                     <i class="fa fa-trash-o" aria-hidden="true"></i>
                                 </a>
                             </td>
@@ -84,12 +76,6 @@
                 @endif
                 </tbody>
             </table>
-        </div>
-        <div class="col-md-6">
-            {{ __('messages.pagination', ['first' => $dishType->firstItem(), 'last' => $dishType->lastItem(), 'total' => $dishType->total()]) }}
-        </div>
-        <div class="col-md-6">
-            {!! $links !!}
         </div>
     </div>
     <!-- Modal: Add new dish -->
@@ -111,14 +97,20 @@
                             <label for="dish_name">{{ __('messages.dishType') }} <span class='mandatory'>*</span>:</label>
                             <input type="text" name="dish_name" placeholder="Enter title" class="form-control" id="dish_name" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
                         </div>
-                        <div class="form-group form-group-sm">
-                            <label for="sub_category">{{ __('messages.subCategory') }} ({{ __('messages.optional') }}):</label>
-                            <div class="input-group mb-3 input-group-sm">
-                                <input type="text" name="sub_category[]" placeholder="Enter sub-category" class="form-control">
-                            </div>
-                            <p class="text-right">
-                                <button type="button" class="btn btn-link add-subcat">Add more</button>
-                            </p>
+                        <div class="form-group">
+                            <label for="parent_id">{{ __('messages.parentCategory') }}</label>
+                            <select name="parent_id" id="parent_id" class="form-control">
+                                <option value="">{{ __('messages.none') }}</option>
+                                @if( !empty($dishType) )
+                                    @foreach($dishType as $row)
+                                        @if($row['level'] <= 1)
+                                            <option value="{{ $row['dish_id'] }}" class="level-{{ $row['level'] }}">
+                                                {!! Helper::strReplaceBy($row['dish_name'], $row['level']*2) !!}
+                                            </option>
+                                        @endif
+                                    @endforeach
+                                @endif
+                            </select>
                         </div>
                         <button type="submit" class="btn btn-success">{{ __('messages.submit') }}</button>
                     </form>
@@ -147,11 +139,20 @@
                             <label for="dish_name">{{ __('messages.dishType') }} <span class='mandatory'>*</span>:</label>
                             <input type="text" name="dish_name" placeholder="Enter title" class="form-control" id="dish_name" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
                         </div>
-                        <div class="form-group form-group-sm">
-                            <label for="sub_category">{{ __('messages.subCategory') }} ({{ __('messages.optional') }}):</label>
-                            <p class="text-right">
-                                <button type="button" class="btn btn-link add-subcat">Add more</button>
-                            </p>
+                        <div class="form-group">
+                            <label for="parent_id">{{ __('messages.parentCategory') }}</label>
+                            <select name="parent_id" id="parent_id" class="form-control">
+                                <option value="">{{ __('messages.none') }}</option>
+                                @if( !empty($dishType) )
+                                    @foreach($dishType as $row)
+                                        @if($row['level'] <= 1)
+                                            <option value="{{ $row['dish_id'] }}" class="level-{{ $row['level'] }}">
+                                                {!! Helper::strReplaceBy($row['dish_name'], $row['level']*2) !!}
+                                            </option>
+                                        @endif
+                                    @endforeach
+                                @endif
+                            </select>
                         </div>
                         <input type="hidden" name="dish_id" id="dish_id" data-rule-required="true">
                         <button type="submit" class="btn btn-success">{{ __('messages.update') }}</button>
@@ -171,21 +172,6 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        // Add sub-category
-        $('.add-subcat').on('click', function() {
-            $(this).closest('.form-group').find('.input-group').last().after('<div class="input-group mb-3 input-group-sm">'+
-                '<input type="text" name="sub_category[]" placeholder="Enter sub-category" class="form-control">'+
-                '<div class="input-group-append">'+
-                    '<button type="button" class="btn remove-subcat"><i class="fa fa-minus" aria-hidden="true"></i></button>'+
-                '</div>'+
-            '</div>');
-        });
-
-        // Remove sub-category
-        $(document).on('click', '.remove-subcat', function() {
-            $(this).closest('.input-group').remove();
-        });
-
         // Form validation
         // $("#add-form").validate();
         $("#update-form").validate();
@@ -197,56 +183,11 @@
             url: '{{ url('kitchen/dishtype/get-dish-type') }}/'+id,
             dataType: 'json',
             success: function(response) {
-                console.log(response);
                 $('#update-form-model').find('#dish_id').val(response.dishType.dish_id);
                 $('#update-form-model').find('#dish_lang').val(response.dishType.dish_lang);
                 $('#update-form-model').find('#dish_name').val(response.dishType.dish_name);
-                $('#update-form-model').find('.input-group').remove();
-
-                let strSubcategory = '';
-                if(response.dishType.subcategory.length)
-                {
-                    for(let i = 0; i < response.dishType.subcategory.length; i++)
-                    {
-                        strSubcategory += '<div class="input-group mb-3 input-group-sm input-group-'+response.dishType.subcategory[i].dish_id+'">'+
-                            '<input type="text" name="sub_category['+response.dishType.subcategory[i].dish_id+']" value="'+response.dishType.subcategory[i].dish_name+'" placeholder="Enter sub-category" class="form-control">'+
-                            '<div class="input-group-append">'+
-                                '<button type="button" class="btn" onclick="removeSubcategory('+id+', '+response.dishType.subcategory[i].dish_id+')"><i class="fa fa-minus" aria-hidden="true"></i></button>'+
-                            '</div>'+
-                        '</div>';
-                    }
-                }
-                else
-                {
-                    strSubcategory += '<div class="input-group mb-3 input-group-sm">'+
-                        '<input type="text" name="sub_category[]" placeholder="Enter sub-category" class="form-control">'+
-                    '</div>';
-                }
-
-                $('#update-form-model').find('.form-group label').last().after(strSubcategory);
+                $('#update-form-model').find('#parent_id').val(response.dishType.parent_id);
                 $('#update-form-model').modal();
-            }
-        });
-    }
-
-    // Remove sub-category
-    function removeSubcategory(parentId, dishId)
-    {
-        $.ajax({
-            url: '{{ url('kitchen/dishtype/remove-subcategory') }}/'+parentId+'/'+dishId,
-            dataType: 'json',
-            success: function(response) {
-                if(response.status)
-                {
-                    $('#update-form-model').find('.input-group-'+dishId).remove();
-
-                    if(!$('#update-form-model').find('.input-group').length)
-                    {
-                        $('#update-form-model').find('.form-group label').last().after('<div class="input-group mb-3 input-group-sm">'+
-                            '<input type="text" name="sub_category[]" placeholder="Enter sub-category" class="form-control">'+
-                        '</div>');
-                    }
-                }
             }
         });
     }

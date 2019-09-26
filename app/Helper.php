@@ -359,4 +359,22 @@ class Helper extends Model
 
         return gmdate("H:i", $seconds);
     }
+
+    /**
+     * Add specific character into string
+     * @param  string  $input  [description]
+     * @param  integer $length [description]
+     * @param  string  $string [description]
+     * @return [type]          [description]
+     */
+    public static function strReplaceBy($input = '', $length = 0, $string = '&nbsp; ')
+    {
+        $str = '';
+        for($i = 1; $i <= $length; $i++)
+        {
+            $str .= $string;
+        }
+
+        return $str.$input;
+    }
 }
