@@ -249,30 +249,13 @@
 			<div class="col-12">
 				<select id="dishType" name="dishType" required title="{{ __('messages.iDishType') }}">
 					<option value="" selected disabled>Dish Type</option>
-					@foreach($listDishes as $key =>$value)
-					@if(isset($product->dish_type))
-						@if($key == $product->dish_type)
-							<option value="{{$key}}" selected>{{$value}}</option>
+					@foreach($listDishes as $row)
+						@if( isset($product->dish_type) && ($row['dish_id'] == $product->dish_type) )
+							<option value="{{ $row['dish_id'] }}" class="level-{{ $row['level'] }}" selected>{!! Helper::strReplaceBy($row['dish_name'], $row['level']*2) !!}</option>
 						@else
-							<option value="{{$key}}">{{$value}}</option>
+							<option value="{{ $row['dish_id'] }}" class="level-{{ $row['level'] }}">{!! Helper::strReplaceBy($row['dish_name'], $row['level']*2) !!}</option>
 						@endif
-					@else
-						<option value="{{$key}}">{{$value}}</option>					
-					@endif
 					@endforeach
-				</select>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-12">
-				<select name="sub_category" id="sub_category" title="{{ __('messages.iSubCategory') }}">
-					<option value="" selected>{{ __('messages.subCategory') }}</option>
-					@if(isset($listSubCategory) && !empty($listSubCategory))
-						@foreach($listSubCategory as $key => $value)
-							<option value="{{ $key }}" {{ $product->sub_category == $key ? 'selected' : '' }}>{{ $value }}</option>
-						@endforeach
-					@endif
 				</select>
 			</div>
 		</div>
@@ -403,34 +386,6 @@
             reader.readAsDataURL(input.files[0]);	
 	    }
     }
-
-    // Let sub-category of selected category
-    $('#dishType').on('change', function() {
-    	dishId = $(this).val();
-    	let select = $('select#sub_category');
-
-    	$.ajax({
-            url: '{{ url('kitchen/dishtype/get-subcategories') }}/'+dishId,
-            dataType: 'json',
-            success: function(response) {
-                let str = '<option value="" selected disabled>{{ __('messages.subCategory') }}</option>';
-
-                if(response.subCategory.length)
-                {
-                	let isSelected = "selected";
-
-                	for(let i = 0; i < response.subCategory.length; i++)
-                	{
-                		str += '<option value="'+response.subCategory[i]['dish_id']+'" '+isSelected+'>'+response.subCategory[i]['dish_name']+'</option>';
-                		isSelected = '';
-                	}
-                }
-
-                select.html(str);
-                select.selectmenu('refresh');
-            }
-        });
-    });
 
     $('.create-menu-form').submit(function(e){     
     	dkS = moment($("#date-start").val(),'DD/MM/YYYY HH:mm').toDate();

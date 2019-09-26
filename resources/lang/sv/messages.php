@@ -167,7 +167,6 @@ return [
     'listDishType' => 'Typ av Maträtt',
     'dishType' => 'Typ av Maträtt',
     'category' => 'Kategori',
-    'subCategory' => 'Underkategori',
     'parentCategory' => 'Föräldrakategori',
     'language' => 'Språk',
     'dishTypeCreated' => 'Maträtten skapades Framgångsrikt.',
@@ -310,7 +309,6 @@ return [
     'iDishUpdatePrice' => 'Ändra uppgifter för detta pris',
     'iDishTypeLanguage' => 'Här listas de språk som är tillgängliga för kunderna. Du kan skapa mer än ett språk Menyn kommer att finnas tillgänglig på alla valda språk. Vilket språk som visas beroende på kundens språkinställningar.',
     'iDishType' => 'Det här är kategorin av maträtt du vill att din maträtt ska visas under',
-    'iSubCategory' => 'Det här är underkategori av maträtt du vill att din maträtt ska visas under',
 
     // Settings
     'iStoreSettingLanguage' => 'Det här är språket du använder i den här appen. Välj ett språk från listan',

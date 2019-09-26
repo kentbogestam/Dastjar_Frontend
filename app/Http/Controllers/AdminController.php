@@ -1209,6 +1209,8 @@ class AdminController extends Controller
     }
 
     public function kitchenCreateMenu(Request $request){        
+        $helper = new Helper();
+
         $store = Store::where('store_id' , Session::get('storeId'));
 
         if(!$store->exists()){
@@ -1223,7 +1225,8 @@ class AdminController extends Controller
         $companyId = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
 
         $dishType = new DishType();
-        $listDishes = $dishType->where('company_id' , '=', $companyId)->where('dish_activate', '=', '1')->pluck('dish_name','dish_id');
+        // $listDishes = $dishType->where('company_id' , '=', $companyId)->where('dish_activate', '=', '1')->pluck('dish_name','dish_id');
+        $listDishes = $helper->getDishTypeTree(Auth::user()->u_id);
 
         $companydetails = new Company();
         $currency = $companydetails->where('company_id' , '=', $companyId)->first()->currencies;
@@ -1334,11 +1337,6 @@ class AdminController extends Controller
 
         $product->lang = $request->dishLang;
         $product->dish_type = $request->dishType;
-
-        if($request->has('sub_category'))
-        {
-            $product->sub_category = $request->sub_category;
-        }
 
         $product->product_description = $request->prodDesc;
         $product->preparation_Time = $hours;
@@ -1529,11 +1527,6 @@ class AdminController extends Controller
         $product->lang = $request->dishLang;
         $product->dish_type = $request->dishType;
 
-        if($request->has('sub_category'))
-        {
-            $product->sub_category = $request->sub_category;
-        }
-
         $product->product_description = $request->prodDesc;
         $product->preparation_Time = $hours;
         $product->category = "7099ead0-8d47-102e-9bd4-12313b062day";
@@ -1584,6 +1577,8 @@ class AdminController extends Controller
     }
 
     public function kitchenEditDish(Request $request){
+        $helper = new Helper();
+
         $productid = $request->product_id;
         $store_id = $request->store_id;
         $price_id = $request->price_id;
@@ -1604,7 +1599,8 @@ class AdminController extends Controller
 
         $dishType = new DishType();
 
-        $listDishes = $dishType->where('u_id' , '=', Auth::user()->u_id)->where('dish_activate', '=', '1')->pluck('dish_name','dish_id');
+        // $listDishes = $dishType->where('u_id' , '=', Auth::user()->u_id)->where('dish_activate', '=', '1')->pluck('dish_name','dish_id');
+        $listDishes = $helper->getDishTypeTree(Auth::user()->u_id);
 
         $listSubCategory = $dishType->where('parent_id' , '=', $product->dish_type)->where('dish_activate', '=', '1')->pluck('dish_name','dish_id');
 

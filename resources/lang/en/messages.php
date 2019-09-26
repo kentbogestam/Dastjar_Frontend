@@ -165,7 +165,6 @@ return [
     'listDishType' => 'List Dish Type',
     'dishType' => 'Dish Type',
     'category' => 'Category',
-    'subCategory' => 'Sub Category',
     'parentCategory' => 'Parent Category',
     'language' => 'Language',
     'dishTypeCreated' => 'Dish type created successfully.',
@@ -308,7 +307,6 @@ return [
     'iDishUpdatePrice' => 'Change the data for this price',
     'iDishTypeLanguage' => 'This lists the languages available for the clients. You can create more than one language The menu will be available in all selected languages. Which language that is displayed depending on the client\'s language settings.',
     'iDishType' => 'This is the category of dish you want your dish to appear under.',
-    'iSubCategory' => 'This is the sub-category of dish you want your dish to appear under.',
 
     // Settings
     'iStoreSettingLanguage' => 'This is the language you like to use in this app. Select a language from the list',
