@@ -218,7 +218,8 @@ Route::group(['prefix' => 'kitchen'], function(){
 	Route::post('create-menu-save', 'AdminController@kitchenCreateMenuPost');
 	Route::post('create-menu-update', 'AdminController@kitchenUpdateMenuPost');
 
-	Route::get('edit-menu-dish', 'AdminController@kitchenEditDish');		
+	Route::get('edit-menu-dish', 'AdminController@kitchenEditDish');
+	Route::get('copy-dish/{productId}', 'AdminController@copyDish');
 	Route::get('delete-menu-dish', 'AdminController@kitchenDeleteDish');
 	Route::get('delete-dish-price', 'AdminController@deleteDishPrice');	
 	Route::get('createStandardOffer', 'AdminController@createStandardOffer');			

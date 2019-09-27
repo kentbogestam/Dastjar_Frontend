@@ -1209,7 +1209,7 @@ class AdminController extends Controller
         $futureProductPrices = ProductPriceList::select('id', 'product_id', 'text', 'price', 'publishing_start_date', 'publishing_end_date')
             ->where('product_id', $request->product_id)
             ->where('store_id', Session::get('storeId'))
-            ->where('publishing_start_date', '>', $current_date)
+            ->whereRaw("(publishing_start_date > '{$current_date}' OR publishing_start_date IS NULL)")
             ->orderBy('publishing_start_date')
             ->get();
 
@@ -1633,6 +1633,93 @@ class AdminController extends Controller
     }
 
     /**
+     * Clone dish functionality
+     * @param  [type] $productId [description]
+     * @return [type]            [description]
+     */
+    function copyDish($productId)
+    {
+        // Find the product and then clone it
+        $product = Product::find($productId);
+
+        if($product)
+        {
+            $helper = new Helper();
+
+            // Create unique product_id and then create product
+            $pId = $helper->uuid();
+
+            while(Product::where('product_id',$pId)->exists()){
+                $pId = $helper->uuid();
+            }
+
+            $productNew = new Product();
+            $productNew->product_id = $pId;
+            $productNew->product_name = $product->product_name.' - Copy';
+            $productNew->dish_type = $product->dish_type;
+            $productNew->product_description = $product->product_description;
+            $productNew->lang = $product->lang;
+            $productNew->preparation_Time = $product->preparation_Time;
+            $productNew->brand_name = $product->brand_name;
+            $productNew->small_image = $product->small_image;
+            $productNew->large_image = $product->large_image;
+            $productNew->category = $product->category;
+            $productNew->start_of_publishing = $product->start_of_publishing;
+            $productNew->coupon_delivery_type = $product->coupon_delivery_type;
+            $productNew->offer_type = $product->offer_type;
+            $productNew->product_info_page = $product->product_info_page;
+            $productNew->link = $product->link;
+            $productNew->is_public = $product->is_public;
+            $productNew->ean_code = $product->ean_code;
+            $productNew->product_number = $product->product_number;
+            $productNew->u_id = $product->u_id;
+            $productNew->company_id = $product->company_id;
+            $productNew->s_activ = $product->s_activ;
+            $productNew->reseller_status = $product->reseller_status;
+            $productNew->product_rank = $product->product_rank;
+            if($productNew->save())
+            {
+                // Get product price detail
+                $current_date = Carbon::now()->format('Y-m-d h:i:00');
+
+                $currentProductPrice = ProductPriceList::select('product_id', 'store_id', 'text', 'price', 'lang', 'publishing_start_date', 'publishing_end_date')
+                    ->where('product_id', $productId)
+                    ->where('store_id', Session::get('storeId'))
+                    ->where('publishing_start_date', '<=', $current_date)
+                    ->where('publishing_end_date', '>=', $current_date)
+                    ->first();
+                
+                if(!$currentProductPrice)
+                {
+                    $currentProductPrice = ProductPriceList::select('product_id', 'store_id', 'text', 'price', 'lang', 'publishing_start_date', 'publishing_end_date')
+                        ->where('product_id', $productId)
+                        ->where('store_id', Session::get('storeId'))
+                        ->orderBy('id', 'DESC')
+                        ->first();
+                }
+
+                if($currentProductPrice)
+                {
+                    $product_price_list = ProductPriceList::firstOrNew(['product_id' => $productNew->product_id]);
+                    $product_price_list->store_id = $currentProductPrice->store_id;
+                    $product_price_list->text = $currentProductPrice->text;
+                    $product_price_list->price = $currentProductPrice->price;
+                    $product_price_list->lang = $currentProductPrice->lang;
+                    $product_price_list->save();
+                }
+            }
+
+            $message = 'Dish copied successfully.';
+        }
+        else
+        {
+            $message = 'Dish not found.';
+        }
+
+        return redirect()->route('menu')->with('success', $message);
+    }
+
+    /**
      * Delete product price
      * @param  Request $request [description]
      * @return [type]           [description]
@@ -1698,8 +1785,12 @@ class AdminController extends Controller
             }
         }
 
+        // 
         $product = new Product();
         $q = $product->where('product_id', '=', $productid)->update(['s_activ' => '2']);
+
+        // Delete all price
+        ProductPriceList::where('product_id', $productid)->delete();
 
         return back()->with('success','Dish deleted successfully');
     }
