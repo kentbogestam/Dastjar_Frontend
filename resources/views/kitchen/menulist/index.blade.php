@@ -229,15 +229,15 @@
 		<a href="{{ url('kitchen/create-menu') }}" class="fa fa-plus-circle fa-4x add_menu_btn" data-ajax="false"></a>
 		<hr>
 
-		@if(!$menuTypes->isEmpty())
+		@if( !empty($menuTypes) )
 			<div class="menu-sortable">
-				@foreach($menuTypes as $key => $value)
-					<div id="{{$key}}" class="menu-sortable-item">
-						<a href="#demo_{{$key}}" class="partial-circle menu-type" data-id="{{$key}}" data-toggle="collapse">
-							<p class="dish_type">{{ $value }}</p>
+				@foreach($menuTypes as $menuType)
+					<div id="{{ $menuType->dish_id }}" class="menu-sortable-item">
+						<a href="#demo_{{ $menuType->dish_id }}" class="partial-circle menu-type" data-id="{{ $menuType->dish_id }}" data-toggle="collapse">
+							<p class="dish_type">{{ $menuType->dish_name }}</p>
 						</a>
 						<br/><br/>
-						<div id="demo_{{$key}}" data-id="{{$key}}" class="collapse collapse_block sortable">Loading...</div>
+						<div id="demo_{{ $menuType->dish_id }}" data-id="{{ $menuType->dish_id }}" class="collapse collapse_block sortable">Loading...</div>
 						<br>
 						@if(!$loop->last)
 							<hr>

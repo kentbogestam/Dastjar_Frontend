@@ -417,7 +417,7 @@ class Helper extends Model
     }
 
     // 
-    private function getdDishTypeBy($uId = null, $parentId = null, $orderBy = null)
+    public function getdDishTypeBy($uId = null, $parentId = null, $orderBy = null)
     {
         $dishType = DishType::select(['dish_id', 'dish_lang', 'dish_name'])
             ->where(['dish_activate' => 1]);

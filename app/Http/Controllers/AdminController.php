@@ -1048,51 +1048,6 @@ class AdminController extends Controller
 
             $allData = [];
 
-            /*$prods = $products->join('dish_type','dish_type.dish_id','=','product.dish_type')->where('product.u_id', Auth::user()->u_id)->where('s_activ', '!=' , 2)->where('dish_activate',1)
-            ->orderBy('product_rank', 'ASC')
-            ->get()->groupBy('dish_type');
-            $prodprices = $productPriceList->where('store_id', Session::get('storeId'))->get()->groupBy('product_id');
-        
-            foreach($prods as $k=>$r){
-                foreach($r as $k2=>$r2){
-                    if(isset($prodprices[$r2->product_id])){
-                        $data = [];
-                        $data['product_id'] = $r2->product_id;
-
-                        $sloganLangId = $productOfferSloganLangList->where('product_id',$data['product_id'])->first()->offer_slogan_lang_list;
-                        $sloganSubLangId = $productOfferSubSloganLangList->where('product_id',$data['product_id'])->first()->offer_sub_slogan_lang_list;
-
-                        $prodName = $langText->where('id',$sloganLangId)->first()->text;
-                        $prodDesc = $langText->where('id',$sloganSubLangId)->first()->text;
-
-                        $data['product_name'] = $prodName;
-                        $data['product_description'] = $prodDesc;
-                        try{
-                            getimagesize($r2->small_image);
-                            $data['small_image'] = $r2->small_image;
-                        }catch(\Exception $ex){
-                            $data['small_image'] = asset('images/placeholder-image.png');
-                        }
-
-                        $data['publishing_start_date'] = $r2->publishing_start_date;
-                        $data['publishing_end_date'] = $r2->publishing_end_date;
-
-                        foreach($prodprices[$r2->product_id] as $pk=>$pr){
-                            $prices['price_id'] = $pr->id;
-                            $prices['price'] = $pr->price;
-                            $prices['publishing_start_date'] = $pr->publishing_start_date;
-                            $prices['publishing_end_date'] = $pr->publishing_end_date;
-
-                            $data['prices'][] = $prices;
-                        }
-
-                        if(!empty($r2->dish_type)){
-                            $allData[$r2->dish_type][] = $data;
-                        }
-                    }
-                }
-            }*/
-
             $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
             $storeName = $storedetails->store_name;
 
@@ -1101,8 +1056,10 @@ class AdminController extends Controller
 
             // Strange logic to get menu types for specific store ID 
             //$menuTypes = DishType::where('company_id', $companyId)->orderBy('rank')->orderBy('dish_id')->pluck('dish_name','dish_id');
+            
+            $menuTypes = array();
 
-            $menuTypes = DishType::select('DT.dish_name','DT.dish_id')
+            $dishType = DishType::select('DT.dish_name','DT.dish_id', 'DT.parent_id', 'DT.rank')
                 ->from('dish_type AS DT')
                 ->join('product AS P', 'P.dish_type', '=', 'DT.dish_id')
                 ->join('product_price_list AS PPL', 'PPL.product_id', '=', 'P.product_id')
@@ -1113,8 +1070,38 @@ class AdminController extends Controller
                 ->groupBy('DT.dish_id')
                 ->orderBy('DT.rank')
                 ->orderBy('DT.dish_id')
-                ->pluck('DT.dish_name','DT.dish_id');
-            //echo '<pre>'; print_r($menuTypes->toArray()); exit;
+                ->get();
+
+            if($dishType)
+            {
+                foreach($dishType as $dish)
+                {
+                    if( !is_null($dish->parent_id) )
+                    {
+                        $dishTypeLevel0 = DishType::from('dish_type AS DT1')
+                            ->select(['DT1.dish_id', 'DT1.dish_name', 'DT1.rank'])
+                            ->leftJoin('dish_type AS DT2', 'DT2.parent_id', '=', 'DT1.dish_id')
+                            ->leftJoin('dish_type AS DT3', 'DT3.parent_id', '=', 'DT2.dish_id')
+                            ->whereRaw("(DT1.dish_id = '{$dish->dish_id}' OR DT2.dish_id = '{$dish->dish_id}' OR DT3.dish_id = '{$dish->dish_id}') AND DT1.parent_id IS NULL")
+                            ->groupBy('DT1.dish_id')
+                            ->first();
+                        
+                        $menuTypes[] = (object) array(
+                            'dish_id' => $dishTypeLevel0->dish_id,
+                            'dish_name' => $dishTypeLevel0->dish_name,
+                            'rank' => $dishTypeLevel0->rank
+                        );
+                    }
+                    else
+                    {
+                        $menuTypes[] = (object) array(
+                            'dish_id' => $dish->dish_id,
+                            'dish_name' => $dish->dish_name,
+                            'rank' => $dish->rank
+                        );
+                    }
+                }
+            }
 
             $companydetails = new Company();
             $currency = $companydetails->where('company_id' , '=', $companyId)->first()->currencies;
@@ -1129,11 +1116,37 @@ class AdminController extends Controller
      * @return [type]           [description]
      */
     public function ajaxGetProductByDishType(Request $request) {
+        $menuTypes = array($request->dish_id);
+        $helper = new Helper();
+
+        // 
+        $dishTypeLevel1 = $helper->getdDishTypeBy(null, $request->dish_id);
+
+        if($dishTypeLevel1)
+        {
+            foreach($dishTypeLevel1 as $level1)
+            {
+                $menuTypes[] = $level1->dish_id;
+
+                // 
+                $dishTypeLevel2 = $helper->getdDishTypeBy(null, $level1->dish_id);
+
+                if($dishTypeLevel2)
+                {
+                    foreach($dishTypeLevel2 as $level2)
+                    {
+                        $menuTypes[] = $level2->dish_id;
+                    }
+                }
+            }
+        }
+        
         // Get all products by dish
         $products = Product::select('product.product_id', 'product.product_name', 'product.product_description', 'product.small_image')
             ->join('dish_type','dish_type.dish_id','=','product.dish_type')
             ->join('product_price_list AS PPL', 'PPL.product_id', '=', 'product.product_id')
-            ->where('product.dish_type', $request->dish_id)
+            // ->where('product.dish_type', $request->dish_id)
+            ->whereIn('product.dish_type', array_unique($menuTypes))
             ->where('product.u_id', Auth::user()->u_id)
             ->where('PPL.store_id', Session::get('storeId'))
             ->where('product.s_activ', '!=' , 2)
