@@ -114,9 +114,12 @@
 	    max-height: 70px;
 	}
 
-	.button-section a,
-	.footer-section ul li a {
+	.button-section a {
 		font-size: 20px;
+	}
+
+	.footer-section ul li a {
+		font-size: 22px;
 	}
 }
 
@@ -149,13 +152,29 @@
 	    max-height: 60px;
 	}
 
-	.button-section a,
-	.footer-section ul li a {
+	.button-section a {
 		font-size: 18px;
+	}
+
+	.footer-section ul li a {
+		font-size: 22px;
 	}
 
 	.order-summery p.large-text {
 		font-size: 2em;
+	}
+
+	.welcome-anar {
+		width:80%;
+	}
+
+	.hotel-icon-none {
+	    display: inline-block;
+	    width: 100px;
+	}
+
+	.logo-with-map ul li.location {
+	    width: 70%;
 	}
 
 }
@@ -183,8 +202,50 @@
 		font-size: 15px;
 	}
 
-	.row-hotel .hotel-icon p,
-	.footer-section ul li a {
+	.row-hotel .hotel-icon p {
 		font-size: 15px;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		max-width: 140px;
+	}
+
+	.footer-section ul li a {
+		font-size: 22px;
+	}
+
+	.row-hotel .title-with-des {
+	    display: inline-block;
+	    vertical-align: middle;
+	    max-width: 100px;
+	}
+
+	.hotel-icon-none {
+	    display: inline-block;
+	    width: 53px;
+	}
+
+	.discription h3 {
+	    font-size: 16px;
+	    font-weight: bold;
+	}
+
+	.discription {
+	    max-width: 85px;
+	}
+
+	.product-detail {
+		margin-right: 5px;
+	}
+
+	.quantity .inputBox input[type="text"] {
+	    width: 38px;
+	}
+}
+
+@media (max-width: 350px) {
+	.logo-with-map ul li.location {
+	    width: 30%;
+	    padding-left: 10%;
 	}
 }

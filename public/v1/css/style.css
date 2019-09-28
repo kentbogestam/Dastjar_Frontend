@@ -126,7 +126,6 @@ img {
 .button-section {
 	display: table;
 	width: 100%;
-	padding: 10px;
 	border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 	border-spacing: 10px;
 	background: rgba(255, 255, 255, 1);
@@ -181,6 +180,10 @@ img {
 	color: #fff;
 }
 
+.button-section img {
+    max-width: 30px;
+}
+
 .hotel-list {
 	margin-top: 7px;
 }
@@ -194,6 +197,18 @@ img {
 .row-hotel a {
 	color: #333;
 	text-decoration: none;
+}
+
+.hotel-icon-none {
+    display: inline-block;
+    width: 120px;
+}
+
+.row-hotel .title-with-des p {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 500px;
 }
 
 .row-hotel .hotel-distance {
@@ -814,6 +829,7 @@ input#pac-input {
 	color: #333;
 	box-shadow: none;
 	outline: none;
+	margin-bottom: 10px;
 }
 
 .welcome-anar .btn img {

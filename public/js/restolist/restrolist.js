@@ -166,7 +166,7 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 								'<a href="'+url+'/'+temp[i]['store_id']+'">'+
 									'<div class="col-sm-8 col-xs-8">'+
 										'<div class="hotel-icon">'+
-											'<img src="'+temp[i]['store_image']+'" alt="" onerror="this.src=\''+noImageUrl+'\'" width="120">'+
+											'<div class="hotel-icon-none"><img src="'+temp[i]['store_image']+'" alt="" onerror="this.src=\''+noImageUrl+'\'" width="120"></div>'+
 											'<div class="title-with-des">'+
 												'<p>'+temp[i]["store_name"]+'</p>'+subStr+
 											'</div>'+

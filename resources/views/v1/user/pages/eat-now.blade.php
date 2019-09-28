@@ -23,11 +23,14 @@
 
 @section('content')
 	<div class="button-section">
-		<a class="active" href="javascript:void(0)">
-			<i class="fa fa-cutlery" aria-hidden="true"></i> {{ __('messages.Eat Now') }}
+		<a class="active icon-eat-active" href="javascript:void(0)">
+			<img src="{{ asset('images/icons/icon-eat-now-active.png') }}" alt="" class="active">
+			<img src="{{ asset('images/icons/icon-eat-now-inactive.png') }}" alt="" class="inactive">
+			{{ __('messages.Eat Now') }}
 		</a>
-		<a href="{{ url('selectOrder-date') }}">
-			<i class="fa fa-clock-o" aria-hidden="true"></i> {{ __('messages.Eat Later') }}
+		<a href="{{ url('selectOrder-date') }}" class="icon-eat-inactive">
+			<img src="{{ asset('images/icons/icon-eat-later-active.png') }}" alt="">
+			<img src="{{ asset('images/icons/icon-eat-later-inactive.png') }}" alt="">{{ __('messages.Eat Later') }}
 		</a>
 	</div>
 	<div class="hotel-list" id="companyDetailContianer"></div>
