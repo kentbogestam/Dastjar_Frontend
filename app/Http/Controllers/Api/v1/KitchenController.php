@@ -19,6 +19,7 @@ use App\ProductPriceList;
 use App\ProductOfferSloganLangList;
 use App\ProductOfferSubSloganLangList;
 use App\LangText;
+use App\StoreVirtualMapping;
 
 class KitchenController extends Controller
 {
@@ -33,9 +34,22 @@ class KitchenController extends Controller
 
    public function orderDetail($reCompanyId){
         $deliveryDate = Carbon::now()->subDays(1)->toDateString();
-        
+        $stores[] = $reCompanyId;
+
+        // Get virtual restaurant if mapped
+        $storeMapping = StoreVirtualMapping::where('store_id', $reCompanyId)
+            ->get();
+
+        if($storeMapping)
+        {
+            foreach($storeMapping as $row)
+            {
+                $stores[] = $row['virtual_store_id'];
+            }
+        }
+
         $orderDetailscustomer = Order::select(['orders.*','customer.name as name', 'OCD.discount_id', 'PD.discount_value', DB::raw('COUNT(OCL.id) AS cntLoyaltyUsed'), 'OD.status AS orderDeliveryStatus', 'CA.street'])
-            ->where(['orders.store_id' => $reCompanyId])
+            ->whereIn('orders.store_id', $stores)
             ->where('user_type','=','customer')
             ->where('check_deliveryDate', '>=', $deliveryDate)
             ->where('orders.paid', '0')

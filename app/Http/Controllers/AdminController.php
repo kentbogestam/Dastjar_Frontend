@@ -56,6 +56,7 @@ use App\PromotionDiscount;
 use App\Driver;
 use App\OrderDelivery;
 use App\UserAddress;
+use App\StoreVirtualMapping;
 
 //use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -105,6 +106,22 @@ class AdminController extends Controller
             $data = $request->input();
             Session::put('storeId', $data['storeId']);
             $storeId = $data['storeId'];
+
+            // Get virtual restaurant if mapped and set them in session
+            $storeMapping = StoreVirtualMapping::where('store_id', $storeId)
+                ->get();
+
+            if($storeMapping)
+            {
+                $virtualStores = array();
+
+                foreach($storeMapping as $row)
+                {
+                    $virtualStores[] = $row['virtual_store_id'];
+                }
+
+                Session::put('virtualStores', $virtualStores);
+            }
         }else{
             $storeId = Session::get('storeId');
         }
@@ -536,11 +553,22 @@ class AdminController extends Controller
 
     
     public function kitchenOrders(){
-        $reCompanyId = Session::get('storeId');
         $deliveryDate = Carbon::now()->subDays(1)->toDateString();
+        $stores[] = $reCompanyId = Session::get('storeId');
 
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time','orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
-            ->where(['order_details.store_id' => $reCompanyId])
+        // Get virtual store if mapped
+        if( Session::has('virtualStores') )
+        {
+            $virtualStores = Session::get('virtualStores');
+
+            foreach($virtualStores as $row)
+            {
+                $stores[] = $row;
+            }
+        }
+
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time', 'orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
+            ->whereIn('order_details.store_id', $stores)
             ->where('delivery_date', '>=', $deliveryDate)
             ->where('order_details.order_ready', '0')
             ->whereNotIn('orders.online_paid', [2])
@@ -557,11 +585,22 @@ class AdminController extends Controller
     }
 
     public function kitchenOrdersNew($id){
-        $reCompanyId = Session::get('storeId');
         $deliveryDate = Carbon::now()->subDays(1)->toDateString();
+        $stores[] = $reCompanyId = Session::get('storeId');
+
+        // Get virtual store if mapped
+        if( Session::has('virtualStores') )
+        {
+            $virtualStores = Session::get('virtualStores');
+
+            foreach($virtualStores as $row)
+            {
+                $stores[] = $row;
+            }
+        }
 
         $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
-            ->where(['order_details.store_id' => $reCompanyId])
+            ->whereIn('order_details.store_id', $stores)
             ->where('delivery_date', '>=', $deliveryDate)
             ->where('order_details.order_ready', '0')
             ->where('order_details.id', '>', $id)
