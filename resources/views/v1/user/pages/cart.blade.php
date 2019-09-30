@@ -588,7 +588,7 @@
 	function updateOrderUserAddress()
 	{
 		// 
-		$('.block-address').find('p.error').remove();
+		$('.block-address').find('div.error').remove();
 		$('.btn-pay').prop('disabled', true);
 		$('.row-confirm-payment').addClass('hidden');
 		$('.send-order').prop('disabled', true);
@@ -609,7 +609,8 @@
 					if(!response.status)
 					{
 						// $('input[name=user_address_id]').prop('checked', false);
-						$('.block-address form#frm-user-address').after('<p class="text-center text-danger error">'+response.msg+'</p>');
+						// $('.block-address form#frm-user-address').after('<p class="text-center text-danger error">'+response.msg+'</p>');
+						$('.block-address form#frm-user-address').after('<div class="col-md-12 alert alert-danger text-center error">'+response.msg+'</div>');
 					}
 					else
 					{
