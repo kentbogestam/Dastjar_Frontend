@@ -90,7 +90,7 @@
 
 @section('content')
 	<div class="mid-section">
-		<div class="order-summery">
+		<div class="order-summery order-confirmation-block">
 			@if($order->order_accepted)
 				<p>{{ __('messages.Thanks for your order') }} </p>
 				<p>{{ __('messages.Order Number') }} </p>

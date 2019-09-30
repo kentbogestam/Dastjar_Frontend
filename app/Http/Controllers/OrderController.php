@@ -117,7 +117,7 @@ class OrderController extends Controller
 
             // Put order in session 'recentOrderList' until its ready
             // Session::forget('recentOrderList'); Session::save();
-            $recentOrder = Order::select('order_id')->where(['order_id' => $orderId, 'order_ready' => 0])->first();
+            $recentOrder = Order::select('order_id')->where(['order_id' => $orderId, 'order_accepted' => 1, 'order_ready' => 0])->first();
 
             if($recentOrder)
             {
