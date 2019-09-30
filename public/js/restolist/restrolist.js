@@ -119,6 +119,7 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 				var discountIndex;
 				var isFindDiscount;
 				let storeClass;
+				let storeImage;
 
 				list = temp;
 				var liItem = "";
@@ -128,7 +129,7 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 					}
 
 					for (var i=0;i<count;i++){
-						storeClass = '';
+						storeClass = storeImage = '';
 						if(checkTime(temp[i]["store_open_close_day_time"])){
 							// Check if discount is applying on restaurant
 							isFindDiscount = false;
@@ -162,11 +163,17 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 								}
 							}
 
+							// Check if image URL is not null and valid
+							if( temp[i]['large_image'] && (temp[i]['large_image'].indexOf('.jpg') != -1 || temp[i]['large_image'].indexOf('.jpeg') != -1 || temp[i]['large_image'].indexOf('.png') != -1) )
+							{
+								storeImage = '<img src="'+temp[i]['large_image']+'" alt="" width="120">';
+							}
+
 							liItem += '<div class="row-hotel'+storeClass+'">'+
 								'<a href="'+url+'/'+temp[i]['store_id']+'">'+
 									'<div class="col-sm-8 col-xs-8">'+
 										'<div class="hotel-icon">'+
-											'<div class="hotel-icon-none"><img src="'+temp[i]['store_image']+'" alt="" onerror="this.src=\''+noImageUrl+'\'" width="120"></div>'+
+											'<div class="hotel-icon-none">'+storeImage+'</div>'+
 											'<div class="title-with-des">'+
 												'<p>'+temp[i]["store_name"]+'</p>'+subStr+
 											'</div>'+
@@ -213,7 +220,7 @@ function  addMore(len,url,noImageUrl){
 				
 				liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
 				liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+list[i]['store_id']+" data-ajax='false'>";
-				liItem += "<img src="+list[i]['store_image']+" onerror=this.src='"+noImageUrl+"'>";
+				liItem += "<img src="+list[i]['large_image']+" onerror=this.src='"+noImageUrl+"'>";
 				liItem += "<h2>"+list[i]["store_name"]+"</h2>";
 				liItem += "<p>";
 				
