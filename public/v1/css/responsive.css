@@ -35,6 +35,10 @@
 		font-size: 100px;
 	}
 
+	.button-section img {
+	    max-width: 30px;
+	}
+
 	.footer-section ul li a {
 		font-size: 100px;
 	}
@@ -118,6 +122,10 @@
 		font-size: 20px;
 	}
 
+	.button-section img {
+	    max-width: 27px;
+	}
+
 	.footer-section ul li a {
 		font-size: 22px;
 	}
@@ -154,6 +162,10 @@
 
 	.button-section a {
 		font-size: 18px;
+	}
+
+	.button-section img {
+	    max-width: 25px;
 	}
 
 	.footer-section ul li a {

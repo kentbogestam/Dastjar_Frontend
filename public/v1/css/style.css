@@ -180,6 +180,10 @@ img {
 	color: #fff;
 }
 
+.button-section a.active img.inactive, .button-section a.inactive .active {
+    display: none;
+}
+
 .button-section img {
     max-width: 30px;
 }
