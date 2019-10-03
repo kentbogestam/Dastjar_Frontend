@@ -164,9 +164,9 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 							}
 
 							// Check if image URL is not null and valid
-							if( temp[i]['large_image'] && (temp[i]['large_image'].indexOf('.jpg') != -1 || temp[i]['large_image'].indexOf('.jpeg') != -1 || temp[i]['large_image'].indexOf('.png') != -1) )
+							if( temp[i]['store_large_image'] && (temp[i]['store_large_image'].indexOf('.jpg') != -1 || temp[i]['store_large_image'].indexOf('.jpeg') != -1 || temp[i]['store_large_image'].indexOf('.png') != -1) )
 							{
-								storeImage = '<img src="'+temp[i]['large_image']+'" alt="" width="120">';
+								storeImage = '<img src="'+temp[i]['store_large_image']+'" alt="" width="120">';
 							}
 
 							liItem += '<div class="row-hotel'+storeClass+'">'+
@@ -220,7 +220,7 @@ function  addMore(len,url,noImageUrl){
 				
 				liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
 				liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+list[i]['store_id']+" data-ajax='false'>";
-				liItem += "<img src="+list[i]['large_image']+" onerror=this.src='"+noImageUrl+"'>";
+				liItem += "<img src="+list[i]['store_large_image']+" onerror=this.src='"+noImageUrl+"'>";
 				liItem += "<h2>"+list[i]["store_name"]+"</h2>";
 				liItem += "<p>";
 				
