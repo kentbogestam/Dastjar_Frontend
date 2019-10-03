@@ -137,12 +137,20 @@
 					</div>
 					<div class="col-md-12 panel panel-default row-confirm-payment hidden">
 						@if(isset($paymentMethod->data))
+							@php
+							$isCardDefault = false;
+
+							if( count($paymentMethod->data) == 1 )
+							{
+								$isCardDefault = false;
+							}
+							@endphp
 							<div class="row-saved-cards">
 								<form id="list-saved-cards">
 									@foreach($paymentMethod->data as $row)
 										<div class="radio">
 											<label>
-												<input type="radio" name="payment_method_id" value="{{ $row->id }}">
+												<input type="radio" name="payment_method_id" value="{{ $row->id }}" <?php echo ($isCardDefault) ? 'checked' : ''; ?>>
 												<i class="fa fa-cc-visa" aria-hidden="true"></i>
 												<i class="fa fa-circle" aria-hidden="true" style="font-size: 9px;"></i><i class="fa fa-circle" aria-hidden="true" style="font-size: 9px;"></i><i class="fa fa-circle" aria-hidden="true" style="font-size: 9px;"></i><i class="fa fa-circle" aria-hidden="true" style="font-size: 9px;"></i>
 												{{ $row->card->last4 }}
