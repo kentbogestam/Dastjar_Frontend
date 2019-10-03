@@ -345,17 +345,13 @@ function deleteFullCart(url,value,msg){
 // Show spinner
 function showLoading(text = 'Loading...')
 {
-    $.mobile.loading('show', {
-        text: text,
-        textVisible: true,
-        theme: 'a',
-    });
+    $('.block-loader').show();
 }
 
 // Hide spinner
 function hideLoading()
 {
-    $.mobile.loading('hide');
+    $('.block-loader').hide();
 }
 
 /* Start from currentLocation.js */

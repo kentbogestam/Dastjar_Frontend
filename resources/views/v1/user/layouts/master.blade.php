@@ -65,6 +65,8 @@
 		<div class="mid-section">
 			@yield('content')
 		</div>
+
+		<div class="block-loader"><span class="block-loader-icon"></span></div>
 		
 		@section('footer')
 			@includeIf('v1.user.elements.footer')

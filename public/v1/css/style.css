@@ -578,6 +578,7 @@ Cart
 	text-decoration: none;
 	font-size: 15px;
 	background: #eee;
+	cursor: pointer;
 }
 
 .contact-form-section ul li input[type="radio"]:checked + label {
@@ -957,4 +958,28 @@ p.error {
 	max-width: 270px;
 	margin: 0 auto;
 	border-radius: 5px;
+}
+
+/* Loader */
+.block-loader {
+	display: none;
+	z-index: 9999999;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	border: 0;
+}
+
+.block-loader .block-loader-icon {
+	background-color: #ccc;
+	display: block;
+	margin: 0;
+	width: 2.75em;
+	height: 2.75em;
+	-webkit-border-radius: 2.25em;
+	border-radius: 2.25em;
+}
+.block-loader-icon {
+	background: url('../../css/images/ajax-loader.gif');
+	background-size: 2.875em 2.875em;
 }
