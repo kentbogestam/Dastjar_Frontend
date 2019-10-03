@@ -33,7 +33,7 @@ $requestPath = Request::path();
 		<li>
 			<a href="{{ url('user-setting') }}">
 				<!-- <img src="{{asset('images/icons/select-store_07.png')}}" width="36"> -->
-				<i class="fa fa-bars" aria-hidden="true"></i>
+				<span style="font-size: 14px;">o o o</span>
 			</a>
 		</li>
 	</ul>
