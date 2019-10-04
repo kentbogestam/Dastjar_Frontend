@@ -443,6 +443,10 @@
 			$('input[name=payment_method_id]').prop('checked', false);
 			$('#charging-saved-cards').hide();
 			$('.section-pay-with-card').removeClass('hidden');
+
+			$('html, body').animate({
+		        scrollTop: $(".section-pay-with-card").offset().top
+		    }, 'slow');
 		});
 	@endif
 
@@ -461,7 +465,11 @@
 		}
 
 		//
-		$('.row-confirm-payment').removeClass('hidden'); 
+		$('.row-confirm-payment').removeClass('hidden');
+
+		$('html, body').animate({
+	        scrollTop: $(".row-new-card").offset().top
+	    }, 'slow');
 	});
 
 	// Delivery address form validation
