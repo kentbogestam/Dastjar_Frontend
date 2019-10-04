@@ -1204,7 +1204,7 @@ class OrderController extends Controller
         else
         {
             $threshold = $storeDeliveryPrice->threshold.' '.$order->currencies;
-            $html .= __('messages.homeDeliveryNotEligible', ['threshold' => $threshold]);
+            $html .= '<p class="text-center error">'.__('messages.homeDeliveryNotEligible', ['threshold' => $threshold]).'</p>';
         }
 
         // Return
