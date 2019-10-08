@@ -472,6 +472,12 @@
 	    }, 'slow');
 	});
 
+	$(document).on('shown.bs.collapse', '.add-address-form', function(){
+		$('html, body').animate({
+	        scrollTop: $(".add-address-form").offset().top
+	    }, 'slow');
+	});
+
 	// Delivery address form validation
 	$('#frm-user-address').validate({
 		rules: {
