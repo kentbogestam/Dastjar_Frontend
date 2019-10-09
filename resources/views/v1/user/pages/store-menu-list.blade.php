@@ -117,7 +117,7 @@
 
 		<!-- Popup GDPR -->
 		<div class="modal fade pop_up" role="dialog">
-			<div class='modal-dialog'>
+			<div class='modal-dialog modal-sm'>
 				<div class="modal-content">
 					<div class="modal-header text-center">
 						<button type="button" class="close popup-close1" onclick="off()">&times;</button>
@@ -125,11 +125,11 @@
 					</div>
 					<div class="modal-body">
 						@if(App::getLocale() == "en")
-							<p>We protect your personal data in accordance with EU's GDPR (General Data Protection Regulations).</p><br>
-							<p>This is a location-based service! It will save your time and serve you best based on your location! To manage to do so, we need your permission to store your login data. This will help us to secure that your orders are delivered to you and no one else.</p>
+							<p>We protect your personal data in accordance<br>with EU's GDPR (General Data Protection<br>Regulations).</p><br>
+							<p>This is a location-based service! It will save your<br>time and serve you best based on your location!<br>To manage to do so, we need your permission to<br>store your login data. This will help us to secure<br>that your orders are delivered to you and no one<br>else.</p>
 						@elseif(App::getLocale() == "sv")
-							<p>Vi skyddar dina personliga uppgifter i enighet med EUs GDPR (General Data Protection Regulations).</p><br>
-							<p>Detta är en positionsbaserad tjänst. Den spar din tid och tjänar dig bäst där du finns. För att kunna göra så behöver vi ditt tillstånd att lagra dina inloggningsuppgifter. Det hjälper oss att säkerställa att din beställning levereras till just dig och ingen annan.</p>
+							<p>Vi skyddar dina personliga uppgifter i enighet<br>med EUs GDPR (General Data Protection<br>Regulations).</p><br>
+							<p>Detta är en positionsbaserad tjänst. Den spar<br>din tid och tjänar dig bäst där du finns. För att<br>kunna göra så behöver vi ditt tillstånd att<br>lagra dina inloggningsuppgifter. Det hjälper<br>oss att säkerställa att din beställning<br>levereras till just dig och ingen annan.</p>
 						@endif
 						<div class="text-center">
 							<button type="button" class="btn btn-success accept-btn submit_btn">Accept</button>
