@@ -144,6 +144,7 @@ return [
     'notificationOrderReady' => 'Your Order :order_id is Ready',
     'notificationOrderDelivered' => 'Your Order :order_id is Delivered',
     'notificationOrderAcceptedHomeDelivery' => 'Order :order_id has been loaded into car',
+    'gdprModalText' => "<p>We protect your personal data in accordance<br>with EU's GDPR (General Data Protection<br>Regulations).</p><br><p>This is a location-based service! It will save your<br>time and serve you best based on your location!<br>To manage to do so, we need your permission to<br>store your login data. This will help us to secure<br>that your orders are delivered to you and no one<br>else.</p>",
 
     // Store
     'store' => 'Store',
