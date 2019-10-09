@@ -983,7 +983,7 @@ p.error {
 	background: url('../../css/images/ajax-loader.gif');
 	background-size: 2.875em 2.875em;
 }
-.popgdpr .modal-body{
+/*.popgdpr .modal-body{
 	overflow-y:scroll;
-	height:100px;
-}
+	height:200px;
+}*/

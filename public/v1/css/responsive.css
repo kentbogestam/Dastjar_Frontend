@@ -259,6 +259,7 @@
 	.hotel-ser a span:nth-of-type(1){ width:auto; }
 	.hotel-ser a span{ display:inline-block; }
 	.icon-fa-angle-right{float:right; }
+	.modal.fade.pop_up.popgdpr{ top:30%; bottom:inherit; }
 }
 @media (max-width: 350px) {
 	.logo-with-map ul li.location {
