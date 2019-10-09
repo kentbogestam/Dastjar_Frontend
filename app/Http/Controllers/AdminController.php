@@ -1399,64 +1399,6 @@ class AdminController extends Controller
         $product->company_id = $company_id;
         $product->save();
 
-        $sloganSubLangId = $helper->uuid();
-
-        $productOfferSubSloganLangList = new ProductOfferSubSloganLangList();
-        $productOfferSubSloganLangList->product_id = $product_id;
-        $productOfferSubSloganLangList->offer_sub_slogan_lang_list = $sloganSubLangId;
-        $productOfferSubSloganLangList->save();
-
-        /*** insert product description in lang_text table */
-        $langText = new LangText();
-        $langText->id = $sloganSubLangId;
-        $langText->lang = $request->dishLang;
-        $langText->text = $request->prodDesc;
-        $langText->save();
-
-        $sloganLangId = $helper->uuid();
-
-        $productOfferSloganLangList = new ProductOfferSloganLangList();
-        $productOfferSloganLangList->product_id = $product_id;
-        $productOfferSloganLangList->offer_slogan_lang_list = $sloganLangId;
-        $productOfferSloganLangList->save();
-
-        /*** insert product name in lang_text table */
-        $langText = new LangText();
-        $langText->id = $sloganLangId;
-        $langText->lang = $request->dishLang;
-        $langText->text = $request->prodName;
-        $langText->save();
-
-        $SystemkeyId = $helper->uuid();
-
-        /*** insert product language in lang_text table */
-        $langText = new LangText();
-        $langText->id = $SystemkeyId;
-        $langText->lang = $request->dishLang;
-        $langText->text = $product_id;
-        $langText->save();
-
-        /*** insert product id in product_keyword table */
-        $productKeyword = new ProductKeyword();
-        $productKeyword->product_id = $product_id;
-        $productKeyword->system_key = $SystemkeyId;
-        $productKeyword->save();
-
-        $Systemkey_companyId = $helper->uuid();
-
-        /*** insert company id in lang_text table */
-        $langText = new LangText();
-        $langText->id = $Systemkey_companyId;
-        $langText->lang = $request->dishLang;
-        $langText->text = $company_id;
-        $langText->save();
-   
-        /*** insert company id in product_keyword table */
-        $productKeyword = new ProductKeyword();
-        $productKeyword->product_id = $product_id;
-        $productKeyword->system_key = $Systemkey_companyId;
-        $productKeyword->save();
-
         $product_price_list = ProductPriceList::firstOrNew(['product_id' => $product_id]);
         $product_price_list->store_id = $store_id;
         $product_price_list->text = "Price:" . $request->prodPrice . $request->currency;
@@ -1466,7 +1408,81 @@ class AdminController extends Controller
         $product_price_list->publishing_end_date = $publish_end_date;
         $product_price_list->save();
 
+        // Add product meta
+        $data = array(
+            'product_id' => $product_id,
+            'company_id' => $company_id,
+            'lang' => $request->dishLang,
+            'product_description' => $request->prodDesc,
+            'product_name' => $request->prodName,
+        );
+
+        $this->addProductMeta($data);
+
         return redirect()->route('menu')->with('success', $message);
+    }
+
+    // Add product meta while adding new product
+    private function addProductMeta($data)
+    {
+        $helper = new Helper();
+        $sloganSubLangId = $helper->uuid();
+
+        $productOfferSubSloganLangList = new ProductOfferSubSloganLangList();
+        $productOfferSubSloganLangList->product_id = $data['product_id'];
+        $productOfferSubSloganLangList->offer_sub_slogan_lang_list = $sloganSubLangId;
+        $productOfferSubSloganLangList->save();
+
+        // insert product description in lang_text table
+        $langText = new LangText();
+        $langText->id = $sloganSubLangId;
+        $langText->lang = $data['lang'];
+        $langText->text = $data['product_description'];
+        $langText->save();
+
+        $sloganLangId = $helper->uuid();
+
+        $productOfferSloganLangList = new ProductOfferSloganLangList();
+        $productOfferSloganLangList->product_id = $data['product_id'];
+        $productOfferSloganLangList->offer_slogan_lang_list = $sloganLangId;
+        $productOfferSloganLangList->save();
+
+        // insert product name in lang_text table
+        $langText = new LangText();
+        $langText->id = $sloganLangId;
+        $langText->lang = $data['lang'];
+        $langText->text = $data['product_name'];
+        $langText->save();
+
+        $SystemkeyId = $helper->uuid();
+
+        // insert product language in lang_text table
+        $langText = new LangText();
+        $langText->id = $SystemkeyId;
+        $langText->lang = $data['lang'];
+        $langText->text = $data['product_id'];
+        $langText->save();
+
+        // insert product id in product_keyword table
+        $productKeyword = new ProductKeyword();
+        $productKeyword->product_id = $data['product_id'];
+        $productKeyword->system_key = $SystemkeyId;
+        $productKeyword->save();
+
+        $Systemkey_companyId = $helper->uuid();
+
+        // insert company id in lang_text table
+        $langText = new LangText();
+        $langText->id = $Systemkey_companyId;
+        $langText->lang = $data['lang'];
+        $langText->text = $data['company_id'];
+        $langText->save();
+   
+        // insert company id in product_keyword table
+        $productKeyword = new ProductKeyword();
+        $productKeyword->product_id = $data['product_id'];
+        $productKeyword->system_key = $Systemkey_companyId;
+        $productKeyword->save();
     }
 
 
@@ -1716,6 +1732,7 @@ class AdminController extends Controller
             $productNew->s_activ = $product->s_activ;
             $productNew->reseller_status = $product->reseller_status;
             $productNew->product_rank = $product->product_rank;
+            
             if($productNew->save())
             {
                 // Get product price detail
@@ -1746,6 +1763,17 @@ class AdminController extends Controller
                     $product_price_list->lang = $currentProductPrice->lang;
                     $product_price_list->save();
                 }
+
+                // Add product meta
+                $data = array(
+                    'product_id' => $pId,
+                    'company_id' => $productNew->company_id,
+                    'lang' => $productNew->lang,
+                    'product_description' => $productNew->product_description,
+                    'product_name' => $productNew->product_name,
+                );
+
+                $this->addProductMeta($data);
             }
 
             $message = 'Dish copied successfully.';
@@ -1773,13 +1801,6 @@ class AdminController extends Controller
 
     public function kitchenDeleteDish(Request $request){
         $productid = $request->product_id;
-        
-        /*$productPriceList = new ProductPriceList();
-
-        if($productPriceList->where('product_id', '=', $productid)->count() > 1){
-            $productPriceList->where('id', '=', $request->price_id)->delete();
-            return back()->with('success','Dish Price deleted successfully');
-        }*/
 
         $c_s_rel = new C_S_Rel();
 
