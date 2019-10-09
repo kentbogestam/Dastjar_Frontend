@@ -275,31 +275,6 @@ class AdminController extends Controller
         }
 
         return response()->json(['data' => $result]);
-
-        /*$response = new \Symfony\Component\HttpFoundation\StreamedResponse(function() {
-            $staticPlans = array('kitchen', 'orderonsite', 'catering');
-            $currentPlans = Session::get('subscribedPlans');
-            $data = array_keys($currentPlans);
-
-            while (true) {
-                // if (!empty($data)) {}
-                echo 'data: ' . json_encode($data) . "\n\n";
-                ob_flush();
-                flush();
-
-                if ( connection_aborted() ) break;
-
-                //sleep for x seconds
-                sleep(20);
-
-                // Check and update subscription plan for logged-in store
-                $currentPlans = array_keys($this->updateStoreSubscriptionPlan());
-                $data = array_values(array_intersect($staticPlans, $currentPlans));
-            }
-        });
-
-        $response->headers->set('Content-Type', 'text/event-stream');
-        return $response;*/
     }
 
     /**
@@ -357,7 +332,7 @@ class AdminController extends Controller
             $helper->logs("Order Ready: Order ID - " . $orderId);
 
             // Get order detail
-            $order = Order::select(['user_id', 'user_type', 'customer_order_id'])
+            $order = Order::select(['user_id', 'user_type', 'delivery_type', 'customer_order_id'])
                 ->where('order_id' , $orderId)
                 ->first();
             
@@ -365,7 +340,10 @@ class AdminController extends Controller
             DB::table('order_details')->where('order_id', $orderId)->update(['order_ready' => 1]);
             DB::table('orders')->where('order_id', $orderId)->update(['order_ready' => 1]);
 
-            if($order->user_id != 0)
+            // Send order ready notification (if not home delivery)
+            $redirectText = 'Order Ready Notification Send Successfully.';
+
+            if($order->user_id != 0 && $order->delivery_type != 3)
             {
                 $recipients = [];
                 if($order->user_type == 'customer'){
@@ -389,7 +367,6 @@ class AdminController extends Controller
                 // if($pieces[0] == 'Safari')
                 if( ($pieces[0] == 'Safari') || ( isset($adminDetail->browser) && strpos($adminDetail->browser, 'Mobile/') !== false ) || ( isset($adminDetail->browser) && strpos($adminDetail->browser, 'wv') !== false ) )
                 {
-                    // $message = "Your Order Ready Please click on Link \n ".env('APP_URL').'ready-notification/'.$order->customer_order_id;
                     $message = __('messages.notificationOrderReady', ['order_id' => $order->customer_order_id]);
                     $result = $this->apiSendTextMessage($recipients, $message);
                     
@@ -405,10 +382,11 @@ class AdminController extends Controller
             }
             else
             {
+                $redirectText = 'Order has ready.';
                 $helper->logs("Order Ready: ELSE; Order ID - ".$orderId);
             }
 
-            return redirect()->back()->with('success', 'Order Ready Notification Send Successfully.');
+            return redirect()->back()->with('success', $redirectText);
         } catch(\Exception $ex){
             $helper->logs("Step 6: Exception = " .$ex->getMessage());
         }
@@ -822,7 +800,6 @@ class AdminController extends Controller
         // Send promotional link
         $recipients = ['+'.$request->prefix.$mobile];
         $message = env('APP_URL') . "promotion/apply-user-discount/{$request->store_id}/{$request->discount_code}";
-        // $message = __('messages.notificationOrderReady', ['order_id' => $OrderId->customer_order_id]);
         $result = $this->apiSendTextMessage($recipients, $message);
 
         return response()->json(['status' => $status, 'result' => $result]);
@@ -2330,7 +2307,10 @@ class AdminController extends Controller
                     'order_ready' => 1,
                 ]);
 
-                if($OrderId->user_id != 0)
+                // Send order ready notification (if not home delivery)
+                $redirectText = 'Order Ready Notification Send Successfully.';
+
+                if($OrderId->user_id != 0 && $OrderId->delivery_type != 3)
                 {
                     $recipients = [];                
                     if($OrderId->user_type == 'customer'){
@@ -2352,31 +2332,12 @@ class AdminController extends Controller
                 }
                 else
                 {
+                    $redirectText = 'Order has ready.';
                     $pieces[0] = '';               
                 }
 
                 if( ($pieces[0] == 'Safari') || ( isset($adminDetail->browser) && strpos($adminDetail->browser, 'Mobile/') !== false ) || ( isset($adminDetail->browser) && strpos($adminDetail->browser, 'wv') !== false ) )
                 {
-                    /*$url = "https://gatewayapi.com/rest/mtsms";
-                    $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
-                    $message = "Your Order Ready Please click on Link \n ".env('APP_URL').'ready-notification/'.$OrderId->customer_order_id;
-                    $json = [
-                        'sender' => 'Dastjar',
-                        'message' => ''.$message.'',
-                        'recipients' => [],
-                    ];
-                    foreach ($recipients as $msisdn) {
-                        $json['recipients'][] = ['msisdn' => $msisdn];}
-
-                    $ch = curl_init();
-                    curl_setopt($ch,CURLOPT_URL, $url);
-                    curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
-                    curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
-                    curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
-                    curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
-                    $result = curl_exec($ch);
-                    curl_close($ch);   */
-
                     $message = __('messages.notificationOrderReady', ['order_id' => $OrderId->customer_order_id]);
                     $result = $this->apiSendTextMessage($recipients, $message);
 
@@ -2392,7 +2353,7 @@ class AdminController extends Controller
                     }
                 }
 
-                return redirect()->back()->with('success', 'Order Ready Notification Send Successfully.');
+                return redirect()->back()->with('success', $redirectText);
             }
 
             return redirect()->back()->with('success', 'Order Item Ready Successfully.');

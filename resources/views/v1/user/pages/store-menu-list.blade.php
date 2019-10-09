@@ -124,13 +124,7 @@
 						<h3 class="modal-title">GDPR</h3>
 					</div>
 					<div class="modal-body">
-						@if(App::getLocale() == "en")
-							<p>We protect your personal data in accordance with EU's GDPR (General Data Protection Regulations).</p><br>
-							<p>This is a location-based service! It will save your time and serve you best based on your location! To manage to do so, we need your permission to store your login data. This will help us to secure that your orders are delivered to you and no one else.</p>
-						@elseif(App::getLocale() == "sv")
-							<p>Vi skyddar dina personliga uppgifter i enighet med EUs GDPR (General Data Protection Regulations).</p><br>
-							<p>Detta är en positionsbaserad tjänst. Den spar din tid och tjänar dig bäst där du finns. För att kunna göra så behöver vi ditt tillstånd att lagra dina inloggningsuppgifter. Det hjälper oss att säkerställa att din beställning levereras till just dig och ingen annan.</p>
-						@endif
+						{!! __('messages.gdprModalText') !!}
 						<div class="text-center">
 							<button type="button" class="btn btn-success accept-btn submit_btn">Accept</button>
 						</div>

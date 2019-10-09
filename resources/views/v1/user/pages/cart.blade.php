@@ -142,7 +142,7 @@
 
 							if( count($paymentMethod->data) == 1 )
 							{
-								$isCardDefault = false;
+								$isCardDefault = true;
 							}
 							@endphp
 							<div class="row-saved-cards">
@@ -155,6 +155,7 @@
 												<i class="fa fa-circle" aria-hidden="true" style="font-size: 9px;"></i><i class="fa fa-circle" aria-hidden="true" style="font-size: 9px;"></i><i class="fa fa-circle" aria-hidden="true" style="font-size: 9px;"></i><i class="fa fa-circle" aria-hidden="true" style="font-size: 9px;"></i>
 												{{ $row->card->last4 }}
 											</label>
+											<button type="button" class="btn btn-link btn-xs" onclick="deleteSource('{{ $row->id }}', this)">Delete</button>
 										</div>
 									@endforeach
 									<div class="card-errors text-danger"></div>
@@ -429,6 +430,40 @@
 				window.location.href = "{{ url('order-view/'.$order->order_id) }}";
 			}
 		}
+
+		// Delete source
+    	function deleteSource(sourceId = null, This)
+    	{
+    		if( confirm('Are you sure you want to delete this card?') )
+    		{
+    			let $this = $(This);
+            	showLoading();
+
+            	// 
+            	$.ajax({
+					type: 'POST',
+					url: "{{ url('delete-source') }}",
+					data: {
+						'_token': "{{ csrf_token() }}",
+						'deleteSource': 1,
+	                    'sourceId': sourceId
+					},
+					dataType: 'json',
+					success: function(response) {
+						if(!response.error)
+	                    {
+	                        $this.closest('.radio').remove();
+	                    }
+	                    else
+	                    {
+	                    	alert(response.error);
+	                    }
+
+	                    hideLoading('Processing...');
+					}
+				});
+    		}
+    	}
 
 		// 
 		$('input[name=payment_method_id]').on('click', function() {

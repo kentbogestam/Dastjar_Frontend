@@ -117,6 +117,7 @@ Route::group(['middleware' => ['latlng']], function(){
 	Route::group(['namespace' => 'User'], function() {
 		Route::post('confirm-payment', 'PaymentController@confirmPayment');
 		Route::post('confirm-payment-test', 'PaymentController@confirmPaymentTest');
+		Route::post('delete-source', 'PaymentController@deleteSource');
 	});
 	// Route::get('cart', 'OrderController@cartWithOutLogin')->name('cartWithOutLogin');
 	Route::get('view-cart/{orderId}', 'OrderController@viewCart');
