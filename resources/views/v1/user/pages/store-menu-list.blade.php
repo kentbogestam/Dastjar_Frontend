@@ -74,7 +74,7 @@
 								{{ $menuType->dish_name }} 
 								{!! $strLoyaltyOffer !!}
 							</span> 
-							<span><i class="fa fa-angle-right"></i></span>
+							<span class="icon-fa-angle-right"><i class="fa fa-angle-right"></i></span>
 						</a>
 						<div class="collapse menu-detail" id="menu-{{ $menuType->dish_id }}">
 							<div class="text-center"><i class="fa fa-spinner" aria-hidden="true"></i></div>
@@ -116,7 +116,7 @@
 		</div>
 
 		<!-- Popup GDPR -->
-		<div class="modal fade pop_up" role="dialog">
+		<div class="modal fade pop_up popgdpr" role="dialog">
 			<div class='modal-dialog'>
 				<div class="modal-content">
 					<div class="modal-header text-center">
