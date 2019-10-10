@@ -254,7 +254,7 @@
 	    width: 38px;
 	}
 }
-@media (max-width: 480px) {
+@media (max-width: 700px) {
 	.hotel-ser a span.loyalty-offer{ display:block; padding-left:0px; }
 	.hotel-ser a span:nth-of-type(1){ width:auto; }
 	.hotel-ser a span{ display:inline-block; }
