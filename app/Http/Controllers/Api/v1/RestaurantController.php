@@ -48,7 +48,7 @@ class RestaurantController extends Controller
             $status = 'empty'; 
 
             // 
-            $store = Store::select(['store_id', 'store_name', 'street', 'city', 'country', 'zip', 'store_image', 'large_image'])
+            $store = Store::select(['store_id', 'tagline', 'latitude', 'longitude', 'store_name', 'street', 'city', 'country', 'phone', 'email', 'delivery_type', 'zip', 'store_image', 'large_image', 'store_open_close_day_time', 'store_close_dates'])
                 ->where(['store_id' => $storeId, 's_activ' => '1'])
                 ->first();
 
