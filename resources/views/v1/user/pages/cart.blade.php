@@ -159,7 +159,7 @@
 										</div>
 									@endforeach
 									<div class="card-errors text-danger"></div>
-									<button type="button" id="charging-saved-cards" class="btn" style="display: none;">{{ __('messages.paySecurely') }}</button>
+									<button type="button" id="charging-saved-cards" class="btn" style="{{ !($isCardDefault) ? 'display: none' : '' }}">{{ __('messages.paySecurely') }}</button>
 								</form>
 							</div>
 						@endif
