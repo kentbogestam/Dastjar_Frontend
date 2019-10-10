@@ -229,7 +229,7 @@
 	});
 
 	// 
-	function getMenuDetail(This, catLevel1, catLevel2 = null)
+	function getMenuDetail(This, dishType, level)
 	{
 		// 
 		This = $(This);
@@ -241,12 +241,7 @@
 		}
 
 		// 
-		let url = '{{ url('get-menu-detail') }}/'+catLevel1; 
-
-		if(catLevel2 != null)
-		{
-			url += '/'+catLevel2;
-		}
+		let url = '{{ url('get-menu-detail') }}/'+dishType+'/'+level;
 
 		$.ajax({
 			url: url,
@@ -254,7 +249,7 @@
 			success: function(response) {
 				if(response.status)
 				{
-					if(catLevel2 == null)
+					if(level == 1)
 					{
 						This.next('.menu-detail').html(response.html);
 					}
