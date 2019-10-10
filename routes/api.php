@@ -33,4 +33,10 @@ Route::group(['middleware' => ['api']], function () {
 		Route::post('update-product-rank', 'Api\v1\KitchenController@updateProductRank');	
 		Route::post('update-menu-rank', 'Api\v1\KitchenController@updateMenuRank');
 	});
+
+	// 
+	Route::group(['prefix' => 'v1/homepage'], function () { 
+		Route::get('get-stores-by-user/{uId}', 'Api\v1\RestaurantController@getStoresByUser');
+		Route::get('get-store/{storeId}', 'Api\v1\RestaurantController@getStore');
+	});
 });

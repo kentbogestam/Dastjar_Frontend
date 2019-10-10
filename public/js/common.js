@@ -54,7 +54,7 @@ function getCurrentCoordinates(){
             },function(error){
                 if (typeof lat === "undefined") {
                     // $('.login-inner-section a').attr('href','javascript:void(0)');
-                    // $('#login-popup').show();                    
+                    // $('#login-popup').modal("show");
                 } else {
                     // document.cookie="latitude=" + lat;
                     // document.cookie="longitude=" + lng;          
@@ -242,7 +242,7 @@ function locationSave(url){
         });
     },function(error){
        $('.login-inner-section a').attr('href','javascript:void(0)');
-       $('#login-popup').show();
+       $('#login-popup').modal("show");
     });
 }
 

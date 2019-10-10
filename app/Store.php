@@ -136,7 +136,7 @@ class Store extends Model
         $radius = $radius;
 
         $latLngList = Store::having('distance','<=',$radius)
-        ->select("*",DB::raw("
+        ->select("*", 'store.large_image AS store_large_image',DB::raw("
                         ($unit * ACOS(COS(RADIANS(".$lat."))
                             * COS(RADIANS(latitude))
                             * COS(RADIANS(".$lng.") - RADIANS(longitude))
@@ -149,7 +149,7 @@ class Store extends Model
             ->where('store_close_dates', 'not like', '%'.$todayDate.'%')->where('store_open_close_day_time', 'like', '%'.$todayDay.'%')
             ->where('store.s_activ','=','1')->where('dish_type.dish_activate',1)
             ->whereIn('store_type', [1, 3])->where('product_price_list.publishing_start_date','<=',Carbon::now())->where('product_price_list.publishing_end_date','>=',Carbon::now())->groupBy('store.store_id')->with('products')
-            ->union(Store::having('distance','<=',$radius)->select("*",DB::raw("
+            ->union(Store::having('distance','<=',$radius)->select("*", 'store.large_image AS store_large_image',DB::raw("
                         ($unit * ACOS(COS(RADIANS(".$lat."))
                             * COS(RADIANS(latitude))
                             * COS(RADIANS(".$lng.") - RADIANS(longitude))

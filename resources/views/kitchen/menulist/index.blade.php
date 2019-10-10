@@ -229,15 +229,15 @@
 		<a href="{{ url('kitchen/create-menu') }}" class="fa fa-plus-circle fa-4x add_menu_btn" data-ajax="false"></a>
 		<hr>
 
-		@if(!$menuTypes->isEmpty())
+		@if( !empty($menuTypes) )
 			<div class="menu-sortable">
-				@foreach($menuTypes as $key => $value)
-					<div id="{{$key}}" class="menu-sortable-item">
-						<a href="#demo_{{$key}}" class="partial-circle menu-type" data-id="{{$key}}" data-toggle="collapse">
-							<p class="dish_type">{{ $value }}</p>
+				@foreach($menuTypes as $menuType)
+					<div id="{{ $menuType->dish_id }}" class="menu-sortable-item">
+						<a href="#demo_{{ $menuType->dish_id }}" class="partial-circle menu-type" data-id="{{ $menuType->dish_id }}" data-toggle="collapse">
+							<p class="dish_type">{{ $menuType->dish_name }}</p>
 						</a>
 						<br/><br/>
-						<div id="demo_{{$key}}" data-id="{{$key}}" class="collapse collapse_block sortable">Loading...</div>
+						<div id="demo_{{ $menuType->dish_id }}" data-id="{{ $menuType->dish_id }}" class="collapse collapse_block sortable">Loading...</div>
 						<br>
 						@if(!$loop->last)
 							<hr>
@@ -442,17 +442,20 @@
 				            		'<div class="col-sm-2">'+
 				            			'<img src="'+item.small_image+'" class="prod_img"/>'+
 				            		'</div>'+
-				            		'<div class="col-sm-7">'+
+				            		'<div class="col-sm-6">'+
 				            			'<h3>'+item.product_name+'</h3>'+
 										'<p>'+item.product_description+'</p>'+
 										'<div class="current-price">'+currentPrice+'</div>'+
 										'<button type="button" class="ui-btn ui-mini ui-btn-inline btn-show-future-prices" onclick="getFuturePriceByProduct(\''+item.product_id+'\', this);">Show future prices</button>'+
 				            			'<div class="future-prices"></div>'+
 				            		'</div>'+
-				            		'<div class="col-sm-3 text-right">'+
-				            			'<a href="javascript:void(0)" onClick="delete_dish(\'{{url('kitchen/delete-menu-dish?product_id=')}}'+item.product_id+'\')" data-ajax="false">'+
-					        				'<span class="fa fa-trash fa-2x" style="margin-left: 15px"></span>'+
-					        			'</a>'+
+				            		'<div class="col-sm-4 text-right">'+
+				            			'<span><a href="javascript:void(0)" onClick="copyDish(\'{{url('kitchen/copy-dish')}}/'+item.product_id+'\')" data-ajax="false">'+
+					        				'<i class="fa fa-clone" aria-hidden="true"></i>'+
+					        			'</a></span>'+
+				            			'<span style="margin-left: 10px"><a href="javascript:void(0)" onClick="delete_dish(\'{{url('kitchen/delete-menu-dish?product_id=')}}'+item.product_id+'\')" data-ajax="false">'+
+					        				'<span class="fa fa-trash"></span>'+
+					        			'</a></span>'+
 				            			'<a href="javascript:void(0)" title="{{ __('messages.iDishAddNewPrice') }}" onClick="add_dish_price(\''+item.product_id+'\', \'{{Session::get('storeId')}}\')" class="btn waves-effect add-price-btn" data-ajax="false">Add New Price</a>'+
 				            		'</div>'+
 				            	'</div>'+
@@ -500,6 +503,15 @@
     	}
 	});
 
+	// Copy dish
+	function copyDish(url)
+	{
+		if(confirm('Are you sure you want to clone this product?')) {
+    	    window.location = url;
+	    }
+	}
+
+	// Delete Dish
 	function delete_dish(url){
 		if(confirm('Are you sure you want to delete this product?')) {
     	    window.location = url;

@@ -265,4 +265,29 @@ class PaymentController extends Controller
 
 		return $data;
     }
+
+    // Delete customer attached card
+    function deleteSource(Request $request)
+    {
+    	$response = array();
+
+        // Get stripe customer_id
+        $user = User::select(['email', 'name', 'stripe_customer_id'])
+				->where('id', Auth::user()->id)
+				->first();
+
+		if( !is_null($user->stripe_customer_id) && !$user->stripe_customer_id == '' )
+        {
+        	\Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+        	
+			$payment_method = \Stripe\PaymentMethod::retrieve($request->sourceId);
+			$payment_method->detach();
+        }
+        else
+        {
+            $response['error'] = 'Attached source didn\'t match the customer.';
+        }
+
+        return response()->json($response);
+    }
 }

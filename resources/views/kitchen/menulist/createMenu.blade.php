@@ -249,16 +249,12 @@
 			<div class="col-12">
 				<select id="dishType" name="dishType" required title="{{ __('messages.iDishType') }}">
 					<option value="" selected disabled>Dish Type</option>
-					@foreach($listDishes as $key =>$value)
-					@if(isset($product->dish_type))
-						@if($key == $product->dish_type)
-							<option value="{{$key}}" selected>{{$value}}</option>
+					@foreach($listDishes as $row)
+						@if( isset($product->dish_type) && ($row['dish_id'] == $product->dish_type) )
+							<option value="{{ $row['dish_id'] }}" class="level-{{ $row['level'] }}" selected>{!! Helper::strReplaceBy($row['dish_name'], $row['level']*2) !!}</option>
 						@else
-							<option value="{{$key}}">{{$value}}</option>
+							<option value="{{ $row['dish_id'] }}" class="level-{{ $row['level'] }}">{!! Helper::strReplaceBy($row['dish_name'], $row['level']*2) !!}</option>
 						@endif
-					@else
-						<option value="{{$key}}">{{$value}}</option>					
-					@endif
 					@endforeach
 				</select>
 			</div>
@@ -345,11 +341,11 @@
 @endsection
 
 @section('footer-script')
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<!-- <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
 <script src="//stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.5.10/js/ripples.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.5.10/js/material.min.js"></script>
-<script type="text/javascript" src="//rawgit.com/FezVrasta/bootstrap-material-design/master/dist/js/material.min.js"></script>
+<!-- <script type="text/javascript" src="//rawgit.com/FezVrasta/bootstrap-material-design/master/dist/js/material.min.js"></script> -->
 <script type="text/javascript" src="//momentjs.com/downloads/moment-with-locales.min.js"></script>
 <script type="text/javascript" src="{{ asset('js/bootstrap-material-datetimepicker.js') }}"></script>
 
@@ -483,7 +479,7 @@
     	//$(".ui-btn-right", activePage).text("ScrollEnd: " + scrollEnd);
     	
     	//if in future this page will get it, then add this condition in and in below if activePage[0].id == "home" 
-    	if (scrolled >= scrollEnd) {
+    	/*if (scrolled >= scrollEnd) {
 		        console.log(list);
 		        $.mobile.loading("show", {
 		        text: "loading more..",
@@ -495,7 +491,7 @@
 		         tempCount += 10;
 		         $.mobile.loading("hide");
 		     },500);
-    	}
+    	}*/
 	});
 
 </script>

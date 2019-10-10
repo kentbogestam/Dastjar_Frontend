@@ -15,5 +15,5 @@ class DishType extends Model
         parent::__construct($attributes);
     }
 
-    protected $fillable = ['dish_lang', 'dish_name', 'company_id', 'u_id', 'dish_activate', 'rank'];
+    protected $fillable = ['dish_lang', 'dish_name', 'company_id', 'u_id', 'dish_activate', 'rank', 'parent_id'];
 }

@@ -144,6 +144,8 @@ return [
     'notificationOrderReady' => 'Your Order :order_id is Ready',
     'notificationOrderDelivered' => 'Your Order :order_id is Delivered',
     'notificationOrderAcceptedHomeDelivery' => 'Order :order_id has been loaded into car',
+    // 'gdprModalText' => "<p>We protect your personal data in accordance<br>with EU's GDPR (General Data Protection<br>Regulations).</p><br><p>This is a location-based service! It will save your<br>time and serve you best based on your location!<br>To manage to do so, we need your permission to<br>store your login data. This will help us to secure<br>that your orders are delivered to you and no one<br>else.</p>",
+    'gdprModalText' => "<p>We protect your personal data in accordance with EU's GDPR (General Data Protection Regulations).</p><br><p>This is a location-based service! It will save your time and serve you best based on your location! To manage to do so, we need your permission to store your login data. This will help us to secure that your orders are delivered to you and no one else.</p>",
 
     // Store
     'store' => 'Store',
@@ -164,7 +166,9 @@ return [
     // Dish Type
     'listDishType' => 'List Dish Type',
     'dishType' => 'Dish Type',
-    'language' => 'language',
+    'category' => 'Category',
+    'parentCategory' => 'Parent Category',
+    'language' => 'Language',
     'dishTypeCreated' => 'Dish type created successfully.',
     'dishTypeUpdated' => 'Dish type updated successfully.',
     'dishTypeNotFound' => 'Dish type not found.',
@@ -257,6 +261,7 @@ return [
     'back' => 'Back',
     'save' => 'Save',
     'action' => 'Action',
+    'optional' => 'Optional',
     'pagination' => 'Showing :first to :last of :total entries',
     'aboutDastjarAnar' => 'About Dastjar RS/Anar',
     'aboutCompanyAdmin' => 'Your Company Admin',
@@ -269,6 +274,7 @@ return [
     'getTheApp' => 'Get the App',
     'name' => 'Name',
     'email' => 'Email',
+    'none' => 'None',
     'phone' => 'Phone',
     'password' => 'Password',
     'login' => 'Login',

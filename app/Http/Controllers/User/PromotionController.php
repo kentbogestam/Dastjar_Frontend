@@ -85,8 +85,7 @@ class PromotionController extends Controller
             }
         }
 
-        // echo $status.$msg;
-
-        return view('apply-user-discount', compact('status'));
+        // return view('apply-user-discount', compact('status'));
+        return view('v1.user.pages.apply-user-discount', compact('status'));
     }
 }

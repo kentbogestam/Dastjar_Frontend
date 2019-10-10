@@ -106,7 +106,8 @@ class MapController extends Controller
 
         // echo '<pre>'; print_r($latLng); exit;
         $latLngList = json_encode($latLng);
-        return view('map.index', compact('latLngList', 'nearbyRestaurantDetail'));
+        // return view('map.index', compact('latLngList', 'nearbyRestaurantDetail'));
+        return view('v1.user.pages.store-list-map', compact('latLngList', 'nearbyRestaurantDetail'));
     }
 
     public function searchMapEatlater(Request $request){
@@ -239,6 +240,7 @@ class MapController extends Controller
         $storedetails = Store::where('store_id' , $request->session()->get('storeId'))->first();
         array_push($latLng,[$storedetails->latitude, $storedetails->longitude]);
         $latLngList = json_encode($latLng);
-        return view('map.single_res_map', compact('latLngList','storedetails'));
+        // return view('map.single_res_map', compact('latLngList','storedetails'));
+        return view('v1.user.pages.store-direction-map', compact('latLngList','storedetails'));
     }
 }

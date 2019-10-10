@@ -55,7 +55,8 @@ class PushNotifactionController extends Controller
                 Session::forget('recentOrderList.'.$orderDetail->order_id);
             }
 
-            return view('order.alert-ready',compact('orderDetail', 'orderID','companydetails','user'));            
+            // return view('order.alert-ready',compact('orderDetail', 'orderID','companydetails','user'));            
+            return view('v1.user.pages.order-ready',compact('orderDetail', 'orderID','companydetails','user'));
         }else{
             return redirect('home');
         }
@@ -149,7 +150,8 @@ class PushNotifactionController extends Controller
 
             $user = User::where('id', $orderDetail->user_id)->first();
             $companydetails = Store::where('store_id', $orderDetail->store_id)->first();
-    	   return view('order.alert-deliver',compact('orderID','companydetails','user'));
+    	   // return view('order.alert-deliver',compact('orderID','companydetails','user'));
+           return view('v1.user.pages.order-delivered',compact('orderID','companydetails','user'));
         }else{
             return redirect('home');
         }

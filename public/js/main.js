@@ -121,7 +121,7 @@ function setCurrentLatLong(urllatlng){
         },function(error){
             if (typeof lat === "undefined") {
                 // $('.login-inner-section a').attr('href','javascript:void(0)');
-                // $('#login-popup').show();           
+                // $('#login-popup').modal("show");
             } else {
                 // document.cookie="latitude=" + lat;
                 // document.cookie="longitude=" + lng;      
@@ -188,8 +188,8 @@ function decrementCartValue(id,msg)
     }
     else
     {
-        $('#delete-cart-item-alert').find('span.delete').attr('onclick', 'onDeleteLastItemFromCart('+id+')')
-        $('#delete-cart-item-alert').show();
+        $('#delete-cart-item-alert').find('.delete').attr('onclick', 'onDeleteLastItemFromCart('+id+')')
+        $('#delete-cart-item-alert').modal('show');
     }
 }
 
@@ -345,17 +345,13 @@ function deleteFullCart(url,value,msg){
 // Show spinner
 function showLoading(text = 'Loading...')
 {
-    $.mobile.loading('show', {
-        text: text,
-        textVisible: true,
-        theme: 'a',
-    });
+    $('.block-loader').show();
 }
 
 // Hide spinner
 function hideLoading()
 {
-    $.mobile.loading('hide');
+    $('.block-loader').hide();
 }
 
 /* Start from currentLocation.js */
@@ -560,13 +556,13 @@ function responseGeoAddressFromIosNative(data)
                     $("#loading-img").hide();
                     $("#overlay").hide();
                     $('.login-inner-section a').attr('href','javascript:void(0)');
-                    $('#login-popup').show();
+                    $('#login-popup').modal("show");
                     /*if (!getCookie("latitude"))
                     {
                         $("#loading-img").hide();
                         $("#overlay").hide();
                         $('.login-inner-section a').attr('href','javascript:void(0)');
-                        $('#login-popup').show();
+                        $('#login-popup').modal("show");
                     }
                     else
                     {
@@ -642,7 +638,7 @@ function responseGeoAddressFromIosNative(data)
             else
             {
                 $('.login-inner-section a').attr('href','javascript:void(0)');
-                $('#login-popup').show();
+                $('#login-popup').modal("show");
             }
         }
     }

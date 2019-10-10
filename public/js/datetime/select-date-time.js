@@ -1,8 +1,6 @@
-
-
-jQuery(window).load(function () {
-    var dateVar = $('#date16').handleDtpicker('getDate');  
-	 $('#date-value1-2').html(dateVar);
+jQuery(window).on('load', function () {
+	var dateVar = $('#date16').handleDtpicker('getDate');
+	$('#date-value1-2').html(dateVar);
 });
 
 function checkDate(){
@@ -23,11 +21,11 @@ function checkDate(){
 
 	// if(cur.getDate()==sel.getDate()){
 	if(hoursDiff < 2){
-		$('.error_time3').show();
+		$('.error_time3').removeClass('hidden');
 	}
 	else{
 		$('#date-value1-23').val(hdate);					
-		$('.error_time').hide();
+		$('.error_time').addClass('hidden');
 		$("#form").submit();
 	}
 }

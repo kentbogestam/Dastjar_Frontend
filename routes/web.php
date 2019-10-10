@@ -89,6 +89,7 @@ Route::post('store-device-token', 'CustomerController@storeDeviceToken');
 Route::post('store-device-token-order-view', 'CustomerController@storeDeviceTokenOrderView');	
 
 Route::get('restro-menu-list/{storeID}', 'HomeController@menuList');
+Route::get('get-menu-detail/{dishType}/{level}', 'HomeController@getMenuDetail');
 
 Route::get('search-store-map', 'MapController@searchStoreMap');
 Route::get('404', 'HomeController@page_404')->name('page_404');
@@ -116,6 +117,7 @@ Route::group(['middleware' => ['latlng']], function(){
 	Route::group(['namespace' => 'User'], function() {
 		Route::post('confirm-payment', 'PaymentController@confirmPayment');
 		Route::post('confirm-payment-test', 'PaymentController@confirmPaymentTest');
+		Route::post('delete-source', 'PaymentController@deleteSource');
 	});
 	// Route::get('cart', 'OrderController@cartWithOutLogin')->name('cartWithOutLogin');
 	Route::get('view-cart/{orderId}', 'OrderController@viewCart');
@@ -217,7 +219,8 @@ Route::group(['prefix' => 'kitchen'], function(){
 	Route::post('create-menu-save', 'AdminController@kitchenCreateMenuPost');
 	Route::post('create-menu-update', 'AdminController@kitchenUpdateMenuPost');
 
-	Route::get('edit-menu-dish', 'AdminController@kitchenEditDish');		
+	Route::get('edit-menu-dish', 'AdminController@kitchenEditDish');
+	Route::get('copy-dish/{productId}', 'AdminController@copyDish');
 	Route::get('delete-menu-dish', 'AdminController@kitchenDeleteDish');
 	Route::get('delete-dish-price', 'AdminController@deleteDishPrice');	
 	Route::get('createStandardOffer', 'AdminController@createStandardOffer');			
@@ -288,6 +291,13 @@ Route::group(['prefix' => 'kitchen'], function(){
 		Route::post('pos-print', 'PosPrintController@handlePost');
 		Route::get('pos-print', 'PosPrintController@handleGet');
 		Route::delete('pos-print', 'PosPrintController@handleDeleteMethod');
+	});
+});
+
+// 
+Route::group(['prefix' => 'iframe'], function() {
+	Route::group(['namespace' => 'Iframe'], function() {
+		Route::get('restro-menu-list/{storeID}', 'IframeController@menuList');
 	});
 });
 

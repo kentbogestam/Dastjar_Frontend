@@ -10,6 +10,7 @@ use Session;
 use \Gumlet\ImageResize;
 
 use App\Order;
+use App\DishType;
 
 // 
 use App\App42\PushNotificationService;
@@ -358,5 +359,106 @@ class Helper extends Model
         }
 
         return gmdate("H:i", $seconds);
+    }
+
+    function getDishTypeTree($uId)
+    {
+        $dishType = array();
+
+        // Level1
+        $dishTypeLevel1 = $this->getdDishTypeBy($uId, null, 'rank');
+
+        if($dishTypeLevel1)
+        {
+            foreach($dishTypeLevel1 as $level1)
+            {
+                $dishType[] = array(
+                    'dish_id' => $level1->dish_id,
+                    'dish_lang' => $level1->dish_lang,
+                    'dish_name' => $level1->dish_name,
+                    'level' => 0
+                );
+
+                // Level2
+                $dishTypeLevel2 = $this->getdDishTypeBy(null, $level1->dish_id);
+                
+                if($dishTypeLevel2)
+                {
+                    foreach($dishTypeLevel2 as $level2)
+                    {
+                        $dishType[] = array(
+                            'dish_id' => $level2->dish_id,
+                            'dish_lang' => $level2->dish_lang,
+                            'dish_name' => $level2->dish_name,
+                            'level' => 1
+                        );
+
+                        // Level3
+                        $dishTypeLevel3 = $this->getdDishTypeBy(null, $level2->dish_id);
+                        
+                        if($dishTypeLevel3)
+                        {
+                            foreach($dishTypeLevel3 as $level3)
+                            {
+                                $dishType[] = array(
+                                    'dish_id' => $level3->dish_id,
+                                    'dish_lang' => $level3->dish_lang,
+                                    'dish_name' => $level3->dish_name,
+                                    'level' => 2
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $dishType;
+    }
+
+    // 
+    public function getdDishTypeBy($uId = null, $parentId = null, $orderBy = null)
+    {
+        $dishType = DishType::select(['dish_id', 'dish_lang', 'dish_name'])
+            ->where(['dish_activate' => 1]);
+
+        if( !is_null($uId) )
+        {
+            $dishType->where('u_id', $uId);
+        }
+
+        if( is_null($parentId) )
+        {
+            $dishType->where('parent_id', null);
+        }
+        else
+        {
+            $dishType->where('parent_id', $parentId);
+        }
+
+        if( !is_null($orderBy) )
+        {
+            $dishType->orderBy($orderBy);
+        }
+
+        return $dishType->get();
+    }
+
+    /**
+     * Add specific character into string
+     * @param  string  $input  [description]
+     * @param  integer $length [description]
+     * @param  string  $string [description]
+     * @return [type]          [description]
+     */
+    public static function strReplaceBy($input = '', $length = 0, $string = '&nbsp; ')
+    {
+        $str = '';
+        for($i = 1; $i <= $length; $i++)
+        {
+            $str .= $string;
+        }
+
+        return $str.$input;
     }
 }

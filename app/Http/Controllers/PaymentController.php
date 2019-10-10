@@ -106,27 +106,27 @@ class PaymentController extends Controller
 					$body = $e->getJsonBody();
     				$err  = $body['error'];
 
-					return view('blankPage')->with('message',  $err['message']);
+					return view('v1.user.pages.blank-page')->with('message',  $err['message']);
 				} catch (Stripe\Error\InvalidRequest $e) {
 					// Invalid parameters were supplied to Stripe's API
-					return view('blankPage')->with('message',  $e->getMessage());
+					return view('v1.user.pages.blank-page')->with('message',  $e->getMessage());
 				} catch (Stripe\Error\Authentication $e) {
 					// Authentication with Stripe's API failed
     				// (maybe you changed API keys recently)
-    				return view('blankPage')->with('message',  $e->getMessage());
+    				return view('v1.user.pages.blank-page')->with('message',  $e->getMessage());
 				} catch (Stripe\Error\ApiConnection $e) {
 					// Network communication with Stripe failed
-					return view('blankPage')->with('message',  $e->getMessage());
+					return view('v1.user.pages.blank-page')->with('message',  $e->getMessage());
 				} catch (Stripe\Error\Base $e) {
 					// Display a very generic error to the user, and maybe send
     				// yourself an email
-    				return view('blankPage')->with('message',  $e->getMessage());
+    				return view('v1.user.pages.blank-page')->with('message',  $e->getMessage());
 				} catch (Exception $e) {
 					// Something else happened, completely unrelated to Stripe
-					return view('blankPage')->with('message',  $e->getMessage());
+					return view('v1.user.pages.blank-page')->with('message',  $e->getMessage());
 				}
 			} catch (\Exception $ex) {
-	        	return view('blankPage')->with('message', $ex->getMessage());
+	        	return view('v1.user.pages.blank-page')->with('message', $ex->getMessage());
 			}
     	}else{
 

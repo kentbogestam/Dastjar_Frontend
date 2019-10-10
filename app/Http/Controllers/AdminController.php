@@ -56,6 +56,7 @@ use App\PromotionDiscount;
 use App\Driver;
 use App\OrderDelivery;
 use App\UserAddress;
+use App\StoreVirtualMapping;
 
 //use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -105,6 +106,22 @@ class AdminController extends Controller
             $data = $request->input();
             Session::put('storeId', $data['storeId']);
             $storeId = $data['storeId'];
+
+            // Get virtual restaurant if mapped and set them in session
+            $storeMapping = StoreVirtualMapping::where('store_id', $storeId)
+                ->get();
+
+            if($storeMapping)
+            {
+                $virtualStores = array();
+
+                foreach($storeMapping as $row)
+                {
+                    $virtualStores[] = $row['virtual_store_id'];
+                }
+
+                Session::put('virtualStores', $virtualStores);
+            }
         }else{
             $storeId = Session::get('storeId');
         }
@@ -258,31 +275,6 @@ class AdminController extends Controller
         }
 
         return response()->json(['data' => $result]);
-
-        /*$response = new \Symfony\Component\HttpFoundation\StreamedResponse(function() {
-            $staticPlans = array('kitchen', 'orderonsite', 'catering');
-            $currentPlans = Session::get('subscribedPlans');
-            $data = array_keys($currentPlans);
-
-            while (true) {
-                // if (!empty($data)) {}
-                echo 'data: ' . json_encode($data) . "\n\n";
-                ob_flush();
-                flush();
-
-                if ( connection_aborted() ) break;
-
-                //sleep for x seconds
-                sleep(20);
-
-                // Check and update subscription plan for logged-in store
-                $currentPlans = array_keys($this->updateStoreSubscriptionPlan());
-                $data = array_values(array_intersect($staticPlans, $currentPlans));
-            }
-        });
-
-        $response->headers->set('Content-Type', 'text/event-stream');
-        return $response;*/
     }
 
     /**
@@ -340,7 +332,7 @@ class AdminController extends Controller
             $helper->logs("Order Ready: Order ID - " . $orderId);
 
             // Get order detail
-            $order = Order::select(['user_id', 'user_type', 'customer_order_id'])
+            $order = Order::select(['user_id', 'user_type', 'delivery_type', 'customer_order_id'])
                 ->where('order_id' , $orderId)
                 ->first();
             
@@ -348,7 +340,10 @@ class AdminController extends Controller
             DB::table('order_details')->where('order_id', $orderId)->update(['order_ready' => 1]);
             DB::table('orders')->where('order_id', $orderId)->update(['order_ready' => 1]);
 
-            if($order->user_id != 0)
+            // Send order ready notification (if not home delivery)
+            $redirectText = 'Order Ready Notification Send Successfully.';
+
+            if($order->user_id != 0 && $order->delivery_type != 3)
             {
                 $recipients = [];
                 if($order->user_type == 'customer'){
@@ -372,7 +367,6 @@ class AdminController extends Controller
                 // if($pieces[0] == 'Safari')
                 if( ($pieces[0] == 'Safari') || ( isset($adminDetail->browser) && strpos($adminDetail->browser, 'Mobile/') !== false ) || ( isset($adminDetail->browser) && strpos($adminDetail->browser, 'wv') !== false ) )
                 {
-                    // $message = "Your Order Ready Please click on Link \n ".env('APP_URL').'ready-notification/'.$order->customer_order_id;
                     $message = __('messages.notificationOrderReady', ['order_id' => $order->customer_order_id]);
                     $result = $this->apiSendTextMessage($recipients, $message);
                     
@@ -388,10 +382,11 @@ class AdminController extends Controller
             }
             else
             {
+                $redirectText = 'Order has ready.';
                 $helper->logs("Order Ready: ELSE; Order ID - ".$orderId);
             }
 
-            return redirect()->back()->with('success', 'Order Ready Notification Send Successfully.');
+            return redirect()->back()->with('success', $redirectText);
         } catch(\Exception $ex){
             $helper->logs("Step 6: Exception = " .$ex->getMessage());
         }
@@ -536,11 +531,22 @@ class AdminController extends Controller
 
     
     public function kitchenOrders(){
-        $reCompanyId = Session::get('storeId');
         $deliveryDate = Carbon::now()->subDays(1)->toDateString();
+        $stores[] = $reCompanyId = Session::get('storeId');
 
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time','orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
-            ->where(['order_details.store_id' => $reCompanyId])
+        // Get virtual store if mapped
+        if( Session::has('virtualStores') )
+        {
+            $virtualStores = Session::get('virtualStores');
+
+            foreach($virtualStores as $row)
+            {
+                $stores[] = $row;
+            }
+        }
+
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time', 'orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
+            ->whereIn('order_details.store_id', $stores)
             ->where('delivery_date', '>=', $deliveryDate)
             ->where('order_details.order_ready', '0')
             ->whereNotIn('orders.online_paid', [2])
@@ -557,11 +563,22 @@ class AdminController extends Controller
     }
 
     public function kitchenOrdersNew($id){
-        $reCompanyId = Session::get('storeId');
         $deliveryDate = Carbon::now()->subDays(1)->toDateString();
+        $stores[] = $reCompanyId = Session::get('storeId');
+
+        // Get virtual store if mapped
+        if( Session::has('virtualStores') )
+        {
+            $virtualStores = Session::get('virtualStores');
+
+            foreach($virtualStores as $row)
+            {
+                $stores[] = $row;
+            }
+        }
 
         $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
-            ->where(['order_details.store_id' => $reCompanyId])
+            ->whereIn('order_details.store_id', $stores)
             ->where('delivery_date', '>=', $deliveryDate)
             ->where('order_details.order_ready', '0')
             ->where('order_details.id', '>', $id)
@@ -783,7 +800,6 @@ class AdminController extends Controller
         // Send promotional link
         $recipients = ['+'.$request->prefix.$mobile];
         $message = env('APP_URL') . "promotion/apply-user-discount/{$request->store_id}/{$request->discount_code}";
-        // $message = __('messages.notificationOrderReady', ['order_id' => $OrderId->customer_order_id]);
         $result = $this->apiSendTextMessage($recipients, $message);
 
         return response()->json(['status' => $status, 'result' => $result]);
@@ -1048,51 +1064,6 @@ class AdminController extends Controller
 
             $allData = [];
 
-            /*$prods = $products->join('dish_type','dish_type.dish_id','=','product.dish_type')->where('product.u_id', Auth::user()->u_id)->where('s_activ', '!=' , 2)->where('dish_activate',1)
-            ->orderBy('product_rank', 'ASC')
-            ->get()->groupBy('dish_type');
-            $prodprices = $productPriceList->where('store_id', Session::get('storeId'))->get()->groupBy('product_id');
-        
-            foreach($prods as $k=>$r){
-                foreach($r as $k2=>$r2){
-                    if(isset($prodprices[$r2->product_id])){
-                        $data = [];
-                        $data['product_id'] = $r2->product_id;
-
-                        $sloganLangId = $productOfferSloganLangList->where('product_id',$data['product_id'])->first()->offer_slogan_lang_list;
-                        $sloganSubLangId = $productOfferSubSloganLangList->where('product_id',$data['product_id'])->first()->offer_sub_slogan_lang_list;
-
-                        $prodName = $langText->where('id',$sloganLangId)->first()->text;
-                        $prodDesc = $langText->where('id',$sloganSubLangId)->first()->text;
-
-                        $data['product_name'] = $prodName;
-                        $data['product_description'] = $prodDesc;
-                        try{
-                            getimagesize($r2->small_image);
-                            $data['small_image'] = $r2->small_image;
-                        }catch(\Exception $ex){
-                            $data['small_image'] = asset('images/placeholder-image.png');
-                        }
-
-                        $data['publishing_start_date'] = $r2->publishing_start_date;
-                        $data['publishing_end_date'] = $r2->publishing_end_date;
-
-                        foreach($prodprices[$r2->product_id] as $pk=>$pr){
-                            $prices['price_id'] = $pr->id;
-                            $prices['price'] = $pr->price;
-                            $prices['publishing_start_date'] = $pr->publishing_start_date;
-                            $prices['publishing_end_date'] = $pr->publishing_end_date;
-
-                            $data['prices'][] = $prices;
-                        }
-
-                        if(!empty($r2->dish_type)){
-                            $allData[$r2->dish_type][] = $data;
-                        }
-                    }
-                }
-            }*/
-
             $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
             $storeName = $storedetails->store_name;
 
@@ -1101,8 +1072,10 @@ class AdminController extends Controller
 
             // Strange logic to get menu types for specific store ID 
             //$menuTypes = DishType::where('company_id', $companyId)->orderBy('rank')->orderBy('dish_id')->pluck('dish_name','dish_id');
+            
+            $menuTypes = array();
 
-            $menuTypes = DishType::select('DT.dish_name','DT.dish_id')
+            $dishType = DishType::select('DT.dish_name','DT.dish_id', 'DT.parent_id', 'DT.rank')
                 ->from('dish_type AS DT')
                 ->join('product AS P', 'P.dish_type', '=', 'DT.dish_id')
                 ->join('product_price_list AS PPL', 'PPL.product_id', '=', 'P.product_id')
@@ -1113,8 +1086,38 @@ class AdminController extends Controller
                 ->groupBy('DT.dish_id')
                 ->orderBy('DT.rank')
                 ->orderBy('DT.dish_id')
-                ->pluck('DT.dish_name','DT.dish_id');
-            //echo '<pre>'; print_r($menuTypes->toArray()); exit;
+                ->get();
+
+            if($dishType)
+            {
+                foreach($dishType as $dish)
+                {
+                    if( !is_null($dish->parent_id) )
+                    {
+                        $dishTypeLevel0 = DishType::from('dish_type AS DT1')
+                            ->select(['DT1.dish_id', 'DT1.dish_name', 'DT1.rank'])
+                            ->leftJoin('dish_type AS DT2', 'DT2.parent_id', '=', 'DT1.dish_id')
+                            ->leftJoin('dish_type AS DT3', 'DT3.parent_id', '=', 'DT2.dish_id')
+                            ->whereRaw("(DT1.dish_id = '{$dish->dish_id}' OR DT2.dish_id = '{$dish->dish_id}' OR DT3.dish_id = '{$dish->dish_id}') AND DT1.parent_id IS NULL")
+                            ->groupBy('DT1.dish_id')
+                            ->first();
+                        
+                        $menuTypes[] = (object) array(
+                            'dish_id' => $dishTypeLevel0->dish_id,
+                            'dish_name' => $dishTypeLevel0->dish_name,
+                            'rank' => $dishTypeLevel0->rank
+                        );
+                    }
+                    else
+                    {
+                        $menuTypes[] = (object) array(
+                            'dish_id' => $dish->dish_id,
+                            'dish_name' => $dish->dish_name,
+                            'rank' => $dish->rank
+                        );
+                    }
+                }
+            }
 
             $companydetails = new Company();
             $currency = $companydetails->where('company_id' , '=', $companyId)->first()->currencies;
@@ -1129,11 +1132,37 @@ class AdminController extends Controller
      * @return [type]           [description]
      */
     public function ajaxGetProductByDishType(Request $request) {
+        $menuTypes = array($request->dish_id);
+        $helper = new Helper();
+
+        // 
+        $dishTypeLevel1 = $helper->getdDishTypeBy(null, $request->dish_id);
+
+        if($dishTypeLevel1)
+        {
+            foreach($dishTypeLevel1 as $level1)
+            {
+                $menuTypes[] = $level1->dish_id;
+
+                // 
+                $dishTypeLevel2 = $helper->getdDishTypeBy(null, $level1->dish_id);
+
+                if($dishTypeLevel2)
+                {
+                    foreach($dishTypeLevel2 as $level2)
+                    {
+                        $menuTypes[] = $level2->dish_id;
+                    }
+                }
+            }
+        }
+        
         // Get all products by dish
         $products = Product::select('product.product_id', 'product.product_name', 'product.product_description', 'product.small_image')
             ->join('dish_type','dish_type.dish_id','=','product.dish_type')
             ->join('product_price_list AS PPL', 'PPL.product_id', '=', 'product.product_id')
-            ->where('product.dish_type', $request->dish_id)
+            // ->where('product.dish_type', $request->dish_id)
+            ->whereIn('product.dish_type', array_unique($menuTypes))
             ->where('product.u_id', Auth::user()->u_id)
             ->where('PPL.store_id', Session::get('storeId'))
             ->where('product.s_activ', '!=' , 2)
@@ -1196,7 +1225,7 @@ class AdminController extends Controller
         $futureProductPrices = ProductPriceList::select('id', 'product_id', 'text', 'price', 'publishing_start_date', 'publishing_end_date')
             ->where('product_id', $request->product_id)
             ->where('store_id', Session::get('storeId'))
-            ->where('publishing_start_date', '>', $current_date)
+            ->whereRaw("(publishing_start_date > '{$current_date}' OR publishing_start_date IS NULL)")
             ->orderBy('publishing_start_date')
             ->get();
 
@@ -1209,6 +1238,8 @@ class AdminController extends Controller
     }
 
     public function kitchenCreateMenu(Request $request){        
+        $helper = new Helper();
+
         $store = Store::where('store_id' , Session::get('storeId'));
 
         if(!$store->exists()){
@@ -1223,7 +1254,8 @@ class AdminController extends Controller
         $companyId = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
 
         $dishType = new DishType();
-        $listDishes = $dishType->where('company_id' , '=', $companyId)->where('dish_activate', '=', '1')->pluck('dish_name','dish_id');
+        // $listDishes = $dishType->where('company_id' , '=', $companyId)->where('dish_activate', '=', '1')->pluck('dish_name','dish_id');
+        $listDishes = $helper->getDishTypeTree(Auth::user()->u_id);
 
         $companydetails = new Company();
         $currency = $companydetails->where('company_id' , '=', $companyId)->first()->currencies;
@@ -1334,6 +1366,7 @@ class AdminController extends Controller
 
         $product->lang = $request->dishLang;
         $product->dish_type = $request->dishType;
+
         $product->product_description = $request->prodDesc;
         $product->preparation_Time = $hours;
         $product->category = "7099ead0-8d47-102e-9bd4-12313b062day";
@@ -1342,64 +1375,6 @@ class AdminController extends Controller
         $product->start_of_publishing = Carbon::now();
         $product->company_id = $company_id;
         $product->save();
-
-        $sloganSubLangId = $helper->uuid();
-
-        $productOfferSubSloganLangList = new ProductOfferSubSloganLangList();
-        $productOfferSubSloganLangList->product_id = $product_id;
-        $productOfferSubSloganLangList->offer_sub_slogan_lang_list = $sloganSubLangId;
-        $productOfferSubSloganLangList->save();
-
-        /*** insert product description in lang_text table */
-        $langText = new LangText();
-        $langText->id = $sloganSubLangId;
-        $langText->lang = $request->dishLang;
-        $langText->text = $request->prodDesc;
-        $langText->save();
-
-        $sloganLangId = $helper->uuid();
-
-        $productOfferSloganLangList = new ProductOfferSloganLangList();
-        $productOfferSloganLangList->product_id = $product_id;
-        $productOfferSloganLangList->offer_slogan_lang_list = $sloganLangId;
-        $productOfferSloganLangList->save();
-
-        /*** insert product name in lang_text table */
-        $langText = new LangText();
-        $langText->id = $sloganLangId;
-        $langText->lang = $request->dishLang;
-        $langText->text = $request->prodName;
-        $langText->save();
-
-        $SystemkeyId = $helper->uuid();
-
-        /*** insert product language in lang_text table */
-        $langText = new LangText();
-        $langText->id = $SystemkeyId;
-        $langText->lang = $request->dishLang;
-        $langText->text = $product_id;
-        $langText->save();
-
-        /*** insert product id in product_keyword table */
-        $productKeyword = new ProductKeyword();
-        $productKeyword->product_id = $product_id;
-        $productKeyword->system_key = $SystemkeyId;
-        $productKeyword->save();
-
-        $Systemkey_companyId = $helper->uuid();
-
-        /*** insert company id in lang_text table */
-        $langText = new LangText();
-        $langText->id = $Systemkey_companyId;
-        $langText->lang = $request->dishLang;
-        $langText->text = $company_id;
-        $langText->save();
-   
-        /*** insert company id in product_keyword table */
-        $productKeyword = new ProductKeyword();
-        $productKeyword->product_id = $product_id;
-        $productKeyword->system_key = $Systemkey_companyId;
-        $productKeyword->save();
 
         $product_price_list = ProductPriceList::firstOrNew(['product_id' => $product_id]);
         $product_price_list->store_id = $store_id;
@@ -1410,7 +1385,81 @@ class AdminController extends Controller
         $product_price_list->publishing_end_date = $publish_end_date;
         $product_price_list->save();
 
+        // Add product meta
+        $data = array(
+            'product_id' => $product_id,
+            'company_id' => $company_id,
+            'lang' => $request->dishLang,
+            'product_description' => $request->prodDesc,
+            'product_name' => $request->prodName,
+        );
+
+        $this->addProductMeta($data);
+
         return redirect()->route('menu')->with('success', $message);
+    }
+
+    // Add product meta while adding new product
+    private function addProductMeta($data)
+    {
+        $helper = new Helper();
+        $sloganSubLangId = $helper->uuid();
+
+        $productOfferSubSloganLangList = new ProductOfferSubSloganLangList();
+        $productOfferSubSloganLangList->product_id = $data['product_id'];
+        $productOfferSubSloganLangList->offer_sub_slogan_lang_list = $sloganSubLangId;
+        $productOfferSubSloganLangList->save();
+
+        // insert product description in lang_text table
+        $langText = new LangText();
+        $langText->id = $sloganSubLangId;
+        $langText->lang = $data['lang'];
+        $langText->text = $data['product_description'];
+        $langText->save();
+
+        $sloganLangId = $helper->uuid();
+
+        $productOfferSloganLangList = new ProductOfferSloganLangList();
+        $productOfferSloganLangList->product_id = $data['product_id'];
+        $productOfferSloganLangList->offer_slogan_lang_list = $sloganLangId;
+        $productOfferSloganLangList->save();
+
+        // insert product name in lang_text table
+        $langText = new LangText();
+        $langText->id = $sloganLangId;
+        $langText->lang = $data['lang'];
+        $langText->text = $data['product_name'];
+        $langText->save();
+
+        $SystemkeyId = $helper->uuid();
+
+        // insert product language in lang_text table
+        $langText = new LangText();
+        $langText->id = $SystemkeyId;
+        $langText->lang = $data['lang'];
+        $langText->text = $data['product_id'];
+        $langText->save();
+
+        // insert product id in product_keyword table
+        $productKeyword = new ProductKeyword();
+        $productKeyword->product_id = $data['product_id'];
+        $productKeyword->system_key = $SystemkeyId;
+        $productKeyword->save();
+
+        $Systemkey_companyId = $helper->uuid();
+
+        // insert company id in lang_text table
+        $langText = new LangText();
+        $langText->id = $Systemkey_companyId;
+        $langText->lang = $data['lang'];
+        $langText->text = $data['company_id'];
+        $langText->save();
+   
+        // insert company id in product_keyword table
+        $productKeyword = new ProductKeyword();
+        $productKeyword->product_id = $data['product_id'];
+        $productKeyword->system_key = $Systemkey_companyId;
+        $productKeyword->save();
     }
 
 
@@ -1522,6 +1571,7 @@ class AdminController extends Controller
 
         $product->lang = $request->dishLang;
         $product->dish_type = $request->dishType;
+
         $product->product_description = $request->prodDesc;
         $product->preparation_Time = $hours;
         $product->category = "7099ead0-8d47-102e-9bd4-12313b062day";
@@ -1572,6 +1622,8 @@ class AdminController extends Controller
     }
 
     public function kitchenEditDish(Request $request){
+        $helper = new Helper();
+
         $productid = $request->product_id;
         $store_id = $request->store_id;
         $price_id = $request->price_id;
@@ -1592,7 +1644,10 @@ class AdminController extends Controller
 
         $dishType = new DishType();
 
-        $listDishes = $dishType->where('u_id' , '=', Auth::user()->u_id)->where('dish_activate', '=', '1')->pluck('dish_name','dish_id');
+        // $listDishes = $dishType->where('u_id' , '=', Auth::user()->u_id)->where('dish_activate', '=', '1')->pluck('dish_name','dish_id');
+        $listDishes = $helper->getDishTypeTree(Auth::user()->u_id);
+
+        $listSubCategory = $dishType->where('parent_id' , '=', $product->dish_type)->where('dish_activate', '=', '1')->pluck('dish_name','dish_id');
 
         $employer = new Employer();
         $companyId = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
@@ -1606,7 +1661,106 @@ class AdminController extends Controller
 
         $product->preparation_Time = $time;
 
-        return view('kitchen.menulist.createMenu',compact('product', 'product_price_list', 'store_id', 'storeName', 'listDishes', 'currency'));
+        return view('kitchen.menulist.createMenu',compact('product', 'product_price_list', 'store_id', 'storeName', 'listDishes', 'currency', 'listSubCategory'));
+    }
+
+    /**
+     * Clone dish functionality
+     * @param  [type] $productId [description]
+     * @return [type]            [description]
+     */
+    function copyDish($productId)
+    {
+        // Find the product and then clone it
+        $product = Product::find($productId);
+
+        if($product)
+        {
+            $helper = new Helper();
+
+            // Create unique product_id and then create product
+            $pId = $helper->uuid();
+
+            while(Product::where('product_id',$pId)->exists()){
+                $pId = $helper->uuid();
+            }
+
+            $productNew = new Product();
+            $productNew->product_id = $pId;
+            $productNew->product_name = $product->product_name.' - Copy';
+            $productNew->dish_type = $product->dish_type;
+            $productNew->product_description = $product->product_description;
+            $productNew->lang = $product->lang;
+            $productNew->preparation_Time = $product->preparation_Time;
+            $productNew->brand_name = $product->brand_name;
+            $productNew->small_image = $product->small_image;
+            $productNew->large_image = $product->large_image;
+            $productNew->category = $product->category;
+            $productNew->start_of_publishing = $product->start_of_publishing;
+            $productNew->coupon_delivery_type = $product->coupon_delivery_type;
+            $productNew->offer_type = $product->offer_type;
+            $productNew->product_info_page = $product->product_info_page;
+            $productNew->link = $product->link;
+            $productNew->is_public = $product->is_public;
+            $productNew->ean_code = $product->ean_code;
+            $productNew->product_number = $product->product_number;
+            $productNew->u_id = $product->u_id;
+            $productNew->company_id = $product->company_id;
+            $productNew->s_activ = $product->s_activ;
+            $productNew->reseller_status = $product->reseller_status;
+            $productNew->product_rank = $product->product_rank;
+            
+            if($productNew->save())
+            {
+                // Get product price detail
+                $current_date = Carbon::now()->format('Y-m-d h:i:00');
+
+                $currentProductPrice = ProductPriceList::select('product_id', 'store_id', 'text', 'price', 'lang', 'publishing_start_date', 'publishing_end_date')
+                    ->where('product_id', $productId)
+                    ->where('store_id', Session::get('storeId'))
+                    ->where('publishing_start_date', '<=', $current_date)
+                    ->where('publishing_end_date', '>=', $current_date)
+                    ->first();
+                
+                if(!$currentProductPrice)
+                {
+                    $currentProductPrice = ProductPriceList::select('product_id', 'store_id', 'text', 'price', 'lang', 'publishing_start_date', 'publishing_end_date')
+                        ->where('product_id', $productId)
+                        ->where('store_id', Session::get('storeId'))
+                        ->orderBy('id', 'DESC')
+                        ->first();
+                }
+
+                if($currentProductPrice)
+                {
+                    $product_price_list = ProductPriceList::firstOrNew(['product_id' => $productNew->product_id]);
+                    $product_price_list->store_id = $currentProductPrice->store_id;
+                    $product_price_list->text = $currentProductPrice->text;
+                    $product_price_list->price = $currentProductPrice->price;
+                    $product_price_list->lang = $currentProductPrice->lang;
+                    $product_price_list->save();
+                }
+
+                // Add product meta
+                $data = array(
+                    'product_id' => $pId,
+                    'company_id' => $productNew->company_id,
+                    'lang' => $productNew->lang,
+                    'product_description' => $productNew->product_description,
+                    'product_name' => $productNew->product_name,
+                );
+
+                $this->addProductMeta($data);
+            }
+
+            $message = 'Dish copied successfully.';
+        }
+        else
+        {
+            $message = 'Dish not found.';
+        }
+
+        return redirect()->route('menu')->with('success', $message);
     }
 
     /**
@@ -1624,13 +1778,6 @@ class AdminController extends Controller
 
     public function kitchenDeleteDish(Request $request){
         $productid = $request->product_id;
-        
-        /*$productPriceList = new ProductPriceList();
-
-        if($productPriceList->where('product_id', '=', $productid)->count() > 1){
-            $productPriceList->where('id', '=', $request->price_id)->delete();
-            return back()->with('success','Dish Price deleted successfully');
-        }*/
 
         $c_s_rel = new C_S_Rel();
 
@@ -1675,8 +1822,12 @@ class AdminController extends Controller
             }
         }
 
+        // 
         $product = new Product();
         $q = $product->where('product_id', '=', $productid)->update(['s_activ' => '2']);
+
+        // Delete all price
+        ProductPriceList::where('product_id', $productid)->delete();
 
         return back()->with('success','Dish deleted successfully');
     }
@@ -2156,7 +2307,10 @@ class AdminController extends Controller
                     'order_ready' => 1,
                 ]);
 
-                if($OrderId->user_id != 0)
+                // Send order ready notification (if not home delivery)
+                $redirectText = 'Order Ready Notification Send Successfully.';
+
+                if($OrderId->user_id != 0 && $OrderId->delivery_type != 3)
                 {
                     $recipients = [];                
                     if($OrderId->user_type == 'customer'){
@@ -2178,31 +2332,12 @@ class AdminController extends Controller
                 }
                 else
                 {
+                    $redirectText = 'Order has ready.';
                     $pieces[0] = '';               
                 }
 
                 if( ($pieces[0] == 'Safari') || ( isset($adminDetail->browser) && strpos($adminDetail->browser, 'Mobile/') !== false ) || ( isset($adminDetail->browser) && strpos($adminDetail->browser, 'wv') !== false ) )
                 {
-                    /*$url = "https://gatewayapi.com/rest/mtsms";
-                    $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
-                    $message = "Your Order Ready Please click on Link \n ".env('APP_URL').'ready-notification/'.$OrderId->customer_order_id;
-                    $json = [
-                        'sender' => 'Dastjar',
-                        'message' => ''.$message.'',
-                        'recipients' => [],
-                    ];
-                    foreach ($recipients as $msisdn) {
-                        $json['recipients'][] = ['msisdn' => $msisdn];}
-
-                    $ch = curl_init();
-                    curl_setopt($ch,CURLOPT_URL, $url);
-                    curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
-                    curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
-                    curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
-                    curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
-                    $result = curl_exec($ch);
-                    curl_close($ch);   */
-
                     $message = __('messages.notificationOrderReady', ['order_id' => $OrderId->customer_order_id]);
                     $result = $this->apiSendTextMessage($recipients, $message);
 
@@ -2218,7 +2353,7 @@ class AdminController extends Controller
                     }
                 }
 
-                return redirect()->back()->with('success', 'Order Ready Notification Send Successfully.');
+                return redirect()->back()->with('success', $redirectText);
             }
 
             return redirect()->back()->with('success', 'Order Item Ready Successfully.');

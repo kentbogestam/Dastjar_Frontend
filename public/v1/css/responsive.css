@@ -1,0 +1,269 @@
+@media screen and (min-width:1920px) {
+	.head-section .logo-with-map .logo img {
+		max-width: unset;
+	}
+
+	.head-section .logo-with-map .map-icon img {
+		max-width: 50px;
+	}
+
+	.mid-section {
+	    margin-top: 80px;
+	}
+
+	.row-hotel {
+		padding: 60px 30px;
+	}
+
+	.row-hotel .hotel-distance a {
+		font-size: 100px;
+		margin-top: 40px;
+	}
+
+	.row-hotel .hotel-icon p {
+		font-size: 100px;
+		margin-left: 70px;
+	}
+
+	.row-hotel .hotel-icon img {
+	    max-width: 400px;
+	    max-height: 300px;
+	    border-radius: 30px;
+	}
+
+	.button-section a {
+		font-size: 100px;
+	}
+
+	.button-section img {
+	    max-width: 30px;
+	}
+
+	.footer-section ul li a {
+		font-size: 100px;
+	}
+
+	.footer-section ul li .badge {
+		padding: 10px 15px;
+		font-size: 30px;
+	}
+}
+
+@media screen and (max-width: 1919px) {
+	.row-hotel .hotel-icon p {
+		font-size: 28px;
+	}
+
+	.row-hotel .hotel-distance {
+		text-align: right;
+	}
+
+	.row-hotel .hotel-distance a {
+	    margin-top: 25px;
+	    font-size: 28px;
+	}
+
+	.row-hotel .hotel-icon img {
+	    max-width: 150px;
+	    max-height: 120px;
+	}
+
+	.button-section a,
+	.footer-section ul li a {
+		font-size: 28px;
+	}
+}
+
+@media screen and (max-width: 1450px) {
+	.row-hotel .hotel-icon p {
+		font-size: 22px;
+	}
+
+	.row-hotel .hotel-distance {
+		text-align: right;
+	}
+
+	.row-hotel .hotel-distance a {
+	    margin-top: 25px;
+	    font-size: 22px;
+	}
+
+	.row-hotel .hotel-icon img {
+	    max-width: 120px;
+	    max-height: 90px;
+	}
+
+	.button-section a,
+	.footer-section ul li a {
+		font-size: 23px;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	.row-hotel .hotel-icon p {
+		font-size: 20px;
+	}
+
+	.row-hotel .hotel-distance {
+		text-align: right;
+	}
+
+	.row-hotel .hotel-distance a {
+	    margin-top: 10px;
+	    font-size: 20px;
+	}
+
+	.row-hotel .hotel-icon img {
+	    max-width: 100px;
+	    max-height: 70px;
+	}
+
+	.button-section a {
+		font-size: 20px;
+	}
+
+	.button-section img {
+	    max-width: 27px;
+	}
+
+	.footer-section ul li a {
+		font-size: 22px;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	.row-hotel .hotel-icon {
+		text-align: left;
+	}
+
+	.row-hotel .hotel-icon p {
+		text-align: center;
+		margin-top: 0;
+		font-size: 18px;
+	}
+
+	.row-hotel .hotel-distance {
+		text-align: right;
+	}
+
+	.row-hotel .hotel-distance a {
+	    margin-top: 10px;
+	    font-size: 18px;
+	}
+
+	.row-hotel .hotel-distance {
+		text-align: right;
+	}
+
+	.row-hotel .hotel-icon img {
+	    max-width: 80px;
+	    max-height: 60px;
+	}
+
+	.button-section a {
+		font-size: 18px;
+	}
+
+	.button-section img {
+	    max-width: 25px;
+	}
+
+	.footer-section ul li a {
+		font-size: 22px;
+	}
+
+	.order-summery p.large-text {
+		font-size: 2em;
+	}
+
+	.welcome-anar {
+		width:80%;
+	}
+
+	.hotel-icon-none {
+	    display: inline-block;
+	    width: 100px;
+	}
+
+	.logo-with-map ul li.location {
+	    width: 70%;
+	}
+
+}
+
+@media screen and (max-width: 576px) {
+	.row-hotel .hotel-distance {
+		margin-top: 5px;
+	}
+
+	.mid-section {
+	    margin-top: 60px;
+	}
+
+	.button-section a {
+		padding: 6px 12px;
+	}
+
+	.row-hotel .hotel-icon img {
+	    max-width: 54px;
+	    max-height: 41px;
+	}
+
+	.button-section a,
+	.row-hotel .hotel-distance a {
+		font-size: 15px;
+	}
+
+	.row-hotel .hotel-icon p {
+		font-size: 15px;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		max-width: 140px;
+	}
+
+	.footer-section ul li a {
+		font-size: 22px;
+	}
+
+	.row-hotel .title-with-des {
+	    display: inline-block;
+	    vertical-align: middle;
+	    max-width: 100px;
+	}
+
+	.hotel-icon-none {
+	    display: inline-block;
+	    width: 53px;
+	}
+
+	.discription h3 {
+	    font-size: 16px;
+	    font-weight: bold;
+	}
+
+	.discription {
+	    max-width: 85px;
+	}
+
+	.product-detail {
+		margin-right: 5px;
+	}
+
+	.quantity .inputBox input[type="text"] {
+	    width: 38px;
+	}
+}
+@media (max-width: 700px) {
+	.hotel-ser a span.loyalty-offer{ display:block; padding-left:0px; }
+	.hotel-ser a span:nth-of-type(1){ width:auto; }
+	.hotel-ser a span{ display:inline-block; }
+	.icon-fa-angle-right{float:right; }
+	.modal.fade.pop_up.popgdpr{ top:30%; bottom:inherit; }
+}
+@media (max-width: 350px) {
+	.logo-with-map ul li.location {
+	    width: 30%;
+	    padding-left: 10%;
+	}
+}
