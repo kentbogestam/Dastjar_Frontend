@@ -146,7 +146,6 @@ return [
     'notificationOrderReady' => 'Din Order, :order_id är Klar',
     'notificationOrderDelivered' => 'Din Order, :order_id är Levererad',
     'notificationOrderAcceptedHomeDelivery' => 'Order :order_id has been loaded into car',
-    // 'gdprModalText' => "<p>Vi skyddar dina personliga uppgifter i enighet<br>med EUs GDPR (General Data Protection<br>Regulations).</p><br><p>Detta är en positionsbaserad tjänst. Den spar<br>din tid och tjänar dig bäst där du finns. För att<br>kunna göra så behöver vi ditt tillstånd att<br>lagra dina inloggningsuppgifter. Det hjälper<br>oss att säkerställa att din beställning<br>levereras till just dig och ingen annan.</p>",
     'gdprModalText' => "<p>Vi skyddar dina personliga uppgifter i enighet med EUs GDPR (General Data Protection Regulations).</p><br><p>Detta är en positionsbaserad tjänst. Den spar din tid och tjänar dig bäst där du finns. För att kunna göra så behöver vi ditt tillstånd att lagra dina inloggningsuppgifter. Det hjälper oss att säkerställa att din beställning levereras till just dig och ingen annan.</p>",
 
     // Store

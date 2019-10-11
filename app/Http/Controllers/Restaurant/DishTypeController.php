@@ -121,8 +121,11 @@ class DishTypeController extends Controller
         $data = $request->except(['_token']);
 
         // Update category
-        DishType::where('dish_id', $request->dish_id)
-            ->update(['dish_lang' => $request->dish_lang, 'dish_name' => $request->dish_name, 'parent_id' => $request->parent_id]);
+        if($request->dish_id != $request->parent_id)
+        {
+            DishType::where('dish_id', $request->dish_id)
+                ->update(['dish_lang' => $request->dish_lang, 'dish_name' => $request->dish_name, 'parent_id' => $request->parent_id]);
+        }
         
         return redirect('kitchen/dishtype/list')->with('success', __('messages.dishTypeUpdated'));
     }
