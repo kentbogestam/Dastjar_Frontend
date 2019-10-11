@@ -84,7 +84,7 @@
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-body">
-                    <form name="add-form" method="POST" action="{{ url('kitchen/dishtype/store') }}" id="add-form" data-ajax="false">
+                    <form name="add-form" id="add-form" method="POST" action="{{ url('kitchen/dishtype/store') }}" enctype="multipart/form-data" data-ajax="false">
                         @csrf
                         <div class="form-group">
                             <label for="dish_lang">{{ __('messages.language') }} <span class='mandatory'>*</span>:</label>
@@ -111,6 +111,10 @@
                                     @endforeach
                                 @endif
                             </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="dish_image">{{ __('messages.dishImage') }}:</label>
+                            <input type="file" name="dish_image" class="form-control" />
                         </div>
                         <button type="submit" class="btn btn-success">{{ __('messages.submit') }}</button>
                     </form>
@@ -126,7 +130,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body">
-                    <form name="update-form" method="POST" action="{{ url('kitchen/dishtype/update') }}" id="update-form" data-ajax="false">
+                    <form name="update-form" id="update-form" method="POST" action="{{ url('kitchen/dishtype/update') }}" enctype="multipart/form-data" data-ajax="false">
                         @csrf
                         <div class="form-group">
                             <label for="dish_lang">{{ __('messages.language') }} <span class='mandatory'>*</span>:</label>
@@ -154,6 +158,11 @@
                                 @endif
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label for="dish_image">{{ __('messages.dishImage') }}:</label>
+                            <input type="file" name="dish_image" class="form-control" />
+                        </div>
+                        <div class="img-wrap"></div>
                         <input type="hidden" name="dish_id" id="dish_id" data-rule-required="true">
                         <button type="submit" class="btn btn-success">{{ __('messages.update') }}</button>
                     </form>
@@ -179,6 +188,8 @@
 
     function getDishType(id)
     {
+        $('.img-wrap').html('');
+
         $.ajax({
             url: '{{ url('kitchen/dishtype/get-dish-type') }}/'+id,
             dataType: 'json',
@@ -187,7 +198,29 @@
                 $('#update-form-model').find('#dish_lang').val(response.dishType.dish_lang);
                 $('#update-form-model').find('#dish_name').val(response.dishType.dish_name);
                 $('#update-form-model').find('#parent_id').val(response.dishType.parent_id);
+
+                if(response.dishType.dish_image)
+                {
+                    let str = '<img src="https://s3.eu-west-1.amazonaws.com/dastjar-coupons/'+response.dishType.dish_image+'" class="img-thumbnail" alt="" style="max-width: 200px;"><button type="button" class="btn btn-link" onclick="removeCategoryImage('+response.dishType.dish_id+')"><i class="fa fa-remove" aria-hidden="true"></i></button>';
+                    $('#update-form-model').find('.img-wrap').html(str);
+                }
+
                 $('#update-form-model').modal();
+            }
+        });
+    }
+
+    // Remove cat image
+    function removeCategoryImage(id)
+    {
+        $.ajax({
+            url: '{{ url('kitchen/dishtype/remove-category-image') }}/'+id,
+            dataType: 'json',
+            success: function(response) {
+                if(response.status)
+                {
+                    $('.img-wrap').html('');
+                }
             }
         });
     }
