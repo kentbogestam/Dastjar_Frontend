@@ -562,10 +562,13 @@ class HomeController extends Controller
                             ->groupBy('DT1.dish_id')
                             ->first();
                         
-                        $menuTypes[] = (object) array(
-                            'dish_id' => $dishTypeLevel0->dish_id,
-                            'dish_name' => $dishTypeLevel0->dish_name
-                        );
+                        if($dishTypeLevel0)
+                        {
+                            $menuTypes[] = (object) array(
+                                'dish_id' => $dishTypeLevel0->dish_id,
+                                'dish_name' => $dishTypeLevel0->dish_name
+                            );
+                        }
                     }
                     else
                     {
