@@ -14,6 +14,8 @@ use App\Helper;
 use App\DishType;
 use App\Company;
 
+use \Gumlet\ImageResize;
+
 class DishTypeController extends Controller
 {
 	/**
@@ -71,9 +73,11 @@ class DishTypeController extends Controller
         if ($request->hasFile('dish_image'))
         {
             $file = $request->file('dish_image');
+            $newFile = new ImageResize($file);
+            $newFile->resizeToWidth(500);
             $imageName = 'cat-img-'.time().'.'.$file->getClientOriginalExtension();
             $filePath = 'upload/category/'.$imageName;
-            $t = Storage::disk('s3')->put($filePath, file_get_contents($file), 'public');
+            $t = Storage::disk('s3')->put($filePath, $newFile, 'public');
             
             if($t)
             {
@@ -176,9 +180,12 @@ class DishTypeController extends Controller
 
                 // Upload image
                 $file = $request->file('dish_image');
+                $newFile = new ImageResize($file);
+                $newFile->resizeToWidth(500);
                 $imageName = 'cat-img-'.time().'.'.$file->getClientOriginalExtension();
                 $filePath = 'upload/category/'.$imageName;
-                Storage::disk('s3')->put($filePath, file_get_contents($file), 'public');
+                // Storage::disk('s3')->put($filePath, file_get_contents($file), 'public');
+                Storage::disk('s3')->put($filePath, $newFile, 'public');
             }
 
             // 
