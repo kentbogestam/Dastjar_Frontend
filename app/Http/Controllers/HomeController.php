@@ -549,6 +549,8 @@ class HomeController extends Controller
 
             if($dishType)
             {
+                $dishIds = array();
+
                 foreach($dishType as $dish)
                 {
                     if( !is_null($dish->parent_id) )
@@ -564,18 +566,28 @@ class HomeController extends Controller
                         
                         if($dishTypeLevel0)
                         {
-                            $menuTypes[] = (object) array(
-                                'dish_id' => $dishTypeLevel0->dish_id,
-                                'dish_name' => $dishTypeLevel0->dish_name
-                            );
+                            $dishIds[] = $dishTypeLevel0->dish_id;
+                            
+                            if( !in_array($dish->dish_id, $dishIds) )
+                            {
+                                $menuTypes[] = (object) array(
+                                    'dish_id' => $dishTypeLevel0->dish_id,
+                                    'dish_name' => $dishTypeLevel0->dish_name
+                                );
+                            }
                         }
                     }
                     else
                     {
-                        $menuTypes[] = (object) array(
-                            'dish_id' => $dish->dish_id,
-                            'dish_name' => $dish->dish_name
-                        );
+                        if( !in_array($dish->dish_id, $dishIds) )
+                        {
+                            $dishIds[] = $dish->dish_id;
+
+                            $menuTypes[] = (object) array(
+                                'dish_id' => $dish->dish_id,
+                                'dish_name' => $dish->dish_name
+                            );
+                        }
                     }
                 }
             }
