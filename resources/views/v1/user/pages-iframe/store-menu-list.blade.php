@@ -23,7 +23,7 @@
 @section('content')
 	@include('v1.user.elements.store-delivery-service')
 
-	@if( isset($menuTypes) && !$menuTypes->isEmpty() )
+	@if( !empty($menuTypes) )
 		<form id="form" class="form-horizontal" method="post" action="{{ url('cart') }}">
 			{{ csrf_field() }}
 			<div class="hotel-service-list">
