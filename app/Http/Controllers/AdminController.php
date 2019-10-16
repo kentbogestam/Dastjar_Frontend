@@ -1106,7 +1106,7 @@ class AdminController extends Controller
                         
                         if($dishTypeLevel0)
                         {
-                            if( !in_array($dish->dish_id, $dishIds) )
+                            if( !in_array($dishTypeLevel0->dish_id, $dishIds) )
                             {
                                 $dishIds[] = $dishTypeLevel0->dish_id;
 

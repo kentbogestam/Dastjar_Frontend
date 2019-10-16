@@ -566,10 +566,10 @@ class HomeController extends Controller
                         
                         if($dishTypeLevel0)
                         {
-                            $dishIds[] = $dishTypeLevel0->dish_id;
-                            
-                            if( !in_array($dish->dish_id, $dishIds) )
+                            if( !in_array($dishTypeLevel0->dish_id, $dishIds) )
                             {
+                                $dishIds[] = $dishTypeLevel0->dish_id;
+
                                 $menuTypes[] = (object) array(
                                     'dish_id' => $dishTypeLevel0->dish_id,
                                     'dish_name' => $dishTypeLevel0->dish_name
@@ -591,7 +591,6 @@ class HomeController extends Controller
                     }
                 }
             }
-            // echo '<pre>'; print_r($menuTypes); exit;
 
             if( !empty($menuTypes) )
             {

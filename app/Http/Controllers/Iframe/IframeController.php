@@ -33,30 +33,85 @@ class IframeController extends Controller
 
         // Get the dish_type ids have products available
         $dish_ids = array();
-        $productPriceList = ProductPriceList::where('store_id',$storeId)->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->with('menuPrice')->with('storeProduct')->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')->orderBy('product.product_rank', 'ASC')->orderBy('product.product_id')->get();
+        $productPriceList = ProductPriceList::select('dish_type')
+            ->where('store_id',$storeId)
+            ->where('publishing_start_date','<=',Carbon::now())
+            ->where('publishing_end_date','>=',Carbon::now())
+            ->where('dish_type', '!=', null)
+            ->join('product', 'product_price_list.product_id', '=', 'product.product_id')
+            ->orderBy('product.product_rank', 'ASC')
+            ->orderBy('product.product_id')
+            ->get();
 
         if($productPriceList->count())
         {
             foreach ($productPriceList as $row) {
-                foreach ($row->storeProduct as $storeProduct) {
-                    $dish_ids[] = $storeProduct->dish_type;
-                }
+                $dish_ids[] = $row->dish_type;
             }
+
+            $dish_ids = array_unique($dish_ids);
         }
 
         // 
         if( !empty($dish_ids) )
         {
-            $menuTypes = DishType::from('dish_type')
+            $menuTypes = array();
+
+            $dishType = DishType::from('dish_type')
                 ->where('u_id' , $storedetails->u_id)
-                ->where('parent_id', null)
+                // ->where('parent_id', null)
                 ->where('dish_activate','1')
-                ->whereIn('dish_id', array_unique($dish_ids))
+                ->whereIn('dish_id', $dish_ids)
                 ->orderBy('rank')
                 ->orderBy('dish_id')
                 ->get();
 
-            if($menuTypes->count())
+            if($dishType)
+            {
+                $dishIds = array();
+
+                foreach($dishType as $dish)
+                {
+                    if( !is_null($dish->parent_id) )
+                    {
+                        // Get 'dish id' from parent ID
+                        $dishTypeLevel0 = DishType::from('dish_type AS DT1')
+                            ->select(['DT1.dish_id', 'DT1.dish_name'])
+                            ->leftJoin('dish_type AS DT2', 'DT2.parent_id', '=', 'DT1.dish_id')
+                            ->leftJoin('dish_type AS DT3', 'DT3.parent_id', '=', 'DT2.dish_id')
+                            ->whereRaw("(DT1.dish_id = '{$dish->dish_id}' OR DT2.dish_id = '{$dish->dish_id}' OR DT3.dish_id = '{$dish->dish_id}') AND DT1.parent_id IS NULL")
+                            ->groupBy('DT1.dish_id')
+                            ->first();
+                        
+                        if($dishTypeLevel0)
+                        {
+                            if( !in_array($dishTypeLevel0->dish_id, $dishIds) )
+                            {
+                                $dishIds[] = $dishTypeLevel0->dish_id;
+
+                                $menuTypes[] = (object) array(
+                                    'dish_id' => $dishTypeLevel0->dish_id,
+                                    'dish_name' => $dishTypeLevel0->dish_name
+                                );
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if( !in_array($dish->dish_id, $dishIds) )
+                        {
+                            $dishIds[] = $dish->dish_id;
+
+                            $menuTypes[] = (object) array(
+                                'dish_id' => $dish->dish_id,
+                                'dish_name' => $dish->dish_name
+                            );
+                        }
+                    }
+                }
+            }
+
+            if( !empty($menuTypes) )
             {
                 // Get loyalty offer
                 $promotionLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
