@@ -1090,6 +1090,8 @@ class AdminController extends Controller
 
             if($dishType)
             {
+                $dishIds = array();
+
                 foreach($dishType as $dish)
                 {
                     if( !is_null($dish->parent_id) )
@@ -1104,20 +1106,30 @@ class AdminController extends Controller
                         
                         if($dishTypeLevel0)
                         {
-                            $menuTypes[] = (object) array(
-                                'dish_id' => $dishTypeLevel0->dish_id,
-                                'dish_name' => $dishTypeLevel0->dish_name,
-                                'rank' => $dishTypeLevel0->rank
-                            );
+                            if( !in_array($dishTypeLevel0->dish_id, $dishIds) )
+                            {
+                                $dishIds[] = $dishTypeLevel0->dish_id;
+
+                                $menuTypes[] = (object) array(
+                                    'dish_id' => $dishTypeLevel0->dish_id,
+                                    'dish_name' => $dishTypeLevel0->dish_name,
+                                    'rank' => $dishTypeLevel0->rank
+                                );
+                            }
                         }
                     }
                     else
                     {
-                        $menuTypes[] = (object) array(
-                            'dish_id' => $dish->dish_id,
-                            'dish_name' => $dish->dish_name,
-                            'rank' => $dish->rank
-                        );
+                        if( !in_array($dish->dish_id, $dishIds) )
+                        {
+                            $dishIds[] = $dish->dish_id;
+
+                            $menuTypes[] = (object) array(
+                                'dish_id' => $dish->dish_id,
+                                'dish_name' => $dish->dish_name,
+                                'rank' => $dish->rank
+                            );
+                        }
                     }
                 }
             }

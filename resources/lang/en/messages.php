@@ -167,6 +167,7 @@ return [
     'dishType' => 'Dish Type',
     'category' => 'Category',
     'parentCategory' => 'Parent Category',
+    'dishImage' => 'Category Image',
     'language' => 'Language',
     'dishTypeCreated' => 'Dish type created successfully.',
     'dishTypeUpdated' => 'Dish type updated successfully.',

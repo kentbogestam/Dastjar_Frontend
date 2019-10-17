@@ -169,6 +169,7 @@ return [
     'dishType' => 'Typ av Maträtt',
     'category' => 'Kategori',
     'parentCategory' => 'Föräldrakategori',
+    'dishImage' => 'Kategori Bild',
     'language' => 'Språk',
     'dishTypeCreated' => 'Maträtten skapades Framgångsrikt.',
     'dishTypeUpdated' => 'Maträtten uppdaterades Framgångsrikt.',
