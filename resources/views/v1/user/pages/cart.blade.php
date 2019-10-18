@@ -271,6 +271,7 @@
 					let isSaveCard = $('#isSaveCard').is(':checked') ? 1 : 0;
 					let data = {
 						'_token': "{{ csrf_token() }}",
+						'orderId': "{{ $order->order_id }}",
 						'isSaveCard': isSaveCard,
 						'payment_method_id': result.paymentMethod.id
 					}
@@ -324,6 +325,7 @@
 						
 						let data = {
 							'_token': "{{ csrf_token() }}",
+							'orderId': "{{ $order->order_id }}",
 							'isSaveCard': isSaveCard,
 							'payment_intent_id': result.paymentIntent.id
 						}
@@ -355,6 +357,7 @@
 				let payment_method_id = $('input[name=payment_method_id]:checked').val();
 				let data = {
 					'_token': "{{ csrf_token() }}",
+					'order_id': "{{ $order->order_id }}",
 					'chargingSavedCard': true,
 					'payment_method_id': payment_method_id
 				}
@@ -409,6 +412,7 @@
 					} else {
 						let data = {
 							'_token': "{{ csrf_token() }}",
+							'order_id': "{{ $order->order_id }}",
 							'payment_intent_id': result.paymentIntent.id
 						}
 						// The card action has been handled
@@ -616,7 +620,7 @@
 			url: "{{ url('order-update-delivery-type') }}",
 			data: {
 				'_token': "{{ csrf_token() }}",
-				'order_id': "{{ $order->order_id }}", 
+				'order_id': "{{ $order->order_id }}",
 				'delivery_type': $('input[name=delivery_type]:checked').val()
 			},
 			dataType: 'json',
@@ -658,7 +662,7 @@
 				url: "{{ url('update-order-user-address') }}",
 				data: {
 					'_token': "{{ csrf_token() }}",
-					'order_id': "{{ $order->order_id }}", 
+					'order_id': "{{ $order->order_id }}",
 					'user_address_id': $('input[name=user_address_id]:checked').val()
 				},
 				dataType: 'json',
