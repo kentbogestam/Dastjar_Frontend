@@ -66,7 +66,7 @@
 	var list = Array();
 	var totalCount = 0;
 	var totallength = 0;
-	var storeId = "{{Session::get('storeId')}}";
+	var storeId = "{{Session::get('kitchenStoreId')}}";
 	// var url = "{{url('kitchen/order-ready')}}";
 	var urldeliver = "{{url('kitchen/order-deliver')}}";
 	var urlReadyOrder = "{{url('kitchen/make-order-ready')}}";

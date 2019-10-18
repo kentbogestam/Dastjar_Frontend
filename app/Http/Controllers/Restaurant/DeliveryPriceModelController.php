@@ -36,7 +36,7 @@ class DeliveryPriceModelController extends Controller
             array('id' => 3, 'summary' => __('messages.ruleDeliveryType3')),
         );
         
-        $deliveryPriceModel = StoreDeliveryPriceModel::where(['store_id' => Session::get('storeId'), 'status' => '1'])
+        $deliveryPriceModel = StoreDeliveryPriceModel::where(['store_id' => Session::get('kitchenStoreId'), 'status' => '1'])
             ->get();
     	
         return view('kitchen.delivery-price-model.index', compact('deliveryRule', 'deliveryPriceModel'));
@@ -57,7 +57,7 @@ class DeliveryPriceModelController extends Controller
         ]);
 
         $data = $request->only(['delivery_rule_id', 'delivery_charge', 'threshold']);
-        $data['store_id'] = Session::get('storeId');
+        $data['store_id'] = Session::get('kitchenStoreId');
 
         $helper = new Helper();
         $id = $helper->uuid();
@@ -69,7 +69,7 @@ class DeliveryPriceModelController extends Controller
         $data['id'] = $id;
 
         // 
-        if(!StoreDeliveryPriceModel::where(['store_id' => Session::get('storeId'), 'status' => '1'])->first())
+        if(!StoreDeliveryPriceModel::where(['store_id' => Session::get('kitchenStoreId'), 'status' => '1'])->first())
         {
             StoreDeliveryPriceModel::create($data);
         }
@@ -84,7 +84,7 @@ class DeliveryPriceModelController extends Controller
      */
     function ajaxGetDeliveryPriceById($id)
     {
-        $deliveryPriceModel = StoreDeliveryPriceModel::where(['id' => $id, 'store_id' => Session::get('storeId')])->first();
+        $deliveryPriceModel = StoreDeliveryPriceModel::where(['id' => $id, 'store_id' => Session::get('kitchenStoreId')])->first();
 
         return response()->json(['deliveryPriceModel' => $deliveryPriceModel]);
     }
@@ -108,7 +108,7 @@ class DeliveryPriceModelController extends Controller
         $data['threshold'] = $request->threshold_upd;
 
         // 
-        StoreDeliveryPriceModel::where(['id' => $request->id, 'store_id' => Session::get('storeId')])
+        StoreDeliveryPriceModel::where(['id' => $request->id, 'store_id' => Session::get('kitchenStoreId')])
             ->update(['delivery_rule_id' => $data['delivery_rule_id'], 'delivery_charge' => $data['delivery_charge'], 'threshold' => $data['threshold']]);
 
         return redirect('kitchen/delivery-price-model/list')->with('success', __('messages.deliveryPriceUpdated'));
@@ -121,11 +121,11 @@ class DeliveryPriceModelController extends Controller
      */
     function destroy($id)
     {
-        $storeDeliveryPrice = StoreDeliveryPriceModel::where(['id' => $id, 'store_id' => Session::get('storeId')])->get();
+        $storeDeliveryPrice = StoreDeliveryPriceModel::where(['id' => $id, 'store_id' => Session::get('kitchenStoreId')])->get();
 
         if($storeDeliveryPrice)
         {
-            StoreDeliveryPriceModel::where(['id' => $id, 'store_id' => Session::get('storeId')])->update(['status' => '0']);
+            StoreDeliveryPriceModel::where(['id' => $id, 'store_id' => Session::get('kitchenStoreId')])->update(['status' => '0']);
         }
 
         return redirect('kitchen/delivery-price-model/list')->with('success', __('messages.deliveryPriceDeleted'));
