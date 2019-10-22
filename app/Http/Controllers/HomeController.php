@@ -498,7 +498,7 @@ class HomeController extends Controller
         return view('v1.user.pages.eat-later', compact('companydetails'));
     }
 
-    public function menuList(Request $request, $storeId){
+    public function menuList(Request $request, $storeId, $styleType = 0){
         // Get store detail
         $request->session()->put('storeId', $storeId);
         $storedetails = Store::where('store_id' , $storeId)->first();
@@ -634,7 +634,9 @@ class HomeController extends Controller
             }
         }
 
-        return view('v1.user.pages.store-menu-list', compact('storedetails', 'menuTypes', 'promotionLoyalty', 'customerLoyalty', 'orderCustomerLoyalty'));
+        // dd($menuTypes);
+        return view('v1.user.pages.store-menu-list', compact('storedetails', 'menuTypes', 'promotionLoyalty', 'customerLoyalty', 'orderCustomerLoyalty', 'styleType'));
+        // return view('v1.user.pages.store-menu-grid', compact('storedetails', 'menuTypes', 'promotionLoyalty', 'customerLoyalty', 'orderCustomerLoyalty'));
     }
 
     function getMenuDetail($dishType, $level)

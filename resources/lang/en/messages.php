@@ -289,6 +289,7 @@ return [
     'moduleCreated' => ':module created successfully.',
     'moduleUpdated' => ':module updated successfully.',
     'moduleDeleted' => ':module deleted successfully.',
+    'loadingText' => 'Loading...',
 
     /**
      * Restaurant's placeholder goes here

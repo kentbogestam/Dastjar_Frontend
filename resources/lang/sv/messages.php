@@ -291,6 +291,7 @@ return [
     'moduleCreated' => ':module skapat.',
     'moduleUpdated' => ':module updaterat.',
     'moduleDeleted' => ':module raderat.',
+    'loadingText' => 'Loading...',
 
     /**
      * Restaurant's placeholder goes here

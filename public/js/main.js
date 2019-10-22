@@ -25,8 +25,8 @@ $(document).ready(function($) {
 
     var aSearchClicked = false;
     
-    jQuery(".sub-menu").hide();
-    jQuery(".container").hide();
+    /*jQuery(".sub-menu").hide();
+    jQuery(".container").hide();*/
         
     if("ontouchstart" in document.documentElement){    
         jQuery(".menu-item-has-children").bind('touchstart touchon', function(event){
