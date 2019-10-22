@@ -557,7 +557,7 @@ class HomeController extends Controller
                     {
                         // Get 'dish id' from parent ID
                         $dishTypeLevel0 = DishType::from('dish_type AS DT1')
-                            ->select(['DT1.dish_id', 'DT1.dish_name'])
+                            ->select(['DT1.dish_id', 'DT1.dish_name', 'DT1.dish_image'])
                             ->leftJoin('dish_type AS DT2', 'DT2.parent_id', '=', 'DT1.dish_id')
                             ->leftJoin('dish_type AS DT3', 'DT3.parent_id', '=', 'DT2.dish_id')
                             ->whereRaw("(DT1.dish_id = '{$dish->dish_id}' OR DT2.dish_id = '{$dish->dish_id}' OR DT3.dish_id = '{$dish->dish_id}') AND DT1.parent_id IS NULL")
@@ -572,7 +572,8 @@ class HomeController extends Controller
 
                                 $menuTypes[] = (object) array(
                                     'dish_id' => $dishTypeLevel0->dish_id,
-                                    'dish_name' => $dishTypeLevel0->dish_name
+                                    'dish_name' => $dishTypeLevel0->dish_name,
+                                    'dish_image' => $dishTypeLevel0->dish_image,
                                 );
                             }
                         }
@@ -585,7 +586,8 @@ class HomeController extends Controller
 
                             $menuTypes[] = (object) array(
                                 'dish_id' => $dish->dish_id,
-                                'dish_name' => $dish->dish_name
+                                'dish_name' => $dish->dish_name,
+                                'dish_image' => $dish->dish_image,
                             );
                         }
                     }

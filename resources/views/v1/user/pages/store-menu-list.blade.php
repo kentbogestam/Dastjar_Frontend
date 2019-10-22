@@ -71,9 +71,14 @@
 						@endif
 
 						@if($styleType)
-							<div class="col-xs-6">
+							<div class="col-xs-6 text-center">
 								<a href="javascript:void(0);" onclick="getMenuDetail(this, {{ $menuType->dish_id }}, 1)">
-									<img src="https://via.placeholder.com/600x150" alt="">
+									@if( !is_null($menuType->dish_image) )
+										<img src="https://s3.eu-west-1.amazonaws.com/dastjar-coupons/{{ $menuType->dish_image }}" alt="{{ $menuType->dish_name }}">
+									@else
+										<img src="https://via.placeholder.com/500x200" alt="{{ $menuType->dish_name }}">
+									@endif
+
 									@if($strLoyaltyOffer != '')
 										<div class="text-center row-loyalty-offer">
 											<small>{!! $strLoyaltyOffer !!}</small><br>
@@ -256,11 +261,19 @@
 			// 
 			if(level == 1)
 			{
-				$('.col-xs-6').removeClass('active');
-				$('.menu-detail').removeClass('in');
-				This.closest('.row').find('.menu-detail').html('{{ __('messages.loadingText') }}');
-				This.closest('.col-xs-6').addClass('active');
-				This.closest('.row').find('.menu-detail').collapse('show');
+				if(This.closest('.col-xs-6').hasClass('active'))
+				{
+					$('.col-xs-6').removeClass('active');
+					This.closest('.row').find('.menu-detail').collapse('hide');
+				}
+				else
+				{
+					$('.col-xs-6').removeClass('active');
+					$('.menu-detail').removeClass('in');
+					This.closest('.row').find('.menu-detail').html('{{ __('messages.loadingText') }}');
+					This.closest('.col-xs-6').addClass('active');
+					This.closest('.row').find('.menu-detail').collapse('show');
+				}
 			}
 
 			// 
