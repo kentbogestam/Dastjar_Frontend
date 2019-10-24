@@ -32,8 +32,11 @@
 			<img src="{{ asset('images/icons/icon-eat-later-inactive.png') }}" alt="" class="inactive"> {{ __('messages.Eat Later') }}
 		</a>
 	</div>
-	<div class="hotel-list" id="companyDetailContianer"></div>
+	<div class="container">
+		<div class="hotel-list" id="companyDetailContianer"></div>
+	</div>
 	<input type="hidden" id="browserCurrentTime" name="browserCurrentTime" value="" />
+	
 
 	<!-- Popup if location not allowed -->
 	<div id="login-popup" class="modal fade login-popup" role="dialog">
