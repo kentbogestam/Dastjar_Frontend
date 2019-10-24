@@ -225,6 +225,7 @@ return [
     'delivery_rule_id' => 'Delivery Rule',
     'delivery_charge' => 'Delivery Charge',
     'threshold' => 'Threshold',
+    'delivery_distance' => 'Distance (In km.)',
     'deliveryPriceCreated' => 'Delivery price created successfully.',
     'deliveryPriceUpdated' => 'Delivery price updated successfully.',
     'deliveryPriceDeleted' => 'Delivery price deleted successfully.',
@@ -232,6 +233,8 @@ return [
     'ruleDeliveryType1' => 'Add Price for each Delivery',
     'ruleDeliveryType2' => 'Add Price for Delivery and the minimum Order Value for Free Delivery',
     'ruleDeliveryType3' => 'Add order value when a home delivery is possible',
+    'ruleDeliveryType4' => 'Add Price for Delivery and the minimum Order Value for Delivery',
+    'ruleDeliveryType5' => 'Distance based delivery price',
 
     // Driver
     'driver' => 'Driver',
@@ -290,6 +293,7 @@ return [
     'moduleUpdated' => ':module updated successfully.',
     'moduleDeleted' => ':module deleted successfully.',
     'loadingText' => 'Loading...',
+    'addMore' => 'Add more',
 
     /**
      * Restaurant's placeholder goes here

@@ -234,6 +234,8 @@ return [
     'ruleDeliveryType1' => 'Lägg till Pris för varje Leverans',
     'ruleDeliveryType2' => 'Lägg till pris för leverans och lägsta beställningsvärde för gratis leverans',
     'ruleDeliveryType3' => 'Lägg till ordervärde när en hemleverans är möjlig',
+    'ruleDeliveryType4' => 'Lägg till pris för leverans och lägsta beställningsvärde för leverans',
+    'ruleDeliveryType5' => 'Distance based delivery price',
 
     // Driver
     'driver' => 'Förare',
@@ -292,6 +294,7 @@ return [
     'moduleUpdated' => ':module updaterat.',
     'moduleDeleted' => ':module raderat.',
     'loadingText' => 'Loading...',
+    'addMore' => 'Add more',
 
     /**
      * Restaurant's placeholder goes here
