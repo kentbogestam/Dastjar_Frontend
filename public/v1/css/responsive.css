@@ -8,35 +8,39 @@
 	}
 
 	.mid-section {
-	    margin-top: 80px;
+	    width:100%;
+	    margin:100px auto; 
 	}
 
 	.row-hotel {
-		padding: 60px 30px;
+		padding:20px 15px;
+		min-height: 130px;
 	}
 
 	.row-hotel .hotel-distance a {
-		font-size: 100px;
-		margin-top: 40px;
+		font-size: 35px;
+		margin-top:20px;
 	}
 
 	.row-hotel .hotel-icon p {
-		font-size: 100px;
-		margin-left: 70px;
+		font-size: 35px;
+		margin-left:20px;
 	}
-
+	.row-hotel .hotel-icon-none{
+		width:90px; 
+	}
 	.row-hotel .hotel-icon img {
-	    max-width: 400px;
-	    max-height: 300px;
-	    border-radius: 30px;
+	    max-width:90px;
+	    max-height:90px;
+	    border-radius:30px;
 	}
 
 	.button-section a {
-		font-size: 100px;
+		font-size: 50px;
 	}
 
 	.button-section img {
-	    max-width: 30px;
+	    max-width: 40px;
 	}
 
 	.footer-section ul li a {
@@ -129,6 +133,10 @@
 	.footer-section ul li a {
 		font-size: 22px;
 	}
+}
+@media screen and (max-width: 990px) {
+.container{ width:100%;  }
+
 }
 
 @media screen and (max-width: 768px) {
@@ -245,7 +253,7 @@
 	}
 
 	.discription {
-	    max-width: 85px;
+	    max-width: 100%;
 	}
 
 	.product-detail {
@@ -280,12 +288,15 @@
 
 /*********************************************************/
 @media screen and (min-width:991px){
-	.list-menu-items{ max-width:95%; margin:0px auto;  }
-	.hotel-product{ padding:15px 30px; }
+	.product-detail{ min-width:200px; min-height: 90px; line-height: 80px; text-align: left; }
+	/*.list-menu-items{ max-width:95%; margin:0px auto;  }*/
+	.hotel-product{ padding:15px 2px; }
 	.discription h3{ font-size:30px; }
 	.discription p{ font-size:18px; }
 	.product [class*="col-"]{ padding:0px 30px; }
 	.product-detail img{ max-width:100%; max-height:88px; border:none;  }
+	.container{  max-width: 1700px; width:100%; }
+
 
 }
 

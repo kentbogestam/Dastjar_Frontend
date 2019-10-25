@@ -79,7 +79,6 @@ img {
 .head-section .logo-with-map {
 	width: 100%;
 	position: relative;
-	height: 60px;
 }
 
 .head-section .logo-with-map .logo {
@@ -194,7 +193,7 @@ img {
 
 .row-hotel {
 	padding: 10px 0;
-	margin-bottom: 10px;
+	margin-bottom:0px;
 	border-bottom: 1px solid #ccc;
 }
 
@@ -325,7 +324,7 @@ img {
 .hotel-ser a {
 	display: table;
     width: 100%;
-    padding: 8px 15px;
+    padding:8px 15px;
     background: #EBEBEB;
     border-top: 1px solid rgba(0, 0, 0, 0.2);
     box-shadow: 1px 1px 1px 0px #ccc;
@@ -989,3 +988,35 @@ p.error {
 	overflow-y:scroll;
 	height:200px;
 }*/
+.row-loyalty-offer .loyalty-offer{
+	color: #000;
+	display: inline-block;
+	font-size:18px;
+	margin-top:10px;
+}
+.form-horizontal .row [class*="col-"] a:hover, .form-horizontal .row [class*="col-"] a:focus{
+	text-decoration: none;
+}
+.form-horizontal .row [class*="col-"] h4{
+	font-size: 35px;
+	font-weight:600;
+	margin-top:10px;
+}
+.form-horizontal .row + .row {
+	margin-top:40px;
+}
+.restaurant-box .box-img img{
+	width:100%;
+	height:100%;
+	border-radius:10px;
+	object-fit: cover;
+}
+.restaurant-box .box-img{
+	width:100%;
+	border-radius:10px;
+}
+.restaurant-box.active .box-img{
+	border: 10px solid #337ab7;
+    border-radius: 20px;
+    box-shadow: 0px 0px 21px rgba(0,0,0,0.5);
+}

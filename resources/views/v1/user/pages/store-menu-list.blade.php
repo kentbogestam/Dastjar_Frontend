@@ -20,7 +20,8 @@
 	@include('v1.user.elements.store-delivery-service')
 
 	@if( !empty($menuTypes) )
-		<div class="{{ ($styleType) ? 'container' : '' }}">
+		<!-- <div class="{{ ($styleType) ? 'container' : '' }}"> -->
+		<div class="container">
 			<form id="form" class="form-horizontal" method="post" action="{{ url('cart') }}">
 				{{ csrf_field() }}
 
@@ -71,12 +72,12 @@
 						@endif
 
 						@if($styleType)
-							<div class="col-xs-6 text-center">
+							<div class="col-xs-6 text-center restaurant-box">
 								<a href="javascript:void(0);" onclick="getMenuDetail(this, {{ $menuType->dish_id }}, 1)">
 									@if( !is_null($menuType->dish_image) )
 										<img src="https://s3.eu-west-1.amazonaws.com/dastjar-coupons/{{ $menuType->dish_image }}" alt="{{ $menuType->dish_name }}">
 									@else
-										<img src="https://via.placeholder.com/500x200" alt="{{ $menuType->dish_name }}">
+										<div class="box-img"><img src="http://localhost/Dastjar_Frontend/public/v1/images/img-pizza.jpg" alt="{{ $menuType->dish_name }}"></div>
 									@endif
 
 									@if($strLoyaltyOffer != '')
