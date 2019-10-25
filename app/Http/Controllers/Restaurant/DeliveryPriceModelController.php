@@ -62,6 +62,15 @@ class DeliveryPriceModelController extends Controller
         $data = $request->only(['delivery_rule_id', 'delivery_charge', 'threshold', 'dp_distance', 'distance_delivery_charge']);
         $data['store_id'] = Session::get('kitchenStoreId');
 
+        if($data['delivery_rule_id'] == 1)
+        {
+            $data['threshold'] = null;
+        }
+        elseif($data['delivery_rule_id'] == 3 || $data['delivery_rule_id'] == 5)
+        {
+            $data['delivery_charge'] = null;
+        }
+
         $helper = new Helper();
         $id = $helper->uuid();
 
@@ -134,6 +143,15 @@ class DeliveryPriceModelController extends Controller
         $data['distance_delivery_charge'] = $request->distance_delivery_charge_upd;
 
         // 
+        if($data['delivery_rule_id'] == 1)
+        {
+            $data['threshold'] = null;
+        }
+        elseif($data['delivery_rule_id'] == 3 || $data['delivery_rule_id'] == 5)
+        {
+            $data['delivery_charge'] = null;
+        }
+
         $response = StoreDeliveryPriceModel::where(['id' => $request->id, 'store_id' => Session::get('kitchenStoreId')])
             ->update(['delivery_rule_id' => $data['delivery_rule_id'], 'delivery_charge' => $data['delivery_charge'], 'threshold' => $data['threshold']]);
 

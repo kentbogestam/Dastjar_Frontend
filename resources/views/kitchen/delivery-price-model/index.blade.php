@@ -80,6 +80,9 @@
 
         $('#delivery_rule_id_upd').on('change', function() {
             modalConditionalFields('_upd');
+
+            id = $(this).closest('form').find('#id').val();
+            getDeliveryPrice(id);
         });
 
         // Form validation
@@ -139,14 +142,17 @@
     });
 
     // 
-    function getDeliveryPrice(id)
+    function getDeliveryPrice(id, flag = 0)
     {
         $.ajax({
             url: '{{ url('kitchen/delivery-price-model/get-delivery-price') }}/'+id,
             dataType: 'json',
             success: function(response) {
                 $('#update-form-model').find('#id').val(response.deliveryPriceModel.id);
-                $('#update-form-model').find('#delivery_rule_id_upd').val(response.deliveryPriceModel.delivery_rule_id);
+                if(flag)
+                {
+                    $('#update-form-model').find('#delivery_rule_id_upd').val(response.deliveryPriceModel.delivery_rule_id);
+                }
                 $('#update-form-model').find('#delivery_charge_upd').val(response.deliveryPriceModel.delivery_charge);
                 $('#update-form-model').find('#threshold_upd').val(response.deliveryPriceModel.threshold);
 
@@ -171,8 +177,7 @@
                 }
 
                 html += '<button type="button" onclick="addMore(this, \'_upd\')" class="btn btn-link pull-right">{{ __('messages.addMore') }}</button>';    
-                $('#update-form-model').find('.type2').append(html);
-
+                $('#update-form-model').find('.type2 .type2-data').html(html);
                 $('#update-form-model').modal();
             }
         });

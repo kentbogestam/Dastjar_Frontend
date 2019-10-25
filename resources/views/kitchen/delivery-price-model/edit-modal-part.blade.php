@@ -39,6 +39,7 @@
                                 <label>{{ __('messages.delivery_charge') }} :</label>
                             </div>
                         </div>
+                        <div class="type2-data"></div>
                     </div>
                     <input type="hidden" name="id" id="id" data-rule-required="true">
                     <button type="submit" class="btn btn-success">{{ __('messages.save') }}</button>
