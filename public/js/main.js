@@ -248,7 +248,7 @@ function onDeleteLastItemFromCart(id = null)
 }*/
 
 // Update cart
-function updateCart(qty,productId,totalProductPrice,grandtotal){
+function updateCart(qty,productId,totalProductPrice,grandtotal, homeDelPartCntRefresh = true){
     var url= $('#baseUrl').val()+"/updateCart";
     var orderid= $('#orderid').val();
 
@@ -299,7 +299,7 @@ function updateCart(qty,productId,totalProductPrice,grandtotal){
                     {
                         if( typeof orderInvoice.homeDelivery.delivery_charge !== 'undefined' && orderInvoice.homeDelivery.delivery_charge != null )
                         {
-                            $('.row-delivery-charge #delivery-charge').html(orderInvoice.homeDelivery.delivery_charge);
+                            $('.row-delivery-charge #delivery-charge').html(orderInvoice.homeDelivery.delivery_charge.toFixed(2));
                             $('.row-delivery-charge').removeClass('hidden');
                         }
                         else
@@ -308,7 +308,7 @@ function updateCart(qty,productId,totalProductPrice,grandtotal){
                         }
                     }
 
-                    if($('input[name=delivery_type]:checked').val() == '3')
+                    if($('input[name=delivery_type]:checked').val() == '3' && homeDelPartCntRefresh)
                     {
                         getHomeDeliveryPartContent(orderid);
                     }

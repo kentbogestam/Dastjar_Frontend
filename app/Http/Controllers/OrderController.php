@@ -18,6 +18,7 @@ use DB;
 use App\Store;
 use App\StoreDeliveryType;
 use App\StoreDeliveryPriceModel;
+use App\StoreDeliveryPriceModelDistance;
 use App\User;
 use App\UserAddress;
 use App\Company;
@@ -764,7 +765,7 @@ class OrderController extends Controller
             // Check if store support 'home delivery'
             if( !empty($store_delivery_type) && in_array(3, $store_delivery_type) && Helper::isPackageSubscribed(12) )
             {
-                $option = array('final_order_total' => $final_order_total);
+                $option = array('order_id' => $orderId, 'final_order_total' => $final_order_total);
                 $homeDelivery = $this->applyHomeDeliveryPriceModel($option);
                 $final_order_total = $homeDelivery['final_order_total'];
             }
@@ -982,7 +983,7 @@ class OrderController extends Controller
         // Check if store support 'home delivery'
         if( !empty($store_delivery_type) && in_array(3, $store_delivery_type) && Helper::isPackageSubscribed(12) )
         {
-            $option = array('final_order_total' => $final_order_total);
+            $option = array('order_id' => $orderId, 'final_order_total' => $final_order_total);
             $homeDelivery = $this->applyHomeDeliveryPriceModel($option);
             $final_order_total = $homeDelivery['final_order_total'];
         }
@@ -1055,9 +1056,10 @@ class OrderController extends Controller
         );
 
         // Get store 'Delivery price model'
-        $storeDeliveryPrice = StoreDeliveryPriceModel::select(['delivery_rule_id', 'delivery_charge', 'threshold'])
+        $storeDeliveryPrice = StoreDeliveryPriceModel::select(['id', 'delivery_rule_id', 'delivery_charge', 'threshold'])
             ->where(['store_id' => Session::get('storeId'), 'status' => '1'])
             ->first();
+        // dd($storeDeliveryPrice->toArray());
 
         if($storeDeliveryPrice)
         {
@@ -1077,6 +1079,47 @@ class OrderController extends Controller
             elseif($storeDeliveryPrice->delivery_rule_id == 3 && $option['final_order_total'] < $storeDeliveryPrice->threshold)
             {
                 $homeDelivery['is_home_delivery_eligible'] = 0;
+            }
+            // Allow delivery if passes the trashhold and delivery charge
+            elseif($storeDeliveryPrice->delivery_rule_id == 4)
+            {
+                if($option['final_order_total'] >= $storeDeliveryPrice->threshold)
+                {
+                    $homeDelivery['delivery_charge'] = $storeDeliveryPrice->delivery_charge;
+                    $homeDelivery['final_order_total'] = $option['final_order_total'] + $homeDelivery['delivery_charge'];
+                }
+                else
+                {
+                    $homeDelivery['is_home_delivery_eligible'] = 0;
+                }
+            }
+            elseif($storeDeliveryPrice->delivery_rule_id == 5)
+            {
+                if($option['final_order_total'] >= $storeDeliveryPrice->threshold)
+                {
+                    if(Session::has('userDeliverAddressDistance'))
+                    {
+                        // $userDeliverAddressDistance = 2;
+                        $userDeliverAddressDistance = Session::get('userDeliverAddressDistance');
+                        
+                        $distancePrice = StoreDeliveryPriceModelDistance::select(['distance', 'delivery_charge'])
+                            ->where('store_delivery_price_model_id', $storeDeliveryPrice->id)
+                            ->where('distance', '<=', $userDeliverAddressDistance)
+                            ->orderBy('distance', 'DESC')
+                            ->first();
+
+                        // dd($distancePrice->toArray());
+                        if($distancePrice)
+                        {
+                            $homeDelivery['delivery_charge'] = $distancePrice->delivery_charge;
+                            $homeDelivery['final_order_total'] = $option['final_order_total'] + $homeDelivery['delivery_charge'];
+                        }
+                    }
+                }
+                else
+                {
+                    $homeDelivery['is_home_delivery_eligible'] = 0;
+                }
             }
         }
 
@@ -1125,7 +1168,7 @@ class OrderController extends Controller
         if($storeDeliveryPrice)
         {
             // Add order value when a home delivery is possible
-            if($storeDeliveryPrice->delivery_rule_id == 3 && $order->final_order_total < $storeDeliveryPrice->threshold)
+            if(($storeDeliveryPrice->delivery_rule_id == 3 || $storeDeliveryPrice->delivery_rule_id == 4 || $storeDeliveryPrice->delivery_rule_id == 5) && $order->final_order_total < $storeDeliveryPrice->threshold)
             {
                 $is_home_delivery_eligible = 0;
             }
@@ -1249,7 +1292,7 @@ class OrderController extends Controller
      */
     function updateOrderUserAddress(Request $request)
     {
-        $status = 0;
+        $status = $distanceBasedDeliveryPrice = 0;
         $msg = __('messages.homeDeliveryNotInRange');
 
         // Check if delivery address is in store delivery range
@@ -1270,12 +1313,24 @@ class OrderController extends Controller
 
             if($store->delivery_range > $distance)
             {
-                Order::where('order_id', $request->input('order_id'))->update(['user_address_id' => $request->input('user_address_id')]);
                 $status = 1;
+                Order::where('order_id', $request->input('order_id'))->update(['user_address_id' => $request->input('user_address_id')]);
+
+                // Get store 'Delivery price model'
+                $storeDeliveryPrice = StoreDeliveryPriceModel::select(['delivery_rule_id', 'delivery_charge', 'threshold'])
+                    ->where(['store_id' => Session::get('storeId'), 'status' => '1'])
+                    ->with('deliveryPriceDistance')
+                    ->first();
+
+                if($storeDeliveryPrice->delivery_rule_id == 5)
+                {
+                    $distanceBasedDeliveryPrice = 1;
+                    Session::flash('userDeliverAddressDistance', $distance);
+                }
             }
         }
 
-        return response()->json(['status' => $status, 'msg' => $msg, 'response' => $response]);
+        return response()->json(['status' => $status, 'msg' => $msg, 'distanceBasedDeliveryPrice' => $distanceBasedDeliveryPrice, 'response' => $response]);
     }
 
     /**
@@ -1462,7 +1517,7 @@ class OrderController extends Controller
                 // Check if store support 'home delivery', and order's 'delivery_type' is 'home delivery'
                 if( !empty($store_delivery_type) && in_array(3, $store_delivery_type) && $order->delivery_type == 3 )
                 {
-                    $option = array('final_order_total' => $final_order_total);
+                    $option = array('order_id' => $data['orderid'], 'final_order_total' => $final_order_total);
                     $homeDelivery = $this->applyHomeDeliveryPriceModel($option);
                     $final_order_total = $homeDelivery['final_order_total'];
                 }
