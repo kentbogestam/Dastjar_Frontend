@@ -91,7 +91,7 @@ function add(urlEatLater,urlMenulist,noImageUrl,sessionTime){
 									'</div>'+
 									'<div class="col-sm-4 col-xs-4">'+
 										'<div class="hotel-distance">'+
-											'<a href="javascript">'+temp[i]["distance"].toFixed(1)+' KM. <i class="fa fa-angle-right"></i></a>'+
+											temp[i]["distance"].toFixed(1)+' KM. <i class="fa fa-angle-right"></i></a>'+
 										'</div>'+
 									'</div>'+
 								'</a>'+
