@@ -664,7 +664,6 @@ class HomeController extends Controller
                     <div class='product-sub'>
                         <a href='#sub-menu-{$row->dish_id}' onclick='getMenuDetail(this, {$row->dish_id}, {$level})' data-toggle='collapse'>
                             <span>{$row->dish_name} </span>
-                            <span><i class='fa fa-angle-right'></i></span>
                         </a>
                         <div class='collapse sub-menu-detail' id='sub-menu-{$row->dish_id}'>
                             <div class='text-center'><i class='fa fa-spinner' aria-hidden='true'></i></div>
