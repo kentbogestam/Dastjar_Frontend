@@ -42,7 +42,14 @@
 						// If not logged-in or loyalty validity is 0 or customer doesn't get loyalty yet
 						if( !Auth::check() || ((!$promotionLoyalty->validity) || ($promotionLoyalty->validity > $orderCustomerLoyalty->cnt)) )
 						{
-							$strLoyaltyOffer = "<span class='loyalty-offer'>".__('messages.loyaltyOfferMsg', ['quantity_to_buy' => $quantity_to_buy, 'quantity_get' => $quantity_get, 'valid_till' => $end_date])."</span>";
+							if($styleType || $storedetails->menu_style_type)
+							{
+								$strLoyaltyOffer = "<span class='loyalty-offer'>".__('messages.loyaltyOfferMsgGrid', ['quantity_to_buy' => $quantity_to_buy, 'quantity_get' => $quantity_get, 'valid_till' => $end_date])."</span>";
+							}
+							else
+							{
+								$strLoyaltyOffer = "<span class='loyalty-offer'>".__('messages.loyaltyOfferMsg', ['quantity_to_buy' => $quantity_to_buy, 'quantity_get' => $quantity_get, 'valid_till' => $end_date])."</span>";
+							}
 						}
 						@endphp
 
@@ -59,7 +66,14 @@
 								{
 									$final_quantity_to_buy = $quantity_to_buy-$quantity_bought;
 
-									$strLoyaltyOffer = "<span class='loyalty-offer'>".__('messages.loyaltyOfferMsg', ['quantity_to_buy' => $final_quantity_to_buy, 'quantity_get' => $quantity_get, 'valid_till' => $end_date])."</span>";
+									if($styleType || $storedetails->menu_style_type)
+									{
+										$strLoyaltyOffer = "<span class='loyalty-offer'>".__('messages.loyaltyOfferMsgGrid', ['quantity_to_buy' => $final_quantity_to_buy, 'quantity_get' => $quantity_get, 'valid_till' => $end_date])."</span>";
+									}
+									else
+									{
+										$strLoyaltyOffer = "<span class='loyalty-offer'>".__('messages.loyaltyOfferMsg', ['quantity_to_buy' => $final_quantity_to_buy, 'quantity_get' => $quantity_get, 'valid_till' => $end_date])."</span>";
+									}
 								}
 								else
 								{

@@ -108,6 +108,7 @@ return [
     'avalableDiscount' => 'Available Discount',
     'discountStoreDuplicate' => 'Do you want to replace your existing discount with this for some restaurant?',
     'loyaltyOfferMsg' => 'Only <span class="quantity-to-buy">:quantity_to_buy</span> to go, get <span class="quantity-get">:quantity_get</span> for free! Valid to :valid_till',
+    'loyaltyOfferMsgGrid' => 'Only <span class="quantity-to-buy">:quantity_to_buy</span> to go, get <span class="quantity-get">:quantity_get</span> for free! <br>Valid to :valid_till',
     'loyaltyOfferOnApply' => 'Congratulations! Get <span class="quantity-offered">:quantity_offered</span> for free now!',
     'loyaltyOfferApplied' => 'You\'re getting <span class="quantity-offered">:loyalty_quantity_free</span> dish(es) for free!',
     'deleteAlert' => 'Are you sure you want to delete this :item?',
