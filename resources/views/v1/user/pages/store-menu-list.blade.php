@@ -25,7 +25,7 @@
 			<form id="form" class="form-horizontal" method="post" action="{{ url('cart') }}">
 				{{ csrf_field() }}
 
-				<div class="{{ ($styleType) ? 'row' : 'hotel-service-list' }}">
+				<div class="{{ ($styleType || $storedetails->menu_style_type) ? 'row' : 'hotel-service-list' }}">
 					@foreach($menuTypes as $menuType)
 						@php
 						$strLoyaltyOffer = "";
@@ -71,13 +71,15 @@
 							@endif
 						@endif
 
-						@if($styleType)
+						@if($styleType || $storedetails->menu_style_type)
 							<div class="col-xs-6 text-center restaurant-box">
 								<a href="javascript:void(0);" onclick="getMenuDetail(this, {{ $menuType->dish_id }}, 1)">
 									@if( !is_null($menuType->dish_image) )
-										<img src="https://s3.eu-west-1.amazonaws.com/dastjar-coupons/{{ $menuType->dish_image }}" alt="{{ $menuType->dish_name }}">
+										<div class="box-img">
+											<img src="https://s3.eu-west-1.amazonaws.com/dastjar-coupons/{{ $menuType->dish_image }}" alt="{{ $menuType->dish_name }}">
+										</div>
 									@else
-										<div class="box-img"><img src="http://localhost/Dastjar_Frontend/public/v1/images/img-pizza.jpg" alt="{{ $menuType->dish_name }}"></div>
+										<!-- <div class="box-img"><img src="{{ asset('v1/images/img-pizza.jpg') }}" alt="{{ $menuType->dish_name }}"></div> -->
 									@endif
 
 									@if($strLoyaltyOffer != '')
@@ -90,7 +92,7 @@
 							</div>
 
 							@if($loop->iteration % 2 == 0 || $loop->last)
-								<div class="col-xs-12 collapse menu-detail">Hello</div>
+								<div class="col-xs-12 collapse menu-detail"></div>
 
 								@if(!$loop->last)
 									</div><div class="row">
@@ -257,7 +259,7 @@
 		This = $(This);
 		let url = '{{ url('get-menu-detail') }}/'+dishType+'/'+level;
 
-		@if($styleType)
+		@if($styleType || $storedetails->menu_style_type)
 			// 
 			if(level == 1)
 			{
