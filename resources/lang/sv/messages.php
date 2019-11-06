@@ -341,4 +341,9 @@ return [
     'printFooterText' => "Rekommedera \x1B\x45\"Anar Find&Eat\"\x1B\x46 \ntill dina v\xE4nner ocks\xE5! Det \xE4r \nl\xE4tt att ladda ner den fr\xE5n \n\x1B\x45Google Play\x1B\x46 eller \x1B\x45AppStore!\x1B\x46",
     'vat' => 'VAT (12%)',
     'deliverTo' => 'Deliver to',
+
+    // Menu style type
+    'menuStyle' => 'Menu Style',
+    'menuStyleList' => 'List',
+    'menuStyleGrid' => 'Grid',
 ];

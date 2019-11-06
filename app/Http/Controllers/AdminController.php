@@ -908,7 +908,7 @@ class AdminController extends Controller
     public function kitchenSetting(){
         // Get logged-in store detail
         $store = Store::from('store AS S')
-            ->select(['S.order_response', 'S.driver_range', 'S.delivery_range', 'S.buffer_time', 'SP.mac_address', 'SP.print_copy'])
+            ->select(['S.menu_style_type', 'S.order_response', 'S.driver_range', 'S.delivery_range', 'S.buffer_time', 'SP.mac_address', 'SP.print_copy'])
             ->leftJoin('store_printers AS SP', 'SP.store_id', '=', 'S.store_id')
             ->where('S.store_id' , Session::get('kitchenStoreId'))
             ->first();
@@ -942,7 +942,7 @@ class AdminController extends Controller
         // Update store setting
         $buffer_time = '00:'.($data['buffer_time'] % 60).':00';
         Store::where('store_id', Session::get('kitchenStoreId'))
-            ->update(['order_response' => $data['order_response'], 'driver_range' => $data['driver_range'], 'delivery_range' => $data['delivery_range'], 'buffer_time' => $buffer_time]);
+            ->update(['order_response' => $data['order_response'], 'driver_range' => $data['driver_range'], 'delivery_range' => $data['delivery_range'], 'buffer_time' => $buffer_time, 'menu_style_type' => $data['menu_style_type']]);
 
         // Store printer setting
         if($data['mac_address'] && $data['mac_address'] != null)

@@ -339,4 +339,9 @@ return [
     'printFooterText' => "Recommend \x1B\x45\"Anar Find&Eat\"\x1B\x46 to\nyour friends too! Easy to\ndownload the app from\n\x1B\x45Google Play\x1B\x46 or \x1B\x45AppStore!\x1B\x46",
     'vat' => 'VAT (12%)',
     'deliverTo' => 'Deliver to',
+
+    // Menu style type
+    'menuStyle' => 'Menu Style',
+    'menuStyleList' => 'List',
+    'menuStyleGrid' => 'Grid',
 ];
