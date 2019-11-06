@@ -135,7 +135,29 @@ class Store extends Model
         $lng = $longitude;
         $radius = $radius;
 
-        $latLngList = Store::having('distance','<=',$radius)
+        $latLngList = Store::from('store AS S')
+            ->select(['S.store_id', 'S.tagline', 'S.store_name', 'S.large_image AS store_large_image', 'S.store_open_close_day_time', DB::raw("($unit * ACOS(COS(RADIANS(".$lat.")) * COS(RADIANS(latitude)) * COS(RADIANS(".$lng.") - RADIANS(longitude)) + SIN(RADIANS(".$lat.")) * SIN(RADIANS(latitude)))) AS distance")])
+            ->join('company', 'company.u_id', '=', 'S.u_id')
+            ->join('product_price_list','S.store_id','=','product_price_list.store_id')
+            ->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')
+            ->leftJoin('dish_type', 'dish_type.dish_id', '=', 'product.dish_type')
+            ->whereIn('S.store_type', [1, 3])
+            ->where('S.store_close_dates', 'not like', '%'.$todayDate.'%')
+            ->where(function($query) use($todayDay) {
+                return $query->where('S.store_open_close_day_time', 'like', '%'.$todayDay.'%')
+                    ->orWhere('S.store_open_close_day_time', 'like', '%'."All".'%');
+            })
+            ->where('S.s_activ','=','1')
+            ->where('dish_type.dish_activate',1)
+            ->where('product_price_list.publishing_start_date','<=',Carbon::now())
+            ->where('product_price_list.publishing_end_date','>=',Carbon::now())
+            ->groupBy('S.store_id')
+            ->having('distance','<=',$radius)
+            ->orderBy('distance')
+            ->get();
+
+
+        /*$latLngList = Store::having('distance','<=',$radius)
         ->select("*", 'store.large_image AS store_large_image',DB::raw("
                         ($unit * ACOS(COS(RADIANS(".$lat."))
                             * COS(RADIANS(latitude))
@@ -161,7 +183,7 @@ class Store extends Model
             ->leftJoin('dish_type', 'dish_type.dish_id', '=', 'product.dish_type')
             ->where('store_close_dates', 'not like', '%'.$todayDate.'%')->where('store_open_close_day_time', 'like', '%'."All".'%')->where('store.s_activ','=','1')->where('dish_type.dish_activate',1)->whereIn('store_type', [1, 3])->where('product_price_list.publishing_start_date','<=',Carbon::now())->where('product_price_list.publishing_end_date','>=',Carbon::now())->groupBy('store.store_id')->with('products'))            
             ->orderBy('distance')
-            ->get();
+            ->get();*/
 
 /*
         $latLngList = Store::having('distance','<=',$radius)->select("*",DB::raw("
