@@ -85,7 +85,7 @@ img {
 
 .head-section .logo-with-map {
 	width: 100%;
-	min-height: 70px;
+	min-height: 60px;
 	display: table;
 	text-align: center;
 	position: relative;
@@ -102,7 +102,7 @@ img {
 }
 
 .head-section .logo-with-map .logo img {
-	max-width: 130px;
+	max-width: 110px;
 }
 
 .head-section .logo-with-map .map-icon {
@@ -114,7 +114,7 @@ img {
 }
 
 .head-section .logo-with-map .map-icon img {
-	max-width: 55px;
+	max-width: 45px;
 }
 
 .head-section .logo-with-map a.arrow {
@@ -130,7 +130,7 @@ img {
 }
 
 .mid-section {
-	margin-top: 80px;
+	margin-top: 60px;
 	padding-bottom: 60px;
 }
 
@@ -204,13 +204,18 @@ img {
 }
 
 .row-hotel {
-	padding: 10px 0;
+	padding: 0px;
 	margin-bottom:0px;
 	border-bottom: 1px solid #ccc;
 }
+.row-hotel [class*="col-"]{
+		padding:20px 15px;
+	}
 
 .row-hotel a {
 	color: #333;
+	float: left;
+	width:100%;
 	text-decoration: none;
 }
 
@@ -230,7 +235,7 @@ img {
 	text-align: right;
 }
 
-.row-hotel .hotel-distance a {
+.row-hotel .hotel-distance{
 	color: #333;
 	text-decoration: none;
 	font-size: 16px;
@@ -379,10 +384,10 @@ img {
 	display: table;
 	width: 100%;
 	padding: 5px 10px;
-	background: #D9EDF7;
-	border: 1px solid rgba(0, 0, 0, 0.4);
+	background: #ff9933;
+	border: 1px solid #f09234;
 	box-shadow: 1px 1px 1px 0px #ccc;
-	color: #8e8e8e;
+	color: #fff;
 	text-decoration: none;
 	font-weight: normal;
 	margin: 5px 0;
@@ -1060,3 +1065,7 @@ p.error {
 .pac-container{
 	top:40px !important;
 }
+.row-hotel .hotel-distance {
+		font-size: 25px;
+		margin-top:28px;
+	}
