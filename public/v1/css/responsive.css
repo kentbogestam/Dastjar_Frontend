@@ -4,12 +4,12 @@
 	}
 
 	.head-section .logo-with-map .map-icon img {
-		max-width: 50px;
+		max-width: 55px;
 	}
 
 	.mid-section {
 	    width:100%;
-	    margin:100px auto; 
+	    margin:80px auto; 
 	}
 
 	.row-hotel {
@@ -18,12 +18,12 @@
 	}
 
 	.row-hotel .hotel-distance a {
-		font-size: 35px;
-		margin-top:20px;
+		font-size: 25px;
+		margin-top:28px;
 	}
 
 	.row-hotel .hotel-icon p {
-		font-size: 35px;
+		font-size: 30px;
 		margin-left:20px;
 	}
 	.row-hotel .hotel-icon-none{
@@ -36,20 +36,21 @@
 	}
 
 	.button-section a {
-		font-size: 50px;
+		font-size: 35px;
 	}
 
 	.button-section img {
-	    max-width: 40px;
+	    max-width: 30px;
+	    margin-top: -7px;
 	}
 
 	.footer-section ul li a {
-		font-size: 60px;
+		font-size: 50px;
 	}
 
 	.footer-section ul li .badge {
-		padding: 10px 15px;
-		font-size: 30px;
+		padding: 7px 10px;
+		font-size:20px;
 	}
 }
 
@@ -97,10 +98,6 @@
 	    max-height: 90px;
 	}
 
-	.button-section a,
-	.footer-section ul li a {
-		font-size: 35px;
-	}
 }
 
 @media screen and (max-width: 1024px) {
@@ -140,6 +137,9 @@
 }
 
 @media screen and (max-width: 768px) {
+	.cart-table .table{ margin-bottom:0px; }
+	.form-horizontal .row [class*="col-"] h4{ font-size:25px; margin-top: 5px;  }
+	.row-loyalty-offer .loyalty-offer{ font-size:14px; }
 	.product-detail img{ max-height: 65px; }
 	.row-hotel .hotel-icon {
 		text-align: left;
@@ -201,13 +201,13 @@
 }
 
 @media screen and (max-width: 576px) {
-	.product-detail img{ max-height: 57px; }
+	.product-detail img{ max-height: 57px; margin-bottom: 15px; }
 	.row-hotel .hotel-distance {
 		margin-top: 5px;
 	}
 
 	.mid-section {
-	    margin-top: 60px;
+	    margin-top: 80px;
 	}
 
 	.button-section a {
@@ -272,10 +272,17 @@
 	.modal.fade.pop_up.popgdpr{ top:30%; bottom:inherit; }
 }
 @media (max-width: 480px) {
+	.restaurant-box { width:100%; margin-bottom: 30px; }
+	.form-horizontal .row{ margin-bottom: 0px; }
 	.quantity .inputBox input[type="text"]{ font-size: 16px; }
 	.quantity .plus, .quantity .minus{ font-size: 12px; }
+	.head-section .logo-with-map .logo h1{ font-size:20px;  }
+}
+@media (max-width: 414px) {
+	.cart-table{ font-size:13px; }
 }
 @media (max-width: 384px) {
+	#cart-wrapper .container-fluid{ padding:0px; }
 	.product-detail img{  max-height: 50px; padding-top: 10px; max-width: 75px; }
 
 }
@@ -291,11 +298,13 @@
 	.product-detail{ min-width:200px; min-height: 90px; line-height: 80px; text-align: left; }
 	/*.list-menu-items{ max-width:95%; margin:0px auto;  }*/
 	.hotel-product{ padding:15px 2px; }
-	.discription h3{ font-size:30px; }
+	.discription h3{ font-size:25px; font-weight:600; }
 	.discription p{ font-size:18px; }
 	.product [class*="col-"]{ padding:0px 30px; }
 	.product-detail img{ max-width:100%; max-height:88px; border:none;  }
 	.container{  max-width: 1700px; width:100%; }
+	.footer-section{ max-width:1670px; padding:0px 10px; left:0px; right:0px; margin:0px auto;  }
+	.head-section.position-fixed{ max-width:1670px; padding:0px 10px; left:0px; right:0px; margin:0px auto;  }
 
 
 }

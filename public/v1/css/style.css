@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900&display=swap');
+/*font-family: 'Nunito', sans-serif;*/
+
+@import url('https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800,900&display=swap');
+/*font-family: 'Nunito', sans-serif;*/
+
 * {
 	margin: 0;
 	padding: 0;
@@ -7,7 +13,7 @@
 
 body,
 html {
-	font-family: 'Lato', sans-serif;
+	font-family: 'Nunito', sans-serif;
 	height: 100%;
 	font-size: 16px;
 	color: #333;
@@ -62,6 +68,7 @@ img {
 
 .head-section.position-fixed {
 	position: fixed;
+	padding: 0px 15px;
 	top: 0;
 	left: 0;
 	width: 100%;
@@ -78,31 +85,36 @@ img {
 
 .head-section .logo-with-map {
 	width: 100%;
+	min-height: 70px;
+	display: table;
+	text-align: center;
 	position: relative;
 }
 
 .head-section .logo-with-map .logo {
-	display: block;
+	display: inline-block;
 	text-align: center;
 	vertical-align: middle;
-	padding: 10px;
+	padding: 5px;
+	width:100%;
+	display: table-cell;
 	text-decoration: none;
 }
 
 .head-section .logo-with-map .logo img {
-	max-width: 90px;
+	max-width: 130px;
 }
 
 .head-section .logo-with-map .map-icon {
 	text-align: center;
 	vertical-align: middle;
-	position: absolute;
-	right: 10px;
-	top: 10px;
+	position: relative;
+	top: 6px;
+	float: right;
 }
 
 .head-section .logo-with-map .map-icon img {
-	max-width: 30px;
+	max-width: 55px;
 }
 
 .head-section .logo-with-map a.arrow {
@@ -118,7 +130,7 @@ img {
 }
 
 .mid-section {
-	margin-top: 60px;
+	margin-top: 80px;
 	padding-bottom: 60px;
 }
 
@@ -148,7 +160,7 @@ img {
 	text-decoration: none;
 	color: #000;
 	font-size: 16px;
-	font-weight: bold;
+	font-weight: 700;
 }
 
 .button-section a i {
@@ -236,7 +248,7 @@ img {
 .row-hotel .hotel-icon p {
 	font-weight: 300;
 	font-size: 16px;
-	font-weight: bold;
+	font-weight: 600;
 	margin-left: 12px;
 	display: inline-block;
 	vertical-align: middle;
@@ -306,6 +318,7 @@ img {
 .head-section .logo-with-map .logo h1 {
 	font-size: 28px;
 	color: #333;
+	font-weight:800;
 	text-decoration: none;
 }
 
@@ -404,6 +417,7 @@ img {
 
 .discription h3 {
 	font-size: 20px;
+	font-weight:600;
 }
 
 .discription p {
@@ -527,14 +541,19 @@ Cart
 }
 
 .cart-list h4 {
-	color: #999;
+	color: #000;
+	font-size: 28px;
+	font-weight:600;
 }
 
 .cart-list a {
 	text-align: right;
 	color: #333;
 }
-
+.cart-table{
+	font-size:16px;
+	color: #000;
+}
 #cart-wrapper .quantity {
 	max-width: 95px;
 	margin-top: 0px;
@@ -544,15 +563,22 @@ Cart
 	border-radius: 20px;
 	border: 1px solid #ddd;
 }
-
+.cart-table .table{
+	margin-bottom:0px; 
+}
 .cart-table .table p {
 	display: block;
 	color: green;
 	font-size: 14px;
 }
+.view-order table tr:first-child td, #row_1 td{ border-top: none;}
+
+.cart-table .custom_row1:nth-child(even), .view-order table tr:nth-child(even) {background: #f2f2f2}
+.cart-table .custom_row1:nth-child(odd), .view-order table tr:nth-child(odd) {background: #f9f9f9}
 
 .cart-table .table > tbody > tr > td {
 	vertical-align: middle;
+	padding:15px;
 }
 
 .contact-form-section {
@@ -633,9 +659,10 @@ Cart
 }
 
 .contact-info .form-control {
-	border-radius: 0;
-	border: 1px solid #333;
+	border-radius: 5px;
+	border: 1px solid #adaaaa;
 	box-shadow: none;
+	height:45px;
 }
 
 .contact-info label {
@@ -686,6 +713,14 @@ Cart
 	background-color: #d9edf7;
 	border-color: #bce8f1;
 }
+/*.row-total{
+	 background-color: #f2f2f2;
+}*/
+.add-address-form{
+	max-width:600px;
+	margin:0px auto;
+}
+.order-summery .container-fluid, #cart-wrapper .container-fluid{ padding:0px;  }
 
 /* View order ---------------------------------- */
 .order-summery {
@@ -722,7 +757,7 @@ Cart
 	list-style: none;
 	display: table;
 	width: 100%;
-	padding: 10px 15px;
+	padding: 14px 15px;
 }
 
 .logo-with-map ul li {
@@ -1004,8 +1039,8 @@ p.error {
 	font-weight:600;
 	margin-top:10px;
 }
-.form-horizontal .row + .row {
-	margin-top:40px;
+.form-horizontal .row{
+	margin-bottom:40px;
 }
 .restaurant-box .box-img img{
 	width:100%;
@@ -1021,4 +1056,7 @@ p.error {
 	border: 10px solid #337ab7;
     border-radius: 20px;
     box-shadow: 0px 0px 21px rgba(0,0,0,0.5);
+}
+.pac-container{
+	top:40px !important;
 }

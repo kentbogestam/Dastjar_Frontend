@@ -21,7 +21,7 @@
 
 	@if( !empty($menuTypes) )
 		<!-- <div class="{{ ($styleType) ? 'container' : '' }}"> -->
-		<div class="container">
+		
 			<form id="form" class="form-horizontal" method="post" action="{{ url('cart') }}">
 				{{ csrf_field() }}
 
@@ -123,8 +123,7 @@
 					@endif
 				@endif
 			</form>
-		</div>
-
+		
 		<!-- Popup add comment -->
 		<div id="transitionExample" class="modal fade" role="dialog">
 			<div class='modal-dialog'>
