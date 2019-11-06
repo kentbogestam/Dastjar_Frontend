@@ -26,7 +26,7 @@
 	@if( !empty($menuTypes) )
 		<form id="form" class="form-horizontal" method="post" action="{{ url('cart') }}">
 			{{ csrf_field() }}
-			<div class="hotel-service-list">
+			<div class="{{ ($styleType || $storedetails->menu_style_type) ? 'row' : 'hotel-service-list' }}">
 				@foreach($menuTypes as $menuType)
 					@php
 					$strLoyaltyOffer = "";
@@ -72,18 +72,47 @@
 						@endif
 					@endif
 
-					<div class="hotel-ser{{ ($strLoyaltyOffer != '') ? ' row-loyalty-offer' : '' }}">
-						<a href="#menu-{{ $menuType->dish_id }}" onclick="getMenuDetail(this, {{ $menuType->dish_id }}, 1)" data-toggle="collapse">
-							<span>
-								{{ $menuType->dish_name }} 
-								{!! $strLoyaltyOffer !!}
-							</span> 
-							<span class="icon-fa-angle-right"><i class="fa fa-angle-right"></i></span>
-						</a>
-						<div class="collapse menu-detail" id="menu-{{ $menuType->dish_id }}">
-							<div class="text-center"><i class="fa fa-spinner" aria-hidden="true"></i></div>
+					@if($styleType || $storedetails->menu_style_type)
+						<div class="col-xs-6 text-center restaurant-box">
+							<a href="javascript:void(0);" onclick="getMenuDetail(this, {{ $menuType->dish_id }}, 1)">
+								@if( !is_null($menuType->dish_image) )
+									<div class="box-img">
+										<img src="https://s3.eu-west-1.amazonaws.com/dastjar-coupons/{{ $menuType->dish_image }}" alt="{{ $menuType->dish_name }}">
+									</div>
+								@else
+									<!-- <div class="box-img"><img src="{{ asset('v1/images/img-pizza.jpg') }}" alt="{{ $menuType->dish_name }}"></div> -->
+								@endif
+
+								@if($strLoyaltyOffer != '')
+									<div class="text-center row-loyalty-offer">
+										<small>{!! $strLoyaltyOffer !!}</small><br>
+									</div>
+								@endif
+								<h4 class="text-center">{{ $menuType->dish_name }}</h4>
+							</a>
 						</div>
-					</div>
+
+						@if($loop->iteration % 2 == 0 || $loop->last)
+							<div class="col-xs-12 collapse menu-detail"></div>
+
+							@if(!$loop->last)
+								</div><div class="row">
+							@endif
+						@endif
+					@else
+						<div class="hotel-ser{{ ($strLoyaltyOffer != '') ? ' row-loyalty-offer' : '' }}">
+							<a href="#menu-{{ $menuType->dish_id }}" onclick="getMenuDetail(this, {{ $menuType->dish_id }}, 1)" data-toggle="collapse">
+								<span>
+									{{ $menuType->dish_name }} 
+									{!! $strLoyaltyOffer !!}
+								</span> 
+								<!-- <span class="icon-fa-angle-right"><i class="fa fa-angle-right"></i></span> -->
+							</a>
+							<div class="collapse menu-detail" id="menu-{{ $menuType->dish_id }}">
+								<div class="text-center"><i class="fa fa-spinner" aria-hidden="true"></i></div>
+							</div>
+						</div>
+					@endif
 				@endforeach
 			</div>
 			<input type="hidden" id="browserCurrentTime" name="browserCurrentTime" value="" />
@@ -227,42 +256,89 @@
 			});
 		});
 	});
-
+	
 	// 
 	function getMenuDetail(This, dishType, level)
 	{
 		// 
 		This = $(This);
-
-		// 
-		if(This.next('.menu-detail').find('.list-menu-items').length || This.next('.sub-menu-detail').find('.list-menu-items').length)
-		{
-			return false;
-		}
-
-		// 
 		let url = '{{ url('get-menu-detail') }}/'+dishType+'/'+level;
 
-		$.ajax({
-			url: url,
-			dataType: 'json',
-			success: function(response) {
-				if(response.status)
+		@if($styleType || $storedetails->menu_style_type)
+			// 
+			if(level == 1)
+			{
+				if(This.closest('.col-xs-6').hasClass('active'))
 				{
-					if(level == 1)
-					{
-						This.next('.menu-detail').html(response.html);
-					}
-					else
-					{
-						This.next('.sub-menu-detail').html(response.html);
-					}
+					$('.col-xs-6').removeClass('active');
+					This.closest('.row').find('.menu-detail').collapse('hide');
 				}
-			},
-			error: function() {
-				alert('Something went wrong!');
+				else
+				{
+					$('.col-xs-6').removeClass('active');
+					$('.menu-detail').removeClass('in');
+					This.closest('.row').find('.menu-detail').html('{{ __('messages.loadingText') }}');
+					This.closest('.col-xs-6').addClass('active');
+					This.closest('.row').find('.menu-detail').collapse('show');
+				}
 			}
-		});
+
+			// 
+			/*if(This.next('.menu-detail').find('.list-menu-items').length || This.next('.sub-menu-detail').find('.list-menu-items').length)
+			{
+				return false;
+			}*/
+
+			// 
+			$.ajax({
+				url: url,
+				dataType: 'json',
+				success: function(response) {
+					if(response.status)
+					{
+						if(level == 1)
+						{
+							This.closest('.row').find('.menu-detail').html(response.html);
+						}
+						else
+						{
+							This.next('.sub-menu-detail').html(response.html);
+						}
+					}
+				},
+				error: function() {
+					alert('Something went wrong!');
+				}
+			});
+		@else
+			// 
+			if(This.next('.menu-detail').find('.list-menu-items').length || This.next('.sub-menu-detail').find('.list-menu-items').length)
+			{
+				return false;
+			}
+
+			// 
+			$.ajax({
+				url: url,
+				dataType: 'json',
+				success: function(response) {
+					if(response.status)
+					{
+						if(level == 1)
+						{
+							This.next('.menu-detail').html(response.html);
+						}
+						else
+						{
+							This.next('.sub-menu-detail').html(response.html);
+						}
+					}
+				},
+				error: function() {
+					alert('Something went wrong!');
+				}
+			});
+		@endif
 	}
 
 	function send_btn(){

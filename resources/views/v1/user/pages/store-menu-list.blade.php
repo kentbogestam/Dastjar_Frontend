@@ -20,111 +20,108 @@
 	@include('v1.user.elements.store-delivery-service')
 
 	@if( !empty($menuTypes) )
-		<!-- <div class="{{ ($styleType) ? 'container' : '' }}"> -->
-		
-			<form id="form" class="form-horizontal" method="post" action="{{ url('cart') }}">
-				{{ csrf_field() }}
+		<form id="form" class="form-horizontal" method="post" action="{{ url('cart') }}">
+			{{ csrf_field() }}
+			<div class="{{ ($styleType || $storedetails->menu_style_type) ? 'row' : 'hotel-service-list' }}">
+				@foreach($menuTypes as $menuType)
+					@php
+					$strLoyaltyOffer = "";
+					@endphp
 
-				<div class="{{ ($styleType || $storedetails->menu_style_type) ? 'row' : 'hotel-service-list' }}">
-					@foreach($menuTypes as $menuType)
+					{{-- Logic to calculate loyalty offer --}}
+					@if( $promotionLoyalty && in_array($menuType->dish_id, explode(',', $promotionLoyalty->dish_type_ids)) )
 						@php
-						$strLoyaltyOffer = "";
+						$quantity_to_buy = $promotionLoyalty->quantity_to_buy;
+						$quantity_get = $promotionLoyalty->quantity_get;
+						$end_date = $promotionLoyalty->end_date;
+
+						// If not logged-in or loyalty validity is 0 or customer doesn't get loyalty yet
+						if( !Auth::check() || ((!$promotionLoyalty->validity) || ($promotionLoyalty->validity > $orderCustomerLoyalty->cnt)) )
+						{
+							$strLoyaltyOffer = "<span class='loyalty-offer'>".__('messages.loyaltyOfferMsg', ['quantity_to_buy' => $quantity_to_buy, 'quantity_get' => $quantity_get, 'valid_till' => $end_date])."</span>";
+						}
 						@endphp
 
-						{{-- Logic to calculate loyalty offer --}}
-						@if( $promotionLoyalty && in_array($menuType->dish_id, explode(',', $promotionLoyalty->dish_type_ids)) )
-							@php
-							$quantity_to_buy = $promotionLoyalty->quantity_to_buy;
-							$quantity_get = $promotionLoyalty->quantity_get;
-							$end_date = $promotionLoyalty->end_date;
+						@if(Auth::check())
+							@if($customerLoyalty)
+								@php
+								$quantity_bought = $customerLoyalty->quantity_bought;
 
-							// If not logged-in or loyalty validity is 0 or customer doesn't get loyalty yet
-							if( !Auth::check() || ((!$promotionLoyalty->validity) || ($promotionLoyalty->validity > $orderCustomerLoyalty->cnt)) )
-							{
-								$strLoyaltyOffer = "<span class='loyalty-offer'>".__('messages.loyaltyOfferMsg', ['quantity_to_buy' => $quantity_to_buy, 'quantity_get' => $quantity_get, 'valid_till' => $end_date])."</span>";
-							}
-							@endphp
+								// Calculate if 'loyalty' already have been applied
+								$quantity_bought -= ($quantity_to_buy*$orderCustomerLoyalty->cnt);
 
-							@if(Auth::check())
-								@if($customerLoyalty)
-									@php
-									$quantity_bought = $customerLoyalty->quantity_bought;
+								//
+								if($quantity_to_buy > $quantity_bought)
+								{
+									$final_quantity_to_buy = $quantity_to_buy-$quantity_bought;
 
-									// Calculate if 'loyalty' already have been applied
-									$quantity_bought -= ($quantity_to_buy*$orderCustomerLoyalty->cnt);
-
-									//
-									if($quantity_to_buy > $quantity_bought)
-									{
-										$final_quantity_to_buy = $quantity_to_buy-$quantity_bought;
-
-										$strLoyaltyOffer = "<span class='loyalty-offer'>".__('messages.loyaltyOfferMsg', ['quantity_to_buy' => $final_quantity_to_buy, 'quantity_get' => $quantity_get, 'valid_till' => $end_date])."</span>";
-									}
-									else
-									{
-										$quantity_offered = floor($quantity_bought/$quantity_to_buy)*$quantity_get;
-										
-										$strLoyaltyOffer = "<span class='loyalty-offer loyalty-offer-apply'>".__('messages.loyaltyOfferOnApply', ['quantity_offered' => $quantity_offered])."</span>";
-									}
-									@endphp
-								@endif
+									$strLoyaltyOffer = "<span class='loyalty-offer'>".__('messages.loyaltyOfferMsg', ['quantity_to_buy' => $final_quantity_to_buy, 'quantity_get' => $quantity_get, 'valid_till' => $end_date])."</span>";
+								}
+								else
+								{
+									$quantity_offered = floor($quantity_bought/$quantity_to_buy)*$quantity_get;
+									
+									$strLoyaltyOffer = "<span class='loyalty-offer loyalty-offer-apply'>".__('messages.loyaltyOfferOnApply', ['quantity_offered' => $quantity_offered])."</span>";
+								}
+								@endphp
 							@endif
 						@endif
-
-						@if($styleType || $storedetails->menu_style_type)
-							<div class="col-xs-6 text-center restaurant-box">
-								<a href="javascript:void(0);" onclick="getMenuDetail(this, {{ $menuType->dish_id }}, 1)">
-									@if( !is_null($menuType->dish_image) )
-										<div class="box-img">
-											<img src="https://s3.eu-west-1.amazonaws.com/dastjar-coupons/{{ $menuType->dish_image }}" alt="{{ $menuType->dish_name }}">
-										</div>
-									@else
-										<!-- <div class="box-img"><img src="{{ asset('v1/images/img-pizza.jpg') }}" alt="{{ $menuType->dish_name }}"></div> -->
-									@endif
-
-									@if($strLoyaltyOffer != '')
-										<div class="text-center row-loyalty-offer">
-											<small>{!! $strLoyaltyOffer !!}</small><br>
-										</div>
-									@endif
-									<h4 class="text-center">{{ $menuType->dish_name }}</h4>
-								</a>
-							</div>
-
-							@if($loop->iteration % 2 == 0 || $loop->last)
-								<div class="col-xs-12 collapse menu-detail"></div>
-
-								@if(!$loop->last)
-									</div><div class="row">
-								@endif
-							@endif
-						@else
-							<div class="hotel-ser{{ ($strLoyaltyOffer != '') ? ' row-loyalty-offer' : '' }}">
-								<a href="#menu-{{ $menuType->dish_id }}" onclick="getMenuDetail(this, {{ $menuType->dish_id }}, 1)" data-toggle="collapse">
-									<span>
-										{{ $menuType->dish_name }} 
-										{!! $strLoyaltyOffer !!}
-									</span> 
-									<!-- <span class="icon-fa-angle-right"><i class="fa fa-angle-right"></i></span> -->
-								</a>
-								<div class="collapse menu-detail" id="menu-{{ $menuType->dish_id }}">
-									<div class="text-center"><i class="fa fa-spinner" aria-hidden="true"></i></div>
-								</div>
-							</div>
-						@endif
-					@endforeach
-				</div>
-				<input type="hidden" id="browserCurrentTime" name="browserCurrentTime" value="" />
-				<input type="hidden" name="storeID" value="{{ $storedetails->store_id }}" />
-				<input type="hidden" name="browser" id="browser" value="">
-				@if($storedetails->deliveryTypes->count() == 1)
-					@if($storedetails->deliveryTypes[0]['delivery_type'] == 3 && Helper::isPackageSubscribed(12))
-						<input type="hidden" name="delivery_type" value="{{ $storedetails->deliveryTypes[0]['delivery_type'] }}" />
-					@elseif($storedetails->deliveryTypes[0]['delivery_type'] != 3)
-						<input type="hidden" name="delivery_type" value="{{ $storedetails->deliveryTypes[0]['delivery_type'] }}" />
 					@endif
+
+					@if($styleType || $storedetails->menu_style_type)
+						<div class="col-xs-6 text-center restaurant-box">
+							<a href="javascript:void(0);" onclick="getMenuDetail(this, {{ $menuType->dish_id }}, 1)">
+								@if( !is_null($menuType->dish_image) )
+									<div class="box-img">
+										<img src="https://s3.eu-west-1.amazonaws.com/dastjar-coupons/{{ $menuType->dish_image }}" alt="{{ $menuType->dish_name }}">
+									</div>
+								@else
+									<!-- <div class="box-img"><img src="{{ asset('v1/images/img-pizza.jpg') }}" alt="{{ $menuType->dish_name }}"></div> -->
+								@endif
+
+								@if($strLoyaltyOffer != '')
+									<div class="text-center row-loyalty-offer">
+										<small>{!! $strLoyaltyOffer !!}</small><br>
+									</div>
+								@endif
+								<h4 class="text-center">{{ $menuType->dish_name }}</h4>
+							</a>
+						</div>
+
+						@if($loop->iteration % 2 == 0 || $loop->last)
+							<div class="col-xs-12 collapse menu-detail"></div>
+
+							@if(!$loop->last)
+								</div><div class="row">
+							@endif
+						@endif
+					@else
+						<div class="hotel-ser{{ ($strLoyaltyOffer != '') ? ' row-loyalty-offer' : '' }}">
+							<a href="#menu-{{ $menuType->dish_id }}" onclick="getMenuDetail(this, {{ $menuType->dish_id }}, 1)" data-toggle="collapse">
+								<span>
+									{{ $menuType->dish_name }} 
+									{!! $strLoyaltyOffer !!}
+								</span> 
+								<!-- <span class="icon-fa-angle-right"><i class="fa fa-angle-right"></i></span> -->
+							</a>
+							<div class="collapse menu-detail" id="menu-{{ $menuType->dish_id }}">
+								<div class="text-center"><i class="fa fa-spinner" aria-hidden="true"></i></div>
+							</div>
+						</div>
+					@endif
+				@endforeach
+			</div>
+			<input type="hidden" id="browserCurrentTime" name="browserCurrentTime" value="" />
+			<input type="hidden" name="storeID" value="{{ $storedetails->store_id }}" />
+			<input type="hidden" name="browser" id="browser" value="">
+			@if($storedetails->deliveryTypes->count() == 1)
+				@if($storedetails->deliveryTypes[0]['delivery_type'] == 3 && Helper::isPackageSubscribed(12))
+					<input type="hidden" name="delivery_type" value="{{ $storedetails->deliveryTypes[0]['delivery_type'] }}" />
+				@elseif($storedetails->deliveryTypes[0]['delivery_type'] != 3)
+					<input type="hidden" name="delivery_type" value="{{ $storedetails->deliveryTypes[0]['delivery_type'] }}" />
 				@endif
-			</form>
+			@endif
+		</form>
 		
 		<!-- Popup add comment -->
 		<div id="transitionExample" class="modal fade" role="dialog">

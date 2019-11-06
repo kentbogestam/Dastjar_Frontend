@@ -298,7 +298,7 @@ Route::group(['prefix' => 'kitchen'], function(){
 // 
 Route::group(['prefix' => 'iframe'], function() {
 	Route::group(['namespace' => 'Iframe'], function() {
-		Route::get('restro-menu-list/{storeID}', 'IframeController@menuList');
+		Route::get('restro-menu-list/{storeID}/{styleType?}', 'IframeController@menuList');
 	});
 });
 

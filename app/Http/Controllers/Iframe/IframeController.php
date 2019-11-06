@@ -26,7 +26,7 @@ use Helper;
 
 class IframeController extends Controller
 {
-    public function menuList(Request $request, $storeId){
+    public function menuList(Request $request, $storeId, $styleType = 0){
         // Get store detail
         $request->session()->put('storeId', $storeId);
         $storedetails = Store::where('store_id' , $storeId)->first();
@@ -153,6 +153,6 @@ class IframeController extends Controller
             }
         }
 
-        return view('v1.user.pages-iframe.store-menu-list', compact('storedetails', 'menuTypes', 'promotionLoyalty', 'customerLoyalty', 'orderCustomerLoyalty'));
+        return view('v1.user.pages-iframe.store-menu-list', compact('storedetails', 'menuTypes', 'promotionLoyalty', 'customerLoyalty', 'orderCustomerLoyalty', 'styleType'));
     }
 }
