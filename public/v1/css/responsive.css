@@ -55,10 +55,7 @@
 
 	.row-hotel .hotel-distance {
 		text-align: right;
-	}
-
-	.row-hotel .hotel-distance a {
-	    margin-top: 25px;
+		margin-top: 0px;
 	    font-size: 28px;
 	}
 
@@ -80,10 +77,7 @@
 
 	.row-hotel .hotel-distance {
 		text-align: right;
-	}
-
-	.row-hotel .hotel-distance a {
-	    margin-top: 25px;
+		margin-top: 0px;
 	    font-size: 22px;
 	}
 
@@ -95,19 +89,13 @@
 }
 
 @media screen and (max-width: 1024px) {
-	.row-hotel .hotel-distance{
-		font-size:20px; margin-top:20px;
-	}
 	.row-hotel .hotel-icon p {
 		font-size: 20px;
 	}
 
 	.row-hotel .hotel-distance {
 		text-align: right;
-	}
-
-	.row-hotel .hotel-distance a {
-	    margin-top: 10px;
+		margin-top: 0px;
 	    font-size: 20px;
 	}
 
@@ -150,15 +138,8 @@
 
 	.row-hotel .hotel-distance {
 		text-align: right;
-	}
-
-	.row-hotel .hotel-distance a {
-	    margin-top: 10px;
+		margin-top: 0px;
 	    font-size: 18px;
-	}
-
-	.row-hotel .hotel-distance {
-		text-align: right;
 	}
 
 	.row-hotel .hotel-icon img {
@@ -200,7 +181,7 @@
 @media screen and (max-width: 576px) {
 	.product-detail img{ max-height: 57px; margin-bottom: 15px; }
 	.row-hotel .hotel-distance {
-		margin-top: 5px;
+		margin-top: 0px;
 	}
 
 	.mid-section {
@@ -217,7 +198,7 @@
 	}
 
 	.button-section a,
-	.row-hotel .hotel-distance a {
+	.row-hotel .hotel-distance {
 		font-size: 15px;
 	}
 

@@ -231,11 +231,8 @@ img {
 	max-width: 500px;
 }
 
-.row-hotel .hotel-distance {
-	text-align: right;
-}
-
 .row-hotel .hotel-distance{
+	text-align: right;
 	color: #333;
 	text-decoration: none;
 	font-size: 16px;
@@ -1066,6 +1063,6 @@ p.error {
 	top:40px !important;
 }
 .row-hotel .hotel-distance {
-		font-size: 25px;
-		margin-top:28px;
-	}
+	font-size: 25px;
+	margin-top:0px;
+}
