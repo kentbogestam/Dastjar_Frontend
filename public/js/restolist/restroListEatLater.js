@@ -74,9 +74,9 @@ function add(urlEatLater,urlMenulist,noImageUrl,sessionTime){
 							}
 
 							// Check if image URL is not null and valid
-							if( temp[i]['large_image'] && (temp[i]['large_image'].indexOf('.jpg') != -1 || temp[i]['large_image'].indexOf('.jpeg') != -1 || temp[i]['large_image'].indexOf('.png') != -1) )
+							if( temp[i]['store_large_image'] && (temp[i]['store_large_image'].indexOf('.jpg') != -1 || temp[i]['store_large_image'].indexOf('.jpeg') != -1 || temp[i]['store_large_image'].indexOf('.png') != -1) )
 							{
-								storeImage = '<img src="'+temp[i]['large_image']+'" alt="" width="120">';
+								storeImage = '<img src="'+temp[i]['store_large_image']+'" alt="" width="120">';
 							}
 
 							liItem += '<div class="row-hotel'+storeClass+'">'+
@@ -91,7 +91,7 @@ function add(urlEatLater,urlMenulist,noImageUrl,sessionTime){
 									'</div>'+
 									'<div class="col-sm-4 col-xs-4">'+
 										'<div class="hotel-distance">'+
-											temp[i]["distance"].toFixed(1)+' KM. <i class="fa fa-angle-right"></i></a>'+
+											temp[i]["distance"].toFixed(1)+' KM. <i class="fa fa-angle-right"></i>'+
 										'</div>'+
 									'</div>'+
 								'</a>'+
