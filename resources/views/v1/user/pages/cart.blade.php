@@ -12,7 +12,11 @@
 			<div class="cart-table">
 				<div class="table-responsive">
 					<table class="table" id="table-custom-2">
-						<input type="hidden" name="redirectUrl" id="redirectUrl" value="{{ url('restro-menu-list/').'/'.$order->store_id }}"/>
+						@if(!Session::has('iFrameMenu'))
+							<input type="hidden" name="redirectUrl" id="redirectUrl" value="{{ url('restro-menu-list/').'/'.$order->store_id }}"/>
+						@else
+							<input type="hidden" name="redirectUrl" id="redirectUrl" value="{{ url('iframe/restro-menu-list/').'/'.$order->store_id }}"/>
+						@endif
 						<input type="hidden" name="orderid" id="orderid" value="{{ $order->order_id }}" />
 						<input type="hidden" name="baseUrl" id="baseUrl" value="{{ url('/')}}"/>
 						{{ csrf_field() }}

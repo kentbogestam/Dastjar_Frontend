@@ -63,11 +63,15 @@
 	<div data-role="header" class="header" data-position="fixed">
 		<div class="nav_fixed">
 			<div data-role="navbar"> 
-				<ul> 
-			<li><a href="{{ Session::has('route_url') ? Session::get('route_url') : url('home') }}" data-ajax="false" id="back_arw" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
-			 <li><a data-ajax="false" class="ui-btn-active Settings">{{ __('messages.Settings') }}</a></li>
-
-			  <li class="done-btn dataSave" id="dataSave">  <input type="button" value="{{ __('messages.Done') }}" /></li> </ul>
+				<ul>
+					@if(!Session::has('iFrameMenu'))
+						<li><a href="{{ Session::has('route_url') ? Session::get('route_url') : url('home') }}" data-ajax="false" id="back_arw" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
+					@else
+						<li><a href="{{ url('iframe/restro-menu-list/'.Session::get('storeId')) }}" data-ajax="false" id="back_arw" class="text-left"><img src="{{asset('images/icons/backarrow.png')}}" width="11px"></a></li>
+					@endif
+					<li><a data-ajax="false" class="ui-btn-active Settings">{{ __('messages.Settings') }}</a></li>
+					<li class="done-btn dataSave" id="dataSave">  <input type="button" value="{{ __('messages.Done') }}" /></li>
+				</ul>
 			</div><!-- /navbar -->
 		</div>
 	</div>
@@ -87,27 +91,30 @@
 			        @endif
 			    </div>
 			@endif
-			<div class="setting-list">
-				<ul data-role="listview"> 
-					<li class="range-sec"><a href="{{url('select-location')}}" data-ajax="false">{{ __('messages.Location') }}
-						<p class="ui-li-aside">
-							@if(Auth::check())
-								@if(Session::get('with_login_address') == null)
-									{{ __('messages.Current Location') }}
-								@else	
-									{{Session::get('with_login_address')}}
+
+			@if(!Session::has('iFrameMenu'))
+				<div class="setting-list">
+					<ul data-role="listview"> 
+						<li class="range-sec"><a href="{{url('select-location')}}" data-ajax="false">{{ __('messages.Location') }}
+							<p class="ui-li-aside">
+								@if(Auth::check())
+									@if(Session::get('with_login_address') == null)
+										{{ __('messages.Current Location') }}
+									@else	
+										{{Session::get('with_login_address')}}
+									@endif
+								@else
+									@if(Session::get('address') == null)
+										{{ __('messages.Current Location') }}
+									@else	
+										{{Session::get('address')}}
+									@endif
 								@endif
-							@else
-								@if(Session::get('address') == null)
-									{{ __('messages.Current Location') }}
-								@else	
-									{{Session::get('address')}}
-								@endif
-							@endif
-						</p></a>
-					</li> 
-				</ul>
-			</div>
+							</p></a>
+						</li> 
+					</ul>
+				</div>
+			@endif
 			
 			<div id="language" class="setting-list">
 				<ul data-role="listview"> 
@@ -140,28 +147,30 @@
 				</ul> 
 			</div>
 			
-			<div class="setting-list">
-				<ul data-role="listview"> 
-					<li data-role="collapsible" class="range-sec">
-						<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Range') }}
-							<p class="ui-li-aside">
+			@if(!Session::has('iFrameMenu'))
+				<div class="setting-list">
+					<ul data-role="listview"> 
+						<li data-role="collapsible" class="range-sec">
+							<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Range') }}
+								<p class="ui-li-aside">
+									@if(Auth::check())
+										{{Auth::user()->range}} Km
+									@else
+										{{Session::get('rang')}}
+									@endif
+								</p>
+							</h2>
+							<div data-role="rangeslider">
 								@if(Auth::check())
-									{{Auth::user()->range}} Km
-								@else
-									{{Session::get('rang')}}
-								@endif
-							</p>
-						</h2>
-						<div data-role="rangeslider">
-							@if(Auth::check())
-						   		<input type="range" name="range-1b" id="range-1b" min="3" max="10" value="{{Auth::user()->range}}">
-						   	@else
-						   		<input type="range" name="range-1b" id="range-1b" min="3" max="10" value="{{Session::get('rang')}}">
-						   	@endif
-						</div>
-					</li> 
-				</ul> 
-			</div>
+							   		<input type="range" name="range-1b" id="range-1b" min="3" max="10" value="{{Auth::user()->range}}">
+							   	@else
+							   		<input type="range" name="range-1b" id="range-1b" min="3" max="10" value="{{Session::get('rang')}}">
+							   	@endif
+							</div>
+						</li> 
+					</ul> 
+				</div>
+			@endif
 		</div>
 	</form>
 

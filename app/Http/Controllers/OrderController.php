@@ -834,6 +834,11 @@ class OrderController extends Controller
             }
             else
             {
+                if(Session::has('iFrameMenu'))
+                {
+                    return redirect('iframe/restro-menu-list/'.Session::get('storeId'));
+                }
+
                 return redirect('eat-now');
             }
         }
@@ -1560,6 +1565,11 @@ class OrderController extends Controller
 
         $this->deleteWholecart($data['orderid']);
         $url=$request->session()->get('route_url');
+
+        if(Session::has('iFrameMenu'))
+        {
+            return redirect('iframe/restro-menu-list/'.Session::get('storeId'));
+        }
 
         if (strpos($url, 'selectOrder-date') !=false){
             return redirect()->action('HomeController@selectOrderDate');

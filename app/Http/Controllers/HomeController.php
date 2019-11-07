@@ -499,6 +499,9 @@ class HomeController extends Controller
     }
 
     public function menuList(Request $request, $storeId, $styleType = 0){
+        // Forget 'iFrameMenu' to say menu is not loading in 'homepage'
+        $request->session()->forget('iFrameMenu');
+
         // Get store detail
         $request->session()->put('storeId', $storeId);
         $storedetails = Store::where('store_id' , $storeId)->first();
