@@ -4,7 +4,7 @@ $requestPath = Request::path();
 
 <div class="footer-section">
 	<ul>
-		@if(Request::is('restro-menu-list/*'))
+		@if(Request::is('*/restro-menu-list/*'))
 			<li class="active">
 				<a href="javascript:void(0)" id="menudataSave">
 					<i class="fa fa-shopping-cart"></i> <sup><span class="badge cart-badge">0</span></sup>
