@@ -86,9 +86,9 @@
 						<div class="col-xs-6 text-center restaurant-box">
 							<a href="javascript:void(0);" onclick="getMenuDetail(this, {{ $menuType->dish_id }}, 1)">
 								@if( !is_null($menuType->dish_image) )
-									<!-- <div class="box-img">
+									<div class="box-img">
 										<img src="https://s3.eu-west-1.amazonaws.com/dastjar-coupons/{{ $menuType->dish_image }}" alt="{{ $menuType->dish_name }}">
-									</div> -->
+									</div>
 								@else
 									<div class="box-img"><img src="{{ asset('v1/images/img-pizza.jpg') }}" alt="{{ $menuType->dish_name }}"></div>
 								@endif
