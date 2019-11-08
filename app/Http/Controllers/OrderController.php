@@ -795,7 +795,7 @@ class OrderController extends Controller
             $request->session()->put('currentOrderId', $order->order_id);
 
             //If store support ontine payment then if condition run.
-            if($storeDetail->online_payment == 1){
+            if( ($storeDetail->online_payment == 1) || (Helper::isPackageSubscribed(5)) ){
                 $request->session()->put('paymentmode',1);
                 $request->session()->put('paymentAmount', $order->final_order_total);
                 $request->session()->put('OrderId', $order->order_id);
@@ -1004,7 +1004,7 @@ class OrderController extends Controller
         $user = User::find(Auth::id());
 
         //If store support ontine payment then if condition run.
-        if( isset($storeDetail->online_payment) && $storeDetail->online_payment == 1 ){
+        if( ($storeDetail->online_payment == 1) || (Helper::isPackageSubscribed(5)) ){
             $request->session()->put('paymentmode',1);
             $request->session()->put('paymentAmount', $order->final_order_total);
             $request->session()->put('OrderId', $order->order_id);
