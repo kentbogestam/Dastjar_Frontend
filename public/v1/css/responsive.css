@@ -14,7 +14,7 @@
 
 	.row-hotel {
 		padding:0px;
-		min-height: 130px;
+		/*min-height: 130px;*/
 	}
 	.row-hotel .hotel-icon p {
 		font-size: 30px;
@@ -89,6 +89,8 @@
 }
 
 @media screen and (max-width: 1024px) {
+	.hotel-icon-none{ min-height:35px; }
+	.row-hotel [class*="col-"]{ min-height:110px; }
 	.row-hotel .hotel-icon p {
 		font-size: 20px;
 	}
@@ -123,6 +125,8 @@
 }
 
 @media screen and (max-width: 768px) {
+	.hotel-icon-none{ min-height:27px; }
+	.row-hotel [class*="col-"]{ min-height:100px; }
 	.row-loyalty-offer .loyalty-offer{ margin-top:0px; }
 	.restaurant-box .box-img{ height:250px; }
 	.cart-table .table{ margin-bottom:0px; }
@@ -182,6 +186,7 @@
 }
 
 @media screen and (max-width: 576px) {
+	.row-hotel [class*="col-"]{ min-height:80px; }
 	.product-detail img{ max-height: 57px; margin-bottom: 15px; }
 	.row-hotel .hotel-distance {
 		margin-top: 0px;
@@ -226,6 +231,7 @@
 	.hotel-icon-none {
 	    display: inline-block;
 	    width: 53px;
+
 	}
 
 	.discription h3 {
@@ -253,6 +259,7 @@
 	.modal.fade.pop_up.popgdpr{ top:30%; bottom:inherit; }
 }
 @media (max-width:568px) {
+	.hotel-icon-none{ min-height:20px; }
 	.restaurant-box .box-img{ height:200px; }
 }
 @media (max-width: 480px) {
@@ -271,6 +278,7 @@
 	.form-horizontal .row [class*="col-"] h4{  font-size: 18px; }
 }
 @media (max-width: 384px) {
+	.row-hotel [class*="col-"]{ min-height:75px; }
 	.row-hotel [class*="col-"]{ padding:15px 0px;}
 	#cart-wrapper .container-fluid{ padding:0px; }
 	.product-detail img{  max-height: 50px; padding-top: 10px; max-width: 75px; }

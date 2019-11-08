@@ -209,9 +209,10 @@ img {
 	border-bottom: 1px solid #ccc;
 }
 .row-hotel [class*="col-"]{
-		padding:20px 15px;
+	padding:20px 15px;
+	display: table;
+	min-height:130px;
 	}
-
 .row-hotel a {
 	color: #333;
 	float: left;
@@ -222,6 +223,9 @@ img {
 .hotel-icon-none {
     display: inline-block;
     width: 120px;
+      min-height:45px;
+/*    min-height:90px;
+    background-color: #ddd;*/
 }
 
 .row-hotel .title-with-des p {
@@ -1084,4 +1088,6 @@ p.error {
 .row-hotel .hotel-distance {
 	font-size: 25px;
 	margin-top:0px;
+	display: table-cell;
+	vertical-align: middle;
 }
