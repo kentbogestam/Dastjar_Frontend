@@ -1104,9 +1104,9 @@ class OrderController extends Controller
                 {
                     if(Session::has('userDeliverAddressDistance'))
                     {
-                        // $userDeliverAddressDistance = 2;
                         $userDeliverAddressDistance = Session::get('userDeliverAddressDistance');
                         
+                        // 
                         $distancePrice = StoreDeliveryPriceModelDistance::select(['distance', 'delivery_charge'])
                             ->where('store_delivery_price_model_id', $storeDeliveryPrice->id)
                             ->where('distance', '<=', $userDeliverAddressDistance)
@@ -1114,6 +1114,15 @@ class OrderController extends Controller
                             ->first();
 
                         // dd($distancePrice->toArray());
+                        if(!$distancePrice)
+                        {
+                            // 
+                            $distancePrice = StoreDeliveryPriceModelDistance::select(['distance', 'delivery_charge'])
+                                ->where('store_delivery_price_model_id', $storeDeliveryPrice->id)
+                                ->where('distance', '>=', 0)
+                                ->first();
+                        }
+
                         if($distancePrice)
                         {
                             $homeDelivery['delivery_charge'] = $distancePrice->delivery_charge;
