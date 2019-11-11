@@ -23,13 +23,15 @@
                     <img src="{{asset('images/l-logo.png')}}">
                 </div>
                 <div class="social-sec">
-                    @if( !((strpos($agent, 'Mobile/') !== false) && (strpos($agent, 'Safari/') == false)) && (strpos($agent, 'wv') == false) )
-                        <div id="facebook-hide" class="ui-grid-solo">
-                            <div class="ui-block-a"><a href="{{ url('login/facebook')}}" class="ui-btn ui-shadow ui-corner-all" data-ajax="false"><img src="{{asset('images/fb-icon.png')}}"></a></div>
-                        </div>
-                        <div id="google-hide" class="ui-grid-solo">
-                            <div class="ui-block-a"><a href="{{ url('login/google')}}" class="ui-btn ui-shadow ui-corner-all" data-ajax="false"><img src="{{asset('images/gplus.png')}}"></a></div>
-                        </div>
+                    @if(!Session::has('iFrameMenu'))
+                        @if( !((strpos($agent, 'Mobile/') !== false) && (strpos($agent, 'Safari/') == false)) && (strpos($agent, 'wv') == false) )
+                            <div id="facebook-hide" class="ui-grid-solo">
+                                <div class="ui-block-a"><a href="{{ url('login/facebook')}}" class="ui-btn ui-shadow ui-corner-all" data-ajax="false"><img src="{{asset('images/fb-icon.png')}}"></a></div>
+                            </div>
+                            <div id="google-hide" class="ui-grid-solo">
+                                <div class="ui-block-a"><a href="{{ url('login/google')}}" class="ui-btn ui-shadow ui-corner-all" data-ajax="false"><img src="{{asset('images/gplus.png')}}"></a></div>
+                            </div>
+                        @endif
                     @endif
                     <div class="ui-grid-solo login_mobile">
                         <div class="ui-block-a"><a href="{{ url('/mobileLogin') }}" class="ui-btn ui-shadow ui-corner-all orange_box" data-ajax="false"><div class="text_box_login"><img src="{{asset('images/phone.png')}}"><div class="wrap_text_signin"><p>Sign in with Mobile Number</p></div></div></a></div>
