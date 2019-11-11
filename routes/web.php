@@ -101,7 +101,6 @@ Route::get('selectOrder-date', 'HomeController@selectOrderDate');
 Route::group(['middleware' => ['latlng']], function(){
 	Route::get('search-map-eatnow', 'MapController@searchMapEatnow');
 	Route::get('eat-now', 'HomeController@index');
-	Route::resource('customer', 'CustomerController');
 	Route::get('saveCurrentlat-long', 'HomeController@saveCurrentLatLong');
 	// Route::get('selectOrder-date', 'HomeController@selectOrderDate');
 	Route::post('eat-later', 'HomeController@eatLater');
@@ -110,24 +109,27 @@ Route::group(['middleware' => ['latlng']], function(){
 	Route::get('search-map-eatlater', 'MapController@searchMapEatlater');
 	Route::get('eat-later-map', 'HomeController@eatLaterMap');
 	// Route::get('withOutLogin', 'OrderController@withOutLogin')->name('withOutLogin');
-	Route::get('checkDistance','DistanceController@checkDistance');
-	Route::post('cart', 'OrderController@cart');
-	Route::get('cart', 'OrderController@cart');
-	Route::get('cart-sca-test', 'OrderController@cartScaTest');
-	Route::group(['namespace' => 'User'], function() {
-		Route::post('confirm-payment', 'PaymentController@confirmPayment');
-		Route::post('confirm-payment-test', 'PaymentController@confirmPaymentTest');
-		Route::post('delete-source', 'PaymentController@deleteSource');
-	});
-	// Route::get('cart', 'OrderController@cartWithOutLogin')->name('cartWithOutLogin');
-	Route::get('view-cart/{orderId}', 'OrderController@viewCart');
-	Route::post('order-update-delivery-type', 'OrderController@orderUpdateDeliveryType');
-	Route::post('save-user-address', 'OrderController@saveUserAddress');
-	Route::post('update-order-user-address', 'OrderController@updateOrderUserAddress');
-	Route::get('get-home-delivery-part-content/{order_id}', 'OrderController@getHomeDeliveryPartContent');
-	// Route::post('apply-promocode', 'OrderController@ajaxApplyPromocode');
 });
 
+Route::resource('customer', 'CustomerController');
+Route::get('checkDistance','DistanceController@checkDistance');
+Route::post('cart', 'OrderController@cart');
+Route::get('cart', 'OrderController@cart');
+Route::get('cart-sca-test', 'OrderController@cartScaTest');
+Route::group(['namespace' => 'User'], function() {
+	Route::post('confirm-payment', 'PaymentController@confirmPayment');
+	Route::post('confirm-payment-test', 'PaymentController@confirmPaymentTest');
+	Route::post('delete-source', 'PaymentController@deleteSource');
+});
+// Route::get('cart', 'OrderController@cartWithOutLogin')->name('cartWithOutLogin');
+Route::get('view-cart/{orderId}', 'OrderController@viewCart');
+Route::post('order-update-delivery-type', 'OrderController@orderUpdateDeliveryType');
+Route::post('save-user-address', 'OrderController@saveUserAddress');
+Route::post('update-order-user-address', 'OrderController@updateOrderUserAddress');
+Route::get('get-home-delivery-part-content/{order_id}', 'OrderController@getHomeDeliveryPartContent');
+// Route::post('apply-promocode', 'OrderController@ajaxApplyPromocode');
+
+// 
 Route::group(['middleware' => ['auth']], function(){
 	Route::get('blank-view', 'HomeController@blankView');
 	Route::get('order-view/{OrderId}', 'OrderController@orderView')->name('order-view');
