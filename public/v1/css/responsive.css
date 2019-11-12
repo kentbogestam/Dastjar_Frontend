@@ -123,7 +123,11 @@
 	.restaurant-box .box-img{ height:350px; }
 
 }
-
+@media screen and (max-width: 800px) {
+		.logo-with-map ul li.location {
+	    width: 70%;
+	}
+}
 @media screen and (max-width: 768px) {
 	.hotel-icon-none{ min-height:27px; }
 	.row-hotel [class*="col-"]{ min-height:100px; }
@@ -179,10 +183,8 @@
 	    width: 100px;
 	}
 
-	.logo-with-map ul li.location {
-	    width: 70%;
-	}
 
+	.head-section.position-fixed{ padding: 0px; }
 }
 
 @media screen and (max-width: 576px) {
@@ -261,6 +263,10 @@
 @media (max-width:568px) {
 	.hotel-icon-none{ min-height:20px; }
 	.restaurant-box .box-img{ height:200px; }
+	input#pac-input{ margin-top: 8px; }
+}
+@media (max-width: 533px) {
+	input#pac-input{ margin-top: 20px; }
 }
 @media (max-width: 480px) {
 	.restaurant-box .restaurant-contant{ margin:0px 5px; padding:10px; }
@@ -287,15 +293,18 @@
 	.restaurant-box{ margin-bottom: 20px; }
 	.restaurant-box .box-img{ height:150px; }
 }
-@media (max-width: 320px){
-	.row-loyalty-offer .loyalty-offer{ font-size:10px;}
-}
 @media (max-width: 350px) {
 	.logo-with-map ul li.location {
 	    width: 30%;
 	    padding-left: 10%;
 	}
+	input#pac-input{ margin-top: 8px; }
+	.logo-with-map ul li.arrow{ width: 15px; }
 }
+@media (max-width: 320px){
+	.row-loyalty-offer .loyalty-offer{ font-size:10px;}
+}
+
 
 /*********************************************************/
 @media screen and (min-width:991px){

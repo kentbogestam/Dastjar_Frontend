@@ -803,6 +803,8 @@ Cart
 
 .logo-with-map ul li.done a {
 	font-size: 12px;
+	margin-left: 15px;
+    display: block;
 }
 
 /* Location header ---------------------------------- */
