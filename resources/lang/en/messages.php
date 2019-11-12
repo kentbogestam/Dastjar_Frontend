@@ -108,6 +108,7 @@ return [
     'avalableDiscount' => 'Available Discount',
     'discountStoreDuplicate' => 'Do you want to replace your existing discount with this for some restaurant?',
     'loyaltyOfferMsg' => 'Only <span class="quantity-to-buy">:quantity_to_buy</span> to go, get <span class="quantity-get">:quantity_get</span> for free! Valid to :valid_till',
+    'loyaltyOfferMsgGrid' => 'Only <span class="quantity-to-buy">:quantity_to_buy</span> to go, get <span class="quantity-get">:quantity_get</span> for free! <br>Valid to :valid_till',
     'loyaltyOfferOnApply' => 'Congratulations! Get <span class="quantity-offered">:quantity_offered</span> for free now!',
     'loyaltyOfferApplied' => 'You\'re getting <span class="quantity-offered">:loyalty_quantity_free</span> dish(es) for free!',
     'deleteAlert' => 'Are you sure you want to delete this :item?',
@@ -225,6 +226,7 @@ return [
     'delivery_rule_id' => 'Delivery Rule',
     'delivery_charge' => 'Delivery Charge',
     'threshold' => 'Threshold',
+    'delivery_distance' => 'Distance (In km.)',
     'deliveryPriceCreated' => 'Delivery price created successfully.',
     'deliveryPriceUpdated' => 'Delivery price updated successfully.',
     'deliveryPriceDeleted' => 'Delivery price deleted successfully.',
@@ -232,6 +234,8 @@ return [
     'ruleDeliveryType1' => 'Add Price for each Delivery',
     'ruleDeliveryType2' => 'Add Price for Delivery and the minimum Order Value for Free Delivery',
     'ruleDeliveryType3' => 'Add order value when a home delivery is possible',
+    'ruleDeliveryType4' => 'Add Price for Delivery and the minimum Order Value for Delivery',
+    'ruleDeliveryType5' => 'Distance based delivery price',
 
     // Driver
     'driver' => 'Driver',
@@ -289,6 +293,8 @@ return [
     'moduleCreated' => ':module created successfully.',
     'moduleUpdated' => ':module updated successfully.',
     'moduleDeleted' => ':module deleted successfully.',
+    'loadingText' => 'Loading...',
+    'addMore' => 'Add more',
 
     /**
      * Restaurant's placeholder goes here
@@ -334,4 +340,9 @@ return [
     'printFooterText' => "Recommend \x1B\x45\"Anar Find&Eat\"\x1B\x46 to\nyour friends too! Easy to\ndownload the app from\n\x1B\x45Google Play\x1B\x46 or \x1B\x45AppStore!\x1B\x46",
     'vat' => 'VAT (12%)',
     'deliverTo' => 'Deliver to',
+
+    // Menu style type
+    'menuStyle' => 'Menu Style',
+    'menuStyleList' => 'List',
+    'menuStyleGrid' => 'Grid',
 ];

@@ -198,12 +198,14 @@ class Helper extends Model
     {
         // 
         $status = false;
-        $date = date('Y-m-d H:i:s'); $storeId = Session::get('storeId');
+        // $date = date('Y-m-d H:i:s');
+        $date = Carbon::parse(Carbon::now())->format('Y-m-d');
+        $storeId = Session::get('storeId');
 
         // 
         if($packageId && $storeId)
         {
-            $query = "SELECT bp.id, bpp.package_id FROM billing_products bp INNER JOIN billing_product_packages bpp ON bp.id = bpp.billing_product_id INNER JOIN anar_packages AP ON AP.id = bpp.package_id INNER JOIN user_plan UP ON (bp.plan_id = UP.plan_id AND UP.store_id='{$storeId}' AND UP.subscription_start_at <= '{$date}' AND UP.subscription_end_at >= '{$date}') WHERE bp.s_activ != 2 AND AP.id = '{$packageId}' AND AP.status = '1'";
+            $query = "SELECT bp.id, bpp.package_id FROM billing_products bp INNER JOIN billing_product_packages bpp ON bp.id = bpp.billing_product_id INNER JOIN anar_packages AP ON AP.id = bpp.package_id INNER JOIN user_plan UP ON (bp.plan_id = UP.plan_id AND UP.store_id='{$storeId}' AND date(UP.subscription_start_at) <= '{$date}' AND date(UP.subscription_end_at) >= '{$date}') WHERE bp.s_activ = 1 AND AP.id = '{$packageId}' AND AP.status = '1'";
             $res = DB::select($query);
             
             if($res)

@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900&display=swap');
+/*font-family: 'Nunito', sans-serif;*/
+
+@import url('https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800,900&display=swap');
+/*font-family: 'Nunito', sans-serif;*/
+
 * {
 	margin: 0;
 	padding: 0;
@@ -7,7 +13,7 @@
 
 body,
 html {
-	font-family: 'Lato', sans-serif;
+	font-family: 'Nunito', sans-serif;
 	height: 100%;
 	font-size: 16px;
 	color: #333;
@@ -62,6 +68,7 @@ img {
 
 .head-section.position-fixed {
 	position: fixed;
+	padding: 0px 15px;
 	top: 0;
 	left: 0;
 	width: 100%;
@@ -78,32 +85,36 @@ img {
 
 .head-section .logo-with-map {
 	width: 100%;
+	min-height: 60px;
+	display: table;
+	text-align: center;
 	position: relative;
-	height: 60px;
 }
 
 .head-section .logo-with-map .logo {
-	display: block;
+	display: inline-block;
 	text-align: center;
 	vertical-align: middle;
-	padding: 10px;
+	padding: 5px;
+	width:100%;
+	display: table-cell;
 	text-decoration: none;
 }
 
 .head-section .logo-with-map .logo img {
-	max-width: 90px;
+	max-width: 110px;
 }
 
 .head-section .logo-with-map .map-icon {
 	text-align: center;
 	vertical-align: middle;
-	position: absolute;
-	right: 10px;
-	top: 10px;
+	position: relative;
+	top: 6px;
+	float: right;
 }
 
 .head-section .logo-with-map .map-icon img {
-	max-width: 30px;
+	max-width: 45px;
 }
 
 .head-section .logo-with-map a.arrow {
@@ -149,7 +160,7 @@ img {
 	text-decoration: none;
 	color: #000;
 	font-size: 16px;
-	font-weight: bold;
+	font-weight: 700;
 }
 
 .button-section a i {
@@ -193,19 +204,28 @@ img {
 }
 
 .row-hotel {
-	padding: 10px 0;
-	margin-bottom: 10px;
+	padding: 0px;
+	margin-bottom:0px;
 	border-bottom: 1px solid #ccc;
 }
-
+.row-hotel [class*="col-"]{
+	padding:20px 15px;
+	display: table;
+	min-height:130px;
+	}
 .row-hotel a {
 	color: #333;
+	float: left;
+	width:100%;
 	text-decoration: none;
 }
 
 .hotel-icon-none {
     display: inline-block;
     width: 120px;
+      min-height:45px;
+/*    min-height:90px;
+    background-color: #ddd;*/
 }
 
 .row-hotel .title-with-des p {
@@ -215,11 +235,8 @@ img {
 	max-width: 500px;
 }
 
-.row-hotel .hotel-distance {
+.row-hotel .hotel-distance{
 	text-align: right;
-}
-
-.row-hotel .hotel-distance a {
 	color: #333;
 	text-decoration: none;
 	font-size: 16px;
@@ -237,7 +254,7 @@ img {
 .row-hotel .hotel-icon p {
 	font-weight: 300;
 	font-size: 16px;
-	font-weight: bold;
+	font-weight: 600;
 	margin-left: 12px;
 	display: inline-block;
 	vertical-align: middle;
@@ -307,15 +324,15 @@ img {
 .head-section .logo-with-map .logo h1 {
 	font-size: 28px;
 	color: #333;
+	font-weight:800;
 	text-decoration: none;
 }
 
 .tag-line-service {
 	text-align: center;
-	color: #31708f;
-	background-color: #d9edf7;
-	border-color: #bce8f1;
-	padding: 5px 0;
+	color: #EBEBEB;
+	background-color: #cc2900;
+	padding: 2px 0;
 }
 
 .tag-line-service p {
@@ -325,14 +342,15 @@ img {
 .hotel-ser a {
 	display: table;
     width: 100%;
-    padding: 8px 15px;
+    padding:8px 15px;
     background: #EBEBEB;
     border-top: 1px solid rgba(0, 0, 0, 0.2);
     box-shadow: 1px 1px 1px 0px #ccc;
-    color: #8e8e8e;
+    color: #8e8989;
     text-decoration: none;
     font-weight: bold;
     margin: 5px 0;
+    font-size: 20px;
 }
 
 .hotel-ser a span {
@@ -345,7 +363,7 @@ img {
 
 .hotel-ser a span.loyalty-offer {
 	font-weight: normal;
-	font-size: 11px;
+	font-size: 12px;
 	display: inline;
 	color: #c2444c;
 	width: auto;
@@ -366,13 +384,15 @@ img {
 	display: table;
 	width: 100%;
 	padding: 5px 10px;
-	background: #D9EDF7;
-	border: 1px solid rgba(0, 0, 0, 0.4);
+	background: #ff9933;
+	border: 1px solid #f09234;
 	box-shadow: 1px 1px 1px 0px #ccc;
-	color: #8e8e8e;
+	color: #fff;
 	text-decoration: none;
 	font-weight: normal;
 	margin: 5px 0;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
 }
 
 .product-sub a span {
@@ -402,6 +422,7 @@ img {
 
 .discription h3 {
 	font-size: 20px;
+	font-weight:600;
 }
 
 .discription p {
@@ -425,13 +446,12 @@ img {
 }
 
 .product-detail img {
-	max-width: 70px;
-	max-height: 50px;
+	max-width: 100%;
+	max-height: 68px;
 	border-radius: 10px;
 	display: inline-block;
 	vertical-align: middle;
 	border-radius: 10px;
-	border: 2px solid #ddd;
 	object-fit: cover;
 	-webkit-object-fit: cover;
 }
@@ -461,15 +481,15 @@ img {
 	width: 15px;
 	color: #333;
 	cursor: pointer;
-	font-size: 11px;
+	font-size: 15px;
 	text-align: center;
 }
 
 .quantity .inputBox input[type="text"] {
-	width: 48px;
+	width: 38px;
 	background: transparent;
 	border: none;
-	font-size: 13px;
+	font-size: 18px;
 	text-align: center;
 }
 
@@ -485,8 +505,10 @@ img {
 	border: none;
 	background: transparent;
 	box-shadow: none;
-	font-size: 12px;
+	font-size: 14px;
 	padding: 0 5px;
+	color: #3e3e3e;
+	letter-spacing:0.3px; 
 	vertical-align: middle;
 }
 
@@ -524,14 +546,19 @@ Cart
 }
 
 .cart-list h4 {
-	color: #999;
+	color: #000;
+	font-size: 28px;
+	font-weight:600;
 }
 
 .cart-list a {
 	text-align: right;
 	color: #333;
 }
-
+.cart-table{
+	font-size:16px;
+	color: #000;
+}
 #cart-wrapper .quantity {
 	max-width: 95px;
 	margin-top: 0px;
@@ -541,15 +568,22 @@ Cart
 	border-radius: 20px;
 	border: 1px solid #ddd;
 }
-
+.cart-table .table{
+	margin-bottom:0px; 
+}
 .cart-table .table p {
 	display: block;
 	color: green;
 	font-size: 14px;
 }
+.view-order table tr:first-child td, #row_1 td{ border-top: none;}
+
+.cart-table .custom_row1:nth-child(even), .view-order table tr:nth-child(even) {background: #f2f2f2}
+.cart-table .custom_row1:nth-child(odd), .view-order table tr:nth-child(odd) {background: #f9f9f9}
 
 .cart-table .table > tbody > tr > td {
 	vertical-align: middle;
+	padding:15px;
 }
 
 .contact-form-section {
@@ -630,9 +664,10 @@ Cart
 }
 
 .contact-info .form-control {
-	border-radius: 0;
-	border: 1px solid #333;
+	border-radius: 5px;
+	border: 1px solid #adaaaa;
 	box-shadow: none;
+	height:45px;
 }
 
 .contact-info label {
@@ -683,6 +718,14 @@ Cart
 	background-color: #d9edf7;
 	border-color: #bce8f1;
 }
+/*.row-total{
+	 background-color: #f2f2f2;
+}*/
+.add-address-form{
+	max-width:600px;
+	margin:0px auto;
+}
+.order-summery .container-fluid, #cart-wrapper .container-fluid{ padding:0px;  }
 
 /* View order ---------------------------------- */
 .order-summery {
@@ -719,7 +762,7 @@ Cart
 	list-style: none;
 	display: table;
 	width: 100%;
-	padding: 10px 15px;
+	padding: 14px 15px;
 }
 
 .logo-with-map ul li {
@@ -760,6 +803,8 @@ Cart
 
 .logo-with-map ul li.done a {
 	font-size: 12px;
+	margin-left: 15px;
+    display: block;
 }
 
 /* Location header ---------------------------------- */
@@ -987,3 +1032,63 @@ p.error {
 	overflow-y:scroll;
 	height:200px;
 }*/
+.row-loyalty-offer .loyalty-offer{
+	color: #fff;
+	display: inline-block;
+	font-size:18px;
+	margin-top:10px;
+}
+.form-horizontal .row [class*="col-"] a:hover, .form-horizontal .row [class*="col-"] a:focus{
+	text-decoration: none;
+}
+.form-horizontal .row [class*="col-"] h4{
+	font-size: 35px;
+	font-weight:600;
+	margin-top:10px;
+}
+.form-horizontal .row{
+	margin-bottom:40px;
+}
+.restaurant-box .box-img img{
+	width:100%;
+	height:100%;
+	border-radius:10px;
+	object-fit: cover;
+}
+.restaurant-box .box-img{
+	width:100%;
+	height:445px;
+	border-radius:10px;
+}
+.restaurant-box .restaurant-contant {
+    position: absolute;
+    bottom: 0;
+    text-align: center;
+    /* width: 100%; */
+    background-color: rgba(0,0,0,0.8);
+    color: #fff;
+    padding: 15px;
+    left: 0;
+    right: 0;
+    margin: 0px 15px;
+    border-radius: 0px 0px 10px 10px;
+}
+.restaurant-box.active .restaurant-contant{
+	border: 10px solid #ff9933;
+	border-top: none;
+	border-radius: 0px 0px 20px 20px;
+}
+.restaurant-box.active .box-img{
+	border: 10px solid #ff9933;
+    border-radius: 20px;
+    box-shadow: 0px 0px 21px rgba(0,0,0,0.5);
+}
+.pac-container{
+	top:40px !important;
+}
+.row-hotel .hotel-distance {
+	font-size: 25px;
+	margin-top:0px;
+	display: table-cell;
+	vertical-align: middle;
+}

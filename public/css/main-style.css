@@ -1123,3 +1123,9 @@ span.close {
     padding: 3px 0;
     font-weight: bold;
 }
+.ui-navbar li:last-child .ui-btn{
+  margin-top: 4px;
+}
+.done-btn .ui-input-btn input{
+  width: 100%;
+}

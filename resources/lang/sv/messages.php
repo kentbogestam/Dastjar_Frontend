@@ -108,6 +108,7 @@ return [
     'avalableDiscount' => 'Tillgänglig rabatt',
     'discountStoreDuplicate' => 'Vill du ersätta din befintliga rabatt med detta för någon restaurang?',
     'loyaltyOfferMsg' => 'Bara <span class="quantity-to-buy">:quantity_to_buy</span> kvar, få <span class="quantity-get">:quantity_get</span> gratis! Gäller till :valid_till',
+    'loyaltyOfferMsgGrid' => 'Bara <span class="quantity-to-buy">:quantity_to_buy</span> kvar, få <span class="quantity-get">:quantity_get</span> gratis! <br>Gäller till :valid_till',
     'loyaltyOfferOnApply' => 'Grattis! Få <span class="quantity-offered">:quantity_offered</span> gratis nu!',
     'loyaltyOfferApplied' => 'Du får <span class="quantity-offered">:loyalty_quantity_free</span> rätt gratis!',
     'deleteAlert'=>'Är du säker på att du vill radera :item?',
@@ -234,6 +235,8 @@ return [
     'ruleDeliveryType1' => 'Lägg till Pris för varje Leverans',
     'ruleDeliveryType2' => 'Lägg till pris för leverans och lägsta beställningsvärde för gratis leverans',
     'ruleDeliveryType3' => 'Lägg till ordervärde när en hemleverans är möjlig',
+    'ruleDeliveryType4' => 'Lägg till pris för leverans och lägsta beställningsvärde för leverans',
+    'ruleDeliveryType5' => 'Distance based delivery price',
 
     // Driver
     'driver' => 'Förare',
@@ -291,6 +294,8 @@ return [
     'moduleCreated' => ':module skapat.',
     'moduleUpdated' => ':module updaterat.',
     'moduleDeleted' => ':module raderat.',
+    'loadingText' => 'Loading...',
+    'addMore' => 'Add more',
 
     /**
      * Restaurant's placeholder goes here
@@ -337,4 +342,9 @@ return [
     'printFooterText' => "Rekommedera \x1B\x45\"Anar Find&Eat\"\x1B\x46 \ntill dina v\xE4nner ocks\xE5! Det \xE4r \nl\xE4tt att ladda ner den fr\xE5n \n\x1B\x45Google Play\x1B\x46 eller \x1B\x45AppStore!\x1B\x46",
     'vat' => 'VAT (12%)',
     'deliverTo' => 'Deliver to',
+
+    // Menu style type
+    'menuStyle' => 'Menu Style',
+    'menuStyleList' => 'List',
+    'menuStyleGrid' => 'Grid',
 ];

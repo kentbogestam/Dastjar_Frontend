@@ -63,7 +63,9 @@
         @show
 
 		<div class="mid-section">
-			@yield('content')
+			<div class="container">
+				@yield('content')
+			</div>
 		</div>
 
 		<div class="block-loader"><span class="block-loader-icon"></span></div>

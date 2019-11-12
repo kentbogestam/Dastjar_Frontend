@@ -32,7 +32,10 @@
 			<img src="{{ asset('images/icons/icon-eat-later-inactive.png') }}" alt="" class="inactive"> {{ __('messages.Eat Later') }}
 		</a>
 	</div>
-	<div class="hotel-list" id="companyDetailContianer"></div>
+
+	<div class="container">
+		<div class="hotel-list" id="companyDetailContianer"></div>
+	</div>
 
 	<div id="loading-img" class="ui-loader ui-corner-all ui-body-a ui-loader-default" style="display: none;">
 		<span class="ui-icon-loading"></span><h1>loading</h1>

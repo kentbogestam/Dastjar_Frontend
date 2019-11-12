@@ -68,15 +68,31 @@ class PromotionController extends Controller
                         CustomerDiscount::create(['customer_id' => Auth::id(), 'discount_id' => $discount->id]);
                     }
 
-                    return redirect('restro-menu-list/'.$storeId)
-                        ->with(['class' => 'success', 'msg' => __('messages.discountAddedSuccessfully')]);
+                    if(Session::has('iFrameMenu'))
+                    {
+                        return redirect('iframe/restro-menu-list/'.$storeId)
+                            ->with(['class' => 'success', 'msg' => __('messages.discountAddedSuccessfully')]);
+                    }
+                    else
+                    {
+                        return redirect('restro-menu-list/'.$storeId)
+                            ->with(['class' => 'success', 'msg' => __('messages.discountAddedSuccessfully')]);
+                    }
                 }
                 else
                 {
                     $status = 2;
 
-                    return redirect('restro-menu-list/'.$storeId)
-                        ->with(['class' => 'warning', 'msg' => __('messages.discountAlreadyApplied')]);
+                    if(Session::has('iFrameMenu'))
+                    {
+                        return redirect('iframe/restro-menu-list/'.$storeId)
+                            ->with(['class' => 'warning', 'msg' => __('messages.discountAlreadyApplied')]);
+                    }
+                    else
+                    {
+                        return redirect('restro-menu-list/'.$storeId)
+                            ->with(['class' => 'warning', 'msg' => __('messages.discountAlreadyApplied')]);
+                    }
                 }
             }
             else

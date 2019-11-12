@@ -22,13 +22,13 @@
 	@if( !empty($menuTypes) )
 		<form id="form" class="form-horizontal" method="post" action="{{ url('cart') }}">
 			{{ csrf_field() }}
-			<div class="hotel-service-list">
+			<div class="{{ ($styleType || $storedetails->menu_style_type) ? 'row' : 'hotel-service-list' }}">
 				@foreach($menuTypes as $menuType)
 					@php
 					$strLoyaltyOffer = "";
 					@endphp
 
-					<!-- Logic to calculate loyalty offer -->
+					{{-- Logic to calculate loyalty offer --}}
 					@if( $promotionLoyalty && in_array($menuType->dish_id, explode(',', $promotionLoyalty->dish_type_ids)) )
 						@php
 						$quantity_to_buy = $promotionLoyalty->quantity_to_buy;
@@ -38,7 +38,14 @@
 						// If not logged-in or loyalty validity is 0 or customer doesn't get loyalty yet
 						if( !Auth::check() || ((!$promotionLoyalty->validity) || ($promotionLoyalty->validity > $orderCustomerLoyalty->cnt)) )
 						{
-							$strLoyaltyOffer = "<span class='loyalty-offer'>".__('messages.loyaltyOfferMsg', ['quantity_to_buy' => $quantity_to_buy, 'quantity_get' => $quantity_get, 'valid_till' => $end_date])."</span>";
+							if($styleType || $storedetails->menu_style_type)
+							{
+								$strLoyaltyOffer = "<span class='loyalty-offer'>".__('messages.loyaltyOfferMsgGrid', ['quantity_to_buy' => $quantity_to_buy, 'quantity_get' => $quantity_get, 'valid_till' => $end_date])."</span>";
+							}
+							else
+							{
+								$strLoyaltyOffer = "<span class='loyalty-offer'>".__('messages.loyaltyOfferMsg', ['quantity_to_buy' => $quantity_to_buy, 'quantity_get' => $quantity_get, 'valid_till' => $end_date])."</span>";
+							}
 						}
 						@endphp
 
@@ -55,7 +62,14 @@
 								{
 									$final_quantity_to_buy = $quantity_to_buy-$quantity_bought;
 
-									$strLoyaltyOffer = "<span class='loyalty-offer'>".__('messages.loyaltyOfferMsg', ['quantity_to_buy' => $final_quantity_to_buy, 'quantity_get' => $quantity_get, 'valid_till' => $end_date])."</span>";
+									if($styleType || $storedetails->menu_style_type)
+									{
+										$strLoyaltyOffer = "<span class='loyalty-offer'>".__('messages.loyaltyOfferMsgGrid', ['quantity_to_buy' => $final_quantity_to_buy, 'quantity_get' => $quantity_get, 'valid_till' => $end_date])."</span>";
+									}
+									else
+									{
+										$strLoyaltyOffer = "<span class='loyalty-offer'>".__('messages.loyaltyOfferMsg', ['quantity_to_buy' => $final_quantity_to_buy, 'quantity_get' => $quantity_get, 'valid_till' => $end_date])."</span>";
+									}
 								}
 								else
 								{
@@ -68,18 +82,49 @@
 						@endif
 					@endif
 
-					<div class="hotel-ser{{ ($strLoyaltyOffer != '') ? ' row-loyalty-offer' : '' }}">
-						<a href="#menu-{{ $menuType->dish_id }}" onclick="getMenuDetail(this, {{ $menuType->dish_id }}, 1)" data-toggle="collapse">
-							<span>
-								{{ $menuType->dish_name }} 
-								{!! $strLoyaltyOffer !!}
-							</span> 
-							<span class="icon-fa-angle-right"><i class="fa fa-angle-right"></i></span>
-						</a>
-						<div class="collapse menu-detail" id="menu-{{ $menuType->dish_id }}">
-							<div class="text-center"><i class="fa fa-spinner" aria-hidden="true"></i></div>
+					@if($styleType || $storedetails->menu_style_type)
+						<div class="col-xs-6 text-center restaurant-box">
+							<a href="javascript:void(0);" onclick="getMenuDetail(this, {{ $menuType->dish_id }}, 1)">
+								@if( !is_null($menuType->dish_image) )
+									<div class="box-img">
+										<img src="https://s3.eu-west-1.amazonaws.com/dastjar-coupons/{{ $menuType->dish_image }}" alt="{{ $menuType->dish_name }}">
+									</div>
+								@else
+									<div class="box-img"><img src="{{ asset('v1/images/img-pizza.jpg') }}" alt="{{ $menuType->dish_name }}"></div>
+								@endif
+
+								<div class="restaurant-contant">
+									@if($strLoyaltyOffer != '')
+										<div class="text-center row-loyalty-offer">
+											<small>{!! $strLoyaltyOffer !!}</small><br>
+										</div>
+									@endif
+									<h4 class="text-center">{{ $menuType->dish_name }}</h4>
+								</div>
+							</a>
 						</div>
-					</div>
+
+						@if($loop->iteration % 2 == 0 || $loop->last)
+							<div class="col-xs-12 collapse menu-detail"></div>
+
+							@if(!$loop->last)
+								</div><div class="row">
+							@endif
+						@endif
+					@else
+						<div class="hotel-ser{{ ($strLoyaltyOffer != '') ? ' row-loyalty-offer' : '' }}">
+							<a href="#menu-{{ $menuType->dish_id }}" onclick="getMenuDetail(this, {{ $menuType->dish_id }}, 1)" data-toggle="collapse">
+								<span>
+									{{ $menuType->dish_name }} 
+									{!! $strLoyaltyOffer !!}
+								</span> 
+								<!-- <span class="icon-fa-angle-right"><i class="fa fa-angle-right"></i></span> -->
+							</a>
+							<div class="collapse menu-detail" id="menu-{{ $menuType->dish_id }}">
+								<div class="text-center"><i class="fa fa-spinner" aria-hidden="true"></i></div>
+							</div>
+						</div>
+					@endif
 				@endforeach
 			</div>
 			<input type="hidden" id="browserCurrentTime" name="browserCurrentTime" value="" />
@@ -93,7 +138,7 @@
 				@endif
 			@endif
 		</form>
-
+		
 		<!-- Popup add comment -->
 		<div id="transitionExample" class="modal fade" role="dialog">
 			<div class='modal-dialog'>
@@ -225,36 +270,83 @@
 	{
 		// 
 		This = $(This);
-
-		// 
-		if(This.next('.menu-detail').find('.list-menu-items').length || This.next('.sub-menu-detail').find('.list-menu-items').length)
-		{
-			return false;
-		}
-
-		// 
 		let url = '{{ url('get-menu-detail') }}/'+dishType+'/'+level;
 
-		$.ajax({
-			url: url,
-			dataType: 'json',
-			success: function(response) {
-				if(response.status)
+		@if($styleType || $storedetails->menu_style_type)
+			// 
+			if(level == 1)
+			{
+				if(This.closest('.col-xs-6').hasClass('active'))
 				{
-					if(level == 1)
-					{
-						This.next('.menu-detail').html(response.html);
-					}
-					else
-					{
-						This.next('.sub-menu-detail').html(response.html);
-					}
+					$('.col-xs-6').removeClass('active');
+					This.closest('.row').find('.menu-detail').collapse('hide');
 				}
-			},
-			error: function() {
-				alert('Something went wrong!');
+				else
+				{
+					$('.col-xs-6').removeClass('active');
+					$('.menu-detail').removeClass('in');
+					This.closest('.row').find('.menu-detail').html('{{ __('messages.loadingText') }}');
+					This.closest('.col-xs-6').addClass('active');
+					This.closest('.row').find('.menu-detail').collapse('show');
+				}
 			}
-		});
+
+			// 
+			/*if(This.next('.menu-detail').find('.list-menu-items').length || This.next('.sub-menu-detail').find('.list-menu-items').length)
+			{
+				return false;
+			}*/
+
+			// 
+			$.ajax({
+				url: url,
+				dataType: 'json',
+				success: function(response) {
+					if(response.status)
+					{
+						if(level == 1)
+						{
+							This.closest('.row').find('.menu-detail').html(response.html);
+						}
+						else
+						{
+							This.next('.sub-menu-detail').html(response.html);
+						}
+					}
+				},
+				error: function() {
+					alert('Something went wrong!');
+				}
+			});
+		@else
+			// 
+			if(This.next('.menu-detail').find('.list-menu-items').length || This.next('.sub-menu-detail').find('.list-menu-items').length)
+			{
+				return false;
+			}
+
+			// 
+			$.ajax({
+				url: url,
+				dataType: 'json',
+				success: function(response) {
+					if(response.status)
+					{
+						if(level == 1)
+						{
+							This.next('.menu-detail').html(response.html);
+						}
+						else
+						{
+							This.next('.sub-menu-detail').html(response.html);
+						}
+					}
+				},
+				error: function() {
+					alert('Something went wrong!');
+				}
+			});
+		@endif
 	}
 
 	function send_btn(){

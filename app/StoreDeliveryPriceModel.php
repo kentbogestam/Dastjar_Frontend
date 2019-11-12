@@ -14,4 +14,10 @@ class StoreDeliveryPriceModel extends Model
 	protected $casts = [
 	    'id' => 'string',
 	];
+
+	// 
+	public function deliveryPriceDistance()
+    {
+        return $this->hasMany('App\StoreDeliveryPriceModelDistance', 'store_delivery_price_model_id', 'id');
+    }
 }

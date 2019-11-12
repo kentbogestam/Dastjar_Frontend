@@ -1,51 +1,50 @@
 @media screen and (min-width:1920px) {
 	.head-section .logo-with-map .logo img {
-		max-width: unset;
+		max-width: 110px;
 	}
 
 	.head-section .logo-with-map .map-icon img {
-		max-width: 50px;
+		max-width: 45px;
 	}
 
 	.mid-section {
-	    margin-top: 80px;
+	    width:100%;
+	    margin:60px auto; 
 	}
 
 	.row-hotel {
-		padding: 60px 30px;
+		padding:0px;
+		/*min-height: 130px;*/
 	}
-
-	.row-hotel .hotel-distance a {
-		font-size: 100px;
-		margin-top: 40px;
-	}
-
 	.row-hotel .hotel-icon p {
-		font-size: 100px;
-		margin-left: 70px;
+		font-size: 30px;
+		margin-left:20px;
 	}
-
+	.row-hotel .hotel-icon-none{
+		width:90px; 
+	}
 	.row-hotel .hotel-icon img {
-	    max-width: 400px;
-	    max-height: 300px;
-	    border-radius: 30px;
+	    max-width:90px;
+	    max-height:90px;
+	    border-radius:30px;
 	}
 
 	.button-section a {
-		font-size: 100px;
+		font-size: 35px;
 	}
 
 	.button-section img {
 	    max-width: 30px;
+	    margin-top: -7px;
 	}
 
 	.footer-section ul li a {
-		font-size: 100px;
+		font-size: 50px;
 	}
 
 	.footer-section ul li .badge {
-		padding: 10px 15px;
-		font-size: 30px;
+		padding: 7px 10px;
+		font-size:20px;
 	}
 }
 
@@ -56,10 +55,7 @@
 
 	.row-hotel .hotel-distance {
 		text-align: right;
-	}
-
-	.row-hotel .hotel-distance a {
-	    margin-top: 25px;
+		margin-top: 0px;
 	    font-size: 28px;
 	}
 
@@ -81,10 +77,7 @@
 
 	.row-hotel .hotel-distance {
 		text-align: right;
-	}
-
-	.row-hotel .hotel-distance a {
-	    margin-top: 25px;
+		margin-top: 0px;
 	    font-size: 22px;
 	}
 
@@ -93,23 +86,18 @@
 	    max-height: 90px;
 	}
 
-	.button-section a,
-	.footer-section ul li a {
-		font-size: 23px;
-	}
 }
 
 @media screen and (max-width: 1024px) {
+	.hotel-icon-none{ min-height:35px; }
+	.row-hotel [class*="col-"]{ min-height:110px; }
 	.row-hotel .hotel-icon p {
 		font-size: 20px;
 	}
 
 	.row-hotel .hotel-distance {
 		text-align: right;
-	}
-
-	.row-hotel .hotel-distance a {
-	    margin-top: 10px;
+		margin-top: 0px;
 	    font-size: 20px;
 	}
 
@@ -130,8 +118,25 @@
 		font-size: 22px;
 	}
 }
+@media screen and (max-width: 990px) {
+	.container{ width:100%;  }
+	.restaurant-box .box-img{ height:350px; }
 
+}
+@media screen and (max-width: 800px) {
+		.logo-with-map ul li.location {
+	    width: 70%;
+	}
+}
 @media screen and (max-width: 768px) {
+	.hotel-icon-none{ min-height:27px; }
+	.row-hotel [class*="col-"]{ min-height:100px; }
+	.row-loyalty-offer .loyalty-offer{ margin-top:0px; }
+	.restaurant-box .box-img{ height:250px; }
+	.cart-table .table{ margin-bottom:0px; }
+	.form-horizontal .row [class*="col-"] h4{ font-size:25px; margin-top: 5px;  }
+	.row-loyalty-offer .loyalty-offer{ font-size:14px; }
+	.product-detail img{ max-height: 65px; }
 	.row-hotel .hotel-icon {
 		text-align: left;
 	}
@@ -144,15 +149,8 @@
 
 	.row-hotel .hotel-distance {
 		text-align: right;
-	}
-
-	.row-hotel .hotel-distance a {
-	    margin-top: 10px;
+		margin-top: 0px;
 	    font-size: 18px;
-	}
-
-	.row-hotel .hotel-distance {
-		text-align: right;
 	}
 
 	.row-hotel .hotel-icon img {
@@ -185,19 +183,19 @@
 	    width: 100px;
 	}
 
-	.logo-with-map ul li.location {
-	    width: 70%;
-	}
 
+	.head-section.position-fixed{ padding: 0px; }
 }
 
 @media screen and (max-width: 576px) {
+	.row-hotel [class*="col-"]{ min-height:80px; }
+	.product-detail img{ max-height: 57px; margin-bottom: 15px; }
 	.row-hotel .hotel-distance {
-		margin-top: 5px;
+		margin-top: 0px;
 	}
 
 	.mid-section {
-	    margin-top: 60px;
+	    margin-top: 62px;
 	}
 
 	.button-section a {
@@ -210,7 +208,7 @@
 	}
 
 	.button-section a,
-	.row-hotel .hotel-distance a {
+	.row-hotel .hotel-distance {
 		font-size: 15px;
 	}
 
@@ -235,6 +233,7 @@
 	.hotel-icon-none {
 	    display: inline-block;
 	    width: 53px;
+
 	}
 
 	.discription h3 {
@@ -243,7 +242,7 @@
 	}
 
 	.discription {
-	    max-width: 85px;
+	    max-width: 100%;
 	}
 
 	.product-detail {
@@ -261,9 +260,67 @@
 	.icon-fa-angle-right{float:right; }
 	.modal.fade.pop_up.popgdpr{ top:30%; bottom:inherit; }
 }
+@media (max-width:568px) {
+	.hotel-icon-none{ min-height:20px; }
+	.restaurant-box .box-img{ height:200px; }
+	input#pac-input{ margin-top: 8px; }
+}
+@media (max-width: 533px) {
+	input#pac-input{ margin-top: 20px; }
+}
+@media (max-width: 480px) {
+	.restaurant-box .restaurant-contant{ margin:0px 5px; padding:10px; }
+	.form-horizontal .row{ margin:0px -5px; }
+	.form-horizontal .restaurant-box{ padding:0px 5px; }
+	.restaurant-box { margin-bottom: 30px; }
+	.form-horizontal .row{ margin-bottom: 0px; }
+	.quantity .inputBox input[type="text"]{ font-size: 16px; }
+	.quantity .plus, .quantity .minus{ font-size: 12px; }
+	.head-section .logo-with-map .logo h1{ font-size:20px;}
+}
+@media (max-width: 414px) {
+	.row-loyalty-offer .loyalty-offer{ font-size:11px;}
+	.cart-table{ font-size:13px; }
+	.form-horizontal .row [class*="col-"] h4{  font-size: 18px; }
+}
+@media (max-width: 384px) {
+	.row-hotel [class*="col-"]{ min-height:75px; }
+	.row-hotel [class*="col-"]{ padding:15px 0px;}
+	#cart-wrapper .container-fluid{ padding:0px; }
+	.product-detail img{  max-height: 50px; padding-top: 10px; max-width: 75px; }
+}
+@media (max-width: 375px) {
+	.restaurant-box{ margin-bottom: 20px; }
+	.restaurant-box .box-img{ height:150px; }
+}
 @media (max-width: 350px) {
 	.logo-with-map ul li.location {
 	    width: 30%;
 	    padding-left: 10%;
 	}
+	input#pac-input{ margin-top: 8px; }
+	.logo-with-map ul li.arrow{ width: 15px; }
 }
+@media (max-width: 320px){
+	.row-loyalty-offer .loyalty-offer{ font-size:10px;}
+}
+
+
+/*********************************************************/
+@media screen and (min-width:991px){
+	.product-detail{ min-width:200px; min-height: 90px; line-height: 80px; text-align: left; }
+	/*.list-menu-items{ max-width:95%; margin:0px auto;  }*/
+	.hotel-product{ padding:15px 2px; }
+	.product-sub .hotel-product{ padding:10px 2px; }
+	.discription h3{ font-size:25px; font-weight:600; }
+	.discription p{ font-size:18px; }
+	.product [class*="col-"]{ padding:0px 30px; }
+	.product-detail img{ max-width:100%; max-height:88px; border:none;  }
+	.container{  max-width: 1700px; width:100%; }
+	.footer-section{ max-width:1670px; padding:0px 10px; left:0px; right:0px; margin:0px auto;  }
+	.head-section.position-fixed{ max-width:1670px; padding:0px 10px; left:0px; right:0px; margin:0px auto;  }
+
+
+}
+
+

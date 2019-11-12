@@ -175,7 +175,7 @@
 		var list = Array();
 		var totalCount = 0;
 		var totallength = 0;
-		var storeId = "{{Session::get('storeId')}}";
+		var storeId = "{{Session::get('kitchenStoreId')}}";
 
 		function removeOrder(orderID,user_id){
 				$("#dialog-confirm").dialog({

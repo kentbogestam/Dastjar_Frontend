@@ -53,133 +53,9 @@
             </div>
         </div>
     @endif
-    <div class="row">
-        <div class="col-md-12">
-            <table class="table table-bordered">
-                <thead>
-                <tr>
-                    <th>{{ __('messages.deliveryType') }}</th>
-                    <th>{{ __('messages.delivery_charge') }}</th>
-                    <th>{{ __('messages.threshold') }}</th>
-                    <th>{{ __('messages.action') }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                @if( !$deliveryPriceModel->isEmpty() )
-                    @foreach($deliveryPriceModel as $row)
-                        <tr>
-                            <td>
-                                @if($row->delivery_rule_id == 1)
-                                    {{ __('messages.ruleDeliveryType1') }}
-                                @elseif($row->delivery_rule_id == 2)
-                                    {{ __('messages.ruleDeliveryType2') }}
-                                @elseif($row->delivery_rule_id == 3)
-                                    {{ __('messages.ruleDeliveryType3') }}
-                                @endif
-                            </td>
-                            <td>{{ $row->delivery_charge }}</td>
-                            <td>{{ $row->threshold }}</td>
-                            <td>
-                                <snap class="btn-link" onclick="getDeliveryPrice('{{ $row->id }}')"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></snap>
-                                <a href="{{ url('kitchen/delivery-price-model/'.$row->id.'/delete') }}" onclick="return confirmDelete()" data-ajax="false">
-                                    <i class="fa fa-trash-o" aria-hidden="true"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    @endforeach
-                @else
-                    <tr>
-                        <td colspan="4" class="text-center">{{ __('messages.noRecordFound') }}</td>
-                    </tr>
-                @endif
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <!-- Modal: Add new dish -->
-    <div class="modal fade" id="add-form-model" role="dialog">
-        <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-body">
-                    <form name="add-form" method="POST" action="{{ url('kitchen/delivery-price-model/store') }}" id="add-form" data-ajax="false">
-                        @csrf
-                        <div class="form-group">
-                            <label for="delivery_rule_id">{{ __('messages.deliveryType') }} <span class='mandatory'>*</span>:</label>
-                            <div class="input-group">
-                                <select name="delivery_rule_id" class="form-control" id="delivery_rule_id" data-rule-required="true">
-                                    @foreach($deliveryRule as $row)
-                                        <option value="{{ $row['id'] }}">{{ $row['summary'] }}</option>
-                                    @endforeach
-                                </select>
-                                <div class="input-group-append">
-                                    <span class="input-group-text">
-                                        <a href="javascript:void(0)" data-toggle="tooltip" data-html="true" title="{{ __('messages.iDeliveryType') }}">
-                                            <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                        </a>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="delivery_charge">{{ __('messages.delivery_charge') }} :</label>
-                            <input type="text" name="delivery_charge" class="form-control" id="delivery_charge" data-msg-required="{{ __('messages.fieldRequired') }}">
-                        </div>
-                        <div class="form-group">
-                            <label for="threshold">{{ __('messages.threshold') }} :</label>
-                            <input type="text" name="threshold" class="form-control" id="threshold" data-msg-required="{{ __('messages.fieldRequired') }}">
-                        </div>
-                        <button type="submit" class="btn btn-success">{{ __('messages.save') }}</button>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ __('messages.close') }}</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Modal: Edit dish -->
-    <div class="modal fade" id="update-form-model" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <form name="update-form" method="POST" action="{{ url('kitchen/delivery-price-model/update') }}" id="update-form" data-ajax="false">
-                        @csrf
-                        <div class="form-group">
-                            <label for="delivery_rule_id_upd">{{ __('messages.delivery_rule_id') }} <span class='mandatory'>*</span>:</label>
-                            <div class="input-group">
-                                <select name="delivery_rule_id_upd" class="form-control" id="delivery_rule_id_upd" data-rule-required="true">
-                                    @foreach($deliveryRule as $row)
-                                        <option value="{{ $row['id'] }}">{{ $row['summary'] }}</option>
-                                    @endforeach
-                                </select>
-                                <div class="input-group-append">
-                                    <span class="input-group-text">
-                                        <a href="javascript:void(0)" data-toggle="tooltip" data-html="true" title="{{ __('messages.iDeliveryType') }}">
-                                            <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                        </a>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="delivery_charge_upd">{{ __('messages.delivery_charge') }} :</label>
-                            <input type="text" name="delivery_charge_upd" class="form-control" id="delivery_charge_upd" data-msg-required="{{ __('messages.fieldRequired') }}">
-                        </div>
-                        <div class="form-group">
-                            <label for="threshold_upd">{{ __('messages.threshold') }} :</label>
-                            <input type="text" name="threshold_upd" class="form-control" id="threshold_upd" data-msg-required="{{ __('messages.fieldRequired') }}">
-                        </div>
-                        <input type="hidden" name="id" id="id" data-rule-required="true">
-                        <button type="submit" class="btn btn-success">{{ __('messages.save') }}</button>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ __('messages.close') }}</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    @include('kitchen.delivery-price-model.list-part')
+    @include('kitchen.delivery-price-model.add-modal-part')
+    @include('kitchen.delivery-price-model.edit-modal-part')
 </div>
 @endsection
 
@@ -204,6 +80,9 @@
 
         $('#delivery_rule_id_upd').on('change', function() {
             modalConditionalFields('_upd');
+
+            id = $(this).closest('form').find('#id').val();
+            getDeliveryPrice(id);
         });
 
         // Form validation
@@ -211,12 +90,24 @@
             rules: {
                 delivery_charge: {
                     required: function(element) {
-                        return ($('#delivery_rule_id').val() == '1' || $('#delivery_rule_id').val() == '2');
+                        return ($('#delivery_rule_id').val() == '1' || $('#delivery_rule_id').val() == '2' || $('#delivery_rule_id').val() == '4');
                     }
                 },
                 threshold: {
                     required: function(element) {
-                        return ($('#delivery_rule_id').val() == '2' || $('#delivery_rule_id').val() == '3');
+                        return ($('#delivery_rule_id').val() == '2' || $('#delivery_rule_id').val() == '3' || $('#delivery_rule_id').val() == '4' || $('#delivery_rule_id').val() == '5');
+                    }
+                },
+                'dp_distance[]': {
+                    digits: true,
+                    required: function(element) {
+                        return ($('#delivery_rule_id').val() == '5');
+                    }
+                },
+                'distance_delivery_charge[]': {
+                    digits: true,
+                    required: function(element) {
+                        return ($('#delivery_rule_id').val() == '5');
                     }
                 }
             }
@@ -226,12 +117,24 @@
             rules: {
                 delivery_charge_upd: {
                     required: function(element) {
-                        return ($('#delivery_rule_id_upd').val() == '1' || $('#delivery_rule_id_upd').val() == '2');
+                        return ($('#delivery_rule_id_upd').val() == '1' || $('#delivery_rule_id_upd').val() == '2' || $('#delivery_rule_id_upd').val() == '4');
                     }
                 },
                 threshold_upd: {
                     required: function(element) {
-                        return ($('#delivery_rule_id_upd').val() == '2' || $('#delivery_rule_id_upd').val() == '3');
+                        return ($('#delivery_rule_id_upd').val() == '2' || $('#delivery_rule_id_upd').val() == '3' || $('#delivery_rule_id_upd').val() == '4' || $('#delivery_rule_id_upd').val() == '5');
+                    }
+                },
+                'dp_distance_upd[]': {
+                    digits: true,
+                    required: function(element) {
+                        return ($('#delivery_rule_id_upd').val() == '5');
+                    }
+                },
+                'distance_delivery_charge_upd[]': {
+                    digits: true,
+                    required: function(element) {
+                        return ($('#delivery_rule_id_upd').val() == '5');
                     }
                 }
             }
@@ -239,16 +142,42 @@
     });
 
     // 
-    function getDeliveryPrice(id)
+    function getDeliveryPrice(id, flag = 0)
     {
         $.ajax({
             url: '{{ url('kitchen/delivery-price-model/get-delivery-price') }}/'+id,
             dataType: 'json',
             success: function(response) {
                 $('#update-form-model').find('#id').val(response.deliveryPriceModel.id);
-                $('#update-form-model').find('#delivery_rule_id_upd').val(response.deliveryPriceModel.delivery_rule_id);
+                if(flag)
+                {
+                    $('#update-form-model').find('#delivery_rule_id_upd').val(response.deliveryPriceModel.delivery_rule_id);
+                }
                 $('#update-form-model').find('#delivery_charge_upd').val(response.deliveryPriceModel.delivery_charge);
                 $('#update-form-model').find('#threshold_upd').val(response.deliveryPriceModel.threshold);
+
+                let html = '';
+                if(response.deliveryPriceModel.delivery_rule_id == 5 && response.deliveryPriceModel.delivery_price_distance.length)
+                {
+                    for(let i = 0; i < response.deliveryPriceModel.delivery_price_distance.length; i++)
+                    {
+                        html += '<div class="form-group row"><div class="col-sm-5"><input type="text" name="dp_distance_upd[]" value="'+response.deliveryPriceModel.delivery_price_distance[i]['distance']+'" class="form-control"></div><div class="col-sm-5"><input type="text" name="distance_delivery_charge_upd[]" value="'+response.deliveryPriceModel.delivery_price_distance[i]['delivery_charge']+'" class="form-control"></div>';
+
+                        if(i != 0)
+                        {
+                            html += '<div class="col-sm-2"><button onclick="removeMore(this)" class="btn btn-link"><i class="fa fa-minus-circle" aria-hidden="true"></i></button></div>';
+                        }
+
+                        html += '</div>';
+                    }
+                }
+                else
+                {
+                    html += '<div class="form-group row"><div class="col-sm-5"><input type="text" name="dp_distance_upd[]" class="form-control"></div><div class="col-sm-5"><input type="text" name="distance_delivery_charge_upd[]" class="form-control"></div></div>';
+                }
+
+                html += '<button type="button" onclick="addMore(this, \'_upd\')" class="btn btn-link pull-right">{{ __('messages.addMore') }}</button>';    
+                $('#update-form-model').find('.type2 .type2-data').html(html);
                 $('#update-form-model').modal();
             }
         });
@@ -259,23 +188,48 @@
     {
         var delivery_rule_id = $('#delivery_rule_id'+flag).val();
 
+        $('.type2').addClass('d-none');
+
         if(delivery_rule_id == '1')
         {
             $('#delivery_charge'+flag).closest('.form-group').show();
             $('#threshold'+flag).val('');
             $('#threshold'+flag).closest('.form-group').hide();
         }
-        if(delivery_rule_id == '2')
+        else if(delivery_rule_id == '2' || delivery_rule_id == '4')
         {
             $('#threshold'+flag).closest('.form-group').show();
             $('#delivery_charge'+flag).closest('.form-group').show();
         }
-        if(delivery_rule_id == '3')
+        else if(delivery_rule_id == '3')
         {
             $('#threshold'+flag).closest('.form-group').show();
             $('#delivery_charge'+flag).val('');
             $('#delivery_charge'+flag).closest('.form-group').hide();
         }
+        else if(delivery_rule_id == '5')
+        {
+            $('#threshold'+flag).closest('.form-group').show();
+            $('#delivery_charge'+flag).closest('.form-group').hide();
+            $('.type2').removeClass('d-none');
+        }
+    }
+
+    // 
+    function addMore(This, suffix = '')
+    {
+        This = $(This);
+
+        let html = '<div class="form-group row"><div class="col-sm-5"><input type="text" name="dp_distance'+suffix+'[]" class="form-control"></div><div class="col-sm-5"><input type="text" name="distance_delivery_charge'+suffix+'[]" class="form-control"></div><div class="col-sm-2"><button onclick="removeMore(this)" class="btn btn-link"><i class="fa fa-minus-circle" aria-hidden="true"></i></button></div></div>';
+
+        This.before(html);
+    }
+
+    // 
+    function removeMore(This)
+    {
+        This = $(This);
+        This.closest('.row').remove();
     }
 </script>
 @endsection

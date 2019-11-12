@@ -104,7 +104,7 @@ class AdminController extends Controller
     public function index(Request $request){
         if(!empty($request->input())){
             $data = $request->input();
-            Session::put('storeId', $data['storeId']);
+            Session::put('kitchenStoreId', $data['storeId']);
             $storeId = $data['storeId'];
 
             // Get virtual restaurant if mapped and set them in session
@@ -123,7 +123,7 @@ class AdminController extends Controller
                 Session::put('virtualStores', $virtualStores);
             }
         }else{
-            $storeId = Session::get('storeId');
+            $storeId = Session::get('kitchenStoreId');
         }
 
         Session::put('checkStore', 1);
@@ -158,7 +158,7 @@ class AdminController extends Controller
         Session::save();
 
         $store = Store::select('check_subscription')
-            ->where('store_id', Session::get('storeId'))
+            ->where('store_id', Session::get('kitchenStoreId'))
             ->first();
 
         // Check if store's 'check_subscription' has set to '0', give access of all modules without subscription
@@ -174,7 +174,7 @@ class AdminController extends Controller
                 ->whereDate('UP.subscription_start_at', '<=', Carbon::parse(Carbon::now())->format('Y-m-d'))
                 ->whereDate('UP.subscription_end_at', '>=', Carbon::parse(Carbon::now())->format('Y-m-d'))
                 ->where('UP.user_id', Auth::user()->u_id)
-                ->where('UP.store_id', Session::get('storeId'))
+                ->where('UP.store_id', Session::get('kitchenStoreId'))
                 ->get();
             // dd($storePlanDetail->toArray());
 
@@ -411,7 +411,7 @@ class AdminController extends Controller
     }
 
     public function kitchenOrderDetail(){
-        $store = Store::where('store_id' , Session::get('storeId'));
+        $store = Store::where('store_id' , Session::get('kitchenStoreId'));
 
         if(!$store->exists()){
             $storeDetails = [];
@@ -456,7 +456,7 @@ class AdminController extends Controller
     }*/
     
     public function cateringDetails(){
-        $store = Store::where('store_id' , Session::get('storeId'));
+        $store = Store::where('store_id' , Session::get('kitchenStoreId'));
 
         if(!$store->exists()){
             $storeDetails = [];
@@ -473,8 +473,8 @@ class AdminController extends Controller
         $menuTypes = null;
         $request->session()->forget('order_date');
         
-        if(Session::get('storeId')){
-            $menuDetails = ProductPriceList::where('store_id',Session::get('storeId'))->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())
+        if(Session::get('kitchenStoreId')){
+            $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())
             ->with('menuPrice')->with('storeProduct')
             ->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')
             ->orderBy('product.product_rank', 'ASC')
@@ -510,14 +510,14 @@ class AdminController extends Controller
                 $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
             }
 
-            $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
+            $storedetails = Store::where('store_id' , Session::get('kitchenStoreId'))->first();
 
             // Get discount
             $todayDate = Carbon::now()->format('Y-m-d h:i:00');
             $discount = PromotionDiscount::from('promotion_discount AS PD')
                 ->select(['PD.id', 'PD.code', 'PD.discount_value', 'PD.start_date', 'PD.description', 'PD.end_date', 'S.store_name'])
                 ->join('store AS S', 'S.store_id', '=', 'PD.store_id')
-                ->where(['PD.store_id' => Session::get('storeId')])
+                ->where(['PD.store_id' => Session::get('kitchenStoreId')])
                 ->where(['S.u_id' => Auth::user()->u_id])
                 ->where('PD.start_date', '<=', $todayDate)
                 ->where('PD.end_date', '>=', $todayDate)
@@ -532,7 +532,7 @@ class AdminController extends Controller
     
     public function kitchenOrders(){
         $deliveryDate = Carbon::now()->subDays(1)->toDateString();
-        $stores[] = $reCompanyId = Session::get('storeId');
+        $stores[] = $reCompanyId = Session::get('kitchenStoreId');
 
         // Get virtual store if mapped
         if( Session::has('virtualStores') )
@@ -564,7 +564,7 @@ class AdminController extends Controller
 
     public function kitchenOrdersNew($id){
         $deliveryDate = Carbon::now()->subDays(1)->toDateString();
-        $stores[] = $reCompanyId = Session::get('storeId');
+        $stores[] = $reCompanyId = Session::get('kitchenStoreId');
 
         // Get virtual store if mapped
         if( Session::has('virtualStores') )
@@ -641,7 +641,7 @@ class AdminController extends Controller
             }
 
             // Get store detail
-            $storeDetail = Store::where('store_id', Session::get('storeId'))->first();
+            $storeDetail = Store::where('store_id', Session::get('kitchenStoreId'))->first();
 
             //
             foreach ($data['product'] as $key => $value) {
@@ -652,7 +652,7 @@ class AdminController extends Controller
                         $order =  new Order();
                         $order->customer_order_id = $this->random_num(6);
                         $order->user_id = $customer_id;
-                        $order->store_id = Session::get('storeId');
+                        $order->store_id = Session::get('kitchenStoreId');
                         $order->company_id = $productTime->company_id;
                         $order->order_type = $orderType;
                         $order->user_type = 'customer';
@@ -692,7 +692,7 @@ class AdminController extends Controller
                     $orderDetail->price = $productPrice->price;
                     $orderDetail->time = $productTime->preparation_Time;
                     $orderDetail->company_id = $productTime->company_id;
-                    $orderDetail->store_id = Session::get('storeId');
+                    $orderDetail->store_id = Session::get('kitchenStoreId');
                     $orderDetail->delivery_date = $checkOrderDate;
                     $orderDetail->save();
                 }
@@ -735,7 +735,7 @@ class AdminController extends Controller
             // return view('kitchen.order.order-detail', compact('order','orderDetails','storeDetail'));
         }else{
             $menuTypes = null;
-            $menuDetails = ProductPriceList::where('store_id',Session::get('storeId'))->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->with('menuPrice')->with('storeProduct')->get();
+            $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->with('menuPrice')->with('storeProduct')->get();
             if(count($menuDetails) != 0){
 
                 foreach ($menuDetails as $menuDetail) {
@@ -760,7 +760,7 @@ class AdminController extends Controller
                     $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();                
             }
 
-            $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
+            $storedetails = Store::where('store_id' , Session::get('kitchenStoreId'))->first();
             return view('kitchen.order.kitchen-pre-order', compact('menuDetails','companydetails','menuTypes','storedetails'));
         }
     }
@@ -854,7 +854,7 @@ class AdminController extends Controller
         }else{}
 
         $menuTypes = null;
-        $menuDetails = ProductPriceList::where('store_id',Session::get('storeId'))->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->with('menuPrice')->with('storeProduct')->get();
+        $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->with('menuPrice')->with('storeProduct')->get();
 
         if(count($menuDetails) != 0){
             foreach ($menuDetails as $menuDetail) {
@@ -874,7 +874,7 @@ class AdminController extends Controller
             $companydetails = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first();
         }
 
-        $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
+        $storedetails = Store::where('store_id' , Session::get('kitchenStoreId'))->first();
         return view('kitchen.order.kitchen-pre-order', compact('menuDetails','companydetails','menuTypes','storedetails'));
     }
 
@@ -908,9 +908,9 @@ class AdminController extends Controller
     public function kitchenSetting(){
         // Get logged-in store detail
         $store = Store::from('store AS S')
-            ->select(['S.order_response', 'S.driver_range', 'S.delivery_range', 'S.buffer_time', 'SP.mac_address', 'SP.print_copy'])
+            ->select(['S.menu_style_type', 'S.order_response', 'S.driver_range', 'S.delivery_range', 'S.buffer_time', 'SP.mac_address', 'SP.print_copy'])
             ->leftJoin('store_printers AS SP', 'SP.store_id', '=', 'S.store_id')
-            ->where('S.store_id' , Session::get('storeId'))
+            ->where('S.store_id' , Session::get('kitchenStoreId'))
             ->first();
 
         if($store['buffer_time'] != NULL && $store['buffer_time'] != '00:00:00')
@@ -941,16 +941,16 @@ class AdminController extends Controller
 
         // Update store setting
         $buffer_time = '00:'.($data['buffer_time'] % 60).':00';
-        Store::where('store_id', Session::get('storeId'))
-            ->update(['order_response' => $data['order_response'], 'driver_range' => $data['driver_range'], 'delivery_range' => $data['delivery_range'], 'buffer_time' => $buffer_time]);
+        Store::where('store_id', Session::get('kitchenStoreId'))
+            ->update(['order_response' => $data['order_response'], 'driver_range' => $data['driver_range'], 'delivery_range' => $data['delivery_range'], 'buffer_time' => $buffer_time, 'menu_style_type' => $data['menu_style_type']]);
 
         // Store printer setting
         if($data['mac_address'] && $data['mac_address'] != null)
         {
-            if(StorePrinter::where(['store_id' => Session::get('storeId'), 'status' => '1'])->count())
+            if(StorePrinter::where(['store_id' => Session::get('kitchenStoreId'), 'status' => '1'])->count())
             {
                 // Update printer setting
-                StorePrinter::where(['store_id' => Session::get('storeId'), 'status' => '1'])
+                StorePrinter::where(['store_id' => Session::get('kitchenStoreId'), 'status' => '1'])
                     ->update(['mac_address' => $data['mac_address'], 'print_copy' => $data['print_copy']]);
             }
             else
@@ -965,7 +965,7 @@ class AdminController extends Controller
 
                 StorePrinter::create(array(
                     'id' => $id,
-                    'store_id' => Session::get('storeId'),
+                    'store_id' => Session::get('kitchenStoreId'),
                     'mac_address' => $data['mac_address'],
                     'print_copy' => $data['print_copy'],
                 ));
@@ -1055,7 +1055,7 @@ class AdminController extends Controller
     }
 
     public function kitchenMenu(){
-        if(Session::get('storeId')){
+        if(Session::get('kitchenStoreId')){
             $products = new Product();
             $productPriceList = new ProductPriceList();
             $productOfferSloganLangList = new ProductOfferSloganLangList();
@@ -1064,7 +1064,7 @@ class AdminController extends Controller
 
             $allData = [];
 
-            $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
+            $storedetails = Store::where('store_id' , Session::get('kitchenStoreId'))->first();
             $storeName = $storedetails->store_name;
 
             $employer = new Employer();
@@ -1082,7 +1082,7 @@ class AdminController extends Controller
                 ->where('P.u_id', Auth::user()->u_id)
                 ->where('P.s_activ', '!=' , 2)
                 ->where('DT.dish_activate', 1)
-                ->where('PPL.store_id', Session::get('storeId'))
+                ->where('PPL.store_id', Session::get('kitchenStoreId'))
                 ->groupBy('DT.dish_id')
                 ->orderBy('DT.rank')
                 ->orderBy('DT.dish_id')
@@ -1179,7 +1179,7 @@ class AdminController extends Controller
             // ->where('product.dish_type', $request->dish_id)
             ->whereIn('product.dish_type', array_unique($menuTypes))
             ->where('product.u_id', Auth::user()->u_id)
-            ->where('PPL.store_id', Session::get('storeId'))
+            ->where('PPL.store_id', Session::get('kitchenStoreId'))
             ->where('product.s_activ', '!=' , 2)
             ->where('dish_type.dish_activate',1)
             ->groupBy('product.product_id')
@@ -1210,7 +1210,7 @@ class AdminController extends Controller
 
                 $currentProductPrice = ProductPriceList::select('id', 'text', 'price', 'publishing_start_date', 'publishing_end_date')
                     ->where('product_id', $value->product_id)
-                    ->where('store_id', Session::get('storeId'))
+                    ->where('store_id', Session::get('kitchenStoreId'))
                     ->where('publishing_start_date', '<=', $current_date)
                     ->where('publishing_end_date', '>=', $current_date)
                     ->first();
@@ -1239,7 +1239,7 @@ class AdminController extends Controller
 
         $futureProductPrices = ProductPriceList::select('id', 'product_id', 'text', 'price', 'publishing_start_date', 'publishing_end_date')
             ->where('product_id', $request->product_id)
-            ->where('store_id', Session::get('storeId'))
+            ->where('store_id', Session::get('kitchenStoreId'))
             ->whereRaw("(publishing_start_date > '{$current_date}' OR publishing_start_date IS NULL)")
             ->orderBy('publishing_start_date')
             ->get();
@@ -1255,7 +1255,7 @@ class AdminController extends Controller
     public function kitchenCreateMenu(Request $request){        
         $helper = new Helper();
 
-        $store = Store::where('store_id' , Session::get('storeId'));
+        $store = Store::where('store_id' , Session::get('kitchenStoreId'));
 
         if(!$store->exists()){
             $storeDetails = [];
@@ -1287,7 +1287,7 @@ class AdminController extends Controller
             $product_id = $helper->uuid();
         }
    
-        $store_id = Session::get('storeId');
+        $store_id = Session::get('kitchenStoreId');
         $message = "Dish Created Successfully.";
 
         $util = new Util(env('APP42_API_KEY'),env('APP42_API_SECRET'));
@@ -1654,7 +1654,7 @@ class AdminController extends Controller
 
         $product_price_list = ProductPriceList::where('id','=',$price_id)->first();
 
-        $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
+        $storedetails = Store::where('store_id' , Session::get('kitchenStoreId'))->first();
         $storeName = $storedetails->store_name;
 
         $dishType = new DishType();
@@ -1732,7 +1732,7 @@ class AdminController extends Controller
 
                 $currentProductPrice = ProductPriceList::select('product_id', 'store_id', 'text', 'price', 'lang', 'publishing_start_date', 'publishing_end_date')
                     ->where('product_id', $productId)
-                    ->where('store_id', Session::get('storeId'))
+                    ->where('store_id', Session::get('kitchenStoreId'))
                     ->where('publishing_start_date', '<=', $current_date)
                     ->where('publishing_end_date', '>=', $current_date)
                     ->first();
@@ -1741,7 +1741,7 @@ class AdminController extends Controller
                 {
                     $currentProductPrice = ProductPriceList::select('product_id', 'store_id', 'text', 'price', 'lang', 'publishing_start_date', 'publishing_end_date')
                         ->where('product_id', $productId)
-                        ->where('store_id', Session::get('storeId'))
+                        ->where('store_id', Session::get('kitchenStoreId'))
                         ->orderBy('id', 'DESC')
                         ->first();
                 }
@@ -2102,7 +2102,7 @@ class AdminController extends Controller
             ->first();
 
         // Get store
-        $store = Store::where('store_id' , Session::get('storeId'))->first();
+        $store = Store::where('store_id' , Session::get('kitchenStoreId'))->first();
         $address = $store->street.', '.$store->city.', '.$store->zip;
         $address = Helper::getLocation($address);
         // dd($address);
@@ -2538,7 +2538,7 @@ class AdminController extends Controller
     }*/
       
     public function extraPrepTime(){
-        $storeId = Session::get('storeId');
+        $storeId = Session::get('kitchenStoreId');
 
         $store = new Store();
         
@@ -2555,7 +2555,7 @@ class AdminController extends Controller
     }
 
     public function addExtraTime(Request $request){
-        $storeId = Session::get('storeId');
+        $storeId = Session::get('kitchenStoreId');
 
         $minutes = $request->extra_prep_time;
         $hours = intdiv($minutes, 60).':'. ($minutes % 60).':00';
@@ -2665,7 +2665,7 @@ class AdminController extends Controller
                 ->join('product_offer_sub_slogan_lang_list','product_offer_sub_slogan_lang_list.product_id','=','product.product_id')
                 ->join('lang_text as prod_name','prod_name.id','=','product_offer_slogan_lang_list.offer_slogan_lang_list')
                 ->join('lang_text as prod_desc','prod_desc.id','=','product_offer_sub_slogan_lang_list.offer_sub_slogan_lang_list')
-                ->where('store_id', Session::get('storeId'))
+                ->where('store_id', Session::get('kitchenStoreId'))
                 ->where('s_activ', '!=' , 2)
                 ->where('dish_type',$dishId)
                 ->orderBy('product_rank', 'ASC')                
@@ -2745,7 +2745,7 @@ class AdminController extends Controller
                 // dd($allData);
 
 
-            $storedetails = Store::where('store_id' , Session::get('storeId'))->first();
+            $storedetails = Store::where('store_id' , Session::get('kitchenStoreId'))->first();
             $storeName = $storedetails->store_name;
 
             $companydetails = new Company();
@@ -2765,7 +2765,7 @@ class AdminController extends Controller
      */
     function getNewOrdersDetailToSpeak()
     {
-        $storeId = Session::get('storeId');
+        $storeId = Session::get('kitchenStoreId');
         $deliveryDate = Carbon::now()->subDays(1)->toDateString();
 
         // 

@@ -165,6 +165,24 @@ textarea.ui-input-text{
 						</li>
 					</ul>
 				</li>
+				<li data-role="collapsible" class="range-sec" title="{{ __('messages.menuStyle') }}">
+					<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">
+						{{  __('messages.menuStyle') }}
+						<span>
+							@if($store->menu_style_type == 0)
+								{{  __('messages.menuStyleList') }}
+							@elseif($store->menu_style_type == 1)
+								{{  __('messages.menuStyleGrid') }}
+							@endif
+						</span>
+					</h2>
+				    <fieldset data-role="controlgroup">
+						<input type="radio" name="menu_style_type" id="menu-style-type-list" value="0" @if($store->menu_style_type == 0) checked="checked" @endif>
+				        <label for="menu-style-type-list">{{  __('messages.menuStyleList') }}</label>
+				        <input type="radio" name="menu_style_type" id="menu-style-type-grid" value="1" @if($store->menu_style_type == 1) checked="checked" @endif>
+				        <label for="menu-style-type-grid">{{  __('messages.menuStyleGrid') }}</label>
+					</fieldset>
+				</li>
 				<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.marketingTools") }} <span>
 					</span></h2>
 				    <ul data-role="controlgroup" class="others_tabs">
