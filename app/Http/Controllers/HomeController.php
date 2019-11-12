@@ -310,8 +310,10 @@ class HomeController extends Controller
          // return view('includes.popupSelection', compact(''));
          return view('v1.user.pages.home');
        }else{
+        // Forget 'iFrameMenu' to say menu is not loading in 'homepage'
+        $request->session()->forget('iFrameMenu');
 
-       $request->session()->put('route_url', url('/').'/eat-now'); // code added by saurabh to update correct url for eat-later and eat-now
+        $request->session()->put('route_url', url('/').'/eat-now'); // code added by saurabh to update correct url for eat-later and eat-now
         if(Auth::check()){
             $versionDetail = WebVersion::orderBy('created_at', 'DESC')->first();
             $userDetail = User::whereId(Auth()->id())->first();
