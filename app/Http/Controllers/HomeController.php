@@ -459,7 +459,7 @@ class HomeController extends Controller
                     $lng = $request->session()->get('with_out_login_lng');
                 }
 
-                $companydetails = Store::getEatLaterListRestaurants($lat,$lng,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
+                // $companydetails = Store::getEatLaterListRestaurants($lat,$lng,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
             }else{
                 $lat = $request->session()->get('with_out_login_lat');
                 $lng = $request->session()->get('with_out_login_lng');
@@ -469,7 +469,7 @@ class HomeController extends Controller
                     $rang = '10';
                     $request->session()->put('rang', $rang);
                 } 
-                $companydetails = Store::getEatLaterListRestaurants($lat,$lng,$rang,'1','3',$todayDate,$currentTime,$todayDay);
+                // $companydetails = Store::getEatLaterListRestaurants($lat,$lng,$rang,'1','3',$todayDate,$currentTime,$todayDay);
             }
              // return view('eat_later', compact(''));
              return view('v1.user.pages.eat-later');
