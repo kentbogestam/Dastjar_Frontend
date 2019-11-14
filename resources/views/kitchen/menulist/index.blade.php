@@ -618,7 +618,7 @@
 		});
 
 		//
-		if( $('.menu-sortable').length )
+		/*if( $('.menu-sortable').length )
 		{
 			$(".menu-sortable").sortable({
 				axis: 'y',
@@ -635,7 +635,7 @@
 					);
 				}
 			});
-		}
+		}*/
 	});
 	</script>
 

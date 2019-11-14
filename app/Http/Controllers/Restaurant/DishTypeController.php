@@ -37,8 +37,28 @@ class DishTypeController extends Controller
     {
         $helper = new Helper();
         $dishType = $helper->getDishTypeTree(Auth::user()->u_id);
+        
+        // Login to create Category tree
+        $dishTypeList = array(); $i; $j;
+        foreach ($dishType as $key => $row) {
+            if($row['level'] == 0)
+            {
+                $dishTypeList[] = $row;
+                $i = $key;
+            }
+            elseif($row['level'] == 1)
+            {
+                $dishTypeList[$i]['cat1'][] = $row;
+                $j = count($dishTypeList[$i]['cat1'])-1;
+            }
+            elseif($row['level'] == 2)
+            {
+                $dishTypeList[$i]['cat1'][$j]['cat2'][] = $row;
+            }
+        }
 
-    	return view('kitchen.dishType.index', compact('dishType'));
+        // dd($dishTypeList);
+    	return view('kitchen.dishType.index', compact('dishType', 'dishTypeList'));
     }
 
     /**
@@ -86,7 +106,18 @@ class DishTypeController extends Controller
         }
         
         // Set rank
-        $rank = DishType::orderBy('rank', 'DESC')->where(['u_id' => Auth::user()->u_id, 'company_id' => $data['company_id'], 'dish_activate' => 1, 'parent_id' => null])->first();
+        $rank = DishType::orderBy('rank', 'DESC')->where(['u_id' => Auth::user()->u_id, 'company_id' => $data['company_id'], 'dish_activate' => 1]);
+        
+        if(is_null($request->parent_id))
+        {
+            $rank->where('parent_id', null);
+        }
+        else
+        {
+            $rank->where('parent_id', $request->parent_id);
+        }
+
+        $rank = $rank->first();
         
         if($rank)
         {

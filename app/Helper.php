@@ -378,11 +378,12 @@ class Helper extends Model
                     'dish_id' => $level1->dish_id,
                     'dish_lang' => $level1->dish_lang,
                     'dish_name' => $level1->dish_name,
+                    'rank' => $level1->rank,
                     'level' => 0
                 );
 
                 // Level2
-                $dishTypeLevel2 = $this->getdDishTypeBy(null, $level1->dish_id);
+                $dishTypeLevel2 = $this->getdDishTypeBy(null, $level1->dish_id, 'rank');
                 
                 if($dishTypeLevel2)
                 {
@@ -392,11 +393,12 @@ class Helper extends Model
                             'dish_id' => $level2->dish_id,
                             'dish_lang' => $level2->dish_lang,
                             'dish_name' => $level2->dish_name,
+                            'rank' => $level2->rank,
                             'level' => 1
                         );
 
                         // Level3
-                        $dishTypeLevel3 = $this->getdDishTypeBy(null, $level2->dish_id);
+                        $dishTypeLevel3 = $this->getdDishTypeBy(null, $level2->dish_id, 'rank');
                         
                         if($dishTypeLevel3)
                         {
@@ -406,6 +408,7 @@ class Helper extends Model
                                     'dish_id' => $level3->dish_id,
                                     'dish_lang' => $level3->dish_lang,
                                     'dish_name' => $level3->dish_name,
+                                    'rank' => $level3->rank,
                                     'level' => 2
                                 );
                             }
@@ -419,9 +422,9 @@ class Helper extends Model
     }
 
     // 
-    public function getdDishTypeBy($uId = null, $parentId = null, $orderBy = null)
+    public function getdDishTypeBy($uId = null, $parentId = null, $orderBy = 'dish_id')
     {
-        $dishType = DishType::select(['dish_id', 'dish_lang', 'dish_name'])
+        $dishType = DishType::select(['dish_id', 'dish_lang', 'dish_name', 'rank'])
             ->where(['dish_activate' => 1]);
 
         if( !is_null($uId) )
@@ -438,10 +441,7 @@ class Helper extends Model
             $dishType->where('parent_id', $parentId);
         }
 
-        if( !is_null($orderBy) )
-        {
-            $dishType->orderBy($orderBy);
-        }
+        $dishType->orderBy($orderBy);
 
         return $dishType->get();
     }

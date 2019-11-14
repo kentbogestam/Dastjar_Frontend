@@ -12,6 +12,23 @@
     .btn-link {
         cursor: pointer;
     }
+
+    .list-category {
+        padding: 0 15px;
+    }
+    .list-category div[class^='col-md-'] {
+        padding: .75rem;
+        vertical-align: top;
+    }
+    .list-category .menu-item-0 > div[class^='col-md-'] {
+        border-top: 1px solid #dee2e6;
+    }
+    /* .list-category .menu-item-0:nth-of-type(odd) {
+        background-color: rgba(0,0,0,.05) !important;
+    }
+    .list-category .menu-item-0:nth-of-type(even) {
+        background-color: #F9F9F9 !important;
+    } */
     </style>
 @stop
 
@@ -45,7 +62,65 @@
             <button class="btn btn-info" data-toggle="modal" data-target="#add-form-model">{{ __('messages.addNew') }}</button>
         </div>
     </div>
-    <div class="row">
+    <hr>
+    <div class="list-category">
+        <div class="row">
+            <div class="col-md-6"><strong>{{ __('messages.dishType') }}</strong></div>
+            <div class="col-md-3"><strong>{{ __('messages.language') }}</strong></div>
+            <div class="col-md-3"><strong>{{ __('messages.action') }}</strong></div>
+        </div>
+        @if( !empty($dishTypeList) )
+            <div class="menu-items-level-0">
+                @foreach($dishTypeList as $row)
+                    <div class="row menu-item-0" id="{{ $row['dish_id'] }}">
+                        <div class="col-md-6">{!! Helper::strReplaceBy($row['dish_name'], $row['level'], '— ') !!}</div>
+                        <div class="col-md-3">{{ $row['dish_lang'] }}</div>
+                        <div class="col-md-3">
+                            <snap class="btn-link" onclick="getDishType({{ $row['dish_id'] }})"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></snap>
+                            <a href="{{ url('kitchen/dishtype/'.$row['dish_id'].'/delete') }}" onclick="return confirmDelete()" data-ajax="false">
+                                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                            </a>
+                        </div>
+
+                        @if(isset($row['cat1']))
+                            <div class="col-md-12 menu-items-level-1">
+                                @foreach($row['cat1'] as $cat1)
+                                    <div class="row menu-item-1" id="{{ $cat1['dish_id'] }}">
+                                        <div class="col-md-6">{!! Helper::strReplaceBy($cat1['dish_name'], $cat1['level'], '— ') !!}</div>
+                                        <div class="col-md-3">{{ $cat1['dish_lang'] }}</div>
+                                        <div class="col-md-3">
+                                            <snap class="btn-link" onclick="getDishType({{ $cat1['dish_id'] }})"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></snap>
+                                            <a href="{{ url('kitchen/dishtype/'.$cat1['dish_id'].'/delete') }}" onclick="return confirmDelete()" data-ajax="false">
+                                                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                            </a>
+                                        </div>
+
+                                        @if(isset($cat1['cat2']))
+                                            <div class="col-md-12 menu-items-level-2">
+                                                @foreach($cat1['cat2'] as $cat2)
+                                                    <div class="row menu-item-2" id="{{ $cat2['dish_id'] }}">
+                                                        <div class="col-md-6">{!! Helper::strReplaceBy($cat2['dish_name'], $cat2['level'], '— ') !!}</div>
+                                                        <div class="col-md-3">{{ $cat2['dish_lang'] }}</div>
+                                                        <div class="col-md-3">
+                                                            <snap class="btn-link" onclick="getDishType({{ $cat2['dish_id'] }})"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></snap>
+                                                            <a href="{{ url('kitchen/dishtype/'.$cat2['dish_id'].'/delete') }}" onclick="return confirmDelete()" data-ajax="false">
+                                                                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+        @endif
+    </div>
+    <!-- <div class="row">
         <div class="col-md-12">
             <table class="table table-striped">
                 <thead>
@@ -58,7 +133,7 @@
                 <tbody>
                 @if( !empty($dishType) )
                     @foreach($dishType as $row)
-                        <tr class="level-{{ $row['level'] }}">
+                        <tr class="level-{{ $row['level'] }}" id="{{ $row['dish_id'] }}">
                             <td>{!! Helper::strReplaceBy($row['dish_name'], $row['level'], '— ') !!}</td>
                             <td>{{ $row['dish_lang'] }}</td>
                             <td>
@@ -77,7 +152,7 @@
                 </tbody>
             </table>
         </div>
-    </div>
+    </div> -->
     <!-- Modal: Add new dish -->
     <div class="modal fade" id="add-form-model" role="dialog">
         <div class="modal-dialog">
@@ -177,6 +252,7 @@
 @endsection
 
 @section('footer-script')
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
 
 <script type="text/javascript">
@@ -224,5 +300,72 @@
             }
         });
     }
+
+    function updateMenuRank(items)
+    {
+        $.ajax({
+            type: 'POST',
+            url: '{{ url('api/v1/kitchen/update-menu-rank') }}',
+            data: {
+                u_id: "<?php echo Auth::user()->u_id; ?>",
+                items: items
+            },
+            success: function(data, status) {
+
+            }
+        })
+    }
+
+    /*$(".table-striped tbody").sortable({
+        axis: 'y',
+        update: function(event, ui) {
+            items = JSON.stringify($(this).sortable('toArray'));
+            console.log(items);
+        }
+    });*/
+    
+    // Sort the parents
+    $(".menu-items-level-0").sortable({
+        containment: "document",
+        items: "> div",
+        // handle: ".move",
+        tolerance: "pointer",
+        cursor: "move",
+        opacity: 0.7,
+        revert: 300,
+        delay: 150,
+        placeholder: "movable-placeholder",
+        start: function(e, ui) {
+            ui.placeholder.height(ui.helper.outerHeight());
+        },
+        update: function(event, ui) {
+            items = JSON.stringify($(this).sortable('toArray'));
+            updateMenuRank(items);
+        }
+    });
+
+    // Sort the children
+    $(".menu-items-level-1").sortable({
+        containment: "parent",
+        items: "> div",
+        tolerance: "pointer",
+        connectWith: '.menu-items-level-1',
+        update: function(event, ui) {
+            items = JSON.stringify($(this).sortable('toArray'));
+            updateMenuRank(items);
+        }
+    });
+
+    // Sort the children
+    $(".menu-items-level-2").sortable({
+        containment: "parent",
+        items: "> div",
+        tolerance: "pointer",
+        connectWith: '.menu-items-level-2',
+        update: function(event, ui) {
+            items = JSON.stringify($(this).sortable('toArray'));
+            updateMenuRank(items);
+        }
+    });
 </script>
 @endsection
