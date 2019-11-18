@@ -48,12 +48,18 @@ class DishTypeController extends Controller
             }
             elseif($row['level'] == 1)
             {
-                $dishTypeList[$i]['cat1'][] = $row;
-                $j = count($dishTypeList[$i]['cat1'])-1;
+                if(isset($dishTypeList[$i]))
+                {
+                    $dishTypeList[$i]['cat1'][] = $row;
+                    $j = count($dishTypeList[$i]['cat1'])-1;
+                }
             }
             elseif($row['level'] == 2)
             {
-                $dishTypeList[$i]['cat1'][$j]['cat2'][] = $row;
+                if(isset($dishTypeList[$i]['cat1']))
+                {
+                    $dishTypeList[$i]['cat1'][$j]['cat2'][] = $row;
+                }
             }
         }
 
