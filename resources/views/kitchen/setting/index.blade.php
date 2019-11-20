@@ -273,9 +273,9 @@ textarea.ui-input-text{
 							<h2 class="ui-btn">{{  __("messages.aboutDastjarAnar") }}</h2>
 						</li>
 
-						<li id="admin" class="range-sec btn_blk">
+						<!-- <li id="admin" class="range-sec btn_blk">
 							<h2 class="ui-btn">{{  __("messages.aboutCompanyAdmin") }}</h2>
-						</li>
+						</li> -->
 				    </ul>
 				</li>
 				</form>
