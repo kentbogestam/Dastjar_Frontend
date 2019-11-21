@@ -38,5 +38,6 @@ Route::group(['middleware' => ['api']], function () {
 	Route::group(['prefix' => 'v1/homepage'], function () { 
 		Route::get('get-stores-by-user/{uId}', 'Api\v1\RestaurantController@getStoresByUser');
 		Route::get('get-store/{storeId}', 'Api\v1\RestaurantController@getStore');
+		Route::get('get-store-delivery-price-model/{storeId}', 'Api\v1\RestaurantController@getStoreDeliveryPriceModel');
 	});
 });

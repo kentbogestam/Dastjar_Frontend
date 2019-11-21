@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 
 use Validator;
 use App\Store;
+use App\StoreDeliveryPriceModel;
 use DB;
 
 class RestaurantController extends Controller
@@ -20,7 +21,7 @@ class RestaurantController extends Controller
         // 
         if( !is_null($uId) && !empty($uId) )
         {
-            $status = 'empty'; 
+            $status = 'empty';
 
             // 
             $stores = Store::select(['store_id', 'store_name', 'tagline', 'street', 'city', 'country', 'zip', 'store_image'])
@@ -45,7 +46,7 @@ class RestaurantController extends Controller
 
         if( !is_null($storeId) && !empty($storeId) )
         {
-            $status = 'empty'; 
+            $status = 'empty';
 
             // 
             $store = Store::select(['store_id', 'tagline', 'latitude', 'longitude', 'store_name', 'street', 'city', 'country', 'phone', 'email', 'delivery_type', 'zip', 'store_image', 'large_image', 'store_open_close_day_time', 'store_close_dates'])
@@ -56,6 +57,31 @@ class RestaurantController extends Controller
             {
                 $status = 'success';
                 $response = $store;
+            }
+        }
+
+        return response()->json(['status' => $status, 'response' => $response]);
+    }
+
+    // 
+    function getStoreDeliveryPriceModel($storeId = null)
+    {
+        $status = 'exception';
+        $response = null;
+
+        if( !is_null($storeId) && !empty($storeId) )
+        {
+            $status = 'empty';
+
+            // 
+            $storeDeliveryPriceModel = StoreDeliveryPriceModel::select(['delivery_rule_id', 'delivery_charge', 'threshold'])
+                ->where(['store_id' => $storeId, 'status' => '1'])
+                ->first();
+
+            if($storeDeliveryPriceModel)
+            {
+                $status = 'success';
+                $response = $storeDeliveryPriceModel;
             }
         }
 
