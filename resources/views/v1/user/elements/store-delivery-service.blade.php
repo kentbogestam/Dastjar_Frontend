@@ -1,4 +1,4 @@
-@if( (Request::is('restro-menu-list/*') || Request::is('view-cart/*') || Request::is('cart')) && (isset($storedetails) && $storedetails->deliveryTypes->count() > 0 && $storedetails->deliveryTypes->count() < 3) )
+@if( (Request::is('iframe/restro-menu-list/*') || Request::is('restro-menu-list/*') || Request::is('view-cart/*') || Request::is('cart')) && (isset($storedetails) && $storedetails->deliveryTypes->count() > 0 && $storedetails->deliveryTypes->count() < 3) )
 	<div class="tag-line-service">
 		@php
 		$deliveryType = array();
