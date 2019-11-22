@@ -38,13 +38,13 @@ class DishTypeController extends Controller
         $helper = new Helper();
         $dishType = $helper->getDishTypeTree(Auth::user()->u_id);
         
-        // Login to create Category tree
+        // Create Category tree
         $dishTypeList = array(); $i; $j;
         foreach ($dishType as $key => $row) {
             if($row['level'] == 0)
             {
                 $dishTypeList[] = $row;
-                $i = $key;
+                $i = count($dishTypeList)-1;
             }
             elseif($row['level'] == 1)
             {
