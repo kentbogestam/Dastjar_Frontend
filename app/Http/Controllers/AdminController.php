@@ -532,6 +532,7 @@ class AdminController extends Controller
     
     public function kitchenOrders(){
         $deliveryDate = Carbon::now()->subDays(1)->toDateString();
+        $deliveryDateTill = Carbon::now()->toDateString();
         $stores[] = $reCompanyId = Session::get('kitchenStoreId');
 
         // Get virtual store if mapped
@@ -548,6 +549,7 @@ class AdminController extends Controller
         $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time', 'orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
             ->whereIn('order_details.store_id', $stores)
             ->where('delivery_date', '>=', $deliveryDate)
+            ->where('delivery_date', '<=', $deliveryDateTill)
             ->where('order_details.order_ready', '0')
             ->whereNotIn('orders.online_paid', [2])
             ->join('product','product.product_id','=','order_details.product_id')
@@ -564,6 +566,7 @@ class AdminController extends Controller
 
     public function kitchenOrdersNew($id){
         $deliveryDate = Carbon::now()->subDays(1)->toDateString();
+        $deliveryDateTill = Carbon::now()->toDateString();
         $stores[] = $reCompanyId = Session::get('kitchenStoreId');
 
         // Get virtual store if mapped
@@ -580,6 +583,7 @@ class AdminController extends Controller
         $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
             ->whereIn('order_details.store_id', $stores)
             ->where('delivery_date', '>=', $deliveryDate)
+            ->where('delivery_date', '<=', $deliveryDateTill)
             ->where('order_details.order_ready', '0')
             ->where('order_details.id', '>', $id)
             ->whereNotIn('orders.online_paid', [2])
@@ -2767,6 +2771,7 @@ class AdminController extends Controller
     {
         $storeId = Session::get('kitchenStoreId');
         $deliveryDate = Carbon::now()->subDays(1)->toDateString();
+        $deliveryDateTill = Carbon::now()->toDateString();
 
         // 
         $orderDetail = OrderDetail::select('order_details.id', 'order_details.product_quality', 'order_details.product_description', 'order_details.is_speak', 'product.product_name')
@@ -2774,6 +2779,7 @@ class AdminController extends Controller
             ->join('product', 'product.product_id', '=', 'order_details.product_id')
             ->where(['orders.store_id' => $storeId, 'user_type' => 'customer', 'orders.order_started' => '0', 'orders.paid' => '0'])
             ->where('check_deliveryDate', '>=', $deliveryDate)
+            ->where('check_deliveryDate', '<=', $deliveryDateTill)
             ->whereNotIn('orders.online_paid', [2])
             ->where('orders.cancel','!=', 1)
             ->get();

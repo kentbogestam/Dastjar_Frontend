@@ -34,6 +34,7 @@ class KitchenController extends Controller
 
    public function orderDetail($reCompanyId){
         $deliveryDate = Carbon::now()->subDays(1)->toDateString();
+        $deliveryDateTill = Carbon::now()->toDateString();
         $stores[] = $reCompanyId;
 
         // Get virtual restaurant if mapped
@@ -52,6 +53,7 @@ class KitchenController extends Controller
             ->whereIn('orders.store_id', $stores)
             ->where('user_type','=','customer')
             ->where('check_deliveryDate', '>=', $deliveryDate)
+            ->where('check_deliveryDate', '<=', $deliveryDateTill)
             ->where('orders.paid', '0')
             ->whereNotIn('orders.online_paid', [2])
             ->where('orders.cancel','!=', 1)
@@ -80,6 +82,7 @@ class KitchenController extends Controller
                 ->whereIn('orders.store_id', $stores)
                 ->where(['user_type' => 'customer', 'orders.order_started' => '0', 'orders.paid' => '0'])
                 ->where('check_deliveryDate', '>=', $deliveryDate)
+                ->where('check_deliveryDate', '<=', $deliveryDateTill)
                 ->whereNotIn('orders.online_paid', [2])
                 ->where('orders.cancel','!=', 1)
                 ->get();
