@@ -28,11 +28,12 @@ function checkUserLogin(url){
 	    	}else{
 	    		if(localStorage.getItem("userId")){
 	    			console.log('logoutloginId='+localStorage.getItem("userId"));
-	    			$.get("{{url('userLogin')}}", { usetId : localStorage.getItem("userId")}, 
+	    			/*$.get("{{url('userLogin')}}", { usetId : localStorage.getItem("userId")}, 
 	    				function(returnedData){
 	    					// console.log(returnedData["data"]);
 	    					// location.reload();
-	    				});
+	    				}
+	    			);*/
 	    		}else{
 	    			// console.log('logout');
 	    		}
@@ -195,6 +196,11 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 					liItem += "<div class='col-sm-8 col-xs-8'><p>"+returnedData['restaurantStatusMsg']+"</p></div>";
 				}
 
+				if(!liItem.length)
+				{
+					liItem += "<div class='col-sm-8 col-xs-8'><p>"+returnedData['restaurantStatusMsg']+"</p></div>";
+				}
+
 				$("#companyDetailContianer").append(liItem);
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
@@ -268,14 +274,6 @@ function getTimeZone(url){
  }
 
 function checkTime($time){
-	// 
-	var todayDate = new Date();
-	todayDate = (todayDate.getMonth() + 1)+'/'+todayDate.getDate()+'/'+todayDate.getFullYear();
-	var tomorrowDate = new Date();
-	tomorrowDate.setDate(tomorrowDate.getDate() + 1);
-	tomorrowDate = (tomorrowDate.getMonth() + 1)+'/'+tomorrowDate.getDate()+'/'+tomorrowDate.getFullYear();
-
-	// 
 	var d = new Date();
 	var dd = (d.toString()).split(' ');
 	var currentTime = dd[4];
@@ -291,6 +289,25 @@ function checkTime($time){
 
 		if(openTime > closeTime)
 		{
+			// 
+			if(d.getHours() >= parseInt(openTime) && d.getHours() <= 23)
+			{
+				var todayDate = new Date();
+				todayDate = (todayDate.getMonth() + 1)+'/'+(todayDate.getDate())+'/'+todayDate.getFullYear();
+				var tomorrowDate = new Date();
+				tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+				tomorrowDate = (tomorrowDate.getMonth() + 1)+'/'+tomorrowDate.getDate()+'/'+tomorrowDate.getFullYear();
+			}
+			else
+			{
+				var todayDate = new Date();
+				todayDate = (todayDate.getMonth() + 1)+'/'+(todayDate.getDate()-1)+'/'+todayDate.getFullYear();
+				var tomorrowDate = new Date();
+				tomorrowDate.setDate(tomorrowDate.getDate());
+				tomorrowDate = (tomorrowDate.getMonth() + 1)+'/'+tomorrowDate.getDate()+'/'+tomorrowDate.getFullYear();
+			}
+
+			// 
 			var openDateTime = todayDate + ' ' + openTime;
 			var closeDateTime = tomorrowDate + ' ' + closeTime;
 			var openDateTime = new Date(openDateTime);
@@ -322,6 +339,25 @@ function checkTime($time){
 
 				if(openTime > closeTime)
 				{
+					// 
+					if(d.getHours() >= parseInt(openTime) && d.getHours() <= 23)
+					{
+						var todayDate = new Date();
+						todayDate = (todayDate.getMonth() + 1)+'/'+(todayDate.getDate())+'/'+todayDate.getFullYear();
+						var tomorrowDate = new Date();
+						tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+						tomorrowDate = (tomorrowDate.getMonth() + 1)+'/'+tomorrowDate.getDate()+'/'+tomorrowDate.getFullYear();
+					}
+					else
+					{
+						var todayDate = new Date();
+						todayDate = (todayDate.getMonth() + 1)+'/'+(todayDate.getDate()-1)+'/'+todayDate.getFullYear();
+						var tomorrowDate = new Date();
+						tomorrowDate.setDate(tomorrowDate.getDate());
+						tomorrowDate = (tomorrowDate.getMonth() + 1)+'/'+tomorrowDate.getDate()+'/'+tomorrowDate.getFullYear();
+					}
+
+					// 
 					var openDateTime = todayDate + ' ' + openTime;
 					var closeDateTime = tomorrowDate + ' ' + closeTime;
 					var openDateTime = new Date(openDateTime);

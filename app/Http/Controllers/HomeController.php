@@ -221,12 +221,15 @@ class HomeController extends Controller
             // Get customer discount from cookie
             $customerDiscount = isset($_COOKIE['discount']) ? $_COOKIE['discount'] : '';
 
-            // Check if restaurant found and send translated message
+            /*// Check if restaurant found and send translated message
             $restaurantStatusMsg = '';
             if( $companydetails == '' || !count($companydetails) )
             {
                 $restaurantStatusMsg = __('messages.noRestaurantFound');
-            }
+            }*/
+
+            // Store not found string
+            $restaurantStatusMsg = __('messages.noRestaurantFound');
 
             return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg, 'customerDiscount' => $customerDiscount]);
         } else{
@@ -289,12 +292,15 @@ class HomeController extends Controller
                 $companydetails = Store::getListRestaurants($lat,$lng,$rang,'1','3',$todayDate,$currentTime,$todayDay);
             }
 
-            // Check if restaurant found and send translated message
+            /*// Check if restaurant found and send translated message
             $restaurantStatusMsg = '';
             if( $companydetails == '' || !count($companydetails) )
             {
                 $restaurantStatusMsg = __('messages.noRestaurantFound');
-            }
+            }*/
+
+            // Store not found string
+            $restaurantStatusMsg = __('messages.noRestaurantFound');
 
             return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg]);
         }
@@ -420,12 +426,15 @@ class HomeController extends Controller
             $customerDiscount = null;
         }
 
-        // Check if restaurant found and send translated message
+        /*// Check if restaurant found and send translated message
         $restaurantStatusMsg = '';
         if( $companydetails == '' || !count($companydetails) )
         {
             $restaurantStatusMsg = __('messages.noRestaurantFound');
-        }
+        }*/
+
+        // Store not found string
+        $restaurantStatusMsg = __('messages.noRestaurantFound');
         
         return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg, 'customerDiscount' => $customerDiscount]);
     }
