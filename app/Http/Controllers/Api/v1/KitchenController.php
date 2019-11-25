@@ -133,7 +133,8 @@ class KitchenController extends Controller
 
                 foreach($products as $id)
                 {
-                    $product->where(['product_id' => $id, 'dish_type' => $request->dish_type])->update(['product_rank' => $i]);
+                    // $product->where(['product_id' => $id, 'dish_type' => $request->dish_type])->update(['product_rank' => $i]);
+                    $product->where(['product_id' => $id])->update(['product_rank' => $i]);
                     $i++;
                 }
             }
