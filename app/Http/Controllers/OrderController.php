@@ -476,7 +476,8 @@ class OrderController extends Controller
     }
 
     public function cancelOrder(Request $request, $order_number){
-        return view('order.order-cancel')->with('order_number',$order_number);
+        // return view('order.order-cancel')->with('order_number',$order_number);
+        return view('v1.user.pages.cancel-order')->with('order_number',$order_number);
     }    
 
     public function cancelOrderPost(Request $request){

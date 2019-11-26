@@ -148,9 +148,9 @@ $requestPath = Request::path();
 						<span>{{ Auth::user()->name}}</span>
 					@endauth
 				</a>
-				<a class="map-icon map-btn user-link" href="{{ url('search-map-eatnow') }}">
+				<!-- <a class="map-icon map-btn user-link" href="{{ url('search-map-eatnow') }}">
 					<img src="{{ asset('v1/images/map-icon.png') }}" alt="">
-				</a>
+				</a> -->
 			</div>
 		@endif
 	</div>

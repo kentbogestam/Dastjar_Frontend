@@ -241,7 +241,7 @@
 
 			@if($order->order_type=="eat_later")
 				<div class="col-md-12 text-center">
-					<button type="button" class="btn btn-primary cancel-order-btn">Cancel Order Request</button>
+					<button type="button" class="btn btn-primary cancel-order-btn" data-toggle="modal" data-target=".pop_up">Cancel Order Request</button>
 				</div>
 			@endif
 
@@ -302,10 +302,6 @@
 	$(document).ready(function(){
 		$("#select-native-5").val('91');
 		$("#select-native-5-button").find("span").html($( "#select-native-5 option:selected" ).text());
-	});
-
-	 $(".cancel-order-btn").click(function(){
-		$('.pop_up').modal('show');
 	});
 
 	$("body").on('click',".accept-btn", function(){
