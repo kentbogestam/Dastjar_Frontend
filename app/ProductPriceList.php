@@ -37,6 +37,6 @@ class ProductPriceList extends Model
         return $this->belongsTo('App\Store','store_id','store_id');
     }
 
-    protected $fillable = ['product_id', 'store_id', 'text', 'lang'];
+    protected $fillable = ['product_id', 'store_id', 'text', 'price', 'lang', 'publishing_start_date', 'publishing_end_date'];
     
 }
