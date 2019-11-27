@@ -338,3 +338,11 @@ Route::group(['prefix' => 'driver'], function() {
 		Route::post('change-password', 'SettingController@changePassword');
 	});
 });
+
+// 
+Route::group(['prefix' => 'script'], function() {
+	Route::group(['namespace' => 'Script'], function() {
+		Route::get('clone-store-product/{companyId}', 'ScriptController@cloneStoreProduct');
+		Route::post('clone-store-product-post', 'ScriptController@cloneStoreProductPost');
+	});
+});
