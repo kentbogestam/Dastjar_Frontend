@@ -96,6 +96,14 @@
 				</div>
 			</div>
 
+			@if($order->order_type == 'eat_later')
+				<p class="text-center">
+					{{ __('messages.Your order will be ready on') }}
+					{{ $order->deliver_date }}
+					{{ date_format(date_create($order->deliver_time), 'G:i') }}
+				</p>
+			@endif
+
 			{{-- Delivery Type --}}
 			@include('v1.user.elements.cart-order-delivery-type')
 			
