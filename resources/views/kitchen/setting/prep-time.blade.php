@@ -139,7 +139,7 @@
 
 @section('footer-script')
 	<script type="text/javascript">
-		$("#dataSave").click(function(e){
+		/*$("#dataSave").click(function(e){
 			var flag = true;
 
 			if(flag){
@@ -156,7 +156,7 @@
 
 		$('#admin').click(function(){
 			window.open("https://admin-dev.dastjar.com/");
-		});
+		});*/
 
 		// $('#add_prep_time').click(function(){
 		// 	$('#prep_time_form')[0].checkValidity();

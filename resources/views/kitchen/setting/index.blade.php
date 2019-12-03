@@ -304,9 +304,9 @@ textarea.ui-input-text{
 			window.open("https://dastjar.com/?page_id=71");
 		});
 
-		$('#admin').click(function(){
+		/*$('#admin').click(function(){
 			window.open("https://admin-dev.dastjar.com/");
-		});
+		});*/
 
 		$('#prep_time').click(function(){
 			location.replace("{{url('kitchen/extra-prep-time')}}");
