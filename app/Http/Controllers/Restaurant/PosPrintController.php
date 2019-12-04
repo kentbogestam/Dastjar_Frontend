@@ -40,6 +40,7 @@ class PosPrintController extends Controller
 		}
 
 		echo json_encode($arr);
+		exit;
     }
 
     // If printer find job exist to print/delete
@@ -72,9 +73,9 @@ class PosPrintController extends Controller
 					header('Content-Type: text/plain');
 					echo file_get_contents($file);
 				}
-				exit;
 	    	}
     	}
+    	exit;
     }
 
     // Handle file delete after print
@@ -109,6 +110,7 @@ class PosPrintController extends Controller
     {
     	$data = $request->all();
     	$this->handleDelete($data);
+    	exit;
     }
 
     private function getPrinterFolder($printerMac)
