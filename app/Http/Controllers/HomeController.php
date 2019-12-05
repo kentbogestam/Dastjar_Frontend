@@ -374,7 +374,7 @@ class HomeController extends Controller
 
     public function eatLaterData(Request $request){
 
-        if($request->session()->get('order_date')){
+        if($request->session()->has('order_date')){
             $pieces = explode(" ", $request->session()->get('order_date'));
             $month = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
             for($i=0;$i<count($month);$i++){
@@ -426,12 +426,22 @@ class HomeController extends Controller
             $customerDiscount = null;
         }
 
-        /*// Check if restaurant found and send translated message
-        $restaurantStatusMsg = '';
-        if( $companydetails == '' || !count($companydetails) )
+        // If 'order date' is not equal to today date, then check for catering package
+        if($todayDate != date('d-m-Y'))
         {
-            $restaurantStatusMsg = __('messages.noRestaurantFound');
-        }*/
+            if($companydetails)
+            {
+                foreach($companydetails as $key => $store)
+                {
+                    if(!Helper::isPackageSubscribed(4, $store->store_id))
+                    {
+                        unset($companydetails[$key]);
+                    }
+                }
+                
+                $companydetails = $companydetails->values();
+            }
+        }
 
         // Store not found string
         $restaurantStatusMsg = __('messages.noRestaurantFound');
@@ -440,26 +450,22 @@ class HomeController extends Controller
     }
 
     public function eatLater(Request $request){
-
-       // if($request->session()->get('order_date') != null){
-        $pieces = explode(" ", $request->session()->get('current_date_time'));
+        /*$pieces = explode(" ", $request->session()->get('current_date_time'));
         $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
         $currentTime = $pieces[4];
-        $todayDay = $pieces[0];
+        $todayDay = $pieces[0];*/
 
-         $request->session()->put('route_url', url('/').'/eat-later'); // code added by saurabh to update correct url for eat-later and eat-now
+        $request->session()->put('route_url', url('/').'/eat-later'); // code added by saurabh to update correct url for eat-later and eat-now
 
-        if(!empty($request->input())) {
-
+        if(!empty($request->input()))
+        {
             $data = $request->input();
             $request->session()->put('order_date', $data['dateorder']);
-            // return view('eat_later', compact(''));
-            return view('v1.user.pages.eat-later');
-            
-        } else {
+        }
+        else
+        {
             if(Auth::check()){
-                $userDetail = User::whereId(Auth()->id())->first();
-
+                // $userDetail = User::whereId(Auth()->id())->first();
                 if(Session::get('with_login_lat') != null){
                     $lat = $request->session()->get('with_login_lat');
                     $lng = $request->session()->get('with_login_lng');
@@ -467,8 +473,6 @@ class HomeController extends Controller
                     $lat = $request->session()->get('with_out_login_lat');
                     $lng = $request->session()->get('with_out_login_lng');
                 }
-
-                // $companydetails = Store::getEatLaterListRestaurants($lat,$lng,$userDetail->range,'1','3',$todayDate,$currentTime,$todayDay);
             }else{
                 $lat = $request->session()->get('with_out_login_lat');
                 $lng = $request->session()->get('with_out_login_lng');
@@ -477,12 +481,11 @@ class HomeController extends Controller
                 }else{
                     $rang = '10';
                     $request->session()->put('rang', $rang);
-                } 
-                // $companydetails = Store::getEatLaterListRestaurants($lat,$lng,$rang,'1','3',$todayDate,$currentTime,$todayDay);
+                }
             }
-             // return view('eat_later', compact(''));
-             return view('v1.user.pages.eat-later');
         }
+
+        return view('v1.user.pages.eat-later');
     }
 
     public function eatLaterMap(Request $request){

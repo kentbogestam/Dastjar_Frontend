@@ -194,13 +194,13 @@ class Helper extends Model
     }
 
     // Check if package is subscribed
-    public static function isPackageSubscribed($packageId)
+    public static function isPackageSubscribed($packageId, $storeId = null)
     {
         // 
         $status = false;
         // $date = date('Y-m-d H:i:s');
         $date = Carbon::parse(Carbon::now())->format('Y-m-d');
-        $storeId = Session::get('storeId');
+        $storeId = !is_null($storeId) ? $storeId : Session::get('storeId');
 
         // 
         if($packageId && $storeId)
