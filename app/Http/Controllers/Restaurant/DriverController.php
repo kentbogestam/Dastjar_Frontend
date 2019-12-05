@@ -62,6 +62,7 @@ class DriverController extends Controller
 
         // Prepare data
         $data = $request->only(['name', 'email', 'phone_prefix', 'phone']);
+        $data['phone'] = ltrim($data['phone'], '0');
         $data['company_id'] = Company::where('u_id', Auth::user()->u_id)->first()->company_id;
         $password = str_random(4);
         $data['password'] = Hash::make($password);
@@ -123,7 +124,7 @@ class DriverController extends Controller
         $data['name'] = $request->input('name_upd');
         $data['email'] = $request->input('email_upd');
         $data['phone_prefix'] = $request->input('phone_prefix_upd');
-        $data['phone'] = $request->input('phone_upd');
+        $data['phone'] = ltrim($request->input('phone_upd'), '0');
 
         // 
         Driver::where(['id' => $request->id])
