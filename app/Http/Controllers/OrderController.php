@@ -1223,7 +1223,7 @@ class OrderController extends Controller
             }
 
             $html .= '
-            <div class="col-md-12" id="add-new-address">
+            <div class="col-md-12 clear" id="add-new-address">
                 <div class="text-center">
                     <button type="button" class="btn" data-toggle="collapse" data-target=".add-address-form">'.__('messages.addAddress').'</button>
                 </div>

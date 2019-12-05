@@ -1093,3 +1093,6 @@ p.error {
 	display: table-cell;
 	vertical-align: middle;
 }
+.clear {
+	clear: both;
+}

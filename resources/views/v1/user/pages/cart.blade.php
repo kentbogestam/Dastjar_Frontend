@@ -290,7 +290,7 @@
 				success: function(response) {
 					if(!response.status)
 					{
-						$('.block-address form#frm-user-address').after('<div class="col-md-12 alert alert-danger text-center error">'+response.msg+'</div>');
+						$('.block-address form#frm-user-address').after('<div class="col-md-12 alert alert-danger text-center error clear">'+response.msg+'</div>');
 					}
 					else
 					{
