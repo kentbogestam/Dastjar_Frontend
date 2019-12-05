@@ -249,6 +249,7 @@ return [
     'phEnterEmail' => 'Skriv email',
     'phPassword' => 'Nytt Passord',
     'phConfirmPassword' => 'Konfirmera Passord',
+    'reset_position' => 'Återställ Position',
 
     // Common
     'addNew' => 'Lägg till Ny',

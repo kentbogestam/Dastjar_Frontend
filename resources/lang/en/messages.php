@@ -248,6 +248,7 @@ return [
     'phEnterEmail' => 'Enter email',
     'phPassword' => 'New Password',
     'phConfirmPassword' => 'Confirm Password',
+    'reset_position' => 'Reset Position',
 
     // Common
     'addNew' => 'Add New',

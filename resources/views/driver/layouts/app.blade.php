@@ -85,6 +85,11 @@
 								</div>
 							@endif
 						</li>
+						<li>
+							<button type="button" class="btn btn-link" onclick="resetPosition();" style="margin-top: 5px;">
+								<i class="fas fa-location-arrow" data-toggle="tooltip" title="{{ __('messages.reset_position') }}" data-placement="bottom"></i>
+							</button>
+						</li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
 						<li>

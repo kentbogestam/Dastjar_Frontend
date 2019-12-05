@@ -81,6 +81,21 @@ function updateDriverPosition(lat2, lon2)
 // Add watch to track driver location
 getLocationUpdate();
 
+// Reset driver position
+function resetPosition()
+{
+    document.cookie = "driver-latitude= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = "driver-longitude= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+
+    // Clear watch first so it can get the current position
+    if(watchID)
+    {
+        navigator.geolocation.clearWatch(watchID);
+    }
+    
+    getLocationUpdate();
+}
+
 // Get order detail
 function getOrderDetail(customerOrderId)
 {

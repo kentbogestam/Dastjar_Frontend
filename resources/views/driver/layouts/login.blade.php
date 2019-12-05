@@ -79,6 +79,12 @@
 	<script src="{{ url('assets/js/jquery.min.js') }}"></script>
 	<script src="{{ url('assets/js/bootstrap.min.js') }}"></script>
 
+	<script type="text/javascript">
+		// Remove cookie
+		document.cookie = "driver-latitude= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+		document.cookie = "driver-longitude= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+	</script>
+
 	@yield('scripts')
 </body>
 </html>
