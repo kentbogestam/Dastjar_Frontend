@@ -2185,6 +2185,11 @@ class AdminController extends Controller
         if($userAddress)
         {
             $strAddress = Helper::convertAddressToStr($userAddress);
+
+            if( !empty($userAddress->mobile) )
+            {
+                $strAddress .= ", ".$userAddress->mobile;
+            }
         }
 
         return response()->json(['strAddress' => $strAddress]);
