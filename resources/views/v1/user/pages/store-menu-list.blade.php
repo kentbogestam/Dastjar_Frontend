@@ -23,6 +23,9 @@
 		<form id="form" class="form-horizontal" method="post" action="{{ url('cart') }}">
 			{{ csrf_field() }}
 			<div class="{{ ($styleType || $storedetails->menu_style_type) ? 'row' : 'hotel-service-list' }}">
+				@php
+				$strMenuDetail = "";
+				@endphp
 				@foreach($menuTypes as $menuType)
 					@php
 					$strLoyaltyOffer = "";
@@ -83,6 +86,9 @@
 					@endif
 
 					@if($styleType || $storedetails->menu_style_type)
+						@php
+						$strMenuDetail .= "<div class='col-xs-12 collapse menu-detail' id='menu-detail-{$menuType->dish_id}'></div>";
+						@endphp
 						<div class="col-xs-6 text-center restaurant-box">
 							<a href="javascript:void(0);" onclick="getMenuDetail(this, {{ $menuType->dish_id }}, 1)">
 								@if( !is_null($menuType->dish_image) )
@@ -105,7 +111,10 @@
 						</div>
 
 						@if($loop->iteration % 2 == 0 || $loop->last)
-							<div class="col-xs-12 collapse menu-detail"></div>
+							{!! $strMenuDetail !!}
+							@php
+							$strMenuDetail = "";
+							@endphp
 
 							@if(!$loop->last)
 								</div><div class="row">
@@ -280,22 +289,32 @@
 				{
 					$('.col-xs-6').removeClass('active');
 					This.closest('.row').find('.menu-detail').collapse('hide');
+					return false;
 				}
 				else
 				{
 					$('.col-xs-6').removeClass('active');
 					$('.menu-detail').removeClass('in');
-					This.closest('.row').find('.menu-detail').html('{{ __('messages.loadingText') }}');
 					This.closest('.col-xs-6').addClass('active');
-					This.closest('.row').find('.menu-detail').collapse('show');
+					This.closest('.row').find('#menu-detail-'+dishType).collapse('show');
+
+					if(This.closest('.row').find('#menu-detail-'+dishType+' .list-menu-items').length || This.closest('.row').find('.sub-menu-detail').length)
+					{
+						return false;
+					}
+					else
+					{
+						This.closest('.row').find('#menu-detail-'+dishType).html('{{ __('messages.loadingText') }}');
+					}
 				}
 			}
-
-			// 
-			/*if(This.next('.menu-detail').find('.list-menu-items').length || This.next('.sub-menu-detail').find('.list-menu-items').length)
+			else
 			{
-				return false;
-			}*/
+				if(This.closest('.product-sub').find('#sub-menu-'+dishType+' .sub-menu-detail').length || This.closest('.product-sub').find('#sub-menu-'+dishType+' .list-menu-items').length || This.closest('.product-sub').find('#sub-menu-'+dishType+' .no-product').length)
+				{
+					return false;
+				}
+			}
 
 			// 
 			$.ajax({
@@ -306,7 +325,7 @@
 					{
 						if(level == 1)
 						{
-							This.closest('.row').find('.menu-detail').html(response.html);
+							This.closest('.row').find('#menu-detail-'+dishType).html(response.html);
 						}
 						else
 						{

@@ -678,12 +678,12 @@ class HomeController extends Controller
         
         if($subMenu->count())
         {
+            $level++;
             $status = true;
             $html .= '<div class="hotel-ser-sub">';
 
             foreach($subMenu as $row)
             {
-                $level++;
                 $html .= "
                     <div class='product-sub'>
                         <a href='#sub-menu-{$row->dish_id}' onclick='getMenuDetail(this, {$row->dish_id}, {$level})' data-toggle='collapse'>
@@ -780,7 +780,7 @@ class HomeController extends Controller
             else
             {
                 $status = 1;
-                $html .= "<div class='text-center'>No product found.</div>";
+                $html .= "<div class='text-center no-product'>No product found.</div>";
             }
         }
 
