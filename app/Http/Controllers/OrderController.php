@@ -1337,7 +1337,7 @@ class OrderController extends Controller
                     ->with('deliveryPriceDistance')
                     ->first();
 
-                if($storeDeliveryPrice->delivery_rule_id == 5)
+                if( isset($storeDeliveryPrice->delivery_rule_id) && $storeDeliveryPrice->delivery_rule_id == 5)
                 {
                     $distanceBasedDeliveryPrice = 1;
                     Session::flash('userDeliverAddressDistance', $distance);
