@@ -1,5 +1,5 @@
 <!-- Popup to add manual preparation time -->
-<div data-role="popup" data-dismissible="false" id="add-manual-prep-time" style="max-width:450px;">
+<div data-role="popup" data-dismissible="false" id="add-manual-prep-time" style="max-width:550px;">
 	<div data-role="header"><h2>Preparation Time</h2></div>
 	<div class="ui-content" style="padding: 15px;">
 		<form name="frm-add-manual-prep-time">
@@ -21,6 +21,10 @@
 				<label for="manual-prep-time-40">40</label>
 				<input type="radio" name="extra_prep_time" id="manual-prep-time-50" value="50">
 				<label for="manual-prep-time-50">50</label>
+				<input type="radio" name="extra_prep_time" id="manual-prep-time-60" value="60">
+				<label for="manual-prep-time-60">60</label>
+				<input type="radio" name="extra_prep_time" id="manual-prep-time-70" value="70">
+				<label for="manual-prep-time-70">70</label>
 			</fieldset>
 			<input type="hidden" name="order_id">
 			<input type="hidden" name="item_id">
