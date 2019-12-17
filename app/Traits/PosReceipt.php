@@ -161,6 +161,7 @@ trait PosReceipt {
         if ($total_columns == 1) return $columns[0];
         if ($total_columns == 2)
         {
+            $columns[0] = '  '.$columns[0]; // Add whitespace before left text to get rid text overide
             $total_characters = strlen($columns[0])+strlen($columns[1]);
             $total_whitespace = $this->MAX_CHARS - $total_characters;
             // echo $this->MAX_CHARS.'-'.$total_characters.'='.$total_whitespace; exit;
