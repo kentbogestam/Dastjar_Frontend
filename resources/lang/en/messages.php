@@ -216,7 +216,7 @@ return [
     'mobileNumber' => 'Mobile number',
     'zipcode' => 'Zipcode',
     'address1' => 'Flat, House no., Building, Company, Apartment',
-    'address2' => 'Area, Colony, Street, Sector',
+    'address2' => 'Street address',
     'city' => 'Town/City',
     'country' => 'Country',
     'saveAddress' => 'Save this address',
