@@ -215,7 +215,7 @@ return [
     'fullName' => 'Full name',
     'mobileNumber' => 'Mobile number',
     'zipcode' => 'Zipcode',
-    'address1' => 'Flat, House no., Building, Company, Apartment',
+    'address1' => 'Entry code, Apartment number or Company',
     'address2' => 'Street address',
     'city' => 'Town/City',
     'country' => 'Country',
