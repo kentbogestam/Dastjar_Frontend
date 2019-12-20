@@ -298,7 +298,7 @@
 					This.closest('.col-xs-6').addClass('active');
 					This.closest('.row').find('#menu-detail-'+dishType).collapse('show');
 
-					if(This.closest('.row').find('#menu-detail-'+dishType+' .list-menu-items').length || This.closest('.row').find('.sub-menu-detail').length)
+					if(This.closest('.row').find('#menu-detail-'+dishType+' .list-menu-items').length || This.closest('.row').find('#menu-detail-'+dishType+' .sub-menu-detail').length)
 					{
 						return false;
 					}
