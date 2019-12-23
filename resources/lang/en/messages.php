@@ -249,6 +249,7 @@ return [
     'phPassword' => 'New Password',
     'phConfirmPassword' => 'Confirm Password',
     'reset_position' => 'Reset Position',
+    'driver_location_denied' => 'This service requires access to your location! Please allow location permission for anar.dastjar.com!',
 
     // Common
     'addNew' => 'Add New',

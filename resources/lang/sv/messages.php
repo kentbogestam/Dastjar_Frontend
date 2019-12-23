@@ -250,6 +250,7 @@ return [
     'phPassword' => 'Nytt Passord',
     'phConfirmPassword' => 'Konfirmera Passord',
     'reset_position' => 'Återställ Position',
+    'driver_location_denied' => 'Den här tjänsten kräver access till din plats! Tillåt anar.dastjar.com att få access till din plats!',
 
     // Common
     'addNew' => 'Lägg till Ny',

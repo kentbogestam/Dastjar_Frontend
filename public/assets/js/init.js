@@ -54,7 +54,7 @@ function showLocationUpdate(position)
 
 function errorHandlerLocationUpdate()
 {
-
+    $('#location-denied').modal('show');
 }
 
 // Update driver current position

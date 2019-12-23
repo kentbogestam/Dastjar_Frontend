@@ -130,6 +130,26 @@
 		</div>
 	</div>
 
+	<!-- Modal: location denied -->
+	<div id="location-denied" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">{{ __('messages.Location') }}</h4>
+				</div>
+				<div class="modal-body">
+					<div class="alert alert-warning">
+						{!! __('messages.driver_location_denied') !!}
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">{{ __('messages.OK') }}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<footer id="footer" class="footer-fixed-bottom">
 		@if(Auth::guard('driver')->check())
 			<nav class="navbar navbar-default navbar-footer-custom" style="margin: 0">
