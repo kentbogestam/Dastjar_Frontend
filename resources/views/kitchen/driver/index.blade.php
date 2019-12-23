@@ -65,8 +65,12 @@
                             <td>{{ $row->email }}</td>
                             <td>{{ $row->phone }}</td>
                             <td>
-                                @if($row->status == 1)
-                                    {{ __('messages.active') }}
+                                @if( !is_null($row->latitude) && !is_null($row->longitude) )
+                                    @if($row->status == 1)
+                                        {{ __('messages.active') }}
+                                    @else
+                                        {{ __('messages.inactive') }}
+                                    @endif
                                 @else
                                     {{ __('messages.inactive') }}
                                 @endif
