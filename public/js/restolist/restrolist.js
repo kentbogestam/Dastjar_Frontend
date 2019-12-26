@@ -100,6 +100,7 @@ function getPos(urlLatlng,urlMenulist,noImageUrl){
 function add(urlLatlng,urlMenulist,noImageUrl){
 	var d = new Date();
 	$("#browserCurrentTime").val(d);
+	d = encodeURIComponent(d);
 	
 	if(resExist==0){
 		resExist=1;

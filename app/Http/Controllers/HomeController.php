@@ -45,7 +45,10 @@ class HomeController extends Controller
 
     public function getList(Request $request){
         $pieces = explode(" ", $request->session()->get('current_date_time'));
-        $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
+        $current_date_time = $request->session()->get('current_date_time');
+        $current_date_time = substr($current_date_time, 0, strpos($current_date_time, '('));
+        $todayDate = date('d-m-Y', strtotime($current_date_time));
+        // $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
         $currentTime = $pieces[4];
         $todayDay = $pieces[0];
         if(Auth::check()){
@@ -129,7 +132,9 @@ class HomeController extends Controller
                 $data = $request->input();
                 $request->session()->put('current_date_time', $data['currentdateTime']);
                 $pieces = explode(" ", $request->session()->get('current_date_time'));
-                $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
+                $current_date_time = $request->session()->get('current_date_time');
+                $current_date_time = substr($current_date_time, 0, strpos($current_date_time, '('));
+                $todayDate = date('d-m-Y', strtotime($current_date_time));
                 $currentTime = $pieces[4];
                 $todayDay = $pieces[0];
                 if($userDetail->range == null){
@@ -280,7 +285,10 @@ class HomeController extends Controller
                 //
                 $request->session()->put('current_date_time', $data['currentdateTime']);
                 $pieces = explode(" ", $request->session()->get('current_date_time'));
-                $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
+                $current_date_time = $request->session()->get('current_date_time');
+                $current_date_time = substr($current_date_time, 0, strpos($current_date_time, '('));
+                $todayDate = date('d-m-Y', strtotime($current_date_time));
+                // $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
                 $currentTime = $pieces[4];
                 $todayDay = $pieces[0];
                 if($request->session()->get('rang') != null){
@@ -355,7 +363,10 @@ class HomeController extends Controller
     {
         $userDetail = User::whereId(Auth()->id())->first();
         $pieces = explode(" ", $request->session()->get('current_date_time'));
-        $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
+        $current_date_time = $request->session()->get('current_date_time');
+        $current_date_time = substr($current_date_time, 0, strpos($current_date_time, '('));
+        $todayDate = date('d-m-Y', strtotime($current_date_time));
+        // $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
         $currentTime = $pieces[4];
         $todayDay = $pieces[0];
 
@@ -393,7 +404,10 @@ class HomeController extends Controller
             $todayDay = $pieces[0]; 
         }else{
             $pieces = explode(" ", $request->session()->get('current_date_time'));
-            $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
+            $current_date_time = $request->session()->get('current_date_time');
+            $current_date_time = substr($current_date_time, 0, strpos($current_date_time, '('));
+            $todayDate = date('d-m-Y', strtotime($current_date_time));
+            // $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
             $currentTime = $pieces[4];
             $todayDay = $pieces[0]; 
         }
@@ -490,7 +504,10 @@ class HomeController extends Controller
 
     public function eatLaterMap(Request $request){
         $pieces = explode(" ", $request->session()->get('current_date_time'));
-        $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
+        $current_date_time = $request->session()->get('current_date_time');
+        $current_date_time = substr($current_date_time, 0, strpos($current_date_time, '('));
+        $todayDate = date('d-m-Y', strtotime($current_date_time));
+        // $todayDate = date('d-m-Y', strtotime($request->session()->get('current_date_time')));
         $currentTime = $pieces[4];
         $todayDay = $pieces[0];
         if(Auth::check()){

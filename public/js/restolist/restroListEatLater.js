@@ -9,6 +9,7 @@
 function add(urlEatLater,urlMenulist,noImageUrl,sessionTime){
 	var d = new Date();
 	$("#browserCurrentTime").val(d);
+	d = encodeURIComponent(d);
 
 	if(resExist==0){
 		resExist=1;
