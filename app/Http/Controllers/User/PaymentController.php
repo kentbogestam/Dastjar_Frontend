@@ -69,7 +69,7 @@ class PaymentController extends Controller
 		    			->where('order_details.order_id', $orderId)
 		    			->get();
 		    		
-		    		$description = "Order ID: {$request->orderId}; ";
+		    		$description = "Order ID: {$orderId}; ";
 					foreach($orderDetails as $value)
 					{
 						$description .= $value->product_quality . " " . $value->product_name . ", ";
