@@ -9,9 +9,9 @@ use DB;
 use App\Libraries\StarCloudPrintStarLineModeJob;
 
 trait PosReceipt {
-	private $MAX_CHARS = 32;
+    private $MAX_CHARS = 32;
 
-	function createPOSReceipt($orderId)
+    function createPOSReceipt($orderId)
     {
         // Get order/store/company detail
         $order = Order::from('orders as O')
@@ -28,7 +28,7 @@ trait PosReceipt {
         {
             // Get order item details belongs to order
             $orderDetail = OrderDetail::from('order_details AS OD')
-                ->select(['OD.product_quality', 'OD.price', 'P.product_name'])
+                ->select(['OD.product_quality', 'OD.product_description', 'OD.price', 'P.product_name'])
                 ->join('product AS P', 'P.product_id', '=', 'OD.product_id')
                 ->where('OD.order_id', $orderId)
                 ->get();
@@ -103,6 +103,12 @@ trait PosReceipt {
                         $arrIndex1 = "{$row->product_quality} {$product_name}";
                         $arrIndex2 = number_format(($row->product_quality*$row->price), 2, '.', '')." ".$order->currencies;
                         $printer->add_text_line($this->get_column_separated_data(array($arrIndex1, $arrIndex2)));
+
+                        // Add product comment if have
+                        if( !is_null($row->product_description) )
+                        {
+                            $printer->add_text_line('      ('.$row->product_description.')');
+                        }
                     }
                     $printer->add_text_line($this->get_seperator_dashed());
                 }
