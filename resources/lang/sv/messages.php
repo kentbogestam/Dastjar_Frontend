@@ -1,4 +1,4 @@
-<?php
+`<?php
 
 return [
     /**
@@ -228,6 +228,7 @@ return [
     'delivery_rule_id' => 'Leveransregel',
     'delivery_charge' => 'Leveransavgift',
     'threshold' => 'Minimum Ordervärde',
+    'delivery_distance' => 'Avstånd (km)',
     'deliveryPriceCreated' => 'Leveranspris skapat',
     'deliveryPriceUpdated' => 'Leveranspris updaterat',
     'deliveryPriceDeleted' => 'Leveranspriset raderat',
@@ -236,7 +237,7 @@ return [
     'ruleDeliveryType2' => 'Lägg till pris för leverans och lägsta beställningsvärde för gratis leverans',
     'ruleDeliveryType3' => 'Lägg till ordervärde när en hemleverans är möjlig',
     'ruleDeliveryType4' => 'Lägg till pris för leverans och lägsta beställningsvärde för leverans',
-    'ruleDeliveryType5' => 'Distance based delivery price',
+    'ruleDeliveryType5' => 'Pris baserat på avstånd',
 
     // Driver
     'driver' => 'Förare',
