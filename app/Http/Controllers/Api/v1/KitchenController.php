@@ -57,6 +57,7 @@ class KitchenController extends Controller
             ->where('orders.paid', '0')
             ->whereNotIn('orders.online_paid', [2])
             ->where('orders.cancel','!=', 1)
+            ->join('order_details', 'orders.order_id', '=', 'order_details.order_id')
             ->leftJoin('customer','orders.user_id','=','customer.id')
             ->leftJoin('customer_addresses AS CA','CA.id','=','orders.user_address_id')
             ->leftJoin('order_customer_discount AS OCD', 'orders.order_id', '=', 'OCD.order_id')
