@@ -125,6 +125,11 @@ Route::group(['namespace' => 'User'], function() {
 Route::get('view-cart/{orderId}', 'OrderController@viewCart');
 Route::post('order-update-delivery-type', 'OrderController@orderUpdateDeliveryType');
 Route::post('save-user-address', 'OrderController@saveUserAddress');
+Route::get('edit-user-address/{id}', 'OrderController@editUserAddress');
+Route::post('update-user-address', 'OrderController@updateUserAddress');
+Route::post('resend-address-verification-code', 'OrderController@resendAddressVerificationCode');
+Route::post('address-verify', 'OrderController@addressVerify');
+Route::get('delete-user-address/{id}', 'OrderController@deleteUserAddress');
 Route::post('update-order-user-address', 'OrderController@updateOrderUserAddress');
 Route::get('get-home-delivery-part-content/{order_id}', 'OrderController@getHomeDeliveryPartContent');
 // Route::post('apply-promocode', 'OrderController@ajaxApplyPromocode');

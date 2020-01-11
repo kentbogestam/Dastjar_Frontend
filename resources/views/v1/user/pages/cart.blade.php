@@ -318,6 +318,223 @@
 		updateCart(qty, prod, 0, 0, false);
 	}
 
+	// 
+	function saveUserAddress()
+	{
+		$('#confirm-address-alert').modal('hide');
+		var formData = $('#save-address').serialize();
+
+		// Send data to server through the Ajax call
+		$.ajax({
+			type: 'POST',
+			url: "{{ url('save-user-address') }}",
+			data: formData,
+			async: 'true',
+			dataType: 'json',
+			beforeSend: function() {
+				showLoading();
+			},
+			complete: function() {
+				hideLoading('Processing...');
+			},
+			success: function(result) {
+				if(result.status == 0)
+				{
+					$('.add-address-form').collapse('hide');
+					$('#address-verification-alert .verification-code-sent-at').html(result.msg);
+					$('#address-verification-alert #address_id').val(result.addressId);
+					$('#address-verification-alert').modal('show');
+				}
+				else if(result.status == 1)
+				{
+					getHomeDeliveryPartContent($('#orderid').val());
+				}
+				else if(result.status == 2)
+				{
+					$('.add-address-form').collapse('hide');
+					$('#warning-address-alert').modal('show');
+				}
+			},
+			error: function() {
+				alert('Something went wrong, please try again!');
+			}
+		});
+
+		return false;
+	}
+
+	// 
+	function editUserAddressModal(id)
+	{
+		$.ajax({
+			url: "{{ url('edit-user-address') }}/"+id,
+			success: function(response) {
+				if(response.address != null)
+				{
+					$('#update-address').find('input[name=address_id]').val(response.address.id);
+					$('#update-address').find('input[name=full_name]').val(response.address.full_name);
+					$('#update-address').find('select[name=phone_prefix]').val(response.address.phone_prefix);
+					$('#update-address').find('input[name=mobile]').val(response.address.mobile);
+					$('#update-address').find('input[name=entry_code]').val(response.address.entry_code);
+					$('#update-address').find('input[name=apt_no]').val(response.address.apt_no);
+					$('#update-address').find('input[name=company_name]').val(response.address.company_name);
+					$('#update-address').find('input[name=other_info]').val(response.address.other_info);
+					$('#update-address').find('input[name=street]').val(response.address.street);
+					$('#update-address').find('input[name=zipcode]').val(response.address.zipcode);
+					$('#update-address').find('input[name=city]').val(response.address.city);
+					$('#update-address').find('input[name=country]').val(response.address.country);
+					
+					$('#update-user-address').modal('show');
+				}
+
+				hideLoading('Processing...');
+			},
+			error: function() {
+				alert('Something went wrong, please try again!');
+				hideLoading('Processing...');
+			}
+		});
+
+		return false;
+	}
+
+	// Update existing address of user
+	function updateUserAddress()
+	{
+		var formData = $('#update-address').serialize();
+
+		// Send data to server through the Ajax call
+		$.ajax({
+			type: 'POST',
+			url: "{{ url('update-user-address') }}",
+			data: formData,
+			async: 'true',
+			dataType: 'json',
+			beforeSend: function() {
+				showLoading();
+			},
+			complete: function() {
+				hideLoading('Processing...');
+				$('#update-user-address').modal('hide');
+			},
+			success: function(result) {
+				if(result.status == 0)
+				{
+					$('#address-verification-alert .verification-code-sent-at').html(result.msg);
+					$('#address-verification-alert #address_id').val(result.addressId);
+					$('#address-verification-alert').modal('show');
+				}
+				else if(result.status == 1)
+				{
+					getHomeDeliveryPartContent($('#orderid').val());
+				}
+			},
+			error: function() {
+				alert('Something went wrong, please try again!');
+			}
+		});
+	}
+
+	// 
+	function resendVerificationCode()
+	{
+		var formData = $('#frm-address-verification').serialize();
+
+		// Send data to server through the Ajax call
+		$.ajax({
+			type: 'POST',
+			url: "{{ url('resend-address-verification-code') }}",
+			data: formData,
+			async: 'true',
+			dataType: 'json',
+			beforeSend: function() {
+				showLoading();
+			},
+			complete: function() {
+				hideLoading('Processing...');
+			},
+			success: function(result) {
+				if(result.status)
+				{
+					$('#address-verification-alert .verification-code-sent-at').html(result.msg);
+				}
+			},
+			error: function() {
+				alert('Something went wrong, please try again!');
+			}
+		});
+
+		return false;
+	}
+
+	// 
+	function addressVerification()
+	{
+		var formData = $('#frm-address-verification').serialize();
+
+		// Send data to server through the Ajax call
+		$.ajax({
+			type: 'POST',
+			url: "{{ url('address-verify') }}",
+			data: formData,
+			async: 'true',
+			dataType: 'json',
+			beforeSend: function() {
+				showLoading();
+			},
+			complete: function() {
+				hideLoading('Processing...');
+			},
+			success: function(result) {
+				if(result.status)
+				{
+					$('#address-verification-alert').modal('hide');
+					getHomeDeliveryPartContent($('#orderid').val());
+				}
+				else
+				{
+					$('#address-verification-alert #verification-error').html(result.msg);
+					$('#address-verification-alert #verification-error').show();
+				}
+			},
+			error: function() {
+				alert('Something went wrong, please try again!');
+			}
+		});
+
+		return false;
+	}
+
+	// 
+	function deleteUserAddress(id)
+	{
+		if( confirm('Are you sure you want to delete this address?') )
+		{
+			showLoading();
+
+			$.ajax({
+				url: "{{ url('delete-user-address') }}/"+id,
+				success: function(response) {
+					if(response.status)
+					{
+						getHomeDeliveryPartContent($('#orderid').val());
+					}
+					else
+					{
+						alert('Address not found!');
+					}
+
+					hideLoading('Processing...');
+				},
+				error: function() {
+					alert('Something went wrong, please try again!');
+
+					hideLoading('Processing...');
+				}
+			});
+		}
+	}
+
 	// Save address
 	$(document).on('submit', '#save-address', function(e) {
 		e.preventDefault();
@@ -325,31 +542,33 @@
 		// Form validate
 		if($('#save-address').valid())
 		{
-			var formData = $(this).serialize();
+			$('#confirm-address-alert').modal('show');
+		}
 
-			// Send data to server through the Ajax call
-			$.ajax({
-				type: 'POST',
-				url: "{{ url('save-user-address') }}",
-				data: formData,
-				async: 'true',
-				dataType: 'json',
-				beforeSend: function() {
-					showLoading();
-				},
-				complete: function() {
-					hideLoading('Processing...');
-				},
-				success: function(result) {
-					if(result.status)
-					{
-						getHomeDeliveryPartContent($('#orderid').val());
-					}
-				},
-				error: function() {
-					alert('Something went wrong, please try again!');
-				}
-			});
+		return false;
+	});
+
+	// Update address
+	$(document).on('submit', '#update-address', function(e) {
+		e.preventDefault();
+
+		// Form validate
+		if($('#update-address').valid())
+		{
+			updateUserAddress();
+		}
+
+		return false;
+	});
+
+	// Check address verification code
+	$(document).on('submit', '#frm-address-verification', function(e) {
+		e.preventDefault();
+
+		// Form validate
+		if($('#frm-address-verification').valid())
+		{
+			addressVerification();
 		}
 
 		return false;

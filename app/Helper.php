@@ -155,7 +155,7 @@ class Helper extends Model
         return $fileName;
     }
 
-    // Return user address
+    // Return custome address 'customer_addresses'
     public static function convertAddressToStr($address)
     {
         $arr = array();
@@ -168,6 +168,28 @@ class Helper extends Model
         if( !empty($address->address) )
         {
             array_push($arr, $address->address);
+        }
+        else
+        {
+            if( !empty($address->entry_code) )
+            {
+                array_push($arr, $address->entry_code);
+            }
+
+            if( !empty($address->apt_no) )
+            {
+                array_push($arr, $address->apt_no);
+            }
+
+            if( !empty($address->company_name) )
+            {
+                array_push($arr, $address->company_name);
+            }
+
+            if( !empty($address->other_info) )
+            {
+                array_push($arr, $address->other_info);
+            }
         }
 
         if( !empty($address->street) )

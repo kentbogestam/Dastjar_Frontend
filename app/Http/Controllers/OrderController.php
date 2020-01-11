@@ -1168,6 +1168,9 @@ class OrderController extends Controller
     {
         $html = '';
 
+        // 
+        $user = User::find(Auth::id());
+
         // Get order
         $order = Order::select(['orders.final_order_total', 'company.currencies'])
             ->join('company','orders.company_id', '=', 'company.company_id')
@@ -1194,71 +1197,17 @@ class OrderController extends Controller
         if($is_home_delivery_eligible)
         {
             // Get user address
-            $userAddresses = UserAddress::where(['customer_id' => Auth::id()])
+            $userAddresses = UserAddress::where(['customer_id' => Auth::id(), 'status' => '1'])
                 ->get();
 
             if($userAddresses)
             {
-                $html .= '
-                <div class="col-md-12 added-address-sec">
-                    <form id="frm-user-address" method="post">';
-                
-                $i = 1;
-                foreach($userAddresses as $address)
-                {
-                    $strAddress = Helper::convertAddressToStr($address);
-                    
-                    $html .= "
-                    <div class='col-sm-6'>
-                        <div class='added-address'>
-                            <label><input type='radio' name='user_address_id' value='{$address->id}'>{$strAddress}</label>
-                        </div>
-                    </div>";
-
-                    $i++;
-                }
-
-                $html .= '
-                    </form>
-                </div>';
+                // List user address form
+                $html .= view('v1.user.elements.cart-list-user-address-frm', compact('userAddresses'))->render();
             }
 
-            $html .= '
-            <div class="col-md-12 clear" id="add-new-address">
-                <div class="text-center">
-                    <button type="button" class="btn" data-toggle="collapse" data-target=".add-address-form">'.__('messages.addAddress').'</button>
-                </div>
-                <div class="collapse add-address-form contact-info">
-                    <form id="save-address">
-                        <div class="form-group">
-                            <input type="text" name="full_name" id="full_name" placeholder="'.__('messages.fullName').'*" class="form-control" data-rule-required="true" data-msg-required="'.__('messages.fieldRequired').'">
-                        </div>
-                        <div class="form-group">
-                            <input type="text" name="mobile" id="mobile" placeholder="'.__('messages.mobileNumber').'*" class="form-control" data-rule-required="true" data-rule-number="true" data-msg-required="'.__('messages.fieldRequired').'" data-msg-number="'.__('messages.fieldNumber').'">
-                        </div>
-                        <div class="form-group">
-                            <input type="text" name="address" id="address" placeholder="'.__('messages.address1').'" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <input type="text" name="street" id="street" placeholder="'.__('messages.address2').'*" class="form-control" data-rule-required="true" data-msg-required="'.__('messages.fieldRequired').'">
-                        </div>
-                        <div class="form-group">
-                            <input type="text" name="zipcode" id="zipcode" placeholder="Zipcode" class="form-control" data-rule-number="true" data-msg-number="'.__('messages.fieldNumber').'">
-                        </div>
-                        <div class="form-group">
-                            <input type="text" name="city" id="city" placeholder="'.__('messages.city').'*" class="form-control" data-rule-required="true" data-msg-required="'.__('messages.fieldRequired').'">
-                        </div>
-                        <div class="form-group">
-                            <input type="text" name="country" id="country" placeholder="'.__('messages.country').'*" class="form-control" data-rule-required="true" data-msg-required="'.__('messages.fieldRequired').'">
-                        </div>
-                        <div class="checkbox">
-                            <label><input type="checkbox" name="is_permanent" value="1" checked="" id="is_permanent"> '.__('messages.saveAddress').'</label>
-                        </div>
-                        <input type="submit" value="'.__('messages.save').'" class="btn btn-default">
-                    </form>
-                </div>
-            </div>
-            ';
+            // Add new address form
+            $html .= view('v1.user.elements.cart-add-user-address-frm', compact('user'))->render();
         }
         else
         {
@@ -1280,6 +1229,7 @@ class OrderController extends Controller
         // Validation
         $this->validate($request, [
             'full_name' => 'required',
+            'phone_prefix' => 'required',
             'mobile'    => 'required|numeric',
             'street'    => 'required',
             'zipcode'   => 'nullable|numeric',
@@ -1287,17 +1237,223 @@ class OrderController extends Controller
             'country'   => 'required',
         ]);
 
-        // Create
-        $status = 0; $addresses = '';
-        $data = $request->only(['full_name', 'mobile', 'zipcode', 'address', 'street', 'city', 'country', 'is_permanent']);
-        $data['customer_id'] = Auth::id();
+        $status = 2; $msg = __('messages.addAddressWarning'); $addressId = null;
 
-        if(UserAddress::create($data))
-        {
-            $status = 1;
+        // Allow max five address per user
+        if( UserAddress::where(['customer_id' => Auth::id(), 'status' => '1'])->count() < 5 )
+        {   
+            // Create
+            $data = $request->only(['full_name', 'phone_prefix', 'mobile', 'entry_code', 'apt_no', 'company_name', 'other_info', 'zipcode', 'address', 'street', 'city', 'country', 'is_permanent']);
+            $data['customer_id'] = Auth::id();
+
+            $userAddress = UserAddress::create($data);
+            
+            if($userAddress)
+            {
+                $addressId = $userAddress->id;
+
+                // Check if address needs to be verify
+                $response = $this->checkAddressToVerify($data['mobile'], $data['customer_id']);
+
+                if($response['isPhoneVerified'] == 0)
+                {
+                    $status = 0;
+                    $msg = __('messages.addrVerificationCodeSentAt', ['mobile' => $data['mobile']]);
+                    $this->sendAddressVerificationCode($data['phone_prefix'], $data['mobile']);
+                }
+                else
+                {
+                    $status = 1; $msg = '';
+                    UserAddress::where('id', $userAddress->id)->update(['status' => '1']);
+                }
+            }
         }
 
         // Return
+        return response()->json(['status' => $status, 'msg' => $msg, 'addressId' => $addressId]);
+    }
+
+    /**
+     * Get user address to edit
+     * @param  [type] $id [description]
+     * @return [type]     [description]
+     */
+    function editUserAddress($id)
+    {
+        // 
+        $address = UserAddress::where(['id' => $id, 'customer_id' => Auth::id()])->first();
+
+        return response()->json(['address' => $address]);
+    }
+
+    /**
+     * Update user address
+     * @return [type] [description]
+     */
+    function updateUserAddress(Request $request)
+    {
+        // Validation
+        $this->validate($request, [
+            'address_id' => 'required',
+            'full_name' => 'required',
+            'phone_prefix' => 'required',
+            'mobile'    => 'required|numeric',
+            'street'    => 'required',
+            'zipcode'   => 'nullable|numeric',
+            'city'      => 'required',
+            'country'   => 'required',
+        ]);
+
+        // 
+        $status = 0; $msg = '';
+        
+        $data['full_name'] = $request->input('full_name');
+        $data['phone_prefix'] = $request->input('phone_prefix');
+        $data['mobile'] = $request->input('mobile');
+        $data['entry_code'] = $request->input('entry_code');
+        $data['apt_no'] = $request->input('apt_no');
+        $data['company_name'] = $request->input('company_name');
+        $data['other_info'] = $request->input('other_info');
+        $data['zipcode'] = $request->input('zipcode');
+        $data['address'] = $request->input('address');
+        $data['street'] = $request->input('street');
+        $data['city'] = $request->input('city');
+        $data['country'] = $request->input('country');
+
+        $customerId = Auth::id();
+        $addressId = $request->input('address_id');
+
+        if( UserAddress::where(['customer_id' => $customerId, 'id' => $addressId])->count() )
+        {
+            // Check if address needs to be verify
+            $response = $this->checkAddressToVerify($data['mobile'], $customerId);
+
+            if($response['isPhoneVerified'] == 0)
+            {
+                $status = 0;
+                $data['status'] = '0';
+                $msg = __('messages.addrVerificationCodeSentAt', ['mobile' => $data['mobile']]);
+                $this->sendAddressVerificationCode($data['phone_prefix'], $data['mobile']);
+            }
+            else
+            {
+                $status = 1;
+            }
+
+            UserAddress::where(['customer_id' => $customerId, 'id' => $addressId])->update($data);
+        }
+
+        // Return
+        return response()->json(['status' => $status, 'msg' => $msg, 'addressId' => $addressId]);
+    }
+
+    // Check if address needs to be verify
+    private function checkAddressToVerify($phone, $customerId)
+    {
+        $data['isPhoneVerified'] = 0;
+
+        // Check if phone already exist and verified
+        if( User::where(['id' => $customerId, 'phone_number' => $phone])->count() )
+        {
+            $data['isPhoneVerified'] = 1;
+        }
+        elseif( UserAddress::where(['customer_id' => $customerId, 'mobile' => $phone, 'status' => '1'])->count() )
+        {
+            $data['isPhoneVerified'] = 1;
+        }
+
+        return $data;
+    }
+
+    /**
+     * Resent address verification code
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    function resendAddressVerificationCode(Request $request)
+    {
+        // Validation
+        $this->validate($request, [
+            'address_id' => 'required',
+        ]);
+
+        $status = 0; $msg  = null; $addressId = $request->input('address_id');
+
+        // Send 'verification code' if address found
+        $address = UserAddress::select(['id', 'phone_prefix', 'mobile'])->where(['id' => $addressId])->first();
+
+        if($address)
+        {
+            $status = 1;
+            $msg = __('messages.addrVerificationCodeSentAt', ['mobile' => $address->mobile]);
+            $this->sendAddressVerificationCode($address->phone_prefix, $address->mobile);
+        }
+
+        // Return
+        return response()->json(['status' => $status, 'msg' => $msg, 'addressId' => $addressId]);
+    }
+
+    /**
+     * Send OPT on phone
+     * @param  [type] $phone [description]
+     * @return [type]        [description]
+     */
+    private function sendAddressVerificationCode($prefix, $phone)
+    {
+        $verificationCode = rand(1000, 9999);
+        Session::put('addrVerificationCode', $verificationCode);
+
+        $recipients = array();
+        $recipients = [$prefix.$phone];
+        $message = __('messages.verificationCodeMsg', ['code' => Session::get('addrVerificationCode')]);
+        $result = Helper::apiSendTextMessage($recipients, $message);
+    }
+
+    /**
+     * Verify address
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    function addressVerify(Request $request)
+    {
+        // Validation
+        $this->validate($request, [
+            'address_id' => 'required',
+            'verification_code' => 'required|numeric',
+        ]);
+
+        // 
+        $status = 0; $msg = __('messages.invalidVerificationCode');
+
+        // Validate verification code, update address status
+        if( Session::has('addrVerificationCode') && (Session::get('addrVerificationCode') == $request->input('verification_code')) )
+        {
+            $status = 1;
+            Session::forget('addrVerificationCode');
+            UserAddress::where(['id' => $request->input('address_id')])->update(['status' => '1']);
+        }
+
+        return response()->json(['status' => $status, 'msg' => $msg]);
+    }
+
+    /**
+     * Delete user address
+     * @param  [type] $id [description]
+     * @return [type]     [description]
+     */
+    function deleteUserAddress($id)
+    {
+        $status = false;
+
+        if(Auth::check())
+        {
+            if(UserAddress::where(['id' => $id,'customer_id' => Auth::id()])->count())
+            {
+                $status = true;
+                UserAddress::where(['id' => $id,'customer_id' => Auth::id()])->delete();
+            }
+        }
+
         return response()->json(['status' => $status]);
     }
 
