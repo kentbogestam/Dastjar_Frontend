@@ -15,7 +15,7 @@ trait PosReceipt {
     {
         // Get order/store/company detail
         $order = Order::from('orders as O')
-            ->select(['O.order_id', 'O.customer_order_id', 'O.delivery_type', 'O.check_deliveryDate', 'O.deliver_time', 'O.order_total', 'O.final_order_total', 'O.delivery_charge', 'O.online_paid', 'C.currencies', 'S.store_name', 'S.phone', 'SP.mac_address', 'SP.print_copy', 'CA.full_name', 'CA.mobile', 'CA.address', 'CA.street', 'CA.city'])
+            ->select(['O.order_id', 'O.customer_order_id', 'O.delivery_type', 'O.check_deliveryDate', 'O.deliver_time', 'O.order_total', 'O.final_order_total', 'O.delivery_charge', 'O.online_paid', 'C.currencies', 'S.store_name', 'S.phone', 'SP.mac_address', 'SP.print_copy', 'CA.full_name', 'CA.mobile', 'CA.entry_code', 'CA.apt_no', 'CA.company_name', 'CA.other_info', 'CA.address', 'CA.street', 'CA.city'])
             ->join('store AS S', 'S.store_id', '=', 'O.store_id')
             ->join('company AS C','C.company_id', '=', 'O.company_id')
             ->leftJoin('store_printers AS SP', 'SP.store_id', '=', 'S.store_id')
@@ -88,6 +88,32 @@ trait PosReceipt {
                     if( !is_null($order->address) && !empty($order->address) )
                     {
                         $address .= $this->replaceAsciiToHex($order->address)."\n";
+                    }
+                    else
+                    {
+                        $txt = '';
+
+                        if( !is_null($order->entry_code) )
+                        {
+                            $txt .= __('messages.entryCode').": {$order->entry_code}\n";
+                        }
+
+                        if( !is_null($order->apt_no) )
+                        {
+                            $txt .= __('messages.aptNo').": {$order->apt_no}\n";
+                        }
+
+                        if( !is_null($order->company_name) )
+                        {
+                            $txt .= __('messages.companyName').": {$order->company_name}\n";
+                        }
+
+                        if( !is_null($order->other_info) )
+                        {
+                            $txt .= __('messages.otherInfo').": {$order->other_info}\n";
+                        }
+
+                        $address .= $this->replaceAsciiToHex($txt);
                     }
                     $address .= $this->replaceAsciiToHex($order->street)."\n".$this->replaceAsciiToHex($order->city)."\n".__('messages.phone').": {$order->mobile}";
                     $printer->add_text_line($address);
