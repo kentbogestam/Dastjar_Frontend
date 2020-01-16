@@ -157,7 +157,7 @@ function getOrderDeliveryAddress(id)
 		url: RESTAURANT_BASE_URL+'/get-order-delivery-address/'+id,
 		dataType: 'json',
 		success: function(response) {
-			$('#popup-order-delivery-address').find('.addr').text(response.strAddress);
+			$('#popup-order-delivery-address').find('.addr').html(response.strAddress).text();
 			$('#popup-order-delivery-address').popup('open');
 		}
 	});

@@ -2184,11 +2184,31 @@ class AdminController extends Controller
 
         if($userAddress)
         {
-            $strAddress = Helper::convertAddressToStr($userAddress);
+            $strAddress = Helper::convertAddressToStr($userAddress, 0);
 
             if( !empty($userAddress->mobile) )
             {
-                $strAddress .= ", ".$userAddress->mobile;
+                $strAddress .= "<p><strong>".__('messages.phone').":</strong> {$userAddress->mobile}</p>";
+            }
+
+            if( !is_null($userAddress->entry_code) )
+            {
+                $strAddress .= "<p><strong>".__('messages.entryCode').":</strong> {$userAddress->entry_code}</p>";
+            }
+
+            if( !is_null($userAddress->apt_no) )
+            {
+                $strAddress .= "<p><strong>".__('messages.aptNo').":</strong> {$userAddress->apt_no}</p>";
+            }
+
+            if( !is_null($userAddress->company_name) )
+            {
+                $strAddress .= "<p><strong>".__('messages.companyName').":</strong> {$userAddress->company_name}</p>";
+            }
+
+            if( !is_null($userAddress->other_info) )
+            {
+                $strAddress .= "<p><strong>".__('messages.otherInfo').":</strong> {$userAddress->other_info}</p>";
             }
         }
 
