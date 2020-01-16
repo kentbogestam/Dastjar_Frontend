@@ -38,10 +38,45 @@
 						let html = '';
 						for(let i = 0; i < response.orderDelivery.length; i++)
 						{
-							// console.log(i);
+							let address2 = '';
 							let customer_order_id = response.orderDelivery[i]['customer_order_id'];
+							
+							// 
 							let address = (response.orderDelivery[i]['address']) ? response.orderDelivery[i]['address']+', ' : '';
 							address += response.orderDelivery[i]['street']+'<br>'+response.orderDelivery[i]['city'];
+
+							// 
+							if(response.orderDelivery[i]['address'])
+							{
+								address2 += response.orderDelivery[i]['address'];
+							}
+							else
+							{
+								if(response.orderDelivery[i]['entry_code'])
+								{
+									address2 += "{{ __('messages.entryCode') }}: "+response.orderDelivery[i]['entry_code'];
+								}
+
+								if(response.orderDelivery[i]['apt_no'])
+								{
+									address2 += ", {{ __('messages.aptNo') }}: "+response.orderDelivery[i]['apt_no'];
+								}
+
+								if(response.orderDelivery[i]['company_name'])
+								{
+									address2 += ", {{ __('messages.companyName') }}: "+response.orderDelivery[i]['company_name'];
+								}
+
+								if(response.orderDelivery[i]['other_info'])
+								{
+									address2 += ", {{ __('messages.otherInfo') }}: "+response.orderDelivery[i]['other_info'];
+								}
+							}
+
+							if(address2)
+							{
+								address2 = "<br>"+address2;
+							}
 
 							let delivered = '';
 							if(response.orderDelivery[i]['paid'])
@@ -94,7 +129,7 @@
 										'<td><a href="javascript:getOrderDetail(\''+customer_order_id+'\')" class="link">'+customer_order_id+'</a></td>'+
 										'<td>'+response.orderDelivery[i]['full_name']+'</td>'+
 										// "<td><a href='https://www.google.com/maps/place/"+response.orderDelivery[i]['customer_address']+"' target='_blank' class='link'>"+address+" <i class='fas fa-directions'></i></a></td>"+
-										"<td><a href='{{ url('driver/delivery-direction') }}/"+response.orderDelivery[i]['order_id']+"' class='link'>"+address+" <i class='fas fa-directions'></i></a></td>"+
+										"<td><a href='{{ url('driver/delivery-direction') }}/"+response.orderDelivery[i]['order_id']+"' class='link'>"+address+" <i class='fas fa-directions'></i></a>"+address2+"</td>"+
 										'<td class="text-center"><a href="tel:'+response.orderDelivery[i]['mobile']+'"><i class="fas fa-phone-volume"></i></a></td>'+
 										'<td class="text-center">'+delivered+'</td>'+
 										'<td class="text-center">'+paid+'</td>'+
