@@ -179,7 +179,7 @@ class AdminController extends Controller
                 ->where('UP.user_id', Auth::user()->u_id)
                 ->where('UP.store_id', Session::get('kitchenStoreId'))
                 ->get();
-            // dd($storeSubs);
+            // dd($storePlanDetail->toArray());
 
             if($storePlanDetail)
             {
@@ -915,7 +915,7 @@ class AdminController extends Controller
     public function kitchenSetting(){
         // Get logged-in store detail
         $store = Store::from('store AS S')
-            ->select(['S.menu_style_type', 'S.order_response', 'S.driver_range', 'S.delivery_range', 'S.buffer_time', 'SP.mac_address', 'SP.print_copy'])
+            ->select(['S.menu_style_type', 'S.order_response', 'S.driver_range', 'S.delivery_range', 'S.buffer_time', 'SP.printer_type', 'SP.mac_address', 'SP.print_copy'])
             ->leftJoin('store_printers AS SP', 'SP.store_id', '=', 'S.store_id')
             ->where('S.store_id' , Session::get('kitchenStoreId'))
             ->first();
@@ -958,7 +958,7 @@ class AdminController extends Controller
             {
                 // Update printer setting
                 StorePrinter::where(['store_id' => Session::get('kitchenStoreId'), 'status' => '1'])
-                    ->update(['mac_address' => $data['mac_address'], 'print_copy' => $data['print_copy']]);
+                    ->update(['printer_type' => $data['printer_type'], 'mac_address' => $data['mac_address'], 'print_copy' => $data['print_copy']]);
             }
             else
             {
@@ -973,6 +973,7 @@ class AdminController extends Controller
                 StorePrinter::create(array(
                     'id' => $id,
                     'store_id' => Session::get('kitchenStoreId'),
+                    'printer_type' => $data['printer_type'],
                     'mac_address' => $data['mac_address'],
                     'print_copy' => $data['print_copy'],
                 ));

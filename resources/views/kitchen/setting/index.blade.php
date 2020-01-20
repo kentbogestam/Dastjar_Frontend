@@ -233,6 +233,24 @@ textarea.ui-input-text{
 						{{ __("messages.printerSetup") }}
 					</h2>
 					<ul>
+						<li data-role="collapsible" class="range-sec">
+							<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">
+								Printer Type
+								<span>
+									@if($store->printer_type == '1')
+										2 Inch
+									@else
+										3 Inch
+									@endif
+								</span>
+							</h2>
+							<fieldset data-role="controlgroup">
+								<input type="radio" name="printer_type" id="printer-type-1" value="1" @if($store->printer_type == '1') checked="checked" @endif>
+						        <label for="printer-type-1">2 Inch</label>
+						        <input type="radio" name="printer_type" id="printer-type-2" value="2" @if($store->printer_type == '2') checked="checked" @endif>
+						        <label for="printer-type-2">3 Inch</label>
+							</fieldset>
+						</li>
 						<li>
 							<input type="text" name="mac_address" value="{{ ($store->mac_address != null) ? $store->mac_address : '' }}" placeholder="{{ __('messages.macAddress') }}" id="mac_address" class="msg-txt">
 						</li>
