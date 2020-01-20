@@ -164,19 +164,22 @@ class AdminController extends Controller
         // Check if store's 'check_subscription' has set to '0', give access of all modules without subscription
         if($store->check_subscription)
         {
+            $date = Carbon::parse(Carbon::now())->format('Y-m-d');
+        
             // Get subscribed plan for store
             $storePlanDetail = SubscriptionPlan::from('billing_products AS BP')
-                ->select('BP.id', 'BPP.package_id', 'UP.plan_id')
+                ->select('BP.id', 'BPP.package_id', 'USI.plan_id')
                 ->join('billing_product_packages AS BPP', 'BP.id', '=', 'BPP.billing_product_id')
                 ->join('anar_packages AS AP', 'AP.id', '=', 'BPP.package_id')
-                ->join('user_plan AS UP', 'BP.plan_id', '=', 'UP.plan_id')
+                ->join('user_subscription_items AS USI', 'BP.plan_id', '=', 'USI.plan_id')
+                ->join('user_plan AS UP', 'USI.subscription_id', '=', 'UP.subscription_id')
                 ->where('BP.s_activ', 1)
-                ->whereDate('UP.subscription_start_at', '<=', Carbon::parse(Carbon::now())->format('Y-m-d'))
-                ->whereDate('UP.subscription_end_at', '>=', Carbon::parse(Carbon::now())->format('Y-m-d'))
+                ->whereDate('UP.subscription_start_at', '<=', $date)
+                ->whereDate('UP.subscription_end_at', '>=', $date)
                 ->where('UP.user_id', Auth::user()->u_id)
                 ->where('UP.store_id', Session::get('kitchenStoreId'))
                 ->get();
-            // dd($storePlanDetail->toArray());
+            // dd($storeSubs);
 
             if($storePlanDetail)
             {
