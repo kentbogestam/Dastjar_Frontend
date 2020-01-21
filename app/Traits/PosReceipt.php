@@ -9,13 +9,13 @@ use DB;
 use App\Libraries\StarCloudPrintStarLineModeJob;
 
 trait PosReceipt {
-    private $MAX_CHARS = 32;
+    private $MAX_CHARS = 32; // 32 char in '2 inch' printer
 
     function createPOSReceipt($orderId)
     {
         // Get order/store/company detail
         $order = Order::from('orders as O')
-            ->select(['O.order_id', 'O.customer_order_id', 'O.delivery_type', 'O.check_deliveryDate', 'O.deliver_time', 'O.order_total', 'O.final_order_total', 'O.delivery_charge', 'O.online_paid', 'C.currencies', 'S.store_name', 'S.phone', 'SP.mac_address', 'SP.print_copy', 'CA.full_name', 'CA.mobile', 'CA.entry_code', 'CA.apt_no', 'CA.company_name', 'CA.other_info', 'CA.address', 'CA.street', 'CA.city'])
+            ->select(['O.order_id', 'O.customer_order_id', 'O.delivery_type', 'O.check_deliveryDate', 'O.deliver_time', 'O.order_total', 'O.final_order_total', 'O.delivery_charge', 'O.online_paid', 'C.currencies', 'S.store_name', 'S.phone', 'SP.printer_type', 'SP.mac_address', 'SP.print_copy', 'CA.full_name', 'CA.mobile', 'CA.entry_code', 'CA.apt_no', 'CA.company_name', 'CA.other_info', 'CA.address', 'CA.street', 'CA.city'])
             ->join('store AS S', 'S.store_id', '=', 'O.store_id')
             ->join('company AS C','C.company_id', '=', 'O.company_id')
             ->leftJoin('store_printers AS SP', 'SP.store_id', '=', 'S.store_id')
@@ -26,6 +26,12 @@ trait PosReceipt {
         // Check if printer settings exist
         if($order && (isset($order->mac_address) && $order->mac_address != null && $order->print_copy != null))
         {
+            // Update 'MAX_CHARS', if its '3 inch' printer
+            if($order->printer_type == '2')
+            {
+                $this->MAX_CHARS = 48; // 48 char in '3 inch' printer
+            }
+
             // Get order item details belongs to order
             $orderDetail = OrderDetail::from('order_details AS OD')
                 ->select(['OD.product_quality', 'OD.product_description', 'OD.price', 'P.product_name'])
