@@ -237,15 +237,15 @@ textarea.ui-input-text{
 							<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">
 								Printer Type
 								<span>
-									@if($store->printer_type == '1')
-										2 Inch
-									@else
+									@if($store->printer_type == '2')
 										3 Inch
+									@else
+										2 Inch
 									@endif
 								</span>
 							</h2>
 							<fieldset data-role="controlgroup">
-								<input type="radio" name="printer_type" id="printer-type-1" value="1" @if($store->printer_type == '1') checked="checked" @endif>
+								<input type="radio" name="printer_type" id="printer-type-1" value="1" @if($store->printer_type == '1') checked="checked" @else checked="checked" @endif>
 						        <label for="printer-type-1">2 Inch</label>
 						        <input type="radio" name="printer_type" id="printer-type-2" value="2" @if($store->printer_type == '2') checked="checked" @endif>
 						        <label for="printer-type-2">3 Inch</label>
