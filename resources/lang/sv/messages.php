@@ -352,6 +352,8 @@ return [
 
     // POS printer
     'printerSetup' => 'Printer Setup',
+    'printerType' => 'Printer Typ',
+    'printer_mm' => ':no mm',
     'macAddress' => 'Mac Address',
     'printCopy' => 'Print Copy',
     // 'printFooterText' => "Rekommedera gärna\n\x1B\x45\"Anar Find&Eat\"\x1B\x46 till dina vänner\nockså! Det är lätt att ladda ner\nden från \x1B\x45Google Play\x1B\x46 eller\n\x1B\x45AppStore!\x1B\x46",

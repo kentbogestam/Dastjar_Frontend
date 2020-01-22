@@ -235,20 +235,20 @@ textarea.ui-input-text{
 					<ul>
 						<li data-role="collapsible" class="range-sec">
 							<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">
-								Printer Type
+								{{ __("messages.printerType") }}
 								<span>
 									@if($store->printer_type == '2')
-										3 Inch
+										{{ __('messages.printer_mm', ['no' => 80]) }}
 									@else
-										2 Inch
+										{{ __('messages.printer_mm', ['no' => 58]) }}
 									@endif
 								</span>
 							</h2>
 							<fieldset data-role="controlgroup">
 								<input type="radio" name="printer_type" id="printer-type-1" value="1" @if($store->printer_type == '1') checked="checked" @else checked="checked" @endif>
-						        <label for="printer-type-1">2 Inch</label>
+						        <label for="printer-type-1">{{ __('messages.printer_mm', ['no' => 58]) }}</label>
 						        <input type="radio" name="printer_type" id="printer-type-2" value="2" @if($store->printer_type == '2') checked="checked" @endif>
-						        <label for="printer-type-2">3 Inch</label>
+						        <label for="printer-type-2">{{ __('messages.printer_mm', ['no' => 80]) }}</label>
 							</fieldset>
 						</li>
 						<li>
