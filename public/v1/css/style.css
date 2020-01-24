@@ -1091,20 +1091,13 @@ p.error {
 	display: table-cell;
 	vertical-align: middle;
 }
-.clear {
-	clear: both;
-}
-.product-sub a[data-toggle="collapse"]{
-	position: relative;
-	font: normal normal normal 14px/1 FontAwesome;
-	}
+.clear { clear:both; }
+.product-sub a[data-toggle="collapse"]{ position: relative; }
 .product-sub a[data-toggle="collapse"]:before{	
 	position:absolute;
-	top: 5px;
+	top: 8px;
 	right: 10px;
 	content: "\f078";
+	font: normal normal normal 14px/1 FontAwesome;
 	}
-.product-sub a[aria-expanded="true"]:before{
-	content: "\f077";
-	}
-	
+.product-sub a[aria-expanded="true"]:before{ content: "\f077"; }
