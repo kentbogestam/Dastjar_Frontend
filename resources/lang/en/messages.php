@@ -111,6 +111,7 @@ return [
     'loyaltyOfferMsgGrid' => 'Only <span class="quantity-to-buy">:quantity_to_buy</span> to go, get <span class="quantity-get">:quantity_get</span> for free! <br>Valid to :valid_till',
     'loyaltyOfferOnApply' => 'Congratulations! Get <span class="quantity-offered">:quantity_offered</span> for free now!',
     'loyaltyOfferApplied' => 'You\'re getting <span class="quantity-offered">:loyalty_quantity_free</span> dish(es) for free!',
+    'alertStoreClosed' => 'We are now closed but opens again at :closeTime. Welcome back!',
     'deleteAlert' => 'Are you sure you want to delete this :item?',
     'Message' => 'Message',
     'Contact Us Placeholder' => 'Enter your Message.Add your email for replay',

@@ -19,6 +19,15 @@
 @section('content')
 	@include('v1.user.elements.store-delivery-service')
 
+	@php
+	$openCloseTime = explode(' to ', $storedetails->store_open_close_day_time);
+	$closeTime = date('h:i a', strtotime($openCloseTime[1]));
+	@endphp
+	<div class="alert alert-warning alert-store-closed collapse" style="margin-top: 20px">
+		<a href="#" class="close" aria-label="close">&times;</a>
+		<i class="fa fa-warning"></i> {{ __('messages.alertStoreClosed', ['closeTime' => $closeTime]) }}
+	</div>
+
 	@if( !empty($menuTypes) )
 		<form id="form" class="form-horizontal" method="post" action="{{ url('cart') }}">
 			{{ csrf_field() }}
@@ -231,26 +240,34 @@
 			$('#textarea-1').val("");
 		});
 
+		// 
 		$("#menudataSave").click(function(e){
-			var d = new Date();
-			//console.log(d);
-			$("#browserCurrentTime").val(d);
-			var flag = false;
-			var x = $('form input[type="text"]').each(function(){
-	        	// Do your magic here
-	        	var checkVal = parseInt($(this).val());
-	        	console.log(checkVal);
-	        	if(checkVal > 0){
-	        		flag = true;
-	        		return flag;
-	        	}
-			});
+			if( !checkTime('{{ $storedetails->store_open_close_day_time }}') )
+			{
+				$('.alert-store-closed').removeClass('collapse').addClass('collapse-in');
+			}
+			else
+			{
+				var d = new Date();
+				//console.log(d);
+				$("#browserCurrentTime").val(d);
+				var flag = false;
+				var x = $('form input[type="text"]').each(function(){
+		        	// Do your magic here
+		        	var checkVal = parseInt($(this).val());
+		        	console.log(checkVal);
+		        	if(checkVal > 0){
+		        		flag = true;
+		        		return flag;
+		        	}
+				});
 
-			if(flag){
-				send_btn();
-			} else{
-				alert("Please select item from the menu.");
-				e.preventDefault();
+				if(flag){
+					send_btn();
+				} else{
+					alert("Please select item from the menu.");
+					e.preventDefault();
+				}
 			}
 		});
 
@@ -400,6 +417,16 @@
 	function makeRedirection(link){
 		window.location.href = link;
 	}
+
+	// 
+	if( !checkTime('{{ $storedetails->store_open_close_day_time }}') )
+	{
+		$('.alert-store-closed').removeClass('collapse').addClass('collapse-in');
+	}
+
+	$('.alert-store-closed .close').on('click', function() {
+		$('.alert-store-closed').removeClass('collapse-in').addClass('collapse');
+	});
 
 	navigator.sayswho= (function(){
         var ua= navigator.userAgent, tem, 

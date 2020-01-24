@@ -111,6 +111,7 @@ return [
     'loyaltyOfferMsgGrid' => 'Bara <span class="quantity-to-buy">:quantity_to_buy</span> kvar, få <span class="quantity-get">:quantity_get</span> gratis! <br>Gäller till :valid_till',
     'loyaltyOfferOnApply' => 'Grattis! Få <span class="quantity-offered">:quantity_offered</span> gratis nu!',
     'loyaltyOfferApplied' => 'Du får <span class="quantity-offered">:loyalty_quantity_free</span> rätt gratis!',
+    'alertStoreClosed' => 'Vi har nu stängt men öppnar igen kl :closeTime, Välkommen tillbaka!',
     'deleteAlert'=>'Är du säker på att du vill radera :item?',
     'Swedish' => 'Svenska',
     'Message' => 'Meddelande',
