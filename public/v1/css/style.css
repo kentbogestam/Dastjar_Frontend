@@ -1,6 +1,4 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900&display=swap');
-/*font-family: 'Nunito', sans-serif;*/
-
 @import url('https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800,900&display=swap');
 /*font-family: 'Nunito', sans-serif;*/
 
@@ -1096,3 +1094,17 @@ p.error {
 .clear {
 	clear: both;
 }
+.product-sub a[data-toggle="collapse"]{
+	position: relative;
+	font: normal normal normal 14px/1 FontAwesome;
+	}
+.product-sub a[data-toggle="collapse"]:before{	
+	position:absolute;
+	top: 5px;
+	right: 10px;
+	content: "\f078";
+	}
+.product-sub a[aria-expanded="true"]:before{
+	content: "\f077";
+	}
+	
