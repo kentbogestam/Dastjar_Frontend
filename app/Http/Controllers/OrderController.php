@@ -30,6 +30,8 @@ use App\Helper;
 use Stripe;
 use App\Traits\PosReceipt;
 
+use Illuminate\Support\Facades\File;
+
 class OrderController extends Controller
 {
     use PosReceipt;
@@ -144,10 +146,53 @@ class OrderController extends Controller
             if( Helper::isPackageSubscribed(13) && (\Request::server('HTTP_REFERER') && (strpos(\Request::server('HTTP_REFERER'), 'cart') != false)) )
             {
                 $this->createPOSReceipt($orderId);
+                $this->uploadPrintFile();
             }
 
             // return view('order.index', compact('order','orderDetails', 'orderInvoice','storeDetail','user'));
             return view('v1.user.pages.view-order', compact('order','orderDetails', 'orderInvoice','storeDetail','user'));
+        }
+    }
+
+    // Upload all txt file from printdata directory to printer server
+    function uploadPrintFile()
+    {
+        $filePath = storage_path('app/printerdata');
+        $files = File::files($filePath);
+
+        if(!empty($files))
+        {
+            $fields = $arrFiles = array();
+
+            foreach($files as $file)
+            {
+                $fields[] = array(
+                    'fileName' => $file->getFilename(),
+                    'fileData' => base64_encode( file_get_contents($file->getPathname()) )
+                );
+
+                $arrFiles[] = $file->getPathname();
+            }
+
+            $fieldsString = http_build_query($fields);
+
+            // Post files to print server
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, "https://printer.dastjar.com/kitchen/handle-upload.php");
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $fieldsString);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+            $result = curl_exec($ch);
+            curl_close($ch);
+
+            // Delete files
+            File::delete($arrFiles);
+
+            return $result;
         }
     }
 
