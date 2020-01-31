@@ -102,7 +102,6 @@ Route::group(['middleware' => ['latlng']], function(){
 	Route::get('search-map-eatnow', 'MapController@searchMapEatnow');
 	Route::get('eat-now', 'HomeController@index');
 	Route::get('saveCurrentlat-long', 'HomeController@saveCurrentLatLong');
-	// Route::get('selectOrder-date', 'HomeController@selectOrderDate');
 	Route::post('eat-later', 'HomeController@eatLater');
 	Route::get('eat-later', 'HomeController@eatLater');
 	Route::get('eat-later-data', 'HomeController@eatLaterData');
@@ -305,6 +304,8 @@ Route::group(['prefix' => 'kitchen'], function(){
 // 
 Route::group(['prefix' => 'iframe'], function() {
 	Route::group(['namespace' => 'Iframe'], function() {
+		Route::get('eat-later-datetime/{storeID}', 'IframeController@eatLaterDatetime');
+		Route::post('eat-later-datetime', 'IframeController@eatLaterDatetimePost');
 		Route::get('restro-menu-list/{storeID}/{styleType?}', 'IframeController@menuList');
 	});
 });

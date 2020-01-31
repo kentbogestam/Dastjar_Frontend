@@ -26,6 +26,43 @@ use Helper;
 
 class IframeController extends Controller
 {
+    /**
+     * Select datetime to make order 'eat later'
+     * @param  Request $request [description]
+     * @param  [type]  $storeId [description]
+     * @return [type]           [description]
+     */
+    function eatLaterDateTime(Request $request, $storeId)
+    {
+        return view('v1.user.pages-iframe.eat-later-datetime', compact('storeId'));
+    }
+
+    /**
+     * Post datetime 'eat later', redirect to menu
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    function eatLaterDateTimePost(Request $request)
+    {
+        // Validation
+        $this->validate($request, [
+            'dateorder' => 'required',
+            'store_id' => 'required'
+        ]);
+
+        $data = $request->input();
+        $request->session()->put('order_date', $data['dateorder']);
+
+        return redirect('iframe/restro-menu-list/'.$data['store_id']);
+    }
+
+    /**
+     * [menuList description]
+     * @param  Request $request   [description]
+     * @param  [type]  $storeId   [description]
+     * @param  integer $styleType [description]
+     * @return [type]             [description]
+     */
     public function menuList(Request $request, $storeId, $styleType = 0){
         // 
         $request->session()->put('iFrameMenu', true);
