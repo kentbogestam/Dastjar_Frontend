@@ -51,8 +51,10 @@
     <script src = "{{asset('js/device.detect.js')}}"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script type="text/javascript" src="{{ asset('v1/js/bootstrap.min.js') }}"></script>
-    <script src = "{{ asset('js/main.js') }}"></script>
-    <script src = "{{ asset('js/common.js') }}"></script>
+    <!-- <script src = "{{ asset('js/main.js') }}"></script> -->
+    <script src = "{{ asset('js/main.js').'?v='.$RAND_APP_VERSION }}"></script>
+    <!-- <script src = "{{ asset('js/common.js') }}"></script> -->
+    <script src = "{{ asset('js/common.js').'?v='.$RAND_APP_VERSION }}"></script>
     <script type="text/javascript" src="https://momentjs.com/downloads/moment.js"></script>
 	@yield('head-scripts')
 </head>

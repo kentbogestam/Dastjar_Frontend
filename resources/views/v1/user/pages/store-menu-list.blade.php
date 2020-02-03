@@ -20,12 +20,17 @@
 	@include('v1.user.elements.store-delivery-service')
 
 	@php
-	$openCloseTime = explode(' to ', $storedetails->store_open_close_day_time);
-	$closeTime = date('h:i a', strtotime($openCloseTime[1]));
+	$time = null;
+	$openCloseTime = Helper::getStoreOpenCloseTime($storedetails->store_open_close_day_time);
+
+	if(!empty($openCloseTime))
+	{
+		$time = date('h:i a', strtotime($openCloseTime[0]));
+	}
 	@endphp
 	<div class="alert alert-warning alert-store-closed collapse" style="margin-top: 20px">
 		<a href="#" class="close" aria-label="close">&times;</a>
-		<i class="fa fa-warning"></i> {{ __('messages.alertStoreClosed', ['closeTime' => $closeTime]) }}
+		<i class="fa fa-warning"></i> {{ __('messages.alertStoreClosed', ['closeTime' => $time]) }}
 	</div>
 
 	@if( !empty($menuTypes) )
@@ -245,6 +250,10 @@
 			if( !checkTime('{{ $storedetails->store_open_close_day_time }}') )
 			{
 				$('.alert-store-closed').removeClass('collapse').addClass('collapse-in');
+
+				$('html, body').animate({
+					scrollTop: ($(".alert-store-closed").offset().top - 50)
+				}, 'slow');
 			}
 			else
 			{
@@ -269,6 +278,7 @@
 					e.preventDefault();
 				}
 			}
+			console.log('menudataSave');
 		});
 
 		$("body").on('click',".accept-btn", function(){

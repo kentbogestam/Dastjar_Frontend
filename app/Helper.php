@@ -487,4 +487,26 @@ class Helper extends Model
 
         return $str.$input;
     }
+
+    // Get store open/close time, e.g. All :: 02:00:00 to 07:00:00 / Mon :: 02:00:00 to 07:00:00
+    public static function getStoreOpenCloseTime($store_open_close_day_time)
+    {
+        $openCloseTime = array();
+        $storeOpenCloseTime = explode(",", $store_open_close_day_time);
+
+        foreach($storeOpenCloseTime as $key => $value)
+        {
+            $getDay = explode("::",$value);
+            $getDay[0] = str_replace(' ', '', $getDay[0]);
+
+            if($getDay[0] == 'All' || $getDay[0] == 'Mon' || $getDay[0] == 'Tue' || $getDay[0] == 'Wed' || $getDay[0] == 'Thu' || $getDay[0] == 'Fri' || $getDay[0] == 'Sat' || $getDay[0] == 'Sun')
+            {
+                $getTime = explode("to",$getDay[1]);
+                $openCloseTime[] = $getTime[0];
+                $openCloseTime[] = $getTime[1];
+            }
+        }
+
+        return $openCloseTime;
+    }
 }
