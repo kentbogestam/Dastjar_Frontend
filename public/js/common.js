@@ -301,8 +301,14 @@ function searchIndexFromMultiDimArray(columnName, columnValue, arr) {
     return 'false';
 }
 
-function checkTime($time){
+function checkTime($time, $orderDateTime){
     var d = new Date();
+
+    if($orderDateTime)
+    {
+        var d = new Date($orderDateTime);
+    }
+
     var dd = (d.toString()).split(' ');
     var currentTime = dd[4];
     var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -320,17 +326,17 @@ function checkTime($time){
             // 
             if(d.getHours() >= parseInt(openTime) && d.getHours() <= 23)
             {
-                var todayDate = new Date();
+                var todayDate = d;
                 todayDate = (todayDate.getMonth() + 1)+'/'+(todayDate.getDate())+'/'+todayDate.getFullYear();
-                var tomorrowDate = new Date();
+                var tomorrowDate = d;
                 tomorrowDate.setDate(tomorrowDate.getDate() + 1);
                 tomorrowDate = (tomorrowDate.getMonth() + 1)+'/'+tomorrowDate.getDate()+'/'+tomorrowDate.getFullYear();
             }
             else
             {
-                var todayDate = new Date();
+                var todayDate = d;
                 todayDate = (todayDate.getMonth() + 1)+'/'+(todayDate.getDate()-1)+'/'+todayDate.getFullYear();
-                var tomorrowDate = new Date();
+                var tomorrowDate = d;
                 tomorrowDate.setDate(tomorrowDate.getDate());
                 tomorrowDate = (tomorrowDate.getMonth() + 1)+'/'+tomorrowDate.getDate()+'/'+tomorrowDate.getFullYear();
             }
@@ -352,7 +358,7 @@ function checkTime($time){
         }
         else
         {
-            if(openTime < currentTime && closeTime > currentTime){
+            if(openTime <= currentTime && closeTime > currentTime){
                 return true;
             }else{
                 return false;
@@ -370,17 +376,17 @@ function checkTime($time){
                     // 
                     if(d.getHours() >= parseInt(openTime) && d.getHours() <= 23)
                     {
-                        var todayDate = new Date();
+                        var todayDate = d;
                         todayDate = (todayDate.getMonth() + 1)+'/'+(todayDate.getDate())+'/'+todayDate.getFullYear();
-                        var tomorrowDate = new Date();
+                        var tomorrowDate = d;
                         tomorrowDate.setDate(tomorrowDate.getDate() + 1);
                         tomorrowDate = (tomorrowDate.getMonth() + 1)+'/'+tomorrowDate.getDate()+'/'+tomorrowDate.getFullYear();
                     }
                     else
                     {
-                        var todayDate = new Date();
+                        var todayDate = d;
                         todayDate = (todayDate.getMonth() + 1)+'/'+(todayDate.getDate()-1)+'/'+todayDate.getFullYear();
-                        var tomorrowDate = new Date();
+                        var tomorrowDate = d;
                         tomorrowDate.setDate(tomorrowDate.getDate());
                         tomorrowDate = (tomorrowDate.getMonth() + 1)+'/'+tomorrowDate.getDate()+'/'+tomorrowDate.getFullYear();
                     }
@@ -402,7 +408,7 @@ function checkTime($time){
                 }
                 else
                 {
-                    if(openTime < currentTime && closeTime > currentTime){
+                    if(openTime <= currentTime && closeTime > currentTime){
                         return true;
                     }else{
                         return false;

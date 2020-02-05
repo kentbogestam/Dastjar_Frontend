@@ -25,7 +25,7 @@
 
 	if(!empty($openCloseTime))
 	{
-		$time = date('h:i a', strtotime($openCloseTime[0]));
+		$time = date('H:i', strtotime($openCloseTime[0]));
 	}
 	@endphp
 	<div class="alert alert-warning alert-store-closed collapse" style="margin-top: 20px">
@@ -247,7 +247,7 @@
 
 		// 
 		$("#menudataSave").click(function(e){
-			if( !checkTime('{{ $storedetails->store_open_close_day_time }}') )
+			if( !checkTime('{{ $storedetails->store_open_close_day_time }}', '{{ Session::get('order_date') }}') )
 			{
 				$('.alert-store-closed').removeClass('collapse').addClass('collapse-in');
 
@@ -429,7 +429,7 @@
 	}
 
 	// 
-	if( !checkTime('{{ $storedetails->store_open_close_day_time }}') )
+	if( !checkTime('{{ $storedetails->store_open_close_day_time }}', '{{ Session::get('order_date') }}') )
 	{
 		$('.alert-store-closed').removeClass('collapse').addClass('collapse-in');
 	}
