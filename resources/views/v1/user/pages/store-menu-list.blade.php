@@ -104,7 +104,7 @@
 						$strMenuDetail .= "<div class='col-xs-12 collapse menu-detail' id='menu-detail-{$menuType->dish_id}'></div>";
 						@endphp
 						<div class="col-xs-6 text-center restaurant-box">
-							<a href="javascript:void(0);" onclick="getMenuDetail(this, {{ $menuType->dish_id }}, 1)">
+							<a href="javascript:void(0);" onclick="getMenuDetail(this, {{ $menuType->dish_id }}, 1, '{{ $storedetails->store_id }}')">
 								@if( !is_null($menuType->dish_image) )
 									<div class="box-img">
 										<img src="https://s3.eu-west-1.amazonaws.com/dastjar-coupons/{{ $menuType->dish_image }}" alt="{{ $menuType->dish_name }}">
@@ -136,7 +136,7 @@
 						@endif
 					@else
 						<div class="hotel-ser{{ ($strLoyaltyOffer != '') ? ' row-loyalty-offer' : '' }}">
-							<a href="#menu-{{ $menuType->dish_id }}" onclick="getMenuDetail(this, {{ $menuType->dish_id }}, 1)" data-toggle="collapse">
+							<a href="#menu-{{ $menuType->dish_id }}" onclick="getMenuDetail(this, {{ $menuType->dish_id }}, 1, '{{ $storedetails->store_id }}')" data-toggle="collapse">
 								<span>
 									{{ $menuType->dish_name }} 
 									{!! $strLoyaltyOffer !!}
@@ -302,11 +302,11 @@
 	});
 
 	// 
-	function getMenuDetail(This, dishType, level)
+	function getMenuDetail(This, dishType, level, storeId)
 	{
 		// 
 		This = $(This);
-		let url = '{{ url('get-menu-detail') }}/'+dishType+'/'+level;
+		let url = '{{ url('get-menu-detail') }}/'+dishType+'/'+level+'/'+storeId;
 
 		@if($styleType || $storedetails->menu_style_type)
 			// 

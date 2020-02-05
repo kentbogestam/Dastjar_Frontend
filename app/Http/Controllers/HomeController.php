@@ -682,10 +682,16 @@ class HomeController extends Controller
         // return view('v1.user.pages.store-menu-grid', compact('storedetails', 'menuTypes', 'promotionLoyalty', 'customerLoyalty', 'orderCustomerLoyalty'));
     }
 
-    function getMenuDetail($dishType, $level)
+    function getMenuDetail($dishType, $level, $storeId = null)
     {
         $status = false;
         $html = '';
+
+        // 
+        if(is_null($storeId))
+        {
+            $storeId = Session::get('storeId');
+        }
 
         // Check if sub-menu exist, or get products belongs to dish_id
         $subMenu = DishType::select(['dish_id', 'dish_name'])
@@ -703,7 +709,7 @@ class HomeController extends Controller
             {
                 $html .= "
                     <div class='product-sub'>
-                        <a href='#sub-menu-{$row->dish_id}' onclick='getMenuDetail(this, {$row->dish_id}, {$level})' data-toggle='collapse'>
+                        <a href='#sub-menu-{$row->dish_id}' onclick='getMenuDetail(this, {$row->dish_id}, {$level}, \"{$storeId}\")' data-toggle='collapse'>
                             <span>{$row->dish_name}</span>                            
                         </a>
                         <div class='collapse sub-menu-detail' id='sub-menu-{$row->dish_id}'>
@@ -723,7 +729,7 @@ class HomeController extends Controller
                 ->select(['P.product_id', 'P.product_name', 'P.product_description', 'P.preparation_Time', 'P.small_image', 'PPL.price', 'S.extra_prep_time'])
                 ->join('product_price_list AS PPL', 'P.product_id', '=', 'PPL.product_id')
                 ->join('store AS S', 'S.store_id', '=', 'PPL.store_id')
-                ->where(['P.dish_type' => $dishType, 'PPL.store_id' => Session::get('storeId')])
+                ->where(['P.dish_type' => $dishType, 'PPL.store_id' => $storeId])
                 ->where('PPL.publishing_start_date','<=',Carbon::now())
                 ->where('PPL.publishing_end_date','>=',Carbon::now())
                 ->groupBy('P.product_id')
