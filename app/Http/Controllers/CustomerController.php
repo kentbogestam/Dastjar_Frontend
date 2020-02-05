@@ -243,14 +243,22 @@ class CustomerController extends Controller
         }
 
         if(Auth::check()){
-            DB::table('customer')->where('id', Auth::id())->update([
-                'language' => $data['radio-choice-v-2'],
-                'range' => $data['range-1b'],
-            ]);
+            $arr['language'] = $data['radio-choice-v-2'];
+
+            if($request->has('range-1b'))
+            {
+                $arr['range'] = $data['range-1b'];
+            }
+
+            DB::table('customer')->where('id', Auth::id())->update($arr);
         }else{
             $request->session()->put('sessionBrowserLanguageValue', 1);
             $request->session()->put('browserLanguageWithOutLogin', $lang);
-            $request->session()->put('rang', $data['range-1b']);
+
+            if($request->has('range-1b'))
+            {
+                $request->session()->put('rang', $data['range-1b']);
+            }
         }
         return redirect('user-setting')->with('success', 'Setting updated successfully.');
     }
