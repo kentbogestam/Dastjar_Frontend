@@ -326,17 +326,17 @@ function checkTime($time, $orderDateTime){
             // 
             if(d.getHours() >= parseInt(openTime) && d.getHours() <= 23)
             {
-                var todayDate = d;
+                var todayDate = new Date(d);
                 todayDate = (todayDate.getMonth() + 1)+'/'+(todayDate.getDate())+'/'+todayDate.getFullYear();
-                var tomorrowDate = d;
+                var tomorrowDate = new Date(d);
                 tomorrowDate.setDate(tomorrowDate.getDate() + 1);
                 tomorrowDate = (tomorrowDate.getMonth() + 1)+'/'+tomorrowDate.getDate()+'/'+tomorrowDate.getFullYear();
             }
             else
             {
-                var todayDate = d;
+                var todayDate = new Date(d);
                 todayDate = (todayDate.getMonth() + 1)+'/'+(todayDate.getDate()-1)+'/'+todayDate.getFullYear();
-                var tomorrowDate = d;
+                var tomorrowDate = new Date(d);
                 tomorrowDate.setDate(tomorrowDate.getDate());
                 tomorrowDate = (tomorrowDate.getMonth() + 1)+'/'+tomorrowDate.getDate()+'/'+tomorrowDate.getFullYear();
             }
@@ -376,17 +376,17 @@ function checkTime($time, $orderDateTime){
                     // 
                     if(d.getHours() >= parseInt(openTime) && d.getHours() <= 23)
                     {
-                        var todayDate = d;
+                        var todayDate = new Date(d);
                         todayDate = (todayDate.getMonth() + 1)+'/'+(todayDate.getDate())+'/'+todayDate.getFullYear();
-                        var tomorrowDate = d;
+                        var tomorrowDate = new Date(d);
                         tomorrowDate.setDate(tomorrowDate.getDate() + 1);
                         tomorrowDate = (tomorrowDate.getMonth() + 1)+'/'+tomorrowDate.getDate()+'/'+tomorrowDate.getFullYear();
                     }
                     else
                     {
-                        var todayDate = d;
+                        var todayDate = new Date(d);
                         todayDate = (todayDate.getMonth() + 1)+'/'+(todayDate.getDate()-1)+'/'+todayDate.getFullYear();
-                        var tomorrowDate = d;
+                        var tomorrowDate = new Date(d);
                         tomorrowDate.setDate(tomorrowDate.getDate());
                         tomorrowDate = (tomorrowDate.getMonth() + 1)+'/'+tomorrowDate.getDate()+'/'+tomorrowDate.getFullYear();
                     }
