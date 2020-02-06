@@ -509,4 +509,32 @@ class Helper extends Model
 
         return $openCloseTime;
     }
+
+    // Get all subscribed packages belongs to store
+    public function getStorePackages($storeId = null)
+    {
+        // 
+        $status = false;
+        $date = Carbon::parse(Carbon::now())->format('Y-m-d');
+        $storeId = !is_null($storeId) ? $storeId : Session::get('storeId');
+
+        // 
+        if($storeId)
+        {
+            $query = "SELECT bpp.package_id FROM billing_products bp INNER JOIN billing_product_packages bpp ON bp.id = bpp.billing_product_id INNER JOIN anar_packages AP ON AP.id = bpp.package_id INNER JOIN user_subscription_items USI ON bp.plan_id = USI.plan_id INNER JOIN user_plan UP ON (USI.subscription_id = UP.subscription_id AND UP.store_id='{$storeId}' AND date(UP.subscription_start_at) <= '{$date}' AND date(UP.subscription_end_at) >= '{$date}') WHERE bp.s_activ = 1 AND AP.status = '1' GROUP BY bpp.package_id";
+            $res = DB::select($query);
+
+            if($res)
+            {
+                foreach($res as $row)
+                {
+                    $status[] = $row->package_id;
+                }
+            }
+            
+            return $status;
+        }
+
+        return $status;
+    }
 }

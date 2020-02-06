@@ -10,6 +10,8 @@ use App\Store;
 use App\StoreDeliveryPriceModel;
 use DB;
 
+use Helper;
+
 class RestaurantController extends Controller
 {
     // 
@@ -82,6 +84,33 @@ class RestaurantController extends Controller
             {
                 $status = 'success';
                 $response = $storeDeliveryPriceModel;
+            }
+        }
+
+        return response()->json(['status' => $status, 'response' => $response]);
+    }
+
+    /**
+     * [getStorePackages description]
+     * @param  [type] $storeId [description]
+     * @return [type]          [description]
+     */
+    function getStorePackages($storeId = null)
+    {
+        $status = 'exception';
+        $response = null;
+
+        if( !is_null($storeId) && !empty($storeId) )
+        {
+            $status = 'empty';
+
+            $helper = new Helper();
+            $packages = $helper->getStorePackages($storeId);
+
+            if( !empty($packages) )
+            {
+                $status = 'success';
+                $response = $packages;
             }
         }
 
