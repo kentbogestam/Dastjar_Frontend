@@ -615,7 +615,8 @@ Cart
 }
 
 .contact-form-section ul li input[type="radio"]:checked + label {
-	background: #38c;
+	background: linear-gradient(to bottom, rgba(249, 163, 34, 1) 0%, rgba(229, 80, 11, 1) 100%);
+	/* background: #38c; */
 	color: #fff;
 }
 
@@ -626,7 +627,8 @@ Cart
 .contact-form-section ul li input[type="radio"] + label:hover,
 .contact-form-section ul li input[type="radio"] + label:focus,
 .contact-form-section ul li input[type="radio"] + label.current {
-	background: #38c;
+	background: linear-gradient(to bottom, rgba(249, 163, 34, 1) 0%, rgba(229, 80, 11, 1) 100%);
+	/*background: #38c;*/
 	color: #fff;
 }
 
