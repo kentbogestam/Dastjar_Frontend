@@ -34,6 +34,8 @@ class IframeController extends Controller
      */
     function eatLaterDateTime(Request $request, $storeId)
     {
+        $request->session()->put('iFrameMenu', true);
+        
         return view('v1.user.pages-iframe.eat-later-datetime', compact('storeId'));
     }
 
