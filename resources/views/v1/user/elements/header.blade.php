@@ -156,7 +156,7 @@ $requestPath = Request::path();
 	</div>
 @else
 	<div class="head-section position-fixed">
-		@if(Request::is('iframe/restro-menu-list/*'))
+		@if(Request::is('iframe/restro-menu-list/*') || Request::is('iframe/eat-later-datetime/*'))
 			<div class="logo-with-map">
 				<a class="logo" href="javascript:void(0);">
 					<h1>{{ $storedetails->store_name }}</h1>
@@ -168,7 +168,7 @@ $requestPath = Request::path();
 		@else
 			<div class="logo-with-map">
 				<a class="logo" href="javascript:void(0);">
-					<img src="{{ asset('v1/images/logo.png') }}" alt="">
+					<!-- <img src="{{ asset('v1/images/logo.png') }}" alt=""> -->
 					@auth
 						<span>{{ Auth::user()->name}}</span>
 					@endauth

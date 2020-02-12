@@ -35,8 +35,10 @@ class IframeController extends Controller
     function eatLaterDateTime(Request $request, $storeId)
     {
         $request->session()->put('iFrameMenu', true);
+
+        $storedetails = Store::where('store_id' , $storeId)->first();
         
-        return view('v1.user.pages-iframe.eat-later-datetime', compact('storeId'));
+        return view('v1.user.pages-iframe.eat-later-datetime', compact('storeId', 'storedetails'));
     }
 
     /**
