@@ -100,6 +100,7 @@ class DishTypeController extends Controller
         {
             $file = $request->file('dish_image');
             $newFile = new ImageResize($file);
+            $newFile->gamma(false);
             $newFile->resizeToWidth(500);
             $imageName = 'cat-img-'.time().'.'.$file->getClientOriginalExtension();
             $filePath = 'upload/category/'.$imageName;
@@ -218,6 +219,7 @@ class DishTypeController extends Controller
                 // Upload image
                 $file = $request->file('dish_image');
                 $newFile = new ImageResize($file);
+                $newFile->gamma(false);
                 $newFile->resizeToWidth(500);
                 $imageName = 'cat-img-'.time().'.'.$file->getClientOriginalExtension();
                 $filePath = 'upload/category/'.$imageName;

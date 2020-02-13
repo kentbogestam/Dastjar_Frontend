@@ -149,6 +149,7 @@ class Helper extends Model
 
         // 
         $image = new ImageResize($tmpName);
+        $image->gamma(false);
         $image->resizeToWidth($w)->save($path.$fileName, $imgType);
         // ->save(BASEPATH.'upload/store_image/image1.jpg', $imgType);
         
