@@ -58,6 +58,8 @@ use App\OrderDelivery;
 use App\UserAddress;
 use App\StoreVirtualMapping;
 
+use \Gumlet\ImageResize;
+
 //use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminController extends Controller
@@ -1313,9 +1315,10 @@ class AdminController extends Controller
         $product->product_name = $request->prodName;
 
         // Product image
-        if (!empty($_FILES["prodImage"]["name"]))
+        // if (!empty($_FILES["prodImage"]["name"]))
+        if ($request->hasFile('prodImage'))
         {
-            // 
+            /*// 
             $basePath = app_path();
             define('UPLOAD_DIR', public_path() . '/upload/images/');
             define('IMAGE_AMAZON_PATH', 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/');
@@ -1365,6 +1368,33 @@ class AdminController extends Controller
                         die();
                     }
                 }
+            }*/
+
+            define('IMAGE_AMAZON_PATH', 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/');
+            $file = $request->file('prodImage');
+            $time = time();
+
+            try{
+                // Upload image   
+                $smallFile = new ImageResize($file);
+                $smallFile->gamma(false);
+                $smallFile->resizeToWidth(256);
+                $imageName = 'dish-thumbnail-'.$time.'.'.$file->getClientOriginalExtension();
+                $smallImg = 'upload/category/'.$imageName;
+                Storage::disk('s3')->put($smallImg, $smallFile, 'public');
+
+                // Upload image
+                $largeFile = new ImageResize($file);
+                $largeFile->gamma(false);
+                $largeFile->resizeToWidth(1024);
+                $imageName = 'dish-large-'.$time.'.'.$file->getClientOriginalExtension();
+                $largeImg = 'upload/category/'.$imageName;
+                Storage::disk('s3')->put($largeImg, $largeFile, 'public');
+
+                $product->small_image = IMAGE_AMAZON_PATH.$smallImg;
+                $product->large_image = IMAGE_AMAZON_PATH.$largeImg;
+            } catch (\Exception $ex) {
+
             }
         }
         else
@@ -1521,7 +1551,7 @@ class AdminController extends Controller
         $price_id = $request->price_id;
         $message = "Dish Updated Successfully.";
 
-        $util = new Util(env('APP42_API_KEY'),env('APP42_API_SECRET'));
+        // $util = new Util(env('APP42_API_KEY'),env('APP42_API_SECRET'));
 
         $employer = new Employer();
         $company_id = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
@@ -1530,58 +1560,54 @@ class AdminController extends Controller
         $product = Product::where(['product_id' => $product_id])->first();
         $product->product_name = $request->prodName;
 
-        if (!empty($_FILES["prodImage"]["name"]))
+        // if (!empty($_FILES["prodImage"]["name"]))
+        if ($request->hasFile('prodImage'))
         {
-            // 
-            $basePath = app_path();
-            define('UPLOAD_DIR', public_path() . '/upload/images/');
-            define('IMAGE_AMAZON_PATH', 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/');
-            define('IMAGE_DIR_PATH', $basePath . '/lib/bin/cumbari_s3.sh ');
+            define('IMAGE_AMAZON_PATH', 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/');
+            $file = $request->file('prodImage');
+            $time = time();
 
-            // 
-            $info = pathinfo($_FILES["prodImage"]["name"]);
-            $file_extension = strtolower($info['extension']);
+            try{
+                // Upload image   
+                $smallFile = new ImageResize($file);
+                $smallFile->gamma(false);
+                $smallFile->resizeToWidth(256);
+                $imageName = 'dish-thumbnail-'.$time.'.'.$file->getClientOriginalExtension();
+                $smallImg = 'upload/category/'.$imageName;
+                Storage::disk('s3')->put($smallImg, $smallFile, 'public');
 
-            if ($file_extension == "png" || $file_extension == "jpg" || $file_extension == "jpeg" || $file_extension == "gif" || $file_extension == "bmp")
-            {
-                if ($_FILES["prodImage"]["error"] > 0)
+                // Upload image
+                $largeFile = new ImageResize($file);
+                $largeFile->gamma(false);
+                $largeFile->resizeToWidth(1024);
+                $imageName = 'dish-large-'.$time.'.'.$file->getClientOriginalExtension();
+                $largeImg = 'upload/category/'.$imageName;
+                Storage::disk('s3')->put($largeImg, $largeFile, 'public');
+
+                // Check if image exist, and then delete
+                if( !empty($product->small_image) || !empty($product->large_image) )
                 {
-                    $error.=$_FILES["prodImage"]["error"] . "<br />";
-                }
-                else
-                {
-                    try{
-                        $helper = new Helper();
+                    // 
+                    $small_image = explode('dastjar-coupons/', $product->small_image);
 
-                        $fileOriginal = $_FILES['prodImage']['tmp_name'];
-                        $path = UPLOAD_DIR . "category/";
+                    if( isset($small_image[1]) )
+                    {
+                        Storage::disk('s3')->delete($small_image[1]);
+                    }
 
-                        // Resize image (small and large)
-                        $fileName = 'dish-thumbnail-'.time().'.jpg';
-                        $smallImg = $helper->gumletImageResize($fileOriginal, $fileName, $path, 256);
+                    // 
+                    $large_image = explode('dastjar-coupons/', $product->large_image);
 
-                        $fileName = 'dish-large-'.time().'.jpg';
-                        $largeImg = $helper->gumletImageResize($fileOriginal, $fileName, $path, 1024);
-
-                        // Upload image to AWS
-                        $file1 = $path.$smallImg;
-                        $dir1 = "category";
-                        $command = IMAGE_DIR_PATH . $file1 . " " . $dir1;
-                        system($command);
-
-                        $file2 = $path.$largeImg;
-                        $dir2 = "coupon";
-                        $command2 = IMAGE_DIR_PATH . $file2 . " " . $dir2;
-                        system($command2);
-
-                        // 
-                        $product->small_image = IMAGE_AMAZON_PATH . 'category/' . $smallImg;
-                        $product->large_image = IMAGE_AMAZON_PATH . 'coupon/' . $largeImg;
-                    } catch (\Exception $ex) {
-                        echo $ex->getMessage();
-                        die();
+                    if( isset($large_image[1]) )
+                    {
+                        Storage::disk('s3')->delete($large_image[1]);
                     }
                 }
+
+                $product->small_image = IMAGE_AMAZON_PATH.$smallImg;
+                $product->large_image = IMAGE_AMAZON_PATH.$largeImg;
+            } catch (\Exception $ex) {
+
             }
         }
         elseif(!isset($request->smallImage))
