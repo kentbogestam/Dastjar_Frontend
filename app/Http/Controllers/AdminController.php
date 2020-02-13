@@ -1399,7 +1399,7 @@ class AdminController extends Controller
         }
         else
         {
-            $product->small_image = $product->large_image = 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/category/cat_icon_b738a523d72867d1fc84e1f9d3c18b29.png';
+            // $product->small_image = $product->large_image = 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/category/cat_icon_b738a523d72867d1fc84e1f9d3c18b29.png';
         }
 
         // Set rank
@@ -1612,7 +1612,7 @@ class AdminController extends Controller
         }
         elseif(!isset($request->smallImage))
         {
-            $product->small_image = $product->large_image = 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/category/cat_icon_b738a523d72867d1fc84e1f9d3c18b29.png';
+            // $product->small_image = $product->large_image = 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/category/cat_icon_b738a523d72867d1fc84e1f9d3c18b29.png';
         }
 
         $minutes = $request->prepTime;

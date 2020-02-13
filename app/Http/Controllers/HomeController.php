@@ -761,13 +761,19 @@ class HomeController extends Controller
 
                     // 
                     // <img src='{$row->small_image}' alt='' onerror='this.src=\"".url('images/placeholder-image.png')."\"'>
+                    
+                    // Product image
+                    $proImg = '';
+                    if( !empty($row->small_image) )
+                    {
+                        $proImg = "<img src='{$row->small_image}' alt='{$row->product_name}' title='{$row->product_name}'>";
+                    }
+
                     $html .= "
                         <div class='hotel-product'>
                             <div class='product' id='item{$row->product_id}'>
                                 <div class='col-sm-10 col-md-10 col-xs-8'>
-                                    <div class='product-detail'>
-                                        <img src='{$row->small_image}' alt=''>
-                                    </div>
+                                    <div class='product-detail'>{$proImg}</div>
                                     <div class='discription'>
                                         <h3>{$row->product_name}</h3>
                                         <p>{$row->product_description}</p>
