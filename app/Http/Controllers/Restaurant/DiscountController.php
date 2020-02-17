@@ -31,14 +31,14 @@ class DiscountController extends Controller
     public function index()
     {
     	// Get store
-    	$store = Store::select(['store_id', 'store_name'])->where(['u_id' => Auth::user()->u_id])->get();
+    	$store = Store::select(['store_id', 'store_name'])->where(['u_id' => Auth::user()->u_id, 's_activ' => '1'])->get();
     	
     	// Get discount
     	$discount = PromotionDiscount::from('promotion_discount AS PD')
     		->select(['PD.id', 'PD.code', 'PD.discount_value', 'PD.start_date', 'PD.description', 'PD.end_date', 'S.store_name'])
     		->join('store AS S', 'S.store_id', '=', 'PD.store_id')
     		// ->where(['PD.store_id' => Session::get('storeId')])
-    		->where(['S.u_id' => Auth::user()->u_id])
+    		->where(['S.u_id' => Auth::user()->u_id, 'S.s_activ' => '1'])
     		->get();
 
     	return view('kitchen.discount.index', compact('discount', 'store'));
