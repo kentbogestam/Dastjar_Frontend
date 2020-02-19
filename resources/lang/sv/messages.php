@@ -12,6 +12,7 @@ return [
     'Orders'  => 'Ordrar', 
     'Settings'  => 'ooo', 
     'Terms' => 'ALLMÄNNA VILLKOR OCH INTEGRITETSPOLITIK',
+    'CalendarText' => 'Välj Datum och tid när du vill ha din beställning levererad eller avhämtad!',
     'eatLaterTimeError1' => 'Ange en hämttid i 24-timmarsformat.',
     'eatLaterTimeError2' => 'Datum och tid är inte giltiga.',
     'eatLaterTimeError3' => 'Beställningsdatum måste vara minst 2 timmar senare än aktuell tid',

@@ -40,8 +40,12 @@
 		<form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('eat-later') }}">
 			{{ csrf_field() }}
 			<div class="container-fluid">
+
 				<div class="row">
+					<br>
+			   <p class="font-weight-bold">{{ __('messages.CalendarText') }}</p>
 					<div class="col-md-12 show-date-time">
+
 				        <span id="date-value1-2" class="date_show_section" value = ""></span>
 				        <input type="hidden" id="date-value1-23" name="dateorder" value="" />
 					</div>
