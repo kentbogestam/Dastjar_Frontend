@@ -43,7 +43,7 @@
 
 				<div class="row">
 					<br>
-			   <p class="font-weight-bold">{{ __('messages.CalendarText') }}</p>
+			   <p class="font-weight-bold"><b>{{ __('messages.CalendarText') }}</b></p>
 					<div class="col-md-12 show-date-time">
 
 				        <span id="date-value1-2" class="date_show_section" value = ""></span>
