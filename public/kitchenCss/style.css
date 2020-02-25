@@ -115,11 +115,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ab0810', end
 .left-side_menu a.ui-shadow{box-shadow: none;}
 .right-side_menu a.ui-shadow{box-shadow: none;}
 .footer_container .block_div.active span{color:#fff; text-shadow: none;}
-.footer_container .img-container img{width: 2.5em;}
+.footer_container .img-container img{width: 2.1vw}
 .footer_container .img-container{float: left;}
 .footer_container .ui-btn{border-color: transparent;box-shadow: none;background: transparent;border: none;} 
 .footer_container .ui-btn:hover{background: transparent;border: none;}
-.footer_container a span{    color: #b2bb4a; vertical-align: -webkit-baseline-middle;margin-left: .4em;font-size: 1.2em;text-align: left;text-shadow: none;font-family: "MavenPro-Regular";}
+.footer_container a span{ position: relative; top: 0.4vw; color: #b2bb4a; vertical-align: -webkit-baseline-middle;margin-left: .8em;font-size: 0.9vw;text-align: left;text-shadow: none;font-family: "MavenPro-Regular";}
 .left-side_menu .ui-btn{background-color:transparent;border-color: transparent;}
 .left-side_menu .ui-btn:focus{box-shadow: none;}
 .left-side_menu .ui-btn:hover{background-color: transparent;border-color: transparent !important;}
@@ -592,3 +592,11 @@ input[type=number]::-webkit-outer-spin-button {
 #list-driver .engaged {
     background: #F2DEDE;
 }
+.table_size{ font-size: 1.2vw; }
+
+@media (max-width: 1366px) {
+    .footer_container a span{ top: 0.3vw; }
+    }
+@media (max-width: 1080px) {
+    .footer_container a span{ top: 0.2vw; }
+    }    
