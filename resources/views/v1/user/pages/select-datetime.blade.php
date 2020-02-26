@@ -3,7 +3,7 @@
 @section('head-scripts')
 	<style type="text/css">
 		.show-date-time {
-			padding: 10px 10px;
+			padding: 10px 0px;
 		}
 		.dateandtime .datepicker{width: 100%;}
 		.datepicker > .datepicker_inner_container > .datepicker_calendar > .datepicker_table > tbody > tr > td.today{border: 2px solid #bd2b2b !important;}
@@ -42,8 +42,9 @@
 			<div class="container-fluid">
 
 				<div class="row">
-					<br>
-			   <p class="font-weight-bold"><b>{{ __('messages.CalendarText') }}</b></p>
+				<br>
+				<h3 class="font-weight-bold text-center"><b>{{ __('messages.CalendarText') }}</b></h3>
+				<br>
 					<div class="col-md-12 show-date-time">
 
 				        <span id="date-value1-2" class="date_show_section" value = ""></span>
