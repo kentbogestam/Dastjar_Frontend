@@ -42,11 +42,8 @@
 			<div class="container-fluid">
 
 				<div class="row">
-				<br>
-				<h3 class="font-weight-bold text-center"><b>{{ __('messages.CalendarText') }}</b></h3>
-				<br>
+					<h4 class="font-weight-bold text-center" style="margin-top: 10px;"><b>{{ __('messages.CalendarText') }}</b></h4>
 					<div class="col-md-12 show-date-time">
-
 				        <span id="date-value1-2" class="date_show_section" value = ""></span>
 				        <input type="hidden" id="date-value1-23" name="dateorder" value="" />
 					</div>
