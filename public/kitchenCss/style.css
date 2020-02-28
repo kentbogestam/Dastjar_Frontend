@@ -628,8 +628,5 @@ input[type=number]::-webkit-outer-spin-button {
     .footer_container .img-container{ padding-top: 6px;  }
     }        
 @media (max-width: 480px) {    
-    .footer_container .img-container img{ width: 4.5vw;  }
-    }
-@media (max-width: 384px) {    
     .footer_container .img-container img{ width: 5vw;  }
     }
