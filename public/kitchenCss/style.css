@@ -592,23 +592,33 @@ input[type=number]::-webkit-outer-spin-button {
 #list-driver .engaged {
     background: #F2DEDE;
 }
-.table_size{ font-size: 1.2vw; }
+.table_size, .footer_container a span{ font-size: 1.2vw; }
 
 @media (max-width: 1366px) {
     .footer_container a span{ top: 0.3vw; }
     }
 @media (max-width: 1080px) {
     .footer_container a span{ top: 0.2vw; }
+    .table_size, .footer_container a span{ font-size: 1.4vw; }    
     }    
 @media (max-width: 990px) {    
-    .table_size{ font-size: 2vw; }    
+    .table_size, .footer_container a span{ font-size: 1.6vw; }    
+    }
+@media (max-width: 900px) {    
+    .table_size, .footer_container a span{ font-size: 1.7vw; }    
     }
 @media (max-width: 768px) {    
-    .table_size{ font-size: 2vw; }    
+    .table_size, .footer_container a span{ font-size: 1.9vw; }    
     }    
 @media (max-width: 720px) {    
-    .table_size{ font-size: 2.1vw; }    
+    .table_size, .footer_container a span{ font-size: 2vw; }    
     }        
+@media (max-width: 640px) {    
+    .table_size, .footer_container a span{ font-size: 2.2vw; }    
+    }        
+@media (max-width: 568px) {    
+    .table_size, .footer_container a span{ font-size: 2.4vw; }    
+    }       
 @media (max-width: 544px) {    
-    .table_size{ font-size: 6vw; }    
+    .table_size, .footer_container a span{ font-size: 4vw; }    
     }        
