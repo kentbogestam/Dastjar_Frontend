@@ -3,7 +3,7 @@
 @section('head-scripts')
 	<style type="text/css">
 		.show-date-time {
-			padding: 10px 10px;
+			padding: 10px 0px;
 		}
 		.dateandtime .datepicker{width: 100%;}
 		.datepicker > .datepicker_inner_container > .datepicker_calendar > .datepicker_table > tbody > tr > td.today{border: 2px solid #bd2b2b !important;}
@@ -40,7 +40,9 @@
 		<form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('eat-later') }}">
 			{{ csrf_field() }}
 			<div class="container-fluid">
+
 				<div class="row">
+					<h4 class="font-weight-bold text-center" style="margin-top: 10px;"><b>{{ __('messages.CalendarText') }}</b></h4>
 					<div class="col-md-12 show-date-time">
 				        <span id="date-value1-2" class="date_show_section" value = ""></span>
 				        <input type="hidden" id="date-value1-23" name="dateorder" value="" />
