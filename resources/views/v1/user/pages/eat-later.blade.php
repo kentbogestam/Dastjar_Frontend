@@ -2,7 +2,7 @@
 
 @section('head-scripts')
 	<script src="{{asset('js/restolist/restroListCommon.js')}}"></script>
-    <script src="{{asset('js/restolist/restroListEatLater.js')}}"></script>
+    <script src="{{asset('js/restolist/restroListEatLater.js?v=11')}}"></script>
     <script src="{{asset('notifactionJs/serviceWorker.js')}}"></script>
     <script src="{{asset('browserShortcutJs/comlink.global.js')}}"></script>
     <script src="{{asset('browserShortcutJs/messagechanneladapter.global.js')}}"></script>

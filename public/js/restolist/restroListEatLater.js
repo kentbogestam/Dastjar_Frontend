@@ -41,7 +41,7 @@ function add(urlEatLater,urlMenulist,noImageUrl,sessionTime){
 
 					for (var i=0;i<count;i++){
 						storeClass = storeImage = '';
-						if(checkTime(temp[i]["store_open_close_day_time"],sessionTime)){
+						if(checkTime(temp[i]["store_open_close_day_time_catering"],sessionTime)){
 							// Check if discount is applying on restaurant
 							isFindDiscount = false;
 							if(Object.keys(customerDiscount).length)
@@ -132,7 +132,7 @@ function  addMore(len,url,noImageUrl,sessionTime){
 		
 		for (var i=totalCount;i<=len-1;i++){
 
-			if(checkTime(list[i]["store_open_close_day_time"],sessionTime)){
+			if(checkTime(list[i]["store_open_close_day_time_catering"],sessionTime)){
 				
 				liItem += "<li class='ui-li-has-count ui-li-has-thumb ui-first-child'>";
 				liItem += "<a class = 'ui-btn ui-btn-icon-right ui-icon-carat-r' href="+url+"/"+list[i]['store_id']+" data-ajax='false'>";
