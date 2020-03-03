@@ -18,7 +18,7 @@ use App\ProductOfferSubSloganLangList;
 use App\LangText;
 use App\ProductOfferSloganLangList;
 use App\ProductKeyword;
-
+use Illuminate\Support\Arr;
 class ScriptController extends Controller
 {
 	/**
@@ -257,5 +257,18 @@ class ScriptController extends Controller
         $productKeyword->product_id = $data['product_id'];
         $productKeyword->system_key = $Systemkey_companyId;
         $productKeyword->save();
+    }
+
+
+    //update catering open close value when catering time is empty
+    public function updateCateringValue()
+    {
+        $data = DB::table('store')->select('store_id','store_open_close_day_time as store_open_close_day_time_catering')->whereNull('store_open_close_day_time_catering')->get()->toArray();
+        $array=array();
+        foreach($data as $data1)
+        {
+            $array=(array) $data1;
+            DB::table('store')->where('store_id',$array['store_id'])->update(['store_open_close_day_time_catering'=>$array['store_open_close_day_time_catering']]);
+        }
     }
 }

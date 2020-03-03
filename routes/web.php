@@ -238,6 +238,7 @@ Route::group(['prefix' => 'kitchen'], function(){
 
 	//
 	Route::get('check-store-subscription-plan', 'AdminController@checkStoreSubscriptionPlan');
+
 	Route::get('order-pay-manually/{order_id}', 'AdminController@orderPayManually');
 
 	Route::get('test-send-notifaction/{order_id}', 'AdminController@testSendNotifaction');
@@ -350,5 +351,7 @@ Route::group(['prefix' => 'script'], function() {
 	Route::group(['namespace' => 'Script'], function() {
 		Route::get('clone-store-product/{companyId}', 'ScriptController@cloneStoreProduct');
 		Route::post('clone-store-product-post', 'ScriptController@cloneStoreProductPost');
+		Route::get('update-catering-value', 'ScriptController@updateCateringValue');
+		
 	});
 });
