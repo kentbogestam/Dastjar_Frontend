@@ -111,6 +111,7 @@ class AdminLoginController extends Controller
         Session::forget('kitchenStoreId');
         Session::forget('checkStore');
         Session::forget('subscribedPlans');
+        Session::forget('driverapp');
         //$request->session()->flush();
 
         //$request->session()->regenerate();

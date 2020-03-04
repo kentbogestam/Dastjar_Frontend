@@ -73,15 +73,15 @@
 		var lastOrderId;
 		var imageUrl = "{{asset('kitchenImages/right_sign.png')}}";
 		// var intervalSpeakText = 0;
+		var driverapp = "{{ Session::get('driverapp') }}";
 
 		function orderReadyStarted(id, This) {
 			$This = $(This);			
 			$.get("{{url('kitchen/orderStartedKitchen')}}/"+id,
 			function(returnedData){
-				// console.log(returnedData["data"]);
 				$('body').find('#'+id).attr('src',imageUrl);
 				$('body').find('#'+id).parent("a").attr('onclick',' ');
-				if(returnedData.order.delivery_type == 3)
+				if(returnedData.order.delivery_type == 3 && driverapp)
 				{
 					$('body').find('#'+id+'ready').parent("a").attr('onclick','popupOrderAssignDriver('+returnedData.order.order_id+', '+id+')');
 				}
@@ -222,7 +222,7 @@
 				          		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 				          		liItem +="</a></td>";
 				          	}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
-				          		if(temp[i]["delivery_type"] == 3)
+				          		if(temp[i]["delivery_type"] == 3 && driverapp)
 				          		{
 				          			aString = "<a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", "+temp[i]['id']+")'>";
 				          		}
@@ -256,7 +256,11 @@
 			          		{
 			          			deliveryType = '{{ __('messages.deliveryOptionHomeDelivery') }}';
 			          			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+temp[i]['user_address_id']+')"><span>'+temp[i]['street']+'</span></a>';
-			          			deliveryType += "<br><a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", "+temp[i]['id']+", false)'>Assign Driver</a>";
+
+			          			if(driverapp)
+			          			{
+			          				deliveryType += "<br><a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", "+temp[i]['id']+", false)'>Assign Driver</a>";
+			          			}
 			          		}
 
 			          		liItem += "<td>"+deliveryType+"</td>";
@@ -390,7 +394,7 @@
 				          		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 				          		liItem +="</a></td>";
 				          	}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
-				          		if(temp[i]["delivery_type"] == 3)
+				          		if(temp[i]["delivery_type"] == 3 && driverapp)
 				          		{
 				          			aString = "<a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", "+temp[i]['id']+")'>";
 				          		}
@@ -423,7 +427,11 @@
 			          		{
 			          			deliveryType = '{{ __('messages.deliveryOptionHomeDelivery') }}';
 			          			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+temp[i]['user_address_id']+')"><span>'+temp[i]['street']+'</span></a>';
-			          			deliveryType += "<br><a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", "+temp[i]['id']+", false)'>Assign Driver</a>";
+
+			          			if(driverapp)
+			          			{
+			          				deliveryType += "<br><a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", "+temp[i]['id']+", false)'>Assign Driver</a>";
+			          			}
 			          		}
 
 			          		liItem += "<td>"+deliveryType+"</td>";
@@ -584,7 +592,7 @@
 		          		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
 		          		liItem +="</a></td>";
 		          	}else if(list[i]["order_ready"] == 0 && list[i]["order_started"] == 1){
-		          		if(list[i]["delivery_type"] == 3)
+		          		if(list[i]["delivery_type"] == 3 && driverapp)
 		          		{
 		          			aString = "<a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+list[i]['order_id']+", "+list[i]['id']+")'>";
 		          		}
@@ -617,7 +625,11 @@
 	          		{
 	          			deliveryType = '{{ __('messages.deliveryOptionHomeDelivery') }}';
 	          			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+temp[i]['user_address_id']+')"><span>'+temp[i]['street']+'</span></a>';
-	          			deliveryType += "<br><a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", "+temp[i]['id']+", false)'>Assign Driver</a>";
+
+	          			if(driverapp)
+	          			{
+	          				deliveryType += "<br><a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", "+temp[i]['id']+", false)'>Assign Driver</a>";
+	          			}
 	          		}
 
 	          		liItem += "<td>"+deliveryType+"</td>";

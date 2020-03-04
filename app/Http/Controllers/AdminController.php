@@ -109,6 +109,14 @@ class AdminController extends Controller
             Session::put('kitchenStoreId', $data['storeId']);
             $storeId = $data['storeId'];
 
+            // Check if driver app is active
+            $store = Store::select('driverapp')->where('store_id', $storeId)->first();
+
+            if($store->driverapp == '1')
+            {
+                Session::put('driverapp', 1);
+            }
+
             // Get virtual restaurant if mapped and set them in session
             $storeMapping = StoreVirtualMapping::where('store_id', $storeId)
                 ->get();
@@ -917,7 +925,7 @@ class AdminController extends Controller
     public function kitchenSetting(){
         // Get logged-in store detail
         $store = Store::from('store AS S')
-            ->select(['S.menu_style_type', 'S.order_response', 'S.driver_range', 'S.delivery_range', 'S.buffer_time', 'SP.printer_type', 'SP.mac_address', 'SP.print_copy'])
+            ->select(['S.menu_style_type', 'S.order_response', 'S.driverapp', 'S.driver_range', 'S.delivery_range', 'S.buffer_time', 'SP.printer_type', 'SP.mac_address', 'SP.print_copy'])
             ->leftJoin('store_printers AS SP', 'SP.store_id', '=', 'S.store_id')
             ->where('S.store_id' , Session::get('kitchenStoreId'))
             ->first();
@@ -950,8 +958,20 @@ class AdminController extends Controller
 
         // Update store setting
         $buffer_time = '00:'.($data['buffer_time'] % 60).':00';
+        $driverapp = (isset($data['driverapp']) && $data['driverapp'] == '0') ? '1' : '0';
+
         Store::where('store_id', Session::get('kitchenStoreId'))
-            ->update(['order_response' => $data['order_response'], 'driver_range' => $data['driver_range'], 'delivery_range' => $data['delivery_range'], 'buffer_time' => $buffer_time, 'menu_style_type' => $data['menu_style_type']]);
+            ->update(['order_response' => $data['order_response'], 'driverapp' => $driverapp, 'driver_range' => $data['driver_range'], 'delivery_range' => $data['delivery_range'], 'buffer_time' => $buffer_time, 'menu_style_type' => $data['menu_style_type']]);
+
+        // Set/remove driver app in session if enabled
+        if($driverapp == '1')
+        {
+            Session::put('driverapp', 1);
+        }
+        else
+        {
+            Session::forget('driverapp');
+        }
 
         // Store printer setting
         if($data['mac_address'] && $data['mac_address'] != null)

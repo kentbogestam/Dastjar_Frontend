@@ -92,213 +92,247 @@ textarea.ui-input-text{
 		</div>
 	</div>
 
-		<div role="main" data-role="main-content" class="content">
-			@if ($message = Session::get('success'))
-				<div class="table-content sucess_msg">
-					<img src="{{asset('images/icons/Yes_Check_Circle.png')}}">
-					 @if(is_array($message))
-			            @foreach ($message as $m)
-			                {{ $languageStrings[$m] ?? $m }}
-			            @endforeach
-			        @else
-			            {{  __("messages.$message") }}
-			        @endif
-			    </div>
-			@endif
-			<div class="setting-list">
-				<form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('kitchen/save-kitchenSetting') }}">
-				{{ csrf_field() }}
-				<li data-role="collapsible" class="range-sec" title="{{ __('messages.iStoreSettingLanguage') }}"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.Language") }} <span>
-					@if(Auth::guard('admin')->user()->language == 'ENG')
-					English
-					@elseif(Auth::guard('admin')->user()->language == 'SWE')
-					Swedish
-					@elseif(Auth::guard('admin')->user()->language == 'GER')
-					German
-					@endif</span></h2>
-				    <fieldset data-role="controlgroup">
-				        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2a" value="ENG" @if(Auth::guard('admin')->user()->language == 'ENG') checked="checked" @else checked="checked" @endif>
-				        <label for="radio-choice-v-2a">English</label>
-				        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2b" value="SWE" @if(Auth::guard('admin')->user()->language == 'SWE') checked="checked" @endif>
-				        <label for="radio-choice-v-2b">Swedish</label>
-				    </fieldset>
-				</li>
+	<div role="main" data-role="main-content" class="content">
+		@if ($message = Session::get('success'))
+			<div class="table-content sucess_msg">
+				<img src="{{asset('images/icons/Yes_Check_Circle.png')}}">
+				 @if(is_array($message))
+		            @foreach ($message as $m)
+		                {{ $languageStrings[$m] ?? $m }}
+		            @endforeach
+		        @else
+		            {{  __("messages.$message") }}
+		        @endif
+		    </div>
+		@endif
+		<div class="setting-list">
+			<form id="form" class="form-horizontal" data-ajax="false" method="post" action="{{ url('kitchen/save-kitchenSetting') }}">
+			{{ csrf_field() }}
+			<li data-role="collapsible" class="range-sec" title="{{ __('messages.iStoreSettingLanguage') }}"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.Language") }} <span>
+				@if(Auth::guard('admin')->user()->language == 'ENG')
+				English
+				@elseif(Auth::guard('admin')->user()->language == 'SWE')
+				Swedish
+				@elseif(Auth::guard('admin')->user()->language == 'GER')
+				German
+				@endif</span></h2>
+			    <fieldset data-role="controlgroup">
+			        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2a" value="ENG" @if(Auth::guard('admin')->user()->language == 'ENG') checked="checked" @else checked="checked" @endif>
+			        <label for="radio-choice-v-2a">English</label>
+			        <input type="radio" name="radio-choice-v-2" id="radio-choice-v-2b" value="SWE" @if(Auth::guard('admin')->user()->language == 'SWE') checked="checked" @endif>
+			        <label for="radio-choice-v-2b">Swedish</label>
+			    </fieldset>
+			</li>
 
-				<li data-role="collapsible" class="range-sec">
-					<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">
-						{{ __("messages.orderResponse") }}
-					</h2>
-					<ul>
-						<li data-role="collapsible" class="range-sec" title="{{ __('messages.iStoreSettingOrderResponse') }}">
-							<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">
-								{{ __("messages.orderResponse") }}
-								<span>
-									@if(!$store->order_response)
-										Manual
-									@else
-										Automatic
-									@endif
-								</span>
-							</h2>
-							<fieldset data-role="controlgroup">
-								<input type="radio" name="order_response" id="order-response-manual" value="0" @if($store->order_response == 0) checked="checked" @endif>
-						        <label for="order-response-manual">Manual</label>
-						        <input type="radio" name="order_response" id="order-response-automatic" value="1" @if($store->order_response == 1) checked="checked" @endif>
-						        <label for="order-response-automatic">Automatic</label>
-							</fieldset>
-						</li>
-						<li id="prep_time" class="range-sec btn_blk" title="{{ __('messages.iStoreSettingExtraPrepTime') }}">
-							<h2 class="ui-btn">{{ __('messages.Extra Preparation Time') }}</h2>
-						</li>
-						<li data-role="collapsible" class="range-sec" title="{{ __('messages.iStoreSettingTextToSpeech') }}"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.Text To Speech") }} <span>
-							@if(Auth::guard('admin')->user()->text_speech == 0)
-							Off
-							@elseif(Auth::guard('admin')->user()->text_speech == 1)
-							On
-							@endif</span></h2>
-						    <fieldset data-role="controlgroup">
-						        <input type="radio" name="text_speech" id="radio-choice-v-2d" value="0" @if(Auth::guard('admin')->user()->text_speech == 0) checked="checked" @else checked="checked" @endif>
-						        <label for="radio-choice-v-2d">Off</label>
-						        <input type="radio" name="text_speech" id="radio-choice-v-2e" value="1" @if(Auth::guard('admin')->user()->text_speech == 1) checked="checked" @endif>
-						        <label for="radio-choice-v-2e">On</label>
-						    </fieldset>
-						</li>
-					</ul>
-				</li>
-				<li data-role="collapsible" class="range-sec" title="{{ __('messages.menuStyle') }}">
-					<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">
-						{{  __('messages.menuStyle') }}
-						<span>
-							@if($store->menu_style_type == 0)
-								{{  __('messages.menuStyleList') }}
-							@elseif($store->menu_style_type == 1)
-								{{  __('messages.menuStyleGrid') }}
-							@endif
-						</span>
-					</h2>
-				    <fieldset data-role="controlgroup">
-						<input type="radio" name="menu_style_type" id="menu-style-type-list" value="0" @if($store->menu_style_type == 0) checked="checked" @endif>
-				        <label for="menu-style-type-list">{{  __('messages.menuStyleList') }}</label>
-				        <input type="radio" name="menu_style_type" id="menu-style-type-grid" value="1" @if($store->menu_style_type == 1) checked="checked" @endif>
-				        <label for="menu-style-type-grid">{{  __('messages.menuStyleGrid') }}</label>
-					</fieldset>
-				</li>
-				<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.marketingTools") }} <span>
-					</span></h2>
-				    <ul data-role="controlgroup" class="others_tabs">
-						<li id="link-discount" class="range-sec btn_blk {{ !Session::has('subscribedPlans.discount') ? 'ui-state-disabled' : '' }}" title="{{ __('messages.iStoreSettingDiscount') }}">
-							<h2 class="ui-btn">{{ __('messages.Discount') }}</h2>
-						</li>
-						<li id="link-loyalty" class="range-sec btn_blk {{ !Session::has('subscribedPlans.loyalty') ? 'ui-state-disabled' : '' }}" title="{{ __('messages.iStoreSettingLoyalty') }}">
-							<h2 class="ui-btn">{{ __('messages.loyalty') }}</h2>
-						</li>
-				    </ul>
-				</li>
+			<li data-role="collapsible" class="range-sec">
+				<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">
+					{{ __("messages.orderResponse") }}
+				</h2>
+				<ul>
+					<li data-role="collapsible" class="range-sec" title="{{ __('messages.iStoreSettingOrderResponse') }}">
+						<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">
+							{{ __("messages.orderResponse") }}
+							<span>
+								@if(!$store->order_response)
+									Manual
+								@else
+									Automatic
+								@endif
+							</span>
+						</h2>
+						<fieldset data-role="controlgroup">
+							<input type="radio" name="order_response" id="order-response-manual" value="0" @if($store->order_response == 0) checked="checked" @endif>
+					        <label for="order-response-manual">Manual</label>
+					        <input type="radio" name="order_response" id="order-response-automatic" value="1" @if($store->order_response == 1) checked="checked" @endif>
+					        <label for="order-response-automatic">Automatic</label>
+						</fieldset>
+					</li>
+					<li id="prep_time" class="range-sec btn_blk" title="{{ __('messages.iStoreSettingExtraPrepTime') }}">
+						<h2 class="ui-btn">{{ __('messages.Extra Preparation Time') }}</h2>
+					</li>
+					<li data-role="collapsible" class="range-sec" title="{{ __('messages.iStoreSettingTextToSpeech') }}"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.Text To Speech") }} <span>
+						@if(Auth::guard('admin')->user()->text_speech == 0)
+						Off
+						@elseif(Auth::guard('admin')->user()->text_speech == 1)
+						On
+						@endif</span></h2>
+					    <fieldset data-role="controlgroup">
+					        <input type="radio" name="text_speech" id="radio-choice-v-2d" value="0" @if(Auth::guard('admin')->user()->text_speech == 0) checked="checked" @else checked="checked" @endif>
+					        <label for="radio-choice-v-2d">Off</label>
+					        <input type="radio" name="text_speech" id="radio-choice-v-2e" value="1" @if(Auth::guard('admin')->user()->text_speech == 1) checked="checked" @endif>
+					        <label for="radio-choice-v-2e">On</label>
+					    </fieldset>
+					</li>
+				</ul>
+			</li>
+			<li data-role="collapsible" class="range-sec" title="{{ __('messages.menuStyle') }}">
+				<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">
+					{{  __('messages.menuStyle') }}
+					<span>
+						@if($store->menu_style_type == 0)
+							{{  __('messages.menuStyleList') }}
+						@elseif($store->menu_style_type == 1)
+							{{  __('messages.menuStyleGrid') }}
+						@endif
+					</span>
+				</h2>
+			    <fieldset data-role="controlgroup">
+					<input type="radio" name="menu_style_type" id="menu-style-type-list" value="0" @if($store->menu_style_type == 0) checked="checked" @endif>
+			        <label for="menu-style-type-list">{{  __('messages.menuStyleList') }}</label>
+			        <input type="radio" name="menu_style_type" id="menu-style-type-grid" value="1" @if($store->menu_style_type == 1) checked="checked" @endif>
+			        <label for="menu-style-type-grid">{{  __('messages.menuStyleGrid') }}</label>
+				</fieldset>
+			</li>
+			<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.marketingTools") }} <span>
+				</span></h2>
+			    <ul data-role="controlgroup" class="others_tabs">
+					<li id="link-discount" class="range-sec btn_blk {{ !Session::has('subscribedPlans.discount') ? 'ui-state-disabled' : '' }}" title="{{ __('messages.iStoreSettingDiscount') }}">
+						<h2 class="ui-btn">{{ __('messages.Discount') }}</h2>
+					</li>
+					<li id="link-loyalty" class="range-sec btn_blk {{ !Session::has('subscribedPlans.loyalty') ? 'ui-state-disabled' : '' }}" title="{{ __('messages.iStoreSettingLoyalty') }}">
+						<h2 class="ui-btn">{{ __('messages.loyalty') }}</h2>
+					</li>
+			    </ul>
+			</li>
 
-				<li data-role="collapsible" class="range-sec {{ !Session::has('subscribedPlans.homedelivery') ? 'ui-state-disabled' : '' }}">
-					<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.deliveryOptionHomeDelivery") }}</h2>
-				    <ul data-role="controlgroup" class="others_tabs">
-						<li id="link-driver" class="range-sec btn_blk">
-							<h2 class="ui-btn">{{ __('messages.driver') }}</h2>
-						</li>
-						<li id="link-delivery-price-model" class="range-sec btn_blk">
-							<h2 class="ui-btn">{{ __('messages.delivery_price_model') }}</h2>
-						</li>
-				    </ul>
-				    <ul>
-				    	<li class="range-sec btn_blk">
-							<div data-role="rangeslider">
-								<label for="driver_range">{{ __('messages.driverRange') }}</label>
-								<input type="range" name="driver_range" id="driver_range" min="0" max="20" value="{{ $store->driver_range }}">
-							</div>
-						</li>
-						<li class="range-sec btn_blk">
-							<div data-role="rangeslider">
-								<label for="delivery_range">{{ __('messages.deliveryRange') }}</label>
-								<input type="range" name="delivery_range" id="delivery_range" min="0" max="20" value="{{ $store->delivery_range }}">
-							</div>
-						</li>
-						<li class="range-sec">
-							<div data-role="rangeslider">
-								<label for="buffer_time">{{ __('messages.buffer_time') }}</label>
-								<input type="range" name="buffer_time" id="buffer_time" min="0" max="50" value="{{ $store->buffer_time }}">
-							</div>
-						</li>
-				    </ul>
-				</li>
+			<li data-role="collapsible" class="range-sec {{ !Session::has('subscribedPlans.homedelivery') ? 'ui-state-disabled' : '' }}">
+				<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.deliveryOptionHomeDelivery") }}</h2>
+				<ul>
+					<li>
+						<label>
+							<input type="checkbox" name="driverapp" id="driverapp" value="0" @if($store->driverapp == '1') checked="checked" @endif>&nbsp;&nbsp;&nbsp;&nbsp;{{ __("messages.noDriverApp") }}
+						</label>
+					</li>
+					<!-- <li data-role="collapsible" class="range-sec" title="{{ __('messages.iStoreSettingOrderResponse') }}">
+						<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">
+							{{ __("messages.driverApp") }}
+							<span>
+								@if($store->driverapp == '1')
+									{{ __('messages.active') }}
+								@else
+									{{ __('messages.inactive') }}
+								@endif
+							</span>
+						</h2>
+						<fieldset data-role="controlgroup">
+							<input type="radio" name="driverapp" id="driverapp-1" value="1" @if($store->driverapp == 1) checked="checked" @endif>
+					        <label for="driverapp-1">{{ __('messages.active') }}</label>
+							<input type="radio" name="driverapp" id="driverapp-0" value="0" @if($store->driverapp == '0') checked="checked" @endif>
+					        <label for="driverapp-0">{{ __('messages.inactive') }}</label>
+						</fieldset>
+					</li> -->
+				</ul>
+			    <ul data-role="controlgroup" class="others_tabs">
+					<li id="link-driver" class="range-sec btn_blk">
+						<h2 class="ui-btn">{{ __('messages.driver') }}</h2>
+					</li>
+					<li id="link-delivery-price-model" class="range-sec btn_blk">
+						<h2 class="ui-btn">{{ __('messages.delivery_price_model') }}</h2>
+					</li>
+			    </ul>
+			    <ul>
+			    	<li class="range-sec btn_blk">
+						<div data-role="rangeslider">
+							<label for="driver_range">{{ __('messages.driverRange') }}</label>
+							<input type="range" name="driver_range" id="driver_range" min="0" max="20" value="{{ $store->driver_range }}">
+						</div>
+					</li>
+					<li class="range-sec btn_blk">
+						<div data-role="rangeslider">
+							<label for="delivery_range">{{ __('messages.deliveryRange') }}</label>
+							<input type="range" name="delivery_range" id="delivery_range" min="0" max="20" value="{{ $store->delivery_range }}">
+						</div>
+					</li>
+					<li class="range-sec">
+						<div data-role="rangeslider">
+							<label for="buffer_time">{{ __('messages.buffer_time') }}</label>
+							<input type="range" name="buffer_time" id="buffer_time" min="0" max="50" value="{{ $store->buffer_time }}">
+						</div>
+					</li>
+			    </ul>
+			</li>
 
-				<!-- Printer setting -->
-				<li data-role="collapsible" class="range-sec {{ !Session::has('subscribedPlans.printer') ? 'ui-state-disabled' : '' }}">
-					<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">
-						{{ __("messages.printerSetup") }}
-					</h2>
-					<ul>
-						<li data-role="collapsible" class="range-sec">
-							<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">
-								{{ __("messages.printerType") }}
-								<span>
-									@if($store->printer_type == '2')
-										{{ __('messages.printer_mm', ['no' => 80]) }}
-									@else
-										{{ __('messages.printer_mm', ['no' => 58]) }}
-									@endif
-								</span>
-							</h2>
-							<fieldset data-role="controlgroup">
-								<input type="radio" name="printer_type" id="printer-type-1" value="1" @if($store->printer_type == '1') checked="checked" @else checked="checked" @endif>
-						        <label for="printer-type-1">{{ __('messages.printer_mm', ['no' => 58]) }}</label>
-						        <input type="radio" name="printer_type" id="printer-type-2" value="2" @if($store->printer_type == '2') checked="checked" @endif>
-						        <label for="printer-type-2">{{ __('messages.printer_mm', ['no' => 80]) }}</label>
-							</fieldset>
-						</li>
-						<li>
-							<input type="text" name="mac_address" value="{{ ($store->mac_address != null) ? $store->mac_address : '' }}" placeholder="{{ __('messages.macAddress') }}" id="mac_address" class="msg-txt">
-						</li>
-						<li>
-							<input type="text" name="print_copy" value="{{ ($store->print_copy != null) ? $store->print_copy : '1' }}" placeholder="{{ __('messages.printCopy') }}" id="print_copy" class="msg-txt">
-						</li>
-					</ul>
-				</li>
+			<!-- Printer setting -->
+			<li data-role="collapsible" class="range-sec {{ !Session::has('subscribedPlans.printer') ? 'ui-state-disabled' : '' }}">
+				<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">
+					{{ __("messages.printerSetup") }}
+				</h2>
+				<ul>
+					<li data-role="collapsible" class="range-sec">
+						<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">
+							{{ __("messages.printerType") }}
+							<span>
+								@if($store->printer_type == '2')
+									{{ __('messages.printer_mm', ['no' => 80]) }}
+								@else
+									{{ __('messages.printer_mm', ['no' => 58]) }}
+								@endif
+							</span>
+						</h2>
+						<fieldset data-role="controlgroup">
+							<input type="radio" name="printer_type" id="printer-type-1" value="1" @if($store->printer_type == '1') checked="checked" @else checked="checked" @endif>
+					        <label for="printer-type-1">{{ __('messages.printer_mm', ['no' => 58]) }}</label>
+					        <input type="radio" name="printer_type" id="printer-type-2" value="2" @if($store->printer_type == '2') checked="checked" @endif>
+					        <label for="printer-type-2">{{ __('messages.printer_mm', ['no' => 80]) }}</label>
+						</fieldset>
+					</li>
+					<li>
+						<input type="text" name="mac_address" value="{{ ($store->mac_address != null) ? $store->mac_address : '' }}" placeholder="{{ __('messages.macAddress') }}" id="mac_address" class="msg-txt">
+					</li>
+					<li>
+						<input type="text" name="print_copy" value="{{ ($store->print_copy != null) ? $store->print_copy : '1' }}" placeholder="{{ __('messages.printCopy') }}" id="print_copy" class="msg-txt">
+					</li>
+				</ul>
+			</li>
 
-				<li id="link-refund" class="range-sec btn_blk" title="{{ __('messages.iStoreSettingRefund') }}">
-					<h2 class="ui-btn">{{ __('messages.refund') }}</h2>
-				</li>
+			<li id="link-refund" class="range-sec btn_blk" title="{{ __('messages.iStoreSettingRefund') }}">
+				<h2 class="ui-btn">{{ __('messages.refund') }}</h2>
+			</li>
 
-				<li data-role="collapsible" id="range-sec-controlgroup" class="range-sec">
-					<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Support') }}
-						<p class="ui-li-aside">
-							
-						</p>
-					</h2>
-					<div>
-						<label class="msg-lbl"><h2>{{ __('messages.Message') }}</h2></label>
-					</div>
+			<li data-role="collapsible" id="range-sec-controlgroup" class="range-sec">
+				<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Support') }}
+					<p class="ui-li-aside">
+						
+					</p>
+				</h2>
+				<div>
+					<label class="msg-lbl"><h2>{{ __('messages.Message') }}</h2></label>
+				</div>
 
-					<div id="msg-controlgroup">
-						<form id="support-form" method="post" action="{{ url('kitchen/support') }}" data-ajax="false">
-							{{ csrf_field() }}
-							<textarea id="msg" name="message" placeholder="{{ __('messages.Contact Us Placeholder') }}"  class="msg-txt"  data-ajax="false" required>
-								</textarea>
-							<button type="submit" class="btn btn-success">{{ __('messages.Send') }}</button>		
-						</form>
-					</div>
-				</li>
+				<div id="msg-controlgroup">
+					<form id="support-form" method="post" action="{{ url('kitchen/support') }}" data-ajax="false">
+						{{ csrf_field() }}
+						<textarea id="msg" name="message" placeholder="{{ __('messages.Contact Us Placeholder') }}"  class="msg-txt"  data-ajax="false" required>
+							</textarea>
+						<button type="submit" class="btn btn-success">{{ __('messages.Send') }}</button>		
+					</form>
+				</div>
+			</li>
 
-				<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.Others") }} <span>
-					</span></h2>
-				    <ul data-role="controlgroup" class="others_tabs">
-						 <li id="about_us" class="range-sec btn_blk">
-							<h2 class="ui-btn">{{  __("messages.aboutDastjarAnar") }}</h2>
-						</li>
+			<li data-role="collapsible" class="range-sec"><h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.Others") }} <span>
+				</span></h2>
+			    <ul data-role="controlgroup" class="others_tabs">
+					 <li id="about_us" class="range-sec btn_blk">
+						<h2 class="ui-btn">{{  __("messages.aboutDastjarAnar") }}</h2>
+					</li>
 
-						<!-- <li id="admin" class="range-sec btn_blk">
-							<h2 class="ui-btn">{{  __("messages.aboutCompanyAdmin") }}</h2>
-						</li> -->
-				    </ul>
-				</li>
-				</form>
-			</div>
+					<!-- <li id="admin" class="range-sec btn_blk">
+						<h2 class="ui-btn">{{  __("messages.aboutCompanyAdmin") }}</h2>
+					</li> -->
+			    </ul>
+			</li>
+			</form>
 		</div>
+	</div>
+
+	<!-- Popup driver-app-disable -->
+	<div data-role="popup" data-dismissible="false" id="driver-app-disable-popup" style="min-width:450px;">
+		<div class="ui-content" style="padding: 15px; background: #fff;">
+			{!! __('messages.driverAppDisableMsg') !!}
+			<a href="javascript:void(0)" class="ui-btn ui-corner-all ui-shadow ui-btn-b" data-rel="back">{{ __('messages.continueAnyway') }}</a>
+			<a href="javascript:void(0)" class="ui-btn ui-corner-all ui-shadow ui-btn-b" data-rel="back" onclick="$('#driverapp').prop('checked', false).checkboxradio('refresh');">{{ __('messages.Cancel') }}</a>
+		</div>
+	</div>
 </div>
 
 @endsection
@@ -315,6 +349,19 @@ textarea.ui-input-text{
 			} else{
 				alert("Please fill some value");	
 				e.preventDefault();
+			}
+		});
+
+		// Update driver app status
+		$('#driverapp').on('change', function() {
+			if( $(this).is(':checked') )
+			{
+				@if( !Session::has('subscribedPlans.printer') )
+					$(this).prop('checked', false);
+					alert('{{ __('messages.driverAppDisableWarningMsg') }}');
+				@else
+					$('#driver-app-disable-popup').popup('open');
+				@endif
 			}
 		});
 
@@ -356,13 +403,11 @@ textarea.ui-input-text{
 		});
 
 		$(document).ready(function(){
-   				$('#msg').on("focus", function () {
-				   $('.setting-page').animate({scrollTop:$(document).height()}, 'slow');
-				});	
-
+			$('#msg').on("focus", function () {
+				$('.setting-page').animate({scrollTop:$(document).height()}, 'slow');
+			});
 			// $("textarea").removeClass('ui-input-text');
 			// $.mobile.silentScroll(0);
-
 		});
 
 $(document).bind("mobileinit", function () {
