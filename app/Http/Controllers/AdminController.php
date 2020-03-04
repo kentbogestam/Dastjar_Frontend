@@ -958,7 +958,7 @@ class AdminController extends Controller
 
         // Update store setting
         $buffer_time = '00:'.($data['buffer_time'] % 60).':00';
-        $driverapp = (isset($data['driverapp']) && $data['driverapp'] == '0') ? '1' : '0';
+        $driverapp = (isset($data['driverapp']) && $data['driverapp'] == '0') ? '0' : '1';
 
         Store::where('store_id', Session::get('kitchenStoreId'))
             ->update(['order_response' => $data['order_response'], 'driverapp' => $driverapp, 'driver_range' => $data['driver_range'], 'delivery_range' => $data['delivery_range'], 'buffer_time' => $buffer_time, 'menu_style_type' => $data['menu_style_type']]);

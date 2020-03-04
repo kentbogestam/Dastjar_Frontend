@@ -200,7 +200,7 @@ textarea.ui-input-text{
 				<ul>
 					<li>
 						<label>
-							<input type="checkbox" name="driverapp" id="driverapp" value="0" @if($store->driverapp == '1') checked="checked" @endif>&nbsp;&nbsp;&nbsp;&nbsp;{{ __("messages.noDriverApp") }}
+							<input type="checkbox" name="driverapp" id="driverapp" value="0" @if($store->driverapp == '0') checked="checked" @endif>&nbsp;&nbsp;&nbsp;&nbsp;{{ __("messages.noDriverApp") }}
 						</label>
 					</li>
 					<!-- <li data-role="collapsible" class="range-sec" title="{{ __('messages.iStoreSettingOrderResponse') }}">
