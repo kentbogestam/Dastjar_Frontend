@@ -38,7 +38,7 @@
 						let html = '';
 						for(let i = 0; i < response.orderDelivery.length; i++)
 						{
-							let address2 = '';
+							let address2 = new Array();
 							let customer_order_id = response.orderDelivery[i]['customer_order_id'];
 							
 							// 
@@ -48,33 +48,34 @@
 							// 
 							if(response.orderDelivery[i]['address'])
 							{
-								address2 += response.orderDelivery[i]['address'];
+								address2.push(response.orderDelivery[i]['address']);
 							}
 							else
 							{
 								if(response.orderDelivery[i]['entry_code'])
 								{
-									address2 += "{{ __('messages.entryCode') }}: "+response.orderDelivery[i]['entry_code'];
+									address2.push("{{ __('messages.entryCode') }}: "+response.orderDelivery[i]['entry_code']);
 								}
 
 								if(response.orderDelivery[i]['apt_no'])
 								{
-									address2 += ", {{ __('messages.aptNo') }}: "+response.orderDelivery[i]['apt_no'];
+									address2.push("{{ __('messages.aptNo') }}: "+response.orderDelivery[i]['apt_no']);
 								}
 
 								if(response.orderDelivery[i]['company_name'])
 								{
-									address2 += ", {{ __('messages.companyName') }}: "+response.orderDelivery[i]['company_name'];
+									address2.push("{{ __('messages.companyName') }}: "+response.orderDelivery[i]['company_name']);
 								}
 
 								if(response.orderDelivery[i]['other_info'])
 								{
-									address2 += ", {{ __('messages.otherInfo') }}: "+response.orderDelivery[i]['other_info'];
+									address2.push("{{ __('messages.otherInfo') }}: "+response.orderDelivery[i]['other_info']);
 								}
 							}
-
-							if(address2)
+							
+							if(address2.length)
 							{
+								address2 = address2.join(', ');
 								address2 = "<br>"+address2;
 							}
 
