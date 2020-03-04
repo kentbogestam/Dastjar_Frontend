@@ -48,20 +48,39 @@ $(document).ready(function($) {
     }
 });
 
-
-
 /* ============== qty box script =============== */
-function incrementValue(id)
+
+function incrementValue(id,people_serve)
 {
+
     var value = parseInt(document.getElementById(id).value, 10);
     value = isNaN(value) ? 0 : value;
     value++;
+    incrimented_value_more=0;
+    if(value ==1)
+    {
+        if(people_serve)
+        {
+        people_serve=parseInt(people_serve);
+        value =(value -1) +   people_serve;
+        incrimented_value_more=value;
+        }       
+    } 
     $("#item"+id).css("background-color", "#fafadc");
     document.getElementById(id).value = value;
 
     // Update value in basket
-    cntCartItems++;
-    $('.cart-badge').html(cntCartItems);
+      if(incrimented_value_more>1)
+      {
+       cntCartItems =cntCartItems +   incrimented_value_more;
+ 
+      }
+      else
+      {
+        cntCartItems++;
+      }
+      
+        $('.cart-badge').html(cntCartItems);
     $('.cart-badge').removeClass('hidden');
 }
 function decrementValue(id)

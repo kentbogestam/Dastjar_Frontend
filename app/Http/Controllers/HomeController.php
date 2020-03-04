@@ -319,7 +319,7 @@ class HomeController extends Controller
     {
         // Artisan::call('view:clear');
         // dd(Session::all());
-       
+       session()->forget('people_serve');
        if($request->session()->get('type_selection') == null){ //code added by saurabh to render the view for the selection of eat later nd eat now
          // return view('includes.popupSelection', compact(''));
          return view('v1.user.pages.home');
@@ -471,9 +471,11 @@ class HomeController extends Controller
 
         $request->session()->put('route_url', url('/').'/eat-later'); // code added by saurabh to update correct url for eat-later and eat-now
 
+        
         if(!empty($request->input()))
         {
             $data = $request->input();
+            $request->session()->put('people_serve', $data['people_serve']);
             $request->session()->put('order_date', $data['dateorder']);
         }
         else
@@ -768,7 +770,7 @@ class HomeController extends Controller
                     {
                         $proImg = "<img src='{$row->small_image}' alt='{$row->product_name}' title='{$row->product_name}'>";
                     }
-
+                    $people_serve=session()->get('people_serve');
                     $html .= "
                         <div class='hotel-product'>
                             <div class='product' id='item{$row->product_id}'>
@@ -786,7 +788,7 @@ class HomeController extends Controller
                                         <span class='inputBox'>
                                             <input type='text' name='product[{$row->product_id}][prod_quant]' maxlength='2' size='1' value='0' readonly id='{$row->product_id}' />
                                         </span>
-                                        <span class='plus max' onclick='incrementValue(\"{$row->product_id}\")'><i class='fa fa-plus'></i></span>
+                                        <span class='plus max' onclick='incrementValue(\"{$row->product_id}\",\"{$people_serve}\")'><i class='fa fa-plus'></i></span>
                                     </div>
                                     <input type='hidden' name='product[{$row->product_id}][id]' value='{$row->product_id}' />
                                 </div>
