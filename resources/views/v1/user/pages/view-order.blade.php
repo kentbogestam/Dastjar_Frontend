@@ -130,7 +130,10 @@
 							{{ __('messages.deliveryDateTimeEatNow') }}
 							{{ date('H:i', strtotime($dateTime)) }}
 						@endif
-						<br><a href="{{ url('track-order/'.$order->order_id) }}" class="ui-btn ui-btn-inline track-order" data-ajax="false">{{ __('messages.trackOrder') }}</a>
+
+						@if($order->driverapp == '1')
+							<br><a href="{{ url('track-order/'.$order->order_id) }}" class="ui-btn ui-btn-inline track-order" data-ajax="false">{{ __('messages.trackOrder') }}</a>
+						@endif
 					</p>
 				@else
 					<p>

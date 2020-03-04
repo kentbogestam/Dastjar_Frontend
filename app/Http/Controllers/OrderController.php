@@ -60,7 +60,7 @@ class OrderController extends Controller
         }
 
         $order = Order::from('orders AS O')
-            ->select(['O.order_id', 'O.customer_order_id', 'O.store_id', 'O.user_id', 'O.order_type', 'O.delivery_type', 'O.deliver_date', 'O.deliver_time', 'O.order_total', 'O.delivery_charge', 'O.final_order_total', 'O.order_delivery_time', 'O.order_response', 'O.order_accepted', 'O.extra_prep_time','S.store_name','company.currencies', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
+            ->select(['O.order_id', 'O.customer_order_id', 'O.store_id', 'O.user_id', 'O.order_type', 'O.delivery_type', 'O.deliver_date', 'O.deliver_time', 'O.order_total', 'O.delivery_charge', 'O.final_order_total', 'O.order_delivery_time', 'O.order_response', 'O.order_accepted', 'O.extra_prep_time','S.store_name', 'S.driverapp', 'company.currencies', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
             ->join('order_details', 'O.order_id', '=', 'order_details.order_id')
             ->join('store AS S','O.store_id', '=', 'S.store_id')
             ->join('company','O.company_id', '=', 'company.company_id')
@@ -357,10 +357,13 @@ class OrderController extends Controller
     function trackOrder($orderId)
     {
         $markerArray = array();
-        $order = Order::where('order_id', $orderId)->first();
+        $order = Order::from('orders AS O')
+            ->select('O.*', 'S.driverapp')
+            ->join('store AS S','O.store_id', '=', 'S.store_id')
+            ->where('order_id', $orderId)->first();
 
         // If order type 'home delivery'
-        if($order && $order->delivery_type == 3)
+        if($order && $order->delivery_type == 3 && $order->driverapp)
         {   
             // Get driver address
             $driver = Driver::from('drivers AS D')
