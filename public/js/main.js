@@ -48,7 +48,42 @@ $(document).ready(function($) {
     }
 });
 
+
+
 /* ============== qty box script =============== */
+function changeValueQuantity(chengeValue) {
+    //x=parseInt(document.getElementsByClassName("cart-badge"));
+    var cartValue = $(".cart-badge").html();
+    var productsInputQuantity = document.getElementsByClassName('product_input_quantity');
+    productsInputQuantityTotal=0;
+    for (let index = 0; index < productsInputQuantity.length; ++index) {
+    productsInputQuantityTotal=productsInputQuantityTotal+parseInt(productsInputQuantity[index].value);
+    }
+    //console.log(productsInputQuantityTotal);
+    //var cartValue1 = $(".product_input_quantity").value();
+    //return false;
+    //console.log(cartValue1);
+    //console.log(x);
+    //preCartValue=x[0].innerHTML;
+    //x1=parseInt(document.getElementsByClassName("product_input_quantity"));
+    //preCartValue1=x1[0].innerHTML;
+    //alert(preCartValue);
+    //return false;
+    //id=chengeValue.id;
+    //var value = parseInt(document.getElementById(id).value, 10);
+    //alert(value);
+    //currentValue=chengeValue.value;
+    //previousValue=chengeValue.oldvalue;
+    //previousValue=isNaN(previousValue) ? 0 : previousValue;
+
+    //netValue=currentValue-previousValue;
+    //alert("current value"+currentValue+"--Previous value"+previousValue+"--Net value"+netValue);
+    //cntCartItems=parseInt(cntCartItems);
+    cntCartItems=productsInputQuantityTotal;
+    $('.cart-badge').html(cntCartItems);
+    $('.cart-badge').removeClass('hidden');
+    
+}
 
 function incrementValue(id,people_serve)
 {

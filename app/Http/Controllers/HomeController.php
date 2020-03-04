@@ -786,7 +786,7 @@ class HomeController extends Controller
                                     <div class='quantity'>
                                         <span class='minus min' onclick='decrementValue(\"{$row->product_id}\")'><i class='fa fa-minus'></i></span>
                                         <span class='inputBox'>
-                                            <input type='text' name='product[{$row->product_id}][prod_quant]' maxlength='2' size='1' value='0' readonly id='{$row->product_id}' />
+                                            <input type='text' name='product[{$row->product_id}][prod_quant]' onchange='changeValueQuantity(this)' maxlength='2' size='1' value='0' id='{$row->product_id}' class='product_input_quantity' />
                                         </span>
                                         <span class='plus max' onclick='incrementValue(\"{$row->product_id}\",\"{$people_serve}\")'><i class='fa fa-plus'></i></span>
                                     </div>
