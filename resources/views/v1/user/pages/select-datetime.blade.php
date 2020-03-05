@@ -61,6 +61,15 @@
 			</div>
 	 	 	<div class="dateandtime" id="dateandtime">
 				<input type="hidden" name="date16" id="date16" value="" onchange="setDateTime()"/>
+				<div class="row d-flex justify-content-center">
+					<div class="col-md-6 text-right">
+						<p><b>Please enter the number of people to be served</b></p>
+						<p>Obs, You can change this later</p>
+					</div>
+					<div class="col-md-6">
+						<input type="text" name="people_serve" id="people_serve">
+					</div>
+				</div>
 			</div>
 			<div class="form-group text-center">
 				<button class="btn btn-danger" type="button" id="ss" onclick="checkDate()">{{ __('messages.continue') }}</button>
