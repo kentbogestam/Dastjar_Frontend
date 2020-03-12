@@ -289,9 +289,9 @@ return [
     'pagination' => 'Visar :first av :last av :total antal',
     'aboutDastjarAnar' => 'Om Dastjar RS/Anar',
     'aboutCompanyAdmin' => 'Ditt Företags Admin',
-    'marketingTools' => 'Marknads Verktyg',
+    'marketingTools' => 'Marknadsverktyg',
     'range' => 'Räckvidd (In km)',
-    'noDriverApp' => 'Ingen Förar app',
+    'noDriverApp' => 'Ingen Förarapp',
     'driverAppDisableWarningMsg' => 'Den här optionen är endast möjlig om en printer är installerad!',
     'driverAppDisableMsg' => '<h3>OBS: Denna option kommer inte att tillåta dina kunder att följa leveransen!</h3>Är du säker på att du vill fortsätta?',
     'driverRange' => 'Förares nåbarhet (In km)',
@@ -357,8 +357,8 @@ return [
     'iDeliveryType' => "Välj vilken prismodell du ska använda. Du kan välja mellan: <ul><li>Lägg till Pris för varje Leverans<ul><li>Använd en enkel prismodell där varje leverans oberoende av ordervärde har ett och samma pris</li><li>Därefter lägg också till kostnaden för varje enskild leverans</li></ul></li><li>Lägg till ett pris för leverans och lägsta beställningsvärde för gratis leverans<ul><li>Använd en prismodell där varje leverans har ett och samma pris upp till ett Minimum Ordervärde. Därutöver är leveransen gratis.</li><li>Därefter lägg också till kostnaden för enskild leverans</li></ul></li><li>Lägg till ordervärde när en hemleverans är möjlig<ul><li>Välj den här optionen om du bara vill leverera om ordervärdet passerat en viss summa som du anger i Minimum Ordervärde</li></ul></li></ul>",
 
     // POS printer
-    'printerSetup' => 'Printer Setup',
-    'printerType' => 'Printer Typ',
+    'printerSetup' => 'Skrivarinställningar',
+    'printerType' => 'Skrivartyp',
     'printer_mm' => ':no mm',
     'macAddress' => 'Mac Address',
     'printCopy' => 'Print Copy',
