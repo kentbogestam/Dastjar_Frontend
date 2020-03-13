@@ -212,7 +212,7 @@ class OrderController extends Controller
             
             // Get order and associated store detail
             $order = Order::from('orders AS O')
-                ->select(['O.order_id', 'O.customer_order_id', 'O.order_type', 'O.delivery_type', 'O.deliver_date', 'O.deliver_time', 'O.order_delivery_time', 'O.order_response', 'O.order_accepted', 'O.extra_prep_time', 'S.store_name', 'S.phone', 'S.extra_prep_time AS extra_prep_time_store', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
+                ->select(['O.order_id', 'O.customer_order_id', 'O.order_type', 'O.delivery_type', 'O.deliver_date', 'O.deliver_time', 'O.order_delivery_time', 'O.order_response', 'O.order_accepted', 'O.extra_prep_time', 'S.store_name', 'S.driverapp', 'S.phone', 'S.extra_prep_time AS extra_prep_time_store', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
                 ->join('store AS S', 'S.store_id', '=', 'O.store_id')
                 ->leftJoin('customer_addresses AS CA', 'CA.id', '=', 'O.user_address_id')
                 ->where('O.order_id', $orderId)
@@ -269,7 +269,11 @@ class OrderController extends Controller
                     $responseStr .= __('messages.deliveryDateTimeEatNow').' '.date('H:i', strtotime($dateTime));
                 }
 
-                $responseStr .= '<br><a href="'.url('track-order/'.$order->order_id).'" class="ui-btn ui-btn-inline track-order" data-ajax="false">'.__('messages.trackOrder').'</a>';
+                // 
+                if($order->driverapp == '1')
+                {
+                    $responseStr .= '<br><a href="'.url('track-order/'.$order->order_id).'" class="ui-btn ui-btn-inline track-order" data-ajax="false">'.__('messages.trackOrder').'</a>';
+                }
                 $responseStr .= '</p>';
             }
             else
