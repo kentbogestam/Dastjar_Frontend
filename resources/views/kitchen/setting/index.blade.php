@@ -199,7 +199,7 @@ textarea.ui-input-text{
 				<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{  __("messages.deliveryOptionHomeDelivery") }}</h2>
 				<ul>
 					<li>
-						<label>
+						<label style="border: none;">
 							<input type="checkbox" name="driverapp" id="driverapp" value="0" @if($store->driverapp == '0') checked="checked" @endif>&nbsp;&nbsp;&nbsp;&nbsp;{{ __("messages.noDriverApp") }}
 						</label>
 					</li>
