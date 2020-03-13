@@ -21,7 +21,15 @@
 
 	@php
 	$time = null;
-	$openCloseTime = Helper::getStoreOpenCloseTime($storedetails->store_open_close_day_time);
+
+	if( Session::has('order_date') )
+	{
+		$openCloseTime = Helper::getStoreOpenCloseTime($storedetails->store_open_close_day_time_catering);
+	}
+	else
+	{
+		$openCloseTime = Helper::getStoreOpenCloseTime($storedetails->store_open_close_day_time);
+	}
 
 	if(!empty($openCloseTime))
 	{
@@ -216,6 +224,12 @@
 	var id;
 	var cntCartItems = 0;
 
+	@if(Session::has('order_date'))
+		var store_open_close_day_time = '{{ $storedetails->store_open_close_day_time_catering }}';
+	@else
+		var store_open_close_day_time = '{{ $storedetails->store_open_close_day_time }}';
+	@endif
+
 	$(function() {
 		$(document).on('click', '.extra-btn a', function() {
 			id=$(this).attr('id');
@@ -247,7 +261,7 @@
 
 		// 
 		$("#menudataSave").click(function(e){
-			if( !checkTime('{{ $storedetails->store_open_close_day_time }}', '{{ Session::get('order_date') }}') )
+			if( !checkTime(store_open_close_day_time, '{{ Session::get('order_date') }}') )
 			{
 				$('.alert-store-closed').removeClass('collapse').addClass('collapse-in');
 
@@ -429,7 +443,7 @@
 	}
 
 	// 
-	if( !checkTime('{{ $storedetails->store_open_close_day_time }}', '{{ Session::get('order_date') }}') )
+	if( !checkTime(store_open_close_day_time, '{{ Session::get('order_date') }}') )
 	{
 		$('.alert-store-closed').removeClass('collapse').addClass('collapse-in');
 	}
