@@ -172,6 +172,10 @@
 				@endif
 			@else
 				<p>{{ __('messages.waitForOrderConfirmation') }} </p>
+				<p>({{$order->store_name}})</p>
+				@if( is_numeric($storeDetail->phone) )
+					<p><i class="fa fa-phone" aria-hidden="true"></i> <span>{{ $storeDetail->phone }}</span></p>
+				@endif
 			@endif
 		</div>
 		<div class="cart-list">
