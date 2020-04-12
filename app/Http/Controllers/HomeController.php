@@ -119,7 +119,7 @@ class HomeController extends Controller
 
     public function userLatLong(Request $request){ 
         $request->session()->forget('order_date');
-
+        $StoreOpenCloseTimeText = __('messages.StoreOpenCloseTimeText');
         $helper = new Helper();
 
         if(Auth::check()){
@@ -236,7 +236,7 @@ class HomeController extends Controller
             // Store not found string
             $restaurantStatusMsg = __('messages.noRestaurantFound');
 
-            return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg, 'customerDiscount' => $customerDiscount]);
+            return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg, 'customerDiscount' => $customerDiscount,'StoreOpenCloseTimeText'=>$StoreOpenCloseTimeText]);
         } else{
             if($request->session()->get('sessionBrowserLanguageValue') == null){
                 if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
@@ -310,7 +310,7 @@ class HomeController extends Controller
             // Store not found string
             $restaurantStatusMsg = __('messages.noRestaurantFound');
 
-            return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg]);
+            return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg,'StoreOpenCloseTimeText'=>$StoreOpenCloseTimeText]);
         }
     }
 
@@ -320,6 +320,7 @@ class HomeController extends Controller
         // Artisan::call('view:clear');
         // dd(Session::all());
        session()->forget('people_serve');
+       session()->forget('orderOption');
        if($request->session()->get('type_selection') == null){ //code added by saurabh to render the view for the selection of eat later nd eat now
          // return view('includes.popupSelection', compact(''));
          return view('v1.user.pages.home');
@@ -384,7 +385,7 @@ class HomeController extends Controller
     }
 
     public function eatLaterData(Request $request){
-
+        $StoreOpenCloseTimeText = __('messages.StoreOpenCloseTimeText');
         if($request->session()->has('order_date')){
             $pieces = explode(" ", $request->session()->get('order_date'));
             $month = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -460,7 +461,7 @@ class HomeController extends Controller
         // Store not found string
         $restaurantStatusMsg = __('messages.noRestaurantFound');
         
-        return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg, 'customerDiscount' => $customerDiscount]);
+        return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg, 'customerDiscount' => $customerDiscount,'StoreOpenCloseTimeText'=>$StoreOpenCloseTimeText]);
     }
 
     public function eatLater(Request $request){
@@ -475,6 +476,8 @@ class HomeController extends Controller
         if(!empty($request->input()))
         {
             $data = $request->input();
+
+            //$request->session()->put('orderOption', $data['orderOption']);
             $request->session()->put('people_serve', $data['people_serve']);
             $request->session()->put('order_date', $data['dateorder']);
         }
@@ -820,6 +823,7 @@ class HomeController extends Controller
 
     public function selectOrderDate()
     {
+        session()->put('orderOption','eatlater');
         // return view('select-datetime', compact('')); 
         return view('v1.user.pages.select-datetime');
     }

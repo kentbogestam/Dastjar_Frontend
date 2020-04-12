@@ -16,6 +16,7 @@ return [
     'eatLaterTimeError1' => 'Please enter pick-up time in 24 hours format.',
     'eatLaterTimeError2' => 'Date and time is not valid.',
     'eatLaterTimeError3' => 'Order date must be minimum 2 hours later from current date time.',
+    'StoreOpenCloseTimeText' => 'Closed! Open',
     'Order id'  => 'Order id',
     'Done'  => 'Done',
     'Setting updated successfully.'   => 'Setting updated successfully.',
