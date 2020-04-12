@@ -13,6 +13,8 @@ return [
     'Settings'  => 'ooo',
     'Terms' => 'GENERAL TERMS & INTEGRITY POLICY',
     'CalendarText' => 'Please, choose Date and Time for when you want your order delivered or picked up!',
+    'NumberofPeopleServed' => 'Please enter the number of people to be served',
+    'CalendarNote' => 'Note, You can change this later',
     'eatLaterTimeError1' => 'Please enter pick-up time in 24 hours format.',
     'eatLaterTimeError2' => 'Date and time is not valid.',
     'eatLaterTimeError3' => 'Order date must be minimum 2 hours later from current date time.',
