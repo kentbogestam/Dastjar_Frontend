@@ -543,6 +543,6 @@ class Helper extends Model
     // 
     public static function updateStoreIslive($store_id)
     {
-        Store::where('store_id', $store_id)->update(['islive' => Carbon::now()->format('Y-m-d h:i:s')]);
+        Store::where('store_id', $store_id)->update(['islive' => Carbon::now()->format('Y-m-d H:i:s')]);
     }
 }
