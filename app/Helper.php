@@ -11,6 +11,7 @@ use \Gumlet\ImageResize;
 
 use App\Order;
 use App\DishType;
+use App\Store;
 
 // 
 use App\App42\PushNotificationService;
@@ -537,5 +538,11 @@ class Helper extends Model
         }
 
         return $status;
+    }
+
+    // 
+    public static function updateStoreIslive($store_id)
+    {
+        Store::where('store_id', $store_id)->update(['islive' => Carbon::now()->format('Y-m-d h:i:s')]);
     }
 }
