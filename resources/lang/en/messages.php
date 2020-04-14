@@ -19,6 +19,7 @@ return [
     'eatLaterTimeError2' => 'Date and time is not valid.',
     'eatLaterTimeError3' => 'Order date must be minimum 2 hours later from current date time.',
     'StoreOpenCloseTimeText' => 'Closed! Open',
+    'storeNotLive' => 'Closed! try later!',
     'Order id'  => 'Order id',
     'Done'  => 'Done',
     'Setting updated successfully.'   => 'Setting updated successfully.',

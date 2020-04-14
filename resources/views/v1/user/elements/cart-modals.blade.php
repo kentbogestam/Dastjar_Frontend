@@ -23,3 +23,17 @@
 		</div>
 	</div>
 </div>
+
+<!-- pop modal when rs offline -->
+<div class="modal fade" id="store-not-live-alert" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-body text-center">
+				{{ __('messages.storeNotLive') }}
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">{{ __('messages.close') }}</button>
+			</div>
+		</div>
+	</div>
+</div>

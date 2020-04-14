@@ -540,9 +540,17 @@ class Helper extends Model
         return $status;
     }
 
-    // 
+    // Update store heartbeat
     public static function updateStoreIslive($store_id)
     {
         Store::where('store_id', $store_id)->update(['islive' => Carbon::now()->format('Y-m-d H:i:s')]);
+    }
+
+    // Return the store heartbeat (in minute)
+    public static function isStoreLive($storeId)
+    {
+        $heartbeat = Store::select([DB::raw("TIMESTAMPDIFF(MINUTE, islive, UTC_TIMESTAMP()) AS heartbeat")])
+            ->where('store_id', $storeId)->first()->heartbeat;
+        return $heartbeat;
     }
 }

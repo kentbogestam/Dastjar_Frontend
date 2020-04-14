@@ -19,6 +19,7 @@ return [
     'eatLaterTimeError2' => 'Datum och tid är inte giltiga.',
     'eatLaterTimeError3' => 'Beställningsdatum måste vara minst 2 timmar senare än aktuell tid',
     'StoreOpenCloseTimeText' => 'Stängt! Öppet',
+    'storeNotLive' => 'Stängt! Försök igen senare!',
     'Order id'  => 'Order-ID',
     'Done'  => 'OK',
     'Setting updated successfully.'   => 'Uppdaterat.',

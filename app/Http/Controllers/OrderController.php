@@ -52,13 +52,6 @@ class OrderController extends Controller
     public function orderView($orderId){
         $orderInvoice = array();
 
-        if( Session::has('paymentmode') && Session::get('paymentmode') == 0 )
-        {
-            DB::table('orders')->where('order_id', $orderId)->update([
-                'online_paid' => 0,
-            ]);
-        }
-
         $order = Order::from('orders AS O')
             ->select(['O.order_id', 'O.customer_order_id', 'O.store_id', 'O.user_id', 'O.order_type', 'O.delivery_type', 'O.deliver_date', 'O.deliver_time', 'O.order_total', 'O.delivery_charge', 'O.final_order_total', 'O.order_delivery_time', 'O.order_response', 'O.order_accepted', 'O.extra_prep_time','S.store_name', 'S.driverapp', 'company.currencies', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
             ->join('order_details', 'O.order_id', '=', 'order_details.order_id')
@@ -70,6 +63,24 @@ class OrderController extends Controller
 
         if($order)
         {
+            // 
+            if( Session::has('paymentmode') && Session::get('paymentmode') == 0 )
+            {
+                // Check if store is open
+                $heartbeat = Helper::isStoreLive($order->store_id);
+
+                if( !is_null($heartbeat) && $heartbeat < 2)
+                {
+                    DB::table('orders')->where('order_id', $orderId)->update([
+                        'online_paid' => 0,
+                    ]);
+                }
+                else
+                {
+                    return redirect()->route('cancel-order', $order->customer_order_id)->with(['errorHeartbeat' => 1]);
+                }
+            }
+
             // If order type is 'home delivery', get driving distance time
             if($order->delivery_type == 3)
             {

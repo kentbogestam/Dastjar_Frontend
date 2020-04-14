@@ -29,24 +29,24 @@ function add(urlEatLater,urlMenulist,noImageUrl,sessionTime){
 				var customerDiscount = (returnedData['customerDiscount']) ? returnedData['customerDiscount'] : {};
 				var discountIndex;
 				var isFindDiscount;
-				let storeClass;
+				// let storeClass;
 				let storeImage;
-				list = temp;
-				var liItem = "";
-				var liItem1 = "";
 				let isStoreOpen;
 				list = temp;
-				var liItem = htmlStoreRow = ancClose = ancOpen = "";
+				var liItem = liItem1 = liItem2 = htmlStoreRow = ancClose = ancOpen = storeClass = "";
+				
 				if(temp.length != 0)
 				{
 					if(temp.length < count)
 					{
 						count = temp.length;
 					}
+
 					for (var i=0;i<count;i++)
 					{
-						storeClass = storeImage = subStr= ancClose=ancOpen = ""; 
+						storestoreClass = storeImage = subStr = ancClose = ancOpen = "";
 						isStoreOpen = true;
+						
 						// Check if discount is applying on restaurant
 						isFindDiscount = false;
 						if(Object.keys(customerDiscount).length)
@@ -58,15 +58,36 @@ function add(urlEatLater,urlMenulist,noImageUrl,sessionTime){
 								isFindDiscount = true;
 							}
 						}
-						if(checkTime(temp[i]["store_open_close_day_time_catering"],sessionTime)){
+
+						//check restauraunt open and offline
+						if( temp[i].heartbeat && temp[i].heartbeat >= 2 && checkTime(temp[i]["store_open_close_day_time_catering"],sessionTime) == true )
+						{
+							isStoreOpen = "nolive";
+							storeClass = ' store-closed not-live';
+
+							// Code added to display tagline of restaurant	
+							if(temp[i]["tagline"]){
+								subStr = '<p class="info-hotel">'+temp[i]["tagline"]+'</p>';
+							}
+							// End of code added to dispaly tagline of restaurant
+
+							if(!subStr.length)
+							{
+								subStr += '<br>'
+							}
+
+							subStr += '<span class="label label-default">'+returnedData['storeNotLive']+'</span>';
+						}
+						else if(checkTime(temp[i]["store_open_close_day_time_catering"],sessionTime))
+						{
 							ancClose = '<a href="'+url+'/'+temp[i]['store_id']+'">';
 							ancOpen = '</a>';
+							
 							// Code added to display tagline of restaurant
 							subStr = '';
 							if(temp[i]["tagline"]){
 								subStr = '<p class="info-hotel">'+temp[i]["tagline"]+'</p>';
 							}
-
 							// End of code added to dispaly tagline of restaurant
 						}
 						else
@@ -74,13 +95,23 @@ function add(urlEatLater,urlMenulist,noImageUrl,sessionTime){
 							isStoreOpen = false;
 							storeClass = ' store-closed';
 
+							// Code added to display tagline of restaurant	
+							if(temp[i]["tagline"]){
+								subStr = '<p class="info-hotel">'+temp[i]["tagline"]+'</p>';
+							}
+							// End of code added to dispaly tagline of restaurant
+
+							if(!subStr.length)
+							{
+								subStr += '<br>'
+							}
+
 							// Code added to display open close time of restaurant
 							time=temp[i]["store_open_close_day_time_catering"];
 							open_close_time=time.split(' :: ')[1].split(' to ');
 							open_time=open_close_time[0].split(':');
 							close_time=open_close_time[1].split(':');	
-							subStr = '';
-							subStr = '<p class="info-hotel">'+returnedData['StoreOpenCloseTimeText']+ ' '+open_time[0]+':'+open_time[1]+'-'+close_time[0]+':'+close_time[1]+'</p>';
+							subStr += '<span class="label label-default">'+returnedData['StoreOpenCloseTimeText']+ ' '+open_time[0]+':'+open_time[1]+'-'+close_time[0]+':'+close_time[1]+'</span>';
 							// Code added to display open close time of restaurant
 						}
 						
@@ -120,9 +151,14 @@ function add(urlEatLater,urlMenulist,noImageUrl,sessionTime){
 							ancOpen+
 							'<div class="clearfix"></div>'+
 						'</div>';
-						if(isStoreOpen)
+						
+						if(isStoreOpen == true)
 						{
 							liItem += htmlStoreRow;
+						}
+						else if(isStoreOpen=='nolive')
+						{
+							liItem2 += htmlStoreRow;
 						}
 						else
 						{
@@ -131,7 +167,7 @@ function add(urlEatLater,urlMenulist,noImageUrl,sessionTime){
 						totalCount= i;
 					}
 
-					liItem=liItem + liItem1;
+					liItem = liItem + liItem2 + liItem1;
 				}else{
 					liItem += "<div class='col-sm-8 col-xs-8'><p>"+returnedData['restaurantStatusMsg']+"</p></div>";
 				}

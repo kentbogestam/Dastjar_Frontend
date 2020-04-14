@@ -125,7 +125,7 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 				let isStoreOpen;
 				list = temp;
 				var liItem = htmlStoreRow = "";
-				var liItem1 = "";
+				var liItem1 = liItem2 = "";
 				if(temp.length != 0){
 					if(temp.length < count){
 						count = temp.length;
@@ -133,10 +133,31 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 
 					for (var i=0;i<count;i++)
 					{
-						storeClass = storeImage = subStr = ancClose=ancOpen =''; 
+						storeClass = storeImage = subStr = ancClose = ancOpen = ''; 
 						isStoreOpen = true;
 
-						if(checkTime(temp[i]["store_open_close_day_time"])){
+						// 
+						if( temp[i].heartbeat && temp[i].heartbeat >= 2 && checkTime(temp[i]["store_open_close_day_time"]) == true )
+						{
+							isStoreOpen = "nolive";
+							storeClass = ' store-closed not-live';
+
+							// Code added to display tagline of restaurant	
+							if(temp[i]["tagline"]){
+								subStr = '<p class="info-hotel">'+temp[i]["tagline"]+'</p>';
+							}
+							// End of code added to dispaly tagline of restaurant
+
+							if(!subStr.length)
+							{
+								subStr += '<br>'
+							}
+
+							subStr += '<span class="label label-default">'+returnedData['storeNotLive']+'</span>';
+						}
+						else if( checkTime(temp[i]["store_open_close_day_time"]) )
+						{
+							//open and online restaurant
 							ancClose = '<a href="'+url+'/'+temp[i]['store_id']+'">';
 							ancOpen = '</a>';
 
@@ -148,15 +169,26 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 						}
 						else
 						{
+							//closed restaunt
 							isStoreOpen = false;
 							storeClass = ' store-closed';
+
+							// Code added to display tagline of restaurant	
+							if(temp[i]["tagline"]){
+								subStr = '<p class="info-hotel">'+temp[i]["tagline"]+'</p>';
+							}
+
+							if(!subStr.length)
+							{
+								subStr += '<br>'
+							}
 
 							// Code added to display open close time of restaurant
 							time=temp[i]["store_open_close_day_time"];
 							open_close_time=time.split(' :: ')[1].split(' to ');
 							open_time=open_close_time[0].split(':');
 							close_time=open_close_time[1].split(':');	
-							subStr = '<p class="info-hotel">'+returnedData['StoreOpenCloseTimeText']+ ' '+open_time[0]+':'+open_time[1]+'-'+close_time[0]+':'+close_time[1]+'</p>';
+							subStr += '<span class="label label-default">'+returnedData['StoreOpenCloseTimeText']+ ' '+open_time[0]+':'+open_time[1]+'-'+close_time[0]+':'+close_time[1]+'</span>';
 						}
 
 						// Check if discount is applying on restaurant
@@ -209,9 +241,13 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 						'</div>';
 
 						// 
-						if(isStoreOpen)
+						if(isStoreOpen == true)
 						{
 							liItem += htmlStoreRow;
+						}
+						else if(isStoreOpen=="nolive")
+						{
+							liItem2 += htmlStoreRow;
 						}
 						else
 						{
@@ -221,7 +257,7 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 						totalCount= i;
 					}
 
-					liItem = liItem + liItem1;
+					liItem = liItem + liItem2 + liItem1;
 				}else{
 					liItem += "<div class='col-sm-8 col-xs-8'><p>"+returnedData['restaurantStatusMsg']+"</p></div>";
 				}
