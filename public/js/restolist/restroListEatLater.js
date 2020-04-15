@@ -59,26 +59,7 @@ function add(urlEatLater,urlMenulist,noImageUrl,sessionTime){
 							}
 						}
 
-						//check restauraunt open and offline
-						if( temp[i].heartbeat == null || (temp[i].heartbeat >= 2 && checkTime(temp[i]["store_open_close_day_time_catering"],sessionTime) == true) )
-						{
-							isStoreOpen = "nolive";
-							storeClass = ' store-closed not-live';
-
-							// Code added to display tagline of restaurant	
-							if(temp[i]["tagline"]){
-								subStr = '<p class="info-hotel">'+temp[i]["tagline"]+'</p>';
-							}
-							// End of code added to dispaly tagline of restaurant
-
-							if(!subStr.length)
-							{
-								subStr += '<br>'
-							}
-
-							subStr += '<span class="label label-default">'+returnedData['storeNotLive']+'</span>';
-						}
-						else if(checkTime(temp[i]["store_open_close_day_time_catering"],sessionTime))
+						if(checkTime(temp[i]["store_open_close_day_time_catering"],sessionTime))
 						{
 							ancClose = '<a href="'+url+'/'+temp[i]['store_id']+'">';
 							ancOpen = '</a>';

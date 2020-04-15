@@ -244,7 +244,7 @@ class Store extends Model
         $radius = $radius;
 
         $latLngList = Store::from('store AS S')
-            ->select(['S.store_id', 'S.tagline', 'S.islive', DB::raw("TIMESTAMPDIFF(MINUTE, S.islive, UTC_TIMESTAMP()) AS heartbeat"), 'S.latitude', 'S.longitude', 'S.store_name', 'S.large_image AS store_large_image', 'S.store_open_close_day_time_catering', DB::raw("($unit * ACOS(COS(RADIANS(".$lat.")) * COS(RADIANS(latitude)) * COS(RADIANS(".$lng.") - RADIANS(longitude)) + SIN(RADIANS(".$lat.")) * SIN(RADIANS(latitude)))) AS distance")])
+            ->select(['S.store_id', 'S.tagline', 'S.latitude', 'S.longitude', 'S.store_name', 'S.large_image AS store_large_image', 'S.store_open_close_day_time_catering', DB::raw("($unit * ACOS(COS(RADIANS(".$lat.")) * COS(RADIANS(latitude)) * COS(RADIANS(".$lng.") - RADIANS(longitude)) + SIN(RADIANS(".$lat.")) * SIN(RADIANS(latitude)))) AS distance")])
             ->join('company', 'company.u_id', '=', 'S.u_id')
             ->join('product_price_list','S.store_id','=','product_price_list.store_id')
             ->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')
