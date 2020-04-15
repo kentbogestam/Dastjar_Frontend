@@ -60,7 +60,7 @@ function add(urlEatLater,urlMenulist,noImageUrl,sessionTime){
 						}
 
 						//check restauraunt open and offline
-						if( temp[i].heartbeat && temp[i].heartbeat >= 2 && checkTime(temp[i]["store_open_close_day_time_catering"],sessionTime) == true )
+						if( temp[i].heartbeat == null || (temp[i].heartbeat >= 2 && checkTime(temp[i]["store_open_close_day_time_catering"],sessionTime) == true) )
 						{
 							isStoreOpen = "nolive";
 							storeClass = ' store-closed not-live';
