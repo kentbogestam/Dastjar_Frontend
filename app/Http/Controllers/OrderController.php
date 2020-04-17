@@ -69,7 +69,7 @@ class OrderController extends Controller
                 // Check if store is open
                 $heartbeat = Helper::isStoreLive($order->store_id);
 
-                if( !is_null($heartbeat) && $heartbeat < 2)
+                if( !is_null($heartbeat) && $heartbeat < 1)
                 {
                     DB::table('orders')->where('order_id', $orderId)->update([
                         'online_paid' => 0,
