@@ -37,7 +37,7 @@ class PaymentController extends Controller
 
     	$heartbeat = Helper::isStoreLive(Session::get('storeId'));
 
-    	if( (!is_null($heartbeat) && $heartbeat < 2) || $order->order_type == 'eat_later' )
+    	if( (!is_null($heartbeat) && $heartbeat < 1) || $order->order_type == 'eat_later' )
     	{
 	    	// Get connect a/c detail
 	        if( $request->session()->has('stripeAccount') )

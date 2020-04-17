@@ -137,7 +137,7 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 						isStoreOpen = true;
 
 						// 
-						if( temp[i].heartbeat == null || (temp[i].heartbeat >= 2 && checkTime(temp[i]["store_open_close_day_time"]) == true) )
+						if( temp[i].heartbeat == null || (temp[i].heartbeat >= 1 && checkTime(temp[i]["store_open_close_day_time"]) == true) )
 						{
 							isStoreOpen = "nolive";
 							storeClass = ' store-closed not-live';

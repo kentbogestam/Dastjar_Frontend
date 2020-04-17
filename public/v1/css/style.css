@@ -286,6 +286,10 @@ img {
 	opacity: 0.5;
 }
 
+.row-hotel.store-closed:not(.not-live) .label-default {
+	background-color: #FF0000 !important;
+}
+
 .footer-section {
 	background: rgba(209, 209, 209, 1);
 	background: -moz-linear-gradient(top, rgba(209, 209, 209, 1) 0%, rgba(0, 0, 0, 1) 87%, rgba(0, 0, 0, 1) 100%);
