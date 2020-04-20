@@ -13,6 +13,9 @@ use App\Order;
 use App\OrderDetail;
 use App\OrderDelivery;
 use App\UserAddress;
+use App\CompanySubscriptionDetail;
+use App\Payment;
+
 use App\Helper;
 
 class DeliveryController extends Controller
@@ -138,32 +141,109 @@ class DeliveryController extends Controller
 	 */
 	function orderDeliver($orderId)
 	{
-		// Check driver engage status
-		$driverId = Auth::guard('driver')->user()->id;
-
 		// Get order deliver status
-		$paid = 1;
-		$order = Order::select(['paid'])->where(['customer_order_id' => $orderId])->first();
-		if($order->paid)
-		{
-			$paid = 0;
-		}
+		$order = Order::select(['order_id', 'store_id', 'paid', 'updated_at'])
+			->where(['customer_order_id' => $orderId])
+			->first();
 
-		// Update order deliver status
-		if(Order::where(['customer_order_id' => $orderId])->update(['paid' => $paid]))
+		if($order)
 		{
-			// Check and update driver engage status
+			// Check driver engage status
 			$driverId = Auth::guard('driver')->user()->id;
+			$paid = 1;
+			$isDelivered = 0;
 
-			$orderDelivery = OrderDelivery::from('order_delivery AS OD')
-				->join('orders AS O', 'O.order_id', '=', 'OD.order_id')
-				->where(['OD.driver_id' => $driverId, 'OD.status' => '2', 'paid' => 0])
-				->count();
-
-			if($orderDelivery == 0)
+			// If order not delivered, capture the payment and deliver it, else undo delivered order within 5 min
+			if($order->paid)
 			{
-				Driver::where(['id' => $driverId])->update(['is_engaged' => '0']);
+				$dateTime = date('Y-m-d H:i:s');
+				$dateTime = new \DateTime($dateTime);
+				$dateDiff = $dateTime->diff(new \DateTime($order->updated_at));
+
+				if($dateDiff->i <= 5)
+				{
+					$paid = 0;
+				}
+				else
+				{
+					return \Redirect::back()->with(['error' => 'You can\'t undo order after 5 minutes!' ]);
+				}
 			}
+			else
+			{
+				// Get the payment if exist and not captured
+	            $payment = Payment::select(['transaction_id', 'status'])
+	                ->where(['order_id' => $order->order_id, 'status' => '2'])->first();
+
+	            if($payment)
+	            {
+					if($payment->status == '2')
+					{
+						// Get the Stripe Account
+	                    $companySubscriptionDetail = CompanySubscriptionDetail::from('company_subscription_detail AS CSD')
+	                        ->select('CSD.stripe_user_id')
+	                        ->join('company AS C', 'C.company_id', '=', 'CSD.company_id')
+	                        ->join('store AS S', 'S.u_id', '=', 'C.u_id')
+	                        ->where('S.store_id', $order->store_id)->first();
+
+	                    if($companySubscriptionDetail)
+	                    {
+	                    	$stripeAccount = $companySubscriptionDetail->stripe_user_id;
+
+	                        // Initilize Stripe
+	                        \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+
+	                        try {
+	                            // capture-later
+	                            $payment_intent = \Stripe\PaymentIntent::retrieve($payment->transaction_id, ['stripe_account' => $stripeAccount]);
+	                            $payment_intent->capture();
+
+	                            if($payment_intent->status == 'succeeded')
+	                            {
+	                                $isDelivered = 1;
+
+	                                // Update payment as captured
+	                                Payment::where(['order_id' => $order->order_id, 'status' => '2'])
+	                                    ->update(['status' => '1']);
+	                            }
+	                        } catch (\Stripe\Error\Base $e) {
+	                            # Display error on client
+	                            $response = array('error' => $e->getMessage());
+	                            return \Redirect::back()->with($response);
+	                        }
+	                    }
+					}
+					elseif($payment->status == '1')
+	                {
+	                    $isDelivered = 1;
+	                }
+	            }
+	            else
+	            {
+	            	$isDelivered = 1;
+	            }
+			}
+
+            // 
+            if($isDelivered || $paid == 0)
+            {
+            	// Update order deliver status
+				if(Order::where(['customer_order_id' => $orderId])->update(['paid' => $paid]))
+				{
+					// Check and update driver engage status
+					$driverId = Auth::guard('driver')->user()->id;
+
+					$orderDelivery = OrderDelivery::from('order_delivery AS OD')
+						->join('orders AS O', 'O.order_id', '=', 'OD.order_id')
+						->where(['OD.driver_id' => $driverId, 'OD.status' => '2', 'paid' => 0])
+						->count();
+
+					if($orderDelivery == 0)
+					{
+						Driver::where(['id' => $driverId])->update(['is_engaged' => '0']);
+					}
+				}
+            }
 		}
         
         return redirect()->back();
