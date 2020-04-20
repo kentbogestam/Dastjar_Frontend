@@ -582,6 +582,9 @@ class AdminController extends Controller
         $deliveryDateTill = Carbon::now()->toDateString();
         $stores[] = $reCompanyId = Session::get('kitchenStoreId');
 
+        // Update store's 'islive'
+        Helper::updateStoreIslive($reCompanyId);
+
         // Get virtual store if mapped
         if( Session::has('virtualStores') )
         {
@@ -2845,10 +2848,14 @@ class AdminController extends Controller
     function getNewOrdersDetailToSpeak()
     {
         $storeId = Session::get('kitchenStoreId');
+
+        // Update store's 'islive'
+        Helper::updateStoreIslive($storeId);
+
+        // 
         $deliveryDate = Carbon::now()->subDays(1)->toDateString();
         $deliveryDateTill = Carbon::now()->toDateString();
 
-        // 
         $orderDetail = OrderDetail::select('order_details.id', 'order_details.product_quality', 'order_details.product_description', 'order_details.is_speak', 'product.product_name')
             ->join('orders', 'orders.order_id', '=', 'order_details.order_id')
             ->join('product', 'product.product_id', '=', 'order_details.product_id')

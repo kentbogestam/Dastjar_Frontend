@@ -647,7 +647,10 @@
 
 		// Handle response when 'Pay with card'
 		function handleServerResponse(response) {
-			if (response.error) {
+			if (response.errorHeartbeat) {
+				// Show store heartbeat alert
+				$('#store-not-live-alert').modal('show');
+			} else if (response.error) {
 				// Show error from server on payment form
 				let message = response.error;
 				if( typeof(response.error) == 'object' ) {
@@ -736,7 +739,10 @@
 		
 		// Handle response when pay with 'saved card' 
 		function handleServerResponseSavedCard(response) {
-			if (response.error) {
+			if (response.errorHeartbeat) {
+				// Show store heartbeat alert
+				$('#store-not-live-alert').modal('show');
+			} else if (response.error) {
 				// Show error from server on payment form
 				let message = response.error;
 				if( typeof(response.error) == 'object' ) {

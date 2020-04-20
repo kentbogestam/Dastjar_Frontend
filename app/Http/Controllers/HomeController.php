@@ -119,7 +119,7 @@ class HomeController extends Controller
 
     public function userLatLong(Request $request){ 
         $request->session()->forget('order_date');
-
+        $StoreOpenCloseTimeText = __('messages.StoreOpenCloseTimeText');
         $helper = new Helper();
 
         if(Auth::check()){
@@ -146,45 +146,6 @@ class HomeController extends Controller
                     ]);
                 }
             }
-
-            /*if($request->session()->get('updateThreeHundrMeterAfterLogin') == null && $request->session()->get('updateLocationBySettingAfterLogin') == null){
-                                   
-
-                if(empty($data['lat'])){
-                    if(Session::get('with_login_address') != null){
-                        $data['lat'] = $request->session()->get('with_login_lat');
-                        $data['lng'] = $request->session()->get('with_login_lng');
-                    }else if(Session::get('with_out_login_lat') != null){
-                        $data['lat'] = $request->session()->get('with_out_login_lat');
-                        $data['lng'] = $request->session()->get('with_out_login_lng');
-                    }
-                }
-
-                    $request->session()->put('with_login_lat', $data['lat']);
-                    $request->session()->put('with_login_lng', $data['lng']);
-
-                    $lat =  $data['lat'];
-                    $lng =  $data['lng'];   
-            }else if($request->session()->get('updateThreeHundrMeterAfterLogin') == 1 && $request->session()->get('updateLocationBySettingAfterLogin') == null){
-                $lat = $request->session()->get('with_login_lat');
-                $lng = $request->session()->get('with_login_lng');
-                $request->session()->put('with_login_lat', $request->session()->get('with_login_lat'));
-            }else if($request->session()->get('updateThreeHundrMeterAfterLogin') == null && $request->session()->get('updateLocationBySettingAfterLogin') == 1){
-
-                    if(Session::get('with_login_address') != null){
-                        $lat = $request->session()->get('with_login_lat');
-                        $lng = $request->session()->get('with_login_lng');
-                    }else{
-                        $lat = $request->session()->get('with_out_login_lat');
-                        $lng = $request->session()->get('with_out_login_lng');
-                    }
-
-                $request->session()->put('with_login_lat', $request->session()->get('with_login_lat'));
-            }else{
-                $lat = $request->session()->get('with_login_lat');
-                $lng = $request->session()->get('with_login_lng');
-                $request->session()->put('with_login_lat', $request->session()->get('with_login_lat')); 
-            }*/
 
             // Get and update lat/lng
             if( empty($data['lat']) || empty($data['lng']) )
@@ -223,20 +184,7 @@ class HomeController extends Controller
                   $helper->logs("getListRestaurants " . $ex->getMessage());
             }
 
-            // Get customer discount from cookie
-            $customerDiscount = isset($_COOKIE['discount']) ? $_COOKIE['discount'] : '';
-
-            /*// Check if restaurant found and send translated message
-            $restaurantStatusMsg = '';
-            if( $companydetails == '' || !count($companydetails) )
-            {
-                $restaurantStatusMsg = __('messages.noRestaurantFound');
-            }*/
-
-            // Store not found string
-            $restaurantStatusMsg = __('messages.noRestaurantFound');
-
-            return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg, 'customerDiscount' => $customerDiscount]);
+            // dd($companydetails);
         } else{
             if($request->session()->get('sessionBrowserLanguageValue') == null){
                 if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
@@ -256,16 +204,6 @@ class HomeController extends Controller
 
             if(!empty($request->input())){
                 $data = $request->input();
-
-                /*if($request->session()->get('setLocationBySettingValue') == null){
-                    $request->session()->put('with_out_login_lat', $data['lat']);
-                    $request->session()->put('with_out_login_lng', $data['lng']);
-                    $lat =  $data['lat'];
-                    $lng =  $data['lng'];
-                }else{
-                    $lat = $request->session()->get('with_out_login_lat');
-                    $lng = $request->session()->get('with_out_login_lng');
-                }*/
 
                 // Get and update lat/lng
                 if( empty($data['lat']) || empty($data['lng']) )
@@ -297,29 +235,27 @@ class HomeController extends Controller
                     $rang = '10';
                     $request->session()->put('rang', $rang);
                 }
+
                 $companydetails = Store::getListRestaurants($lat,$lng,$rang,'1','3',$todayDate,$currentTime,$todayDay);
             }
-
-            /*// Check if restaurant found and send translated message
-            $restaurantStatusMsg = '';
-            if( $companydetails == '' || !count($companydetails) )
-            {
-                $restaurantStatusMsg = __('messages.noRestaurantFound');
-            }*/
-
-            // Store not found string
-            $restaurantStatusMsg = __('messages.noRestaurantFound');
-
-            return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg]);
         }
-    }
 
+        // Get customer discount from cookie
+        $customerDiscount = isset($_COOKIE['discount']) ? $_COOKIE['discount'] : '';
+
+        // Store not found string
+        $restaurantStatusMsg = __('messages.noRestaurantFound');
+        $storeNotLive = __('messages.storeNotLive');
+
+        return response()->json(['status' => 'success', 'response' => true, 'data' => $companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg, 'customerDiscount' => $customerDiscount,'StoreOpenCloseTimeText' => $StoreOpenCloseTimeText, 'storeNotLive' => $storeNotLive]);
+    }
 
     public function index(Request $request)
     {
         // Artisan::call('view:clear');
         // dd(Session::all());
        session()->forget('people_serve');
+       session()->forget('orderOption');
        if($request->session()->get('type_selection') == null){ //code added by saurabh to render the view for the selection of eat later nd eat now
          // return view('includes.popupSelection', compact(''));
          return view('v1.user.pages.home');
@@ -384,7 +320,7 @@ class HomeController extends Controller
     }
 
     public function eatLaterData(Request $request){
-
+        $StoreOpenCloseTimeText = __('messages.StoreOpenCloseTimeText');
         if($request->session()->has('order_date')){
             $pieces = explode(" ", $request->session()->get('order_date'));
             $month = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -459,8 +395,9 @@ class HomeController extends Controller
 
         // Store not found string
         $restaurantStatusMsg = __('messages.noRestaurantFound');
+        $storeNotLive = __('messages.storeNotLive');
         
-        return response()->json(['status' => 'success', 'response' => true,'data'=>$companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg, 'customerDiscount' => $customerDiscount]);
+        return response()->json(['status' => 'success', 'response' => true, 'data' => $companydetails, 'restaurantStatusMsg' => $restaurantStatusMsg, 'customerDiscount' => $customerDiscount,'StoreOpenCloseTimeText' => $StoreOpenCloseTimeText, 'storeNotLive' => $storeNotLive]);
     }
 
     public function eatLater(Request $request){
@@ -475,6 +412,8 @@ class HomeController extends Controller
         if(!empty($request->input()))
         {
             $data = $request->input();
+
+            //$request->session()->put('orderOption', $data['orderOption']);
             $request->session()->put('people_serve', $data['people_serve']);
             $request->session()->put('order_date', $data['dateorder']);
         }
@@ -820,6 +759,7 @@ class HomeController extends Controller
 
     public function selectOrderDate()
     {
+        session()->put('orderOption','eatlater');
         // return view('select-datetime', compact('')); 
         return view('v1.user.pages.select-datetime');
     }

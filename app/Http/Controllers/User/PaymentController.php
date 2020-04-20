@@ -15,6 +15,8 @@ use App\OrderDetail;
 use App\CompanySubscriptionDetail;
 use App\Payment;
 
+use App\Helper;
+
 use Stripe\Stripe;
 
 class PaymentController extends Controller
@@ -28,148 +30,161 @@ class PaymentController extends Controller
     {
     	$response = array();
 
-    	// Get connect a/c detail
-        if( $request->session()->has('stripeAccount') )
-        {
-        	$stripeAccount = $request->session()->get('stripeAccount');
-        }
-        else
-        {
-	        $storeId = Session::get('storeId');
-	        $companySubscriptionDetail = CompanySubscriptionDetail::from('company_subscription_detail AS CSD')
-	            ->select('CSD.stripe_user_id')
-	            ->join('company AS C', 'C.company_id', '=', 'CSD.company_id')
-	            ->join('store AS S', 'S.u_id', '=', 'C.u_id')
-	            ->where('S.store_id', $storeId)->first();
-        	
-        	$stripeAccount = $companySubscriptionDetail->stripe_user_id;
-        }
+    	// Check if store is open for 'eat-now'
+    	$orderId = $request->session()->get('OrderId');
+    	$order = Order::select(['order_type'])->where(['order_id' => $orderId])->first();
 
-    	if( !is_null($stripeAccount) && !empty($stripeAccount) )
-    	{	
-    		// Session data
-    		$orderId = $request->session()->get('OrderId');
-    		$amount = $request->session()->get('paymentAmount') * 100;
+    	$heartbeat = Helper::isStoreLive(Session::get('storeId'));
 
-    		// 
-    		$user = User::select(['email', 'name', 'stripe_customer_id'])
-				->where('id', Auth::user()->id)
-				->first();
+    	if( (!is_null($heartbeat) && $heartbeat < 1) || $order->order_type == 'eat_later' )
+    	{
+	    	// Get connect a/c detail
+	        if( $request->session()->has('stripeAccount') )
+	        {
+	        	$stripeAccount = $request->session()->get('stripeAccount');
+	        }
+	        else
+	        {
+		        $storeId = Session::get('storeId');
+		        $companySubscriptionDetail = CompanySubscriptionDetail::from('company_subscription_detail AS CSD')
+		            ->select('CSD.stripe_user_id')
+		            ->join('company AS C', 'C.company_id', '=', 'CSD.company_id')
+		            ->join('store AS S', 'S.u_id', '=', 'C.u_id')
+		            ->where('S.store_id', $storeId)->first();
+	        	
+	        	$stripeAccount = $companySubscriptionDetail->stripe_user_id;
+	        }
 
-    		// Initilize Stripe
-	    	\Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+	    	if( !is_null($stripeAccount) && !empty($stripeAccount) )
+	    	{	
+	    		// Session data
+	    		$orderId = $request->session()->get('OrderId');
+	    		$amount = $request->session()->get('paymentAmount') * 100;
 
-	    	// Stripe make payment using 'Payment Instent API'
-	    	$intent = null;
-			try {
-				if ($request->has('payment_method_id')) {
-		    		// Get order detail to prepare description
-		    		$orderDetails = OrderDetail::select('order_details.order_id', 'order_details.product_quality', 'product.product_name')
-		    			->join('product', 'order_details.product_id', '=', 'product.product_id')
-		    			->where('order_details.order_id', $orderId)
-		    			->get();
-		    		
-		    		$description = "Order ID: {$orderId}; ";
-					foreach($orderDetails as $value)
-					{
-						$description .= $value->product_quality . " " . $value->product_name . ", ";
-					}
+	    		// 
+	    		$user = User::select(['email', 'name', 'stripe_customer_id'])
+					->where('id', Auth::user()->id)
+					->first();
 
-					$vat_total = (12*$amount)/10000;
-					$description .= "Vat 12%, Vat Total ".$vat_total."kr";
+	    		// Initilize Stripe
+		    	\Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
 
-					// Step 1: Storing customers
-					if( is_null($user->stripe_customer_id) || $user->stripe_customer_id == '' )
-					{
-						$arrCustomer['name'] = $user->name;
-						$arrCustomer['email'] = $user->email;
-
-						// Attach payment
-						if($request->has('isSaveCard') && $request->input('isSaveCard'))
+		    	// Stripe make payment using 'Payment Instent API'
+		    	$intent = null;
+				try {
+					if ($request->has('payment_method_id')) {
+			    		// Get order detail to prepare description
+			    		$orderDetails = OrderDetail::select('order_details.order_id', 'order_details.product_quality', 'product.product_name')
+			    			->join('product', 'order_details.product_id', '=', 'product.product_id')
+			    			->where('order_details.order_id', $orderId)
+			    			->get();
+			    		
+			    		$description = "Order ID: {$orderId}; ";
+						foreach($orderDetails as $value)
 						{
-							$arrCustomer['payment_method'] = $request->input('payment_method_id');
+							$description .= $value->product_quality . " " . $value->product_name . ", ";
 						}
 
-						$customer = \Stripe\Customer::create($arrCustomer);
+						$vat_total = (12*$amount)/10000;
+						$description .= "Vat 12%, Vat Total ".$vat_total."kr";
 
-						// Update 'stripe_customer_id' for user
-		                $customerId = $customer->id;
-		                User::where('id', Auth::user()->id)->update(['stripe_customer_id' => $customerId]);
+						// Step 1: Storing customers
+						if( is_null($user->stripe_customer_id) || $user->stripe_customer_id == '' )
+						{
+							$arrCustomer['name'] = $user->name;
+							$arrCustomer['email'] = $user->email;
+
+							// Attach payment
+							if($request->has('isSaveCard') && $request->input('isSaveCard'))
+							{
+								$arrCustomer['payment_method'] = $request->input('payment_method_id');
+							}
+
+							$customer = \Stripe\Customer::create($arrCustomer);
+
+							// Update 'stripe_customer_id' for user
+			                $customerId = $customer->id;
+			                User::where('id', Auth::user()->id)->update(['stripe_customer_id' => $customerId]);
+						}
+						else
+						{
+							$customerId = $user->stripe_customer_id;
+
+							// Attach payment
+							if($request->has('isSaveCard') && $request->input('isSaveCard'))
+							{
+								$payment_method = \Stripe\PaymentMethod::retrieve($request->input('payment_method_id'));
+								$payment_method->attach(['customer' => $customerId]);
+							}
+						}
+
+						// Step 2: Shared PaymentMethods for connected account
+						$payment_method = \Stripe\PaymentMethod::create([
+							'customer' => $customerId,
+							'payment_method' => $request->input('payment_method_id'),
+						], ['stripe_account' => $stripeAccount]);
+
+						// Step 3: Creating charges
+						$arrPaymentIntent = array(
+							'payment_method' => $payment_method->id,
+							'amount' => $amount,
+							'currency' => 'sek',
+							'description' => $description,
+							'receipt_email' => $user->email,
+							'confirmation_method' => 'manual',
+							'confirm' => true,
+						);
+
+						if(!$request->has('chargingSavedCard'))
+						{
+							$arrPaymentIntent['setup_future_usage'] = 'off_session';
+						}
+
+						$intent = \Stripe\PaymentIntent::create($arrPaymentIntent, ['stripe_account' => $stripeAccount]);
+					}
+					if ($request->has('payment_intent_id')) {
+						$intent = \Stripe\PaymentIntent::retrieve($request->input('payment_intent_id'), ['stripe_account' => $stripeAccount]);
+						$intent->confirm();
+					}
+					$response = $this->generatePaymentResponse($intent);
+
+					// If 'requires_action' is 'true', send 'stripeAccount' for further authentication
+					if( isset($response['requires_action']) && $response['requires_action'] )
+					{
+						$response['stripeAccount'] = $stripeAccount;
 					}
 					else
 					{
-						$customerId = $user->stripe_customer_id;
-
-						// Attach payment
-						if($request->has('isSaveCard') && $request->input('isSaveCard'))
+						// If payment succeeded, save transaction in DB
+						if( isset($response['success']) && $response['success'] )
 						{
-							$payment_method = \Stripe\PaymentMethod::retrieve($request->input('payment_method_id'));
-							$payment_method->attach(['customer' => $customerId]);
+							DB::transaction(function () use($orderId, $request, $intent) {
+								// Update order as paid
+								DB::table('orders')->where('order_id', $orderId)->update(['online_paid' => 1]);
+
+								// Save recent payment detail in DB
+								$balanceTransaction = isset($intent->charges->data[0]->balance_transaction) ? $intent->charges->data[0]->balance_transaction : null;
+								
+								$paymentSave =  new Payment();
+					        	$paymentSave->user_id = Auth()->id();
+					        	$paymentSave->order_id = $orderId;
+					        	$paymentSave->transaction_id = $intent->id;
+					        	$paymentSave->amount = $intent->amount;
+					        	$paymentSave->balance_transaction = $balanceTransaction;
+					        	$paymentSave->save();
+							});
 						}
 					}
-
-					// Step 2: Shared PaymentMethods for connected account
-					$payment_method = \Stripe\PaymentMethod::create([
-						'customer' => $customerId,
-						'payment_method' => $request->input('payment_method_id'),
-					], ['stripe_account' => $stripeAccount]);
-
-					// Step 3: Creating charges
-					$arrPaymentIntent = array(
-						'payment_method' => $payment_method->id,
-						'amount' => $amount,
-						'currency' => 'sek',
-						'description' => $description,
-						'receipt_email' => $user->email,
-						'confirmation_method' => 'manual',
-						'confirm' => true,
-					);
-
-					if(!$request->has('chargingSavedCard'))
-					{
-						$arrPaymentIntent['setup_future_usage'] = 'off_session';
-					}
-
-					$intent = \Stripe\PaymentIntent::create($arrPaymentIntent, ['stripe_account' => $stripeAccount]);
+				} catch (\Stripe\Error\Base $e) {
+					# Display error on client
+					$response = array('error' => $e->getMessage());
 				}
-				if ($request->has('payment_intent_id')) {
-					$intent = \Stripe\PaymentIntent::retrieve($request->input('payment_intent_id'), ['stripe_account' => $stripeAccount]);
-					$intent->confirm();
-				}
-				$response = $this->generatePaymentResponse($intent);
-
-				// If 'requires_action' is 'true', send 'stripeAccount' for further authentication
-				if( isset($response['requires_action']) && $response['requires_action'] )
-				{
-					$response['stripeAccount'] = $stripeAccount;
-				}
-				else
-				{
-					// If payment succeeded, save transaction in DB
-					if( isset($response['success']) && $response['success'] )
-					{
-						DB::transaction(function () use($orderId, $request, $intent) {
-							// Update order as paid
-							DB::table('orders')->where('order_id', $orderId)->update(['online_paid' => 1]);
-
-							// Save recent payment detail in DB
-							$balanceTransaction = isset($intent->charges->data[0]->balance_transaction) ? $intent->charges->data[0]->balance_transaction : null;
-							
-							$paymentSave =  new Payment();
-				        	$paymentSave->user_id = Auth()->id();
-				        	$paymentSave->order_id = $orderId;
-				        	$paymentSave->transaction_id = $intent->id;
-				        	$paymentSave->amount = $intent->amount;
-				        	$paymentSave->balance_transaction = $balanceTransaction;
-				        	$paymentSave->save();
-						});
-					}
-				}
-			} catch (\Stripe\Error\Base $e) {
-				# Display error on client
-				$response = array('error' => $e->getMessage());
-			}
-    	}
+	    	}
+	    }
+	    else
+	    {
+	    	$response = array('errorHeartbeat' => true, 'heartbeat' => $heartbeat);
+	    }
 
 		return response()->json($response);
     }

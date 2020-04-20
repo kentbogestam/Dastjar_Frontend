@@ -159,7 +159,7 @@ $requestPath = Request::path();
 		@if(Request::is('iframe/restro-menu-list/*') || Request::is('iframe/eat-later-datetime/*'))
 			<div class="logo-with-map">
 				<a class="logo" href="javascript:void(0);">
-					<h1>{{ $storedetails->store_name }}</h1>
+					<!-- <h1>{{ $storedetails->store_name }}</h1> -->
 					@auth
 						<span>{{ Auth::user()->name}}</span>
 					@endauth

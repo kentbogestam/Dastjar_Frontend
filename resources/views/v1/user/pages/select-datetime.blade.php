@@ -63,8 +63,8 @@
 				<input type="hidden" name="date16" id="date16" value="" onchange="setDateTime()"/>
 				<div class="row d-flex justify-content-center">
 					<div class="col-md-6 text-right">
-						<p><b>Please enter the number of people to be served</b></p>
-						<p>Obs, You can change this later</p>
+						<p><b>{{ __('messages.NumberofPeopleServed') }}</b></p>
+						<p>{{ __('messages.CalendarNote') }}</p>
 					</div>
 					<div class="col-md-6">
 						<input type="text" name="people_serve" id="people_serve">

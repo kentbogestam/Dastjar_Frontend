@@ -247,13 +247,14 @@ img {
 .row-hotel .title-with-des {
 	display: inline-block;
 	vertical-align: middle;
+	margin-left: 12px;
 }
 
 .row-hotel .hotel-icon p {
 	font-weight: 300;
 	font-size: 16px;
 	font-weight: 600;
-	margin-left: 12px;
+	/*margin-left: 12px;*/
 	display: inline-block;
 	vertical-align: middle;
 }
@@ -263,6 +264,10 @@ img {
 	font-weight: normal;
 	color: #999;
 	display: block;
+}
+
+.row-hotel.store-closed p, .row-hotel.store-closed .hotel-icon p.info-hotel, .row-hotel.store-closed .hotel-distance {
+	color: #b9b9b9;
 }
 
 .row-hotel .hotel-icon img {
@@ -275,6 +280,14 @@ img {
 	border: 2px solid #ddd;
 	object-fit: cover;
 	-webkit-object-fit: cover;
+}
+
+.row-hotel.store-closed .hotel-icon img {
+	opacity: 0.5;
+}
+
+.row-hotel.store-closed:not(.not-live) .label-default {
+	background-color: #FF0000 !important;
 }
 
 .footer-section {

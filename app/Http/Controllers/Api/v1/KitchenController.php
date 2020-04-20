@@ -20,6 +20,7 @@ use App\ProductOfferSloganLangList;
 use App\ProductOfferSubSloganLangList;
 use App\LangText;
 use App\StoreVirtualMapping;
+use App\Helper;
 
 class KitchenController extends Controller
 {
@@ -33,6 +34,10 @@ class KitchenController extends Controller
     }
 
    public function orderDetail($reCompanyId){
+        // Update store's 'islive'
+        Helper::updateStoreIslive($reCompanyId);
+
+        // 
         $deliveryDate = Carbon::now()->subDays(1)->toDateString();
         $deliveryDateTill = Carbon::now()->toDateString();
         $stores[] = $reCompanyId;

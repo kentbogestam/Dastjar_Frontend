@@ -29,79 +29,126 @@ function add(urlEatLater,urlMenulist,noImageUrl,sessionTime){
 				var customerDiscount = (returnedData['customerDiscount']) ? returnedData['customerDiscount'] : {};
 				var discountIndex;
 				var isFindDiscount;
-				let storeClass;
+				// let storeClass;
 				let storeImage;
-
+				let isStoreOpen;
 				list = temp;
-				var liItem = "";
-				if(temp.length != 0){
-					if(temp.length < count){
+				var liItem = liItem1 = liItem2 = htmlStoreRow = ancClose = ancOpen = storeClass = "";
+				
+				if(temp.length != 0)
+				{
+					if(temp.length < count)
+					{
 						count = temp.length;
 					}
 
-					for (var i=0;i<count;i++){
-						storeClass = storeImage = '';
-						if(checkTime(temp[i]["store_open_close_day_time_catering"],sessionTime)){
-							// Check if discount is applying on restaurant
-							isFindDiscount = false;
-							if(Object.keys(customerDiscount).length)
+					for (var i=0;i<count;i++)
+					{
+						storestoreClass = storeImage = subStr = ancClose = ancOpen = "";
+						isStoreOpen = true;
+						
+						// Check if discount is applying on restaurant
+						isFindDiscount = false;
+						if(Object.keys(customerDiscount).length)
+						{
+							// Search and get discount index
+							discountIndex = searchIndexFromMultiDimArray('store_id', temp[i]['store_id'], customerDiscount);
+							if(discountIndex != 'false')
 							{
-								// Search and get discount index
-								discountIndex = searchIndexFromMultiDimArray('store_id', temp[i]['store_id'], customerDiscount);
-
-								if(discountIndex != 'false')
-								{
-									isFindDiscount = true;
-								}
+								isFindDiscount = true;
 							}
+						}
 
-							// Code added to display tagline of restaurant	
+						if(checkTime(temp[i]["store_open_close_day_time_catering"],sessionTime))
+						{
+							ancClose = '<a href="'+url+'/'+temp[i]['store_id']+'">';
+							ancOpen = '</a>';
+							
+							// Code added to display tagline of restaurant
 							subStr = '';
 							if(temp[i]["tagline"]){
 								subStr = '<p class="info-hotel">'+temp[i]["tagline"]+'</p>';
 							}
 							// End of code added to dispaly tagline of restaurant
-							
-							// If found discount
-							if(isFindDiscount)
-							{
-								storeClass = ' li-has-discount';
-
-								if( customerDiscount[discountIndex] )
-								{
-									customerDiscountParsed = JSON.parse(customerDiscount[discountIndex]);
-									subStr += '<p class="text-success"><span>'+customerDiscountParsed.discount_value+'% OFF</span></p>';
-								}
-							}
-
-							// Check if image URL is not null and valid
-							if( temp[i]['store_large_image'] && (temp[i]['store_large_image'].indexOf('.jpg') != -1 || temp[i]['store_large_image'].indexOf('.jpeg') != -1 || temp[i]['store_large_image'].indexOf('.png') != -1) )
-							{
-								storeImage = '<img src="'+temp[i]['store_large_image']+'" alt="" width="120">';
-							}
-
-							liItem += '<div class="row-hotel'+storeClass+'">'+
-								'<a href="'+url+'/'+temp[i]['store_id']+'">'+
-									'<div class="col-sm-8 col-xs-8">'+
-										'<div class="hotel-icon">'+
-											'<div class="hotel-icon-none">'+storeImage+'</div>'+
-											'<div class="title-with-des">'+
-												'<p>'+temp[i]["store_name"]+'</p>'+subStr+
-											'</div>'+
-										'</div>'+
-									'</div>'+
-									'<div class="col-sm-4 col-xs-4">'+
-										'<div class="hotel-distance">'+
-											temp[i]["distance"].toFixed(1)+' KM. <i class="fa fa-angle-right"></i>'+
-										'</div>'+
-									'</div>'+
-								'</a>'+
-								'<div class="clearfix"></div>'+
-							'</div>';
-
-							totalCount= i;
 						}
+						else
+						{
+							isStoreOpen = false;
+							storeClass = ' store-closed';
+
+							// Code added to display tagline of restaurant	
+							if(temp[i]["tagline"]){
+								subStr = '<p class="info-hotel">'+temp[i]["tagline"]+'</p>';
+							}
+							// End of code added to dispaly tagline of restaurant
+
+							if(!subStr.length)
+							{
+								subStr += '<br>'
+							}
+
+							// Code added to display open close time of restaurant
+							time=temp[i]["store_open_close_day_time_catering"];
+							open_close_time=time.split(' :: ')[1].split(' to ');
+							open_time=open_close_time[0].split(':');
+							close_time=open_close_time[1].split(':');	
+							subStr += '<span class="label label-default">'+returnedData['StoreOpenCloseTimeText']+ ' '+open_time[0]+':'+open_time[1]+'-'+close_time[0]+':'+close_time[1]+'</span>';
+							// Code added to display open close time of restaurant
+						}
+						
+						// If found discount
+						if(isFindDiscount)
+						{
+							storeClass = ' li-has-discount';
+
+							if( customerDiscount[discountIndex] )
+							{
+								customerDiscountParsed = JSON.parse(customerDiscount[discountIndex]);
+								subStr += '<p class="text-success"><span>'+customerDiscountParsed.discount_value+'% OFF</span></p>';
+							}
+						}
+
+						// Check if image URL is not null and valid
+						if( temp[i]['store_large_image'] && (temp[i]['store_large_image'].indexOf('.jpg') != -1 || temp[i]['store_large_image'].indexOf('.jpeg') != -1 || temp[i]['store_large_image'].indexOf('.png') != -1) )
+						{
+							storeImage = '<img src="'+temp[i]['store_large_image']+'" alt="" width="120">';
+						}
+
+						htmlStoreRow = '<div class="row-hotel'+storeClass+'">'+
+							ancClose+
+								'<div class="col-sm-8 col-xs-8">'+
+									'<div class="hotel-icon">'+
+										'<div class="hotel-icon-none">'+storeImage+'</div>'+
+										'<div class="title-with-des">'+
+											'<p>'+temp[i]["store_name"]+'</p>'+subStr+
+										'</div>'+
+									'</div>'+
+								'</div>'+
+								'<div class="col-sm-4 col-xs-4">'+
+									'<div class="hotel-distance">'+
+										temp[i]["distance"].toFixed(1)+' KM. <i class="fa fa-angle-right"></i>'+
+									'</div>'+
+								'</div>'+
+							ancOpen+
+							'<div class="clearfix"></div>'+
+						'</div>';
+						
+						if(isStoreOpen == true)
+						{
+							liItem += htmlStoreRow;
+						}
+						else if(isStoreOpen=='nolive')
+						{
+							liItem2 += htmlStoreRow;
+						}
+						else
+						{
+							liItem1 += htmlStoreRow;
+						}
+						totalCount= i;
 					}
+
+					liItem = liItem + liItem2 + liItem1;
 				}else{
 					liItem += "<div class='col-sm-8 col-xs-8'><p>"+returnedData['restaurantStatusMsg']+"</p></div>";
 				}

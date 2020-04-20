@@ -19,7 +19,7 @@ class MapController extends Controller
 
         if(Auth::check())
         {
-            if(Session::get('with_login_address') != null)
+            if( (Session::get('with_login_address') != null) || Session::has('with_login_lat') )
             {
                 $loc_lat = Session::get('with_login_lat');
                 $loc_lng = Session::get('with_login_lng');
