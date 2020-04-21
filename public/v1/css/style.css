@@ -286,6 +286,10 @@ img {
 	opacity: 0.5;
 }
 
+.row-hotel.store-closed.not-live .label-default {
+	background-color: #ff9900 !important;
+}
+
 .row-hotel.store-closed:not(.not-live) .label-default {
 	background-color: #FF0000 !important;
 }
