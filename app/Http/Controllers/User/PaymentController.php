@@ -69,7 +69,10 @@ class PaymentController extends Controller
 	    		if($applicationFee)
 	    		{
 	    			$stripe_fee = (($request->session()->get('paymentAmount') * $applicationFee->stripe_fee_percent)/100) + $applicationFee->stripe_fee_fixed;
+	    			$stripe_fee = number_format((float)$stripe_fee, 2, '.', '');
+
 	    			$application_fee = ($request->session()->get('paymentAmount') * $applicationFee->application_fee)/100;
+	    			$application_fee = number_format((float)$application_fee, 2, '.', '');
 	    			$application_fee = ($application_fee - $stripe_fee) * 100;
 	    		}
 
