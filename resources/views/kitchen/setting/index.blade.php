@@ -366,7 +366,7 @@ textarea.ui-input-text{
 		});
 
 		$('#about_us').click(function(){
-			window.open("https://dastjar.com/?page_id=71");
+			window.open("https://dastjar.com/");
 		});
 
 		/*$('#admin').click(function(){

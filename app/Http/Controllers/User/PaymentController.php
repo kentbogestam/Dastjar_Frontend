@@ -14,6 +14,7 @@ use App\Order;
 use App\OrderDetail;
 use App\CompanySubscriptionDetail;
 use App\Payment;
+use App\ApplicationFee;
 
 use App\Helper;
 
@@ -60,6 +61,20 @@ class PaymentController extends Controller
 	    		// Session data
 	    		$orderId = $request->session()->get('OrderId');
 	    		$amount = $request->session()->get('paymentAmount') * 100;
+
+	    		// Get applicationFee
+	    		$application_fee = 0;
+	    		$applicationFee = ApplicationFee::where(['id' => 1])->first();
+
+	    		if($applicationFee)
+	    		{
+	    			$stripe_fee = (($request->session()->get('paymentAmount') * $applicationFee->stripe_fee_percent)/100) + $applicationFee->stripe_fee_fixed;
+	    			$stripe_fee = number_format((float)$stripe_fee, 2, '.', '');
+
+	    			$application_fee = ($request->session()->get('paymentAmount') * $applicationFee->application_fee)/100;
+	    			$application_fee = number_format((float)$application_fee, 2, '.', '');
+	    			$application_fee = ($application_fee - $stripe_fee) * 100;
+	    		}
 
 	    		// 
 	    		$user = User::select(['email', 'name', 'stripe_customer_id'])
@@ -134,6 +149,12 @@ class PaymentController extends Controller
 							'confirmation_method' => 'manual',
 							'confirm' => true,
 						);
+
+						// If application fee exist
+						if($application_fee)
+						{
+							$arrPaymentIntent['application_fee_amount'] = $application_fee;
+						}
 
 						if(!$request->has('chargingSavedCard'))
 						{
