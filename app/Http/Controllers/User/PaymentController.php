@@ -151,7 +151,7 @@ class PaymentController extends Controller
 						);
 
 						// If application fee exist
-						if($application_fee)
+						if($application_fee >= 1)
 						{
 							$arrPaymentIntent['application_fee_amount'] = $application_fee;
 						}
