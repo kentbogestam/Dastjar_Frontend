@@ -59,7 +59,7 @@
 	@yield('head-scripts')
 </head>
 <body>
-	<div id="main-wrapper">
+	<div id="main-wrapper" class="{{ Session::has('iFrameMenu') ? 'homes' : '' }}">
 		@section('header')
             @includeIf('v1.user.elements.header')
         @show
