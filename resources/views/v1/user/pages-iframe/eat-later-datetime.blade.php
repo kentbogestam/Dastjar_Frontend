@@ -44,6 +44,7 @@
 			{{ csrf_field() }}
 			<div class="container-fluid">
 				<div class="row">
+					<h4 class="font-weight-bold text-center" style="margin-top: 10px;"><b>{{ __('messages.CalendarText') }}</b></h4>
 					<div class="col-md-12 show-date-time">
 				        <span id="date-value1-2" class="date_show_section" value = ""></span>
 				        <input type="hidden" id="date-value1-23" name="dateorder" value="" />
@@ -64,6 +65,17 @@
 			</div>
 	 	 	<div class="dateandtime" id="dateandtime">
 				<input type="hidden" name="date16" id="date16" value="" onchange="setDateTime()"/>
+			</div>
+			<div class="container">
+				<div class="form-group">
+					<div class="row">
+						<div class="col-sm-6 col-sm-offset-3">
+							<label for="people_serve"><b>{{ __('messages.NumberofPeopleServed') }}</b>:</label>
+							<input type="text" name="people_serve" class="form-control" id="people_serve">
+							<small class="text-muted">{{ __('messages.CalendarNote') }}</small>
+						</div>
+					</div>
+				</div>
 			</div>
 			<div class="form-group text-center">
 				<button class="btn btn-danger" type="button" id="ss" onclick="checkDate()">{{ __('messages.continue') }}</button>

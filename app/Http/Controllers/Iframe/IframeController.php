@@ -57,6 +57,12 @@ class IframeController extends Controller
         $data = $request->input();
         $request->session()->put('order_date', $data['dateorder']);
 
+        Session::forget('people_serve');
+        if($data['people_serve'])
+        {
+            $request->session()->put('people_serve', $data['people_serve']);
+        }
+
         return redirect('iframe/restro-menu-list/'.$data['store_id']);
     }
 
