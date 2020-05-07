@@ -34,8 +34,6 @@ class PushNotifactionController extends Controller
                             'ready_notifaction' => 1,
                         ]);
     	return redirect()->action('AdminController@index')->with('success', 'Order Ready Notification Send Successfully.');
-		//dd($jsonResponse);
-        //return view('order.alert-ready',compact('orderID'));
     }
 
     public function readyNotifaction(Request $request, $orderID){
@@ -63,79 +61,80 @@ class PushNotifactionController extends Controller
     }
 
     public function orderDeliver(Request $request, $orderID){
-        /*$helper = new Helper();
-        try {
-        $helper->logs("Step 1: order id = " . $orderID);       
-
-    	$message = 'orderDeliver';
-
+        
         $OrderId = Order::where('customer_order_id' , $orderID)->first();
+        if($OrderId->delivery_type == '3'){
+            $helper = new Helper();
+            try {
+            $helper->logs("Step 1: order id = " . $OrderId->order_id);       
 
-        if($OrderId->user_id != 0){
-            $recipients = [];
-        if($OrderId->user_type == 'customer'){
-            $adminDetail = User::where('id' , $OrderId->user_id)->first();
+            $message = 'orderDeliver';
+            
+            if($OrderId->user_id != 0){
+                $recipients = [];
+                if($OrderId->user_type == 'customer'){
+                    $adminDetail = User::where('id' , $OrderId->user_id)->first();
 
-            //$afterRemoveFirstZeroNumber = substr($adminDetail->phone_number, -9);
-            if(isset($adminDetail->phone_number_prifix) && isset($adminDetail->phone_number)){
-                $recipients = ['+'.$adminDetail->phone_number_prifix.$adminDetail->phone_number];   
-            }
-        }else{
-            $adminDetail = Admin::where('id' , $OrderId->user_id)->first();
-            $recipients = ['+'.$adminDetail->mobile_phone];
-        }
+                    //$afterRemoveFirstZeroNumber = substr($adminDetail->phone_number, -9);
+                    if(isset($adminDetail->phone_number_prifix) && isset($adminDetail->phone_number)){
+                        $recipients = ['+'.$adminDetail->phone_number_prifix.$adminDetail->phone_number];   
+                    }
+                }else{
+                    $adminDetail = Admin::where('id' , $OrderId->user_id)->first();
+                    $recipients = ['+'.$adminDetail->mobile_phone];
+                }
 
                 if(isset($adminDetail->browser)){
                     $pieces = explode(" ", $adminDetail->browser);
                 }else{
                     $pieces[0] = '';                              
                 }
-        
-           $helper->logs("Step 2: recipient calculation = " . $orderID . " And browser=" .$pieces[0]);  
 
-        if($pieces[0] == 'Safari'){
-            //dd($recipients);
-            $url = "https://gatewayapi.com/rest/mtsms";
-            $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
+                $helper->logs("Step 2: recipient calculation = " . $orderID . " And browser=" .$pieces[0]);  
 
-            $message = "Your order deliver please click on link \n".env('APP_URL').'deliver-notification/'.$orderID;
+                if($pieces[0] == 'Safari'){
+                    //dd($recipients);
+                    $url = "https://gatewayapi.com/rest/mtsms";
+                    $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
 
-            $json = [
-                'sender' => 'Dastjar',
-                'message' => ''.$message.'',
-                'recipients' => [],
-            ];
-            foreach ($recipients as $msisdn) {
-                $json['recipients'][] = ['msisdn' => $msisdn];}
+                    $message = "Your order deliver please click on link \n".env('APP_URL').'deliver-notification/'.$orderID;
 
-            $ch = curl_init();
-            curl_setopt($ch,CURLOPT_URL, $url);
-            curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
-            curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
-            curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
-            curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
-            $result = curl_exec($ch);
-            curl_close($ch);   
-            $helper->logs("Step 3: IOS notification sent = " . $orderID . " And Result=" .$result);
+                    $json = [
+                        'sender' => 'Dastjar',
+                        'message' => ''.$message.'',
+                        'recipients' => [],
+                    ];
+                    foreach ($recipients as $msisdn) {
+                        $json['recipients'][] = ['msisdn' => $msisdn];}
+
+                    $ch = curl_init();
+                    curl_setopt($ch,CURLOPT_URL, $url);
+                    curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+                    curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
+                    curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
+                    curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+                    $result = curl_exec($ch);
+                    curl_close($ch);   
+                    $helper->logs("Step 3: IOS notification sent = " . $orderID . " And Result=" .$result);
+                }else{
+                    $result = $this->sendNotifaction($orderID , $message);
+                    $helper->logs("Step 4: Android notification sent = " . $orderID . " And Result=" .$result);
+
+                }
+            }
+
+            DB::table('orders')->where('customer_order_id', $orderID)->update([ 'paid' => 1 ]);
+            
+            $helper->logs("Step 5: order table updated = " . $orderID . " And user id=" . $OrderId->user_id);       
+            return redirect()->action('AdminController@index');
+            } catch (Exception $e) {
+                $helper->logs("Step 6: Exception = " .$ex->getMessage());           
+            }
         }else{
-            $result = $this->sendNotifaction($orderID , $message);
-            $helper->logs("Step 4: Android notification sent = " . $orderID . " And Result=" .$result);
-
+            DB::table('orders')->where('customer_order_id', $orderID)->update([
+                'paid' => 1,
+            ]);
         }
-        }
-
-		DB::table('orders')->where('customer_order_id', $orderID)->update([
-                            'paid' => 1,
-                        ]);
-        $helper->logs("Step 5: order table updated = " . $orderID . " And user id=" . $OrderId->user_id);       
-        return redirect()->action('AdminController@index');
-        } catch (Exception $e) {
-            $helper->logs("Step 6: Exception = " .$ex->getMessage());            
-        }*/
-
-        DB::table('orders')->where('customer_order_id', $orderID)->update([
-            'paid' => 1,
-        ]);
         
         return redirect()->action('AdminController@index');
     }
@@ -144,19 +143,22 @@ class PushNotifactionController extends Controller
         if(Order::where('customer_order_id', $orderID)->exists()){
             $orderDetail = Order::where('customer_order_id', $orderID)->first();
 
-             if(!User::where('id', $orderDetail->user_id)->exists()){
+            if(!User::where('id', $orderDetail->user_id)->exists()){
                 return redirect('home');
             }
 
             $user = User::where('id', $orderDetail->user_id)->first();
             $companydetails = Store::where('store_id', $orderDetail->store_id)->first();
-    	   // return view('order.alert-deliver',compact('orderID','companydetails','user'));
            return view('v1.user.pages.order-delivered',compact('orderID','companydetails','user'));
         }else{
             return redirect('home');
         }
     }
-
+  
+    /**
+     * Send text message to recipients using API
+     * @return [type] [description]
+     */
     public function sendNotifaction($orderID, $message){
     	$order = Order::select('*')->where('customer_order_id',$orderID)->first();
     	if($order->user_type == 'customer'){
@@ -165,31 +167,26 @@ class PushNotifactionController extends Controller
     		$userDetail = Admin::whereId($order->user_id)->first();
     	}
 
-            if(!isset($userDetail->email)){
-                return "Notification Send Successfully";
-            }
-            $userName = $userDetail->email;
+        if(!isset($userDetail->email)){
+            return "Notification Send Successfully";
+        }
+        $userName = $userDetail->email;
 	
     	if($message == 'orderDeliver'){
-            $messageDelever = __('messages.notificationOrderDelivered', ['order_id' => $orderID]);
+            if($order->delivery_at_door == '0'){
+                $messageDelever = __('messages.notificationOrderDelivered', ['order_id' => $orderID]);
+            }else{
+                $messageDelever = __('messages.orderDeliveryAtDoor', ['order_id' => $orderID]);
+            }
     		$url = env('APP_URL').'deliver-notification/'.$orderID;
             $message = "{'alert': " ."'". $messageDelever."'" . ",'_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': " ."'". $messageDelever."'" . ",'type':'openUrl','content':" ."'". $url."'" . "}}";
-
-    		//$message = "{'alert':'Your Order Deliver.','badge':1,'sound':'default','Url':" ."'". $url."'" . "}";
     	}else{
     		$url = env('APP_URL').'ready-notification/'.$orderID;
             $message = "{'alert': 'Your Order Deliver.','_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': 'Your Order Deliver.','type':'openUrl','content':" ."'". $url."'" . "}}";
-    		//$message = "{'alert':'Your Order Ready.','badge':1,'sound':'default','Url':" ."'". $url."'" . "}";
     	}
-    	//dd(Config::get('app.php.varname'));
-    	//dd(env('APP_URL').'/ready-notification/'.$orderID);
-    	//dd($request->url());
     	App42API::initialize(env('APP42_API_KEY'),env('APP42_API_SECRET')); 
 		$pushNotificationService = App42API::buildPushNotificationService();
 		$pushNotification = $pushNotificationService->sendPushMessageToUser($userName,$message);
         return $pushNotification;
-		// if($pushNotification){
-		// $jsonResponse = $pushNotification->toString();
- 	//}
 	}
 }

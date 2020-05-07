@@ -375,4 +375,9 @@ return [
     'menuStyle' => 'Menu Style',
     'menuStyleList' => 'List',
     'menuStyleGrid' => 'Grid',
+    'pleaseWait' => 'Var god vänta',
+    'OrdersNotReady' => 'Den här ordern är inte färdig ännu',
+    'deliveryAtDoor' => 'Lämna vid dörren',
+    'orderDeliveryAtDoor' => 'Din beställning är nu levererad till din dörr! Tack för beställningen och Välkommen tillbaka!',
+    'deliverAtDoor' => '||Leverera till dörren||'
 ];

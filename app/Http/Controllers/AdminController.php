@@ -2433,6 +2433,7 @@ class AdminController extends Controller
                     $pieces[0] = '';               
                 }
 
+                // sending Notification
                 if( ($pieces[0] == 'Safari') || ( isset($adminDetail->browser) && strpos($adminDetail->browser, 'Mobile/') !== false ) || ( isset($adminDetail->browser) && strpos($adminDetail->browser, 'wv') !== false ) )
                 {
                     $message = __('messages.notificationOrderReady', ['order_id' => $OrderId->customer_order_id]);

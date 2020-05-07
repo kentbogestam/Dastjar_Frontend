@@ -1213,8 +1213,8 @@ class OrderController extends Controller
     function orderUpdateDeliveryType(Request $request)
     {
         $status = 0;
-
-        if( Order::where('order_id', $request->input('order_id'))->update(['delivery_type' => $request->input('delivery_type')]) )
+            
+        if( Order::where('order_id', $request->input('order_id'))->update([ 'delivery_type' => $request->input('delivery_type'), 'delivery_at_door' => $request->delivery_at_door]) )
         {
             $status = 1;
         }
