@@ -77,6 +77,16 @@
 		ajaxCall();
 	});
 
+    $('body').on('mouseover', '.image_clicked', function(){
+        $(this).css("padding","2px");
+    });
+    $('body').on('mouseout', '.image_clicked', function(){
+        $(this).css("padding","0px");
+    });
+    $('body').on('click', '.image_clicked', function(){
+        $(this).css("padding","0px");
+    });
+    
 	function getList(orderId){
 		var liItem = "";
 		$.get("{{url('api/v1/kitchen/orderSpecificOdrderDetail')}}/"+orderId,
@@ -198,7 +208,7 @@
 
 			          		liItem += "<td>"
 			          		liItem += aString
-			          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
+			          		liItem += "<img id='"+ids+"' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
 			          		liItem +="</a></td>";
 		          		}else{
 		          			liItem += "<td>"
@@ -221,9 +231,9 @@
 		          			{
 //                                flash image based on pick up and new time
                                 if(old_time < new_time){
-		          				    aString = "<a data-ajax='false' href="+urlReadyOrder+"/"+temp[i]['order_id']+"><img src='{{asset('kitchenImages/red_blink_image.gif')}}'>";
+		          				    aString = "<a data-ajax='false' href="+urlReadyOrder+"/"+temp[i]['order_id']+"><img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.gif')}}'>";
                                 }else{
-                                  aString = "<a data-ajax='false' href="+urlReadyOrder+"/"+temp[i]['order_id']+"><img src='{{asset('kitchenImages/red_blink_image.png')}}'>";
+                                  aString = "<a data-ajax='false' href="+urlReadyOrder+"/"+temp[i]['order_id']+"><img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>";
                                 }
 		          			}
 
@@ -250,7 +260,11 @@
 	          		if( (list[i]["paid"] == 0 && list[i]["order_ready"] == 0) || (list[i]["delivery_type"] == 3 && driverapp) ){
 	          		}else if(list[i]["paid"] == 0 && list[i]["order_ready"] == 1){
 		          		liItem += "<a data-ajax='false' href="+urldeliver+"/"+list[i]['customer_order_id']+" >"
-		          		liItem += "<img src='{{asset('kitchenImages/red_blink_image.png')}}'>"
+                        if(old_time < new_time){
+                            liItem += "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.gif')}}'>"
+                        }else{
+                            liItem += "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
+                        }
 		          		liItem += "</a>"
 	          		}
 	          		else{
@@ -472,7 +486,7 @@
 
           		liItem += "<td>"
           		liItem += aString
-          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
+          		liItem += "<img id='"+ids+"' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
           		liItem +="</a></td>";
       		}else{
       			liItem += "<td>"
@@ -494,9 +508,9 @@
                 {
 //                  flash image based on pick up time will
                     if(old_time < new_time){
-                        aString = "<a data-ajax='false' href="+urlReadyOrder+"/"+list[i]['order_id']+"><img src='{{asset('kitchenImages/red_blink_image.gif')}}'>";
+                        aString = "<a data-ajax='false' href="+urlReadyOrder+"/"+list[i]['order_id']+"><img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.gif')}}'>";
                     }else{
-                        aString = "<a data-ajax='false' href="+urlReadyOrder+"/"+list[i]['order_id']+"><img src='{{asset('kitchenImages/red_blink_image.png')}}'>";
+                        aString = "<a data-ajax='false' href="+urlReadyOrder+"/"+list[i]['order_id']+"><img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>";
                     }
                 }
 
@@ -524,7 +538,11 @@
   		if(list[i]["paid"] == 0 && list[i]["order_ready"] == 0 ){
   		}else if(list[i]["paid"] == 0 && list[i]["order_ready"] == 1){
       		liItem += "<a data-ajax='false' href="+urldeliver+"/"+list[i]['customer_order_id']+" >"
-      		liItem += "<img src='{{asset('kitchenImages/red_blink_image.png')}}'>"
+      		if(old_time < new_time){
+                liItem += "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.gif')}}'>"
+            }else{
+                liItem += "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
+            }
       		liItem += "</a>"
   		}
   		else{
@@ -644,7 +662,7 @@
                 
 //              change red blinker to gray circle and remove class new form its table row tr element
                 $This.parents('tr').removeClass('new')
-                $This.parents('tr').find('.ready_class').html("<a data-ajax='false' href="+urlReadyOrder+"/"+id+"><img src='{{asset('kitchenImages/red_blink_image.png')}}'>");
+                $This.parents('tr').find('.ready_class').html("<a data-ajax='false' href="+urlReadyOrder+"/"+id+"><img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>");
 				clearSpeakTextInterval();
 			}
 		});

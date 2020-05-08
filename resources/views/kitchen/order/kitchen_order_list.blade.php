@@ -73,6 +73,16 @@
 
 		var driverapp = "{{ Session::get('driverapp') }}";
 
+        $('body').on('mouseover', '.image_clicked', function(){
+            $(this).css("padding","2px");
+        });
+        $('body').on('mouseout', '.image_clicked', function(){
+            $(this).css("padding","0px");
+        });
+        $('body').on('click', '.image_clicked', function(){
+            $(this).css("padding","0px");
+        });
+        
 		function orderReadyStarted(id, This) {
 			$This = $(This);			
 			$.get("{{url('kitchen/orderStartedKitchen')}}/"+id,
@@ -89,7 +99,7 @@
 				}
 //            on removing class ebent remove button also
 				$This.closest('tr').removeClass('not-started');
-                $This.closest('tr').find('.ready_class').html("<a data-ajax='false' href="+urlReady+"/"+id+"><img src='{{asset('kitchenImages/red_blink_image.png')}}'>");
+                $This.closest('tr').find('.ready_class').html("<a data-ajax='false' href="+urlReady+"/"+id+"><img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>");
 				// Update item as speak
 				updateSpeak(id);
 			});
@@ -209,7 +219,7 @@
 
 				          		liItem += "<td>"
 				          		liItem += aString
-				          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
+				          		liItem += "<img id='"+ids+"' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
 				          		liItem +="</a></td>";
 				          		
 			          		}else{
@@ -235,9 +245,9 @@
 				          		{
 //                                flash image based on pick up and new time
                                     if(old_time < new_time){
-                                        aString = "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+"><img id='"+temp[i]['id']+"ready' src='{{asset('kitchenImages/red_blink_image.gif')}}'>";
+                                        aString = "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+"><img id='"+temp[i]['id']+"ready' class='image_clicked'  src='{{asset('kitchenImages/red_blink_image.gif')}}'>";
                                     }else{
-                                        aString = "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+"><img id='"+temp[i]['id']+"ready' src='{{asset('kitchenImages/red_blink_image.png')}}'>";
+                                        aString = "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+"><img id='"+temp[i]['id']+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>";
                                     }
 				          		}
 				          		liItem += "<td>"
@@ -390,7 +400,7 @@
 
 				          		liItem += "<td>"
 				          		liItem += aString
-				          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
+				          		liItem += "<img id='"+ids+"' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
 				          		liItem +="</a></td>";
 			          		}else{
 			          			liItem += "<td>"
@@ -411,9 +421,9 @@
 				          		{
 //                                flash image based on pick up and new time
                                     if(old_time < new_time){
-                                        aString = "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+"><img id='"+temp[i]['id']+"ready' src='{{asset('kitchenImages/red_blink_image.gif')}}'>";
+                                        aString = "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+"><img id='"+temp[i]['id']+"ready' class='image_clicked'  src='{{asset('kitchenImages/red_blink_image.gif')}}'>";
                                     }else{
-                                        aString = "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+"><img id='"+temp[i]['id']+"ready' src='{{asset('kitchenImages/red_blink_image.png')}}'>";
+                                        aString = "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+"><img id='"+temp[i]['id']+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>";
                                     }
 				          		}
 				          		liItem += "<td>"
@@ -592,7 +602,7 @@
 
 		          		liItem += "<td >"
 		          		liItem += aString
-		          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
+		          		liItem += "<img id='"+ids+"' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
 		          		liItem +="</a></td>";
 		      		}else{
 		      			liItem += "<td>"
@@ -612,9 +622,9 @@
 		          		{
 //                                flash image based on pick up and new time
 		          			if(old_time < new_time){
-                                aString = "<a data-ajax='false' href="+urlReady+"/"+list[i]['id']+"><img id='"+list[i]['id']+"ready' src='{{asset('kitchenImages/red_blink_image.gif')}}'>";
+                                aString = "<a data-ajax='false' href="+urlReady+"/"+list[i]['id']+"><img id='"+list[i]['id']+"ready' class='image_clicked'  src='{{asset('kitchenImages/red_blink_image.gif')}}'>";
                             }else{
-                                aString = "<a data-ajax='false' href="+urlReady+"/"+list[i]['id']+"><img id='"+list[i]['id']+"ready' src='{{asset('kitchenImages/red_blink_image.png')}}'>";
+                                aString = "<a data-ajax='false' href="+urlReady+"/"+list[i]['id']+"><img id='"+list[i]['id']+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>";
                             }
                             
 		          		}
