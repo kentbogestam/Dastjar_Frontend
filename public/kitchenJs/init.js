@@ -57,6 +57,7 @@ function frmAddManualPrepTime()
 				// Start item individually for order from 'Kitchen Menu', and update speak
 				orderReadyStarted(itemId, This);
 				updateSpeak(itemId);
+				timechange(This,data.time);
 			}
 			else
 			{

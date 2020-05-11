@@ -28,8 +28,8 @@
 			   		<th data-priority="3">{{ __('messages.Date and Time') }}</th>
 			   		@if( !Session::has('subscribedPlans.kitchen') )
 						<th data-priority="3">{{ __('messages.Started') }}</th>
+					    <th data-priority="1">{{ __('messages.Ready') }}</th>
 					@endif
-					<th data-priority="1">{{ __('messages.Ready') }}</th>
 			    	<th data-priority="5">{{ __('messages.Delivered') }}</th>
 			    	<th data-priority="3" width="15%">{{ __('messages.Paid') }}</th>
 			     	<th data-priority="1">{{ __('messages.Pick up Time') }}</th>
@@ -246,14 +246,6 @@
 			          		liItem += "<a>"
 			          		liItem +="</a></td>";
 		          		}
-		          	@else
-		          		liItem += "<td>"
-				  		if(list[i]["order_ready"] == 0){
-		          			liItem += "<a data-ajax='false'>"
-				  		}else{
-		          			liItem += "<a data-ajax='false'>"
-				  		}
-		          		liItem +="</a></td>";
 	          		@endif
 	          		
 	          		liItem += "<td>"
@@ -649,7 +641,6 @@
 			if(returnedData.status)
 			{
 				$('body').find('#'+id).parent("a").attr('onclick',' ');
-				$('body').find('#'+id).remove()
 				if(returnedData.order.delivery_type == 3 && driverapp)
 				{
 					$('body').find('#'+id+'ready').parent("a").attr('onclick','popupOrderAssignDriver('+id+', false)');
@@ -661,8 +652,9 @@
 				$This.closest('tr').removeClass('not-started');
                 
 //              change red blinker to gray circle and remove class new form its table row tr element
-                $This.parents('tr').removeClass('new')
+                $This.parents('tr').removeClass('new');
                 $This.parents('tr').find('.ready_class').html("<a data-ajax='false' href="+urlReadyOrder+"/"+id+"><img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>");
+				$('body').find('#'+id).remove();
 				clearSpeakTextInterval();
 			}
 		});

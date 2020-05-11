@@ -2126,21 +2126,24 @@ class AdminController extends Controller
      */
     function addManualPrepTime(Request $request)
     {
-        $status = 0;
+        $status = $time = 0;
 
         $minutes = $request->extra_prep_time;
         $extra_prep_time = intdiv($minutes, 60).':'. ($minutes % 60).':00';
 
         // Update extra preparation time
-        $result = Order::where('order_id', $request->order_id)
-            ->update(['extra_prep_time' => $extra_prep_time]);
+        $results = Order::where('order_id', $request->order_id)
+          ->update(['extra_prep_time' => $extra_prep_time]);
+        $result = Order::where('order_id', $request->order_id)->first();
 
-        if($result)
+        if($results)
         {
             $status = 1;
+            $newtime = strtotime($result->deliver_time) + (strtotime($extra_prep_time) - strtotime('00:00:00'));
+            $time = date("H:i",$newtime);
         }
 
-        return response()->json(['status' => $status]);
+        return response()->json(['status' => $status,'time' => $time]);
     }
 
     /**

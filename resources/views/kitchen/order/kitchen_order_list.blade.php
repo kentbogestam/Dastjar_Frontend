@@ -87,8 +87,7 @@
 			$This = $(This);			
 			$.get("{{url('kitchen/orderStartedKitchen')}}/"+id,
 			function(returnedData){
-				$('body').find('#'+id).parent("td").attr('onclick',' ');
-				$('body').find('#'+id).remove();
+				$('body').find('#'+id).parent("a").attr('onclick',' ');
 				if(returnedData.order.delivery_type == 3 && driverapp)
                 {                               
                     $('body').find('#'+id+'ready').parent("a").attr('onclick', 'popupOrderAssignDriver('+returnedData.order.order_id+', '+id+')');
@@ -100,9 +99,15 @@
 //            on removing class ebent remove button also
 				$This.closest('tr').removeClass('not-started');
                 $This.closest('tr').find('.ready_class').html("<a data-ajax='false' href="+urlReady+"/"+id+"><img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>");
+				$('body').find('#'+id).remove();
 				// Update item as speak
 				updateSpeak(id);
 			});
+		}
+        
+		function timechange(This,time) {
+			$This = $(This);			
+			$This.closest('tr').find('.time_class').html(time);
 		}
 
 		function onReady(id) {		
