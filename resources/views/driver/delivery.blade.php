@@ -5,6 +5,7 @@
 		<div class="row">
 			<div class="col-md-12 text-center"><h2>{{ $company->company_name }}</h2></div>
 		</div>
+		@include('common.flash')
 		<table class="table table-bordered table-listing">
 			<thead>
 				<tr>

@@ -14,6 +14,7 @@ use App\Order;
 use App\OrderDetail;
 use App\CompanySubscriptionDetail;
 use App\Payment;
+use App\ApplicationFee;
 
 use App\Helper;
 
@@ -35,7 +36,7 @@ class PaymentController extends Controller
     	$order = Order::select(['order_type'])->where(['order_id' => $orderId])->first();
 
     	$heartbeat = Helper::isStoreLive(Session::get('storeId'));
-
+    	
     	if( (!is_null($heartbeat) && $heartbeat < 1) || $order->order_type == 'eat_later' )
     	{
 	    	// Get connect a/c detail
@@ -60,6 +61,20 @@ class PaymentController extends Controller
 	    		// Session data
 	    		$orderId = $request->session()->get('OrderId');
 	    		$amount = $request->session()->get('paymentAmount') * 100;
+
+	    		// Get applicationFee
+	    		$application_fee = 0;
+	    		$applicationFee = ApplicationFee::where(['id' => 1])->first();
+
+	    		if($applicationFee)
+	    		{
+	    			$stripe_fee = (($request->session()->get('paymentAmount') * $applicationFee->stripe_fee_percent)/100) + $applicationFee->stripe_fee_fixed;
+	    			$stripe_fee = number_format((float)$stripe_fee, 2, '.', '');
+
+	    			$application_fee = ($request->session()->get('paymentAmount') * $applicationFee->application_fee)/100;
+	    			$application_fee = number_format((float)$application_fee, 2, '.', '');
+	    			$application_fee = ($application_fee - $stripe_fee) * 100;
+	    		}
 
 	    		// 
 	    		$user = User::select(['email', 'name', 'stripe_customer_id'])
@@ -133,7 +148,14 @@ class PaymentController extends Controller
 							'receipt_email' => $user->email,
 							'confirmation_method' => 'manual',
 							'confirm' => true,
+							'capture_method' => 'manual'
 						);
+
+						// If application fee exist
+						if($application_fee >= 1)
+						{
+							$arrPaymentIntent['application_fee_amount'] = $application_fee;
+						}
 
 						if(!$request->has('chargingSavedCard'))
 						{
@@ -142,10 +164,12 @@ class PaymentController extends Controller
 
 						$intent = \Stripe\PaymentIntent::create($arrPaymentIntent, ['stripe_account' => $stripeAccount]);
 					}
+					
 					if ($request->has('payment_intent_id')) {
 						$intent = \Stripe\PaymentIntent::retrieve($request->input('payment_intent_id'), ['stripe_account' => $stripeAccount]);
 						$intent->confirm();
 					}
+					
 					$response = $this->generatePaymentResponse($intent);
 
 					// If 'requires_action' is 'true', send 'stripeAccount' for further authentication
@@ -156,9 +180,9 @@ class PaymentController extends Controller
 					else
 					{
 						// If payment succeeded, save transaction in DB
-						if( isset($response['success']) && $response['success'] )
+						if( (isset($response['success']) && $response['success']) || (isset($response['requires_capture']) && $response['requires_capture']) )
 						{
-							DB::transaction(function () use($orderId, $request, $intent) {
+							DB::transaction(function () use($orderId, $request, $intent, $response) {
 								// Update order as paid
 								DB::table('orders')->where('order_id', $orderId)->update(['online_paid' => 1]);
 
@@ -171,6 +195,13 @@ class PaymentController extends Controller
 					        	$paymentSave->transaction_id = $intent->id;
 					        	$paymentSave->amount = $intent->amount;
 					        	$paymentSave->balance_transaction = $balanceTransaction;
+					        	$paymentSave->status = '1';
+
+					        	if(isset($response['requires_capture']) && $response['requires_capture'])
+					        	{
+					        		$paymentSave->status = '2';
+					        	}
+
 					        	$paymentSave->save();
 							});
 						}
@@ -268,6 +299,9 @@ class PaymentController extends Controller
 				'requires_action' => true,
 				'payment_intent_client_secret' => $intent->client_secret
 			);
+		} else if($intent->status == 'requires_capture') {
+			# Payment authorized, but not yet captured
+			$data = array('requires_capture' => true);
 		} else if ($intent->status == 'succeeded') {
 			# The payment didn’t need any additional actions and completed!
 			# Handle post-payment fulfillment

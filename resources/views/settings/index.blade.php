@@ -247,7 +247,7 @@
 
 	<div class="setting-list">
 		<div style="margin-right: 15px; margin-top: 5px;"> 
-			<a href="https://dastjar.com/?page_id=71" target="_blank" id="" class="terms btn btn-primary" data-ajax="false">{{ __('messages.About Us') }}
+			<a href="https://dastjar.com/" target="_blank" id="" class="terms btn btn-primary" data-ajax="false">{{ __('messages.About Us') }}
 			</a>		
 		</div> 
 	</div>
