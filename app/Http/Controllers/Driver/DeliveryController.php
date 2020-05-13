@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use Auth;
 use DB;
 
+use App\User;
+use App\Admin;
 use App\Driver;
 use App\Company;
 use App\Order;
@@ -17,6 +19,20 @@ use App\CompanySubscriptionDetail;
 use App\Payment;
 
 use App\Helper;
+
+use App\App42\PushNotificationService;
+use App\App42\DeviceType;
+use App\App42\App42Log;
+use App\App42\App42Exception;
+use App\App42\App42NotFoundException;
+use App\App42\App42BadParameterException;
+use App\App42\StorageService;
+use App\App42\QueryBuilder;
+use App\App42\Query;
+use App\App42\App42API;
+use App\App42\Util;
+
+use Log;
 
 class DeliveryController extends Controller
 {
@@ -61,7 +77,7 @@ class DeliveryController extends Controller
 
 		// Get deliver order list
 		$orderDelivery = OrderDelivery::from('order_delivery AS OD')
-			->select(['OD.id', 'O.order_id', 'O.customer_order_id', 'O.online_paid', 'O.deliver_time', 'O.order_delivery_time', 'O.order_response', 'O.extra_prep_time AS o_extra_prep_time', 'O.paid', 'CA.full_name', 'CA.mobile', 'CA.entry_code', 'CA.apt_no', 'CA.company_name', 'CA.other_info', 'CA.address', 'CA.street', 'CA.city', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), 'S.store_name', 'S.phone', 'S.extra_prep_time', 'S.buffer_time', DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
+			->select(['OD.id', 'O.order_id', 'O.delivery_type', 'O.delivery_at_door', 'O.customer_order_id', 'O.online_paid', 'O.deliver_time', 'O.order_delivery_time', 'O.order_response', 'O.extra_prep_time AS o_extra_prep_time', 'O.paid', 'CA.full_name', 'CA.mobile', 'CA.entry_code', 'CA.apt_no', 'CA.company_name', 'CA.other_info', 'CA.address', 'CA.street', 'CA.city', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), 'S.store_name', 'S.phone', 'S.extra_prep_time', 'S.buffer_time', DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
 			->join('orders AS O', 'O.order_id', '=', 'OD.order_id')
 			->join('customer_addresses AS CA', 'CA.id', '=', 'O.user_address_id')
 			->join('store AS S', 'S.store_id', '=', 'O.store_id')
@@ -246,6 +262,107 @@ class DeliveryController extends Controller
             }
 		}
         
+        $OrderId = Order::where('customer_order_id' , $orderId)->first();
+        if($OrderId->delivery_type == '3' && $paid == '1'){
+            $helper = new Helper();
+            try {
+            $helper->logs("Step 1: order id = " . $OrderId->order_id);       
+
+            $message = 'orderDeliver';
+            
+            if($OrderId->user_id != 0){ 
+                $recipients = [];
+                if($OrderId->user_type == 'customer'){
+                    $adminDetail = User::where('id' , $OrderId->user_id)->first();
+
+                    if(isset($adminDetail->phone_number_prifix) && isset($adminDetail->phone_number)){
+                        $recipients = ['+'.$adminDetail->phone_number_prifix.$adminDetail->phone_number];   
+                    }
+                }else{
+                    $adminDetail = Admin::where('id' , $OrderId->user_id)->first();
+                    $recipients = ['+'.$adminDetail->mobile_phone];
+                }
+
+                if(isset($adminDetail->browser)){
+                    $pieces = explode(" ", $adminDetail->browser);
+                }else{
+                    $pieces[0] = '';                              
+                }
+
+                $helper->logs("Step 2: recipient calculation = " . $orderId . " And browser=" .$pieces[0]);  
+
+                if($pieces[0] == 'Safari'){
+                    //dd($recipients);
+                    $url = "https://gatewayapi.com/rest/mtsms";
+                    $api_token = "BP4nmP86TGS102YYUxMrD_h8bL1Q2KilCzw0frq8TsOx4IsyxKmHuTY9zZaU17dL";
+
+                    $message = "Your order deliver please click on link \n".env('APP_URL').'deliver-notification/'.$orderId;
+
+                    $json = [
+                        'sender' => 'Dastjar',
+                        'message' => ''.$message.'',
+                        'recipients' => [],
+                    ];
+                    foreach ($recipients as $msisdn) {
+                        $json['recipients'][] = ['msisdn' => $msisdn];}
+
+                    $ch = curl_init();
+                    curl_setopt($ch,CURLOPT_URL, $url);
+                    curl_setopt($ch,CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+                    curl_setopt($ch,CURLOPT_USERPWD, $api_token.":");
+                    curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($json));
+                    curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+                    $result = curl_exec($ch);
+                    curl_close($ch);   
+                    $helper->logs("Step 3: IOS notification sent = " . $orderId . " And Result=" .$result);
+                }else{
+                    $result = $this->sendNotifaction($orderId , $message);
+                    $helper->logs("Step 4: Android notification sent = " . $orderId . " And Result=" .$result);
+
+                }
+            }
+            
+            $helper->logs("Step 5: order table updated = " . $orderId . " And user id=" . $OrderId->user_id);       
+            } catch (Exception $e) {
+                $helper->logs("Step 6: Exception = " .$ex->getMessage());           
+            }
+        }
+        
         return redirect()->back();
+	}
+    
+    /**
+     * Send text message to recipients using API
+     * @return [type] [description]
+     */
+    public function sendNotifaction($orderId, $message){
+    	$order = Order::select('*')->where('customer_order_id',$orderId)->first();
+    	if($order->user_type == 'customer'){
+    		$userDetail = User::whereId($order->user_id)->first();
+    	}else{
+    		$userDetail = Admin::whereId($order->user_id)->first();
+    	}
+
+        if(!isset($userDetail->email)){
+            return "Notification Send Successfully";
+        }
+        $userName = $userDetail->email;
+	
+    	if($message == 'orderDeliver'){
+            if($order->delivery_at_door == '0'){
+                $messageDelever = __('messages.notificationOrderDelivered', ['order_id' => $orderId]);
+            }else{
+                $messageDelever = __('messages.orderDeliveryAtDoor', ['order_id' => $orderId]);
+            }
+    		$url = env('APP_URL').'deliver-notification/'.$orderId;
+            $message = "{'alert': " ."'". $messageDelever."'" . ",'_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': " ."'". $messageDelever."'" . ",'type':'openUrl','content':" ."'". $url."'" . "}}";
+    	}else{
+    		$url = env('APP_URL').'ready-notification/'.$orderId;
+            $message = "{'alert': 'Your Order Deliver.','_App42Convert': true,'mutable-content': 1,'_app42RichPush': {'title': 'Your Order Deliver.','type':'openUrl','content':" ."'". $url."'" . "}}";
+    	}
+    	App42API::initialize(env('APP42_API_KEY'),env('APP42_API_SECRET')); 
+		$pushNotificationService = App42API::buildPushNotificationService();
+		$pushNotification = $pushNotificationService->sendPushMessageToUser($userName,$message);
+        return $pushNotification;
 	}
 }
