@@ -89,6 +89,10 @@ img {
 	position: relative;
 }
 
+.homes .head-section .logo-with-map {
+	min-height: 30px;
+}
+
 .head-section .logo-with-map .logo {
 	display: inline-block;
 	text-align: center;
@@ -125,6 +129,10 @@ img {
 	top: 11px;
 	color: #333;
 	text-decoration: none;
+}
+
+.homes .mid-section {
+	margin-top: 30px;
 }
 
 .mid-section {
@@ -331,6 +339,10 @@ img {
 
 .footer-section .ui-block-c a {
 	color: #fff;
+}
+
+.homes .footer-section ul li a {
+	padding: 2px 0;
 }
 
 /* ----------------------------------------------------------------------- 
