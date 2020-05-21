@@ -39,7 +39,7 @@ class KitchenController extends Controller
 
         // 
         $deliveryDate = Carbon::now()->subDays(1)->toDateString();
-        $deliveryDateTill = Carbon::now()->toDateString();
+        $deliveryDateTill = Carbon::now()->addDays(1)->toDateString();
         $stores[] = $reCompanyId;
 
         // Get virtual restaurant if mapped

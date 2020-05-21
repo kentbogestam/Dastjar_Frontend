@@ -5,6 +5,12 @@
 		<div class="row">
 			<div class="col-md-12 text-center"><h2>{{ $company->company_name }}</h2></div>
 		</div>
+        <div class="append_messge" style="display: none">
+            <div class="alert alert-danger alert-dismissible">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong>{{ __('messages.pleaseWait') }} !</strong> {{ __('messages.OrdersNotReady') }}.
+            </div>
+        </div>
 		<div class="table-responsive">
 			<table class="table table-bordered table-listing">
 				<thead>
@@ -29,7 +35,16 @@
 			// On order accept
 			$(document).on('click', '.order-pickup-accept', function() {
 				var orderDeliveryId = $(this).data('id');
-				orderPickupAccept(orderDeliveryId, $(this));
+				var rel = $(this).data('rel');
+                // if order is ready then accept if not then show error message
+                if(rel == "1"){
+                    orderPickupAccept(orderDeliveryId, $(this));
+                }else{
+                    $('.append_messge').css("display","block");
+                    setTimeout(function(){
+                        $('.append_messge').css("display","none");
+                    },3000)
+                }
 			});
 
 			// On order picked-up
@@ -74,7 +89,7 @@
 							if(response.orderDelivery[i]['status'] == '0')
 							{
 								html += 
-									"<td class='text-center'><a href='javascript:void(0)' class='order-pickup-accept' data-id='"+response.orderDelivery[i]['id']+"'><i class='fas fa-minus-circle'></i></a></td>"+
+									"<td class='text-center'><a href='javascript:void(0)' class='order-pickup-accept' data-id='"+response.orderDelivery[i]['id']+"' data-rel='"+response.orderDelivery[i]['order_ready']+"'><i class='fas fa-minus-circle'></i></a></td>"+
 									"<td class='text-center'><a href='javascript:void(0)' class='order-pickup-pickedup disabled' data-id='"+response.orderDelivery[i]['id']+"'><i class='fas fa-minus-circle'></i></a><br>"+pickupTime+"</td>";
 							}
 							else
