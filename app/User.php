@@ -43,7 +43,7 @@ class User extends Authenticatable
         return $this->hasMany('App\Order','user_id')
             ->where(['paid' => 0])
             ->where('orders.check_deliveryDate', '>=', date('Y-m-d'))
-            ->whereNotIn('online_paid', [2])
+//            ->whereNotIn('online_paid', [2])
             ->where('orders.cancel', '!=', 1)
             ->orderBy('order_id', 'desc');
     }

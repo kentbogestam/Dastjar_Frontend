@@ -6,6 +6,12 @@
 
 @section('content')
 
+<style>
+	.news{
+		background-color: #87ceebbf !important;
+	}
+</style>
+
 <div data-role="header" data-position="fixed" data-tap-toggle="false" class="header">
 		@include('includes.kitchen-header-sticky-bar')
 		<h3 class="ui-bar ui-bar-a order_background"><span>{{$storeName}}</span></h3>
@@ -26,7 +32,7 @@
 		    </div>
 		@endif
 		</div>
-		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow table-stripe ui-responsive table_size" >
+		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow ui-responsive table_size" >
 		 	<thead>
 		 		<tr class="ui-bar-d">
 			  		<th data-priority="2">{{ __('messages.Orders') }}</th>
@@ -90,6 +96,7 @@
 					$('body').find('#'+id+'ready').parent("a").attr('onclick','onReady('+id+')');
 				}
 				$This.closest('tr').removeClass('not-started');
+				$This.closest('tr').removeClass('news');
 
 				// Update item as speak
 				updateSpeak(id);
@@ -147,7 +154,12 @@
 			          		}
 			          		
 			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
-			          		var clsStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
+
+			          		if(temp[i]["order_type"] == "eat_now"){
+			          			var clsStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
+			          		}else{
+			          			var clsStatus = temp[i]["order_started"] == 0 ? 'news' : '';
+			          		}
 
 			          		if(temp[i]['orderDeliveryStatus'] == '0')
 					  		{
@@ -323,7 +335,11 @@
 			          		}
 
 			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
-			          		var clsStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
+			          		if(temp[i]["order_type"] == "eat_now"){
+			          			var clsStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
+			          		}else{
+			          			var clsStatus = temp[i]["order_started"] == 0 ? 'news' : '';
+			          		}
 
 			          		if(temp[i]['orderDeliveryStatus'] == '0')
 					  		{
@@ -530,8 +546,20 @@
 	          			var time = addTimes(list[i]['deliver_time'], list[i]['extra_prep_time']);
 	          		}
 			      	// var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
-			      	var timeOrder = addTimes("00:00::",list[i]["deliver_time"]);
-		      		liItem += "<tr>";
+			      	
+	          		var timeOrder = addTimes("00:00::",list[i]["deliver_time"]);
+	          		if(list[i]["order_type"] == "eat_now"){
+	          			var clsStatus = list[i]["order_started"] == 0 ? 'not-started' : '';
+	          		}else{
+	          			var clsStatus = list[i]["order_started"] == 0 ? 'news' : '';
+	          		}
+
+	          		if(list[i]['orderDeliveryStatus'] == '0')
+			  		{
+			  			clsStatus += clsStatus.length ? ' not-accepted' : 'not-accepted';
+			  		}
+
+	          		liItem += "<tr class='"+clsStatus+"'>";
 		      		liItem += "<th>"+list[i]["customer_order_id"]+"</th>";
 		      		liItem += "<td>"+list[i]["product_quality"]+"</td>";
 		      		liItem += "<td>"+list[i]["product_name"]+"</td>";

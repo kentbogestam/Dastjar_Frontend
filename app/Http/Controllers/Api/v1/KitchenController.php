@@ -33,13 +33,13 @@ class KitchenController extends Controller
     {
     }
 
-   public function orderDetail($reCompanyId){
+    public function orderDetail($reCompanyId){
         // Update store's 'islive'
         Helper::updateStoreIslive($reCompanyId);
 
         // 
-        $deliveryDate = Carbon::now()->subDays(1)->toDateString();
-        $deliveryDateTill = Carbon::now()->toDateString();
+        // $deliveryDate = Carbon::now()->subDays(1)->toDateString();
+        // $deliveryDateTill = Carbon::now()->toDateString();
         $stores[] = $reCompanyId;
 
         // Get virtual restaurant if mapped
@@ -57,8 +57,9 @@ class KitchenController extends Controller
         $orderDetailscustomer = Order::select(['orders.*','customer.name as name', 'OCD.discount_id', 'PD.discount_value', DB::raw('COUNT(OCL.id) AS cntLoyaltyUsed'), 'OD.status AS orderDeliveryStatus', 'CA.street'])
             ->whereIn('orders.store_id', $stores)
             ->where('user_type','=','customer')
-            ->where('check_deliveryDate', '>=', $deliveryDate)
-            ->where('check_deliveryDate', '<=', $deliveryDateTill)
+            // ->where('check_deliveryDate', '>=', $deliveryDate)
+            // ->where('check_deliveryDate', '<=', $deliveryDateTill)
+            ->where('orders.check_deliveryDate', '>=', date("Y-m-d",time()))
             ->where('orders.paid', '0')
             ->whereNotIn('orders.online_paid', [2])
             ->where('orders.cancel','!=', 1)
@@ -69,6 +70,7 @@ class KitchenController extends Controller
             ->leftJoin('promotion_discount AS PD', 'OCD.discount_id', '=', 'PD.id')
             ->leftJoin('order_customer_loyalty AS OCL', 'OCL.order_id', '=', 'orders.order_id')
             ->leftJoin('order_delivery AS OD', 'OD.order_id', '=', 'orders.order_id')
+            ->where('orders.is_verified', '1')
             ->groupBy('orders.order_id');
 
         $store = Store::select(['extra_prep_time', 'order_response'])->where('store_id', $reCompanyId)->first();
@@ -87,8 +89,7 @@ class KitchenController extends Controller
                 ->join('product', 'product.product_id', '=', 'order_details.product_id')
                 ->whereIn('orders.store_id', $stores)
                 ->where(['user_type' => 'customer', 'orders.order_started' => '0', 'orders.paid' => '0'])
-                ->where('check_deliveryDate', '>=', $deliveryDate)
-                ->where('check_deliveryDate', '<=', $deliveryDateTill)
+                ->where('orders.check_deliveryDate', '>=', date("Y-m-d",time()))
                 ->whereNotIn('orders.online_paid', [2])
                 ->where('orders.cancel','!=', 1)
                 ->get();
@@ -113,12 +114,6 @@ class KitchenController extends Controller
     public function orderSpecificOrderDetail($orderId){
          $orderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.order_id' => $orderId])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
         return response()->json(['status' => 'success', 'data'=>$orderDetails]);
-    }
-
-    public function cateringOrders($reCompanyId){
-        $cateringorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.user_id','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.customer_order_id','orders.online_paid','orders.cancel')->where(['order_details.store_id' => $reCompanyId])->where('order_details.delivery_date','>', Carbon::now()->toDateString())->whereNotIn('orders.online_paid', [2])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->where('orders.cancel', '!=', 1)->orderBy('order_details.delivery_date','ASC')->get();
-    
-        return response()->json(['status' => 'success', 'response' => true,'data'=>$cateringorderDetails]);
     }
 
     /**

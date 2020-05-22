@@ -1,5 +1,5 @@
 <div class="row" style="padding: 10px 0">
-	@if(Session::get('paymentmode') !=0 && $order->final_order_total > 0)
+    @if($storeDetail->online_payment == 1)
 		<div class="col-md-12 text-center">
 			<button type="button" class="btn btn-pay" disabled="">{{ __('messages.proceedToPay') }}</button>
 		</div>

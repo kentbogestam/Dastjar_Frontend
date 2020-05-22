@@ -32,35 +32,28 @@ class PaymentController extends Controller
     	$response = array();
 
     	// Check if store is open for 'eat-now'
-    	$orderId = $request->session()->get('OrderId');
-    	$order = Order::select(['order_type'])->where(['order_id' => $orderId])->first();
-
-    	$heartbeat = Helper::isStoreLive(Session::get('storeId'));
+    	$orderId = $request->order_id;
+    	$order = Order::where(['order_id' => $orderId])->first();
+    	$storeId = $order->store_id; //store id 
+    	$paymentAmount = $order->final_order_total; //final order total
+    	$deliveryTimestamp = $order->delivery_timestamp; //delivery order time stamp
+    	$created_at = strtotime($order->created_at) + 86400; //convert created time to time function
+    	$heartbeat = Helper::isStoreLive($storeId);
 
     	if( (!is_null($heartbeat) && $heartbeat < 1) || $order->order_type == 'eat_later' )
     	{
 	    	// Get connect a/c detail
-	        if( $request->session()->has('stripeAccount') )
-	        {
-	        	$stripeAccount = $request->session()->get('stripeAccount');
-	        }
-	        else
-	        {
-		        $storeId = Session::get('storeId');
-		        $companySubscriptionDetail = CompanySubscriptionDetail::from('company_subscription_detail AS CSD')
-		            ->select('CSD.stripe_user_id')
-		            ->join('company AS C', 'C.company_id', '=', 'CSD.company_id')
-		            ->join('store AS S', 'S.u_id', '=', 'C.u_id')
-		            ->where('S.store_id', $storeId)->first();
-	        	
-	        	$stripeAccount = $companySubscriptionDetail->stripe_user_id;
-	        }
+	        $companySubscriptionDetail = CompanySubscriptionDetail::from('company_subscription_detail AS CSD')
+	            ->select('CSD.stripe_user_id')
+	            ->join('company AS C', 'C.company_id', '=', 'CSD.company_id')
+	            ->join('store AS S', 'S.u_id', '=', 'C.u_id')
+	            ->where('S.store_id', $storeId)->first();
+        	
+        	$stripeAccount = $companySubscriptionDetail->stripe_user_id;
 
 	    	if( !is_null($stripeAccount) && !empty($stripeAccount) )
 	    	{	
-	    		// Session data
-	    		$orderId = $request->session()->get('OrderId');
-	    		$amount = $request->session()->get('paymentAmount') * 100;
+	    		$amount = $paymentAmount * 100;
 
 	    		// Get applicationFee
 	    		$application_fee = 0;
@@ -68,10 +61,10 @@ class PaymentController extends Controller
 
 	    		if($applicationFee)
 	    		{
-	    			$stripe_fee = (($request->session()->get('paymentAmount') * $applicationFee->stripe_fee_percent)/100) + $applicationFee->stripe_fee_fixed;
+	    			$stripe_fee = (($paymentAmount * $applicationFee->stripe_fee_percent)/100) + $applicationFee->stripe_fee_fixed;
 	    			$stripe_fee = number_format((float)$stripe_fee, 2, '.', '');
 
-	    			$application_fee = ($request->session()->get('paymentAmount') * $applicationFee->application_fee)/100;
+	    			$application_fee = ($paymentAmount * $applicationFee->application_fee)/100;
 	    			$application_fee = number_format((float)$application_fee, 2, '.', '');
 	    			$application_fee = ($application_fee - $stripe_fee) * 100;
 	    		}
@@ -179,9 +172,14 @@ class PaymentController extends Controller
 						// If payment succeeded, save transaction in DB
 						if( isset($response['success']) && $response['success'] )
 						{
-							DB::transaction(function () use($orderId, $request, $intent) {
-								// Update order as paid
-								DB::table('orders')->where('order_id', $orderId)->update(['online_paid' => 1]);
+							DB::transaction(function () use($orderId, $request, $intent,$deliveryTimestamp, $created_at) {
+								// if delivery time is less than created date's next day.
+								if($deliveryTimestamp < $created_at){
+									$is_verified = '1';
+								}else{
+									$is_verified = '0';
+								}
+								DB::table('orders')->where('order_id', $orderId)->update(['online_paid' => 1, 'is_verified' => $is_verified]);
 
 								// Save recent payment detail in DB
 								$balanceTransaction = isset($intent->charges->data[0]->balance_transaction) ? $intent->charges->data[0]->balance_transaction : null;
@@ -196,6 +194,7 @@ class PaymentController extends Controller
 							});
 						}
 					}
+                    
 				} catch (\Stripe\Error\Base $e) {
 					# Display error on client
 					$response = array('error' => $e->getMessage());

@@ -100,7 +100,7 @@ Route::get('404', 'HomeController@page_404')->name('page_404');
 Route::get('selectOrder-date', 'HomeController@selectOrderDate');
 Route::group(['middleware' => ['latlng']], function(){
 	Route::get('search-map-eatnow', 'MapController@searchMapEatnow');
-	Route::get('eat-now', 'HomeController@index');
+	Route::get('eat-now', 'HomeController@index')->name('eatNow');
 	Route::get('saveCurrentlat-long', 'HomeController@saveCurrentLatLong');
 	Route::post('eat-later', 'HomeController@eatLater');
 	Route::get('eat-later', 'HomeController@eatLater');
@@ -143,7 +143,7 @@ Route::group(['middleware' => ['auth']], function(){
 	Route::get('check-if-order-ready', 'OrderController@checkIfOrderReady');
 	Route::post('payment', 'PaymentController@payment');
 	Route::get('payment', 'PaymentController@payment');
-	Route::post('cancel-order', 'OrderController@cancelOrderPost');		
+	Route::post('cancel-order', 'OrderController@cancelOrderPost')->name('userCancelOrder');		
 	Route::get('cancel-order/{order_number}', 'OrderController@cancelOrder')->name('cancel-order');		
 	Route::post('save-order', 'OrderController@saveOrder');
     Route::get('save-order', 'OrderController@saveOrder');
@@ -254,6 +254,14 @@ Route::group(['prefix' => 'kitchen'], function(){
 			Route::post('remote-validate-discount', 'DiscountController@remoteValidateDiscount');
 			Route::post('store', 'DiscountController@store');
 		});
+        
+        Route::group(['prefix' => 'catering'], function() {
+            Route::get('orderCateringOrderDetail/{orderId}', 'CateringController@orderCateringOrderDetail');
+            Route::get('orderCateringUserDetail/{userId}', 'CateringController@orderCateringUserDetail');
+            Route::get('orderCateringRejectAccept/{id}/{status}', 'CateringController@orderCateringRejectAccept');
+		    Route::get('catering-orders/{storeId}', 'CateringController@cateringOrders');
+		    Route::get('cateringAutoDelete', 'CateringController@cateringAutoDelete')->name('cateringAutoDelete');
+        });
 
 		// Loyalty
 		Route::group(['prefix' => 'loyalty', 'middleware' => 'isModuleSubscribed:loyalty'], function() {

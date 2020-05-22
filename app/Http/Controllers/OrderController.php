@@ -53,7 +53,7 @@ class OrderController extends Controller
         $orderInvoice = array();
 
         $order = Order::from('orders AS O')
-            ->select(['O.order_id', 'O.customer_order_id', 'O.store_id', 'O.user_id', 'O.order_type', 'O.delivery_type', 'O.deliver_date', 'O.deliver_time', 'O.order_total', 'O.delivery_charge', 'O.final_order_total', 'O.order_delivery_time', 'O.order_response', 'O.order_accepted', 'O.extra_prep_time','S.store_name', 'S.driverapp', 'company.currencies', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
+            ->select(['O.order_id', 'O.customer_order_id', 'O.store_id', 'O.user_id',  'O.cancel', 'O.order_type', 'O.delivery_type', 'O.deliver_date', 'O.deliver_time', 'O.order_total', 'O.delivery_charge', 'O.final_order_total', 'O.order_delivery_time', 'O.is_seen', 'O.order_response', 'O.order_accepted', 'O.catering_order_status', 'O.extra_prep_time', 'O.online_paid', 'S.store_name', 'S.driverapp', 'company.currencies', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
             ->join('order_details', 'O.order_id', '=', 'order_details.order_id')
             ->join('store AS S','O.store_id', '=', 'S.store_id')
             ->join('company','O.company_id', '=', 'company.company_id')
@@ -63,8 +63,8 @@ class OrderController extends Controller
 
         if($order)
         {
-            // 
-            if( Session::has('paymentmode') && Session::get('paymentmode') == 0 )
+            // when online_paid is 2 then make it to 0 as default
+            if( $order->online_paid == "0" )
             {
                 // Check if store is open
                 $heartbeat = Helper::isStoreLive($order->store_id);
@@ -72,7 +72,8 @@ class OrderController extends Controller
                 if( !is_null($heartbeat) && $heartbeat < 1)
                 {
                     DB::table('orders')->where('order_id', $orderId)->update([
-                        'online_paid' => 0,
+                        'online_paid' => 2,
+                        // 'online_paid' => 0,
                     ]);
                 }
                 else
@@ -128,7 +129,7 @@ class OrderController extends Controller
                 $orderInvoice['discount'] =  ($order->order_total*$orderDiscount->discount_value/100);
             }
 
-            Session::forget('paymentmode');
+//            Session::forget('paymentmode');
 
             // Put order in session 'recentOrderList' until its ready
             // Session::forget('recentOrderList'); Session::save();
@@ -159,9 +160,16 @@ class OrderController extends Controller
                 $this->createPOSReceipt($orderId);
                 $this->uploadPrintFile();
             }
+            
+            $paymentMethod = array();
+            if( !is_null($user->stripe_customer_id) )
+            {
+                \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+                $paymentMethod = \Stripe\PaymentMethod::all(["customer" => $user->stripe_customer_id, "type" => "card"]);
+            }
 
             // return view('order.index', compact('order','orderDetails', 'orderInvoice','storeDetail','user'));
-            return view('v1.user.pages.view-order', compact('order','orderDetails', 'orderInvoice','storeDetail','user'));
+            return view('v1.user.pages.view-order', compact('order','orderDetails', 'orderInvoice','storeDetail','user', 'paymentMethod'));
         }
     }
 
@@ -544,38 +552,26 @@ class OrderController extends Controller
         return view('v1.user.pages.cancel-order')->with('order_number',$order_number);
     }    
 
-    public function cancelOrderPost(Request $request){
+    public function cancelOrderPost(Request $request)
+    {
         $order = new Order();
-
-        if($order->where('order_id',$request->order_id)->first()->cancel == 1){
-            Session::flash('order_already_cancelled', 1);            
-            return redirect()->route('cancel-order', $request->order_number);
+        $orderdata = $order->where('order_id',$request->order_id)->first();
+        if($orderdata->cancel > 0){
+            if($orderdata->cancel != 3){           
+                return response()->json(['status' => true, 'order_number' => $request->order_number]);
+            }else{
+                return response()->json(['status' => true, 'order_number' => '']);
+            }
+        }else{
+            if($orderdata->catering_order_status == 1){
+                $order->where('order_id',$request->order_id)->update(['is_seen'=>'1']);
+                return response()->json(['status' => true, 'order_number' => '']);
+            }
         }
 
-        Session::flash('order_already_cancelled', 0);            
-
-        $message = '<html><body>';
-        $message .= '<p style="color:#1275ff;">Order Number: ' . $request->order_number . '</p>';
-        $message .= '<p style="color:#080;font-size:18px;">Mobile Number: ' . $request->mobile_number . '</p>';
-        $message .= '</body></html>';
-
-        $headers = "MIME-Version: 1.0\r\n";
-        $headers .= "Content-type: text/html; charset=iso-8859-1\r\n";   
-        $headers .='X-Mailer: PHP/' . phpversion();
-        $headers .= "From: Anar <admin@dastjar.com> \r\n"; // header of mail content
-
-        $email = Store::where('store_id',$request->store_id)->first()->email;
-
-        $user = User::where('id',Auth::user()->id)->first();
-
-        if($user->phone_number == null){
-            $user->update(['phone_number_prifix'=>$request->phone_number_prifix,'phone_number'=>$request->mobile_number]);
-        }
-
-        mail($email, 'Order Canceled', $message, $headers);
         $order->where('order_id',$request->order_id)->update(['cancel'=>2]);
 
-        return redirect()->route('cancel-order', $request->order_number);
+        return response()->json(['status' => true, 'order_number' => $request->order_number]);
     }
 
     public function updateBrowser(Request $request){
@@ -672,6 +668,7 @@ class OrderController extends Controller
                         $order->deliver_date = $orderDate;
                         $order->deliver_time = $orderTime;
                         $order->check_deliveryDate = $checkOrderDate;
+                        $order->delivery_timestamp = strtotime($checkOrderDate." ".$orderTime);
 
                         if( isset($data['delivery_type']) && is_numeric($data['delivery_type']) )
                         {
@@ -732,11 +729,17 @@ class OrderController extends Controller
             // Update order_total, delivery_time and 'online_paid' => 2 (default)
             $final_order_total = $total_price;
 
+            if($order->order_type == "eat_now"){
+                $online_paid = 2;
+            }else{
+                $online_paid = 0;
+            }
+            
             DB::table('orders')->where('order_id', $orderId)->update([
                 'order_delivery_time' => $max_time,
                 'order_total' => $total_price,
                 'final_order_total' => $final_order_total,
-                'online_paid' => 2
+                'online_paid' => $online_paid
             ]);
 
             // Start applying discount rule
@@ -861,7 +864,7 @@ class OrderController extends Controller
 
             //If store support ontine payment then if condition run.
             if( ($storeDetail->online_payment == 1) || (Helper::isPackageSubscribed(5)) ){
-                $request->session()->put('paymentmode',1);
+//                $request->session()->put('paymentmode',1);
                 $request->session()->put('paymentAmount', $order->final_order_total);
                 $request->session()->put('OrderId', $order->order_id);
 
@@ -874,7 +877,7 @@ class OrderController extends Controller
                     $request->session()->put('stripeAccount', $companyUserDetail->stripe_user_id);
                 }
             }else{
-                $request->session()->put('paymentmode',0);
+//                $request->session()->put('paymentmode',0);
             }
 
             // Get customer's Stripe 'PaymentMethod'
@@ -886,7 +889,7 @@ class OrderController extends Controller
             }
 
             // return view('order.cart', compact('order','orderDetails', 'customerDiscount', 'user', 'orderInvoice', 'storedetails', 'store_delivery_type', 'paymentMethod'));
-            return view('v1.user.pages.cart', compact('order','orderDetails', 'customerDiscount', 'user', 'orderInvoice', 'storedetails', 'store_delivery_type', 'paymentMethod'));
+            return view('v1.user.pages.cart', compact('order','orderDetails', 'customerDiscount', 'user', 'orderInvoice', 'storedetails', 'storeDetail', 'store_delivery_type', 'paymentMethod'));
         }
         else
         {
@@ -1070,7 +1073,7 @@ class OrderController extends Controller
 
         //If store support ontine payment then if condition run.
         if( ($storeDetail->online_payment == 1) || (Helper::isPackageSubscribed(5)) ){
-            $request->session()->put('paymentmode',1);
+//            $request->session()->put('paymentmode',1);
             $request->session()->put('paymentAmount', $order->final_order_total);
             $request->session()->put('OrderId', $order->order_id);
             $request->session()->put('paymentAmount', $final_order_total);
@@ -1084,8 +1087,7 @@ class OrderController extends Controller
         }
         else
         {
-            $request->session()->put('paymentmode',0);
-            // $request->session()->put('paymentmode',1);
+//            $request->session()->put('paymentmode',0);
         }
 
         // Get customer's Stripe 'PaymentMethod'
@@ -1108,7 +1110,7 @@ class OrderController extends Controller
         // echo '<pre>'; print_r($orderInvoice); exit;
 
         // return view('order.cart', compact('order','orderDetails', 'customerDiscount', 'user', 'orderInvoice', 'storedetails', 'store_delivery_type', 'paymentMethod'));
-        return view('v1.user.pages.cart', compact('order','orderDetails', 'customerDiscount', 'user', 'orderInvoice', 'storedetails', 'store_delivery_type', 'paymentMethod'));
+        return view('v1.user.pages.cart', compact('order','orderDetails', 'customerDiscount', 'user', 'orderInvoice', 'storedetails','storeDetail', 'store_delivery_type', 'paymentMethod'));
     }
 
     /**
@@ -1794,7 +1796,7 @@ class OrderController extends Controller
         $data = $request->input();
 
         $this->deleteWholecart($data['orderid']);
-        $url=$request->session()->get('route_url');
+        $url= route('eatNow');
 
         if(Session::has('iFrameMenu'))
         {

@@ -38,6 +38,11 @@
                                 }
                             }
                         }
+        
+                        // if catering order is new so show count.
+                        if(returnedData['catering_order_count'] >= 0){
+                            $('i.catering-badge').html(returnedData['catering_order_count']);
+                        }
 
                         setTimeout(serverSE, INTERVAL_CHECK_STORE_SUBS);
                     },

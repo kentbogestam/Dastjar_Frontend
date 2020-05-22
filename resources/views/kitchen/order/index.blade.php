@@ -1,6 +1,13 @@
 @extends('layouts.blank')
 
 @section('content')
+
+<style>
+	.news{
+		background-color: #87ceebbf !important;
+	}
+</style>
+
 	<div data-role="header" data-position="fixed" data-tap-toggle="false" class="header">
 		@include('includes.kitchen-header-sticky-bar')
 		<h3 class="ui-bar ui-bar-a order_background"><span>{{$storeName}}</span></h3>
@@ -10,7 +17,7 @@
 			@if ($message = Session::get('success'))
 			<div class="table-content sucess_msg">
 				<img src="{{asset('images/icons/Yes_Check_Circle.png')}}">
-				 @if(is_array($message))
+				@if(is_array($message))
 		            @foreach ($message as $m)
 		                {{ $languageStrings[$m] ?? $m }}
 		            @endforeach
@@ -20,7 +27,7 @@
 		    </div>
 			@endif
 		</div>
-		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow table-stripe ui-responsive table_size" >
+		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow ui-responsive table_size" >
 			<thead>
 			 	<tr class="ui-bar-d">
 			 		<th data-priority="2">{{ __('messages.Orders') }}</th>
@@ -159,7 +166,12 @@
 
 	          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
 	          		var orderIdSpecific = temp[i]["order_id"] ;
-	          		var orderStatus = temp[i]["order_started"] == 0 ? 'new' : ''; // Add class 'new' until order 'started'
+
+	          		if(temp[i]["order_type"] == "eat_now"){
+	          			var orderStatus = temp[i]["order_started"] == 0 ? 'new' : ''; // Add class 'new' until order 'started'
+	          		}else{
+	          			var orderStatus = temp[i]["order_started"] == 0 ? 'news' : '';// Add class 'news' until order 'started'
+	          		}
 
 	          		if(temp[i]['orderDeliveryStatus'] == '0')
 	          		{
@@ -430,7 +442,12 @@
       	// var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
       	var timeOrder = addTimes("00:00:00",list[i]["deliver_time"]);
       	var orderIdSpecific = list[i]["order_id"] ;
-      	var orderStatus = list[i]["order_started"] == 0 ? 'new' : ''; // Add class 'new' until order 'started'
+
+      	if(list[i]["order_type"] == "eat_now"){
+  			var orderStatus = list[i]["order_started"] == 0 ? 'new' : ''; // Add class 'new' until order 'started'
+  		}else{
+  			var orderStatus = list[i]["order_started"] == 0 ? 'news' : '';// Add class 'news' until order 'started'
+  		}
 
       	if(list[i]['orderDeliveryStatus'] == '0')
   		{
@@ -640,6 +657,7 @@
 					$('body').find('#'+id+'ready').parent("a").attr('onclick','makeOrderReady('+id+')');
 				}
 				$This.closest('tr').removeClass('not-started');
+				$This.closest('tr').removeClass('news');
 
 				clearSpeakTextInterval();
 			}

@@ -1,3 +1,13 @@
+<style>
+    i.badge{
+        margin-left: 0px;
+        font-family: cursive;
+        text-shadow: none;
+        font-size: 12px;
+        color: #fff;
+    }
+</style>
+
 <div data-role="footer" data-position="fixed" data-tap-toggle="false" class="footer_container">
 	<div class="ui-grid-a center">
 		<div class="ui-block-a left-side_menu">
@@ -23,6 +33,7 @@
 					<img src="{{asset('kitchenImages/icon-3.png')}}">
 				</div>
 				<span>{{ __('messages.Catering') }}</span>
+                <i class="badge catering-badge">0</i>
 				</a>
 			</div>
 		</div>
