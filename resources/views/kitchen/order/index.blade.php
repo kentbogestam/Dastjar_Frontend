@@ -35,8 +35,8 @@
 			   		<th data-priority="3">{{ __('messages.Date and Time') }}</th>
 			   		@if( !Session::has('subscribedPlans.kitchen') )
 						<th data-priority="3">{{ __('messages.Started') }}</th>
+					    <th data-priority="1">{{ __('messages.Ready') }}</th>
 					@endif
-					<th data-priority="1">{{ __('messages.Ready') }}</th>
 			    	<th data-priority="5">{{ __('messages.Delivered') }}</th>
 			    	<th data-priority="3" width="15%">{{ __('messages.Paid') }}</th>
 			     	<th data-priority="1">{{ __('messages.Pick up Time') }}</th>
@@ -74,11 +74,9 @@
 	var totalCount = 0;
 	var totallength = 0;
 	var storeId = "{{Session::get('kitchenStoreId')}}";
-	// var url = "{{url('kitchen/order-ready')}}";
 	var urldeliver = "{{url('kitchen/order-deliver')}}";
 	var urlReadyOrder = "{{url('kitchen/make-order-ready')}}";
-	var imageUrl = "{{asset('kitchenImages/right_sign.png')}}";
-	// var intervalSpeakText = 0;
+	var imageUrlLoad = "{{asset('kitchenImages/red_blink_image.png')}}";
 	var speakOrderItemList = [];
 	var driverapp = "{{ Session::get('driverapp') }}";
 
@@ -86,11 +84,20 @@
 		ajaxCall();
 	});
 
+    $('body').on('mouseover', '.image_clicked', function(){
+        $(this).css("padding","2px");
+    });
+    $('body').on('mouseout', '.image_clicked', function(){
+        $(this).css("padding","0px");
+    });
+    $('body').on('click', '.image_clicked', function(){
+        $(this).css("padding","0px");
+    });
+    
 	function getList(orderId){
 		var liItem = "";
 		$.get("{{url('api/v1/kitchen/orderSpecificOdrderDetail')}}/"+orderId,
 		function(returnedData){
-			// console.log(returnedData["data"]);
 			var temp = returnedData["data"];
 			var isQuantityFree = 0;
 
@@ -132,13 +139,11 @@
 	var ajaxCall = function(){
 		$.get("{{url('api/v1/kitchen/order-detail')}}/" + storeId,
 		function(returnedData){
-			// console.log(returnedData["data"]);
 			var count = 18;
 			var temp = returnedData["data"];
 			var orderItems = returnedData['orderItems'];
 			extra_prep_time = returnedData["extra_prep_time"];
           	list = temp;
-          	// console.log(temp.length);
           	var liItem = "";
           	var aString = '';
           	totallength = temp.length;
@@ -163,7 +168,14 @@
 			      	{
 			      		var time = addTimes(temp[i]['deliver_time'], temp[i]['extra_prep_time']);
 			      	}
-
+                    
+//                    blink image time caculator getting time based on pick up and current time
+                    var today = new Date(); 
+                    old_hour = time.substr(0,2);
+                    old_mins = time.substr(3,5);
+                    var old_time = parseInt(old_hour)*60 + parseInt(old_mins);
+                    var new_time = parseInt(today.getHours())*60 + parseInt(today.getMinutes())
+                    
 	          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
 	          		var orderIdSpecific = temp[i]["order_id"] ;
 
@@ -208,67 +220,66 @@
 
 			          		liItem += "<td>"
 			          		liItem += aString
-			          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/subs_sign.png')}}'>"
+			          		liItem += "<img id='"+ids+"' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
 			          		liItem +="</a></td>";
 		          		}else{
 		          			liItem += "<td>"
 			          		liItem += "<a>"
-			          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
-			          		liItem +="</a></td>";
+			          		liItem +="</a>";
+			          		liItem +="</td>";
 		          		}
 
 		          		// Order Ready
 		          		if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 0){
 		          			ids = temp[i]['order_id'];
-			          		liItem += "<td>"
-			          		liItem += "<a data-ajax='false' href='javascript:void(0)' >"
-			          		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
-			          		liItem +="</a></td>";
+			          		liItem += "<td class='ready_class'>";
+			          		liItem +="</td>";
 			          	}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
+			          		// flash image based on pick up time will
+			          		if(old_time < new_time){
+			                    var flashImg = "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.gif')}}'>";
+			                }else{
+			                    var flashImg = "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>";
+			                }
+
 			          		if(temp[i]["delivery_type"] == 3 && driverapp)
 			          		{
 		          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", false)'>";
 			          		}
 		          			else
 		          			{
-		          				aString = "<a data-ajax='false' href="+urlReadyOrder+"/"+temp[i]['order_id']+">";
+                                aString = "<a data-ajax='false' href="+urlReadyOrder+"/"+temp[i]['order_id']+">";
 		          			}
+
+		          			aString += flashImg;
 
 			          		liItem += "<td>"
 			          		liItem += aString
-			          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
-			          		liItem +="</a></td>";
+			          		liItem +="</a>";
+			          		liItem +="</td>";
 			          	}else{
 			          		liItem += "<td>"
 			          		liItem += "<a>"
-			          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
 			          		liItem +="</a></td>";
 		          		}
-		          	@else
-		          		liItem += "<td>"
-				  		if(list[i]["order_ready"] == 0){
-		          			liItem += "<a data-ajax='false'>"
-				  			liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
-				  		}else{
-		          			liItem += "<a data-ajax='false'>"
-				  			liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
-				  		}
-		          		liItem +="</a></td>";
 	          		@endif
 	          		
 	          		liItem += "<td>"
 	          		if( (list[i]["paid"] == 0 && list[i]["order_ready"] == 0) || (list[i]["delivery_type"] == 3 && driverapp) ){
-		          		liItem += "<a data-ajax='false' >"
-		          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
 	          		}else if(list[i]["paid"] == 0 && list[i]["order_ready"] == 1){
 		          		liItem += "<a data-ajax='false' href="+urldeliver+"/"+list[i]['customer_order_id']+" >"
-		          		liItem += "<img src='{{asset('kitchenImages/yellow_right_sign.png')}}'>"
+                        if(old_time < new_time){
+                            liItem += "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.gif')}}'>"
+                        }else{
+                            liItem += "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
+                        }
+		          		liItem += "</a>"
 	          		}
 	          		else{
 		          		liItem += "<a data-ajax='false'>"
-		          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
+		          		liItem += "</a>"
 	          		}
-	          		liItem +="</a></td>";
+	          		liItem +="</td>";
 	          		liItem += "<td>"
 	          		if(list[i]["paid"] == 1 || list[i]["online_paid"] == 1 || list[i]["online_paid"] == 3){
 	          			liItem += "<input class='yes_check'  type='button' data-role='none' value='yes' name=''>"
@@ -290,7 +301,7 @@
 	          		{
 	          			liItem += '<div class="show-total"><strong>Loyalty</strong></div>';
 	          		}
-
+                    
 	          		liItem += "<td>"+time+"</td>";
 
 	          		var deliveryType = '';
@@ -384,7 +395,6 @@
         scrollEnd = contentHeight - screenHeight + header + footer;
 
     	$(".ui-btn-left", activePage).text("Scrolled: " + scrolled);
-    	//$(".ui-btn-right", activePage).text("ScrollEnd: " + scrollEnd);
 
     	
     	//if in future this page will get it, then add this condition in and in below if activePage[0].id == "home" 
@@ -420,9 +430,6 @@
 
 
       for (var i=len;i<len + 10;i++){
-      // console.log(returnedData["data"]);console.log("len="+len);
-      // console.log("i="+i);
-      // console.log("totallength="+totallength);
       	if(i>=totallength){
       		tempCount = 18;
       		break;
@@ -439,7 +446,12 @@
       		var time = addTimes(list[i]["deliver_time"], list[i]['extra_prep_time']);
       	}
 
-      	// var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
+//      blink image time caculator getting time based on pick up and current time
+        var today = new Date(); 
+        old_hour = time.substr(0,2);
+        old_mins = time.substr(3,5);
+        var old_time = parseInt(old_hour)*60 + parseInt(old_mins);
+        var new_time = parseInt(today.getHours())*60 + parseInt(today.getMinutes())
       	var timeOrder = addTimes("00:00:00",list[i]["deliver_time"]);
       	var orderIdSpecific = list[i]["order_id"] ;
 
@@ -487,67 +499,74 @@
 
           		liItem += "<td>"
           		liItem += aString
-          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/subs_sign.png')}}'>"
+          		liItem += "<img id='"+ids+"' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
           		liItem +="</a></td>";
       		}else{
       			liItem += "<td>"
           		liItem += "<a>"
-          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
           		liItem +="</a></td>";
       		}
 
       		// Order Ready
       		if(list[i]["order_ready"] == 0 && list[i]["order_started"] == 0){
       			ids = list[i]['order_id'];
-          		liItem += "<td>"
-          		liItem += "<a data-ajax='false' href='javascript:void(0)' >"
-          		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
-          		liItem +="</a></td>";
+          		liItem += "<td class='ready_class'>"
+          		liItem +="</td>";
           	}else if(list[i]["order_ready"] == 0 && list[i]["order_started"] == 1){
+          		// flash image based on pick up time will
+          		if(old_time < new_time){
+                    var flashImg = "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.gif')}}'>";
+                }else{
+                    var flashImg = "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>";
+                }
+
           		if(list[i]["delivery_type"] == 3 && driverapp)
           		{
       				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+list[i]['order_id']+", false)'>";
           		}
       			else
-      			{
-      				aString = "<a data-ajax='false' href="+urlReadyOrder+"/"+list[i]['order_id']+">";
-      			}
+                {
+                	aString = "<a data-ajax='false' href="+urlReadyOrder+"/"+list[i]['order_id']+">";
+                }
 
-          		liItem += "<td>"
-          		liItem += aString
-          		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
-          		liItem +="</a></td>";
+                aString += flashImg;
+
+                liItem += "<td>"
+                liItem += aString
+                liItem +="</a>";
+                liItem +="</td>";
+                
           	}else{
           		liItem += "<td>"
           		liItem += "<a>"
-          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
           		liItem +="</a></td>";
       		}
       	@else
       		liItem += "<td>"
 	  		if(list[i]["order_ready"] == 0){
 	  			liItem += "<a data-ajax='false'>"
-	  			liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
 	  		}else{
 	  			liItem += "<a data-ajax='false'>"
-	  			liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
 	  		}
 	  		liItem +="</a></td>";
   		@endif
   		
   		liItem += "<td>"
   		if(list[i]["paid"] == 0 && list[i]["order_ready"] == 0 ){
-      		liItem += "<a data-ajax='false' >"
-      		liItem += "<img src='{{asset('kitchenImages/subs_sign.png')}}'>"
   		}else if(list[i]["paid"] == 0 && list[i]["order_ready"] == 1){
       		liItem += "<a data-ajax='false' href="+urldeliver+"/"+list[i]['customer_order_id']+" >"
-      		liItem += "<img src='{{asset('kitchenImages/yellow_right_sign.png')}}'>"
+      		if(old_time < new_time){
+                liItem += "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.gif')}}'>"
+            }else{
+                liItem += "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
+            }
+      		liItem += "</a>"
   		}
   		else{
       		liItem += "<a data-ajax='false'>"
-      		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
+      		liItem += "</a>"
   		}
-  		liItem +="</a></td>";
+  		liItem +="</td>";
   		liItem += "<td>"
   		if(list[i]["paid"] == 1 || list[i]["online_paid"] == 1 || list[i]["online_paid"] == 3){
   			liItem += "<input class='yes_check'  type='button' data-role='none' value='yes' name=''>"
@@ -646,7 +665,6 @@
 		function(returnedData){
 			if(returnedData.status)
 			{
-				$('body').find('#'+id).attr('src',imageUrl);
 				$('body').find('#'+id).parent("a").attr('onclick',' ');
 				if(returnedData.order.delivery_type == 3 && driverapp)
 				{
@@ -657,8 +675,11 @@
 					$('body').find('#'+id+'ready').parent("a").attr('onclick','makeOrderReady('+id+')');
 				}
 				$This.closest('tr').removeClass('not-started');
-				$This.closest('tr').removeClass('news');
-
+                $This.closest('tr').removeClass('news');
+             	// change red blinker to gray circle and remove class new form its table row tr element
+                $This.parents('tr').removeClass('new');
+                $This.parents('tr').find('.ready_class').html("<a data-ajax='false' href="+urlReadyOrder+"/"+id+"><img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>");
+				$('body').find('#'+id).remove();
 				clearSpeakTextInterval();
 			}
 		});
@@ -666,12 +687,11 @@
 
 	// Update the order and order items
 	function makeOrderReady(id) {
-		$('body').find('#'+id+'ready').attr('src',imageUrl);
 		$('body').find('#'+id+'ready').parent("a").attr('onclick',' ');
+		$('body').find('#'+id+'ready').remove();
 
 		$.get("{{url('kitchen/make-order-ready')}}/"+id,
 		function(returnedData){
-			//$('body').find('#'+id+'ready').parents("tr").remove();
 			window.location.reload();
 		});
 	}

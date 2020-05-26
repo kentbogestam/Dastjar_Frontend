@@ -37,9 +37,6 @@ class KitchenController extends Controller
         // Update store's 'islive'
         Helper::updateStoreIslive($reCompanyId);
 
-        // 
-        // $deliveryDate = Carbon::now()->subDays(1)->toDateString();
-        // $deliveryDateTill = Carbon::now()->toDateString();
         $stores[] = $reCompanyId;
 
         // Get virtual restaurant if mapped
@@ -57,8 +54,6 @@ class KitchenController extends Controller
         $orderDetailscustomer = Order::select(['orders.*','customer.name as name', 'OCD.discount_id', 'PD.discount_value', DB::raw('COUNT(OCL.id) AS cntLoyaltyUsed'), 'OD.status AS orderDeliveryStatus', 'CA.street'])
             ->whereIn('orders.store_id', $stores)
             ->where('user_type','=','customer')
-            // ->where('check_deliveryDate', '>=', $deliveryDate)
-            // ->where('check_deliveryDate', '<=', $deliveryDateTill)
             ->where('orders.check_deliveryDate', '>=', date("Y-m-d",time()))
             ->where('orders.paid', '0')
             ->whereNotIn('orders.online_paid', [2])

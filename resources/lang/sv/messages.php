@@ -379,7 +379,6 @@ return [
     'sendorderforconfirmation' => 'Skicka din order och invänta konfirmation',
     'pleaseSelectOne' => ' Vänligen välj en',
     'price' => 'Pris',
-    'deliveryAtDoor' => 'Leverera till dörren',
     'welcomeAnyTime' => 'Du är välkommen tillbaka någon annan gång!',
     'rejectMsg' => 'Ledsen, vi kan inte ta hand om din beställning just nu, baserat på överbelastning!',
     'success' => 'Framgång',
@@ -387,4 +386,9 @@ return [
     'cancelMyOrder' => 'Avboka Min Beställning',
     'doYoureallywantstoCancel' => 'Vill du verkligen avbryta?',
     'okay' => 'Okej',
+    'pleaseWait' => 'Var god vänta',
+    'OrdersNotReady' => 'Den här ordern är inte färdig ännu',
+    'deliveryAtDoor' => 'Lämna vid dörren',
+    'orderDeliveryAtDoor' => 'Din beställning är nu levererad till din dörr! Tack för beställningen och Välkommen tillbaka!',
+    'deliverAtDoor' => '||Leverera till dörren||'
 ];

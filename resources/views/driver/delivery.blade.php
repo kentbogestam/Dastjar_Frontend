@@ -5,6 +5,7 @@
 		<div class="row">
 			<div class="col-md-12 text-center"><h2>{{ $company->company_name }}</h2></div>
 		</div>
+		@include('common.flash')
 		<table class="table table-bordered table-listing">
 			<thead>
 				<tr>
@@ -126,8 +127,13 @@
 									}
 
 									// Draw HTML
-									html = '<tr>'+
-										'<td><a href="javascript:getOrderDetail(\''+customer_order_id+'\')" class="link">'+customer_order_id+'</a></td>'+
+                                    if(response.orderDelivery[i]['delivery_at_door'] == '1' && response.orderDelivery[i]['delivery_type'] == '3'){
+                                        html = '<tr style="background-color:#ffff0091">'
+                                    }else{
+									   html = '<tr>'
+                                    }
+                                
+								    html +='<td><a href="javascript:getOrderDetail(\''+customer_order_id+'\')" class="link">'+customer_order_id+'</a></td>'+
 										'<td>'+response.orderDelivery[i]['full_name']+'</td>'+
 										// "<td><a href='https://www.google.com/maps/place/"+response.orderDelivery[i]['customer_address']+"' target='_blank' class='link'>"+address+" <i class='fas fa-directions'></i></a></td>"+
 										"<td><a href='{{ url('driver/delivery-direction') }}/"+response.orderDelivery[i]['order_id']+"' class='link'>"+address+" <i class='fas fa-directions'></i></a>"+address2+"</td>"+

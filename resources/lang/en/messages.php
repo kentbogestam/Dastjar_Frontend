@@ -376,7 +376,6 @@ return [
     'sendorderforconfirmation' => 'Send your order and wait for confirmation',
     'pleaseSelectOne' => 'Please Select One',
     'price' => 'Price',
-    'deliveryAtDoor' => 'Deliver to Door',
     'welcomeAnyTime' => 'You are welcome back any other time!',
     'rejectMsg' => 'Sorry, We are not able to take care of your order right now, based on overload!',
     'success' => 'Success',
@@ -384,4 +383,9 @@ return [
     'cancelMyOrder' => 'Cancel My Order',
     'doYoureallywantstoCancel' => 'Do you really wants to cancel ?',
     'okay' => 'Okay',
+    'pleaseWait' => 'Please Wait',
+    'OrdersNotReady' => 'This Order is not Ready Yet',
+    'deliveryAtDoor' => 'Delivery at door',
+    'orderDeliveryAtDoor' => 'Your order is now delivered to your door, please pick it up! Thanks for order and Welcome back anytime!',
+    'deliverAtDoor' => '||Deliver at Door||'
 ];

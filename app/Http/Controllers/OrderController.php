@@ -176,10 +176,12 @@ class OrderController extends Controller
     // Upload all txt file from printdata directory to printer server
     function uploadPrintFile()
     {
+        $PRINTER_BASE_URL = env('PRINTER_BASE_URL');
         $filePath = storage_path('app/printerdata');
         $files = File::files($filePath);
 
-        if(!empty($files))
+        // Check if files and printer server URL exist
+        if(!empty($files) && $PRINTER_BASE_URL)
         {
             $fields = $arrFiles = array();
 
@@ -196,8 +198,9 @@ class OrderController extends Controller
             $fieldsString = http_build_query($fields);
 
             // Post files to print server
+            $uploadUrl = $PRINTER_BASE_URL.'/kitchen/handle-upload.php';
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, "https://printer.dastjar.com/kitchen/handle-upload.php");
+            curl_setopt($ch, CURLOPT_URL, $uploadUrl);
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $fieldsString);
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
@@ -1215,8 +1218,8 @@ class OrderController extends Controller
     function orderUpdateDeliveryType(Request $request)
     {
         $status = 0;
-
-        if( Order::where('order_id', $request->input('order_id'))->update(['delivery_type' => $request->input('delivery_type')]) )
+            
+        if( Order::where('order_id', $request->input('order_id'))->update([ 'delivery_type' => $request->input('delivery_type'), 'delivery_at_door' => $request->delivery_at_door]) )
         {
             $status = 1;
         }

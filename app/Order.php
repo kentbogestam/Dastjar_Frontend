@@ -10,7 +10,7 @@ class Order extends Model
 
     //
     protected $fillable = [
-        'order_id', 'customer_order_id', 'user_id', 'order_type', 'user_type', 'deliver_date', 'deliver_time', 'check_deliveryDate', 'order_total', 'order_delivery_time', 'created_at', 'updated_at'
+        'order_id', 'customer_order_id', 'user_id', 'order_type', 'user_type', 'deliver_date', 'deliver_time', 'check_deliveryDate', 'order_total', 'order_delivery_time', 'delivery_at_door', 'created_at', 'updated_at'
     ];
     
     public function orderdetailDetail()

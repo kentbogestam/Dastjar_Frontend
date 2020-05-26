@@ -610,7 +610,7 @@ class AdminController extends Controller
             }
         }
 
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time', 'orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
             ->whereIn('order_details.store_id', $stores)
             // ->where('delivery_date', '>=', $deliveryDate)
             // ->where('delivery_date', '<=', $deliveryDateTill)
@@ -624,7 +624,7 @@ class AdminController extends Controller
             ->leftJoin('order_delivery AS OD', 'OD.order_id', '=', 'orders.order_id')
             ->where('orders.is_verified', '1')
             ->get();
-
+ 
         $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;
         
         $text_speech = Auth::guard('admin')->user()->text_speech;
@@ -2143,21 +2143,24 @@ class AdminController extends Controller
      */
     function addManualPrepTime(Request $request)
     {
-        $status = 0;
+        $status = $time = 0;
 
         $minutes = $request->extra_prep_time;
         $extra_prep_time = intdiv($minutes, 60).':'. ($minutes % 60).':00';
 
         // Update extra preparation time
-        $result = Order::where('order_id', $request->order_id)
-            ->update(['extra_prep_time' => $extra_prep_time]);
+        $results = Order::where('order_id', $request->order_id)
+          ->update(['extra_prep_time' => $extra_prep_time]);
+        $result = Order::where('order_id', $request->order_id)->first();
 
-        if($result)
+        if($results)
         {
             $status = 1;
+            $newtime = strtotime($result->deliver_time) + (strtotime($extra_prep_time) - strtotime('00:00:00'));
+            $time = date("H:i",$newtime);
         }
 
-        return response()->json(['status' => $status]);
+        return response()->json(['status' => $status,'time' => $time]);
     }
 
     /**
@@ -2449,6 +2452,7 @@ class AdminController extends Controller
                     $pieces[0] = '';               
                 }
 
+                // sending Notification
                 if( ($pieces[0] == 'Safari') || ( isset($adminDetail->browser) && strpos($adminDetail->browser, 'Mobile/') !== false ) || ( isset($adminDetail->browser) && strpos($adminDetail->browser, 'wv') !== false ) )
                 {
                     $message = __('messages.notificationOrderReady', ['order_id' => $OrderId->customer_order_id]);

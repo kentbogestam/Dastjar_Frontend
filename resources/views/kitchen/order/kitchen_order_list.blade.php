@@ -73,39 +73,55 @@
 		var totalCount = 0;
 		var textSpeech = 0;
 		var totallength = 0;
-		//var url = "{{url('kitchen/order-started')}}";
 		var urlReady = "{{url('kitchen/order-readyKitchen')}}";
-		// var textSpeachDone = "{{url('kitchen/textSpeachDone')}}";
 		var lastOrderId;
-		var imageUrl = "{{asset('kitchenImages/right_sign.png')}}";
-		// var intervalSpeakText = 0;
+        var imageUrl = "{{asset('kitchenImages/gray_circle.jpg')}}";
+
 		var driverapp = "{{ Session::get('driverapp') }}";
 
+        $('body').on('mouseover', '.image_clicked', function(){
+            $(this).css("padding","2px");
+        });
+        $('body').on('mouseout', '.image_clicked', function(){
+            $(this).css("padding","0px");
+        });
+        $('body').on('click', '.image_clicked', function(){
+            $(this).css("padding","0px");
+        });
+        
 		function orderReadyStarted(id, This) {
 			$This = $(This);			
 			$.get("{{url('kitchen/orderStartedKitchen')}}/"+id,
 			function(returnedData){
-				$('body').find('#'+id).attr('src',imageUrl);
 				$('body').find('#'+id).parent("a").attr('onclick',' ');
 				if(returnedData.order.delivery_type == 3 && driverapp)
-				{
-					$('body').find('#'+id+'ready').parent("a").attr('onclick','popupOrderAssignDriver('+returnedData.order.order_id+', '+id+')');
+                {                               
+                    $('body').find('#'+id+'ready').parent("a").attr('onclick', 'popupOrderAssignDriver('+returnedData.order.order_id+', '+id+')');
 				}
 				else
 				{
 					$('body').find('#'+id+'ready').parent("a").attr('onclick','onReady('+id+')');
 				}
+           		// on removing class ebent remove button also
 				$This.closest('tr').removeClass('not-started');
 				$This.closest('tr').removeClass('news');
+				$This.closest('tr').find('.ready_class').html("<a data-ajax='false' href="+urlReady+"/"+id+"><img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>");
+				$('body').find('#'+id).remove();
 
 				// Update item as speak
 				updateSpeak(id);
 			});
 		}
+        
+		function timechange(This,time) {
+			$This = $(This);			
+			$This.closest('tr').find('.time_class').html(time);
+		}
 
 		function onReady(id) {		
-			$('body').find('#'+id+'ready').attr('src',imageUrl);
+//            on removing click ebent remove button also
 			$('body').find('#'+id+'ready').parent("a").attr('onclick',' ');
+			$('body').find('#'+id+'ready').remove();
 
 			$.get("{{url('kitchen/order-readyKitchen')}}/"+id,
 			function(returnedData){
@@ -116,15 +132,13 @@
 		$(function(){
 			$.get("{{url('kitchen/kitchen-orders')}}",
 			function(returnedData){
-				// console.log(returnedData);
+                
 				textSpeech = returnedData["user"];
 				extra_prep_time = returnedData["extra_prep_time"];
-				// order_response = returnedData["order_response"];
 				var count = 18;
 				
 				var temp = returnedData["data"];
 	          	list = temp;
-	          	// console.log(temp.length);
 	          	var liItem = "";
 	          	var ids = '';
 	          	var aString = '';
@@ -153,6 +167,13 @@
 			          			var time = addTimes(temp[i]['deliver_time'], temp[i]['extra_prep_time']);
 			          		}
 			          		
+//                    blink image time caculator getting time based on pick up and current time
+                            var today = new Date(); 
+                            old_hour = time.substr(0,2);
+                            old_mins = time.substr(3,5);
+                            var old_time = parseInt(old_hour)*60 + parseInt(old_mins);
+                            var new_time = parseInt(today.getHours())*60 + parseInt(today.getMinutes())
+                            
 			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
 
 			          		if(temp[i]["order_type"] == "eat_now"){
@@ -205,8 +226,7 @@
 
 			          		if(temp[i]["order_started"] == 0){
 			          			ids = temp[i]['id'];
-
-			          			if(temp[i]['order_response'])
+                                if(temp[i]['order_response'])
 			          			{
 			          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='orderReadyStarted("+ids+", this)'>";
 			          			}
@@ -215,25 +235,33 @@
 			          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='isManualPrepTimeForOrder("+temp[i]['order_id']+", "+ids+", this)'>";
 			          			}
 
-				          		liItem += "<td >"
+				          		liItem += "<td>"
 				          		liItem += aString
-				          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/subs_sign.png')}}'>"
+				          		liItem += "<img id='"+ids+"' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
 				          		liItem +="</a></td>";
 				          		
 			          		}else{
 			          			liItem += "<td>"
 				          		liItem += "<a>"
-				          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
+//				          		liItem += "<img src='{{asset('kitchenImages/gray_circle.jpg')}}'>"
 				          		liItem +="</a></td>";
 			          		}
 
 			          		if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 0){
 			          			ids = temp[i]['id'];
-				          		liItem += "<td>"
-				          		liItem += "<a data-ajax='false' href='javascript:void(0)' >"
-				          		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
-				          		liItem +="</a></td>";
+				          		liItem += "<td class='ready_class'>"
+//				          		liItem += "<a data-ajax='false' href='javascript:void(0)' >"
+//				          		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
+//				          		liItem +="</a>";
+				          		liItem +="</td>";
 				          	}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
+				          		// flash image based on pick up time will
+				          		if(old_time < new_time){
+				                    var flashImg = "<img id='"+temp[i]['id']+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.gif')}}'>";
+				                }else{
+				                    var flashImg = "<img id='"+temp[i]['id']+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>";
+				                }
+
 				          		if(temp[i]["delivery_type"] == 3 && driverapp)
 				          		{
 				          			aString = "<a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", "+temp[i]['id']+")'>";
@@ -242,18 +270,21 @@
 				          		{
 				          			aString = "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+">";
 				          		}
+
+				          		aString += flashImg;
+
 				          		liItem += "<td>"
 				          		// liItem += "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+" >"
 				          		liItem += aString
-				          		liItem += "<img id='"+temp[i]['id']+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
-				          		liItem +="</a></td>";
+				          		liItem +="</a>";
+				          		liItem +="</td>";
 				          	}else{
 				          		liItem += "<td>"
 				          		liItem += "<a>"
-				          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
+//				          		liItem += "<img src='{{asset('kitchenImages/gray_circle.jpg')}}'>"
 				          		liItem +="</a></td>";
 			          		}
-			          		liItem += "<td>"+time+"</td>";
+			          		liItem += "<td class='time_class'>"+time+"</td>";
 
 			          		var deliveryType = '';
 			          		if( temp[i]['delivery_type'] == 1 )
@@ -284,28 +315,23 @@
 					    })(i);
 		          	}
 	          	}else{
-	          		/*liItem += "<div class='table-content'>";
-		        	liItem += "<p>";
-		        	//liItem += '{{ __('messages.Order is not available.') }}';
-		        	liItem += "</p>";
-		        	liItem += "</div>";*/
+	          	
 	          	}
 	          	
 	          	$("#orderDetailContianer").append(liItem);
 			}); 
 		});
-		// console.log('lastOrderId'+lastOrderId);
+        
 		var ajaxCall = function(){
 			$.get("{{url('kitchen/kitchen-orders-new')}}/"+lastOrderId,
 			function(returnedData){
-				// console.log(returnedData["data"]);
 				var count = 18;
 				var temp = returnedData["data"];
 				textSpeech = returnedData["user"];
 				extra_prep_time = returnedData["extra_prep_time"];
 				totallength = temp.length;
 	          	list = temp;
-	          	// console.log(temp.length);
+                
 	          	var liItem = "";
 	          	var ids = '';
 	          	var aString = '';
@@ -321,6 +347,7 @@
 		          		if(i>totallength){
 				      		break;
 				      	}
+                        
 				      	lastOrderId = temp[i]["id"];
 				      	
 				      	(function (i) {
@@ -334,6 +361,13 @@
 			          			var time = addTimes(temp[i]['deliver_time'], temp[i]['extra_prep_time']);
 			          		}
 
+//                    blink image time caculator getting time based on pick up and current time
+                            var today = new Date(); 
+                            old_hour = time.substr(0,2);
+                            old_mins = time.substr(3,5);
+                            var old_time = parseInt(old_hour)*60 + parseInt(old_mins);
+                            var new_time = parseInt(today.getHours())*60 + parseInt(today.getMinutes())
+        
 			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
 			          		if(temp[i]["order_type"] == "eat_now"){
 			          			var clsStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
@@ -382,7 +416,6 @@
 
 			          		if(temp[i]["order_started"] == 0){
 				          		ids = temp[i]['id'];
-
 				          		if(temp[i]['order_response'])
 				          		{
 			          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='orderReadyStarted("+ids+", this)'>";
@@ -392,24 +425,28 @@
 			          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='isManualPrepTimeForOrder("+temp[i]['order_id']+", "+ids+", this)'>";
 			          			}
 
-				          		liItem += "<td >"
+				          		liItem += "<td>"
 				          		liItem += aString
-				          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/subs_sign.png')}}'>"
+				          		liItem += "<img id='"+ids+"' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
 				          		liItem +="</a></td>";
 			          		}else{
 			          			liItem += "<td>"
 				          		liItem += "<a>"
-				          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
 				          		liItem +="</a></td>";
 			          		}
 
 			          		if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 0){
-				          		ids = temp[i]['id'];
-				          		liItem += "<td>"
-				          		liItem += "<a data-ajax='false' href='javascript:void(0)' >"
-				          		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
-				          		liItem +="</a></td>";
+				          		ids = temp[i]['id'];                                
+                                liItem += "<td class='ready_class'>"
+				          		liItem +="</td>";
 				          	}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
+				          		// flash image based on pick up time will
+				          		if(old_time < new_time){
+				                    var flashImg = "<img id='"+temp[i]['id']+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.gif')}}'>";
+				                }else{
+				                    var flashImg = "<img id='"+temp[i]['id']+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>";
+				                }
+
 				          		if(temp[i]["delivery_type"] == 3 && driverapp)
 				          		{
 				          			aString = "<a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", "+temp[i]['id']+")'>";
@@ -418,17 +455,19 @@
 				          		{
 				          			aString = "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+">";
 				          		}
+
+				          		aString += flashImg;
+
 				          		liItem += "<td>"
 				          		liItem += aString
-				          		liItem += "<img id='"+temp[i]['id']+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
-				          		liItem +="</a></td>";
+				          		liItem +="</a>";
+				          		liItem +="</td>";
 				          	}else{
 				          		liItem += "<td>"
 				          		liItem += "<a>"
-				          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
 				          		liItem +="</a></td>";
 			          		}
-			          		liItem += "<td>"+time+"</td>";
+			          		liItem += "<td class='time_class'>"+time+"</td>";
 
 			          		var deliveryType = '';
 			          		if( temp[i]['delivery_type'] == 1 )
@@ -461,7 +500,6 @@
 	          	}else{
 	          		liItem += "<div class='table-content'>";
 		        	liItem += "<p>";
-		        	//liItem += '{{ __('messages.Order is not available.') }}';
 		        	liItem += "</p>";
 		        	liItem += "</div>";
 	          	}
@@ -523,10 +561,7 @@
 
 
 	      for (var i=len;i<len + 10;i++){
-	      //console.log(returnedData["data"]);
-	      //console.log("len="+len);
-	     // console.log("i="+i);
-	      // console.log("totallength="+totallength);
+              
 	      	if(i>=totallength){
 	      		tempCount = 10;
 	      		break;
@@ -534,7 +569,7 @@
 	      	if(countCheck>limit){
 	      		break;
 	      	}
-	      	// console.log('iiiiiiiiissssssssssssssssss'+i);
+              
 	      	 (function (i) {
 			    setTimeout(function () {
 			    	if(list[i]['order_response'])
@@ -545,9 +580,15 @@
 	          		{
 	          			var time = addTimes(list[i]['deliver_time'], list[i]['extra_prep_time']);
 	          		}
-			      	// var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
-			      	
-	          		var timeOrder = addTimes("00:00::",list[i]["deliver_time"]);
+
+                   	// blink image time caculator getting time based on pick up and current time
+                    var today = new Date(); 
+                    old_hour = time.substr(0,2);
+                    old_mins = time.substr(3,5);
+                    var old_time = parseInt(old_hour)*60 + parseInt(old_mins);
+                    var new_time = parseInt(today.getHours())*60 + parseInt(today.getMinutes())
+                            
+			      	var timeOrder = addTimes("00:00::",list[i]["deliver_time"]);
 	          		if(list[i]["order_type"] == "eat_now"){
 	          			var clsStatus = list[i]["order_started"] == 0 ? 'not-started' : '';
 	          		}else{
@@ -593,8 +634,7 @@
 		      		liItem += "<td>"+list[i]["deliver_date"]+' '+timeOrder+"</td>";
 		      		if(list[i]["order_started"] == 0){
 		      			ids = list[i]['id'];
-
-		      			if(list[i]['order_response'])
+                        if(list[i]['order_response'])
 		      			{
 	          				aString = "<a data-ajax='false' href='javascript:void(0)' onclick='orderReadyStarted("+ids+", this)'>";
 		      			}
@@ -605,21 +645,25 @@
 
 		          		liItem += "<td >"
 		          		liItem += aString
-		          		liItem += "<img id='"+ids+"' src='{{asset('kitchenImages/subs_sign.png')}}'>"
+		          		liItem += "<img id='"+ids+"' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
 		          		liItem +="</a></td>";
 		      		}else{
 		      			liItem += "<td>"
 		          		liItem += "<a>"
-		          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
 		          		liItem +="</a></td>";
 		      		}
 		      		if(list[i]["order_ready"] == 0 && list[i]["order_started"] == 0){
 		          		ids = list[i]['id'];
-		          		liItem += "<td>"
-		          		liItem += "<a data-ajax='false' >"
-		          		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
-		          		liItem +="</a></td>";
+		          		liItem += "<td class='ready_class'>"
+				        liItem +="</td>";
 		          	}else if(list[i]["order_ready"] == 0 && list[i]["order_started"] == 1){
+		          		// flash image based on pick up time will
+		          		if(old_time < new_time){
+		                    var flashImg = "<img id='"+list[i]['id']+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.gif')}}'>";
+		                }else{
+		                    var flashImg = "<img id='"+list[i]['id']+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>";
+		                }
+
 		          		if(list[i]["delivery_type"] == 3 && driverapp)
 		          		{
 		          			aString = "<a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+list[i]['order_id']+", "+list[i]['id']+")'>";
@@ -628,17 +672,20 @@
 		          		{
 		          			aString = "<a data-ajax='false' href="+urlReady+"/"+list[i]['id']+">";
 		          		}
-		          		liItem += "<td>"
-		          		liItem += aString
-		          		liItem += "<img id='"+list[i]['id']+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
-		          		liItem +="</a></td>";
+
+		          		aString += flashImg;
+
+                        liItem += "<td>"
+                        liItem += aString
+                        liItem +="</a>";
+                        liItem +="</td>";                       
 		          	}else{
 		          		liItem += "<td>"
 		          		liItem += "<a>"
 		          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
 		          		liItem +="</a></td>";
 		      		}
-		      		liItem += "<td>"+time+"</td>";
+		      		liItem += "<td class='time_class'>"+time+"</td>";
 
 		      		var deliveryType = '';
 	          		if( temp[i]['delivery_type'] == 1 )
@@ -673,6 +720,7 @@
 		}
 
 		function addTimes (startTime, endTime, extra_prep_time) {
+            console.log(startTime + ' ' + endTime + ' ' + extra_prep_time)
 		  var times = [ 0, 0, 0 ];
 		  var max = times.length;
 
@@ -710,5 +758,25 @@
 
 		  return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2)
 		}
-	</script>
+        
+        setInterval(function(){
+            $('#orderDetailContianer tr').each(function(){
+                
+//              blink image time caculator getting time based on pick up and current time
+                var text = $(this).find('.time_class').text();
+                var today = new Date(); 
+                old_hour = text.substr(0,2);
+                old_mins = text.substr(3,5);
+                var old_time = parseInt(old_hour)*60 + parseInt(old_mins);
+                var new_time = parseInt(today.getHours())*60 + parseInt(today.getMinutes())
+                var chng = $(this).find('.ready_class');
+                var len = chng.length;
+                
+//              flash image based on pick up and new time
+                if(old_time < new_time && len > 0){
+                    chng.find('img').attr('src',"{{asset('kitchenImages/red_blink_image.gif')}}");
+                }
+            });
+        },10000);
+    </script>
 @endsection

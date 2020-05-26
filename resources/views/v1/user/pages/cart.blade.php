@@ -131,7 +131,29 @@
 			'X-CSRF-TOKEN': "{{ csrf_token() }}"
 		}
 	});
-
+    
+    $(function(){
+        // if home delivery clicked then show delivery at door otherwise not
+        $('.delivery_type_3').on('click', function(){
+            rel = $(this).attr('rel');
+            if(rel == "3"){
+                $('.delivery_at_door').css("display","block")
+            }else{
+                $('.delivery_at_door').css("display","none")
+            }
+        });
+        
+        // if delivery door clicked then change value
+        $('#delivery_at_door').on('click', function(){
+            if (this.checked) {
+                $('#delivery_at_door').val('1');
+            }else{
+                $('#delivery_at_door').val('0');
+            }
+            orderUpdateDeliveryType();
+        });
+    });
+    
 	// Update value in basket
 	var cntCartItems = "{{ $cntCartItems }}";
 	$('.cart-badge').html(cntCartItems);
@@ -243,7 +265,8 @@
 			data: {
 				'_token': "{{ csrf_token() }}",
 				'order_id': "{{ $order->order_id }}",
-				'delivery_type': $('input[name=delivery_type]:checked').val()
+				'delivery_type': $('input[name=delivery_type]:checked').val(),
+				'delivery_at_door': $('#delivery_at_door').val(),
 			},
 			dataType: 'json',
 			success: function(response) {
