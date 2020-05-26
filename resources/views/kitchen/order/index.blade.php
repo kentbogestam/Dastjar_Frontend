@@ -6,6 +6,9 @@
 	.news{
 		background-color: #87ceebbf !important;
 	}
+	.new{
+		background-color: #dbe473 !important;
+	}
 </style>
 
 	<div data-role="header" data-position="fixed" data-tap-toggle="false" class="header">

@@ -1,14 +1,13 @@
 @extends('layouts.blank')
 
-@section('head-scripts') 
-
-@endsection
-
 @section('content')
 
 <style>
 	.news{
 		background-color: #87ceebbf !important;
+	}
+	.not-started{
+		background-color: #dbe473 !important;
 	}
 </style>
 
@@ -22,7 +21,7 @@
 			@if ($message = Session::get('success'))
 			<div class="table-content sucess_msg">
 				<img src="{{asset('images/icons/Yes_Check_Circle.png')}}">
-				 @if(is_array($message))
+				@if(is_array($message))
 		            @foreach ($message as $m)
 		                {{ $languageStrings[$m] ?? $m }}
 		            @endforeach
@@ -114,12 +113,12 @@
 		}
         
 		function timechange(This,time) {
-			$This = $(This);			
+			$This = $(This);
 			$This.closest('tr').find('.time_class').html(time);
 		}
 
 		function onReady(id) {		
-//            on removing click ebent remove button also
+           	// on removing click ebent remove button also
 			$('body').find('#'+id+'ready').parent("a").attr('onclick',' ');
 			$('body').find('#'+id+'ready').remove();
 
@@ -167,7 +166,7 @@
 			          			var time = addTimes(temp[i]['deliver_time'], temp[i]['extra_prep_time']);
 			          		}
 			          		
-//                    blink image time caculator getting time based on pick up and current time
+                   			// blink image time caculator getting time based on pick up and current time
                             var today = new Date(); 
                             old_hour = time.substr(0,2);
                             old_mins = time.substr(3,5);
@@ -243,16 +242,16 @@
 			          		}else{
 			          			liItem += "<td>"
 				          		liItem += "<a>"
-//				          		liItem += "<img src='{{asset('kitchenImages/gray_circle.jpg')}}'>"
+				          		// liItem += "<img src='{{asset('kitchenImages/gray_circle.jpg')}}'>"
 				          		liItem +="</a></td>";
 			          		}
 
 			          		if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 0){
 			          			ids = temp[i]['id'];
 				          		liItem += "<td class='ready_class'>"
-//				          		liItem += "<a data-ajax='false' href='javascript:void(0)' >"
-//				          		liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
-//				          		liItem +="</a>";
+				          		// liItem += "<a data-ajax='false' href='javascript:void(0)' >"
+				          		// liItem += "<img id='"+ids+"ready' src='{{asset('kitchenImages/subs_sign.png')}}'>"
+				          		// liItem +="</a>";
 				          		liItem +="</td>";
 				          	}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
 				          		// flash image based on pick up time will
@@ -281,7 +280,7 @@
 				          	}else{
 				          		liItem += "<td>"
 				          		liItem += "<a>"
-//				          		liItem += "<img src='{{asset('kitchenImages/gray_circle.jpg')}}'>"
+				          		// liItem += "<img src='{{asset('kitchenImages/gray_circle.jpg')}}'>"
 				          		liItem +="</a></td>";
 			          		}
 			          		liItem += "<td class='time_class'>"+time+"</td>";
@@ -361,7 +360,7 @@
 			          			var time = addTimes(temp[i]['deliver_time'], temp[i]['extra_prep_time']);
 			          		}
 
-//                    blink image time caculator getting time based on pick up and current time
+                   			// blink image time caculator getting time based on pick up and current time
                             var today = new Date(); 
                             old_hour = time.substr(0,2);
                             old_mins = time.substr(3,5);
@@ -503,7 +502,7 @@
 		        	liItem += "</p>";
 		        	liItem += "</div>";
 	          	}
-	          	//$("#orderDetailContianer").append(liItem);
+	          	// $("#orderDetailContianer").append(liItem);
 			}); 
 		}
 
@@ -522,7 +521,6 @@
 	    	$(".ui-btn-left", activePage).text("Scrolled: " + scrolled);
 	    	//$(".ui-btn-right", activePage).text("ScrollEnd: " + scrollEnd);
 
-	    	
 	    	//if in future this page will get it, then add this condition in and in below if activePage[0].id == "home" 
 	    	if (scrolled >= scrollEnd) {
 			        // console.log(list);
@@ -762,7 +760,7 @@
         setInterval(function(){
             $('#orderDetailContianer tr').each(function(){
                 
-//              blink image time caculator getting time based on pick up and current time
+             	// blink image time caculator getting time based on pick up and current time
                 var text = $(this).find('.time_class').text();
                 var today = new Date(); 
                 old_hour = text.substr(0,2);
@@ -772,7 +770,7 @@
                 var chng = $(this).find('.ready_class');
                 var len = chng.length;
                 
-//              flash image based on pick up and new time
+             	// flash image based on pick up and new time
                 if(old_time < new_time && len > 0){
                     chng.find('img').attr('src',"{{asset('kitchenImages/red_blink_image.gif')}}");
                 }

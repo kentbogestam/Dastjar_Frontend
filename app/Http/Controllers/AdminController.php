@@ -571,7 +571,7 @@ class AdminController extends Controller
             }
         }
 
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time', 'orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time', 'orders.order_type', 'orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
             ->whereIn('order_details.store_id', $stores)
             // ->where('delivery_date', '>=', $deliveryDate)
             // ->where('delivery_date', '<=', $deliveryDateTill)
@@ -610,7 +610,7 @@ class AdminController extends Controller
             }
         }
 
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time', 'orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time', 'orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'orders.order_type', 'CA.street', 'OD.status AS orderDeliveryStatus')
             ->whereIn('order_details.store_id', $stores)
             // ->where('delivery_date', '>=', $deliveryDate)
             // ->where('delivery_date', '<=', $deliveryDateTill)
