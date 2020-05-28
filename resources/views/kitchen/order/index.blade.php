@@ -9,6 +9,9 @@
 	.new{
 		background-color: #dbe473 !important;
 	}
+	.ready_notifications{
+		display: none;
+	}
 </style>
 
 	<div data-role="header" data-position="fixed" data-tap-toggle="false" class="header">
@@ -48,8 +51,15 @@
 			</thead>
 		    <tbody id="orderDetailContianer"></tbody>
 		</table>
+	</div>	
+
+	<div class="ready_notifications">
+		<div class="table-content sucess_msg">
+			<img src="{{asset('images/icons/Yes_Check_Circle.png')}}">
+			<span></span>
+	    </div>
 	</div>
-	
+
 	@include('includes.kitchen-footer-menu')
 
 	<div data-role="popup" id="popupCloseRight" class="ui-content" style="max-width:100%;border: none;">
@@ -96,7 +106,31 @@
     $('body').on('click', '.image_clicked', function(){
         $(this).css("padding","0px");
     });
-    
+
+	function rejectOrder(id){
+	    var status = '1';
+		if(confirm("Do you really wants to reject ?")){
+	        $('#overlay').css("display", "block");
+	        $('#loading-img').css("display", "block");
+			$.get("{{url('kitchen/catering/orderCateringRejectAccept')}}/"+id+"/"+status,
+	            function(returnedData){  
+	                if(returnedData != ''){
+	                    $('#loading-img').css("display", "none");
+	                    $('#overlay').css("display", "none");
+	                    $(".order_id_"+id).remove();
+	                    $('.ready_notifications span').html('Order Rejected Successfully.');
+	                    $('.ready_notifications').show();
+
+	                    setTimeout(
+	                        function(){ 
+	                            $('.ready_notifications').hide();
+	                    }, 3000);
+	                }
+	            }
+	        );
+		}
+	}
+
 	function getList(orderId){
 		var liItem = "";
 		$.get("{{url('api/v1/kitchen/orderSpecificOdrderDetail')}}/"+orderId,
@@ -224,7 +258,12 @@
 			          		liItem += "<td>"
 			          		liItem += aString
 			          		liItem += "<img id='"+ids+"' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
-			          		liItem +="</a></td>";
+			          		liItem +="</a>";
+			          		var utcTime = new Date(temp[i]['created_at']+" UTC").getTime()/1000;
+			          		if((temp[i]["delivery_timestamp"] < (utcTime + 86400)) && (utcTime > {{ time()-300 }} )) {
+			          			liItem +="<a href='javascript:void(0)' class='rejectRemove' rel='"+utcTime+"' onclick='rejectOrder("+temp[i]['order_id']+");'><br>reject</a>";
+			          		}
+			          		liItem +="</td>";
 		          		}else{
 		          			liItem += "<td>"
 			          		liItem += "<a>"
@@ -503,7 +542,12 @@
           		liItem += "<td>"
           		liItem += aString
           		liItem += "<img id='"+ids+"' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
-          		liItem +="</a></td>";
+          		liItem +="</a>";
+          		var utcTime = new Date(list[i]['created_at']+" UTC").getTime()/1000;
+          		if((list[i]["delivery_timestamp"] < (utcTime + 86400)) && (utcTime > {{ time()-300 }} )) {
+          			liItem +="<a href='javascript:void(0)' class='rejectRemove' rel='"+utcTime+"' onclick='rejectOrder("+list[i]['order_id']+");'><br>reject</a>";
+          		}
+          		liItem +="</td>";
       		}else{
       			liItem += "<td>"
           		liItem += "<a>"

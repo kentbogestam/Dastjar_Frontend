@@ -626,7 +626,7 @@ class OrderController extends Controller
                 $orderDate = $pieces[0]." ".$pieces[1]." ".$pieces[2]." ".$pieces[3];
                 $orderTime = $pieces[4];
             }
-
+            $delivery_timestamp = strtotime($checkOrderDate." ".$orderTime);
             // Get store detail
             $storeDetail = $storedetails = Store::where('store_id', $data['storeID'])->first();
 
@@ -671,17 +671,21 @@ class OrderController extends Controller
                         $order->deliver_date = $orderDate;
                         $order->deliver_time = $orderTime;
                         $order->check_deliveryDate = $checkOrderDate;
-                        $order->delivery_timestamp = strtotime($checkOrderDate." ".$orderTime);
+                        $order->delivery_timestamp = $delivery_timestamp;
 
-                        if( isset($data['delivery_type']) && is_numeric($data['delivery_type']) )
-                        {
+                        if( isset($data['delivery_type']) && is_numeric($data['delivery_type']) ){
                             $order->delivery_type = $data['delivery_type'];
                         }
 
-                        if($storeDetail->order_response == 0 && $orderType == 'eat_now')
-                        {
+                        if($storeDetail->order_response == 0 && $orderType == 'eat_now'){
                             $order->order_response = 0;
                             $order->order_accepted = 0;
+                        }
+
+                        if(($delivery_timestamp - time()) < 86400){
+                            $order->catering_order_status = '2';
+                        }else{
+                            $order->catering_order_status = '0';
                         }
 
                         $order->save();

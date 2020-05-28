@@ -286,12 +286,12 @@
 				<!-- if order type is eat leater -->
                 @if($order->catering_order_status == '1')
                 	<!-- catering order is rejected -->
+                	{{-- rejection message --}}
+                    <div class="rejectbox">
+                        <p> {{ __('messages.rejectMsg') }} <br> {{ __('messages.welcomeAnyTime') }} </p>
+                    </div>
                     @if($order->is_seen == "0")
-                    	<!-- if seen by user -->
-                    	{{-- rejection message --}}
-	                    <div class="rejectbox">
-	                        <p> {{ __('messages.rejectMsg') }} <br> {{ __('messages.welcomeAnyTime') }} </p>
-	                    </div>
+                	<!-- if seen by user -->
 		                {{-- okay order message --}}
 						<div class="col-md-12 text-center">
 							<button type="button" class="btn btn-primary" onclick="isSeenMyOrder();">{{ __('messages.okay') }}</button><br><br>
@@ -331,6 +331,26 @@
 						</div>
 					@endif
                 @endif
+            @else
+            	@if($order->catering_order_status == '1')
+                	<!-- catering order is rejected -->
+                	{{-- rejection message --}}
+                    <div class="rejectbox">
+                        <p> {{ __('messages.rejectMsg') }} <br> {{ __('messages.welcomeAnyTime') }} </p>
+                    </div>
+                    @if($order->is_seen == "0")
+                		<!-- if seen by user -->
+		                {{-- okay order message --}}
+						<div class="col-md-12 text-center">
+							<button type="button" class="btn btn-primary" onclick="isSeenMyOrder();">{{ __('messages.okay') }}</button><br><br>
+						</div>
+					@endif
+                @elseif($order->catering_order_status == '2')
+                    <div class="acceptbox">
+                        <p> {{ __('messages.success') }}! </p>
+                        <p> {{ __('messages.acceptMsg') }} </p>
+                    </div>
+	            @endif
 			@endif
 		</div>
 	</div>
@@ -400,7 +420,7 @@
 					let isSaveCard = $('#isSaveCard').is(':checked') ? 1 : 0;
 					let data = {
 						'_token': "{{ csrf_token() }}",
-						'orderId': "{{ $order->order_id }}",
+						'order_id': "{{ $order->order_id }}",
 						'isSaveCard': isSaveCard,
 						'payment_method_id': result.paymentMethod.id
 					}
@@ -457,7 +477,7 @@
 						
 						let data = {
 							'_token': "{{ csrf_token() }}",
-							'orderId': "{{ $order->order_id }}",
+							'order_id': "{{ $order->order_id }}",
 							'isSaveCard': isSaveCard,
 							'payment_intent_id': result.paymentIntent.id
 						}

@@ -66,6 +66,7 @@ class KitchenController extends Controller
             ->leftJoin('order_customer_loyalty AS OCL', 'OCL.order_id', '=', 'orders.order_id')
             ->leftJoin('order_delivery AS OD', 'OD.order_id', '=', 'orders.order_id')
             ->where('orders.is_verified', '1')
+            ->where('orders.catering_order_status', '2')
             ->groupBy('orders.order_id');
 
         $store = Store::select(['extra_prep_time', 'order_response'])->where('store_id', $reCompanyId)->first();

@@ -29,7 +29,7 @@
 		cursor: pointer;
 	}
 
-	.ready_notification{
+	.ready_notifications{
 		display: none;
 	}
 
@@ -123,7 +123,7 @@
 		<h3 class="ui-bar ui-bar-a order_background"><span>{{$storeName}}</span></h3>
 	</div>
 	<div role="main" class="ui-content">
-		<div class="ready_notification">
+		<div class="ready_notifications">
 			<div class="table-content sucess_msg">
 				<img src="{{asset('images/icons/Yes_Check_Circle.png')}}">
 				<span></span>
@@ -178,10 +178,9 @@
 		@endif	
 	</div>
 
-		<img src="{{ asset('images/loading.gif') }}" id="loading-img" />
+	<img src="{{ asset('images/loading.gif') }}" id="loading-img" />
 
-	  <div id="overlay" onclick="off()">
-	  </div>
+	<div id="overlay" onclick="off()"></div>
 
     <div data-role="popup" id="popupCloseRight" class="ui-content" style="max-width:100%;border: none;">
 	    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" style="background-color:#000;border-color: #000;">Close</a>
@@ -279,12 +278,12 @@
                         $(".order_id_"+id+" .acceptRejectStatus img").attr("onclick","");
                         $('#loading-img').css("display", "none");
                         $('#overlay').css("display", "none");
-                        $('.ready_notification span').html('Order Accepted Successfully.');
-                        $('.ready_notification').show();
+                        $('.ready_notifications span').html('Order Accepted Successfully.');
+                        $('.ready_notifications').show();
 
                         setTimeout(
                             function(){ 
-                                $('.ready_notification').hide();
+                                $('.ready_notifications').hide();
                         }, 3000);
                     }
                 }
@@ -304,12 +303,12 @@
                             $('#loading-img').css("display", "none");
                             $('#overlay').css("display", "none");
                             $(".order_id_"+id).remove();
-                            $('.ready_notification span').html('Order Rejected Successfully.');
-                            $('.ready_notification').show();
+                            $('.ready_notifications span').html('Order Rejected Successfully.');
+                            $('.ready_notifications').show();
 
                             setTimeout(
                                 function(){ 
-                                    $('.ready_notification').hide();
+                                    $('.ready_notifications').hide();
                             }, 3000);
                         }
                     }
@@ -327,12 +326,12 @@
                         $(".order_id_"+orderID).remove();
                         $('#loading-img').css("display", "none");
                         $('#overlay').css("display", "none");
-                        $('.ready_notification span').html('Order Cancelled Successfully.');
-                        $('.ready_notification').show();
+                        $('.ready_notifications span').html('Order Cancelled Successfully.');
+                        $('.ready_notifications').show();
 
                         setTimeout(
                             function(){
-                                $('.ready_notification').hide();
+                                $('.ready_notifications').hide();
                         }, 3000);
                     }
                 );

@@ -2,7 +2,11 @@
 
 @section('content')
 	@include('v1.user.elements.store-delivery-service')
-
+	<style>
+		button.btn.send-order-confirmation {
+		    background-color: lightgray;
+		}
+	</style>
 	<div id="cart-wrapper">
 		<div class="cart-list">
 			<h4>{{ __('messages.Order Details') }}</h4>
@@ -664,7 +668,7 @@
 					let isSaveCard = $('#isSaveCard').is(':checked') ? 1 : 0;
 					let data = {
 						'_token': "{{ csrf_token() }}",
-						'orderId': "{{ $order->order_id }}",
+						'order_id': "{{ $order->order_id }}",
 						'isSaveCard': isSaveCard,
 						'payment_method_id': result.paymentMethod.id
 					}
@@ -721,7 +725,7 @@
 						
 						let data = {
 							'_token': "{{ csrf_token() }}",
-							'orderId': "{{ $order->order_id }}",
+							'order_id': "{{ $order->order_id }}",
 							'isSaveCard': isSaveCard,
 							'payment_intent_id': result.paymentIntent.id
 						}
