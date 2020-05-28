@@ -175,7 +175,7 @@ class PaymentController extends Controller
 						// If payment succeeded, save transaction in DB
 						if( (isset($response['success']) && $response['success']) || (isset($response['requires_capture']) && $response['requires_capture']) )
 						{
-							DB::transaction(function () use($orderId, $request, $intent,$deliveryTimestamp, $created_at) {
+							DB::transaction(function () use($orderId, $request, $intent, $response, $deliveryTimestamp, $created_at) {
 								// if delivery time is less than created date's next day.
 								if($deliveryTimestamp < $created_at){
 									$is_verified = '1';
@@ -193,7 +193,7 @@ class PaymentController extends Controller
 					        	$paymentSave->transaction_id = $intent->id;
 					        	$paymentSave->amount = $intent->amount;
 					        	$paymentSave->balance_transaction = $balanceTransaction;
-					        	$paymentSave->status = '1';
+					        	// $paymentSave->status = '1';
 
 					        	if(isset($response['requires_capture']) && $response['requires_capture'])
 					        	{
