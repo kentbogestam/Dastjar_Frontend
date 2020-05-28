@@ -1308,7 +1308,7 @@ class AdminController extends Controller
         $companydetails = new Company();
         $currency = $companydetails->where('company_id' , '=', $companyId)->first()->currencies;
 
-        return view('kitchen.menulist.createMenu', compact('storeName', 'listDishes' ,'currency'));
+        return view('kitchen.menulist.createMenu', compact('storedetails', 'storeName', 'listDishes' ,'currency'));
     }
 
     public function kitchenCreateMenuPost(Request $request){
