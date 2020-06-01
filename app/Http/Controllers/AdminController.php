@@ -1543,35 +1543,32 @@ class AdminController extends Controller
         $publishing_start_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_start_date);
         $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_end_date);
 
-        $publishing_start_date = $publishing_start_date_time->format('Y-m-d');
-        $publishing_end_date = $publishing_end_date_time->format('Y-m-d');
-        $publishing_start_time = $publishing_start_date_time->format('H:i:00');
-        $publishing_end_time = $publishing_end_date_time->format('H:i:00');
+        $startDt = strtotime($publishing_start_date_time->format('Y-m-d H:i:s'));
+        $endDt = strtotime($publishing_end_date_time->format('Y-m-d H:i:s'));
 
-        $product_price_list = new ProductPriceList();
-        $product_price_list = ProductPriceList::where('product_id', $request->product_id)->where('store_id', $request->store_id);
-
-        $product_price = ProductPriceList::where(['id' => $request->price_id])->first();
-
-        if($product_price)
-        {
-            $product_price_list->where('id', '!=', $product_price->id);
-        }
-
-        $product_price_list->whereRaw("( DATE(publishing_start_date) BETWEEN '{$publishing_start_date}' AND '{$publishing_end_date}' OR DATE(publishing_end_date) BETWEEN '{$publishing_start_date}' AND '{$publishing_end_date}' OR (DATE(publishing_start_date) <= '{$publishing_start_date}' AND DATE(publishing_end_date) >= '{$publishing_end_date}') ) AND ( TIME(publishing_start_date) BETWEEN '{$publishing_start_time}' AND '{$publishing_end_time}' OR TIME(publishing_end_date) BETWEEN '{$publishing_start_time}' AND '{$publishing_end_time}' OR (TIME(publishing_start_date) <= '{$publishing_start_time}' AND TIME(publishing_end_date) >= '{$publishing_end_time}') )");
-
-        // Validate
-        if($product_price_list->exists()){
-            return back()->with('error','Invalid date');
-        }
-
-        // 
-        $helper = new Helper();
+        $publishStartDateTime = $publishing_start_date_time->format('Y-m-d H:i:s');
+        $publishEndDateTime = $publishing_end_date_time->format('Y-m-d H:i:s');
 
         $product_id = $request->product_id;
         $store_id = $request->store_id;
         $price_id = $request->price_id;
         $message = "Dish Updated Successfully.";
+
+        //check for validation with time availability
+        $data = ProductPriceList::where('product_id', $product_id)
+                        ->where('store_id', $store_id)
+                        ->where('id', '!=', $price_id)
+                        ->pluck('publishing_end_date','publishing_start_date');
+        foreach($data as $key => $val){
+            $keys = strtotime($key); $vals = strtotime($val);
+            if($startDt > $keys && $startDt > $vals && $endDt > $keys && $endDt > $vals){
+            }else if($startDt < $keys && $startDt < $vals && $endDt < $keys && $endDt < $vals){
+            }else{
+               return back()->with('error','Invalid date');
+            }
+        }
+
+        $helper = new Helper();
 
         // $util = new Util(env('APP42_API_KEY'),env('APP42_API_SECRET'));
 
@@ -1679,13 +1676,11 @@ class AdminController extends Controller
         $product_price_list->text = "Price:" . $request->prodPrice . $request->currency;
         $product_price_list->price = $request->prodPrice;
         $product_price_list->lang = $request->dishLang;
-        if($request->publish_start_date!=null){
-            $publish_start_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_start_date);
-            $product_price_list->publishing_start_date = $publish_start_date;
+        if($publishStartDateTime!=null){
+            $product_price_list->publishing_start_date = $publishStartDateTime;
         }
-        if($request->publish_end_date!=null){
-            $publish_end_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_end_date);       
-            $product_price_list->publishing_end_date = $publish_end_date;
+        if($publishEndDateTime!=null){      
+            $product_price_list->publishing_end_date = $publishEndDateTime;
         }
         $product_price_list->save();
 
@@ -1905,6 +1900,7 @@ class AdminController extends Controller
         $publishing_start_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_start_date);
         $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_end_date);
 
+        //check for validation with time availability
         $startDt = strtotime($publishing_start_date_time->format('Y-m-d H:i:s'));
         $endDt = strtotime($publishing_end_date_time->format('Y-m-d H:i:s'));
         $status = 0;
@@ -1927,6 +1923,7 @@ class AdminController extends Controller
         $publishing_start_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_start_date);
         $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_end_date);
 
+        //check for validation with time availability
         $startDt = strtotime($publishing_start_date_time->format('Y-m-d H:i:s'));
         $endDt = strtotime($publishing_end_date_time->format('Y-m-d H:i:s'));
 
