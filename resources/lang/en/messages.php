@@ -376,5 +376,5 @@ return [
     'OrdersNotReady' => 'This Order is not Ready Yet',
     'deliveryAtDoor' => 'Delivery at door',
     'orderDeliveryAtDoor' => 'Your order is now delivered to your door, please pick it up! Thanks for order and Welcome back anytime!',
-    'deliverAtDoor' => '||Deliver To Door||'
+    'deliverAtDoor' => '||Deliver at Door||'
 ];

@@ -242,19 +242,24 @@
 //				          		liItem +="</a>";
 				          		liItem +="</td>";
 				          	}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
+				          		// flash image based on pick up time will
+				          		if(old_time < new_time){
+				                    var flashImg = "<img id='"+temp[i]['id']+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.gif')}}'>";
+				                }else{
+				                    var flashImg = "<img id='"+temp[i]['id']+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>";
+				                }
+
 				          		if(temp[i]["delivery_type"] == 3 && driverapp)
 				          		{
 				          			aString = "<a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", "+temp[i]['id']+")'>";
 				          		}
 				          		else
 				          		{
-//                                flash image based on pick up and new time
-                                    if(old_time < new_time){
-                                        aString = "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+"><img id='"+temp[i]['id']+"ready' class='image_clicked'  src='{{asset('kitchenImages/red_blink_image.gif')}}'>";
-                                    }else{
-                                        aString = "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+"><img id='"+temp[i]['id']+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>";
-                                    }
+				          			aString = "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+">";
 				          		}
+
+				          		aString += flashImg;
+
 				          		liItem += "<td>"
 				          		// liItem += "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+" >"
 				          		liItem += aString
@@ -418,19 +423,24 @@
                                 liItem += "<td class='ready_class'>"
 				          		liItem +="</td>";
 				          	}else if(temp[i]["order_ready"] == 0 && temp[i]["order_started"] == 1){
+				          		// flash image based on pick up time will
+				          		if(old_time < new_time){
+				                    var flashImg = "<img id='"+temp[i]['id']+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.gif')}}'>";
+				                }else{
+				                    var flashImg = "<img id='"+temp[i]['id']+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>";
+				                }
+
 				          		if(temp[i]["delivery_type"] == 3 && driverapp)
 				          		{
 				          			aString = "<a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+temp[i]['order_id']+", "+temp[i]['id']+")'>";
 				          		}
 				          		else
 				          		{
-//                                flash image based on pick up and new time
-                                    if(old_time < new_time){
-                                        aString = "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+"><img id='"+temp[i]['id']+"ready' class='image_clicked'  src='{{asset('kitchenImages/red_blink_image.gif')}}'>";
-                                    }else{
-                                        aString = "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+"><img id='"+temp[i]['id']+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>";
-                                    }
+				          			aString = "<a data-ajax='false' href="+urlReady+"/"+temp[i]['id']+">";
 				          		}
+
+				          		aString += flashImg;
+
 				          		liItem += "<td>"
 				          		liItem += aString
 				          		liItem +="</a>";
@@ -619,20 +629,24 @@
 		          		liItem += "<td class='ready_class'>"
 				        liItem +="</td>";
 		          	}else if(list[i]["order_ready"] == 0 && list[i]["order_started"] == 1){
+		          		// flash image based on pick up time will
+		          		if(old_time < new_time){
+		                    var flashImg = "<img id='"+list[i]['id']+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.gif')}}'>";
+		                }else{
+		                    var flashImg = "<img id='"+list[i]['id']+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>";
+		                }
+
 		          		if(list[i]["delivery_type"] == 3 && driverapp)
 		          		{
 		          			aString = "<a data-ajax='false' href='javascript:void(0)' onclick='popupOrderAssignDriver("+list[i]['order_id']+", "+list[i]['id']+")'>";
 		          		}
 		          		else
 		          		{
-//                                flash image based on pick up and new time
-		          			if(old_time < new_time){
-                                aString = "<a data-ajax='false' href="+urlReady+"/"+list[i]['id']+"><img id='"+list[i]['id']+"ready' class='image_clicked'  src='{{asset('kitchenImages/red_blink_image.gif')}}'>";
-                            }else{
-                                aString = "<a data-ajax='false' href="+urlReady+"/"+list[i]['id']+"><img id='"+list[i]['id']+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>";
-                            }
-                            
+		          			aString = "<a data-ajax='false' href="+urlReady+"/"+list[i]['id']+">";
 		          		}
+
+		          		aString += flashImg;
+
                         liItem += "<td>"
                         liItem += aString
                         liItem +="</a>";

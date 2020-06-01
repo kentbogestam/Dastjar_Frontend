@@ -22,7 +22,6 @@ use App\User;
 use App\Payment;
 use App\Coupon;
 use App\CouponKeywordsLangList;
-use App\C_S_Rel;
 use App\CouponOfferSloganLangList;
 use App\CouponOfferTitleLangList;
 use App\App42\PushNotificationService;
@@ -1851,18 +1850,10 @@ class AdminController extends Controller
     public function kitchenDeleteDish(Request $request){
         $productid = $request->product_id;
 
-        $c_s_rel = new C_S_Rel();
-
-        $res1 = $c_s_rel->where('product_id', '=', $productid)->get();
-
         foreach ($res1 as $rs1) {
             $productId = $rs1['product_id'];
             $couponId = $rs1['coupon_id'];
             $storeId = $rs1['store_id'];
-            
-            if ($productId) {
-                $res2 = $c_s_rel->where('product_id', '=', $productid)->update(['activ' => '2']);
-            }
 
             if ($couponId) {
                 $coupon = new Coupon();
