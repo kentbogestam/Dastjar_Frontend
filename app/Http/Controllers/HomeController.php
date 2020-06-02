@@ -663,7 +663,7 @@ class HomeController extends Controller
         if($status == false)
         {
             $products = Product::from('product AS P')
-                ->select(['P.product_id', 'P.product_name', 'P.product_description', 'P.preparation_Time', 'P.small_image', 'PPL.price', 'S.extra_prep_time'])
+                ->select(['P.product_id', 'P.product_name', 'P.product_description', 'P.preparation_Time', 'P.small_image', 'PPL.price', 'S.extra_prep_time', 'PPL.publishing_start_date', 'PPL.publishing_end_date'])
                 ->join('product_price_list AS PPL', 'P.product_id', '=', 'PPL.product_id')
                 ->join('store AS S', 'S.store_id', '=', 'PPL.store_id')
                 ->where(['P.dish_type' => $dishType, 'PPL.store_id' => $storeId])

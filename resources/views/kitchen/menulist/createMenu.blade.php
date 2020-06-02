@@ -238,8 +238,13 @@
 						<option <?php if ($product->lang == "SWE")echo "selected='selected'"; ?> value="SWE">Swedish</option>
 						<option <?php if ($product->lang == "ENG")echo "selected='selected'"; ?> value="ENG">English</option>
 					@else
-						<option value="SWE">Swedish</option>
-						<option value="ENG">English</option>
+						@if(isset($storedetails->country_code))
+							<option <?php if ($storedetails->country_code != "IN")echo "selected='selected'"; ?> value="SWE">Swedish</option>
+							<option <?php if ($storedetails->country_code == "IN")echo "selected='selected'"; ?> value="ENG">English</option>
+						@else
+							<option value="SWE">Swedish</option>
+							<option value="ENG">English</option>
+						@endif
 					@endif
 				</select>
 			</div>
@@ -268,7 +273,7 @@
 
 		<div class="row">
 			<div class="col-12">
-				<input type="number" id="prep-time" name="prepTime" placeholder="Prep. Time (mins)" value="{{ $product->preparation_Time ?? "" }}" required title="{{ __('messages.iDishPrepTime') }}" />
+				<input type="number" id="prep-time" name="prepTime" placeholder="Prep. Time (mins)" value="{{ empty(@$product->preparation_Time) ? '15' : @$product->preparation_Time }}" required title="{{ __('messages.iDishPrepTime') }}" />
 			</div>
 		</div>
 
@@ -404,6 +409,8 @@
     });
 
 	$(document).ready(function(){
+		var defaultStartDate = "{{date('d/m/Y',strtotime('+1day'))}} 05:00";
+		var defaultEndDate = "{{date('d/m/Y',strtotime('+10Year'))}} 05:00";
 		@if(isset($product_price_list->publishing_start_date) && $product_price_list->publishing_start_date != "0000-00-00 00:00:00")
 			dStart = "{{date('Y-m-d H:i:s', strtotime($product_price_list->publishing_start_date))}}";
 			dStart = moment.utc(dStart).toDate();
@@ -411,8 +418,8 @@
 			$('#date-start-utc').val(moment.utc(dStart).format("DD/MM/YYYY HH:mm"));
 			dStart = moment(dStart).local().format("DD/MM/YYYY HH:mm");
 		@else
-			$('#date-start').val("{{date('d/m/Y 00:00')}}");
-			dStart = "{{date('Y-m-d 00:00:00')}}";	
+			$('#date-start').val(defaultStartDate);
+			dStart = "{{date('Y-m-d',strtotime('+1Day'))}} 05:00";	
 			dStart = moment(dStart).toDate();
 			dStart = moment.utc(dStart).format("DD/MM/YYYY HH:mm");
 			$('#date-start-utc').val(dStart);
@@ -426,8 +433,8 @@
 			dKEnd = moment(dEnd).local().format("YYYY-MM-DD HH:mm");					
 			dEnd = moment(dEnd).local().format("DD/MM/YYYY HH:mm");	
 		@else
-			$('#date-end').val("{{date('d/m/Y 23:59')}}");
-			dEnd = "{{date('Y-m-d 23:59:00')}}";
+			$('#date-end').val(defaultEndDate);
+			dEnd = "{{date('Y-m-d',strtotime('+10Year'))}} 05:00";
 			dEnd = moment(dEnd).toDate();
 			dKEnd = moment(dEnd).local().format("YYYY-MM-DD HH:mm");											
 			dEnd = moment.utc(dEnd).format("DD/MM/YYYY HH:mm");
@@ -440,12 +447,11 @@
 			$('#blah').show();
 		@endif
 
-		var dateToday = new Date();
 		dKStart = dStart;
 
 		$('#date-start').bootstrapMaterialDatePicker
 		({
-			weekStart: 0, format: 'DD/MM/YYYY HH:mm', minDate: dateToday, clearButton: true
+			weekStart: 0, format: 'DD/MM/YYYY HH:mm', minDate: defaultStartDate, maxDate: defaultEndDate, clearButton: true
 		}).on('change', function(e, date)
 		{
 			dKStart = date;
@@ -455,7 +461,7 @@
 
 		$('#date-end').bootstrapMaterialDatePicker
 		({
-			weekStart: 0, format: 'DD/MM/YYYY HH:mm', minDate: dateToday, clearButton: true
+			weekStart: 0, format: 'DD/MM/YYYY HH:mm', minDate: defaultStartDate, maxDate: defaultEndDate, clearButton: true
 		}).on('change', function(e2, date2)
 		{
 			dKEnd = date2;
@@ -464,7 +470,6 @@
 
 		$.material.init();
 	});
-
 
 	$(document).on("scrollstop", function (e) {
     	var activePage = $.mobile.pageContainer.pagecontainer("getActivePage"),

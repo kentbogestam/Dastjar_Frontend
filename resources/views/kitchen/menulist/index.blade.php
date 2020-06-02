@@ -352,15 +352,9 @@
 						'publishing_end_date': $("#date-end-utc").val()
 					}, 
 					function(data) {
-						// console.log(data);
-
-						if(!data.status)
-						{
-							alert('Invalid date.');
-							return false;
-						}
-						else
-						{
+						if(data.status){
+							alert('Invalid date !'); return false;
+						}else{
 							$('#add-dish-price-frm').submit();
 						}
 					});
