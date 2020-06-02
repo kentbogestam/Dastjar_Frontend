@@ -366,6 +366,7 @@ class OrderController extends Controller
                 ->first();            
         }
         $catering_id = Order::select('order_id')
+                ->where('order_type','eat_later')
                 ->where('user_id', Auth::id())
                 ->whereIn('catering_order_status', ['1','2'])
                 ->where('updated_at', '>', date("Y-m-d h:i:s",(time()-11)))
