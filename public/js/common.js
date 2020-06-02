@@ -23,7 +23,7 @@ function reloadRestaurantList(){
 
     $value=pieces[pieces.length-1];
 
-    if($value=='eat-now' || $value=='eat-later' || $value=='' ){
+    if($value=='eat-now' || $value=='eat-later' || $value=='home' || $value=='' ){
         location.reload();
     }
 }

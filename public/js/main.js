@@ -147,14 +147,11 @@ function setCurrentLatLong(urllatlng){
                 dataType: "json"
             });
 
-            // reloadRestaurantList();
+            reloadRestaurantList();
         },function(error){
-            if (typeof lat === "undefined") {
-                // $('.login-inner-section a').attr('href','javascript:void(0)');
-                // $('#login-popup').modal("show");
-            } else {
-                // document.cookie="latitude=" + lat;
-                // document.cookie="longitude=" + lng;      
+            if(!getCookie("latitude") && !getCookie("longitude"))
+            {
+                $('#login-popup').modal("show");
             }
         });
     }

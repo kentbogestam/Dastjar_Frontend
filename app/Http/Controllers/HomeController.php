@@ -253,38 +253,34 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         // Artisan::call('view:clear');
-        // dd(Session::all());
-       session()->forget('people_serve');
-       session()->forget('orderOption');
-       if($request->session()->get('type_selection') == null){ //code added by saurabh to render the view for the selection of eat later nd eat now
-         // return view('includes.popupSelection', compact(''));
-         return view('v1.user.pages.home');
-       }else{
+        session()->forget('people_serve');
+        session()->forget('orderOption');
+       
         // Forget 'iFrameMenu' to say menu is not loading in 'homepage'
         $request->session()->forget('iFrameMenu');
 
-        $request->session()->put('route_url', url('/').'/eat-now'); // code added by saurabh to update correct url for eat-later and eat-now
+        // code added by saurabh to update correct url for eat-later and eat-now
+        $request->session()->put('route_url', url('/').'/eat-now');
+
         if(Auth::check()){
             $versionDetail = WebVersion::orderBy('created_at', 'DESC')->first();
             $userDetail = User::whereId(Auth()->id())->first();
             if($userDetail->web_version == null){
                 DB::table('customer')->where('id', Auth::id())->update(['web_version' => $versionDetail->version,]);
-                // return view('index', compact(''));
+                
                 return view('v1.user.pages.eat-now');
             }else if($userDetail->web_version != $versionDetail->version){
                 DB::table('customer')->where('id', Auth::id())->update(['web_version' => $versionDetail->version,]);
                 Auth::logout();
+                
                 return redirect('/login')->with('success', 'App version is updated.Please login again');
             }else{
-                // return view('index', compact(''));
                 return view('v1.user.pages.eat-now');
             }
         }else{
-            // return view('index', compact(''));
             return view('v1.user.pages.eat-now');
         }
     }
-}
 
     public function blankView(){
         // return view('blankPage');
