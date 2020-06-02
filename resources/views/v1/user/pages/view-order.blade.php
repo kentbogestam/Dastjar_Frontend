@@ -327,7 +327,7 @@
 	                    </div>
 		                {{-- Cancel order message --}}
 						<div class="col-md-12 text-center">
-							<button type="button" class="btn btn-primary" onclick="cancelMyOrder();">{{ __('messages.cancelMyOrder') }}</button><br><br>
+							<button type="button" class="btn btn-danger" onclick="cancelMyOrder();">{{ __('messages.cancelMyOrder') }}</button><br><br>
 						</div>
 					@endif
                 @endif

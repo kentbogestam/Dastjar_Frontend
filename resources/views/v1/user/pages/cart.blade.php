@@ -2,11 +2,6 @@
 
 @section('content')
 	@include('v1.user.elements.store-delivery-service')
-	<style>
-		button.btn.btn-address {
-		    background-color: lightgray;
-		}
-	</style>
 	<div id="cart-wrapper">
 		<div class="cart-list">
 			<h4>{{ __('messages.Order Details') }}</h4>
