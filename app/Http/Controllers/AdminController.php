@@ -976,32 +976,29 @@ class AdminController extends Controller
         }
 
         // Store printer setting
-        if($data['mac_address'] && $data['mac_address'] != null)
+        if(StorePrinter::where(['store_id' => Session::get('kitchenStoreId'), 'status' => '1'])->count())
         {
-            if(StorePrinter::where(['store_id' => Session::get('kitchenStoreId'), 'status' => '1'])->count())
-            {
-                // Update printer setting
-                StorePrinter::where(['store_id' => Session::get('kitchenStoreId'), 'status' => '1'])
-                    ->update(['printer_type' => $data['printer_type'], 'mac_address' => $data['mac_address'], 'print_copy' => $data['print_copy']]);
-            }
-            else
-            {
-                // Create printer
-                $helper = new Helper();
+            // Update printer setting
+            StorePrinter::where(['store_id' => Session::get('kitchenStoreId'), 'status' => '1'])
+                ->update(['printer_type' => $data['printer_type'], 'mac_address' => $data['mac_address'], 'print_copy' => $data['print_copy']]);
+        }
+        elseif($data['mac_address'] && $data['mac_address'] != null)
+        {
+            // Create printer
+            $helper = new Helper();
+            $id = $helper->uuid();
+
+            while(StorePrinter::where('id', $id)->exists()){
                 $id = $helper->uuid();
-
-                while(StorePrinter::where('id', $id)->exists()){
-                    $id = $helper->uuid();
-                }
-
-                StorePrinter::create(array(
-                    'id' => $id,
-                    'store_id' => Session::get('kitchenStoreId'),
-                    'printer_type' => $data['printer_type'],
-                    'mac_address' => $data['mac_address'],
-                    'print_copy' => $data['print_copy'],
-                ));
             }
+
+            StorePrinter::create(array(
+                'id' => $id,
+                'store_id' => Session::get('kitchenStoreId'),
+                'printer_type' => $data['printer_type'],
+                'mac_address' => $data['mac_address'],
+                'print_copy' => $data['print_copy'],
+            ));
         }
 
         return redirect()->back()->with('success', 'Setting updated successfully.');
