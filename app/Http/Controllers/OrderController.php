@@ -365,12 +365,18 @@ class OrderController extends Controller
                 ->orderBy('order_id')
                 ->first();            
         }
-        $catering_id = Order::select('order_id')
+        $catering_data = Order::select('order_id')
                 ->where('order_type','eat_later')
                 ->where('user_id', Auth::id())
                 ->whereIn('catering_order_status', ['1','2'])
                 ->where('updated_at', '>', date("Y-m-d h:i:s",(time()-11)))
                 ->first();
+
+        if($catering_data){
+            if((strtotime($catering_data->created_at)+86400) < $catering_data->delivery_timestamp){
+                $catering_id = $catering_data;
+            }
+        }
         if($order || $catering_id)
         {
             $status = true;

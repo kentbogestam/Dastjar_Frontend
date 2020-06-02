@@ -117,7 +117,6 @@
 						if(result.catering_id){
 							window.location = "{{ url('order-view') }}/"+result.catering_id['order_id'];
 						}
-						console.log(result.catering_id['order_id'])
 						// clearInterval(intervalCheckIfOrderReady);
 					}
 				});
