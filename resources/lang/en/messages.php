@@ -379,7 +379,7 @@ return [
     'welcomeAnyTime' => 'You are welcome back any other time!',
     'rejectMsg' => 'Sorry, We are not able to take care of your order right now, based on overload!',
     'success' => 'Success',
-    'acceptMsg' => 'Your Order will be ready on given Date!',
+    'acceptMsg' => 'Your order will be ready on the desired date!',
     'cancelMyOrder' => 'Cancel My Order',
     'doYoureallywantstoCancel' => 'Do you really wants to cancel ?',
     'okay' => 'Okay',

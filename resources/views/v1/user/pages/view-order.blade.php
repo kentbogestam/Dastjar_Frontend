@@ -11,7 +11,7 @@
         margin: 20px auto;
     }
     .waitingtbox{
-        background-color: #00bcd4;
+        background: linear-gradient(to bottom, rgba(249, 163, 34, 1) 0%, rgba(229, 80, 11, 1) 100%);
         padding:20px;
         width:30%;
         color:white;
@@ -307,7 +307,7 @@
 	                        @include('v1.user.elements.cart-proceed-to-pay')
 			                {{-- Cancel order message --}}
 							<div class="col-md-12 text-center">
-								<button type="button" class="btn btn-primary" onclick="cancelMyOrder();">{{ __('messages.cancelMyOrder') }}</button><br><br>
+								<button type="button" class="btn btn-danger" onclick="cancelMyOrder();">{{ __('messages.cancelMyOrder') }}</button><br><br>
 							</div>
 	                    @endif
 	                    @if($order->online_paid == "1")

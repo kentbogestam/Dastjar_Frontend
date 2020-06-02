@@ -12,6 +12,9 @@
 	.ready_notifications{
 		display: none;
 	}
+	.gr-en{
+		color:#4caf50 !important;
+	}
 </style>
 
 <div data-role="header" data-position="fixed" data-tap-toggle="false" class="header">
@@ -111,7 +114,7 @@
 				$This.closest('tr').removeClass('not-started');
 				$This.closest('tr').removeClass('news');
 				$This.closest('tr').find('.ready_class').html("<a data-ajax='false' href="+urlReady+"/"+id+"><img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>");
-				$('body').find('#'+id).parents('td').empty();
+				$('body').find('#'+id).parents('td').html("<a class='gr-en'>-</a>");
 
 				// Update item as speak
 				updateSpeak(id);
@@ -276,8 +279,8 @@
 				          		
 			          		}else{
 			          			liItem += "<td>"
-				          		liItem += "<a>"
-				          		// liItem += "<img src='{{asset('kitchenImages/gray_circle.jpg')}}'>"
+				          		liItem += "<a class='gr-en'>"
+				          		liItem += "-";
 				          		liItem +="</a></td>";
 			          		}
 
@@ -470,7 +473,8 @@
 				          		liItem +="</td>";
 			          		}else{
 			          			liItem += "<td>"
-				          		liItem += "<a>"
+				          		liItem += "<a class='gr-en'>"
+				          		liItem += "-";
 				          		liItem +="</a></td>";
 			          		}
 
@@ -692,7 +696,8 @@
 		          		liItem +="</td>";
 		      		}else{
 		      			liItem += "<td>"
-		          		liItem += "<a>"
+		          		liItem += "<a class='gr-en'>"
+		          		liItem += "-";
 		          		liItem +="</a></td>";
 		      		}
 		      		if(list[i]["order_ready"] == 0 && list[i]["order_started"] == 0){

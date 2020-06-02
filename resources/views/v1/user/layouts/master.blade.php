@@ -110,9 +110,14 @@
 			var checkIfOrderReady = function() {
 				$.get('{{ url('check-if-order-ready') }}', function(result) {
 					if(result.status)
-					{
-						console.log(result.order['order_id']);
-						window.location = "{{ url('ready-notification') }}/"+result.order['customer_order_id'];
+					{						
+						if(result.order){
+							window.location = "{{ url('ready-notification') }}/"+result.order['customer_order_id'];
+						}
+						if(result.catering_id){
+							window.location = "{{ url('order-view') }}/"+result.catering_id['order_id'];
+						}
+						console.log(result.catering_id['order_id'])
 						// clearInterval(intervalCheckIfOrderReady);
 					}
 				});

@@ -23,7 +23,7 @@
 		</ul>
 {{--        delivery at door checkbox added--}}
         <div class="delivery_at_door" style="display: none">
-            <input type="checkbox" id="delivery_at_door" value="0"> {{ __('messages.deliveryAtDoor') }}
+            <input type="checkbox" id="delivery_at_door" value="0"> <b>{{ __('messages.deliveryAtDoor') }}</b>
         </div>
 	</div>
 @else

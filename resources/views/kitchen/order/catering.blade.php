@@ -113,6 +113,47 @@
     .acceptit,.rejectit{
         cursor:pointer;
     }
+
+    #popupCloseRight2-popup{
+        width:20%;
+    }
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 100px;
+      background-color: #555;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px 0;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -60px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .tooltip .tooltiptext::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #555 transparent transparent transparent;
+    }
+
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
 </style>
 @stop
 
@@ -136,8 +177,8 @@
 			  		<th data-priority="2">{{ __('messages.Orders') }}</th>
 			   		<th data-priority="3">{{ __('messages.name') }}</th>
 			    	<th data-priority="5">{{ __('messages.Date and Time') }}</th>
+                    <th data-priority="1">{{ __('messages.accept') }}</th> 
 			    	<th data-priority="5">{{ __('messages.status') }}</th>
-			    	<th data-priority="1">{{ __('messages.accept') }}</th> 
 			    	<th data-priority="1">{{ __('messages.price') }}</th> 
 			     	<th data-priority="1">{{ __('messages.Pick up Time') }}</th>
 			     	<th data-priority="1">{{ __('messages.deliveryType') }}</th>
@@ -198,7 +239,7 @@
 		</table>
     </div>
 
-    <div data-role="popup" id="popupCloseRight2" class="ui-content" style="max-width:100%;border: none;">
+    <div data-role="popup" id="popupCloseRight2" class="ui-content" style="max-width:100%;border:none;">
 	    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" style="background-color:#000;border-color: #000;">Close</a>
 		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow table-stripe ui-responsive table_size" >
 			<thead>
@@ -361,6 +402,7 @@
                     start = 0;
                     liItem += htmlData(start,count,temp) 
 	          	}
+                $('.catering-badge').html(returnedData["count"])
 	          	$("#orderDetailContianer").html(liItem);
 			}); 
 		}
@@ -377,16 +419,20 @@
                 var isNew;
                 var paid_status;
                 var order_status;
+                var paidOrNot;
                 for(var j=0;j<leng;j++){
                     totalprice += (parseInt(temp[i]['orderdetail_detail'][j]['product_quality']) - parseInt(temp[i]['orderdetail_detail'][j]['quantity_free'])) * parseInt(temp[i]['orderdetail_detail'][j]['price']);
                 }
                 
                 var catering_paid_status = list[i]["online_paid"];
                 if(catering_paid_status == '0'){
+                    paidOrNot = 'Not Paid';
                     paid_status = '<img src="{{asset('kitchenImages/subs_sign.png')}}">';
                 }else if(catering_paid_status == '1'){
+                    paidOrNot = 'Paid';
                     paid_status = '<img src="{{asset('kitchenImages/right_sign.png')}}">';
                 }else{
+                    paidOrNot = 'Not Paid';
                     paid_status = '<img src="{{asset('kitchenImages/subs_sign.png')}}">';
                 }
                 
@@ -416,8 +462,8 @@
                 liItem += "<th><a href='javascript:getOrderDetail("+temp[i]["order_id"]+")' data-rel='popup'>" +temp[i]["customer_order_id"]+"</a></th>";
                 liItem += "<th><a href='javascript:getUserDetail("+temp[i]["user_id"]+")' data-rel='popup'>" +temp[i]["customer_detail"][0]["name"]+"</a></th>";
                 liItem += "<td>"+orderCreate+"</td>";
-                liItem += "<td class='paidStatus'><a href='javascript:void(0)'>"+paid_status+"</a></td>";
                 liItem += "<td class='acceptRejectStatus'><a href='javascript:void(0)'>"+order_status+"</a></td>";
+                liItem += "<td class='paidStatus'><a href='javascript:void(0)' class='tooltip'>" + paid_status + "<span class='tooltiptext'>"+paidOrNot+"</span></a> </td>";
                 liItem += "<td>"+totalprice+" SEK </td>";
                 liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
                 var deliveryType = '';
@@ -544,5 +590,6 @@
 
 		  return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2)
 		}
+
 	</script>
 @endsection

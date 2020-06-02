@@ -65,18 +65,20 @@ class CateringController extends Controller
         
     public function cateringOrders($id)
     {
-        //to get list of orders
-        $items = Order::with(['orderdetailDetail','customerDetail','customerFullDetail'])
+        $query = Order::with(['orderdetailDetail','customerDetail','customerFullDetail'])
             ->where('store_id',$id)
             ->where('order_type', 'eat_later')
             ->where('cancel','!=', 1)
             ->where('online_paid', '>', 0)
-            ->where('catering_order_status', '!=', 2)
             ->where('delivery_timestamp', '>', time())
-            ->where('is_verified', '0')
-            ->get();
-        
-        return response()->json(['status' => true, 'data' => $items]);
+            ->where('is_verified', '0');
+
+        //to get list of orders
+        $items = $query->where('catering_order_status', '!=', 2)->get();
+        //to get list of orders
+        $count = $query->where('catering_order_status', '0')->count();
+
+        return response()->json(['status' => true, 'data' => $items, 'count' => $count]);
     }
         
     public function orderCateringRejectAccept($id,$status)

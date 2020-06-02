@@ -351,7 +351,7 @@ class OrderController extends Controller
      */
     function checkIfOrderReady()
     {
-        $status = false; $order = null;
+        $status = false; $order = null; $catering_id = null;
 
         $recentOrderList = Session::get('recentOrderList');
 
@@ -363,16 +363,20 @@ class OrderController extends Controller
                 ->where(['user_id' => Auth::id(), 'order_ready' => 1])
                 ->whereIn('order_id', $orderList)
                 ->orderBy('order_id')
+                ->first();            
+        }
+        $catering_id = Order::select('order_id')
+                ->where('user_id', Auth::id())
+                ->whereIn('catering_order_status', ['1','2'])
+                ->where('updated_at', '>', date("Y-m-d h:i:s",(time()-11)))
                 ->first();
-
-            if($order)
-            {
-                $status = true;
-            }
+        if($order || $catering_id)
+        {
+            $status = true;
         }
 
         // Return response data
-        return response()->json(['status' => $status, 'order' => $order]);
+        return response()->json(['status' => $status, 'order' => $order, 'catering_id'=>$catering_id]);
     }
 
     /**
@@ -1272,14 +1276,14 @@ class OrderController extends Controller
             $userAddresses = UserAddress::where(['customer_id' => Auth::id(), 'status' => '1'])
                 ->get();
 
+            // Add new address form
+            $html .= view('v1.user.elements.cart-add-user-address-frm', compact('user'))->render();
+            
             if($userAddresses)
             {
                 // List user address form
                 $html .= view('v1.user.elements.cart-list-user-address-frm', compact('userAddresses'))->render();
             }
-
-            // Add new address form
-            $html .= view('v1.user.elements.cart-add-user-address-frm', compact('user'))->render();
         }
         else
         {

@@ -933,7 +933,7 @@ input#pac-input {
 }
 
 button.btn.btn-pay {
-	background: #d9edf7;
+	/*background: #d9edf7;*/
 	border: none;
 	padding: 6px 12px;
 	display: inline-block;
@@ -961,7 +961,7 @@ button.send-order.ui-btn.ui-mini {
 }
 
 button#charging-saved-cards {
-	background: #d9edf7;
+	/*background: #d9edf7;*/
 	border: none;
 	padding: 6px 12px;
 	display: inline-block;

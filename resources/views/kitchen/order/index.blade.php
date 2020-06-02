@@ -12,6 +12,9 @@
 	.ready_notifications{
 		display: none;
 	}
+	.gr-en{
+		color:#4caf50 !important;
+	}
 </style>
 
 	<div data-role="header" data-position="fixed" data-tap-toggle="false" class="header">
@@ -33,6 +36,12 @@
 		    </div>
 			@endif
 		</div>
+		<div class="ready_notifications">
+			<div class="table-content sucess_msg">
+				<img src="{{asset('images/icons/Yes_Check_Circle.png')}}">
+				<span></span>
+		    </div>
+		</div>
 		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow ui-responsive table_size" >
 			<thead>
 			 	<tr class="ui-bar-d">
@@ -52,13 +61,6 @@
 		    <tbody id="orderDetailContianer"></tbody>
 		</table>
 	</div>	
-
-	<div class="ready_notifications">
-		<div class="table-content sucess_msg">
-			<img src="{{asset('images/icons/Yes_Check_Circle.png')}}">
-			<span></span>
-	    </div>
-	</div>
 
 	@include('includes.kitchen-footer-menu')
 
@@ -266,9 +268,9 @@
 			          		liItem +="</td>";
 		          		}else{
 		          			liItem += "<td>"
-			          		liItem += "<a>"
-			          		liItem +="</a>";
-			          		liItem +="</td>";
+				        	liItem += "<a class='gr-en'>"
+				        	liItem += "-";
+				       		liItem +="</a></td>";
 		          		}
 
 		          		// Order Ready
@@ -301,21 +303,28 @@
 			          		liItem +="</td>";
 			          	}else{
 			          		liItem += "<td>"
-			          		liItem += "<a>"
-			          		liItem +="</a></td>";
+				        	liItem += "<a class='gr-en'>"
+				        	liItem += "-";
+				       		liItem +="</a></td>";
 		          		}
 	          		@endif
 	          		
 	          		liItem += "<td>"
-	          		if( (list[i]["paid"] == 0 && list[i]["order_ready"] == 0) || (list[i]["delivery_type"] == 3 && driverapp) ){
-	          		}else if(list[i]["paid"] == 0 && list[i]["order_ready"] == 1){
-		          		liItem += "<a data-ajax='false' href="+urldeliver+"/"+list[i]['customer_order_id']+" >"
-                        if(old_time < new_time){
-                            liItem += "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.gif')}}'>"
-                        }else{
-                            liItem += "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
-                        }
-		          		liItem += "</a>"
+	          		if(temp[i]["order_ready"] == 0){
+	          		}else if(temp[i]["order_ready"] == 1){
+	          			if(temp[i]["delivery_type"] == 3 && driverapp){
+	          				liItem += "<td>"
+				        	liItem += "<i class='fa fa-car' aria-hidden='true'></i>"
+				       		liItem +="</td>";
+	          			}else{
+	          				liItem += "<a data-ajax='false' href="+urldeliver+"/"+temp[i]['customer_order_id']+" >"
+	                        if(old_time < new_time){
+	                            liItem += "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.gif')}}'>"
+	                        }else{
+	                            liItem += "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
+	                        }
+			          		liItem += "</a>"
+	          			}
 	          		}
 	          		else{
 		          		liItem += "<a data-ajax='false'>"
@@ -323,23 +332,23 @@
 	          		}
 	          		liItem +="</td>";
 	          		liItem += "<td>"
-	          		if(list[i]["paid"] == 1 || list[i]["online_paid"] == 1 || list[i]["online_paid"] == 3){
+	          		if(temp[i]["paid"] == 1 || temp[i]["online_paid"] == 1 || temp[i]["online_paid"] == 3){
 	          			liItem += "<input class='yes_check'  type='button' data-role='none' value='yes' name=''>"
-	          		}else if(list[i]["online_paid"] == 0){
-	          			liItem += "<input class='no_check' type='button' value='Pay Manual' data-role='none' onclick='orderPayManually("+list[i]["order_id"]+", this);'>";
+	          		}else if(temp[i]["online_paid"] == 0){
+	          			liItem += "<input class='no_check' type='button' value='Pay Manual' data-role='none' onclick='orderPayManually("+temp[i]["order_id"]+", this);'>";
 
 	          			// Check if discount applied on order
-	          			if( list[i]["discount_id"] )
+	          			if( temp[i]["discount_id"] )
 	          			{
-	          				discountAmount = (list[i]["order_total"] * list[i]['discount_value']) / 100;
-	          				liItem += '<div class="show-total"><strong><span class="discounted-total">'+(list[i]["order_total"] - discountAmount).toFixed(2)+' (SEK)</span></strong></div>';
+	          				discountAmount = (temp[i]["order_total"] * temp[i]['discount_value']) / 100;
+	          				liItem += '<div class="show-total"><strong><span class="discounted-total">'+(temp[i]["order_total"] - discountAmount).toFixed(2)+' (SEK)</span></strong></div>';
 	          			}
 	          		}else{
 	          			liItem += "<input class='no_check'  type='button' data-role='none' value='no' name=''>"
 	          		}
 
 	          		// If order belongs to 'Loyalty'
-	          		if(list[i]['cntLoyaltyUsed'])
+	          		if(temp[i]['cntLoyaltyUsed'])
 	          		{
 	          			liItem += '<div class="show-total"><strong>Loyalty</strong></div>';
 	          		}
@@ -550,8 +559,9 @@
           		liItem +="</td>";
       		}else{
       			liItem += "<td>"
-          		liItem += "<a>"
-          		liItem +="</a></td>";
+		        liItem += "<a class='gr-en'>"
+		        liItem += "-";
+		        liItem +="</a></td>";
       		}
 
       		// Order Ready
@@ -585,8 +595,9 @@
                 
           	}else{
           		liItem += "<td>"
-          		liItem += "<a>"
-          		liItem +="</a></td>";
+				liItem += "<a class='gr-en'>"
+				liItem += "-";
+				liItem +="</a></td>";
       		}
       	@else
       		liItem += "<td>"
@@ -599,15 +610,21 @@
   		@endif
   		
   		liItem += "<td>"
-  		if(list[i]["paid"] == 0 && list[i]["order_ready"] == 0 ){
-  		}else if(list[i]["paid"] == 0 && list[i]["order_ready"] == 1){
-      		liItem += "<a data-ajax='false' href="+urldeliver+"/"+list[i]['customer_order_id']+" >"
-      		if(old_time < new_time){
-                liItem += "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.gif')}}'>"
-            }else{
-                liItem += "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
-            }
-      		liItem += "</a>"
+  		if(list[i]["order_ready"] == 0 ){
+  		}else if(list[i]["order_ready"] == 1){
+  			if(list[i]["delivery_type"] == 3 && driverapp){
+  				liItem += "<td>"
+	        	liItem += "<i class='fa fa-car' aria-hidden='true'></i>"
+	       		liItem +="</td>";
+  			}else{
+	      		liItem += "<a data-ajax='false' href="+urldeliver+"/"+list[i]['customer_order_id']+" >"
+	      		if(old_time < new_time){
+	                liItem += "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.gif')}}'>"
+	            }else{
+	                liItem += "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
+	            }
+	      		liItem += "</a>"
+	      	}
   		}
   		else{
       		liItem += "<a data-ajax='false'>"
@@ -726,7 +743,7 @@
              	// change red blinker to gray circle and remove class new form its table row tr element
                 $This.parents('tr').removeClass('new');
                 $This.parents('tr').find('.ready_class').html("<a data-ajax='false' href="+urlReadyOrder+"/"+id+"><img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>");
-				$('body').find('#'+id).remove();
+				$('body').find('#'+id).parents('td').html("<a class='gr-en'>-</a>");
 				clearSpeakTextInterval();
 			}
 		});

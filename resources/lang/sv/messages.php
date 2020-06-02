@@ -382,7 +382,7 @@ return [
     'welcomeAnyTime' => 'Du är välkommen tillbaka någon annan gång!',
     'rejectMsg' => 'Ledsen, vi kan inte ta hand om din beställning just nu, baserat på överbelastning!',
     'success' => 'Framgång',
-    'acceptMsg' => 'Din beställning är klar på givet datum!',
+    'acceptMsg' => 'Din beställning är klar på önskat datum!',
     'cancelMyOrder' => 'Avboka Min Beställning',
     'doYoureallywantstoCancel' => 'Vill du verkligen avbryta?',
     'okay' => 'Okej',
