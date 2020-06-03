@@ -17,6 +17,8 @@
 	}
 </style>
 
+@include('includes.confirm-modal')
+
 	<div data-role="header" data-position="fixed" data-tap-toggle="false" class="header">
 		@include('includes.kitchen-header-sticky-bar')
 		<h3 class="ui-bar ui-bar-a order_background"><span>{{$storeName}}</span></h3>

@@ -160,7 +160,7 @@
 @section('content')
 
 @include('includes.confirm-modal')
-
+@include('includes.kitchen-popup-add-manual-preparation-time')
 <div data-role="header" data-position="fixed" data-tap-toggle="false" class="header">
 		@include('includes.kitchen-header-sticky-bar')
 		<h3 class="ui-bar ui-bar-a order_background"><span>{{$storeName}}</span></h3>
@@ -486,7 +486,7 @@
                     if(temp[i]['delivery_at_door'] == '1'){
                         deliveryType += '<br><b><span>{{ __('messages.deliveryAtDoor') }}</span></b>';
                     } 
-                    deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+temp[i]['user_address_id']+')"><span>'+temp[i]['street']+'</span></a>';
+                    deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+temp[i]['user_address_id']+')"><span>'+temp[i]["customer_full_detail"][0]["street"]+'</span></a>';
                 }
 
                 liItem += "<td>"+deliveryType+"</td>";
