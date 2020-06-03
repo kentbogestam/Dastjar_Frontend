@@ -2,6 +2,8 @@
 
 @section('content')
 
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
 <style>
 	.news{
 		background-color: #87ceebbf !important;
@@ -314,14 +316,15 @@
 		          		}
 	          		@endif
 	          		
-	          		liItem += "<td>"
-	          		if(temp[i]["order_ready"] == 0){
-	          		}else if(temp[i]["order_ready"] == 1){
+	          		// Order Delivered
+	          		liItem += "<td>";
+	          		if(temp[i]["order_ready"] == 1)
+	          		{
 	          			if(temp[i]["delivery_type"] == 3 && driverapp){
-	          				liItem += "<td>"
-				        	liItem += "<i class='fa fa-car' aria-hidden='true'></i>"
-				       		liItem +="</td>";
-	          			}else{
+	          				liItem += "<i class='fa fa-car' aria-hidden='true'></i>"
+	          			}
+	          			else
+	          			{
 	          				liItem += "<a data-ajax='false' href="+urldeliver+"/"+temp[i]['customer_order_id']+" >"
 	                        if(old_time < new_time){
 	                            liItem += "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.gif')}}'>"
@@ -331,11 +334,9 @@
 			          		liItem += "</a>"
 	          			}
 	          		}
-	          		else{
-		          		liItem += "<a data-ajax='false'>"
-		          		liItem += "</a>"
-	          		}
 	          		liItem +="</td>";
+
+	          		// 
 	          		liItem += "<td>"
 	          		if(temp[i]["paid"] == 1 || temp[i]["online_paid"] == 1 || temp[i]["online_paid"] == 3){
 	          			liItem += "<input class='yes_check'  type='button' data-role='none' value='yes' name=''>"
