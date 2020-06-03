@@ -17,6 +17,7 @@
     @yield('footer-script')
     <script src="{{asset('kitchenJs/speekJs.js')}}"></script>
     <script src="{{asset('kitchenJs/init.js')}}"></script>
+    <script src="{{asset('plugins/NoSleep/dist/NoSleep.js')}}"></script>
     <script type="text/javascript">
     	@if(Session::has('storeId'))
             // Server-Sent Events allow a web page to get updates from a server in x second.
