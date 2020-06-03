@@ -40,8 +40,10 @@
                         }
         
                         // if catering order is new so show count.
-                        if(returnedData['catering_order_count'] >= 0){
+                        if(returnedData['catering_order_count'] > 0){
                             $('i.catering-badge').html(returnedData['catering_order_count']);
+                        }else{
+                            $('i.catering-badge').html('');
                         }
 
                         setTimeout(serverSE, INTERVAL_CHECK_STORE_SUBS);

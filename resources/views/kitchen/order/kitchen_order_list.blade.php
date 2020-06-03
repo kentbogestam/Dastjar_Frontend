@@ -17,6 +17,8 @@
 	}
 </style>
 
+@include('includes.confirm-modal')
+
 <div data-role="header" data-position="fixed" data-tap-toggle="false" class="header">
 		@include('includes.kitchen-header-sticky-bar')
 		<h3 class="ui-bar ui-bar-a order_background"><span>{{$storeName}}</span></h3>
@@ -139,26 +141,29 @@
 
 		function rejectOrder(id){
             var status = '1';
-			if(confirm("Do you really wants to reject ?")){
-                $('#overlay').css("display", "block");
+            var msg = "{{ __('messages.doYoureallywantstoReject') }}";
+            $('.confirm-text').html(msg);
+            $('#myConfirmBtn').trigger('click');
+            $('.confirm-conti').on('click', function(){
+                $('.confirm-close').trigger('click');
+            	$('#overlay').css("display", "block");
                 $('#loading-img').css("display", "block");
 				$.get("{{url('kitchen/catering/orderCateringRejectAccept')}}/"+id+"/"+status,
-                    function(returnedData){  
-                        if(returnedData != ''){
-                            $('#loading-img').css("display", "none");
-                            $('#overlay').css("display", "none");
-                            $(".order_id_"+id).remove();
-                            $('.ready_notifications span').html('Order Rejected Successfully.');
-                            $('.ready_notifications').show();
+                function(returnedData){  
+                    if(returnedData != ''){
+                        $('#loading-img').css("display", "none");
+                        $('#overlay').css("display", "none");
+                        $(".order_id_"+id).remove();
+                        $('.ready_notifications span').html('Order Rejected Successfully.');
+                        $('.ready_notifications').show();
 
-                            setTimeout(
-                                function(){ 
-                                    $('.ready_notifications').hide();
-                            }, 3000);
-                        }
+                        setTimeout(
+                            function(){ 
+                                $('.ready_notifications').hide();
+                        }, 3000);
                     }
-                );
-			}
+                });
+            });
 		}
 
 		$(function(){
@@ -335,6 +340,9 @@
 			          		else if( temp[i]['delivery_type'] == 3 )
 			          		{
 			          			deliveryType = '{{ __('messages.deliveryOptionHomeDelivery') }}';
+			          			if(temp[i]['delivery_at_door'] == '1'){
+			                        deliveryType += '<br><b><span>{{ __('messages.deliveryAtDoor') }}</span></b>';
+			                    }
 			          			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+temp[i]['user_address_id']+')"><span>'+temp[i]['street']+'</span></a>';
 
 			          			if(driverapp)
@@ -356,6 +364,12 @@
 	          	}
 	          	
 	          	$("#orderDetailContianer").append(liItem);
+	          	
+	          	if(returnedData['catCount'] > 0){
+	          		$('.catering-badge').html(returnedData['catCount']);
+	          	}else{
+	          		$('.catering-badge').html('');
+	          	}
 			}); 
 		});
         
@@ -524,6 +538,9 @@
 			          		else if( temp[i]['delivery_type'] == 3 )
 			          		{
 			          			deliveryType = '{{ __('messages.deliveryOptionHomeDelivery') }}';
+			          			if(temp[i]['delivery_at_door'] == '1'){
+			                        deliveryType += '<br><b><span>{{ __('messages.deliveryAtDoor') }}</span></b>';
+			                    }
 			          			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+temp[i]['user_address_id']+')"><span>'+temp[i]['street']+'</span></a>';
 
 			          			if(driverapp)
@@ -747,6 +764,9 @@
 	          		else if( list[i]['delivery_type'] == 3 )
 	          		{
 	          			deliveryType = '{{ __('messages.deliveryOptionHomeDelivery') }}';
+	          			if(list[i]['delivery_at_door'] == '1'){
+	                        deliveryType += '<br><b><span>{{ __('messages.deliveryAtDoor') }}</span></b>';
+	                    }
 	          			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+list[i]['user_address_id']+')"><span>'+list[i]['street']+'</span></a>';
 
 	          			if(driverapp)

@@ -91,7 +91,15 @@ class KitchenController extends Controller
                 ->get();
         }
 
-        return response()->json(['status' => 'success', 'response' => true, 'store' => $store, 'extra_prep_time' => $extra_prep_time, 'data'=>$results, 'orderItems' => $orderItems]);
+        $catCount = Order::whereIn('store_id',$stores)
+            ->where('order_type', 'eat_later')
+            ->where('cancel','!=', 1)
+            ->where('online_paid', '>', 0)
+            ->where('delivery_timestamp', '>', time())
+            ->where('is_verified', '0')
+            ->where('catering_order_status', '0')->count();
+
+        return response()->json(['status' => 'success', 'response' => true, 'store' => $store, 'extra_prep_time' => $extra_prep_time, 'data'=>$results, 'orderItems' => $orderItems, 'catCount' => $catCount]);
     }
     
     /**

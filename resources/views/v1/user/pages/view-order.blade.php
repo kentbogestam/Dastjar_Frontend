@@ -5,7 +5,7 @@
     .rejectbox{
         background-color: #d57301;
         padding:20px;
-        width:30%;
+        width:fit-content;
         color:white;
         text-align: center;
         margin: 20px auto;
@@ -13,7 +13,7 @@
     .waitingtbox{
         background: linear-gradient(to bottom, rgba(249, 163, 34, 1) 0%, rgba(229, 80, 11, 1) 100%);
         padding:20px;
-        width:30%;
+        width:fit-content;
         color:white;
         text-align: center;
         margin: 20px auto;
@@ -21,7 +21,7 @@
     .acceptbox{
         background-color: #4caf50;
         padding:20px;
-        width:30%;
+        width:fit-content;
         color:white;
         text-align: center;
         margin: 20px auto;
@@ -132,6 +132,9 @@
 @endsection
 
 @section('content')
+	
+	@include('includes.confirm-modal')
+
 	<div class="order-summery-section">
 		<div class="order-summery order-confirmation-block">
 			@if($order->order_accepted)
@@ -313,7 +316,6 @@
 	                    @if($order->online_paid == "1")
                     	<!-- if paid -->
 	                        <div class="acceptbox">
-	                            <p> {{ __('messages.success') }}! </p>
 	                            <p> {{ __('messages.acceptMsg') }} </p>
 	                        </div>
 	                    @endif
@@ -345,11 +347,6 @@
 							<button type="button" class="btn btn-primary" onclick="isSeenMyOrder();">{{ __('messages.okay') }}</button><br><br>
 						</div>
 					@endif
-                @elseif($order->catering_order_status == '2')
-                    <div class="acceptbox">
-                        <p> {{ __('messages.success') }}! </p>
-                        <p> {{ __('messages.acceptMsg') }} </p>
-                    </div>
 	            @endif
 			@endif
 		</div>
@@ -682,9 +679,11 @@
 	function cancelMyOrder()
 	{
 		var msg = "{{ __('messages.doYoureallywantstoCancel') }}";
-		if(confirm(msg))
-		{
-			$('#loading-img').css("display", "block");
+		$('.confirm-text').html(msg);
+		$('#myConfirmBtn').trigger('click');
+        $('.confirm-conti').on('click', function(){
+        	$('.confirm-close').trigger('click');
+        	$('#loading-img').css("display", "block");
 			$.ajax({
 				type: 'post',
 				url: "{{ route('userCancelOrder') }}",
@@ -706,7 +705,7 @@
 					}
 				}
 			});
-		}
+        });
 	}
 </script>
 @endsection

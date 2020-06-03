@@ -159,6 +159,8 @@
 
 @section('content')
 
+@include('includes.confirm-modal')
+
 <div data-role="header" data-position="fixed" data-tap-toggle="false" class="header">
 		@include('includes.kitchen-header-sticky-bar')
 		<h3 class="ui-bar ui-bar-a order_background"><span>{{$storeName}}</span></h3>
@@ -321,7 +323,7 @@
                         $('#overlay').css("display", "none");
                         $('.ready_notifications span').html('Order Accepted Successfully.');
                         $('.ready_notifications').show();
-
+                        serverSE();
                         setTimeout(
                             function(){ 
                                 $('.ready_notifications').hide();
@@ -333,8 +335,12 @@
             
         function rejectit(id){
             var status = '1';
-            if(confirm("Do you really wants to reject ?")){
-                $("#popupCloseRight2").popup("close");
+            $("#popupCloseRight2").popup("close");
+            var msg = "{{ __('messages.doYoureallywantstoReject') }}";
+            $('.confirm-text').html(msg);
+            $('#myConfirmBtn').trigger('click');
+            $('.confirm-conti').on('click', function(){
+                $('.confirm-close').trigger('click');
                 $('#overlay').css("display", "block");
                 $('#loading-img').css("display", "block");
                 $.get("{{url('kitchen/catering/orderCateringRejectAccept')}}/"+id+"/"+status,
@@ -346,7 +352,7 @@
                             $(".order_id_"+id).remove();
                             $('.ready_notifications span').html('Order Rejected Successfully.');
                             $('.ready_notifications').show();
-
+                            serverSE();
                             setTimeout(
                                 function(){ 
                                     $('.ready_notifications').hide();
@@ -354,7 +360,7 @@
                         }
                     }
                 );
-            }
+            });
         }
         
 		function removeOrder(orderID,user_id){
@@ -402,7 +408,11 @@
                     start = 0;
                     liItem += htmlData(start,count,temp) 
 	          	}
-                $('.catering-badge').html(returnedData["count"])
+                if(returnedData['count'] > 0){
+                    $('.catering-badge').html(returnedData['count']);
+                }else{
+                    $('.catering-badge').html('');
+                }
 	          	$("#orderDetailContianer").html(liItem);
 			}); 
 		}
@@ -474,9 +484,9 @@
                 }else if( temp[i]['delivery_type'] == 3 ){
                     deliveryType = '<span>{{ __('messages.deliveryOptionHomeDelivery') }}</span>';
                     if(temp[i]['delivery_at_door'] == '1'){
-                        deliveryType += '<br><span>{{ __('messages.deliveryAtDoor') }}</span>';
+                        deliveryType += '<br><b><span>{{ __('messages.deliveryAtDoor') }}</span></b>';
                     } 
-                    deliveryType += '<br><span>'+temp[i]["customer_full_detail"][0]["street"]+' '+temp[i]["customer_full_detail"][0]["city"]+'</span>';
+                    deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+temp[i]['user_address_id']+')"><span>'+temp[i]['street']+'</span></a>';
                 }
 
                 liItem += "<td>"+deliveryType+"</td>";
