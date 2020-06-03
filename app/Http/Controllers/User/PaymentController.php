@@ -30,7 +30,6 @@ class PaymentController extends Controller
     function confirmPayment(Request $request)
     {
     	$response = array();
-
     	// Check if store is open for 'eat-now'
     	$orderId = $request->order_id;
     	$order = Order::where(['order_id' => $orderId])->first();
@@ -175,7 +174,7 @@ class PaymentController extends Controller
 						// If payment succeeded, save transaction in DB
 						if( (isset($response['success']) && $response['success']) || (isset($response['requires_capture']) && $response['requires_capture']) )
 						{
-							DB::transaction(function () use($orderId, $request, $intent, $response, $deliveryTimestamp, $created_at) {
+							DB::transaction(function () use($orderId, $request, $intent, $response, $deliveryTimestamp, $created_at, $order) {
 								// if delivery time is less than created date's next day.
 								if($deliveryTimestamp < $created_at){
 									$is_verified = '1';
@@ -201,6 +200,23 @@ class PaymentController extends Controller
 					        	}
 
 					        	$paymentSave->save();
+
+					        	//send sms to user when its dine-in or take-away
+					        	if($order->delivery_type != "3"){
+						        	if($order->user_type == 'customer'){
+					                    $adminDetail = User::where('id' , $order->user_id)->first();
+					                    if(isset($adminDetail->phone_number_prifix) && isset($adminDetail->phone_number)){
+					                        $recipients = ['+'.$adminDetail->phone_number_prifix.$adminDetail->phone_number];
+					                    }
+					                }else{
+					                    $adminDetail = Admin::where('id' , $order->user_id)->first();
+					                    $recipients = ['+'.$adminDetail->mobile_phone];
+					                }
+
+					                $url = env('APP_URL').'order-view/'.$orderId;
+					                $message = "Visit Order : ".$url;
+				                    Helper::apiSendTextMessage($recipients, $message);
+				                }
 							});
 						}
 					}
