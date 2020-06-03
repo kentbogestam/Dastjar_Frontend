@@ -252,22 +252,27 @@
 		          		}
 	          		@endif
 	          		
-	          		liItem += "<td>"
-	          		if( (list[i]["paid"] == 0 && list[i]["order_ready"] == 0) || (list[i]["delivery_type"] == 3 && driverapp) ){
-	          		}else if(list[i]["paid"] == 0 && list[i]["order_ready"] == 1){
-		          		liItem += "<a data-ajax='false' href="+urldeliver+"/"+list[i]['customer_order_id']+" >"
-                        if(old_time < new_time){
-                            liItem += "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.gif')}}'>"
-                        }else{
-                            liItem += "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
-                        }
-		          		liItem += "</a>"
-	          		}
-	          		else{
-		          		liItem += "<a data-ajax='false'>"
-		          		liItem += "</a>"
+	          		// Order Delivered
+	          		liItem += "<td>";
+	          		if(list[i]["paid"] == 0 && list[i]["order_ready"] == 1)
+	          		{
+	          			if(list[i]["delivery_type"] == 3 && driverapp){
+	          				
+	          			}
+	          			else
+	          			{
+	          				liItem += "<a data-ajax='false' href="+urldeliver+"/"+list[i]['customer_order_id']+" >"
+	                        if(old_time < new_time){
+	                            liItem += "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.gif')}}'>"
+	                        }else{
+	                            liItem += "<img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
+	                        }
+			          		liItem += "</a>"
+	          			}
 	          		}
 	          		liItem +="</td>";
+
+	          		// 
 	          		liItem += "<td>"
 	          		if(list[i]["paid"] == 1 || list[i]["online_paid"] == 1 || list[i]["online_paid"] == 3){
 	          			liItem += "<input class='yes_check'  type='button' data-role='none' value='yes' name=''>"
