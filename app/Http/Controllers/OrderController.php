@@ -64,7 +64,7 @@ class OrderController extends Controller
         if($order)
         {
             // when online_paid is 2 then make it to 0 as default
-            if( $order->online_paid == "0" )
+            if( $order->online_paid == "2" )
             {
                 // Check if store is open
                 $heartbeat = Helper::isStoreLive($order->store_id);
@@ -72,8 +72,7 @@ class OrderController extends Controller
                 if( !is_null($heartbeat) && $heartbeat < 1)
                 {
                     DB::table('orders')->where('order_id', $orderId)->update([
-                        'online_paid' => 2,
-                        // 'online_paid' => 0,
+                        'online_paid' => 0,
                     ]);
                 }
                 else
@@ -696,8 +695,10 @@ class OrderController extends Controller
 
                         if(($delivery_timestamp - time()) < 86400){
                             $order->catering_order_status = '2';
+                            $order->is_verified = '1';
                         }else{
                             $order->catering_order_status = '0';
+                            $order->is_verified = '0';
                         }
 
                         $order->save();

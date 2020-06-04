@@ -200,23 +200,6 @@ class PaymentController extends Controller
 					        	}
 
 					        	$paymentSave->save();
-
-					        	//send sms to user when its dine-in or take-away
-					        	if($order->delivery_type != "3"){
-						        	if($order->user_type == 'customer'){
-					                    $adminDetail = User::where('id' , $order->user_id)->first();
-					                    if(isset($adminDetail->phone_number_prifix) && isset($adminDetail->phone_number)){
-					                        $recipients = ['+'.$adminDetail->phone_number_prifix.$adminDetail->phone_number];
-					                    }
-					                }else{
-					                    $adminDetail = Admin::where('id' , $order->user_id)->first();
-					                    $recipients = ['+'.$adminDetail->mobile_phone];
-					                }
-
-					                $url = env('APP_URL').'order-view/'.$orderId;
-					                $message = "Visit Order : ".$url;
-				                    Helper::apiSendTextMessage($recipients, $message);
-				                }
 							});
 						}
 					}

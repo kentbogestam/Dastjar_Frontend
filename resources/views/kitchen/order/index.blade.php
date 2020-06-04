@@ -98,6 +98,7 @@
 	var imageUrlLoad = "{{asset('kitchenImages/red_blink_image.png')}}";
 	var speakOrderItemList = [];
 	var driverapp = "{{ Session::get('driverapp') }}";
+	var crntTime = parseInt({{time()}});
 
 	$(function(){
 		ajaxCall();
@@ -269,7 +270,8 @@
 			          		liItem += "<img id='"+ids+"' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
 			          		liItem +="</a>";
 			          		var utcTime = new Date(temp[i]['created_at']+" UTC").getTime()/1000;
-			          		if((temp[i]["delivery_timestamp"] < (utcTime + 86400)) && (utcTime > {{ time()-300 }} )) {
+			          		
+			          		if((temp[i]["delivery_timestamp"] < (utcTime + 86400)) && (utcTime > (crntTime-300) )) {
 			          			liItem +="<a href='javascript:void(0)' class='rejectRemove' rel='"+utcTime+"' onclick='rejectOrder("+temp[i]['order_id']+");'><br>reject</a>";
 			          		}
 			          		liItem +="</td>";
@@ -444,10 +446,11 @@
           	}else{
           		$('.catering-badge').html('');
           	}
-		}); 
+		});
+		crntTime = crntTime + 10; 
 	}
 
-	setInterval(ajaxCall, 10000);
+	setInterval(ajaxCall, 10000, crntTime);
 
 	var tempCount = 18;
 	$(document).on("scrollstop", function (e) {
@@ -567,7 +570,7 @@
           		liItem += "<img id='"+ids+"' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
           		liItem +="</a>";
           		var utcTime = new Date(list[i]['created_at']+" UTC").getTime()/1000;
-          		if((list[i]["delivery_timestamp"] < (utcTime + 86400)) && (utcTime > {{ time()-300 }} )) {
+          		if((list[i]["delivery_timestamp"] < (utcTime + 86400)) && (utcTime > (crntTime-300) )) {
           			liItem +="<a href='javascript:void(0)' class='rejectRemove' rel='"+utcTime+"' onclick='rejectOrder("+list[i]['order_id']+");'><br>reject</a>";
           		}
           		liItem +="</td>";
@@ -784,7 +787,7 @@
 
 		$.get("{{url('kitchen/order-pay-manually')}}/"+id,
 		function(returnedData){
-			console.log(returnedData);
+			// console.log(returnedData);
 			if(returnedData["status"])
 			{
 				$This.val('Yes');
