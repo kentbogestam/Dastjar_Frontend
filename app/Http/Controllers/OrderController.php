@@ -609,6 +609,7 @@ class OrderController extends Controller
         // 
         if( Auth::check() && !empty($data) )
         {
+            $agent = $request->server('HTTP_USER_AGENT');
             $orderInvoice = array();
             $i = 0;
             $total_price = $final_order_total = 0;
@@ -676,11 +677,28 @@ class OrderController extends Controller
                         $order->deliver_time = $orderTime;
                         $order->check_deliveryDate = $checkOrderDate;
 
+                        // Check where order comes from i.e. 'Web/IOS/Android/webstore'
+                        $order->order_reference_id = 1;
+                        if(Session::has('iFrameMenu'))
+                        {
+                            $order->order_reference_id = 4;
+                        }
+                        elseif( stripos($agent, "iPod") || stripos($agent, "iPhone") || stripos($agent, "iPad") )
+                        {
+                            $order->order_reference_id = 2;
+                        }
+                        elseif( stripos($agent, "Android") )
+                        {
+                            $order->order_reference_id = 3;
+                        }
+
+                        // 
                         if( isset($data['delivery_type']) && is_numeric($data['delivery_type']) )
                         {
                             $order->delivery_type = $data['delivery_type'];
                         }
 
+                        // 
                         if($storeDetail->order_response == 0 && $orderType == 'eat_now')
                         {
                             $order->order_response = 0;
@@ -848,9 +866,7 @@ class OrderController extends Controller
                     ->update(['final_order_total' => $final_order_total, 'delivery_charge' => $homeDelivery['delivery_charge']]);
             }
 
-            //
-            // User::where('id',Auth::id())->update(['browser' => $data['browser']]);
-            $agent = $request->server('HTTP_USER_AGENT');
+            // Update user agent from where order comes
             User::where('id',Auth::id())->update(['browser' => $agent]);
 
             //
