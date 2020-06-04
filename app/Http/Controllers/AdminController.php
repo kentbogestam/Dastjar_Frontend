@@ -2888,16 +2888,39 @@ class AdminController extends Controller
         $deliveryDateTill = Carbon::now()->toDateString();
 
         //new order speak
-        $orderDetail = OrderDetail::select('order_details.id', 'order_details.product_quality', 'order_details.product_description', 'order_details.is_speak', 'product.product_name')
+        $orderDetails = OrderDetail::select('order_details.id', 'order_details.product_quality', 'order_details.product_description', 'order_details.is_speak', 'product.product_name', 'orders.delivery_timestamp', 'orders.created_at', 'orders.online_paid', 'orders.catering_order_status')
             ->join('orders', 'orders.order_id', '=', 'order_details.order_id')
             ->join('product', 'product.product_id', '=', 'order_details.product_id')
-            ->where(['orders.store_id' => $storeId, 'user_type' => 'customer', 'orders.order_started' => '0', 'orders.paid' => '0'])
-            ->where('check_deliveryDate', '>=', $deliveryDate)
-            ->where('check_deliveryDate', '<=', $deliveryDateTill)
-            ->whereNotIn('orders.online_paid', [2])
+            ->where('orders.store_id', $storeId)
+            ->where('user_type', 'customer')
+            ->where('check_deliveryDate', '>=', date("Y-m-d", time()))
             ->where('orders.cancel','!=', 1)
             ->get();
-        
+            $orderIds = array();
+            if(!empty($orderDetails->toArray())){
+                foreach($orderDetails as $ord){
+                    if($ord->delivery_timestamp > strtotime($ord->created_at)+86400){
+                        if($ord->catering_order_status == '0' && $ord->online_paid == '2'){
+                            $orderIds[] = $ord->id;
+                        }
+                    }else{
+                        if($ord->order_started == '0' && $ord->online_paid != '2'){
+                            $orderIds[] = $ord->id;
+                        }
+                    }
+                }
+            }
+
+            if(!empty($orderIds)){
+                $orderDetail = OrderDetail::select('order_details.id', 'order_details.product_quality', 'order_details.product_description', 'order_details.is_speak', 'product.product_name')
+                ->join('orders', 'orders.order_id', '=', 'order_details.order_id')
+                ->join('product', 'product.product_id', '=', 'order_details.product_id')
+                ->whereIn('order_details.id', $orderIds)
+                ->get();
+            }else{
+                $orderDetail = array();
+            }
+
         // Logged-in user setting's detail
         $text_speech = Auth::guard('admin')->user()->text_speech;
 
