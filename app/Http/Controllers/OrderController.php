@@ -53,7 +53,7 @@ class OrderController extends Controller
         $orderInvoice = array();
 
         $order = Order::from('orders AS O')
-            ->select(['O.order_id', 'O.customer_order_id', 'O.store_id', 'O.user_id',  'O.cancel', 'O.order_type', 'O.delivery_type', 'O.deliver_date', 'O.deliver_time', 'O.order_total', 'O.delivery_charge', 'O.final_order_total', 'O.order_delivery_time', 'O.is_seen', 'O.order_response', 'O.order_accepted', 'O.catering_order_status', 'O.extra_prep_time', 'O.online_paid', 'S.store_name', 'S.driverapp', 'company.currencies', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
+            ->select(['O.order_id', 'O.customer_order_id', 'O.store_id', 'O.user_id',  'O.cancel', 'O.order_type', 'O.delivery_type', 'O.delivery_timestamp', 'O.created_at', 'O.deliver_date', 'O.deliver_time', 'O.order_total', 'O.delivery_charge', 'O.final_order_total', 'O.order_delivery_time', 'O.is_seen', 'O.order_response', 'O.order_accepted', 'O.catering_order_status', 'O.extra_prep_time', 'O.online_paid', 'S.store_name', 'S.driverapp', 'company.currencies', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
             ->join('order_details', 'O.order_id', '=', 'order_details.order_id')
             ->join('store AS S','O.store_id', '=', 'S.store_id')
             ->join('company','O.company_id', '=', 'company.company_id')
@@ -63,8 +63,15 @@ class OrderController extends Controller
 
         if($order)
         {
-            // when online_paid is 2 then make it to 0 as default
-            if( $order->online_paid == "2" )
+            // when more than 24 hour deliverytime then chk for online_paid is 2 then make it to 0 as default or vice versa
+            if($order->delivery_timestamp < (strtotime($order->created_at) + 86400)){
+                $chkvar = '2';
+                $setvar = 0;
+            }else{
+                $chkvar = '0';
+                $setvar = 2;
+            }
+            if( $order->online_paid == $chkvar )
             {
                 // Check if store is open
                 $heartbeat = Helper::isStoreLive($order->store_id);
@@ -72,7 +79,7 @@ class OrderController extends Controller
                 if( !is_null($heartbeat) && $heartbeat < 1)
                 {
                     DB::table('orders')->where('order_id', $orderId)->update([
-                        'online_paid' => 0,
+                        'online_paid' => $setvar,
                     ]);
                 }
                 else
