@@ -81,6 +81,13 @@
 			    </tr>
 			</thead>
 			<tbody id="specificOrderDetailContianer"></tbody>
+			@if(App\Helper::isPackageSubscribed(13))
+			<tfoot>
+				<tr class="ui-bar-d">
+					<th id="printCopy" colspan="4" onclick="" style="cursor:pointer;">{{ __('messages.printCopy') }}</th> 
+			    </tr>
+			</tfoot>
+			@endif
 		</table>
 	</div>
 
@@ -167,6 +174,7 @@
 				}
 			}
 			$("#specificOrderDetailContianer").html(liItem);
+			$("#printCopy").attr('onclick','printCopy('+orderId+');');
 
 			// Show/hide loyalty column in 'order detail' popup
 			if(!isQuantityFree)
@@ -180,6 +188,13 @@
 
 			$("#popupCloseRight").popup("open");
 			var liItem = "";
+		});
+	}
+
+	function printCopy(orderId){
+		$.get("{{route('printCopy')}}?orderId="+orderId,
+		function(returnedData){
+			$("#popupCloseRight").popup("close");
 		});
 	}
 

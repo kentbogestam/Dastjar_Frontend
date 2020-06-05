@@ -53,7 +53,7 @@ class OrderController extends Controller
         $orderInvoice = array();
 
         $order = Order::from('orders AS O')
-            ->select(['O.order_id', 'O.customer_order_id', 'O.store_id', 'O.user_id',  'O.cancel', 'O.order_type', 'O.delivery_type', 'O.delivery_timestamp', 'O.created_at', 'O.deliver_date', 'O.deliver_time', 'O.order_total', 'O.delivery_charge', 'O.final_order_total', 'O.order_delivery_time', 'O.is_seen', 'O.order_response', 'O.order_accepted', 'O.catering_order_status', 'O.extra_prep_time', 'O.online_paid', 'S.store_name', 'S.driverapp', 'company.currencies', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
+            ->select(['O.order_id', 'O.check_deliveryDate', 'O.deliver_time', 'O.customer_order_id', 'O.store_id', 'O.user_id',  'O.cancel', 'O.order_type', 'O.delivery_type', 'O.delivery_timestamp', 'O.created_at', 'O.deliver_date', 'O.deliver_time', 'O.order_total', 'O.delivery_charge', 'O.final_order_total', 'O.order_delivery_time', 'O.is_seen', 'O.order_response', 'O.order_accepted', 'O.catering_order_status', 'O.extra_prep_time', 'O.online_paid', 'S.store_name', 'S.driverapp', 'company.currencies', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
             ->join('order_details', 'O.order_id', '=', 'order_details.order_id')
             ->join('store AS S','O.store_id', '=', 'S.store_id')
             ->join('company','O.company_id', '=', 'company.company_id')
@@ -161,7 +161,7 @@ class OrderController extends Controller
             
             // Check if subscription exist, create bong receipt to print 
             // if(1)
-            if( Helper::isPackageSubscribed(13) && (\Request::server('HTTP_REFERER') && (strpos(\Request::server('HTTP_REFERER'), 'cart') != false)) )
+            if( Helper::isPackageSubscribed(13) && (\Request::server('HTTP_REFERER') && (strpos(\Request::server('HTTP_REFERER'), 'cart') != false)) && !Helper::isPackageSubscribed(4, $order->store_id) )
             {
                 $this->createPOSReceipt($orderId);
                 $this->uploadPrintFile();

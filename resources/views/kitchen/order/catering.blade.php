@@ -238,6 +238,13 @@
 			    </tr>
 			</thead>
 			<tbody id="specificOrderDetailContianer"></tbody>
+            @if(App\Helper::isPackageSubscribed(13))
+            <tfoot>
+                <tr class="ui-bar-d">
+                    <th id="printCopy" colspan="5" onclick="" style="cursor:pointer;">{{ __('messages.printCopy') }}</th> 
+                </tr>
+            </tfoot>
+            @endif
 		</table>
     </div>
 
@@ -277,15 +284,23 @@
 		var totallength = 0;
 		var storeId = "{{Session::get('kitchenStoreId')}}";
 
-        function getOrderDetail(orderId){
+        function getOrderDetail(orderId){   
             var liItem = "";
             $.get("{{url('kitchen/catering/orderCateringOrderDetail')}}/"+orderId,
             function(returnedData){
                 $("#specificOrderDetailContianer").html(returnedData);
+                $("#printCopy").attr('onclick','printCopy('+orderId+');');
     			$("#popupCloseRight").popup("open");
             });
         }
-        
+
+        function printCopy(orderId){
+            $.get("{{route('printCopy')}}?orderId="+orderId,
+            function(returnedData){
+                $("#popupCloseRight").popup("close");
+            });
+        }
+
         function getUserDetail(userId){
             var liItem = "";
             $.get("{{url('kitchen/catering/orderCateringUserDetail')}}/"+userId,

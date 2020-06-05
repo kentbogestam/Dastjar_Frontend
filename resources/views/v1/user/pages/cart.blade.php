@@ -1,6 +1,7 @@
 @extends('v1.user.layouts.master')
 
 @section('content')
+	@include('includes.confirm-modal')
 	@include('v1.user.elements.store-delivery-service')
 	<div id="cart-wrapper">
 		<div class="cart-list">
@@ -740,6 +741,7 @@
 			} else {
 				// Show success message
 				$('.row-new-card').find('div.card-errors').html('');
+				AskPhoneForInfo();
 				window.location.href = "{{ url('order-view/'.$order->order_id) }}";
 			}
 		}
@@ -829,6 +831,7 @@
 			} else {
 				// Show success message
 				$('.row-saved-cards').find('div.card-errors').html('');
+				AskPhoneForInfo();
 				window.location.href = "{{ url('order-view/'.$order->order_id) }}";
 			}
 		}
@@ -902,5 +905,15 @@
 		    }, 'slow');
 		});
 	@endif
+
+	function AskPhoneForInfo(){
+		// var msg = "{{ __('messages.doYoureallywantstoCancel') }}";
+		// $('.confirm-text').html(msg);
+		// $('#myConfirmBtn').trigger('click');
+  //       $('.confirm-conti').on('click', function(){
+  //       	$('.confirm-close').trigger('click');
+  //       	$('#loading-img').css("display", "block");
+  //       });
+	}
 </script>
 @endsection
