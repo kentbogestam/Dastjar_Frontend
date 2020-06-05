@@ -131,6 +131,7 @@ Route::post('address-verify', 'OrderController@addressVerify');
 Route::get('delete-user-address/{id}', 'OrderController@deleteUserAddress');
 Route::post('update-order-user-address', 'OrderController@updateOrderUserAddress');
 Route::get('get-home-delivery-part-content/{order_id}', 'OrderController@getHomeDeliveryPartContent');
+Route::get('smsOverPhone/{order_id}', 'OrderController@smsOverPhone');
 // Route::post('apply-promocode', 'OrderController@ajaxApplyPromocode');
 
 // 
