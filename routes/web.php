@@ -307,6 +307,7 @@ Route::group(['prefix' => 'kitchen'], function(){
 		Route::post('pos-print', 'PosPrintController@handlePost');
 		Route::get('pos-print', 'PosPrintController@handleGet');
 		Route::delete('pos-print', 'PosPrintController@handleDeleteMethod');
+		Route::get('print-copy', 'PosPrintController@PrintCopyReceipt')->name('printCopy');
 	});
 });
 

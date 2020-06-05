@@ -27,6 +27,8 @@ use App\App42\Query;
 use App\App42\App42API;
 use App\App42\Util;
 
+use Illuminate\Support\Facades\File;
+
 class Helper extends Model
 {
     public static function getLocation($address)
@@ -567,5 +569,50 @@ class Helper extends Model
         $heartbeat = Store::select([DB::raw("TIMESTAMPDIFF(MINUTE, islive, UTC_TIMESTAMP()) AS heartbeat")])
             ->where('store_id', $storeId)->first()->heartbeat;
         return $heartbeat;
+    }
+
+    // Upload all txt file from printdata directory to printer server
+    public static function uploadPrintFile()
+    {
+        $PRINTER_BASE_URL = env('PRINTER_BASE_URL');
+        $filePath = storage_path('app/printerdata');
+        $files = File::files($filePath);
+
+        // Check if files and printer server URL exist
+        if(!empty($files) && $PRINTER_BASE_URL)
+        {
+            $fields = $arrFiles = array();
+
+            foreach($files as $file)
+            {
+                $fields[] = array(
+                    'fileName' => $file->getFilename(),
+                    'fileData' => base64_encode( file_get_contents($file->getPathname()) )
+                );
+
+                $arrFiles[] = $file->getPathname();
+            }
+
+            $fieldsString = http_build_query($fields);
+
+            // Post files to print server
+            $uploadUrl = $PRINTER_BASE_URL.'/kitchen/handle-upload.php';
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $uploadUrl);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $fieldsString);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+            $result = curl_exec($ch);
+            curl_close($ch);
+
+            // Delete files
+            File::delete($arrFiles);
+
+            return $result;
+        }
     }
 }

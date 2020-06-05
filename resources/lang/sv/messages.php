@@ -366,7 +366,7 @@ return [
     'printerType' => 'Skrivartyp',
     'printer_mm' => ':no mm',
     'macAddress' => 'Mac Address',
-    'printCopy' => 'Print Copy',
+    'printCopy' => 'Skriv ut kopia',
     // 'printFooterText' => "Rekommedera gärna\n\x1B\x45\"Anar Find&Eat\"\x1B\x46 till dina vänner\nockså! Det är lätt att ladda ner\nden från \x1B\x45Google Play\x1B\x46 eller\n\x1B\x45AppStore!\x1B\x46",
     'printFooterText' => "Rekommedera \x1B\x45\"Anar Find&Eat\"\x1B\x46 \ntill dina v\xE4nner ocks\xE5! Det \xE4r \nl\xE4tt att ladda ner den fr\xE5n \n\x1B\x45Google Play\x1B\x46 eller \x1B\x45AppStore!\x1B\x46",
     'vat' => 'VAT (12%)',
