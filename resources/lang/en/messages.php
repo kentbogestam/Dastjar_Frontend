@@ -365,6 +365,7 @@ return [
     'printer_mm' => ':no mm',
     'macAddress' => 'Mac Address',
     'printCopy' => 'Print Copy',
+    'print' => 'Print',
     'printFooterText' => "Recommend \x1B\x45\"Anar Find&Eat\"\x1B\x46 to\nyour friends too! Easy to\ndownload the app from\n\x1B\x45Google Play\x1B\x46 or \x1B\x45AppStore!\x1B\x46",
     'vat' => 'VAT (12%)',
     'deliverTo' => 'Deliver to',
@@ -390,5 +391,6 @@ return [
     'orderDeliveryAtDoor' => 'Your order is now delivered to your door, please pick it up! Thanks for order and Welcome back anytime!',
     'deliverAtDoor' => '||Deliver at Door||',
     'doYouWantsToShareOverPhone' => 'Do you wants to share detail on phone',
-    '10digitNumber' => 'Your 10 digit number'
+    '10digitNumber' => 'Your 10 digit number',
+    'deliverOn' => 'Deliver On:'
 ];

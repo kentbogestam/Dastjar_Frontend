@@ -84,7 +84,7 @@
 			@if(App\Helper::isPackageSubscribed(13))
 			<tfoot>
 				<tr class="ui-bar-d">
-					<th id="printCopy" colspan="4" onclick="" style="cursor:pointer;">{{ __('messages.printCopy') }}</th> 
+					<th id="printCopy" colspan="4" onclick="" style="cursor:pointer;">{{ __('messages.print') }}</th> 
 			    </tr>
 			</tfoot>
 			@endif
@@ -292,8 +292,8 @@
 			          		liItem +="</td>";
 		          		}else{
 		          			liItem += "<td>"
-				        	liItem += "<a class='gr-en'>"
-				        	liItem += "-";
+				        	liItem += "<a>"
+				        	liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
 				       		liItem +="</a></td>";
 		          		}
 
@@ -327,8 +327,8 @@
 			          		liItem +="</td>";
 			          	}else{
 			          		liItem += "<td>"
-				        	liItem += "<a class='gr-en'>"
-				        	liItem += "-";
+				        	liItem += "<a>"
+				        	liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
 				       		liItem +="</a></td>";
 		          		}
 	          		@endif
@@ -591,8 +591,8 @@
           		liItem +="</td>";
       		}else{
       			liItem += "<td>"
-		        liItem += "<a class='gr-en'>"
-		        liItem += "-";
+		        liItem += "<a>"
+		        liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
 		        liItem +="</a></td>";
       		}
 
@@ -627,8 +627,8 @@
                 
           	}else{
           		liItem += "<td>"
-				liItem += "<a class='gr-en'>"
-				liItem += "-";
+				liItem += "<a>"
+				liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
 				liItem +="</a></td>";
       		}
       	@else
@@ -778,7 +778,7 @@
              	// change red blinker to gray circle and remove class new form its table row tr element
                 $This.parents('tr').removeClass('new');
                 $This.parents('tr').find('.ready_class').html("<a data-ajax='false' href="+urlReadyOrder+"/"+id+"><img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>");
-				$('body').find('#'+id).parents('td').html("<a class='gr-en'>-</a>");
+				$('body').find('#'+id).parents('td').html("<a><img src='{{asset('kitchenImages/right_sign.png')}}'></a>");
 				clearSpeakTextInterval();
 			}
 		});

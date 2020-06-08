@@ -281,9 +281,9 @@
 					<table class="table table-borderless">
 						<tbody>
 							<tr class="row-total">
-								<td class="text-right" width="70%"><strong>To be Deliver On</strong></td>
+								<td class="text-right" width="70%"><strong>{{ __('messages.deliverOn') }}</strong></td>
 								<td class="text-right" width="30%"><strong>{{ @$order->check_deliveryDate }}
-									{{ date("h:i a", strtotime(@$order->deliver_time)) }}</strong></td>
+									{{ date("H:i a", strtotime(@$order->deliver_time)) }}</strong></td>
 							</tr>
 						</tbody>
 					</table>

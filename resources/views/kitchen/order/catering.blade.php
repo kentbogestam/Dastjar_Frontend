@@ -241,7 +241,7 @@
             @if(App\Helper::isPackageSubscribed(13))
             <tfoot>
                 <tr class="ui-bar-d">
-                    <th id="printCopy" colspan="5" onclick="" style="cursor:pointer;">{{ __('messages.printCopy') }}</th> 
+                    <th id="printCopy" colspan="5" onclick="" style="cursor:pointer;">{{ __('messages.print') }}</th> 
                 </tr>
             </tfoot>
             @endif

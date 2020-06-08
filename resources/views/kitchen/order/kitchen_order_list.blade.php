@@ -116,7 +116,7 @@
 				$This.closest('tr').removeClass('not-started');
 				$This.closest('tr').removeClass('news');
 				$This.closest('tr').find('.ready_class').html("<a data-ajax='false' href="+urlReady+"/"+id+"><img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>");
-				$('body').find('#'+id).parents('td').html("<a class='gr-en'>-</a>");
+				$('body').find('#'+id).parents('td').html("<a><img src='{{asset('kitchenImages/right_sign.png')}}'></a>");
 
 				// Update item as speak
 				updateSpeak(id);
@@ -284,8 +284,8 @@
 				          		
 			          		}else{
 			          			liItem += "<td>"
-				          		liItem += "<a class='gr-en'>"
-				          		liItem += "-";
+				          		liItem += "<a>"
+				          		liItem += "<img class='image_clicked' src='{{asset('kitchenImages/right_sign.png')}}'>";
 				          		liItem +="</a></td>";
 			          		}
 
@@ -487,8 +487,8 @@
 				          		liItem +="</td>";
 			          		}else{
 			          			liItem += "<td>"
-				          		liItem += "<a class='gr-en'>"
-				          		liItem += "-";
+				          		liItem += "<a>"
+				          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
 				          		liItem +="</a></td>";
 			          		}
 
@@ -713,8 +713,8 @@
 		          		liItem +="</td>";
 		      		}else{
 		      			liItem += "<td>"
-		          		liItem += "<a class='gr-en'>"
-		          		liItem += "-";
+		          		liItem += "<a>"
+		          		liItem += "<img src='{{asset('kitchenImages/right_sign.png')}}'>"
 		          		liItem +="</a></td>";
 		      		}
 		      		if(list[i]["order_ready"] == 0 && list[i]["order_started"] == 0){

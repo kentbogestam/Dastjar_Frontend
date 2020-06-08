@@ -1,7 +1,7 @@
 <div class="row" style="padding: 10px 0">
     @if($storeDetail->online_payment == 1)
 		<div class="col-md-12 text-center">
-			<button type="button" class="btn btn-pay btn-danger" disabled="">{{ __('messages.proceedToPay') }}</button>
+			<button type="button" class="btn btn-pay btn-success" disabled="">{{ __('messages.proceedToPay') }}</button>
 		</div>
 		<div class="col-md-12 panel panel-default row-confirm-payment hidden">
 			@if(isset($paymentMethod->data))
