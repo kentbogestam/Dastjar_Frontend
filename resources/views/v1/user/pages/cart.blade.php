@@ -1,12 +1,12 @@
 @extends('v1.user.layouts.master')
 
 @section('content')
+	@include('includes.confirm-modal')
 	@include('v1.user.elements.store-delivery-service')
-
 	<div id="cart-wrapper">
 		<div class="cart-list">
 			<h4>{{ __('messages.Order Details') }}</h4>
-			<a href="javascript:void(0)" id="delete-cart" data-content="{{ __("messages.Delete Cart Order") }}"><i class="fa fa-trash"></i></a>
+			<a href="javascript:void(0)" id="delete-cart" data-content="{{ __('messages.Delete Cart Order') }}"><i class="fa fa-trash"></i></a>
 		</div>
 		<div class="container-fluid">
 			<div class="cart-table">
@@ -95,25 +95,25 @@
 					</div>
 				</div>
 			</div>
-
-			@if($order->order_type == 'eat_later')
-				<p class="text-center">
-					{{ __('messages.Your order will be ready on') }}
-					{{ $order->deliver_date }}
-					{{ date_format(date_create($order->deliver_time), 'G:i') }}
-				</p>
-			@endif
-
+          
 			{{-- Delivery Type --}}
 			@include('v1.user.elements.cart-order-delivery-type')
-			
+          
 			{{-- If store support home delivery --}}
 			@if( in_array(3, $store_delivery_type) && Helper::isPackageSubscribed(12) )
 				<div class="row block-address hidden"></div>
 			@endif
-
-			{{-- Proceed to pay --}}
-			@include('v1.user.elements.cart-proceed-to-pay')
+			
+			<!-- check whether if delivery time is less than 24 hours -->
+			@if($order->order_type == 'eat_later' && ($order->delivery_timestamp > strtotime('+1 day')))
+            	{{-- Send Order For Confirmation --}}
+                <div class="col-md-12 text-center"> 
+                    <br><button class="btn btn-primary send-order-confirmation">{{ __('messages.sendorderforconfirmation') }}</button><br>
+                </div>
+            @else
+                {{-- Proceed to pay --}}
+			    @include('v1.user.elements.cart-proceed-to-pay')
+			@endif
 
 			{{-- Modals --}}
 			@include('v1.user.elements.cart-modals')
@@ -249,6 +249,7 @@
 			$('.block-address').addClass('hidden');
 			$('.btn-pay').prop('disabled', false);
 			$('.send-order').prop('disabled', false);
+			$('.send-order-confirmation').prop('disabled', false);
 		}
 
 		// Start: Just to update cart
@@ -295,6 +296,7 @@
 		// 
 		$('.block-address').find('div.error').remove();
 		$('.btn-pay').prop('disabled', true);
+		$('.send-order-confirmation').prop('disabled', true);
 		$('.row-confirm-payment').addClass('hidden');
 		$('.send-order').prop('disabled', true);
 
@@ -324,6 +326,7 @@
 						}
 
 						$('.btn-pay').prop('disabled', false);
+						$('.send-order-confirmation').prop('disabled', false);
 						$('.send-order').prop('disabled', false);
 					}
 				}
@@ -612,7 +615,24 @@
 		}
 	});
 
-	@if(Session::get('paymentmode') !=0 && $order->final_order_total > 0)
+	// 
+	$('.send-order-confirmation').on('click', function() {
+		if($('input[name=delivery_type]:checked').val() == '3')
+		{
+			if($('#frm-user-address').length && $('input[name=user_address_id]:checked').length)
+			{
+				window.location.href = "{{url('order-view').'/'.$order->order_id}}";
+			}
+		}
+		else
+		{
+			window.location.href = "{{url('order-view').'/'.$order->order_id}}";
+		}
+	});
+
+	checkDefaultDeliveryType();
+
+    @if($storeDetail->online_payment == 1)
 		// Initialize Stripe and card element
 		var stripe = Stripe('{{ env('STRIPE_PUB_KEY') }}');
 		var stripe2;
@@ -644,7 +664,7 @@
 					let isSaveCard = $('#isSaveCard').is(':checked') ? 1 : 0;
 					let data = {
 						'_token': "{{ csrf_token() }}",
-						'orderId': "{{ $order->order_id }}",
+						'order_id': "{{ $order->order_id }}",
 						'isSaveCard': isSaveCard,
 						'payment_method_id': result.paymentMethod.id
 					}
@@ -701,7 +721,7 @@
 						
 						let data = {
 							'_token': "{{ csrf_token() }}",
-							'orderId': "{{ $order->order_id }}",
+							'order_id': "{{ $order->order_id }}",
 							'isSaveCard': isSaveCard,
 							'payment_intent_id': result.paymentIntent.id
 						}
@@ -721,7 +741,7 @@
 			} else {
 				// Show success message
 				$('.row-new-card').find('div.card-errors').html('');
-				window.location.href = "{{ url('order-view/'.$order->order_id) }}";
+				AskPhoneForInfo();
 			}
 		}
 
@@ -810,7 +830,7 @@
 			} else {
 				// Show success message
 				$('.row-saved-cards').find('div.card-errors').html('');
-				window.location.href = "{{ url('order-view/'.$order->order_id) }}";
+				AskPhoneForInfo();
 			}
 		}
 
@@ -884,6 +904,44 @@
 		});
 	@endif
 
-	checkDefaultDeliveryType();
+	function AskPhoneForInfo(){
+		//send sms to user when its dine-in or take-away not home-delivery
+		if($('input[name=delivery_type]:checked').val() != '3'){
+			// var nmbr;
+			// var phone = "{{@$order->phone_number}}";
+			var msg = "{{ __('messages.doYouWantsToShareOverPhone') }}?";
+			// msg += "</p><br><input type='text' id='askphone' value='' placeholder='{{__('messages.10digitNumber')}}' class='form-control'>";
+
+			// if(phone == '' || phone == null){
+				
+			// }else{
+			// 	nmbr = "+{{@$order->phone_number_prifix}} {{@$order->phone_number}}";
+			// }
+
+			$('.confirm-text').html(msg);
+			$('#myConfirmBtn').trigger('click');
+	        $('.confirm-conti').on('click', function(){
+	        	$('#loading-img').css("display", "block");
+	        	$.ajax({
+					url: "{{ url('smsOverPhone') }}/{{$order->order_id}}",
+					// data:{
+					// 	'nmbr':nmbr,
+					// 	'nmbr':$('#askphone').val(),
+					// }
+					type: 'get',
+					success: function(data, status) {
+						console.log(data)
+					}
+				});
+				// return false;
+	        	window.location.href = "{{ url('order-view/'.$order->order_id) }}";
+	        });
+	        $('.confirm-close').on('click', function(){
+	        	window.location.href = "{{ url('order-view/'.$order->order_id) }}";
+	        });
+		}else{
+			window.location.href = "{{ url('order-view/'.$order->order_id) }}";
+		}
+	}
 </script>
 @endsection

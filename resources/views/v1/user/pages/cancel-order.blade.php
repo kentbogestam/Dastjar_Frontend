@@ -22,6 +22,6 @@
 			@endif
 		@endif
 		<br>
-		<a href="{{url('')}}" style="color:#1275ff" data-ajax="false">Go to Home</a>
+		<a href="{{url('')}}" style="color:#1275ff" data-ajax="false">Return <img src="{{asset('kitchenImages/returnImage.png')}}" width="20" height="20"></a>
 	</div>
 @endsection

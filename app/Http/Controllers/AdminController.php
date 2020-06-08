@@ -285,8 +285,20 @@ class AdminController extends Controller
             $currentPlans = array_keys($this->updateStoreSubscriptionPlan());
             $result = array_values(array_intersect($staticPlans, $currentPlans));
         }
+        
+        //new catering-order count
+        $storeId = Session::get('kitchenStoreId');
+        $count = Order::with(['orderdetailDetail','customerDetail','customerFullDetail'])
+            ->where('store_id',$storeId)
+            ->where('order_type', 'eat_later')
+            ->where('cancel','!=', 1)
+            ->where('online_paid', '>', 0)
+            ->where('catering_order_status','0')
+            ->where('delivery_timestamp', '>', time())
+            ->where('is_verified', '0')
+            ->count();
 
-        return response()->json(['data' => $result]);
+        return response()->json(['data' => $result, 'catering_order_count' => $count]);
     }
 
     /**
@@ -543,8 +555,8 @@ class AdminController extends Controller
 
     
     public function kitchenOrders(){
-        $deliveryDate = Carbon::now()->subDays(1)->toDateString();
-        $deliveryDateTill = Carbon::now()->toDateString();
+        // $deliveryDate = Carbon::now()->subDays(1)->toDateString();
+        // $deliveryDateTill = Carbon::now()->toDateString();
         $stores[] = $reCompanyId = Session::get('kitchenStoreId');
 
         // Get virtual store if mapped
@@ -558,27 +570,39 @@ class AdminController extends Controller
             }
         }
 
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time', 'orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time', 'orders.order_type', 'orders.customer_order_id','orders.online_paid', 'orders.delivery_timestamp', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
             ->whereIn('order_details.store_id', $stores)
-            ->where('delivery_date', '>=', $deliveryDate)
-            ->where('delivery_date', '<=', $deliveryDateTill)
+            // ->where('delivery_date', '>=', $deliveryDate)
+            // ->where('delivery_date', '<=', $deliveryDateTill)
+            ->where('orders.check_deliveryDate', '>=', date("Y-m-d",time()))
             ->where('order_details.order_ready', '0')
             ->whereNotIn('orders.online_paid', [2])
             ->join('product','product.product_id','=','order_details.product_id')
             ->join('orders','orders.order_id','=','order_details.order_id')
             ->leftJoin('customer_addresses AS CA','CA.id','=','orders.user_address_id')
             ->leftJoin('order_delivery AS OD', 'OD.order_id', '=', 'orders.order_id')
+            ->where('orders.is_verified', '1')
+            ->where('orders.catering_order_status', '2')
             ->get();
 
         $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;
 
         $text_speech = Auth::guard('admin')->user()->text_speech;
-        return response()->json(['status' => 'success', 'user' => $text_speech, 'extra_prep_time' => $extra_prep_time, 'data'=>$kitchenorderDetails]);
+
+        $catCount = Order::whereIn('store_id',$stores)
+            ->where('order_type', 'eat_later')
+            ->where('cancel','!=', 1)
+            ->where('online_paid', '>', 0)
+            ->where('delivery_timestamp', '>', time())
+            ->where('is_verified', '0')
+            ->where('catering_order_status', '0')->count();
+
+        return response()->json(['status' => 'success', 'user' => $text_speech, 'extra_prep_time' => $extra_prep_time, 'data'=>$kitchenorderDetails, 'catCount' => $catCount]);
     }
 
     public function kitchenOrdersNew($id){
-        $deliveryDate = Carbon::now()->subDays(1)->toDateString();
-        $deliveryDateTill = Carbon::now()->toDateString();
+        // $deliveryDate = Carbon::now()->subDays(1)->toDateString();
+        // $deliveryDateTill = Carbon::now()->toDateString();
         $stores[] = $reCompanyId = Session::get('kitchenStoreId');
 
         // Update store's 'islive'
@@ -595,10 +619,11 @@ class AdminController extends Controller
             }
         }
 
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time', 'orders.customer_order_id','orders.online_paid', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time', 'orders.customer_order_id','orders.online_paid', 'orders.delivery_timestamp', 'orders.user_address_id', 'orders.order_type', 'CA.street', 'OD.status AS orderDeliveryStatus')
             ->whereIn('order_details.store_id', $stores)
-            ->where('delivery_date', '>=', $deliveryDate)
-            ->where('delivery_date', '<=', $deliveryDateTill)
+            // ->where('delivery_date', '>=', $deliveryDate)
+            // ->where('delivery_date', '<=', $deliveryDateTill)
+            ->where('orders.check_deliveryDate', '>=', date("Y-m-d",time()))
             ->where('order_details.order_ready', '0')
             ->where('order_details.id', '>', $id)
             ->whereNotIn('orders.online_paid', [2])
@@ -606,6 +631,8 @@ class AdminController extends Controller
             ->join('orders','orders.order_id','=','order_details.order_id')
             ->leftJoin('customer_addresses AS CA','CA.id','=','orders.user_address_id')
             ->leftJoin('order_delivery AS OD', 'OD.order_id', '=', 'orders.order_id')
+            ->where('orders.is_verified', '1')
+            ->where('orders.catering_order_status', '2')
             ->get();
  
         $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;
@@ -2852,15 +2879,39 @@ class AdminController extends Controller
         $deliveryDate = Carbon::now()->subDays(1)->toDateString();
         $deliveryDateTill = Carbon::now()->toDateString();
 
-        $orderDetail = OrderDetail::select('order_details.id', 'order_details.product_quality', 'order_details.product_description', 'order_details.is_speak', 'product.product_name')
+        //new order speak
+        $orderDetails = OrderDetail::select('order_details.id', 'order_details.product_quality', 'order_details.product_description', 'order_details.is_speak', 'product.product_name', 'orders.delivery_timestamp', 'orders.created_at', 'orders.online_paid', 'orders.catering_order_status')
             ->join('orders', 'orders.order_id', '=', 'order_details.order_id')
             ->join('product', 'product.product_id', '=', 'order_details.product_id')
-            ->where(['orders.store_id' => $storeId, 'user_type' => 'customer', 'orders.order_started' => '0', 'orders.paid' => '0'])
-            ->where('check_deliveryDate', '>=', $deliveryDate)
-            ->where('check_deliveryDate', '<=', $deliveryDateTill)
-            ->whereNotIn('orders.online_paid', [2])
+            ->where('orders.store_id', $storeId)
+            ->where('user_type', 'customer')
+            ->where('check_deliveryDate', '>=', date("Y-m-d", time()))
             ->where('orders.cancel','!=', 1)
             ->get();
+            $orderIds = array();
+            if(!empty($orderDetails->toArray())){
+                foreach($orderDetails as $ord){
+                    if($ord->delivery_timestamp > strtotime($ord->created_at)+86400){
+                        if($ord->catering_order_status == '0' && $ord->online_paid == '2'){
+                            $orderIds[] = $ord->id;
+                        }
+                    }else{
+                        if($ord->order_started == '0' && $ord->online_paid != '2'){
+                            $orderIds[] = $ord->id;
+                        }
+                    }
+                }
+            }
+
+            if(!empty($orderIds)){
+                $orderDetail = OrderDetail::select('order_details.id', 'order_details.product_quality', 'order_details.product_description', 'order_details.is_speak', 'product.product_name')
+                ->join('orders', 'orders.order_id', '=', 'order_details.order_id')
+                ->join('product', 'product.product_id', '=', 'order_details.product_id')
+                ->whereIn('order_details.id', $orderIds)
+                ->get();
+            }else{
+                $orderDetail = array();
+            }
 
         // Logged-in user setting's detail
         $text_speech = Auth::guard('admin')->user()->text_speech;

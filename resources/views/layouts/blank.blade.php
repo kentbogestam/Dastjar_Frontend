@@ -17,6 +17,7 @@
     @yield('footer-script')
     <script src="{{asset('kitchenJs/speekJs.js')}}"></script>
     <script src="{{asset('kitchenJs/init.js')}}"></script>
+    <script src="{{asset('plugins/NoSleep/dist/NoSleep.js')}}"></script>
     <script type="text/javascript">
     	@if(Session::has('storeId'))
             // Server-Sent Events allow a web page to get updates from a server in x second.
@@ -37,6 +38,13 @@
                                     $('#menu-'+data[i]).removeClass('ui-state-disabled');
                                 }
                             }
+                        }
+        
+                        // if catering order is new so show count.
+                        if(returnedData['catering_order_count'] > 0){
+                            $('i.catering-badge').html(returnedData['catering_order_count']);
+                        }else{
+                            $('i.catering-badge').html('');
                         }
 
                         setTimeout(serverSE, INTERVAL_CHECK_STORE_SUBS);

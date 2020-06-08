@@ -7,32 +7,17 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
-    /**
-     * The Artisan commands provided by your application.
-     *
-     * @var array
-     */
     protected $commands = [
-        //
+        \App\Console\Commands\autoCancel::class,
     ];
 
-    /**
-     * Define the application's command schedule.
-     *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
-     * @return void
-     */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        // to hit this command in 5:00, 11:00, 17:00, 23:00 in background
+        $schedule->command('auto:cancel')->cron('0 5,11,17,23 * * *');
     }
 
-    /**
-     * Register the commands for the application.
-     *
-     * @return void
-     */
+    
     protected function commands()
     {
         $this->load(__DIR__.'/Commands');

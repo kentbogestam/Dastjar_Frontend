@@ -29,7 +29,6 @@ Route::group(['middleware' => ['api']], function () {
 		Route::get('order-detail/{storeId}', 'Api\v1\KitchenController@orderDetail');
 		Route::get('updateTextspeach/{id}','Api\v1\KitchenController@updateTextspeach');
 		Route::get('orderSpecificOdrderDetail/{orderId}', 'Api\v1\KitchenController@orderSpecificOrderDetail');
-		Route::get('catering-orders/{storeId}', 'Api\v1\KitchenController@cateringOrders');						
 		Route::post('update-product-rank', 'Api\v1\KitchenController@updateProductRank');	
 		Route::post('update-menu-rank', 'Api\v1\KitchenController@updateMenuRank');
 	});

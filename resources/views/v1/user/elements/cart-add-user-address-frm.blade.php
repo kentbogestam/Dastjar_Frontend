@@ -1,6 +1,6 @@
 <div class="col-md-12 clear" id="add-new-address">
     <div class="text-center">
-        <button type="button" class="btn btn-primary" data-toggle="collapse" data-target=".add-address-form">{{ __('messages.addAddress') }}</button>
+        <button type="button" class="btn btn-address" data-toggle="collapse" data-target=".add-address-form">{{ __('messages.addAddress') }}</button>
     </div>
     <div class="collapse add-address-form contact-info">
         <form id="save-address">
