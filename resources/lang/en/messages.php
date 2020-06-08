@@ -390,7 +390,5 @@ return [
     'deliveryAtDoor' => 'Delivery at door',
     'orderDeliveryAtDoor' => 'Your order is now delivered to your door, please pick it up! Thanks for order and Welcome back anytime!',
     'deliverAtDoor' => '||Deliver at Door||',
-    'doYouWantsToShareOverPhone' => 'Do you wants to share detail on phone',
-    '10digitNumber' => 'Your 10 digit number',
     'deliverOn' => 'Deliver On:'
 ];
