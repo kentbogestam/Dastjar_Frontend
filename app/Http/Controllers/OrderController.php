@@ -881,7 +881,7 @@ class OrderController extends Controller
             User::where('id',Auth::id())->update(['browser' => $agent]);
 
             //
-            $order = Order::select('orders.*','customer.phone_number','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->join('customer','orders.user_id', '=', 'customer.id')->first();
+            $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
             
             $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name','order_details.product_id')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 
@@ -1845,29 +1845,6 @@ class OrderController extends Controller
         DB::table('order_details')->where('order_id', $orderid)->delete();
         DB::table('order_customer_discount')->where('order_id', $orderid)->delete();
         DB::table('order_customer_loyalty')->where('order_id', $orderid)->delete();
-    }
-
-    public function smsOverPhone($order_id)
-    {
-        $order = Order::with('customerDetail')->where('order_id',$order_id)->first();
-        $recipients = null;
-        //send sms to user when its dine-in or take-away
-        if($order->delivery_type != "3"){
-            if($order->user_type == 'customer'){
-                $adminDetail = User::where('id' , $order->user_id)->first();
-                if(isset($adminDetail->phone_number_prifix) && isset($adminDetail->phone_number)){
-                    $recipients = ['+'.$adminDetail->phone_number_prifix.$adminDetail->phone_number];
-                }
-            }else{
-                $adminDetail = Admin::where('id' , $order->user_id)->first();
-                $recipients = ['+'.$adminDetail->mobile_phone];
-            }
-            if(!empty($recipients)){
-                $url = env('APP_URL').'order-view/'.$order_id;
-                $message = "Visit Order : ".$url;
-                Helper::apiSendTextMessage($recipients, $message);
-            }
-        }
     }
 
     /**
