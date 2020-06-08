@@ -1,7 +1,7 @@
 @extends('v1.user.layouts.master')
 
 @section('content')
-	@include('includes.confirm-modal')
+	@include('includes.phone-modal')
 	@include('v1.user.elements.store-delivery-service')
 	<div id="cart-wrapper">
 		<div class="cart-list">
@@ -907,33 +907,32 @@
 	function AskPhoneForInfo(){
 		//send sms to user when its dine-in or take-away not home-delivery
 		if($('input[name=delivery_type]:checked').val() != '3'){
-			// var nmbr;
-			// var phone = "{{@$order->phone_number}}";
-			var msg = "{{ __('messages.doYouWantsToShareOverPhone') }}?";
-			// msg += "</p><br><input type='text' id='askphone' value='' placeholder='{{__('messages.10digitNumber')}}' class='form-control'>";
+			var nmbr;
+			var phone_number = "{{@$order->phone_number}}";
+			var phone_number_prifix = "{{@$order->phone_number_prifix}}";
 
-			// if(phone == '' || phone == null){
-				
-			// }else{
-			// 	nmbr = "+{{@$order->phone_number_prifix}} {{@$order->phone_number}}";
-			// }
+			// if no phone number then ask number
+			if(phone_number != null && phone_number_prifix != null){
+				$('.confirm-text2').css("display","none")
+				$('.confirm-text1').css("display","block")
+			}
+			else{
+				$('.confirm-text1').css("display","none")
+				$('.confirm-text2').css("display","block")
+			}
 
-			$('.confirm-text').html(msg);
 			$('#myConfirmBtn').trigger('click');
 	        $('.confirm-conti').on('click', function(){
 	        	$('#loading-img').css("display", "block");
 	        	$.ajax({
-					url: "{{ url('smsOverPhone') }}/{{$order->order_id}}",
-					// data:{
-					// 	'nmbr':nmbr,
-					// 	'nmbr':$('#askphone').val(),
-					// }
-					type: 'get',
-					success: function(data, status) {
-						console.log(data)
+					url: "{{ url('smsOverPhone') }}",
+					method: 'post',
+					data:{
+						'phone_number_prifix':$('#phone_number_prifix').val(),
+						'phone_number':$('#phone_number').val(),
+						'order_number':'{{$order->order_id}}',
 					}
 				});
-				// return false;
 	        	window.location.href = "{{ url('order-view/'.$order->order_id) }}";
 	        });
 	        $('.confirm-close').on('click', function(){

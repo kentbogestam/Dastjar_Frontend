@@ -394,6 +394,7 @@ return [
     'orderDeliveryAtDoor' => 'Din beställning är nu levererad till din dörr! Tack för beställningen och Välkommen tillbaka!',
     'deliverAtDoor' => '||Leverera till dörren||',
     'doYouWantsToShareOverPhone' => 'Vill du dela information på telefon',
+    'enterYourPhoneNumber' => 'Skriv in ditt telefonnummer',
     '10digitNumber' => 'Ditt 10-siffriga nummer',
     'deliverOn' => 'Lverans den:'
 ];
