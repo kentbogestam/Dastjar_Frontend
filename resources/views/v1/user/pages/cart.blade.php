@@ -912,13 +912,15 @@
 			var phone_number_prifix = "{{@$order->phone_number_prifix}}";
 
 			// if no phone number then ask number
-			if(phone_number != null && phone_number_prifix != null){
+			if(phone_number != '' && phone_number_prifix != ''){
 				$('.confirm-text2').css("display","none")
 				$('.confirm-text1').css("display","block")
+				console.log('+'+phone_number_prifix + phone_number)
 			}
 			else{
 				$('.confirm-text1').css("display","none")
 				$('.confirm-text2').css("display","block")
+				console.log('+'+phone_number_prifix + phone_number)
 			}
 
 			$('#myConfirmBtn').trigger('click');

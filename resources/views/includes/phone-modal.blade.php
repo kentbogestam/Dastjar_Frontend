@@ -26,8 +26,8 @@
   <div class="confirm-modal-content">
     <p class="confirm-text1">{{ __('messages.doYouWantsToShareOverPhone') }}?<br></p>
     <div class="row confirm-text2">
-      <div class="col-xs-12">{{ __('messages.enterYourPhoneNumber') }}?</div>
-      <div class="col-xs-4">
+      <div class="col-xs-12">{{ __('messages.enterYourPhoneNumber') }}?<br><br></div>
+      <div class="col-xs-3">
         @php $phone_number_prifix = 46; @endphp
         @if( !is_null(@$order->phone_number_prifix) )
           @php $phone_number_prifix = @$order->phone_number_prifix; @endphp
@@ -38,7 +38,7 @@
           <option value="46" {{ ($phone_number_prifix == 46) ? "selected" : '' }}>+46</option>
         </select>
       </div>
-      <div class="col-xs-8">
+      <div class="col-xs-9">
         <input type="text" id="phone_number" value="{{ !is_null($order->phone_number) ? $order->phone_number : '' }}" placeholder="{{ __('messages.mobileNumber') }}*" class="form-control" required>
       </div>
     </div><br>
