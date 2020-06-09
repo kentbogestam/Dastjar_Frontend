@@ -161,7 +161,7 @@ class OrderController extends Controller
             
             // Check if subscription exist, create bong receipt to print 
             // if(1)
-            if( Helper::isPackageSubscribed(13) && (\Request::server('HTTP_REFERER') && (strpos(\Request::server('HTTP_REFERER'), 'cart') != false)) && !Helper::isPackageSubscribed(4, $order->store_id) )
+            if( Helper::isPackageSubscribed(13) && (\Request::server('HTTP_REFERER') && (strpos(\Request::server('HTTP_REFERER'), 'cart') != false)) && $chkvar == '2')
             {
                 $this->createPOSReceipt($orderId);
                 $this->uploadPrintFile();
