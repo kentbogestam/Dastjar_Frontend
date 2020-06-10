@@ -685,7 +685,7 @@
 			dataType: 'json',
 			success: function(response) {
 				$('#loading-img').css("display", "none");
-				location.reload(true);
+				window.location.href="{{ route('eatNow') }}";
 			}
 		});
 	}

@@ -66,6 +66,30 @@
 	</div>
 
 	@include('includes.kitchen-footer-menu')
+
+	<div data-role="popup" id="popupCloseRight" class="ui-content" style="max-width:100%;border: none;">
+	    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" style="background-color:#000;border-color: #000;">Close</a>
+		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow table-stripe ui-responsive table_size" >
+			<thead>
+				<tr class="ui-bar-d">
+					<th data-priority="2">{{ __('messages.Orders') }}</th>
+			   		<th>{{ __('messages.Amount') }}</th>
+			   		<th class="qty-loyalty-offer">{{ __('messages.qtyLoyaltyOffer') }}</th>
+			   		<th data-priority="3">{{ __('messages.Product') }}</th>
+			    	<th data-priority="1">{{ __('messages.Comments') }}</th> 
+			    </tr>
+			</thead>
+			<tbody id="specificOrderDetailContianer"></tbody>
+			@if(App\Helper::isPackageSubscribed(13))
+			<tfoot>
+				<tr class="ui-bar-d">
+					<th id="printCopy" colspan="4" onclick="" style="cursor:pointer;">{{ __('messages.print') }}</th> 
+			    </tr>
+			</tfoot>
+			@endif
+		</table>
+	</div>
+
 	
 	<!-- <div data-role="popup" id="popupNotifaction" class="ui-content" style="max-width:280px;padding: 15px;">
 	    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
@@ -166,6 +190,56 @@
             });
 		}
 
+		function getList(orderId){
+			var liItem = "";
+			$.get("{{url('api/v1/kitchen/orderSpecificOdrderDetail')}}/"+orderId,
+			function(returnedData){
+				var temp = returnedData["data"];
+				var isQuantityFree = 0;
+
+				for (var i=0;i<temp.length;i++){
+					liItem += "<tr>";
+					liItem += "<td>"+temp[i]["customer_order_id"]+"</td>";
+					liItem += "<td>"+temp[i]["product_quality"]+"</td>";
+					liItem += "<td class='qty-loyalty-offer'>"+temp[i]["quantity_free"]+"</td>";
+					liItem += "<td>"+temp[i]["product_name"]+"</td>";
+					if(temp[i]["product_description"] != null){
+						liItem += "<td>"+temp[i]["product_description"]+"</td>";
+					}else{
+						liItem += "<td>"+' '+"</td>";
+					}
+					liItem += "</tr>";
+
+					if(temp[i]["quantity_free"])
+					{
+						isQuantityFree = 1;
+					}
+				}
+				$("#specificOrderDetailContianer").html(liItem);
+				$("#printCopy").attr('onclick','printCopy('+orderId+');');
+
+				// Show/hide loyalty column in 'order detail' popup
+				if(!isQuantityFree)
+				{
+					$('.qty-loyalty-offer').hide();
+				}
+				else
+				{
+					$('.qty-loyalty-offer').show();
+				}
+
+				$("#popupCloseRight").popup("open");
+				var liItem = "";
+			});
+		}
+
+		function printCopy(orderId){
+			$.get("{{route('printCopy')}}?orderId="+orderId,
+			function(returnedData){
+				$("#popupCloseRight").popup("close");
+			});
+		}
+
 		$(function(){
 			$.get("{{url('kitchen/kitchen-orders')}}",
 			function(returnedData){
@@ -210,7 +284,7 @@
                             old_mins = time.substr(3,5);
                             var old_time = parseInt(old_hour)*60 + parseInt(old_mins);
                             var new_time = parseInt(today.getHours())*60 + parseInt(today.getMinutes())
-                            
+                            var orderIdSpecific = temp[i]["order_id"];
 			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
 
 			          		if(temp[i]["order_type"] == "eat_now"){
@@ -225,7 +299,8 @@
 					  		}
 
 			          		liItem += "<tr class='order_id_"+temp[i]["order_id"]+" "+clsStatus+"'>";
-			          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
+					        liItem += "<th><a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>"+temp[i]["customer_order_id"]+"</a></th>";
+			          		// liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 			          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
 			          		liItem += "<td>"+temp[i]["product_name"]+
 			          		"</td>";
@@ -418,7 +493,7 @@
                             old_mins = time.substr(3,5);
                             var old_time = parseInt(old_hour)*60 + parseInt(old_mins);
                             var new_time = parseInt(today.getHours())*60 + parseInt(today.getMinutes())
-        
+        					var orderIdSpecific = temp[i]["order_id"];
 			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
 			          		if(temp[i]["order_type"] == "eat_now"){
 			          			var clsStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
@@ -432,7 +507,8 @@
 					  		}
 
 			          		liItem += "<tr class='order_id_"+temp[i]["order_id"]+" "+clsStatus+"'>";
-			          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
+			          		// liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
+			          		liItem += "<th><a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>"+temp[i]["customer_order_id"]+"</a></th>";
 			          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
 			          		liItem += "<td>"+temp[i]["product_name"]+
 			          		"</td>";
@@ -646,7 +722,7 @@
                     old_mins = time.substr(3,5);
                     var old_time = parseInt(old_hour)*60 + parseInt(old_mins);
                     var new_time = parseInt(today.getHours())*60 + parseInt(today.getMinutes())
-                            
+                	var orderIdSpecific = list[i]["order_id"];
 			      	var timeOrder = addTimes("00:00::",list[i]["deliver_time"]);
 	          		if(list[i]["order_type"] == "eat_now"){
 	          			var clsStatus = list[i]["order_started"] == 0 ? 'not-started' : '';
@@ -661,6 +737,7 @@
 
 	          		liItem += "<tr class='order_id_"+list[i]["order_id"]+" "+clsStatus+"'>";
 		      		liItem += "<th>"+list[i]["customer_order_id"]+"</th>";
+		      		liItem += "<th><a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>"+list[i]["customer_order_id"]+"</a></th>";
 		      		liItem += "<td>"+list[i]["product_quality"]+"</td>";
 		      		liItem += "<td>"+list[i]["product_name"]+"</td>";
 		      		if(textSpeech == 1 && list[i]['is_speak'] == 0){
