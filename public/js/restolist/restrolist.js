@@ -184,10 +184,21 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 							}
 
 							// Code added to display open close time of restaurant
-							time=temp[i]["store_open_close_day_time"];
-							open_close_time=time.split(' :: ')[1].split(' to ');
-							open_time=open_close_time[0].split(':');
-							close_time=open_close_time[1].split(':');	
+							let open_close_time = getStoreOpenCloseDayTime(temp[i]["store_open_close_day_time"]);
+
+							if(open_close_time.openTime && open_close_time.closeTime)
+							{
+								open_time=open_close_time.openTime.split(':');
+								close_time=open_close_time.closeTime.split(':');
+							}
+							else
+							{
+								time=temp[i]["store_open_close_day_time"];
+								open_close_time=time.split(' :: ')[1].split(' to ');
+								open_time=open_close_time[0].split(':');
+								close_time=open_close_time[1].split(':');
+							}
+
 							subStr += '<span class="label label-default">'+returnedData['StoreOpenCloseTimeText']+ ' '+open_time[0]+':'+open_time[1]+'-'+close_time[0]+':'+close_time[1]+'</span>';
 						}
 

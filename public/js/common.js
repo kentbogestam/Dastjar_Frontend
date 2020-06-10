@@ -424,14 +424,98 @@ function checkTime($time, $orderDateTime){
                     var timeSplit = getDay[1].split(' to ');
                     var openTime = timeSplit[0];
                     var closeTime = timeSplit[1];
-                    if(openTime < currentTime && closeTime > currentTime){
-                        return true;
-                    }else{
-                        return false;
+
+                    if(openTime > closeTime)
+                    {
+                        // 
+                        if(d.getHours() >= parseInt(openTime) && d.getHours() <= 23)
+                        {
+                            var todayDate = new Date(d);
+                            todayDate = (todayDate.getMonth() + 1)+'/'+(todayDate.getDate())+'/'+todayDate.getFullYear();
+                            var tomorrowDate = new Date(d);
+                            tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+                            tomorrowDate = (tomorrowDate.getMonth() + 1)+'/'+tomorrowDate.getDate()+'/'+tomorrowDate.getFullYear();
+                        }
+                        else
+                        {
+                            var todayDate = new Date(d);
+                            todayDate = (todayDate.getMonth() + 1)+'/'+(todayDate.getDate()-1)+'/'+todayDate.getFullYear();
+                            var tomorrowDate = new Date(d);
+                            tomorrowDate.setDate(tomorrowDate.getDate());
+                            tomorrowDate = (tomorrowDate.getMonth() + 1)+'/'+tomorrowDate.getDate()+'/'+tomorrowDate.getFullYear();
+                        }
+
+                        // 
+                        var openDateTime = todayDate + ' ' + openTime;
+                        var closeDateTime = tomorrowDate + ' ' + closeTime;
+                        var openDateTime = new Date(openDateTime);
+                        var closeDateTime = new Date(closeDateTime);
+
+                        if(d.getTime() >= openDateTime.getTime() && d.getTime() < closeDateTime.getTime())
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        if(openTime <= currentTime && closeTime > currentTime){
+                            return true;
+                        }else{
+                            return false;
+                        }
                     }
                 }
             }
         }
     }
     return false;
+}
+
+// Return eatnow/catering from db column
+function getStoreOpenCloseDayTime(time, orderDateTime)
+{
+    let d;
+    d = new Date();
+
+    if(orderDateTime)
+    {
+        d = new Date(orderDateTime);
+    }
+
+    let days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+    let todayDay = days[d.getDay()];
+    let day = time.split(' :: ');
+    let checkday = time.split(',');
+    let timeSplit, openTime, closeTime;
+
+    if(day[0] == 'All')
+    {
+        timeSplit = day[1].split(' to ');
+        openTime = timeSplit[0];
+        closeTime = timeSplit[1];
+    }
+    else
+    {
+        for(i=0;i<checkday.length;i++)
+        {
+            let getDay = checkday[i].split(' :: ');
+            if(getDay[0] == todayDay)
+            {
+                timeSplit = getDay[1].split(' to ');
+                openTime = timeSplit[0];
+                closeTime = timeSplit[1];
+            }
+        }
+    }
+
+    let open_close_time = {
+        'openTime' : openTime,
+        'closeTime' : closeTime,
+    };
+
+    return open_close_time;
 }

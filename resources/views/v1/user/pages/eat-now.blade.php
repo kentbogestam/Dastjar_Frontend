@@ -10,7 +10,7 @@
 <script src="{{asset('addToHomeIphoneJs/addtohomescreen.js')}}"></script>
 <script src="{{asset('kitchenJs/moment-with-locales.min.js')}}"></script>
 <script src="{{asset('js/restolist/moment-timezone-with-data.min.js')}}"></script>
-<script src="{{asset('js/restolist/restrolist.js')}}"></script>
+<script src="{{asset('js/restolist/restrolist.js?v=1')}}"></script>
 <script src="{{asset('js/restolist/restroListCommon.js')}}"></script>
 <script src="{{ asset('locationJs/currentLocation.js') }}"></script>
 
