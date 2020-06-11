@@ -52,7 +52,7 @@ class CateringController extends Controller
             $output .= "<td>".@$item->name."</td>";
             $output .= "<td>".@$item->email."</td>";
             $output .= "<td>+".@$item->phone_number_prifix." ".@$item->phone_number."</td>";
-            $output .= "<td>".@$item->customerAddressDetail->street.", ".@$item->customerAddressDetail->city."<br>".__('messages.zipcode')." - ".@$item->customerAddressDetail->zipcode."</td>";
+            $output .= "<td>".@$item->customerAddressDetail->street.", ".@$item->customerAddressDetail->city."<br>".__('messages.zip')." - ".@$item->customerAddressDetail->zipcode."</td>";
             $output .= "</tr>";
         }else{      
             $output .= "<tr>";

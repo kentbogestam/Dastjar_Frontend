@@ -393,5 +393,6 @@ return [
     'deliveryAtDoor' => 'Lämna vid dörren',
     'orderDeliveryAtDoor' => 'Din beställning är nu levererad till din dörr! Tack för beställningen och Välkommen tillbaka!',
     'deliverAtDoor' => '||Leverera till dörren||',
-    'deliverOn' => 'Lverans den:'
+    'deliverOn' => 'Lverans den:',
+    'zip' => 'postnr'
 ];
