@@ -438,7 +438,9 @@
             for (var i=0;i<count;i++){
                 var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
                 var orderCreateDate = new Date(temp[i]["created_at"]+' UTC');
-                var orderCreate = days[orderCreateDate.getDay()]+' '+monthNames[orderCreateDate.getMonth()]+' '+orderCreateDate.getDate()+' '+orderCreateDate.getFullYear()+' '+orderCreateDate.getHours()+':'+orderCreateDate.getMinutes();
+                var hours = ("0" + orderCreateDate.getHours()).slice(-2);
+                var minutes = ("0" + orderCreateDate.getMinutes()).slice(-2);
+                var orderCreate = days[orderCreateDate.getDay()]+' '+monthNames[orderCreateDate.getMonth()]+' '+orderCreateDate.getDate()+' '+orderCreateDate.getFullYear()+' '+hours+':'+minutes;
                 var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
                 var leng = temp[i]['orderdetail_detail'].length;
                 var totalprice = 0;

@@ -269,14 +269,15 @@
 				      	lastOrderId = temp[i]["id"];
 				      	(function (i) {
 						    setTimeout(function () {
-			          		if(temp[i]['order_response'])
-			          		{
-			          			var time = addTimes(temp[i]['order_delivery_time'], temp[i]['deliver_time'], extra_prep_time);
-			          		}
-			          		else
-			          		{
-			          			var time = addTimes(temp[i]['deliver_time'], temp[i]['extra_prep_time']);
-			          		}
+			          		if(temp[i]['order_type'] == "eat_now"){
+						      	if(temp[i]['order_response']){
+						      		var time = addTimes(temp[i]['order_delivery_time'], temp[i]['deliver_time'], extra_prep_time);
+						      	}else{
+						      		var time = addTimes(temp[i]['deliver_time'], temp[i]['extra_prep_time']);
+						      	}
+					      	}else{
+					      		var time = addTimes(temp[i]['deliver_time']);
+					      	}
 			          		
                    			// blink image time caculator getting time based on pick up and current time
                             var today = new Date(); 
@@ -285,7 +286,12 @@
                             var old_time = parseInt(old_hour)*60 + parseInt(old_mins);
                             var new_time = parseInt(today.getHours())*60 + parseInt(today.getMinutes())
                             var orderIdSpecific = temp[i]["order_id"];
-			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
+                            const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
+							var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+							var orderCreateDate = new Date(temp[i]["created_at"]+' UTC');
+					        var hours = ("0" + orderCreateDate.getHours()).slice(-2);
+					        var minutes = ("0" + orderCreateDate.getMinutes()).slice(-2);
+					        var orderCreate = days[orderCreateDate.getDay()]+' '+monthNames[orderCreateDate.getMonth()]+' '+orderCreateDate.getDate()+' '+orderCreateDate.getFullYear()+' '+hours+':'+minutes;
 
 			          		if(temp[i]["order_type"] == "eat_now"){
 			          			var clsStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
@@ -334,7 +340,7 @@
 				          			liItem += "<td>"+''+"</td>";
 				          		}
 			          		}
-			          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
+			          		liItem += "<td>"+orderCreate+"</td>";
 
 			          		if(temp[i]["order_started"] == 0){
 			          			ids = temp[i]['id'];
@@ -478,15 +484,15 @@
 				      	
 				      	(function (i) {
 						    setTimeout(function () {
-						    if(temp[i]['order_response'])
-			          		{
-			          			var time = addTimes(temp[i]['order_delivery_time'], temp[i]['deliver_time'], extra_prep_time);
-			          		}
-			          		else
-			          		{
-			          			var time = addTimes(temp[i]['deliver_time'], temp[i]['extra_prep_time']);
-			          		}
-
+			          		if(temp[i]['order_type'] == "eat_now"){
+						      	if(temp[i]['order_response']){
+						      		var time = addTimes(temp[i]['order_delivery_time'], temp[i]['deliver_time'], extra_prep_time);
+						      	}else{
+						      		var time = addTimes(temp[i]['deliver_time'], temp[i]['extra_prep_time']);
+						      	}
+					      	}else{
+					      		var time = addTimes(temp[i]['deliver_time']);
+					      	}
                    			// blink image time caculator getting time based on pick up and current time
                             var today = new Date(); 
                             old_hour = time.substr(0,2);
@@ -494,7 +500,12 @@
                             var old_time = parseInt(old_hour)*60 + parseInt(old_mins);
                             var new_time = parseInt(today.getHours())*60 + parseInt(today.getMinutes())
         					var orderIdSpecific = temp[i]["order_id"];
-			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
+        					const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
+							var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+							var orderCreateDate = new Date(temp[i]["created_at"]+' UTC');
+					        var hours = ("0" + orderCreateDate.getHours()).slice(-2);
+					        var minutes = ("0" + orderCreateDate.getMinutes()).slice(-2);
+					        var orderCreate = days[orderCreateDate.getDay()]+' '+monthNames[orderCreateDate.getMonth()]+' '+orderCreateDate.getDate()+' '+orderCreateDate.getFullYear()+' '+hours+':'+minutes;
 			          		if(temp[i]["order_type"] == "eat_now"){
 			          			var clsStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
 			          		}else{
@@ -539,7 +550,7 @@
 				          			liItem += "<td>"+''+"</td>";
 				          		}
 			          		}
-			          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
+			          		liItem += "<td>"+orderCreate+"</td>";
 
 			          		if(temp[i]["order_started"] == 0){
 				          		ids = temp[i]['id'];
@@ -707,15 +718,15 @@
               
 	      	 (function (i) {
 			    setTimeout(function () {
-			    	if(list[i]['order_response'])
-	          		{
-	          			var time = addTimes(list[i]['order_delivery_time'], list[i]['deliver_time']);
-	          		}
-	          		else
-	          		{
-	          			var time = addTimes(list[i]['deliver_time'], list[i]['extra_prep_time']);
-	          		}
-
+	          		if(list[i]['order_type'] == "eat_now"){
+				      	if(list[i]['order_response']){
+				      		var time = addTimes(list[i]['order_delivery_time'], list[i]['deliver_time']);
+				      	}else{
+				      		var time = addTimes(list[i]['deliver_time'], list[i]['extra_prep_time']);
+				      	}
+			      	}else{
+			      		var time = addTimes(list[i]['deliver_time']);
+			      	}
                    	// blink image time caculator getting time based on pick up and current time
                     var today = new Date(); 
                     old_hour = time.substr(0,2);
@@ -723,7 +734,12 @@
                     var old_time = parseInt(old_hour)*60 + parseInt(old_mins);
                     var new_time = parseInt(today.getHours())*60 + parseInt(today.getMinutes())
                 	var orderIdSpecific = list[i]["order_id"];
-			      	var timeOrder = addTimes("00:00::",list[i]["deliver_time"]);
+                	const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
+					var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+					var orderCreateDate = new Date(list[i]["created_at"]+' UTC');
+			        var hours = ("0" + orderCreateDate.getHours()).slice(-2);
+			        var minutes = ("0" + orderCreateDate.getMinutes()).slice(-2);
+			        var orderCreate = days[orderCreateDate.getDay()]+' '+monthNames[orderCreateDate.getMonth()]+' '+orderCreateDate.getDate()+' '+orderCreateDate.getFullYear()+' '+hours+':'+minutes;
 	          		if(list[i]["order_type"] == "eat_now"){
 	          			var clsStatus = list[i]["order_started"] == 0 ? 'not-started' : '';
 	          		}else{
@@ -767,7 +783,7 @@
 		          			liItem += "<td>"+''+"</td>";
 		          		}
 	          		}
-		      		liItem += "<td>"+list[i]["deliver_date"]+' '+timeOrder+"</td>";
+		      		liItem += "<td>"+orderCreate+"</td>";
 		      		if(list[i]["order_started"] == 0){
 		      			ids = list[i]['id'];
                         if(list[i]['order_response'])
