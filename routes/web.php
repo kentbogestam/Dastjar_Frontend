@@ -137,6 +137,7 @@ Route::get('get-home-delivery-part-content/{order_id}', 'OrderController@getHome
 Route::group(['middleware' => ['auth']], function(){
 	Route::get('blank-view', 'HomeController@blankView');
 	Route::get('order-view/{OrderId}', 'OrderController@orderView')->name('order-view');
+	Route::get('order-confirmation-status/{OrderId}', 'OrderController@orderConfirmationStatus')->name('order-confirmation-status');
 	Route::get('track-order/{orderId}', 'OrderController@trackOrder');
 	Route::get('get-driver-position/{orderId}', 'OrderController@getDriverPosition');
 	Route::get('check-if-order-accepted/{orderId}', 'OrderController@checkIfOrderAccepted');

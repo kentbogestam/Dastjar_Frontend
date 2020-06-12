@@ -599,34 +599,40 @@
 
 		return false;
 	});
+	
+	function orderConfirmationStatus(order_id)
+	{
+		$.ajax({
+			url : "{{url('order-confirmation-status').'/'.$order->order_id}}",
+			type : 'get',
+			data : {
+				'eatLater' : '0'
+			},
+			success: function(data, status){
+				window.location.href = "{{url('order-view').'/'.$order->order_id}}";
+			}
+		});
+	}
 
 	// 
 	$('.send-order').on('click', function() {
-		if($('input[name=delivery_type]:checked').val() == '3')
-		{
-			if($('#frm-user-address').length && $('input[name=user_address_id]:checked').length)
-			{
-				window.location.href = "{{url('order-view').'/'.$order->order_id}}";
+		if($('input[name=delivery_type]:checked').val() == '3'){
+			if($('#frm-user-address').length && $('input[name=user_address_id]:checked').length){
+				orderConfirmationStatus({{$order->order_id}});
 			}
-		}
-		else
-		{
-			window.location.href = "{{url('order-view').'/'.$order->order_id}}";
+		}else{
+			orderConfirmationStatus({{$order->order_id}});
 		}
 	});
 
 	// 
 	$('.send-order-confirmation').on('click', function() {
-		if($('input[name=delivery_type]:checked').val() == '3')
-		{
-			if($('#frm-user-address').length && $('input[name=user_address_id]:checked').length)
-			{
-				window.location.href = "{{url('order-view').'/'.$order->order_id}}";
+		if($('input[name=delivery_type]:checked').val() == '3'){
+			if($('#frm-user-address').length && $('input[name=user_address_id]:checked').length){
+				orderConfirmationStatus({{$order->order_id}});
 			}
-		}
-		else
-		{
-			window.location.href = "{{url('order-view').'/'.$order->order_id}}";
+		}else{
+			orderConfirmationStatus({{$order->order_id}});
 		}
 	});
 

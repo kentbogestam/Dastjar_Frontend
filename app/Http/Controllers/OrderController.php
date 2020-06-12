@@ -49,6 +49,36 @@ class OrderController extends Controller
         }
     }
 
+    public function orderConfirmationStatus($orderId, Request $request)
+    {
+        // when more than 24 hour deliverytime then chk for online_paid is 2 then make it to 0 as default or vice versa
+        $order = Order::where('order_id',$orderId)->first();
+        if($order->delivery_timestamp < (strtotime($order->created_at) + 86400)){
+            $chkvar = '2';
+            $setvar = 0;
+        }else{
+            if($request->eatLater == '0'){
+                $chkvar = '0';
+                $setvar = 2;
+            }else{
+                $chkvar = '2';
+                $setvar = 0;
+            }
+        }
+        if( $order->online_paid == $chkvar )
+        {
+            // Check if store is open
+            $heartbeat = Helper::isStoreLive($order->store_id);
+
+            if( !is_null($heartbeat) && $heartbeat < 1)
+            {
+                DB::table('orders')->where('order_id', $orderId)->update([
+                    'online_paid' => $setvar,
+                ]);
+            }
+        }
+    }
+
     public function orderView($orderId){
         $orderInvoice = array();
 
@@ -63,29 +93,16 @@ class OrderController extends Controller
 
         if($order)
         {
-            // when more than 24 hour deliverytime then chk for online_paid is 2 then make it to 0 as default or vice versa
             if($order->delivery_timestamp < (strtotime($order->created_at) + 86400)){
                 $chkvar = '2';
-                $setvar = 0;
             }else{
                 $chkvar = '0';
-                $setvar = 2;
             }
-            if( $order->online_paid == $chkvar )
-            {
-                // Check if store is open
-                $heartbeat = Helper::isStoreLive($order->store_id);
+            $heartbeat = Helper::isStoreLive($order->store_id);
 
-                if( !is_null($heartbeat) && $heartbeat < 1)
-                {
-                    DB::table('orders')->where('order_id', $orderId)->update([
-                        'online_paid' => $setvar,
-                    ]);
-                }
-                else
-                {
-                    return redirect()->route('cancel-order', $order->customer_order_id)->with(['errorHeartbeat' => 1]);
-                }
+            if( is_null($heartbeat) || $heartbeat > 0)
+            {
+                return redirect()->route('cancel-order', $order->customer_order_id)->with(['errorHeartbeat' => 1]);
             }
 
             // If order type is 'home delivery', get driving distance time

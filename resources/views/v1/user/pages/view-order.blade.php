@@ -669,6 +669,11 @@
 		        scrollTop: $(".row-new-card").offset().top
 		    }, 'slow');
 		});
+	@else
+		$('.send-order').prop('disabled', false);
+		$('.send-order').on('click', function() {
+			orderConfirmationStatus({{$order->order_id}});
+		});
 	@endif
 
 	function isSeenMyOrder()
@@ -720,6 +725,20 @@
 				}
 			});
         });
+	}
+
+	function orderConfirmationStatus(order_id)
+	{
+		$.ajax({
+			url : "{{url('order-confirmation-status').'/'.$order->order_id}}",
+			type : 'get',
+			data : {
+				'eatLater' : '1'
+			},
+			success: function(data, status){
+				window.location.href = "{{url('order-view').'/'.$order->order_id}}";
+			}
+		});
 	}
 </script>
 @endsection
