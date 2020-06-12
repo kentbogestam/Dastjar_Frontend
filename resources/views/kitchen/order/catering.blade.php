@@ -455,7 +455,7 @@
                 var catering_paid_status = list[i]["online_paid"];
                 if(catering_paid_status == '0'){
                     paidOrNot = 'Not Paid';
-                    paid_status = '<img src="{{asset('kitchenImages/subs_sign.png')}}">';
+                    paid_status = '<img src="{{asset('kitchenImages/yellow_right_sign.png')}}">';
                 }else if(catering_paid_status == '1'){
                     paidOrNot = 'Paid';
                     paid_status = '<img src="{{asset('kitchenImages/right_sign.png')}}">';
@@ -471,8 +471,7 @@
                         order_status = '<img src="{{asset('kitchenImages/red_right_sign.png')}}">';
                     }else{
                         order_status = '<img src="{{asset('kitchenImages/red_right_sign.png')}}" onclick="acceptRejectOrder('+temp[i]['order_id']+')">';
-                    }
-                    
+                    }  
                 }
 
                 if(catering_order_status == '2'){

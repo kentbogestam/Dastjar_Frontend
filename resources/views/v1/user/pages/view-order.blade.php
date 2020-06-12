@@ -327,7 +327,7 @@
 								<button type="button" class="btn btn-danger" onclick="cancelMyOrder();">{{ __('messages.cancelMyOrder') }}</button><br><br>
 							</div>
 	                    @endif
-	                    @if($order->online_paid == "1")
+	                    @if($order->online_paid == "1" || $order->online_paid == "0" )
                     	<!-- if paid -->
 	                        <div class="acceptbox">
 	                            <p> {{ __('messages.acceptMsg') }} </p>

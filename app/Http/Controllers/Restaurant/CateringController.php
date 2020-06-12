@@ -69,7 +69,6 @@ class CateringController extends Controller
             ->where('store_id',$id)
             ->where('order_type', 'eat_later')
             ->where('cancel','!=', 1)
-            ->where('online_paid', '>', 0)
             ->where('delivery_timestamp', '>', time())
             ->where('is_verified', '0');
 
@@ -128,22 +127,5 @@ class CateringController extends Controller
         }else{
             return response()->json(['success'=>false]);
         }
-    }
-
-    public function cateringAutoDelete()
-    {
-        //auto cancellaton status updating cron job function in controller
-        Order::where('order_type','eat_later')
-            ->where('online_paid', '!=', '1')
-            ->where('cancel', '0')
-            ->where('delivery_timestamp', '>', time())
-            ->where('delivery_timestamp', '<', strtotime('+12 hour'))
-            ->update(['cancel' => 3]);
-        Order::where('order_type','eat_later')
-            ->where('online_paid','1')
-            ->where('cancel', '0')
-            ->where('delivery_timestamp', '>', time())
-            ->where('delivery_timestamp', '<', strtotime('+12 hour'))
-            ->update(['is_verified' => '1']);
     }
 }
