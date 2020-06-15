@@ -62,7 +62,7 @@ class OrderController extends Controller
                 $setvar = 2;
             }else{
                 $chkvar = '2';
-                $setvar = 0;
+                $setvar = 4;
             }
         }
         if( $order->online_paid == $chkvar )
