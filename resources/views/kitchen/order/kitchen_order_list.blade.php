@@ -158,7 +158,8 @@
 
 			$.get("{{url('kitchen/order-readyKitchen')}}/"+id,
 			function(returnedData){
-				$('body').find('#'+id+'ready').parents("tr").remove();
+				// $('body').find('#'+id+'ready').parents("tr").remove();
+				window.location.reload();
 			});
 		}
 
