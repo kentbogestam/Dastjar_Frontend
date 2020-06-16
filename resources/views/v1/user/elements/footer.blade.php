@@ -11,20 +11,22 @@ $requestPath = Request::path();
 				@if(Request::is('cart') || Request::is('save-order'))
 					<li><a href="javascript:void(0)" id="leave-cart" data-content="{{ __("messages.Leave Cart Page") }}"><i class="fa fa-cutlery"></i></a></li>
 				@else
-					<li><a href="{{ Session::get('route_url') }}"><i class="fa fa-cutlery"></i></a></li>
+					<li><a href="{{ route('eatNow') }}"><i class="fa fa-cutlery"></i></a></li>
 				@endif
 			@endif
 
 			@if(Request::is('restro-menu-list/*'))
 				<li class="active">
 					<a href="javascript:void(0)" id="menudataSave">
-						<i class="fa fa-shopping-cart"></i> <sup><span class="badge cart-badge">0</span></sup>
+                        <i class="fa fa-shopping-cart"></i> 
+                        <sup><span class="badge cart-badge">0</span></sup>
 					</a>
 				</li>
 			@else
 				<li {{ (Request::is('cart') || Request::is('save-order')) ? 'class=active' : '' }}>
 					<a href="javascript:void(0)">
-						<i class="fa fa-shopping-cart"></i> <sup><span class="badge cart-badge">0</span></sup>
+                        <i class="fa fa-shopping-cart"></i>
+                        <sup><span class="badge cart-badge">0</span></sup>
 					</a>
 				</li>
 			@endif

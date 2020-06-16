@@ -9,15 +9,27 @@
 		color: #515151;
 	}
 
+    .new{
+        background-color: #87ceebbf !important;
+    }
+
+    .rejectnew{
+       background-color: lightgray !important;
+    }
+    
+    .acceptnew{
+       background-color: white !important;
+    }
+    
 	.red{
 		color: #a90810;		
 	}
-
+    
 	.red:hover{
 		cursor: pointer;
 	}
 
-	.ready_notification{
+	.ready_notifications{
 		display: none;
 	}
 
@@ -74,56 +86,104 @@
 	}
 
 	#overlay {
-    		position: fixed;
-    		display: none;
-    		width: 100vw;
-    		height: 100vh;
-		    top: 0;
-		    left: 0;
-		    right: 0;
-    		bottom: 0;
-	    	background-color: rgba(0,0,0,0.5);
-	    	z-index: 999;
+        position: fixed;
+        display: none;
+        width: 100vw;
+        height: 100vh;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;  
+        background-color: rgba(0,0,0,0.5);
+        z-index: 999;
 	}
 
 	#loading-img{
-			display: none;
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			-moz-transform: translate(-50%);
-			-webkit-transform: translate(-50%);
-			-o-transform: translate(-50%);
-			-ms-transform: translate(-50%);
-			transform: translate(-50%);
-			z-index: 99999;
+        display: none;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -moz-transform: translate(-50%);
+        -webkit-transform: translate(-50%);
+        -o-transform: translate(-50%);
+        -ms-transform: translate(-50%);
+        transform: translate(-50%);
+        z-index: 99999;
 	}
+    .acceptit,.rejectit{
+        cursor:pointer;
+    }
+
+    #popupCloseRight2-popup{
+        width:20%;
+    }
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 100px;
+      background-color: #555;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px 0;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -60px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .tooltip .tooltiptext::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #555 transparent transparent transparent;
+    }
+
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
 </style>
 @stop
 
 @section('content')
 
+@include('includes.confirm-modal')
+@include('includes.kitchen-popup-add-manual-preparation-time')
 <div data-role="header" data-position="fixed" data-tap-toggle="false" class="header">
 		@include('includes.kitchen-header-sticky-bar')
 		<h3 class="ui-bar ui-bar-a order_background"><span>{{$storeName}}</span></h3>
 	</div>
 	<div role="main" class="ui-content">
-		<div class="ready_notification">
+		<div class="ready_notifications">
 			<div class="table-content sucess_msg">
 				<img src="{{asset('images/icons/Yes_Check_Circle.png')}}">
-				Order Cancelled Successfully.
+				<span></span>
 		    </div>
 		</div>
 
-		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow table-stripe ui-responsive table_size" >
+		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow ui-responsive table_size" >
 		 	<thead>
 		 		<tr class="ui-bar-d">
 			  		<th data-priority="2">{{ __('messages.Orders') }}</th>
-			   		<th>{{ __('messages.Amount') }}</th> 
-			   		<th data-priority="3">{{ __('messages.Product') }}</th>
-			    	<th data-priority="1">{{ __('messages.Comments') }}</th> 
+			   		<th data-priority="3">{{ __('messages.name') }}</th>
 			    	<th data-priority="5">{{ __('messages.Date and Time') }}</th>
+                    <th data-priority="1">{{ __('messages.accept') }}</th> 
+			    	<th data-priority="5">{{ __('messages.status') }}</th>
+			    	<th data-priority="1">{{ __('messages.price') }}</th> 
 			     	<th data-priority="1">{{ __('messages.Pick up Time') }}</th>
+			     	<th data-priority="1">{{ __('messages.deliveryType') }}</th>
 			     	<th data-priority="1">{{ __('messages.Remove') }}</th>
 		      	</tr>
 		    </thead>
@@ -161,15 +221,62 @@
 		@endif	
 	</div>
 
-		<img src="{{ asset('images/loading.gif') }}" id="loading-img" />
+	<img src="{{ asset('images/loading.gif') }}" id="loading-img" />
 
-	  <div id="overlay" onclick="off()">
-	  </div>
+	<div id="overlay" onclick="off()"></div>
+
+    <div data-role="popup" id="popupCloseRight" class="ui-content" style="max-width:100%;border: none;">
+	    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" style="background-color:#000;border-color: #000;">Close</a>
+		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow table-stripe ui-responsive table_size" >
+			<thead>
+				<tr class="ui-bar-d">
+					<th data-priority="2">{{ __('messages.name') }}</th>
+			   		<th class="qty-loyalty-offer">{{ __('messages.qtyLoyaltyOffer') }}</th>
+			   		<th data-priority="4">{{ __('messages.price') }}</th>
+			   		<th data-priority="4">{{ __('messages.Amount') }}</th>
+			   		<th data-priority="4">{{ __('messages.subTotal') }}</th>
+			    </tr>
+			</thead>
+			<tbody id="specificOrderDetailContianer"></tbody>
+            @if(App\Helper::isPackageSubscribed(13))
+            <tfoot>
+                <tr class="ui-bar-d">
+                    <th id="printCopy" colspan="5" onclick="" style="cursor:pointer;">{{ __('messages.print') }}</th> 
+                </tr>
+            </tfoot>
+            @endif
+		</table>
+    </div>
+
+    <div data-role="popup" id="popupCloseRight2" class="ui-content" style="max-width:100%;border:none;">
+	    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" style="background-color:#000;border-color: #000;">Close</a>
+		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow table-stripe ui-responsive table_size" >
+			<thead>
+				<tr class="ui-bar-d">
+					<th data-priority="2" colspan="2">{{ __('messages.pleaseSelectOne') }}</th>
+			    </tr>
+			</thead>
+			<tbody id="specificOrderDetailContianer2"></tbody>
+		</table>
+    </div>
+
+    <div data-role="popup" id="popupCloseRight3" class="ui-content" style="max-width:100%;border: none;">
+	    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" style="background-color:#000;border-color: #000;">Close</a>
+		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow table-stripe ui-responsive table_size" >
+			<thead>
+				<tr class="ui-bar-d">
+					<th data-priority="2">{{ __('messages.name') }}</th>
+					<th data-priority="2">{{ __('messages.email') }}</th>
+					<th data-priority="2">{{ __('messages.phone') }}</th>
+					<th data-priority="2">{{ __('messages.address') }}</th>
+			    </tr>
+			</thead>
+			<tbody id="specificOrderDetailContianer3"></tbody>
+		</table>
+    </div>
 @endsection
 
 @section('footer-script')
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>	 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
 	<script type="text/javascript">
 		var list = Array();
@@ -177,134 +284,131 @@
 		var totallength = 0;
 		var storeId = "{{Session::get('kitchenStoreId')}}";
 
+        function getOrderDetail(orderId){   
+            var liItem = "";
+            $.get("{{url('kitchen/catering/orderCateringOrderDetail')}}/"+orderId,
+            function(returnedData){
+                $("#specificOrderDetailContianer").html(returnedData);
+                $("#printCopy").attr('onclick','printCopy('+orderId+');');
+    			$("#popupCloseRight").popup("open");
+            });
+        }
+
+        function printCopy(orderId){
+            $.get("{{route('printCopy')}}?orderId="+orderId,
+            function(returnedData){
+                $("#popupCloseRight").popup("close");
+            });
+        }
+
+        function getUserDetail(userId){
+            var liItem = "";
+            $.get("{{url('kitchen/catering/orderCateringUserDetail')}}/"+userId,
+            function(returnedData){
+                $("#specificOrderDetailContianer3").html(returnedData);
+    			$("#popupCloseRight3").popup("open");
+            });
+        }
+      
+		function acceptRejectOrder(orderId)
+        {
+            var liItem = '';
+            liItem += "<tr>";
+            liItem += "<td class='acceptit' onclick='acceptit("+orderId+")'>Accept</td>";
+            liItem += "<td class='rejectit' onclick='rejectit("+orderId+");'>Reject</td>";
+            liItem += "</tr>";
+                
+            $("#specificOrderDetailContianer2").html(liItem);
+            $("#popupCloseRight2").popup("open");
+        }
+            
+        function acceptit(id){
+            var status = '2';
+            $("#popupCloseRight2").popup("close");
+            $('#overlay').css("display", "block");
+            $('#loading-img').css("display", "block");
+            $.get("{{url('kitchen/catering/orderCateringRejectAccept')}}/"+id+"/"+status,
+                function(returnedData){  
+                    if(returnedData != ''){
+                        $(".order_id_"+id).removeClass('new');
+                        $(".order_id_"+id).addClass('acceptnew');
+                        $(".order_id_"+id+" .acceptRejectStatus img").attr("src","{{asset('kitchenImages/right_sign.png')}}");
+                        $(".order_id_"+id+" .acceptRejectStatus img").attr("onclick","");
+                        $('#loading-img').css("display", "none");
+                        $('#overlay').css("display", "none");
+                        $('.ready_notifications span').html('Order Accepted Successfully.');
+                        $('.ready_notifications').show();
+                        serverSE();
+                        setTimeout(
+                            function(){ 
+                                $('.ready_notifications').hide();
+                        }, 3000);
+                    }
+                }
+            );
+        }
+            
+        function rejectit(id){
+            var status = '1';
+            $("#popupCloseRight2").popup("close");
+            var msg = "{{ __('messages.doYoureallywantstoReject') }}";
+            $('.confirm-text').html(msg);
+            $('#myConfirmBtn').trigger('click');
+            $('.confirm-conti').on('click', function(){
+                $('.confirm-close').trigger('click');
+                $('#overlay').css("display", "block");
+                $('#loading-img').css("display", "block");
+                $.get("{{url('kitchen/catering/orderCateringRejectAccept')}}/"+id+"/"+status,
+                    function(returnedData){  
+                        if(returnedData != ''){
+                            $(".order_id_"+id+" .acceptRejectStatus img").attr("onclick","");
+                            $('#loading-img').css("display", "none");
+                            $('#overlay').css("display", "none");
+                            $(".order_id_"+id).remove();
+                            $('.ready_notifications span').html('Order Rejected Successfully.');
+                            $('.ready_notifications').show();
+                            serverSE();
+                            setTimeout(
+                                function(){ 
+                                    $('.ready_notifications').hide();
+                            }, 3000);
+                        }
+                    }
+                );
+            });
+        }
+        
 		function removeOrder(orderID,user_id){
-				$("#dialog-confirm").dialog({
-					resizable: false,
-					modal: true,
-					buttons: [						
-						{
-							text: "No",
-							"class": 'dialog-no',
-							click: function() {
-								$(this).dialog("close");
-							}					
-						},
-						{
-							text: "Yes",
-							"class": 'dialog-yes',
-							click: function() {
-								$(this).dialog("close");
-								$('#overlay').css("display", "block");
-								$('#loading-img').css("display", "block");
+            $('#overlay').css("display", "block");
+            $('#loading-img').css("display", "block");
+            $.post("{{url('kitchen/remove-order')}}",
+                {"_token":"{{ csrf_token() }}","order_id":orderID,"user_id":user_id},
+                function(returnedData){                    
+                    $(".order_id_"+orderID).remove();
+                    $('#loading-img').css("display", "none");
+                    $('#overlay').css("display", "none");
+                    $('.ready_notifications span').html('Order Cancelled Successfully.');
+                    $('.ready_notifications').show();
 
-								$.post("{{url('kitchen/remove-order')}}",
-									{"_token":"{{ csrf_token() }}","order_id":orderID,"user_id":user_id},
-									function(returnedData){
-										$(".order_id_"+orderID).remove();
-										$('#loading-img').css("display", "none");
-										$('#overlay').css("display", "none");
-										$('.ready_notification').show();
-										
-										setTimeout(
-											function(){ 
-												$('.ready_notification').hide();
-										}, 3000);
-									}
-								);
-							}
-						}
-		        ]
-				
-			});
+                    setTimeout(
+                        function(){
+                            $('.ready_notifications').hide();
+                    }, 3000);
+                }
+            );
 		}
-
-		// If order is new then it update the order status
-		function updateOrderDetailStatus(This, id) {
-			$this = $(This);
-
-			if($this.hasClass('new'))
-			{
-				$.post("{{url('kitchen/update-order-detail-status')}}",
-					{"_token": "{{ csrf_token() }}", "id": id},
-					function(returnedData){
-						$this.removeClass('new');
-						$this.removeAttr('onclick');
-					}
-				);
-			}
-		}
-
-		$(function(){
-			
-
-			$.get("{{url('api/v1/kitchen/catering-orders')}}/" + storeId,
-			function(returnedData){
-				console.log(returnedData["data"]);
-				var count = 18;
-				var temp = returnedData["data"];
-	          	list = temp;
-	          	console.log(temp.length);
-	          	var liItem = "";
-	          	totallength = temp.length;
-	          	if(temp.length != 0){
-	          		totalCount = temp.length;
-
-		          	if(temp.length < count){
-		          		count = temp.length
-		          	}
-
-		          	totalCount -= 10;
-		          	for (var i=0;i<count;i++){
-		          		if(i>=totallength){
-				      		break;
-				      	}
-		          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
-		          		var orderCreate = orderCreateTime(temp[i]["created_at"]);
-		          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
-		          		
-		          		// Add new class on tr if order added recently
-		          		if(temp[i]['is_new'])
-		          		{
-		          			liItem += "<tr class='order_id_"+temp[i]["order_id"]+" new' onclick='updateOrderDetailStatus(this, "+temp[i]['id']+")'>";
-		          		}
-		          		else
-		          		{
-		          			liItem += "<tr class='order_id_"+temp[i]["order_id"]+"'>";
-		          		}
-		          		
-		          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
-		          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
-		          		liItem += "<td>"+temp[i]["product_name"]+"</td>";
-		          		if(temp[i]["product_description"] != null){
-		          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
-		          		}else{
-		          			liItem += "<td>"+''+"</td>";
-		          		}
-		          		liItem += "<td>"+orderCreate+"</td>";
-		          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
-		          		if(temp[i]["cancel"]==2){
-   			          		liItem += "<td>"+"<span class='fa fa-times-circle fa-2x red' onclick='removeOrder("+temp[i]["order_id"]+","
-   			          		+temp[i]["user_id"]+")'>"+"</span>"+"</td>";	
-		          		}else{
-			          		liItem += "<td>"+"<span class='fa fa-times-circle fa-2x grey'>"+"</span>"+"</td>";					          			
-		          		}
-		          		liItem += "</tr>";
-		          	}
-	          	}else{
-
-	          	}
-	          	$("#orderDetailContianer").append(liItem);
-			}); 
-		});
+        
+        $(function(){
+          ajaxCall();
+        });
 
 		var ajaxCall = function(){
-			$.get("{{url('api/v1/kitchen/catering-orders')}}/" + storeId,
+			$.get("{{url('kitchen/catering/catering-orders')}}/" + storeId,
 			function(returnedData){
-				//console.log(returnedData["data"]);
+//				console.log(returnedData["data"]);
 				var count = 18;
 				var temp = returnedData["data"];
 	          	list = temp;
-	          	console.log(temp.length);
 	          	var liItem = "";
 	          	if(temp.length != 0){
 	          		totalCount = temp.length;
@@ -314,50 +418,106 @@
 		          	}
 
 		          	totalCount -= 10;
-		          	for (var i=0;i<count;i++){
-		          		if(i>totallength){
-				      		break;
-				      	}
-		          		var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
-		          		var orderCreate = orderCreateTime(temp[i]["created_at"]);
-		          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
-		          		var isNew = temp[i]['is_new'] ? ' new' : '';
-
-		          		// Add new class on tr if order added recently
-		          		if(temp[i]['is_new'])
-		          		{
-		          			liItem += "<tr class='order_id_"+temp[i]["order_id"]+" new' onclick='updateOrderDetailStatus(this, "+temp[i]['id']+")'>";
-		          		}
-		          		else
-		          		{
-		          			liItem += "<tr class='order_id_"+temp[i]["order_id"]+"'>";
-		          		}
-		          		
-		          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
-		          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
-		          		liItem += "<td>"+temp[i]["product_name"]+"</td>";
-		          		if(temp[i]["product_description"] != null){
-		          			liItem += "<td>"+temp[i]["product_description"]+"</td>";
-		          		}else{
-		          			liItem += "<td>"+''+"</td>";
-		          		}
-		          		liItem += "<td>"+orderCreate+"</td>";
-		          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
-		          		if(temp[i]["cancel"]==2){
-   			          		liItem += "<td>"+"<span class='fa fa-times-circle fa-2x red' onclick='removeOrder("+temp[i]["order_id"]+","
-   			          			+temp[i]["user_id"]+")'>"+"</span>"+"</td>";	
-		          		}else{
-			          		liItem += "<td>"+"<span class='fa fa-times-circle fa-2x grey'>"+"</span>"+"</td>";					          			
-		          		}
-		          		liItem += "</tr>";
-		          	}
-	          	}else{
-
+                    start = 0;
+                    liItem += htmlData(start,count,temp) 
 	          	}
+                if(returnedData['count'] > 0){
+                    $('.catering-badge').html(returnedData['count']);
+                }else{
+                    $('.catering-badge').html('');
+                }
 	          	$("#orderDetailContianer").html(liItem);
 			}); 
 		}
 
+        function htmlData(start,count,temp)
+        {
+            var liItem;
+            const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
+            var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            for (var i=0;i<count;i++){
+                var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
+                var orderCreateDate = new Date(temp[i]["created_at"]+' UTC');
+                var hours = ("0" + orderCreateDate.getHours()).slice(-2);
+                var minutes = ("0" + orderCreateDate.getMinutes()).slice(-2);
+                var orderCreate = days[orderCreateDate.getDay()]+' '+monthNames[orderCreateDate.getMonth()]+' '+orderCreateDate.getDate()+' '+orderCreateDate.getFullYear()+' '+hours+':'+minutes;
+                var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
+                var leng = temp[i]['orderdetail_detail'].length;
+                var totalprice = 0;
+                var isNew;
+                var paid_status;
+                var order_status;
+                var paidOrNot;
+                for(var j=0;j<leng;j++){
+                    totalprice += (parseInt(temp[i]['orderdetail_detail'][j]['product_quality']) - parseInt(temp[i]['orderdetail_detail'][j]['quantity_free'])) * parseInt(temp[i]['orderdetail_detail'][j]['price']);
+                }
+                
+                var catering_paid_status = list[i]["online_paid"];
+                if(catering_paid_status == '1'){
+                    paidOrNot = 'Paid';
+                    paid_status = '<img src="{{asset('kitchenImages/right_sign.png')}}">';
+                }else if(catering_paid_status == '4'){
+                    paidOrNot = 'Not Paid';
+                    paid_status = '<img src="{{asset('kitchenImages/yellow_right_sign.png')}}">';
+                }else{
+                    paidOrNot = 'Not Paid';
+                    paid_status = '<img src="{{asset('kitchenImages/subs_sign.png')}}">';
+                }
+                
+                var catering_order_status = list[i]["catering_order_status"];
+                if(catering_order_status == '0'){
+                    isNew = 'new';
+                    if(temp[i]["cancel"] > 1){
+                        order_status = '<img src="{{asset('kitchenImages/red_right_sign.png')}}">';
+                    }else{
+                        order_status = '<img src="{{asset('kitchenImages/red_right_sign.png')}}" onclick="acceptRejectOrder('+temp[i]['order_id']+')">';
+                    }  
+                }
+
+                if(catering_order_status == '2'){
+                    isNew = 'acceptnew';
+                    order_status = '<img src="{{asset('kitchenImages/right_sign.png')}}">';
+                }
+
+                if(temp[i]["cancel"] > 1){
+                    isNew = 'rejectnew';
+                }
+
+                // Add new class on tr if order added recently
+                liItem += "<tr class='order_id_"+temp[i]["order_id"]+" "+isNew+"'>";
+                
+                liItem += "<th><a href='javascript:getOrderDetail("+temp[i]["order_id"]+")' data-rel='popup'>" +temp[i]["customer_order_id"]+"</a></th>";
+                liItem += "<th><a href='javascript:getUserDetail("+temp[i]["user_id"]+")' data-rel='popup'>" +temp[i]["customer_detail"][0]["name"]+"</a></th>";
+                liItem += "<td>"+orderCreate+"</td>";
+                liItem += "<td class='acceptRejectStatus'><a href='javascript:void(0)'>"+order_status+"</a></td>";
+                liItem += "<td class='paidStatus'><a href='javascript:void(0)' class='tooltip'>" + paid_status + "<span class='tooltiptext'>"+paidOrNot+"</span></a> </td>";
+                liItem += "<td>"+totalprice+" SEK </td>";
+                liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
+                var deliveryType = '';
+                if( temp[i]['delivery_type'] == 1 ){
+                    deliveryType = '{{ __('messages.deliveryOptionDineIn') }}';
+                }else if( temp[i]['delivery_type'] == 2 ){
+                    deliveryType = '{{ __('messages.deliveryOptionTakeAway') }}';
+                }else if( temp[i]['delivery_type'] == 3 ){
+                    deliveryType = '<span>{{ __('messages.deliveryOptionHomeDelivery') }}</span>';
+                    if(temp[i]['delivery_at_door'] == '1'){
+                        deliveryType += '<br><b><span>{{ __('messages.deliveryAtDoor') }}</span></b>';
+                    } 
+                    deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderDeliveryAddress('+temp[i]['user_address_id']+')"><span>'+temp[i]["customer_full_detail"][0]["street"]+'</span></a>';
+                }
+
+                liItem += "<td>"+deliveryType+"</td>";
+
+                if(temp[i]["cancel"] > 1){
+                    liItem += "<td>"+"<span class='fa fa-times-circle fa-2x red' onclick='removeOrder("+temp[i]["order_id"]+","+temp[i]["user_id"]+")'>"+"</span>"+"</td>";	
+                }else{
+                    liItem += "<td></td>";
+                }
+                liItem += "</tr>";
+            }
+            return liItem;
+        }
+        
 		setInterval(ajaxCall, 30000);
 		var tempCount = 18;
 
@@ -390,12 +550,10 @@
 	    	}
 		});
 
-		function  addMore(len){
+		function addMore(len){
 			var liItem = "";
 	    	var limit = 0;
-	    	var countCheck = 1;
-	    	//console.log(totalCount);
-	    	//console.log(len);
+            
 			if(totalCount > 10){
 			 	limit = 10;
 			 	totalCount -= 10;
@@ -405,46 +563,11 @@
 			 	limit = totalCount;
 			 	totalCount -= totalCount;
 			}
-
-	      for (var i=len;i<len + 10;i++){
-	      //console.log(returnedData["data"]);
-	      	if(i>=totallength){
-	      		tempCount = 18;
-	      		break;
-	      	}
-	      	if(countCheck>limit){
-	      		break;
-	      	}
-	      	var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
-		    var orderCreate = orderCreateTime(list[i]["created_at"]);
-	      	var timeOrder = addTimes("00:00:00",list[i]["deliver_time"]);
-      		liItem += "<tr>";
-      		liItem += "<th>"+list[i]["customer_order_id"]+"</th>";
-      		liItem += "<td>"+list[i]["product_quality"]+"</td>";
-      		liItem += "<td>"+list[i]["product_name"]+"</td>";
-      		if(list[i]["product_description"] != null){
-      			liItem += "<td>"+list[i]["product_description"]+"</td>";
-      		}else{
-      			liItem += "<td>"+ +"</td>";
-      		}
-      		liItem += "<td>"+orderCreate+"</td>";
-		    liItem += "<td>"+list[i]["deliver_date"]+' '+timeOrder+"</td>";
-      		liItem += "</tr>";
-	      	countCheck++;
-	      }
-	      $("#orderDetailContianer").append(liItem);	
-		}
-
-		function orderCreateTime(time){
-			var date = convertUTCDateToLocalDate(new Date(time));
-			// var date = new Date(time + " UTC");
-
-			var dd = date.toString();
-			var ddd = dd.split(" ");
-			var ddddd = ddd[4].split(":");
-			var dddd = ddd[0]+" "+ddd[1]+" "+ddd[2]+" "+ddd[3]+" "+ddddd[0]+":"+ddddd[1];
-
-			return dddd;
+            start = len
+            count = len+10
+            liItem += htmlData(start,count,temp)
+            
+	        $("#orderDetailContianer").append(liItem);	
 		}
 
 		function convertUTCDateToLocalDate(date) {
@@ -494,5 +617,6 @@
 
 		  return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2)
 		}
+
 	</script>
 @endsection
