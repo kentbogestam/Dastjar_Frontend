@@ -2883,6 +2883,20 @@ class AdminController extends Controller
         // Update store's 'islive'
         Helper::updateStoreIslive($storeId);
 
+        $stores[] = $storeId;
+
+        // Get virtual restaurant if mapped
+        $storeMapping = StoreVirtualMapping::where('store_id', $storeId)
+            ->get();
+
+        if($storeMapping)
+        {
+            foreach($storeMapping as $row)
+            {
+                $stores[] = $row['virtual_store_id'];
+            }
+        }
+
         // 
         $deliveryDate = Carbon::now()->subDays(1)->toDateString();
         $deliveryDateTill = Carbon::now()->toDateString();
@@ -2891,10 +2905,12 @@ class AdminController extends Controller
         $orderDetails = OrderDetail::select('order_details.id', 'order_details.product_quality', 'order_details.product_description', 'order_details.is_speak', 'product.product_name', 'orders.delivery_timestamp', 'orders.created_at', 'orders.online_paid', 'orders.catering_order_status')
             ->join('orders', 'orders.order_id', '=', 'order_details.order_id')
             ->join('product', 'product.product_id', '=', 'order_details.product_id')
-            ->where('orders.store_id', $storeId)
-            ->where('user_type', 'customer')
-            ->where('check_deliveryDate', '>=', date("Y-m-d", time()))
+            ->whereIn('orders.store_id', $stores)
+            ->where(['user_type' => 'customer', 'orders.order_started' => '0', 'orders.paid' => '0'])
+            ->where('orders.check_deliveryDate', '>=', date("Y-m-d"))
+            ->where('orders.check_deliveryDate', '<=', date("Y-m-d",strtotime("+1 day")))
             ->where('orders.cancel','!=', 1)
+            ->where('orders.is_verified', '1')
             ->get();
             $orderIds = array();
             if(!empty($orderDetails->toArray())){
@@ -2904,7 +2920,7 @@ class AdminController extends Controller
                             $orderIds[] = $ord->id;
                         }
                     }else{
-                        if($ord->order_started == '0' && $ord->online_paid != '2'){
+                        if($ord->online_paid != '2'){
                             $orderIds[] = $ord->id;
                         }
                     }

@@ -81,7 +81,7 @@ class KitchenController extends Controller
         $orderItems = array();
         if($results)
         {
-            $orderItems = OrderDetail::select('order_details.id', 'order_details.product_quality', 'order_details.product_description', 'product.product_name')
+            $orderItems = OrderDetail::select('order_details.id', 'order_details.product_quality', 'order_details.product_description', 'order_details.order_started', 'product.product_name')
                 ->join('orders', 'orders.order_id', '=', 'order_details.order_id')
                 ->join('product', 'product.product_id', '=', 'order_details.product_id')
                 ->whereIn('orders.store_id', $stores)
@@ -90,6 +90,8 @@ class KitchenController extends Controller
                 ->where('orders.check_deliveryDate', '<=', date("Y-m-d",strtotime("+1 day")))
                 ->whereNotIn('orders.online_paid', [2])
                 ->where('orders.cancel','!=', 1)
+                ->where('orders.is_verified', '1')
+                ->where('orders.catering_order_status', '2')
                 ->get();
         }
 

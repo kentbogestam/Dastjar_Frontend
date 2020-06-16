@@ -420,7 +420,7 @@
 
 	          			for(var j = 0; j < orderItems.length; j++)
 	          			{
-	          				if(speakOrderItemList.indexOf(orderItems[j]['id']) == -1)
+	          				if( orderItems[j]['order_started'] == 0 && speakOrderItemList.indexOf(orderItems[j]['id']) == -1 )
 	          				{
 	          					speakOrderItemList.push(orderItems[j]['id']);
 
