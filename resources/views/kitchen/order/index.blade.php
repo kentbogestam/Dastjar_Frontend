@@ -776,20 +776,15 @@
 		function(returnedData){
 			if(returnedData.status)
 			{
-				$('body').find('#'+id).parent("a").attr('onclick',' ');
-				if(returnedData.order.delivery_type == 3 && driverapp)
-				{
-					$('body').find('#'+id+'ready').parent("a").attr('onclick','popupOrderAssignDriver('+id+', false)');
-				}
-				else
-				{
-					$('body').find('#'+id+'ready').parent("a").attr('onclick','makeOrderReady('+id+')');
-				}
 				$This.closest('tr').removeClass('not-started');
                 $This.closest('tr').removeClass('news');
              	// change red blinker to gray circle and remove class new form its table row tr element
                 $This.parents('tr').removeClass('new');
-                $This.parents('tr').find('.ready_class').html("<a data-ajax='false' href="+urlReadyOrder+"/"+id+"><img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>");
+                if(returnedData.order.delivery_type == 3 && driverapp){
+                	$This.parents('tr').find('.ready_class').html("<a data-ajax='false' onclick='popupOrderAssignDriver("+id+", false)'><img id='#"+id+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>");
+                }else{
+                	$This.parents('tr').find('.ready_class').html("<a data-ajax='false' onclick='makeOrderReady("+id+")'><img id='#"+id+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>");
+                }
 				$('body').find('#'+id).parents('td').html("<a><img src='{{asset('kitchenImages/right_sign.png')}}'></a>");
 				clearSpeakTextInterval();
 			}

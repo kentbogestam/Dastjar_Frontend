@@ -20,7 +20,7 @@ class autoCancel extends Command
     {
         // update status to cancel to 3 means auto cancel on non payment
         Order::where('order_type','eat_later')
-            ->whereNotIn('online_paid', ['1','0'])
+            ->whereNotIn('online_paid', ['1','4'])
             ->where('cancel', '0')
             ->where('delivery_timestamp', '>', time())
             ->where('delivery_timestamp', '<', strtotime('+12 hour'))
@@ -28,7 +28,7 @@ class autoCancel extends Command
 
         // if payment is done then change verified status to 1
         Order::where('order_type','eat_later')
-            ->whereIn('online_paid', ['1','0'])
+            ->whereIn('online_paid', ['1','4'])
             ->where('catering_order_status', '2')
             ->where('cancel', '0')
             ->where('delivery_timestamp', '>', time())

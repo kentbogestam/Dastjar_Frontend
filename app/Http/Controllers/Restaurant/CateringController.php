@@ -69,6 +69,7 @@ class CateringController extends Controller
             ->where('store_id',$id)
             ->where('order_type', 'eat_later')
             ->where('cancel','!=', 1)
+            ->where('online_paid','!=', '0')
             ->where('delivery_timestamp', '>', time())
             ->where('is_verified', '0');
 

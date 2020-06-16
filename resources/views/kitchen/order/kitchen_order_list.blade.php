@@ -130,16 +130,15 @@
 			$This = $(This);			
 			$.get("{{url('kitchen/orderStartedKitchen')}}/"+id,
 			function(returnedData){
-				$('body').find('#'+id).parent("a").attr('onclick',' ');
-				if(returnedData.order.delivery_type == 3 && driverapp){                               
-                    $('body').find('#'+id+'ready').parent("a").attr('onclick', 'popupOrderAssignDriver('+returnedData.order.order_id+', '+id+')');
-				}else{
-					$('body').find('#'+id+'ready').parent("a").attr('onclick','onReady('+id+')');
-				}
            		// on removing class ebent remove button also
 				$This.closest('tr').removeClass('not-started');
 				$This.closest('tr').removeClass('news');
-				$This.closest('tr').find('.ready_class').html("<a data-ajax='false' href="+urlReady+"/"+id+"><img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>");
+				if(returnedData.order.delivery_type == 3 && driverapp){
+					$This.closest('tr').find('.ready_class').html("<a data-ajax='false' onclick='popupOrderAssignDriver("+returnedData.order.order_id+","+id+")'><img id='#"+id+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>");
+				}else{
+					$This.closest('tr').find('.ready_class').html("<a data-ajax='false' onclick='onReady("+id+")'><img id='#"+id+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>");
+				}
+
 				$('body').find('#'+id).parents('td').html("<a><img src='{{asset('kitchenImages/right_sign.png')}}'></a>");
 
 				// Update item as speak
@@ -159,7 +158,8 @@
 
 			$.get("{{url('kitchen/order-readyKitchen')}}/"+id,
 			function(returnedData){
-				$('body').find('#'+id+'ready').parents("tr").remove();
+				// $('body').find('#'+id+'ready').parents("tr").remove();
+				window.location.reload();
 			});
 		}
 
