@@ -5,14 +5,19 @@ namespace App\Http\Controllers\Restaurant;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
+use App\Helper;
 // use Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Arr;
 
+use App\Traits\PosReceipt;
+
 class PosPrintController extends Controller
 {
+	use PosReceipt;
+
 	// Called from printer to check if there any job to print
     function handlePost(Request $request)
     {
@@ -121,5 +126,11 @@ class PosPrintController extends Controller
 	private function getPrinterMac($printerFolder)
 	{
 		return str_replace(".", ":", $printerFolder);
+	}
+
+	public function PrintCopyReceipt(Request $request)
+	{
+		$this->createPOSReceipt($request->orderId);
+      	Helper::uploadPrintFile();
 	}
 }

@@ -77,11 +77,11 @@ class PushNotifactionController extends Controller
 
             // Get the payment if exist and not captured
             $payment = Payment::select(['transaction_id', 'status'])
-                ->where(['order_id' => $order->order_id, 'status' => '2'])->first();
+                ->where(['order_id' => $order->order_id])->first();
 
             if($payment)
             {
-                if($payment->status == '2')
+                if($payment->status != '0')
                 {
                     // Get the Stripe Account
                     $companySubscriptionDetail = CompanySubscriptionDetail::from('company_subscription_detail AS CSD')
@@ -100,26 +100,26 @@ class PushNotifactionController extends Controller
                         try {
                             // capture-later
                             $payment_intent = \Stripe\PaymentIntent::retrieve($payment->transaction_id, ['stripe_account' => $stripeAccount]);
-                            $payment_intent->capture();
+
+                            if($payment_intent->status == 'requires_capture')
+                            {
+                                $payment_intent->capture();
+                            }
 
                             if($payment_intent->status == 'succeeded')
                             {
                                 $isDelivered = 1;
 
                                 // Update payment as captured
-                                Payment::where(['order_id' => $order->order_id, 'status' => '2'])
+                                Payment::where(['order_id' => $order->order_id])
                                     ->update(['status' => '1']);
                             }
                         } catch (\Stripe\Error\Base $e) {
                             # Display error on client
                             $response = array('error' => $e->getMessage());
-                            dd($response);
+                            return \Redirect::back()->with($response);
                         }
                     }
-                }
-                elseif($payment->status == '1')
-                {
-                    $isDelivered = 1;
                 }
             }
             else
