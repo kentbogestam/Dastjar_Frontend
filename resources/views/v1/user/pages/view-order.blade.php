@@ -327,7 +327,7 @@
 								<button type="button" class="btn btn-danger" onclick="cancelMyOrder();">{{ __('messages.cancelMyOrder') }}</button><br><br>
 							</div>
 	                    @endif
-	                    @if($order->online_paid == "1")
+	                    @if($order->online_paid == "1" || $order->online_paid == "4" )
                     	<!-- if paid -->
 	                        <div class="acceptbox">
 	                            <p> {{ __('messages.acceptMsg') }} </p>
@@ -669,6 +669,11 @@
 		        scrollTop: $(".row-new-card").offset().top
 		    }, 'slow');
 		});
+	@else
+		$('.send-order').prop('disabled', false);
+		$('.send-order').on('click', function() {
+			orderConfirmationStatus({{$order->order_id}});
+		});
 	@endif
 
 	function isSeenMyOrder()
@@ -685,7 +690,7 @@
 			dataType: 'json',
 			success: function(response) {
 				$('#loading-img').css("display", "none");
-				location.reload(true);
+				window.location.href="{{ route('eatNow') }}";
 			}
 		});
 	}
@@ -720,6 +725,20 @@
 				}
 			});
         });
+	}
+
+	function orderConfirmationStatus(order_id)
+	{
+		$.ajax({
+			url : "{{url('order-confirmation-status').'/'.$order->order_id}}",
+			type : 'get',
+			data : {
+				'eatLater' : '1'
+			},
+			success: function(data, status){
+				window.location.href = "{{url('order-view').'/'.$order->order_id}}";
+			}
+		});
 	}
 </script>
 @endsection

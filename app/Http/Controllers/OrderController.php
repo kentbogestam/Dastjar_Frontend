@@ -49,6 +49,36 @@ class OrderController extends Controller
         }
     }
 
+    public function orderConfirmationStatus($orderId, Request $request)
+    {
+        // when more than 24 hour deliverytime then chk for online_paid is 2 then make it to 0 as default or vice versa
+        $order = Order::where('order_id',$orderId)->first();
+        if($order->delivery_timestamp < (strtotime($order->created_at) + 86400)){
+            $chkvar = '2';
+            $setvar = 0;
+        }else{
+            if($request->eatLater == '0'){
+                $chkvar = '0';
+                $setvar = 2;
+            }else{
+                $chkvar = '2';
+                $setvar = 4;
+            }
+        }
+        if( $order->online_paid == $chkvar )
+        {
+            // Check if store is open
+            $heartbeat = Helper::isStoreLive($order->store_id);
+
+            if( !is_null($heartbeat) && $heartbeat < 1)
+            {
+                DB::table('orders')->where('order_id', $orderId)->update([
+                    'online_paid' => $setvar,
+                ]);
+            }
+        }
+    }
+
     public function orderView($orderId){
         $orderInvoice = array();
 
@@ -63,29 +93,16 @@ class OrderController extends Controller
 
         if($order)
         {
-            // when more than 24 hour deliverytime then chk for online_paid is 2 then make it to 0 as default or vice versa
             if($order->delivery_timestamp < (strtotime($order->created_at) + 86400)){
                 $chkvar = '2';
-                $setvar = 0;
             }else{
                 $chkvar = '0';
-                $setvar = 2;
             }
-            if( $order->online_paid == $chkvar )
-            {
-                // Check if store is open
-                $heartbeat = Helper::isStoreLive($order->store_id);
+            $heartbeat = Helper::isStoreLive($order->store_id);
 
-                if( !is_null($heartbeat) && $heartbeat < 1)
-                {
-                    DB::table('orders')->where('order_id', $orderId)->update([
-                        'online_paid' => $setvar,
-                    ]);
-                }
-                else
-                {
-                    return redirect()->route('cancel-order', $order->customer_order_id)->with(['errorHeartbeat' => 1]);
-                }
+            if( is_null($heartbeat) || $heartbeat > 0)
+            {
+                return redirect()->route('cancel-order', $order->customer_order_id)->with(['errorHeartbeat' => 1]);
             }
 
             // If order type is 'home delivery', get driving distance time
@@ -161,7 +178,7 @@ class OrderController extends Controller
             
             // Check if subscription exist, create bong receipt to print 
             // if(1)
-            if( Helper::isPackageSubscribed(13) && (\Request::server('HTTP_REFERER') && (strpos(\Request::server('HTTP_REFERER'), 'cart') != false)) && !Helper::isPackageSubscribed(4, $order->store_id) )
+            if( Helper::isPackageSubscribed(13) && (\Request::server('HTTP_REFERER') && (strpos(\Request::server('HTTP_REFERER'), 'cart') != false)) && $chkvar == '2')
             {
                 $this->createPOSReceipt($orderId);
                 $this->uploadPrintFile();
@@ -623,6 +640,7 @@ class OrderController extends Controller
         // 
         if( Auth::check() && !empty($data) )
         {
+            $agent = $request->server('HTTP_USER_AGENT');
             $orderInvoice = array();
             $i = 0;
             $total_price = $final_order_total = 0;
@@ -691,11 +709,30 @@ class OrderController extends Controller
                         $order->check_deliveryDate = $checkOrderDate;
                         $order->delivery_timestamp = $delivery_timestamp;
 
-                        if( isset($data['delivery_type']) && is_numeric($data['delivery_type']) ){
+                        // Check where order comes from i.e. 'Web/IOS/Android/webstore'
+                        $order->order_reference_id = 1;
+                        if(Session::has('iFrameMenu'))
+                        {
+                            $order->order_reference_id = 4;
+                        }
+                        elseif( stripos($agent, "iPod") || stripos($agent, "iPhone") || stripos($agent, "iPad") )
+                        {
+                            $order->order_reference_id = 2;
+                        }
+                        elseif( stripos($agent, "Android") )
+                        {
+                            $order->order_reference_id = 3;
+                        }
+
+                        // 
+                        if( isset($data['delivery_type']) && is_numeric($data['delivery_type']) )
+                        {
                             $order->delivery_type = $data['delivery_type'];
                         }
 
-                        if($storeDetail->order_response == 0 && $orderType == 'eat_now'){
+                        // 
+                        if($storeDetail->order_response == 0 && $orderType == 'eat_now')
+                        {
                             $order->order_response = 0;
                             $order->order_accepted = 0;
                         }
@@ -875,13 +912,11 @@ class OrderController extends Controller
                     ->update(['final_order_total' => $final_order_total, 'delivery_charge' => $homeDelivery['delivery_charge']]);
             }
 
-            //
-            // User::where('id',Auth::id())->update(['browser' => $data['browser']]);
-            $agent = $request->server('HTTP_USER_AGENT');
+            // Update user agent from where order comes
             User::where('id',Auth::id())->update(['browser' => $agent]);
 
             //
-            $order = Order::select('orders.*','customer.phone_number','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->join('customer','orders.user_id', '=', 'customer.id')->first();
+            $order = Order::select('orders.*','store.store_name','company.currencies')->where('order_id',$orderId)->join('store','orders.store_id', '=', 'store.store_id')->join('company','orders.company_id', '=', 'company.company_id')->first();
             
             $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name','order_details.product_id')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 
@@ -1845,29 +1880,6 @@ class OrderController extends Controller
         DB::table('order_details')->where('order_id', $orderid)->delete();
         DB::table('order_customer_discount')->where('order_id', $orderid)->delete();
         DB::table('order_customer_loyalty')->where('order_id', $orderid)->delete();
-    }
-
-    public function smsOverPhone($order_id)
-    {
-        $order = Order::with('customerDetail')->where('order_id',$order_id)->first();
-        $recipients = null;
-        //send sms to user when its dine-in or take-away
-        if($order->delivery_type != "3"){
-            if($order->user_type == 'customer'){
-                $adminDetail = User::where('id' , $order->user_id)->first();
-                if(isset($adminDetail->phone_number_prifix) && isset($adminDetail->phone_number)){
-                    $recipients = ['+'.$adminDetail->phone_number_prifix.$adminDetail->phone_number];
-                }
-            }else{
-                $adminDetail = Admin::where('id' , $order->user_id)->first();
-                $recipients = ['+'.$adminDetail->mobile_phone];
-            }
-            if(!empty($recipients)){
-                $url = env('APP_URL').'order-view/'.$order_id;
-                $message = "Visit Order : ".$url;
-                Helper::apiSendTextMessage($recipients, $message);
-            }
-        }
     }
 
     /**

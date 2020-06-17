@@ -66,6 +66,30 @@
 	</div>
 
 	@include('includes.kitchen-footer-menu')
+
+	<div data-role="popup" id="popupCloseRight" class="ui-content" style="max-width:100%;border: none;">
+	    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" style="background-color:#000;border-color: #000;">Close</a>
+		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow table-stripe ui-responsive table_size" >
+			<thead>
+				<tr class="ui-bar-d">
+					<th data-priority="2">{{ __('messages.Orders') }}</th>
+			   		<th>{{ __('messages.Amount') }}</th>
+			   		<th class="qty-loyalty-offer">{{ __('messages.qtyLoyaltyOffer') }}</th>
+			   		<th data-priority="3">{{ __('messages.Product') }}</th>
+			    	<th data-priority="1">{{ __('messages.Comments') }}</th> 
+			    </tr>
+			</thead>
+			<tbody id="specificOrderDetailContianer"></tbody>
+			@if(App\Helper::isPackageSubscribed(13))
+			<tfoot>
+				<tr class="ui-bar-d">
+					<th id="printCopy" colspan="4" onclick="" style="cursor:pointer;">{{ __('messages.print') }}</th> 
+			    </tr>
+			</tfoot>
+			@endif
+		</table>
+	</div>
+
 	
 	<!-- <div data-role="popup" id="popupNotifaction" class="ui-content" style="max-width:280px;padding: 15px;">
 	    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
@@ -106,16 +130,15 @@
 			$This = $(This);			
 			$.get("{{url('kitchen/orderStartedKitchen')}}/"+id,
 			function(returnedData){
-				$('body').find('#'+id).parent("a").attr('onclick',' ');
-				if(returnedData.order.delivery_type == 3 && driverapp){                               
-                    $('body').find('#'+id+'ready').parent("a").attr('onclick', 'popupOrderAssignDriver('+returnedData.order.order_id+', '+id+')');
-				}else{
-					$('body').find('#'+id+'ready').parent("a").attr('onclick','onReady('+id+')');
-				}
            		// on removing class ebent remove button also
 				$This.closest('tr').removeClass('not-started');
 				$This.closest('tr').removeClass('news');
-				$This.closest('tr').find('.ready_class').html("<a data-ajax='false' href="+urlReady+"/"+id+"><img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>");
+				if(returnedData.order.delivery_type == 3 && driverapp){
+					$This.closest('tr').find('.ready_class').html("<a data-ajax='false' onclick='popupOrderAssignDriver("+returnedData.order.order_id+","+id+")'><img id='#"+id+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>");
+				}else{
+					$This.closest('tr').find('.ready_class').html("<a data-ajax='false' onclick='onReady("+id+")'><img id='#"+id+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>");
+				}
+
 				$('body').find('#'+id).parents('td').html("<a><img src='{{asset('kitchenImages/right_sign.png')}}'></a>");
 
 				// Update item as speak
@@ -135,7 +158,8 @@
 
 			$.get("{{url('kitchen/order-readyKitchen')}}/"+id,
 			function(returnedData){
-				$('body').find('#'+id+'ready').parents("tr").remove();
+				// $('body').find('#'+id+'ready').parents("tr").remove();
+				window.location.reload();
 			});
 		}
 
@@ -164,6 +188,56 @@
                     }
                 });
             });
+		}
+
+		function getList(orderId){
+			var liItem = "";
+			$.get("{{url('api/v1/kitchen/orderSpecificOdrderDetail')}}/"+orderId,
+			function(returnedData){
+				var temp = returnedData["data"];
+				var isQuantityFree = 0;
+
+				for (var i=0;i<temp.length;i++){
+					liItem += "<tr>";
+					liItem += "<td>"+temp[i]["customer_order_id"]+"</td>";
+					liItem += "<td>"+temp[i]["product_quality"]+"</td>";
+					liItem += "<td class='qty-loyalty-offer'>"+temp[i]["quantity_free"]+"</td>";
+					liItem += "<td>"+temp[i]["product_name"]+"</td>";
+					if(temp[i]["product_description"] != null){
+						liItem += "<td>"+temp[i]["product_description"]+"</td>";
+					}else{
+						liItem += "<td>"+' '+"</td>";
+					}
+					liItem += "</tr>";
+
+					if(temp[i]["quantity_free"])
+					{
+						isQuantityFree = 1;
+					}
+				}
+				$("#specificOrderDetailContianer").html(liItem);
+				$("#printCopy").attr('onclick','printCopy('+orderId+');');
+
+				// Show/hide loyalty column in 'order detail' popup
+				if(!isQuantityFree)
+				{
+					$('.qty-loyalty-offer').hide();
+				}
+				else
+				{
+					$('.qty-loyalty-offer').show();
+				}
+
+				$("#popupCloseRight").popup("open");
+				var liItem = "";
+			});
+		}
+
+		function printCopy(orderId){
+			$.get("{{route('printCopy')}}?orderId="+orderId,
+			function(returnedData){
+				$("#popupCloseRight").popup("close");
+			});
 		}
 
 		$(function(){
@@ -195,14 +269,15 @@
 				      	lastOrderId = temp[i]["id"];
 				      	(function (i) {
 						    setTimeout(function () {
-			          		if(temp[i]['order_response'])
-			          		{
-			          			var time = addTimes(temp[i]['order_delivery_time'], temp[i]['deliver_time'], extra_prep_time);
-			          		}
-			          		else
-			          		{
-			          			var time = addTimes(temp[i]['deliver_time'], temp[i]['extra_prep_time']);
-			          		}
+			          		if(temp[i]['order_type'] == "eat_now"){
+						      	if(temp[i]['order_response']){
+						      		var time = addTimes(temp[i]['order_delivery_time'], temp[i]['deliver_time'], extra_prep_time);
+						      	}else{
+						      		var time = addTimes(temp[i]['deliver_time'], temp[i]['extra_prep_time']);
+						      	}
+					      	}else{
+					      		var time = addTimes(temp[i]['deliver_time']);
+					      	}
 			          		
                    			// blink image time caculator getting time based on pick up and current time
                             var today = new Date(); 
@@ -210,8 +285,13 @@
                             old_mins = time.substr(3,5);
                             var old_time = parseInt(old_hour)*60 + parseInt(old_mins);
                             var new_time = parseInt(today.getHours())*60 + parseInt(today.getMinutes())
-                            
-			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
+                            var orderIdSpecific = temp[i]["order_id"];
+                            const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
+							var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+							var orderCreateDate = new Date(temp[i]["created_at"]+' UTC');
+					        var hours = ("0" + orderCreateDate.getHours()).slice(-2);
+					        var minutes = ("0" + orderCreateDate.getMinutes()).slice(-2);
+					        var orderCreate = days[orderCreateDate.getDay()]+' '+monthNames[orderCreateDate.getMonth()]+' '+orderCreateDate.getDate()+' '+orderCreateDate.getFullYear()+' '+hours+':'+minutes;
 
 			          		if(temp[i]["order_type"] == "eat_now"){
 			          			var clsStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
@@ -225,7 +305,8 @@
 					  		}
 
 			          		liItem += "<tr class='order_id_"+temp[i]["order_id"]+" "+clsStatus+"'>";
-			          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
+					        liItem += "<th><a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>"+temp[i]["customer_order_id"]+"</a></th>";
+			          		// liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
 			          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
 			          		liItem += "<td>"+temp[i]["product_name"]+
 			          		"</td>";
@@ -259,7 +340,7 @@
 				          			liItem += "<td>"+''+"</td>";
 				          		}
 			          		}
-			          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
+			          		liItem += "<td>"+orderCreate+"</td>";
 
 			          		if(temp[i]["order_started"] == 0){
 			          			ids = temp[i]['id'];
@@ -403,23 +484,28 @@
 				      	
 				      	(function (i) {
 						    setTimeout(function () {
-						    if(temp[i]['order_response'])
-			          		{
-			          			var time = addTimes(temp[i]['order_delivery_time'], temp[i]['deliver_time'], extra_prep_time);
-			          		}
-			          		else
-			          		{
-			          			var time = addTimes(temp[i]['deliver_time'], temp[i]['extra_prep_time']);
-			          		}
-
+			          		if(temp[i]['order_type'] == "eat_now"){
+						      	if(temp[i]['order_response']){
+						      		var time = addTimes(temp[i]['order_delivery_time'], temp[i]['deliver_time'], extra_prep_time);
+						      	}else{
+						      		var time = addTimes(temp[i]['deliver_time'], temp[i]['extra_prep_time']);
+						      	}
+					      	}else{
+					      		var time = addTimes(temp[i]['deliver_time']);
+					      	}
                    			// blink image time caculator getting time based on pick up and current time
                             var today = new Date(); 
                             old_hour = time.substr(0,2);
                             old_mins = time.substr(3,5);
                             var old_time = parseInt(old_hour)*60 + parseInt(old_mins);
                             var new_time = parseInt(today.getHours())*60 + parseInt(today.getMinutes())
-        
-			          		var timeOrder = addTimes("00:00::",temp[i]["deliver_time"]);
+        					var orderIdSpecific = temp[i]["order_id"];
+        					const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
+							var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+							var orderCreateDate = new Date(temp[i]["created_at"]+' UTC');
+					        var hours = ("0" + orderCreateDate.getHours()).slice(-2);
+					        var minutes = ("0" + orderCreateDate.getMinutes()).slice(-2);
+					        var orderCreate = days[orderCreateDate.getDay()]+' '+monthNames[orderCreateDate.getMonth()]+' '+orderCreateDate.getDate()+' '+orderCreateDate.getFullYear()+' '+hours+':'+minutes;
 			          		if(temp[i]["order_type"] == "eat_now"){
 			          			var clsStatus = temp[i]["order_started"] == 0 ? 'not-started' : '';
 			          		}else{
@@ -432,7 +518,8 @@
 					  		}
 
 			          		liItem += "<tr class='order_id_"+temp[i]["order_id"]+" "+clsStatus+"'>";
-			          		liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
+			          		// liItem += "<th>"+temp[i]["customer_order_id"]+"</th>";
+			          		liItem += "<th><a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>"+temp[i]["customer_order_id"]+"</a></th>";
 			          		liItem += "<td>"+temp[i]["product_quality"]+"</td>";
 			          		liItem += "<td>"+temp[i]["product_name"]+
 			          		"</td>";
@@ -463,7 +550,7 @@
 				          			liItem += "<td>"+''+"</td>";
 				          		}
 			          		}
-			          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
+			          		liItem += "<td>"+orderCreate+"</td>";
 
 			          		if(temp[i]["order_started"] == 0){
 				          		ids = temp[i]['id'];
@@ -631,23 +718,28 @@
               
 	      	 (function (i) {
 			    setTimeout(function () {
-			    	if(list[i]['order_response'])
-	          		{
-	          			var time = addTimes(list[i]['order_delivery_time'], list[i]['deliver_time']);
-	          		}
-	          		else
-	          		{
-	          			var time = addTimes(list[i]['deliver_time'], list[i]['extra_prep_time']);
-	          		}
-
+	          		if(list[i]['order_type'] == "eat_now"){
+				      	if(list[i]['order_response']){
+				      		var time = addTimes(list[i]['order_delivery_time'], list[i]['deliver_time']);
+				      	}else{
+				      		var time = addTimes(list[i]['deliver_time'], list[i]['extra_prep_time']);
+				      	}
+			      	}else{
+			      		var time = addTimes(list[i]['deliver_time']);
+			      	}
                    	// blink image time caculator getting time based on pick up and current time
                     var today = new Date(); 
                     old_hour = time.substr(0,2);
                     old_mins = time.substr(3,5);
                     var old_time = parseInt(old_hour)*60 + parseInt(old_mins);
                     var new_time = parseInt(today.getHours())*60 + parseInt(today.getMinutes())
-                            
-			      	var timeOrder = addTimes("00:00::",list[i]["deliver_time"]);
+                	var orderIdSpecific = list[i]["order_id"];
+                	const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
+					var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+					var orderCreateDate = new Date(list[i]["created_at"]+' UTC');
+			        var hours = ("0" + orderCreateDate.getHours()).slice(-2);
+			        var minutes = ("0" + orderCreateDate.getMinutes()).slice(-2);
+			        var orderCreate = days[orderCreateDate.getDay()]+' '+monthNames[orderCreateDate.getMonth()]+' '+orderCreateDate.getDate()+' '+orderCreateDate.getFullYear()+' '+hours+':'+minutes;
 	          		if(list[i]["order_type"] == "eat_now"){
 	          			var clsStatus = list[i]["order_started"] == 0 ? 'not-started' : '';
 	          		}else{
@@ -661,6 +753,7 @@
 
 	          		liItem += "<tr class='order_id_"+list[i]["order_id"]+" "+clsStatus+"'>";
 		      		liItem += "<th>"+list[i]["customer_order_id"]+"</th>";
+		      		liItem += "<th><a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>"+list[i]["customer_order_id"]+"</a></th>";
 		      		liItem += "<td>"+list[i]["product_quality"]+"</td>";
 		      		liItem += "<td>"+list[i]["product_name"]+"</td>";
 		      		if(textSpeech == 1 && list[i]['is_speak'] == 0){
@@ -690,7 +783,7 @@
 		          			liItem += "<td>"+''+"</td>";
 		          		}
 	          		}
-		      		liItem += "<td>"+list[i]["deliver_date"]+' '+timeOrder+"</td>";
+		      		liItem += "<td>"+orderCreate+"</td>";
 		      		if(list[i]["order_started"] == 0){
 		      			ids = list[i]['id'];
                         if(list[i]['order_response'])

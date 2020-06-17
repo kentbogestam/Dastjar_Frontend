@@ -222,13 +222,14 @@
 			      		break;
 			      	}
 
-			      	if(temp[i]['order_response'])
-			      	{
-			      		var time = addTimes(temp[i]['order_delivery_time'],temp[i]['deliver_time'],extra_prep_time);
-			      	}
-			      	else
-			      	{
-			      		var time = addTimes(temp[i]['deliver_time'], temp[i]['extra_prep_time']);
+			      	if(temp[i]['order_type'] == "eat_now"){
+				      	if(temp[i]['order_response']){
+				      		var time = addTimes(temp[i]['order_delivery_time'],temp[i]['deliver_time'],extra_prep_time);
+				      	}else{
+				      		var time = addTimes(temp[i]['deliver_time'], temp[i]['extra_prep_time']);
+				      	}
+			      	}else{
+			      		var time = addTimes(temp[i]['deliver_time']);
 			      	}
                     
 //                    blink image time caculator getting time based on pick up and current time
@@ -238,9 +239,14 @@
                     var old_time = parseInt(old_hour)*60 + parseInt(old_mins);
                     var new_time = parseInt(today.getHours())*60 + parseInt(today.getMinutes())
                     
-	          		var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
 	          		var orderIdSpecific = temp[i]["order_id"] ;
 
+					const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
+					var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+					var orderCreateDate = new Date(temp[i]["created_at"]+' UTC');
+	                var hours = ("0" + orderCreateDate.getHours()).slice(-2);
+	                var minutes = ("0" + orderCreateDate.getMinutes()).slice(-2);
+	                var orderCreate = days[orderCreateDate.getDay()]+' '+monthNames[orderCreateDate.getMonth()]+' '+orderCreateDate.getDate()+' '+orderCreateDate.getFullYear()+' '+hours+':'+minutes;
 	          		if(temp[i]["order_type"] == "eat_now"){
 	          			var orderStatus = temp[i]["order_started"] == 0 ? 'new' : ''; // Add class 'new' until order 'started'
 	          		}else{
@@ -263,7 +269,7 @@
 	          		}
 	          		
 	          		liItem += "<td>"+temp[i]["name"]+"</td>";
-	          		liItem += "<td>"+temp[i]["deliver_date"]+' '+timeOrder+"</td>";
+	          		liItem += "<td>"+orderCreate+"</td>";
 
 	          		// Add additional column if 'kitchen' module not subscribed
 	          		@if( !Session::has('subscribedPlans.kitchen') )
@@ -414,7 +420,7 @@
 
 	          			for(var j = 0; j < orderItems.length; j++)
 	          			{
-	          				if(speakOrderItemList.indexOf(orderItems[j]['id']) == -1)
+	          				if( orderItems[j]['order_started'] == 0 && speakOrderItemList.indexOf(orderItems[j]['id']) == -1 )
 	          				{
 	          					speakOrderItemList.push(orderItems[j]['id']);
 
@@ -520,13 +526,15 @@
       	if(countCheck>limit){
       		break;
       	}
-      	if(list[i]['order_response'])
-      	{
-      		var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
-      	}
-      	else
-      	{
-      		var time = addTimes(list[i]["deliver_time"], list[i]['extra_prep_time']);
+      	
+      	if(list[i]['order_type'] == "eat_now"){
+	      	if(list[i]['order_response']){
+	      		var time = addTimes(list[i]["order_delivery_time"],list[i]["deliver_time"]);
+	      	}else{
+	      		var time = addTimes(list[i]["deliver_time"], list[i]['extra_prep_time']);
+	      	}
+      	}else{
+      		var time = addTimes(list[i]['deliver_time']);
       	}
 
 //      blink image time caculator getting time based on pick up and current time
@@ -535,9 +543,13 @@
         old_mins = time.substr(3,5);
         var old_time = parseInt(old_hour)*60 + parseInt(old_mins);
         var new_time = parseInt(today.getHours())*60 + parseInt(today.getMinutes())
-      	var timeOrder = addTimes("00:00:00",list[i]["deliver_time"]);
       	var orderIdSpecific = list[i]["order_id"] ;
-
+      	const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
+		var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+		var orderCreateDate = new Date(list[i]["created_at"]+' UTC');
+        var hours = ("0" + orderCreateDate.getHours()).slice(-2);
+        var minutes = ("0" + orderCreateDate.getMinutes()).slice(-2);
+        var orderCreate = days[orderCreateDate.getDay()]+' '+monthNames[orderCreateDate.getMonth()]+' '+orderCreateDate.getDate()+' '+orderCreateDate.getFullYear()+' '+hours+':'+minutes;
       	if(list[i]["order_type"] == "eat_now"){
   			var orderStatus = list[i]["order_started"] == 0 ? 'new' : ''; // Add class 'new' until order 'started'
   		}else{
@@ -555,7 +567,7 @@
   		liItem += list[i]["customer_order_id"]
   		liItem += "</a></th>";
   		liItem += "<td>"+list[i]["name"]+"</td>";
-  		liItem += "<td>"+list[i]["deliver_date"]+' '+timeOrder+"</td>";
+  		liItem += "<td>"+orderCreate+"</td>";
   		
   		// Add additional column if 'kitchen' module not subscribed
   		@if( !Session::has('subscribedPlans.kitchen') )
@@ -764,20 +776,15 @@
 		function(returnedData){
 			if(returnedData.status)
 			{
-				$('body').find('#'+id).parent("a").attr('onclick',' ');
-				if(returnedData.order.delivery_type == 3 && driverapp)
-				{
-					$('body').find('#'+id+'ready').parent("a").attr('onclick','popupOrderAssignDriver('+id+', false)');
-				}
-				else
-				{
-					$('body').find('#'+id+'ready').parent("a").attr('onclick','makeOrderReady('+id+')');
-				}
 				$This.closest('tr').removeClass('not-started');
                 $This.closest('tr').removeClass('news');
              	// change red blinker to gray circle and remove class new form its table row tr element
                 $This.parents('tr').removeClass('new');
-                $This.parents('tr').find('.ready_class').html("<a data-ajax='false' href="+urlReadyOrder+"/"+id+"><img class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>");
+                if(returnedData.order.delivery_type == 3 && driverapp){
+                	$This.parents('tr').find('.ready_class').html("<a data-ajax='false' onclick='popupOrderAssignDriver("+id+", false)'><img id='#"+id+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>");
+                }else{
+                	$This.parents('tr').find('.ready_class').html("<a data-ajax='false' onclick='makeOrderReady("+id+")'><img id='#"+id+"ready' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>");
+                }
 				$('body').find('#'+id).parents('td').html("<a><img src='{{asset('kitchenImages/right_sign.png')}}'></a>");
 				clearSpeakTextInterval();
 			}

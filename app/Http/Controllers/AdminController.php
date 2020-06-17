@@ -1003,32 +1003,29 @@ class AdminController extends Controller
         }
 
         // Store printer setting
-        if($data['mac_address'] && $data['mac_address'] != null)
+        if(StorePrinter::where(['store_id' => Session::get('kitchenStoreId'), 'status' => '1'])->count())
         {
-            if(StorePrinter::where(['store_id' => Session::get('kitchenStoreId'), 'status' => '1'])->count())
-            {
-                // Update printer setting
-                StorePrinter::where(['store_id' => Session::get('kitchenStoreId'), 'status' => '1'])
-                    ->update(['printer_type' => $data['printer_type'], 'mac_address' => $data['mac_address'], 'print_copy' => $data['print_copy']]);
-            }
-            else
-            {
-                // Create printer
-                $helper = new Helper();
+            // Update printer setting
+            StorePrinter::where(['store_id' => Session::get('kitchenStoreId'), 'status' => '1'])
+                ->update(['printer_type' => $data['printer_type'], 'mac_address' => $data['mac_address'], 'print_copy' => $data['print_copy']]);
+        }
+        elseif($data['mac_address'] && $data['mac_address'] != null)
+        {
+            // Create printer
+            $helper = new Helper();
+            $id = $helper->uuid();
+
+            while(StorePrinter::where('id', $id)->exists()){
                 $id = $helper->uuid();
-
-                while(StorePrinter::where('id', $id)->exists()){
-                    $id = $helper->uuid();
-                }
-
-                StorePrinter::create(array(
-                    'id' => $id,
-                    'store_id' => Session::get('kitchenStoreId'),
-                    'printer_type' => $data['printer_type'],
-                    'mac_address' => $data['mac_address'],
-                    'print_copy' => $data['print_copy'],
-                ));
             }
+
+            StorePrinter::create(array(
+                'id' => $id,
+                'store_id' => Session::get('kitchenStoreId'),
+                'printer_type' => $data['printer_type'],
+                'mac_address' => $data['mac_address'],
+                'print_copy' => $data['print_copy'],
+            ));
         }
 
         return redirect()->back()->with('success', 'Setting updated successfully.');
@@ -2875,6 +2872,20 @@ class AdminController extends Controller
         // Update store's 'islive'
         Helper::updateStoreIslive($storeId);
 
+        $stores[] = $storeId;
+
+        // Get virtual restaurant if mapped
+        $storeMapping = StoreVirtualMapping::where('store_id', $storeId)
+            ->get();
+
+        if($storeMapping)
+        {
+            foreach($storeMapping as $row)
+            {
+                $stores[] = $row['virtual_store_id'];
+            }
+        }
+
         // 
         $deliveryDate = Carbon::now()->subDays(1)->toDateString();
         $deliveryDateTill = Carbon::now()->toDateString();
@@ -2883,10 +2894,12 @@ class AdminController extends Controller
         $orderDetails = OrderDetail::select('order_details.id', 'order_details.product_quality', 'order_details.product_description', 'order_details.is_speak', 'product.product_name', 'orders.delivery_timestamp', 'orders.created_at', 'orders.online_paid', 'orders.catering_order_status')
             ->join('orders', 'orders.order_id', '=', 'order_details.order_id')
             ->join('product', 'product.product_id', '=', 'order_details.product_id')
-            ->where('orders.store_id', $storeId)
-            ->where('user_type', 'customer')
-            ->where('check_deliveryDate', '>=', date("Y-m-d", time()))
+            ->whereIn('orders.store_id', $stores)
+            ->where(['user_type' => 'customer', 'orders.order_started' => '0', 'orders.paid' => '0'])
+            ->where('orders.check_deliveryDate', '>=', date("Y-m-d"))
+            ->where('orders.check_deliveryDate', '<=', date("Y-m-d",strtotime("+1 day")))
             ->where('orders.cancel','!=', 1)
+            ->where('orders.is_verified', '1')
             ->get();
             $orderIds = array();
             if(!empty($orderDetails->toArray())){
@@ -2896,7 +2909,7 @@ class AdminController extends Controller
                             $orderIds[] = $ord->id;
                         }
                     }else{
-                        if($ord->order_started == '0' && $ord->online_paid != '2'){
+                        if($ord->online_paid != '2'){
                             $orderIds[] = $ord->id;
                         }
                     }

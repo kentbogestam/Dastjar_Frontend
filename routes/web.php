@@ -131,13 +131,13 @@ Route::post('address-verify', 'OrderController@addressVerify');
 Route::get('delete-user-address/{id}', 'OrderController@deleteUserAddress');
 Route::post('update-order-user-address', 'OrderController@updateOrderUserAddress');
 Route::get('get-home-delivery-part-content/{order_id}', 'OrderController@getHomeDeliveryPartContent');
-Route::get('smsOverPhone/{order_id}', 'OrderController@smsOverPhone');
 // Route::post('apply-promocode', 'OrderController@ajaxApplyPromocode');
 
 // 
 Route::group(['middleware' => ['auth']], function(){
 	Route::get('blank-view', 'HomeController@blankView');
 	Route::get('order-view/{OrderId}', 'OrderController@orderView')->name('order-view');
+	Route::get('order-confirmation-status/{OrderId}', 'OrderController@orderConfirmationStatus')->name('order-confirmation-status');
 	Route::get('track-order/{orderId}', 'OrderController@trackOrder');
 	Route::get('get-driver-position/{orderId}', 'OrderController@getDriverPosition');
 	Route::get('check-if-order-accepted/{orderId}', 'OrderController@checkIfOrderAccepted');

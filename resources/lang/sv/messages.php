@@ -121,7 +121,9 @@ return [
     'deleteAlert'=>'Är du säker på att du vill radera :item?',
     'Swedish' => 'Svenska',
     'Message' => 'Meddelande',
-   'Contact Us Placeholder' => 'Skriv till oss och lägg till din e-mail address.',
+   'Contact Us Placeholder' => 'Skriv till oss',
+   'enterName' => 'Skriv namn',
+    'enterEmail' => 'Skriv in e-mail',
     'Terms and Conditions' => 'Villkor',
     'Extra Preparation Time' => 'Öka beredningstid',
     'Support' => 'Support/ Hjälp',
@@ -393,7 +395,6 @@ return [
     'deliveryAtDoor' => 'Lämna vid dörren',
     'orderDeliveryAtDoor' => 'Din beställning är nu levererad till din dörr! Tack för beställningen och Välkommen tillbaka!',
     'deliverAtDoor' => '||Leverera till dörren||',
-    'doYouWantsToShareOverPhone' => 'Vill du dela information på telefon',
-    '10digitNumber' => 'Ditt 10-siffriga nummer',
-    'deliverOn' => 'Lverans den:'
+    'deliverOn' => 'Lverans den:',
+    'zip' => 'postnr'
 ];

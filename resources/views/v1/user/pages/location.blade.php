@@ -40,6 +40,10 @@
 
 @section('footer-script')
 	<script type="text/javascript">
+        @if(isset($_GET['k']))
+            var k = "{{ $_GET['k'] }}";
+        @endif
+
 		$(function(){
             // Check if its IOS native
             @if( ((strpos(\Request::server('HTTP_USER_AGENT'), 'Mobile/') !== false) && (strpos(\Request::server('HTTP_USER_AGENT'), 'Safari/') == false)) )
@@ -51,7 +55,7 @@
                     console.log("longitude=" + position.coords.longitude);
                 },function(error){
                     if (typeof loc_lat === "undefined" || loc_lat == "") {
-                        if (!getCookie("latitude")){
+                        if (!getCookie("latitude") && typeof k === "undefined"){
                             $('.login-inner-section a').attr('href','javascript:void(0)');
                             $('#login-popup').modal('show');
                         }

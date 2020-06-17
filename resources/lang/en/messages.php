@@ -120,7 +120,9 @@ return [
     'alertStoreClosed' => 'We are now closed but opens again at :closeTime. Welcome back!',
     'deleteAlert' => 'Are you sure you want to delete this :item?',
     'Message' => 'Message',
-    'Contact Us Placeholder' => 'Enter your Message.Add your email for replay',
+    'Contact Us Placeholder' => 'Enter your message',
+    'enterName' => 'Enter Name',
+    'enterEmail' => 'Enter Email',
     'Terms and Conditions' => 'Terms and Conditions',
     'Extra Preparation Time' => 'Extra Preparation Time',
     'Support' => 'Support/ Help',
@@ -390,7 +392,6 @@ return [
     'deliveryAtDoor' => 'Delivery at door',
     'orderDeliveryAtDoor' => 'Your order is now delivered to your door, please pick it up! Thanks for order and Welcome back anytime!',
     'deliverAtDoor' => '||Deliver at Door||',
-    'doYouWantsToShareOverPhone' => 'Do you wants to share detail on phone',
-    '10digitNumber' => 'Your 10 digit number',
-    'deliverOn' => 'Deliver On:'
+    'deliverOn' => 'Deliver On:',
+    'zip' => 'zip'
 ];

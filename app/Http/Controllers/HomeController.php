@@ -253,38 +253,34 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         // Artisan::call('view:clear');
-        // dd(Session::all());
-       session()->forget('people_serve');
-       session()->forget('orderOption');
-       if($request->session()->get('type_selection') == null){ //code added by saurabh to render the view for the selection of eat later nd eat now
-         // return view('includes.popupSelection', compact(''));
-         return view('v1.user.pages.home');
-       }else{
+        session()->forget('people_serve');
+        session()->forget('orderOption');
+       
         // Forget 'iFrameMenu' to say menu is not loading in 'homepage'
         $request->session()->forget('iFrameMenu');
 
-        $request->session()->put('route_url', url('/').'/eat-now'); // code added by saurabh to update correct url for eat-later and eat-now
+        // code added by saurabh to update correct url for eat-later and eat-now
+        $request->session()->put('route_url', url('/').'/eat-now');
+
         if(Auth::check()){
             $versionDetail = WebVersion::orderBy('created_at', 'DESC')->first();
             $userDetail = User::whereId(Auth()->id())->first();
             if($userDetail->web_version == null){
                 DB::table('customer')->where('id', Auth::id())->update(['web_version' => $versionDetail->version,]);
-                // return view('index', compact(''));
+                
                 return view('v1.user.pages.eat-now');
             }else if($userDetail->web_version != $versionDetail->version){
                 DB::table('customer')->where('id', Auth::id())->update(['web_version' => $versionDetail->version,]);
                 Auth::logout();
+                
                 return redirect('/login')->with('success', 'App version is updated.Please login again');
             }else{
-                // return view('index', compact(''));
                 return view('v1.user.pages.eat-now');
             }
         }else{
-            // return view('index', compact(''));
             return view('v1.user.pages.eat-now');
         }
     }
-}
 
     public function blankView(){
         // return view('blankPage');
@@ -763,17 +759,67 @@ class HomeController extends Controller
         // return view('select-datetime', compact('')); 
         return view('v1.user.pages.select-datetime');
     }
-	
-	public function contact_us(Request $request){        
-        $data = array('msg'=>$request->message);
+    
+    public function contact_us(Request $request){
+        $validatorArr = array('message' => 'required');
 
-        $headers = "MIME-Version: 1.0\r\n";
-        $headers .= "Content-type: text/html; charset=iso-8859-1\r\n";   
-        $headers .='X-Mailer: PHP/' . phpversion();
-        $headers .= "From: Anar <admin@dastjar.com> \r\n"; // header of mail content
+        if(!Auth::check())
+        {
+            $validatorArr['name'] = 'required';
+            $validatorArr['email'] = 'required';
+        }
 
-        mail('info@dastjar.com', 'Dastjar Contact Mail', $request->message, $headers);
+        // Validation
+        $validator = \Validator::make($request->all(), $validatorArr);
 
+        $data = $request->all();
+        $template = '';
+
+        // 
+        if(Auth::check())
+        {
+            $user = User::whereId(Auth()->id())->first();
+
+            if($user)
+            {
+                if( !is_null($user['name']) )
+                {
+                    $template .= '<p><strong>Name: </strong>'.$user['name'].'</p>';
+                }
+
+                if( !is_null($user['email']) )
+                {
+                    $template .= '<p><strong>Email: </strong>'.$user['email'].'</p>';
+                }
+
+                if( !is_null($user['phone_number']) )
+                {
+                    $template .= '<p><strong>Phone: </strong>'.$user['phone_number_prifix'].' '.$user['phone_number'].'</p>';
+                }
+            }
+        }
+        else
+        {
+            if($request->has('name'))
+            {
+                $template .= '<p><strong>Name: </strong>'.$data['name'].'</p>';
+            }
+
+            if($request->has('email'))
+            {
+                $template .= '<p><strong>Email: </strong>'.$data['email'].'</p>';
+            }
+        }
+
+        $template .= '<p><strong>Message: </strong>'.$data['message'].'</p>';
+
+        $to = array('info@dastjar.com');
+        $subject = 'Dastjar Contact Mail';
+
+        $helper = new Helper();
+        $helper->awsSendEmail($to, $subject, $template);
+
+        // 
         return redirect()->back();
     }
 

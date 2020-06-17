@@ -599,34 +599,40 @@
 
 		return false;
 	});
+	
+	function orderConfirmationStatus(order_id)
+	{
+		$.ajax({
+			url : "{{url('order-confirmation-status').'/'.$order->order_id}}",
+			type : 'get',
+			data : {
+				'eatLater' : '0'
+			},
+			success: function(data, status){
+				window.location.href = "{{url('order-view').'/'.$order->order_id}}";
+			}
+		});
+	}
 
 	// 
 	$('.send-order').on('click', function() {
-		if($('input[name=delivery_type]:checked').val() == '3')
-		{
-			if($('#frm-user-address').length && $('input[name=user_address_id]:checked').length)
-			{
-				window.location.href = "{{url('order-view').'/'.$order->order_id}}";
+		if($('input[name=delivery_type]:checked').val() == '3'){
+			if($('#frm-user-address').length && $('input[name=user_address_id]:checked').length){
+				orderConfirmationStatus({{$order->order_id}});
 			}
-		}
-		else
-		{
-			window.location.href = "{{url('order-view').'/'.$order->order_id}}";
+		}else{
+			orderConfirmationStatus({{$order->order_id}});
 		}
 	});
 
 	// 
 	$('.send-order-confirmation').on('click', function() {
-		if($('input[name=delivery_type]:checked').val() == '3')
-		{
-			if($('#frm-user-address').length && $('input[name=user_address_id]:checked').length)
-			{
-				window.location.href = "{{url('order-view').'/'.$order->order_id}}";
+		if($('input[name=delivery_type]:checked').val() == '3'){
+			if($('#frm-user-address').length && $('input[name=user_address_id]:checked').length){
+				orderConfirmationStatus({{$order->order_id}});
 			}
-		}
-		else
-		{
-			window.location.href = "{{url('order-view').'/'.$order->order_id}}";
+		}else{
+			orderConfirmationStatus({{$order->order_id}});
 		}
 	});
 
@@ -741,7 +747,7 @@
 			} else {
 				// Show success message
 				$('.row-new-card').find('div.card-errors').html('');
-				AskPhoneForInfo();
+				window.location.href = "{{ url('order-view/'.$order->order_id) }}";
 			}
 		}
 
@@ -830,7 +836,7 @@
 			} else {
 				// Show success message
 				$('.row-saved-cards').find('div.card-errors').html('');
-				AskPhoneForInfo();
+				window.location.href = "{{ url('order-view/'.$order->order_id) }}";
 			}
 		}
 
@@ -903,45 +909,5 @@
 		    }, 'slow');
 		});
 	@endif
-
-	function AskPhoneForInfo(){
-		//send sms to user when its dine-in or take-away not home-delivery
-		if($('input[name=delivery_type]:checked').val() != '3'){
-			// var nmbr;
-			// var phone = "{{@$order->phone_number}}";
-			var msg = "{{ __('messages.doYouWantsToShareOverPhone') }}?";
-			// msg += "</p><br><input type='text' id='askphone' value='' placeholder='{{__('messages.10digitNumber')}}' class='form-control'>";
-
-			// if(phone == '' || phone == null){
-				
-			// }else{
-			// 	nmbr = "+{{@$order->phone_number_prifix}} {{@$order->phone_number}}";
-			// }
-
-			$('.confirm-text').html(msg);
-			$('#myConfirmBtn').trigger('click');
-	        $('.confirm-conti').on('click', function(){
-	        	$('#loading-img').css("display", "block");
-	        	$.ajax({
-					url: "{{ url('smsOverPhone') }}/{{$order->order_id}}",
-					// data:{
-					// 	'nmbr':nmbr,
-					// 	'nmbr':$('#askphone').val(),
-					// }
-					type: 'get',
-					success: function(data, status) {
-						console.log(data)
-					}
-				});
-				// return false;
-	        	window.location.href = "{{ url('order-view/'.$order->order_id) }}";
-	        });
-	        $('.confirm-close').on('click', function(){
-	        	window.location.href = "{{ url('order-view/'.$order->order_id) }}";
-	        });
-		}else{
-			window.location.href = "{{ url('order-view/'.$order->order_id) }}";
-		}
-	}
 </script>
 @endsection

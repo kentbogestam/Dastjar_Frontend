@@ -1,6 +1,8 @@
 @extends('v1.user.layouts.master')
 
 @section('head-scripts')
+<script src="{{asset('js/restolist/resturantSelection.js?v=11')}}"></script>
+
 <script src="{{asset('js/restolist/fingerprint2.min.js')}}"></script>
 <script src="{{asset('notifactionJs/App42-all-3.1.min.js')}}"></script>
 <script src="{{asset('notifactionJs/SiteTwo.js')}}"></script>
@@ -10,7 +12,7 @@
 <script src="{{asset('addToHomeIphoneJs/addtohomescreen.js')}}"></script>
 <script src="{{asset('kitchenJs/moment-with-locales.min.js')}}"></script>
 <script src="{{asset('js/restolist/moment-timezone-with-data.min.js')}}"></script>
-<script src="{{asset('js/restolist/restrolist.js')}}"></script>
+<script src="{{asset('js/restolist/restrolist.js?v=1')}}"></script>
 <script src="{{asset('js/restolist/restroListCommon.js')}}"></script>
 <script src="{{ asset('locationJs/currentLocation.js') }}"></script>
 
@@ -18,6 +20,15 @@
 	var noImageUrl = "{{ url('images/placeholder-image.png') }}";
 	var constUrlLatLng = "{{ url('lat-long') }}";
 	var constUrlRestaurantMenu = "{{ url('restro-menu-list/') }}";
+
+	// Call geolocation API and set updated position
+	if(!getCookie("latitude") && !getCookie("longitude"))
+	{
+		setCurrentLatLong("{{ url('update-location') }}");
+
+		// Set default type store 'eatnow/eatlater'
+		setResttype("{{ url('setResttype') }}", 'eatnow');
+	}
 </script>
 @endsection
 
@@ -85,7 +96,11 @@
 	});
 
 	$(function(){
-		getPos("{{url('lat-long')}}","{{url('restro-menu-list/')}}",noImageUrl);
+		if( (getCookie("latitude") && getCookie("longitude")) || (loc_lat && loc_lng) )
+		{
+			getPos("{{url('lat-long')}}","{{url('restro-menu-list/')}}",noImageUrl);
+		}
+		
 		checkUserLogin("{{url('checkUserLogin')}}");
 	});
 

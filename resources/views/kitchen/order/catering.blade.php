@@ -379,25 +379,23 @@
         }
         
 		function removeOrder(orderID,user_id){
-            if(confirm("Do you really wants to delete ?")){
-                $('#overlay').css("display", "block");
-                $('#loading-img').css("display", "block");
-                $.post("{{url('kitchen/remove-order')}}",
-                    {"_token":"{{ csrf_token() }}","order_id":orderID,"user_id":user_id},
-                    function(returnedData){                    
-                        $(".order_id_"+orderID).remove();
-                        $('#loading-img').css("display", "none");
-                        $('#overlay').css("display", "none");
-                        $('.ready_notifications span').html('Order Cancelled Successfully.');
-                        $('.ready_notifications').show();
+            $('#overlay').css("display", "block");
+            $('#loading-img').css("display", "block");
+            $.post("{{url('kitchen/remove-order')}}",
+                {"_token":"{{ csrf_token() }}","order_id":orderID,"user_id":user_id},
+                function(returnedData){                    
+                    $(".order_id_"+orderID).remove();
+                    $('#loading-img').css("display", "none");
+                    $('#overlay').css("display", "none");
+                    $('.ready_notifications span').html('Order Cancelled Successfully.');
+                    $('.ready_notifications').show();
 
-                        setTimeout(
-                            function(){
-                                $('.ready_notifications').hide();
-                        }, 3000);
-                    }
-                );
-            }
+                    setTimeout(
+                        function(){
+                            $('.ready_notifications').hide();
+                    }, 3000);
+                }
+            );
 		}
         
         $(function(){
@@ -435,9 +433,14 @@
         function htmlData(start,count,temp)
         {
             var liItem;
+            const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
+            var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
             for (var i=0;i<count;i++){
                 var time = addTimes(temp[i]["order_delivery_time"],temp[i]["deliver_time"]);
-                var orderCreate = temp[i]["created_at"];
+                var orderCreateDate = new Date(temp[i]["created_at"]+' UTC');
+                var hours = ("0" + orderCreateDate.getHours()).slice(-2);
+                var minutes = ("0" + orderCreateDate.getMinutes()).slice(-2);
+                var orderCreate = days[orderCreateDate.getDay()]+' '+monthNames[orderCreateDate.getMonth()]+' '+orderCreateDate.getDate()+' '+orderCreateDate.getFullYear()+' '+hours+':'+minutes;
                 var timeOrder = addTimes("00:00:00",temp[i]["deliver_time"]);
                 var leng = temp[i]['orderdetail_detail'].length;
                 var totalprice = 0;
@@ -450,12 +453,12 @@
                 }
                 
                 var catering_paid_status = list[i]["online_paid"];
-                if(catering_paid_status == '0'){
-                    paidOrNot = 'Not Paid';
-                    paid_status = '<img src="{{asset('kitchenImages/subs_sign.png')}}">';
-                }else if(catering_paid_status == '1'){
+                if(catering_paid_status == '1'){
                     paidOrNot = 'Paid';
                     paid_status = '<img src="{{asset('kitchenImages/right_sign.png')}}">';
+                }else if(catering_paid_status == '4'){
+                    paidOrNot = 'Not Paid';
+                    paid_status = '<img src="{{asset('kitchenImages/yellow_right_sign.png')}}">';
                 }else{
                     paidOrNot = 'Not Paid';
                     paid_status = '<img src="{{asset('kitchenImages/subs_sign.png')}}">';
@@ -468,8 +471,7 @@
                         order_status = '<img src="{{asset('kitchenImages/red_right_sign.png')}}">';
                     }else{
                         order_status = '<img src="{{asset('kitchenImages/red_right_sign.png')}}" onclick="acceptRejectOrder('+temp[i]['order_id']+')">';
-                    }
-                    
+                    }  
                 }
 
                 if(catering_order_status == '2'){
@@ -509,7 +511,7 @@
                 if(temp[i]["cancel"] > 1){
                     liItem += "<td>"+"<span class='fa fa-times-circle fa-2x red' onclick='removeOrder("+temp[i]["order_id"]+","+temp[i]["user_id"]+")'>"+"</span>"+"</td>";	
                 }else{
-                    liItem += "<td>"+"<span class='fa fa-times-circle fa-2x grey'>"+"</span>"+"</td>";
+                    liItem += "<td></td>";
                 }
                 liItem += "</tr>";
             }
