@@ -759,17 +759,67 @@ class HomeController extends Controller
         // return view('select-datetime', compact('')); 
         return view('v1.user.pages.select-datetime');
     }
-	
-	public function contact_us(Request $request){        
-        $data = array('msg'=>$request->message);
+    
+    public function contact_us(Request $request){
+        $validatorArr = array('message' => 'required');
 
-        $headers = "MIME-Version: 1.0\r\n";
-        $headers .= "Content-type: text/html; charset=iso-8859-1\r\n";   
-        $headers .='X-Mailer: PHP/' . phpversion();
-        $headers .= "From: Anar <admin@dastjar.com> \r\n"; // header of mail content
+        if(!Auth::check())
+        {
+            $validatorArr['name'] = 'required';
+            $validatorArr['email'] = 'required';
+        }
 
-        mail('info@dastjar.com', 'Dastjar Contact Mail', $request->message, $headers);
+        // Validation
+        $validator = \Validator::make($request->all(), $validatorArr);
 
+        $data = $request->all();
+        $template = '';
+
+        // 
+        if(Auth::check())
+        {
+            $user = User::whereId(Auth()->id())->first();
+
+            if($user)
+            {
+                if( !is_null($user['name']) )
+                {
+                    $template .= '<p><strong>Name: </strong>'.$user['name'].'</p>';
+                }
+
+                if( !is_null($user['email']) )
+                {
+                    $template .= '<p><strong>Email: </strong>'.$user['email'].'</p>';
+                }
+
+                if( !is_null($user['phone_number']) )
+                {
+                    $template .= '<p><strong>Phone: </strong>'.$user['phone_number_prifix'].' '.$user['phone_number'].'</p>';
+                }
+            }
+        }
+        else
+        {
+            if($request->has('name'))
+            {
+                $template .= '<p><strong>Name: </strong>'.$data['name'].'</p>';
+            }
+
+            if($request->has('email'))
+            {
+                $template .= '<p><strong>Email: </strong>'.$data['email'].'</p>';
+            }
+        }
+
+        $template .= '<p><strong>Message: </strong>'.$data['message'].'</p>';
+
+        $to = array('info@dastjar.com');
+        $subject = 'Dastjar Contact Mail';
+
+        $helper = new Helper();
+        $helper->awsSendEmail($to, $subject, $template);
+
+        // 
         return redirect()->back();
     }
 

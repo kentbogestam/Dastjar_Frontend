@@ -223,26 +223,31 @@
 	@endif
 	
 	<div id="contact-setting-list" class="setting-list">
-			<ul data-role="listview"> 
-				<li data-role="collapsible" class="range-sec">
-
-					<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Contact Us') }}						
-					</h2>
-					<div>
-						<label class="msg-lbl"><h2>{{ __('messages.Message') }}</h2></label>
-					</div>
-
-					<div data-role="controlgroup">
-						<form method="post" action="{{ url('contact-us') }}" data-ajax="false">
-							{{ csrf_field() }}
-							<textarea type="text" name="message" placeholder="{{ __('messages.Contact Us Placeholder') }}" class="msg-txt" required></textarea>
-							<button type="submit" class="btn btn-success">{{ __('messages.Send') }}</button>		
-						</form>
-					</div>
-			
-
-				</li> 
-			</ul> 
+		<ul data-role="listview">
+			<li data-role="collapsible" class="range-sec">
+				<h2  class="ui-btn ui-btn-icon-right ui-icon-carat-r">{{ __('messages.Contact Us') }}</h2>
+				<div>
+					<label class="msg-lbl"><h2>{{ __('messages.Message') }}</h2></label>
+				</div>
+				<div data-role="controlgroup">
+					<form method="post" action="{{ url('contact-us') }}" data-ajax="false">
+						{{ csrf_field() }}
+						@if(!Auth::check())
+							<div class="ui-grid-a">
+								<div class="ui-block-a" style="padding: 0 5px 0 0;">
+									<input type="text" name="name" id="name" placeholder="{{ __('messages.enterName') }}" required>
+								</div>
+								<div class="ui-block-b" style="padding: 0 0 0 5px;">
+									<input type="text" name="email" id="email" placeholder="{{ __('messages.enterEmail') }}" required>
+								</div>
+							</div>
+						@endif
+						<textarea type="text" name="message" placeholder="{{ __('messages.Contact Us Placeholder') }}" class="msg-txt" required></textarea>
+						<button type="submit" class="btn btn-success">{{ __('messages.Send') }}</button>
+					</form>
+				</div>
+			</li>
+		</ul>
 	</div>
 
 	<div class="setting-list">
