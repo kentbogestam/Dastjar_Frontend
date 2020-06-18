@@ -1,5 +1,5 @@
 <div class="row" style="padding: 10px 0">
-    @if($storeDetail->online_payment == 1)
+    @if( $isPaymentPackageSubscribed )
 		<div class="col-md-12 text-center">
 			<button type="button" class="btn btn-pay btn-success" disabled="">{{ __('messages.proceedToPay') }}</button>
 		</div>
