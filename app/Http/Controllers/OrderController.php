@@ -93,6 +93,9 @@ class OrderController extends Controller
 
         if($order)
         {
+            $isPaymentPackageSubscribed = Helper::isPackageSubscribed(5);
+            $isHomeDeliveryPackageSubscribed = Helper::isPackageSubscribed(12);
+
             if($order->delivery_timestamp < (strtotime($order->created_at) + 86400)){
                 $chkvar = '2';
             }else{
@@ -192,7 +195,7 @@ class OrderController extends Controller
             }
 
             // return view('order.index', compact('order','orderDetails', 'orderInvoice','storeDetail','user'));
-            return view('v1.user.pages.view-order', compact('order','orderDetails', 'orderInvoice','storeDetail','user', 'paymentMethod'));
+            return view('v1.user.pages.view-order', compact('order','orderDetails', 'orderInvoice','storeDetail','user', 'paymentMethod', 'isPaymentPackageSubscribed', 'isHomeDeliveryPackageSubscribed'));
         }
     }
 
@@ -644,6 +647,8 @@ class OrderController extends Controller
             $i = 0;
             $total_price = $final_order_total = 0;
             $max_time = "00:00:00";
+            $isPaymentPackageSubscribed = Helper::isPackageSubscribed(5);
+            $isHomeDeliveryPackageSubscribed = Helper::isPackageSubscribed(12);
             
             if($request->session()->get('order_date') != null){
                 $pieces = explode(" ", $request->session()->get('order_date'));
@@ -875,7 +880,7 @@ class OrderController extends Controller
                 ->toArray();
             
             // Check if store support 'home delivery'
-            if( !empty($store_delivery_type) && in_array(3, $store_delivery_type) && Helper::isPackageSubscribed(12) )
+            if( !empty($store_delivery_type) && in_array(3, $store_delivery_type) && $isHomeDeliveryPackageSubscribed )
             {
                 $option = array('order_id' => $orderId, 'final_order_total' => $final_order_total);
                 $homeDelivery = $this->applyHomeDeliveryPriceModel($option);
@@ -907,8 +912,8 @@ class OrderController extends Controller
             $request->session()->put('currentOrderId', $order->order_id);
 
             //If store support ontine payment then if condition run.
-            if( ($storeDetail->online_payment == 1) || (Helper::isPackageSubscribed(5)) ){
-//                $request->session()->put('paymentmode',1);
+            if( $isPaymentPackageSubscribed ){
+                // $request->session()->put('paymentmode',1);
                 $request->session()->put('paymentAmount', $order->final_order_total);
                 $request->session()->put('OrderId', $order->order_id);
 
@@ -921,7 +926,7 @@ class OrderController extends Controller
                     $request->session()->put('stripeAccount', $companyUserDetail->stripe_user_id);
                 }
             }else{
-//                $request->session()->put('paymentmode',0);
+                // $request->session()->put('paymentmode',0);
             }
 
             // Get customer's Stripe 'PaymentMethod'
@@ -933,7 +938,7 @@ class OrderController extends Controller
             }
 
             // return view('order.cart', compact('order','orderDetails', 'customerDiscount', 'user', 'orderInvoice', 'storedetails', 'store_delivery_type', 'paymentMethod'));
-            return view('v1.user.pages.cart', compact('order','orderDetails', 'customerDiscount', 'user', 'orderInvoice', 'storedetails', 'storeDetail', 'store_delivery_type', 'paymentMethod'));
+            return view('v1.user.pages.cart', compact('order','orderDetails', 'customerDiscount', 'user', 'orderInvoice', 'storedetails', 'storeDetail', 'store_delivery_type', 'paymentMethod', 'isPaymentPackageSubscribed', 'isHomeDeliveryPackageSubscribed'));
         }
         else
         {
@@ -967,6 +972,9 @@ class OrderController extends Controller
      */
     function viewCart(Request $request, $orderId)
     {
+        $isPaymentPackageSubscribed = Helper::isPackageSubscribed(5);
+        $isHomeDeliveryPackageSubscribed = Helper::isPackageSubscribed(12);
+
         // 
         $orderInvoice = array();
 
@@ -1098,7 +1106,7 @@ class OrderController extends Controller
             ->toArray();
         
         // Check if store support 'home delivery'
-        if( !empty($store_delivery_type) && in_array(3, $store_delivery_type) && Helper::isPackageSubscribed(12) )
+        if( !empty($store_delivery_type) && in_array(3, $store_delivery_type) && $isHomeDeliveryPackageSubscribed )
         {
             $option = array('order_id' => $orderId, 'final_order_total' => $final_order_total);
             $homeDelivery = $this->applyHomeDeliveryPriceModel($option);
@@ -1116,8 +1124,8 @@ class OrderController extends Controller
         $user = User::find(Auth::id());
 
         //If store support ontine payment then if condition run.
-        if( ($storeDetail->online_payment == 1) || (Helper::isPackageSubscribed(5)) ){
-//            $request->session()->put('paymentmode',1);
+        if( $isPaymentPackageSubscribed ){
+            // $request->session()->put('paymentmode',1);
             $request->session()->put('paymentAmount', $order->final_order_total);
             $request->session()->put('OrderId', $order->order_id);
             $request->session()->put('paymentAmount', $final_order_total);
@@ -1131,7 +1139,7 @@ class OrderController extends Controller
         }
         else
         {
-//            $request->session()->put('paymentmode',0);
+            // $request->session()->put('paymentmode',0);
         }
 
         // Get customer's Stripe 'PaymentMethod'
@@ -1154,7 +1162,7 @@ class OrderController extends Controller
         // echo '<pre>'; print_r($orderInvoice); exit;
 
         // return view('order.cart', compact('order','orderDetails', 'customerDiscount', 'user', 'orderInvoice', 'storedetails', 'store_delivery_type', 'paymentMethod'));
-        return view('v1.user.pages.cart', compact('order','orderDetails', 'customerDiscount', 'user', 'orderInvoice', 'storedetails','storeDetail', 'store_delivery_type', 'paymentMethod'));
+        return view('v1.user.pages.cart', compact('order','orderDetails', 'customerDiscount', 'user', 'orderInvoice', 'storedetails','storeDetail', 'store_delivery_type', 'paymentMethod', 'isPaymentPackageSubscribed', 'isHomeDeliveryPackageSubscribed'));
     }
 
     /**
