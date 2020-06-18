@@ -397,7 +397,7 @@
 		intervalCheckIfOrderAccepted = setInterval(checkIfOrderAccepted, 5000);
 	@endif
     
-    @if($order->order_type == 'eat_later' && $order->online_paid == '2' && $storeDetail->online_payment == 1)
+    @if($order->order_type == 'eat_later' && $order->online_paid == '2' && $isPaymentPackageSubscribed)
         $('.btn-pay').prop('disabled',false);
     
 		// Initialize Stripe and card element

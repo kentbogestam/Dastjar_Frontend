@@ -68,7 +68,7 @@
 									</td>
 								</tr>
 							@endif
-							@if( in_array(3, $store_delivery_type) && Helper::isPackageSubscribed(12) )
+							@if( in_array(3, $store_delivery_type) && $isHomeDeliveryPackageSubscribed )
 								<tr class="row-delivery-charge {{ !isset($orderInvoice['homeDelivery']['delivery_charge']) ? 'hidden' : '' }}">
 									<td class="text-right" width="70%">DELIVERY CHARGE</td>
 									<td class="text-right" width="30%">
@@ -100,7 +100,7 @@
 			@include('v1.user.elements.cart-order-delivery-type')
           
 			{{-- If store support home delivery --}}
-			@if( in_array(3, $store_delivery_type) && Helper::isPackageSubscribed(12) )
+			@if( in_array(3, $store_delivery_type) && $isHomeDeliveryPackageSubscribed )
 				<div class="row block-address hidden"></div>
 			@endif
 			
@@ -638,7 +638,7 @@
 
 	checkDefaultDeliveryType();
 
-    @if($storeDetail->online_payment == 1)
+    @if( $isPaymentPackageSubscribed )
 		// Initialize Stripe and card element
 		var stripe = Stripe('{{ env('STRIPE_PUB_KEY') }}');
 		var stripe2;
