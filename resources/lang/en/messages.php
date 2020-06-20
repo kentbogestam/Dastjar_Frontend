@@ -391,5 +391,6 @@ return [
     'orderDeliveryAtDoor' => 'Your order is now delivered to your door, please pick it up! Thanks for order and Welcome back anytime!',
     'deliverAtDoor' => '||Deliver at Door||',
     'deliverOn' => 'Deliver On:',
-    'zip' => 'zip'
+    'zip' => 'zip',
+    'infoText' => 'On continue order will get rejected.',
 ];

@@ -25,8 +25,9 @@
 <div id="myConfirmModal" class="confirm-modal">
   <div class="confirm-modal-content">
     <p class="confirm-text"></p><br>
+    <p style="color:gray;font-size:12px">{{__('messages.infoText')}}</p>
     <button type="button" class="btn confirm-conti">{{__('messages.continue')}}</button>
-    <button type="button" class="btn confirm-close">{{__('messages.Cancel')}}</button>
+    <button type="button" class="btn confirm-close" style="background: linear-gradient(to bottom, rgba(171,8,16,1) 0%, rgba(88,12,15,1) 100%); color:white">{{__('messages.Cancel')}}</button>
   </div>
 
 </div>
