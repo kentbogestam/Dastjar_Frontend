@@ -396,4 +396,5 @@ return [
     'deliverOn' => 'Lverans den:',
     'zip' => 'postnr',
     'infoText' => 'Vid fortsättning kommer beställningen att avvisas.',
+    'return' => 'Tillbaka'
 ];

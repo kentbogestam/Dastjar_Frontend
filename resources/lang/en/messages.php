@@ -393,4 +393,5 @@ return [
     'deliverOn' => 'Deliver On:',
     'zip' => 'zip',
     'infoText' => 'On continue order will get rejected.',
+    'return' => 'Return'
 ];
