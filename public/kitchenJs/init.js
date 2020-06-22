@@ -91,7 +91,11 @@ function popupOrderAssignDriver(orderId, itemId, isReady = true)
 				}
 				else
 				{
-					alert('No driver found.')
+                    $('.ready_notifications span').html('No Driver Found.');
+                    $('.ready_notifications').show();
+                    setTimeout(function(){
+                    	$('.ready_notifications').hide();
+                    },1000);
 				}
 			}
 			else if(isReady)

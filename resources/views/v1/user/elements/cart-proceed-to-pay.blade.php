@@ -1,7 +1,7 @@
 <div class="row" style="padding: 10px 0">
-	@if(Session::get('paymentmode') !=0 && $order->final_order_total > 0)
+    @if( $isPaymentPackageSubscribed )
 		<div class="col-md-12 text-center">
-			<button type="button" class="btn btn-pay" disabled="">{{ __('messages.proceedToPay') }}</button>
+			<button type="button" class="btn btn-pay btn-success" disabled="">{{ __('messages.proceedToPay') }}</button>
 		</div>
 		<div class="col-md-12 panel panel-default row-confirm-payment hidden">
 			@if(isset($paymentMethod->data))
@@ -27,7 +27,7 @@
 							</div>
 						@endforeach
 						<div class="card-errors text-danger"></div>
-						<button type="button" id="charging-saved-cards" class="btn" style="{{ !($isCardDefault) ? 'display: none' : '' }}">{{ __('messages.paySecurely') }}</button>
+						<button type="button" id="charging-saved-cards" class="btn btn-success" style="{{ !($isCardDefault) ? 'display: none' : '' }}">{{ __('messages.paySecurely') }}</button>
 					</form>
 				</div>
 			@endif
@@ -62,7 +62,7 @@
 		</div>
 	@else
 		<div class="col-md-12 text-center">
-			<button type="button" class="btn send-order" disabled="">{{ __('messages.send order and pay in restaurant') }}</button>
+			<button type="button" class="btn btn-primary send-order" disabled="">{{ __('messages.send order and pay in restaurant') }}</button>
 		</div>
 	@endif
 </div>

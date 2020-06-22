@@ -15,6 +15,10 @@ use App\Store;
 use App\StoreVirtualMapping;
 
 // 
+use Aws\Ses\SesClient;
+use Aws\Exception\AwsException;
+
+// 
 use App\App42\PushNotificationService;
 use App\App42\DeviceType;
 use App\App42\App42Log;
@@ -26,6 +30,8 @@ use App\App42\QueryBuilder;
 use App\App42\Query;
 use App\App42\App42API;
 use App\App42\Util;
+
+use Illuminate\Support\Facades\File;
 
 class Helper extends Model
 {
@@ -567,5 +573,106 @@ class Helper extends Model
         $heartbeat = Store::select([DB::raw("TIMESTAMPDIFF(MINUTE, islive, UTC_TIMESTAMP()) AS heartbeat")])
             ->where('store_id', $storeId)->first()->heartbeat;
         return $heartbeat;
+    }
+
+    // Upload all txt file from printdata directory to printer server
+    public static function uploadPrintFile()
+    {
+        $PRINTER_BASE_URL = env('PRINTER_BASE_URL');
+        $filePath = storage_path('app/printerdata');
+        $files = File::files($filePath);
+
+        // Check if files and printer server URL exist
+        if(!empty($files) && $PRINTER_BASE_URL)
+        {
+            $fields = $arrFiles = array();
+
+            foreach($files as $file)
+            {
+                $fields[] = array(
+                    'fileName' => $file->getFilename(),
+                    'fileData' => base64_encode( file_get_contents($file->getPathname()) )
+                );
+
+                $arrFiles[] = $file->getPathname();
+            }
+
+            $fieldsString = http_build_query($fields);
+
+            // Post files to print server
+            $uploadUrl = $PRINTER_BASE_URL.'/kitchen/handle-upload.php';
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $uploadUrl);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $fieldsString);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+            $result = curl_exec($ch);
+            curl_close($ch);
+
+            // Delete files
+            File::delete($arrFiles);
+
+            return $result;
+        }
+    }
+
+    // Send email thorugh AWS PHP SDK
+    function awsSendEmail($to = array(), $subject = 'Test subject', $message = 'Test email')
+    {
+        if( is_array($to) && !empty($to) )
+        {
+            $SesClient = new SesClient([
+                'version' => '2010-12-01',
+                'region'  => env('AWS_DEFAULT_REGION'),
+                // 'profile' => 'default',
+                'credentials' => [
+                    'key' => env('AWS_ACCESS_KEY_ID'),
+                    'secret' => env('AWS_SECRET_ACCESS_KEY')
+                ]
+            ]);
+
+            // This address must be verified with Amazon SES.
+            $sender_email = 'admin@dastjar.com';
+            
+            $plaintext_body = 'This email was sent with Dastjar SES using the AWS SDK for PHP.';
+            $char_set = 'UTF-8';
+
+            try {
+                $result = $SesClient->sendEmail([
+                    'Destination' => [
+                        'ToAddresses' => $to,
+                    ],
+                    'ReplyToAddresses' => [$sender_email],
+                    'Source' => $sender_email,
+                    'Message' => [
+                      'Body' => [
+                          'Html' => [
+                              'Charset' => $char_set,
+                              'Data' => $message,
+                          ],
+                          'Text' => [
+                              'Charset' => $char_set,
+                              'Data' => $plaintext_body,
+                          ],
+                      ],
+                      'Subject' => [
+                          'Charset' => $char_set,
+                          'Data' => $subject,
+                      ],
+                    ],
+                ]);
+
+                return $result;
+            } catch (AwsException $e) {
+                // output error message if fails
+                echo $e->getMessage();
+                echo("The email was not sent. Error message: ".$e->getAwsErrorMessage()."\n");
+                echo "\n";
+            }
+        }
     }
 }
