@@ -337,13 +337,23 @@
 	    	dkS = moment($("#date-start").val(),'DD/MM/YYYY HH:mm').toDate();
 	    	dkE = moment($("#date-end").val(),'DD/MM/YYYY HH:mm').toDate();
 
+	    	TmS = moment(dkS).format("HH:mm");
+	    	TmE = moment(dkE).format("HH:mm");
+	    	
 			if(dkS>dkE){
 				alert("Publishing start date must be smaller than publishing end date");
 				return false;
 			}
 			else
 			{
-				$.post("{{url('kitchen/is-future-date-available')}}", 
+				if(TmS >= TmE)
+				{
+					alert("Publishing start time must be smaller than publishing end time");
+					return false;
+				}
+				else
+				{
+					$.post("{{url('kitchen/is-future-date-available')}}", 
 					{
 						"_token": "{{ csrf_token() }}", 
 						'product_id': $('#selected_prod_product_id').val(),
@@ -358,6 +368,7 @@
 							$('#add-dish-price-frm').submit();
 						}
 					});
+				}
 			}
 	    });
 
