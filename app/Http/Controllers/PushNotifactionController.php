@@ -117,6 +117,7 @@ class PushNotifactionController extends Controller
                         } catch (\Stripe\Error\Base $e) {
                             # Display error on client
                             $response = array('error' => $e->getMessage());
+
                             return \Redirect::back()->with($response);
                         }
                     }
