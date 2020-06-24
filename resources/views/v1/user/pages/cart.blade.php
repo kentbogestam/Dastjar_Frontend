@@ -1,7 +1,7 @@
 @extends('v1.user.layouts.master')
 
 @section('content')
-	@include('includes.confirm-modal')
+	@include('includes.phone-modal')
 	@include('v1.user.elements.store-delivery-service')
 	<div id="cart-wrapper">
 		<div class="cart-list">
@@ -929,5 +929,46 @@
 		    }, 'slow');
 		});
 	@endif
+
+	function AskPhoneForInfo(){
+		//send sms to user when its dine-in or take-away not home-delivery
+		if($('input[name=delivery_type]:checked').val() != '3'){
+			var nmbr;
+			var phone_number = "{{@$order->phone_number}}";
+			var phone_number_prifix = "{{@$order->phone_number_prifix}}";
+
+			// if no phone number then ask number
+			if(phone_number != '' && phone_number_prifix != ''){
+				$('.confirm-text2').css("display","none")
+				$('.confirm-text1').css("display","block")
+				console.log('+'+phone_number_prifix + phone_number)
+			}
+			else{
+				$('.confirm-text1').css("display","none")
+				$('.confirm-text2').css("display","block")
+				console.log('+'+phone_number_prifix + phone_number)
+			}
+
+			$('#myConfirmBtn').trigger('click');
+	        $('.confirm-conti').on('click', function(){
+	        	$('#loading-img').css("display", "block");
+	        	$.ajax({
+					url: "{{ url('smsOverPhone') }}",
+					method: 'post',
+					data:{
+						'phone_number_prifix':$('#phone_number_prifix').val(),
+						'phone_number':$('#phone_number').val(),
+						'order_number':'{{$order->order_id}}',
+					}
+				});
+	        	window.location.href = "{{ url('order-view/'.$order->order_id) }}";
+	        });
+	        $('.confirm-close').on('click', function(){
+	        	window.location.href = "{{ url('order-view/'.$order->order_id) }}";
+	        });
+		}else{
+			window.location.href = "{{ url('order-view/'.$order->order_id) }}";
+		}
+	}
 </script>
 @endsection
