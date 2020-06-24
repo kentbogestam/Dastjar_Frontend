@@ -132,6 +132,7 @@ Route::get('delete-user-address/{id}', 'OrderController@deleteUserAddress');
 Route::get('set-user-address-default/{id}', 'OrderController@setUserAddressDefault');
 Route::post('update-order-user-address', 'OrderController@updateOrderUserAddress');
 Route::get('get-home-delivery-part-content/{order_id}', 'OrderController@getHomeDeliveryPartContent');
+Route::post('smsOverPhone', 'OrderController@smsOverPhone');
 // Route::post('apply-promocode', 'OrderController@ajaxApplyPromocode');
 
 // 
