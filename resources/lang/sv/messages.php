@@ -244,6 +244,7 @@ return [
     'resendVerificationCode' => 'Skicka verifieringskoden igen',
     'invalidVerificationCode' => 'Ogiltig verifieringskod',
     'enterVerificationCode' => 'Skriv in din verifieringskod',
+    'addressSetAsDefault' => 'Välj som default',
 
     // Delivery Price Model
     'delivery_price_model' => 'Leveranspriser',
@@ -325,6 +326,7 @@ return [
     'moduleDeleted' => ':module raderat.',
     'loadingText' => 'Loading...',
     'addMore' => 'Add more',
+    'edit' => 'Editera',
 
     /**
      * Restaurant's placeholder goes here

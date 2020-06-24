@@ -335,10 +335,10 @@ function updateCart(qty,productId,totalProductPrice,grandtotal, homeDelPartCntRe
                         }
                     }
 
-                    if($('input[name=delivery_type]:checked').val() == '3' && homeDelPartCntRefresh)
+                    /*if($('input[name=delivery_type]:checked').val() == '3' && homeDelPartCntRefresh)
                     {
                         getHomeDeliveryPartContent(orderid);
-                    }
+                    }*/
                 }
             }
         },

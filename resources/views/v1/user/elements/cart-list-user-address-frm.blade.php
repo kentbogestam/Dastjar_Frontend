@@ -6,10 +6,17 @@
                 $strAddress = Helper::convertAddressToStr($address);
                 @endphp
                 <div class='col-sm-6'>
-                    <div class='added-address'>
-                        <label><input type='radio' name='user_address_id' value='{{ $address->id }}'>{{ $strAddress }}</label>
-                        <a href="javascript:void(0)" onclick="editUserAddressModal({{$address->id}});"><i class="fa fa-edit" aria-hidden="true"></i></a>
-                        <a href="javascript:void(0)" onclick="deleteUserAddress({{$address->id}});"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                    <div class='added-address list-group-item'>
+                        <label><input type='radio' name='user_address_id' value='{{ $address->id }}' {{ ($address->is_default == '1') ? 'checked' : '' }}>{{ $strAddress }}</label>
+                        <!-- <a href="javascript:void(0)" onclick="editUserAddressModal({{$address->id}});"><i class="fa fa-edit" aria-hidden="true"></i></a>
+                        <a href="javascript:void(0)" onclick="deleteUserAddress({{$address->id}});"><i class="fa fa-trash-o" aria-hidden="true"></i></a> -->
+                        <div style="margin-left: 22px;">
+                            <a href="javascript:void(0)" onclick="editUserAddressModal({{$address->id}});">{{ __('messages.edit') }}</i></a> | 
+                            <a href="javascript:void(0)" onclick="deleteUserAddress({{$address->id}});">{{ __('messages.Remove') }}</a>
+                            @if($address->is_default == '0')
+                                 | <a href="javascript:void(0)" onclick="setUserAddressDefault({{$address->id}});">{{ __('messages.addressSetAsDefault') }}</a>
+                            @endif
+                        </div>
                     </div>
                 </div>
             @endforeach

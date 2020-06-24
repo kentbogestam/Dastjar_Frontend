@@ -242,6 +242,8 @@ return [
     'resendVerificationCode' => 'Resend verification code',
     'invalidVerificationCode' => 'Invalid verification code',
     'enterVerificationCode' => 'Enter verification code',
+    'addressSetAsDefault' => 'Set as Default',
+
 
     // Delivery Price Model
     'delivery_price_model' => 'Delivery Price',
@@ -323,6 +325,7 @@ return [
     'moduleDeleted' => ':module deleted successfully.',
     'loadingText' => 'Loading...',
     'addMore' => 'Add more',
+    'edit' => 'Edit',
 
     /**
      * Restaurant's placeholder goes here

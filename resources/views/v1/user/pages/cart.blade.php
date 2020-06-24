@@ -133,16 +133,6 @@
 	});
     
     $(function(){
-        // if home delivery clicked then show delivery at door otherwise not
-        $('.delivery_type_3').on('click', function(){
-            rel = $(this).attr('rel');
-            if(rel == "3"){
-                $('.delivery_at_door').css("display","block")
-            }else{
-                $('.delivery_at_door').css("display","none")
-            }
-        });
-        
         // if delivery door clicked then change value
         $('#delivery_at_door').on('click', function(){
             if (this.checked) {
@@ -239,13 +229,17 @@
 	// Update order delivery type
 	function orderUpdateDeliveryType()
 	{
+		let deliveryType = $('input[name=delivery_type]:checked').val();
+		
 		// 
-		if($('input[name=delivery_type]:checked').val() == '3')
+		if(deliveryType == '3')
 		{
+			$('.delivery_at_door').css("display","block");
 			getHomeDeliveryPartContent($('#orderid').val());
 		}
 		else
 		{
+			$('.delivery_at_door').css("display","none");
 			$('.block-address').addClass('hidden');
 			$('.btn-pay').prop('disabled', false);
 			$('.send-order').prop('disabled', false);
@@ -265,7 +259,7 @@
 			data: {
 				'_token': "{{ csrf_token() }}",
 				'order_id': "{{ $order->order_id }}",
-				'delivery_type': $('input[name=delivery_type]:checked').val(),
+				'delivery_type': deliveryType,
 				'delivery_at_door': $('#delivery_at_door').val(),
 			},
 			dataType: 'json',
@@ -315,7 +309,10 @@
 				success: function(response) {
 					if(!response.status)
 					{
-						$('.block-address form#frm-user-address').after('<div class="col-md-12 alert alert-danger text-center error clear">'+response.msg+'</div>');
+						if( !$('.block-address').find('.addr-out-deliver-range').length )
+						{
+							$('.block-address form#frm-user-address').after('<div class="col-md-12 alert alert-danger text-center error clear addr-out-deliver-range">'+response.msg+'</div>');
+						}
 					}
 					else
 					{
@@ -559,6 +556,29 @@
 				}
 			});
 		}
+	}
+
+	// Set user address as default
+	function setUserAddressDefault(id)
+	{
+		showLoading();
+
+		$.ajax({
+			url: "{{ url('set-user-address-default') }}/"+id,
+			success: function(response) {
+				if(response.status)
+				{
+					getHomeDeliveryPartContent($('#orderid').val());
+				}
+
+				hideLoading('Processing...');
+			},
+			error: function() {
+				alert('Something went wrong, please try again!');
+
+				hideLoading('Processing...');
+			}
+		});
 	}
 
 	// Save address
