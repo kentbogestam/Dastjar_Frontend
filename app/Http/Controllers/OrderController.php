@@ -1375,10 +1375,14 @@ class OrderController extends Controller
         $status = 2; $msg = __('messages.addAddressWarning'); $addressId = null;
 
         // Allow max five address per user
-        if( UserAddress::where(['customer_id' => Auth::id(), 'status' => '1'])->count() < 5 )
-        {   
+        $userAddressCount = UserAddress::where(['customer_id' => Auth::id(), 'status' => '1'])->count();
+        if( $userAddressCount < 5 )
+        {
             // Create
             $data = $request->only(['full_name', 'phone_prefix', 'mobile', 'entry_code', 'apt_no', 'company_name', 'other_info', 'zipcode', 'address', 'street', 'city', 'country', 'is_permanent']);
+            $data['mobile'] = ltrim($data['mobile'], '0');
+            $data['mobile'] = str_replace("-", "", $data['mobile']);
+            $data['mobile'] = str_replace(" ", "", $data['mobile']);
             $data['customer_id'] = Auth::id();
 
             $userAddress = UserAddress::create($data);
@@ -1400,6 +1404,12 @@ class OrderController extends Controller
                 {
                     $status = 1; $msg = '';
                     UserAddress::where('id', $userAddress->id)->update(['status' => '1']);
+
+                    // Set user address as default if first address
+                    if(!$userAddressCount)
+                    {
+                        $this->setUserAddressDefault($userAddress->id);
+                    }
                 }
             }
         }
@@ -1445,6 +1455,9 @@ class OrderController extends Controller
         $data['full_name'] = $request->input('full_name');
         $data['phone_prefix'] = $request->input('phone_prefix');
         $data['mobile'] = $request->input('mobile');
+        $data['mobile'] = ltrim($data['mobile'], '0');
+        $data['mobile'] = str_replace("-", "", $data['mobile']);
+        $data['mobile'] = str_replace(" ", "", $data['mobile']);
         $data['entry_code'] = $request->input('entry_code');
         $data['apt_no'] = $request->input('apt_no');
         $data['company_name'] = $request->input('company_name');
@@ -1566,6 +1579,12 @@ class OrderController extends Controller
             $status = 1;
             Session::forget('addrVerificationCode');
             UserAddress::where(['id' => $request->input('address_id')])->update(['status' => '1']);
+
+            // Set user address as default if first address
+            if(UserAddress::where(['customer_id' => Auth::id(), 'status' => '1'])->count() == 1)
+            {
+                $this->setUserAddressDefault($request->input('address_id'));
+            }
         }
 
         return response()->json(['status' => $status, 'msg' => $msg]);
@@ -1587,6 +1606,25 @@ class OrderController extends Controller
                 $status = true;
                 UserAddress::where(['id' => $id,'customer_id' => Auth::id()])->delete();
             }
+        }
+
+        return response()->json(['status' => $status]);
+    }
+
+    /**
+     * Set user address as default
+     * @param [type] $id [description]
+     */
+    function setUserAddressDefault($id)
+    {
+        $status = false;
+
+        if(Auth::check())
+        {
+            $customerId = Auth::id();
+            UserAddress::where(['customer_id' => $customerId])->update(['is_default' => '0']);
+            UserAddress::where(['id' => $id, 'customer_id' => $customerId])->update(['is_default' => '1']);
+            $status = true;
         }
 
         return response()->json(['status' => $status]);

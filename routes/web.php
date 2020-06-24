@@ -129,6 +129,7 @@ Route::post('update-user-address', 'OrderController@updateUserAddress');
 Route::post('resend-address-verification-code', 'OrderController@resendAddressVerificationCode');
 Route::post('address-verify', 'OrderController@addressVerify');
 Route::get('delete-user-address/{id}', 'OrderController@deleteUserAddress');
+Route::get('set-user-address-default/{id}', 'OrderController@setUserAddressDefault');
 Route::post('update-order-user-address', 'OrderController@updateOrderUserAddress');
 Route::get('get-home-delivery-part-content/{order_id}', 'OrderController@getHomeDeliveryPartContent');
 // Route::post('apply-promocode', 'OrderController@ajaxApplyPromocode');
