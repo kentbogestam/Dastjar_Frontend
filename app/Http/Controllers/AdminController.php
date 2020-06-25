@@ -1262,16 +1262,13 @@ class AdminController extends Controller
 
                 // Get current product price detail
                 $data[$key]['current_price'] = null;
-                $current_date = Carbon::now()->format('Y-m-d');
-                $current_time = Carbon::now()->format('h:i:00');
+                $current_date = Carbon::now()->format('Y-m-d h:i:00');
 
                 $currentProductPrice = ProductPriceList::select('id', 'text', 'price', 'publishing_start_date', 'publishing_end_date')
                     ->where('product_id', $value->product_id)
                     ->where('store_id', Session::get('kitchenStoreId'))
-                    ->whereDate('publishing_start_date', '<=', $current_date)
-                    ->whereDate('publishing_end_date', '>=', $current_date)
-                    ->whereTime('publishing_start_date', '<=', $current_time)
-                    ->whereTime('publishing_end_date', '>=', $current_time)
+                    ->where('publishing_start_date', '<=', $current_date)
+                    ->where('publishing_end_date', '>=', $current_date)
                     ->first();
                     //->toSql();
                 
@@ -1570,10 +1567,8 @@ class AdminController extends Controller
         $publishing_start_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_start_date);
         $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_end_date);
 
-        $startDt = $publishing_start_date_time->format('Y-m-d');
-        $startTm = $publishing_start_date_time->format('H:i:s');
-        $endDt = $publishing_end_date_time->format('Y-m-d');
-        $endTm = $publishing_end_date_time->format('H:i:s');
+        $startDt = strtotime($publishing_start_date_time->format('Y-m-d H:i:s'));
+        $endDt = strtotime($publishing_end_date_time->format('Y-m-d H:i:s'));
 
         $publishStartDateTime = $publishing_start_date_time->format('Y-m-d H:i:s');
         $publishEndDateTime = $publishing_end_date_time->format('Y-m-d H:i:s');
@@ -1590,19 +1585,11 @@ class AdminController extends Controller
                         ->pluck('publishing_end_date','publishing_start_date');
         
         foreach($data as $key => $val){
-            $keyDt = date("Y-m-d", strtotime($key));
-            $keyTm = date("H:i:s", strtotime($key));
-            $valDt = date("Y-m-d", strtotime($val));
-            $valTm = date("H:i:s", strtotime($val));
-
-            if($startDt > $keyDt && $startDt > $valDt && $endDt > $keyDt && $endDt > $valDt){
-            } else if($startDt < $keyDt && $startDt < $valDt && $endDt < $keyDt && $endDt < $valDt){
+            $keys = strtotime($key); $vals = strtotime($val);
+            if($startDt > $keys && $startDt > $vals && $endDt > $keys && $endDt > $vals){
+            }else if($startDt < $keys && $startDt < $vals && $endDt < $keys && $endDt < $vals){
             }else{
-                if($startTm > $keyTm && $startTm > $valTm && $endTm > $keyTm && $endTm > $valTm){
-                } else if($startTm < $keyTm && $startTm < $valTm && $endTm < $keyTm && $endTm < $valTm){
-                }else{
-                    return back()->with('error','Invalid date');
-                }
+                return back()->with('error','Invalid date');
             }       
         }
 
@@ -1939,28 +1926,18 @@ class AdminController extends Controller
         $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_end_date);
 
         //check for validation with time availability
-        $startDt = $publishing_start_date_time->format('Y-m-d');
-        $startTm = $publishing_start_date_time->format('H:i:s');
-        $endDt = $publishing_end_date_time->format('Y-m-d');
-        $endTm = $publishing_end_date_time->format('H:i:s');
+        $startDt = strtotime($publishing_start_date_time->format('Y-m-d H:i:s'));
+        $endDt = strtotime($publishing_end_date_time->format('Y-m-d H:i:s'));
         $status = 0;
         $data = ProductPriceList::where('product_id', $request->product_id)
                         ->where('store_id', $request->store_id)
                         ->pluck('publishing_end_date','publishing_start_date');
         foreach($data as $key => $val){
-            $keyDt = date("Y-m-d", strtotime($key));
-            $keyTm = date("H:i:s", strtotime($key));
-            $valDt = date("Y-m-d", strtotime($val));
-            $valTm = date("H:i:s", strtotime($val));
-
-            if($startDt > $keyDt && $startDt > $valDt && $endDt > $keyDt && $endDt > $valDt){
-            } else if($startDt < $keyDt && $startDt < $valDt && $endDt < $keyDt && $endDt < $valDt){
+            $keys = strtotime($key); $vals = strtotime($val);
+            if($startDt > $keys && $startDt > $vals && $endDt > $keys && $endDt > $vals){
+            }else if($startDt < $keys && $startDt < $vals && $endDt < $keys && $endDt < $vals){
             }else{
-                if($startTm > $keyTm && $startTm > $valTm && $endTm > $keyTm && $endTm > $valTm){
-                } else if($startTm < $keyTm && $startTm < $valTm && $endTm < $keyTm && $endTm < $valTm){
-                }else{
-                    ++$status;
-                }
+                ++$status;
             }       
         }
         return response()->json(['status' => $status]);
@@ -1972,10 +1949,8 @@ class AdminController extends Controller
         $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_end_date);
 
         //check for validation with time availability
-        $startDt = $publishing_start_date_time->format('Y-m-d');
-        $startTm = $publishing_start_date_time->format('H:i:s');
-        $endDt = $publishing_end_date_time->format('Y-m-d');
-        $endTm = $publishing_end_date_time->format('H:i:s');
+        $startDt = strtotime($publishing_start_date_time->format('Y-m-d H:i:s'));
+        $endDt = strtotime($publishing_end_date_time->format('Y-m-d H:i:s'));
 
         $publishStartDateTime = $publishing_start_date_time->format('Y-m-d H:i:s');
         $publishEndDateTime = $publishing_end_date_time->format('Y-m-d H:i:s');
@@ -1985,19 +1960,11 @@ class AdminController extends Controller
                         ->where('store_id', $request->store_id)
                         ->pluck('publishing_end_date','publishing_start_date');
         foreach($data as $key => $val){
-            $keyDt = date("Y-m-d", strtotime($key));
-            $keyTm = date("H:i:s", strtotime($key));
-            $valDt = date("Y-m-d", strtotime($val));
-            $valTm = date("H:i:s", strtotime($val));
-
-            if($startDt > $keyDt && $startDt > $valDt && $endDt > $keyDt && $endDt > $valDt){
-            } else if($startDt < $keyDt && $startDt < $valDt && $endDt < $keyDt && $endDt < $valDt){
+            $keys = strtotime($key); $vals = strtotime($val);
+            if($startDt > $keys && $startDt > $vals && $endDt > $keys && $endDt > $vals){
+            }else if($startDt < $keys && $startDt < $vals && $endDt < $keys && $endDt < $vals){
             }else{
-                if($startTm > $keyTm && $startTm > $valTm && $endTm > $keyTm && $endTm > $valTm){
-                } else if($startTm < $keyTm && $startTm < $valTm && $endTm < $keyTm && $endTm < $valTm){
-                }else{
-                    return back()->with('error','Invalid date');
-                }
+                return back()->with('error','Invalid date');
             }       
         }
 

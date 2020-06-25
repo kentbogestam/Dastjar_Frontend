@@ -485,15 +485,11 @@ class HomeController extends Controller
                 }
             }
         }*/
-        $current_date = Carbon::now()->format('Y-m-d');
-        $current_time = Carbon::now()->format('h:i:00');
 
         $productPriceList = ProductPriceList::select('dish_type')
             ->where('store_id',$storeId)
-            ->whereDate('publishing_start_date', '<=', $current_date)
-            ->whereDate('publishing_end_date', '>=', $current_date)
-            ->whereTime('publishing_start_date', '<=', $current_time)
-            ->whereTime('publishing_end_date', '>=', $current_time)
+            ->where('publishing_start_date','<=',Carbon::now())
+            ->where('publishing_end_date','>=',Carbon::now())
             ->where('dish_type', '!=', null)
             ->join('product', 'product_price_list.product_id', '=', 'product.product_id')
             ->orderBy('product.product_rank', 'ASC')
@@ -667,18 +663,13 @@ class HomeController extends Controller
         // If no 'sub-cat' found
         if($status == false)
         {
-            $current_date = Carbon::now()->format('Y-m-d');
-            $current_time = Carbon::now()->format('h:i:00');
-
             $products = Product::from('product AS P')
                 ->select(['P.product_id', 'P.product_name', 'P.product_description', 'P.preparation_Time', 'P.small_image', 'PPL.price', 'S.extra_prep_time', 'PPL.publishing_start_date', 'PPL.publishing_end_date'])
                 ->join('product_price_list AS PPL', 'P.product_id', '=', 'PPL.product_id')
                 ->join('store AS S', 'S.store_id', '=', 'PPL.store_id')
                 ->where(['P.dish_type' => $dishType, 'PPL.store_id' => $storeId])
-                ->whereDate('PPL.publishing_start_date', '<=', $current_date)
-                ->whereDate('PPL.publishing_end_date', '>=', $current_date)
-                ->whereTime('PPL.publishing_start_date', '<=', $current_time)
-                ->whereTime('PPL.publishing_end_date', '>=', $current_time)
+                ->where('PPL.publishing_start_date','<=',Carbon::now())
+                ->where('PPL.publishing_end_date','>=',Carbon::now())
                 ->groupBy('P.product_id')
                 ->orderBy('P.product_rank', 'ASC')
                 ->orderBy('P.product_id')

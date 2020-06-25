@@ -763,16 +763,11 @@ class OrderController extends Controller
                         $max_time = $productTime->preparation_Time;
                     }
 
-                    $current_date = Carbon::now()->format('Y-m-d');
-                    $current_time = Carbon::now()->format('h:i:00');
-
                     $productPrice = ProductPriceList::select('price')
                         ->whereProductId($value['id'])
                         ->where('store_id' , $data['storeID'])
-                        ->whereDate('publishing_start_date', '<=', $current_date)
-                        ->whereDate('publishing_end_date', '>=', $current_date)
-                        ->whereTime('publishing_start_date', '<=', $current_time)
-                        ->whereTime('publishing_end_date', '>=', $current_time)
+                        ->where('publishing_start_date','<=',Carbon::now())
+                        ->where('publishing_end_date','>=',Carbon::now())
                         ->first();
                     $total_price = $total_price + ($productPrice->price * $value['prod_quant']); 
                     $orderDetail =  new OrderDetail();
