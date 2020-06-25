@@ -9,6 +9,7 @@
     label.error {
         color: red !important;
     }
+
     .btn-link {
         cursor: pointer;
     }
@@ -29,10 +30,13 @@
     .list-category .menu-item-0:nth-of-type(even) {
         background-color: #F9F9F9 !important;
     } */
+    
     </style>
+    <link rel="stylesheet" href="{{ asset('css/multi.min.css') }}" />
 @stop
 
 @section('content-jMobile')
+
 <div data-role="header"  data-position="fixed" data-tap-toggle="false" class="header">
     @include('includes.kitchen-header-sticky-bar')
     <div class="order_background setting_head_container">
@@ -158,45 +162,65 @@
         <div class="modal-dialog">
             <!-- Modal content-->
             <div class="modal-content">
-                <div class="modal-body">
-                    <form name="add-form" id="add-form" method="POST" action="{{ url('kitchen/dishtype/store') }}" enctype="multipart/form-data" data-ajax="false">
+                <form name="add-form" id="add-form" method="POST" action="{{ url('kitchen/dishtype/store') }}" enctype="multipart/form-data" data-ajax="false">
                         @csrf
-                        <div class="form-group">
-                            <label for="dish_lang">{{ __('messages.language') }} <span class='mandatory'>*</span>:</label>
-                            <select name="dish_lang" class="form-control" id="dish_lang" data-rule-required="true">
-                                <option value="SWE">Swedish</option>
-                                <option value="ENG">English</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="dish_name">{{ __('messages.dishType') }} <span class='mandatory'>*</span>:</label>
-                            <input type="text" name="dish_name" placeholder="Enter title" class="form-control" id="dish_name" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
-                        </div>
-                        <div class="form-group">
-                            <label for="parent_id">{{ __('messages.parentCategory') }}</label>
-                            <select name="parent_id" id="parent_id" class="form-control">
-                                <option value="">{{ __('messages.none') }}</option>
-                                @if( !empty($dishType) )
-                                    @foreach($dishType as $row)
-                                        @if($row['level'] <= 1)
-                                            <option value="{{ $row['dish_id'] }}" class="level-{{ $row['level'] }}">
-                                                {!! Helper::strReplaceBy($row['dish_name'], $row['level']*2) !!}
-                                            </option>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="dish_lang">{{ __('messages.language') }} <span class='mandatory'>*</span>:</label>
+                                    <select name="dish_lang" class="form-control" id="dish_lang" data-rule-required="true">
+                                        <option value="SWE">Swedish</option>
+                                        <option value="ENG">English</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="parent_id">{{ __('messages.parentCategory') }}</label>
+                                    <select name="parent_id" id="parent_id" class="form-control">
+                                        <option value="">{{ __('messages.none') }}</option>
+                                        @if( !empty($dishType) )
+                                            @foreach($dishType as $row)
+                                                @if($row['level'] <= 1)
+                                                    <option value="{{ $row['dish_id'] }}" class="level-{{ $row['level'] }}">
+                                                        {!! Helper::strReplaceBy($row['dish_name'], $row['level']*2) !!}
+                                                    </option>
+                                                @endif
+                                            @endforeach
                                         @endif
-                                    @endforeach
-                                @endif
-                            </select>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="dish_name">{{ __('messages.dishType') }} <span class='mandatory'>*</span>:</label>
+                                    <input type="text" name="dish_name" placeholder="Enter title" class="form-control" id="dish_name" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
+                                </div>
+                                 <div class="form-group">
+                                    <label for="dish_image">{{ __('messages.dishImage') }}:</label>
+                                    <input type="file" name="dish_image" class="" />
+                                </div>
+                            </div>
+                            <div class="col-md-12 extra_dish_div">
+                                <label for="extra_dish">{{ __('messages.extra') }}</label>
+                                <input type="checkbox" name="extra_dish" id="extra_dish" value="1">
+                            </div>
+                            <div class="col-md-12 extra_dish_type_div">
+                                <label for="extra_dish_type">{{ __('messages.extras') }}:</label>
+                                <select class="extra_dish_type" name="extra_dish_type[]" multiple="multiple">
+                                    @forelse($extraDishTypes as $key => $val)
+                                        <option value="{{@$key}}">{{@$val}}</option>
+                                    @empty
+                                    @endforelse
+                                </select>
+                                <br>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="dish_image">{{ __('messages.dishImage') }}:</label>
-                            <input type="file" name="dish_image" class="form-control" />
-                        </div>
+                    </div>
+                    <div class="modal-footer">
                         <button type="submit" class="btn btn-success">{{ __('messages.submit') }}</button>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ __('messages.close') }}</button>
-                </div>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{{ __('messages.close') }}</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -204,47 +228,54 @@
     <div class="modal fade" id="update-form-model" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-body">
-                    <form name="update-form" id="update-form" method="POST" action="{{ url('kitchen/dishtype/update') }}" enctype="multipart/form-data" data-ajax="false">
+                <form name="update-form" id="update-form" method="POST" action="{{ url('kitchen/dishtype/update') }}" enctype="multipart/form-data" data-ajax="false">
                         @csrf
-                        <div class="form-group">
-                            <label for="dish_lang">{{ __('messages.language') }} <span class='mandatory'>*</span>:</label>
-                            <select name="dish_lang" class="form-control" id="dish_lang" data-rule-required="true">
-                                <option value="SWE">Swedish</option>
-                                <option value="ENG">English</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="dish_name">{{ __('messages.dishType') }} <span class='mandatory'>*</span>:</label>
-                            <input type="text" name="dish_name" placeholder="Enter title" class="form-control" id="dish_name" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
-                        </div>
-                        <div class="form-group">
-                            <label for="parent_id">{{ __('messages.parentCategory') }}</label>
-                            <select name="parent_id" id="parent_id" class="form-control">
-                                <option value="">{{ __('messages.none') }}</option>
-                                @if( !empty($dishType) )
-                                    @foreach($dishType as $row)
-                                        @if($row['level'] <= 1)
-                                            <option value="{{ $row['dish_id'] }}" class="level-{{ $row['level'] }}">
-                                                {!! Helper::strReplaceBy($row['dish_name'], $row['level']*2) !!}
-                                            </option>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="dish_lang">{{ __('messages.language') }} <span class='mandatory'>*</span>:</label>
+                                    <select name="dish_lang" class="form-control" id="dish_lang" data-rule-required="true">
+                                        <option value="SWE">Swedish</option>
+                                        <option value="ENG">English</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="parent_id">{{ __('messages.parentCategory') }}</label>
+                                    <select name="parent_id" id="parent_id" class="form-control">
+                                        <option value="">{{ __('messages.none') }}</option>
+                                        @if( !empty($dishType) )
+                                            @foreach($dishType as $row)
+                                                @if($row['level'] <= 1)
+                                                    <option value="{{ $row['dish_id'] }}" class="level-{{ $row['level'] }}">
+                                                        {!! Helper::strReplaceBy($row['dish_name'], $row['level']*2) !!}
+                                                    </option>
+                                                @endif
+                                            @endforeach
                                         @endif
-                                    @endforeach
-                                @endif
-                            </select>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="dish_name">{{ __('messages.dishType') }} <span class='mandatory'>*</span>:</label>
+                                    <input type="text" name="dish_name" placeholder="Enter title" class="form-control" id="dish_name" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="dish_image">{{ __('messages.dishImage') }}:</label>
+                                    <input type="file" name="dish_image" class="form-control" />
+                                </div>
+                                <div class="img-wrap"></div>
+                            </div>
+                            <div class="col-md-12 extra_dish_div append_here"></div>
+                            <input type="hidden" name="dish_id" id="dish_id" data-rule-required="true">
                         </div>
-                        <div class="form-group">
-                            <label for="dish_image">{{ __('messages.dishImage') }}:</label>
-                            <input type="file" name="dish_image" class="form-control" />
-                        </div>
-                        <div class="img-wrap"></div>
-                        <input type="hidden" name="dish_id" id="dish_id" data-rule-required="true">
+                    </div>
+                    <div class="modal-footer">
                         <button type="submit" class="btn btn-success">{{ __('messages.update') }}</button>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ __('messages.close') }}</button>
-                </div>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{{ __('messages.close') }}</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -254,6 +285,7 @@
 @section('footer-script')
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
+<script src="{{ asset('js/multi.min.js') }}"></script>
 
 <script type="text/javascript">
     $(document).ready(function() {
@@ -261,6 +293,19 @@
         // $("#add-form").validate();
         $("#update-form").validate();
     });
+
+    // extra_dish_type
+    $('body').on('click', '.extra_dish_div input', function(){
+        if($(this).is(':checked')){
+            $('.extra_dish_type_div').css('display','none');
+        }else{
+            $('.extra_dish_type_div').css('display','block');
+        }
+    });
+
+    //apply multi selection 
+    $( '.extra_dish_type' ).multi({ non_selected_header: '{{ __("messages.categories") }}' ,
+                selected_header: '{{ __("messages.selectedcategories") }}' });
 
     function getDishType(id)
     {
@@ -275,12 +320,18 @@
                 $('#update-form-model').find('#dish_name').val(response.dishType.dish_name);
                 $('#update-form-model').find('#parent_id').val(response.dishType.parent_id);
 
-                if(response.dishType.dish_image)
-                {
+                if(response.dishType.dish_image){
                     let str = '<img src="https://s3.eu-west-1.amazonaws.com/dastjar-coupons/'+response.dishType.dish_image+'" class="img-thumbnail" alt="" style="max-width: 200px;"><button type="button" class="btn btn-link" onclick="removeCategoryImage('+response.dishType.dish_id+')"><i class="fa fa-remove" aria-hidden="true"></i></button>';
                     $('#update-form-model').find('.img-wrap').html(str);
                 }
-
+                $('.append_here').html('');
+                //auto select items 
+                console.log(response.output)
+                if(response.output){
+                    $('.append_here').html(response.output);
+                }
+                $( '.extra_dish_type_append' ).multi({ non_selected_header: '{{ __("messages.categories") }}' ,
+                selected_header: '{{ __("messages.selectedcategories") }}' });
                 $('#update-form-model').modal();
             }
         });

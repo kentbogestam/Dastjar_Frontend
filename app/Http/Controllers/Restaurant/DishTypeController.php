@@ -13,6 +13,8 @@ use Storage;
 use App\Helper;
 use App\DishType;
 use App\Company;
+use App\Product;
+use App\ProductsExtra;
 
 use \Gumlet\ImageResize;
 
@@ -63,8 +65,61 @@ class DishTypeController extends Controller
             }
         }
 
+        $extraDishTypes = array();
+
+        $dishData = DishType::select('DT.dish_name','DT.dish_id', 'DT.parent_id', 'DT.rank')
+            ->from('dish_type AS DT')
+            ->join('product AS P', 'P.dish_type', '=', 'DT.dish_id')
+            ->join('product_price_list AS PPL', 'PPL.product_id', '=', 'P.product_id')
+            ->where('P.u_id', Auth::user()->u_id)
+            ->where('P.s_activ', '!=' , 2)
+            ->where('DT.dish_activate', 1)
+            ->where('DT.extras', '1')
+            ->where('PPL.store_id', Session::get('kitchenStoreId'))
+            ->groupBy('DT.dish_id')
+            ->orderBy('DT.rank')
+            ->orderBy('DT.dish_id')
+            ->get();
+
+        if($dishData)
+        {
+            $dishIds = array();
+
+            foreach($dishData as $dish)
+            {
+                if( !is_null($dish->parent_id) )
+                {
+                    $dishTypeLevel0 = DishType::from('dish_type AS DT1')
+                        ->select(['DT1.dish_id', 'DT1.dish_name', 'DT1.rank'])
+                        ->leftJoin('dish_type AS DT2', 'DT2.parent_id', '=', 'DT1.dish_id')
+                        ->leftJoin('dish_type AS DT3', 'DT3.parent_id', '=', 'DT2.dish_id')
+                        ->whereRaw("(DT1.dish_id = '{$dish->dish_id}' OR DT2.dish_id = '{$dish->dish_id}' OR DT3.dish_id = '{$dish->dish_id}') AND DT1.parent_id IS NULL")
+                        ->groupBy('DT1.dish_id')
+                        ->first();
+                    
+                    if($dishTypeLevel0)
+                    {
+                        if( !in_array($dishTypeLevel0->dish_id, $dishIds) )
+                        {
+                            $dishIds[] = $dishTypeLevel0->dish_id;
+
+                            $extraDishTypes[$dishTypeLevel0->dish_id] = $dishTypeLevel0->dish_name;
+                        }
+                    }
+                }
+                else
+                {
+                    if( !in_array($dish->dish_id, $dishIds) )
+                    {
+                        $dishIds[] = $dish->dish_id;
+
+                        $extraDishTypes[$dish->dish_id] = $dish->dish_name;
+                    }
+                }
+            }
+        }
         // dd($dishTypeList);
-    	return view('kitchen.dishType.index', compact('dishType', 'dishTypeList'));
+        return view('kitchen.dishType.index', compact('dishType', 'dishTypeList','extraDishTypes'));
     }
 
     /**
@@ -135,8 +190,26 @@ class DishTypeController extends Controller
             $data['rank'] = 1;
         }
 
+        if(isset($data['extra_dish'])){
+            $data['extras'] = '1';
+        }else{
+            $data['extras'] = '0';
+        }
+
         // Create DishType
-        DishType::create($data);
+        $item = DishType::create($data);
+        echo $item;
+        if($item->extra_dish == '0'){
+            if(isset($request->extra_dish_type)){
+                foreach($request->extra_dish_type as $key => $val){
+                    ProductsExtra::create([
+                        'dish_type_id' => $item->id,
+                        'extra_dish_type_id' => $val,
+                        'store_id' => Session::get('kitchenStoreId'),
+                    ]);
+                }
+            }
+        }
 
         return redirect('kitchen/dishtype/list')->with('success', __('messages.dishTypeCreated'));
     }
@@ -146,13 +219,91 @@ class DishTypeController extends Controller
      * @param  [type] $id [description]
      * @return [type]     [description]
      */
+    
     function ajaxGetDishTypeById($id)
     {
         // Get category
-        $dishType = DishType::select(['dish_id', 'dish_lang', 'dish_name', 'parent_id', 'dish_image'])
-            ->where(['dish_id' => $id, 'dish_activate' => 1])->first();
+        $dishType = DishType::with('extraDishTypeName')
 
-        return response()->json(['dishType' => $dishType]);
+                        ->where(['dish_id' => $id, 'dish_activate' => 1])->first();
+        
+        $extraDishTypes = array();
+
+        $dishData = DishType::select('DT.dish_name','DT.dish_id', 'DT.parent_id', 'DT.rank')
+            ->from('dish_type AS DT')
+            ->join('product AS P', 'P.dish_type', '=', 'DT.dish_id')
+            ->join('product_price_list AS PPL', 'PPL.product_id', '=', 'P.product_id')
+            ->where('P.u_id', Auth::user()->u_id)
+            ->where('P.s_activ', '!=' , 2)
+            ->where('DT.dish_activate', 1)
+            ->where('DT.extras', '1')
+            ->where('PPL.store_id', Session::get('kitchenStoreId'))
+            ->groupBy('DT.dish_id')
+            ->orderBy('DT.rank')
+            ->orderBy('DT.dish_id')
+            ->get();
+
+        if($dishData)
+        {
+            $dishIds = array();
+
+            foreach($dishData as $dish)
+            {
+                if( !is_null($dish->parent_id) )
+                {
+                    $dishTypeLevel0 = DishType::from('dish_type AS DT1')
+                        ->select(['DT1.dish_id', 'DT1.dish_name', 'DT1.rank'])
+                        ->leftJoin('dish_type AS DT2', 'DT2.parent_id', '=', 'DT1.dish_id')
+                        ->leftJoin('dish_type AS DT3', 'DT3.parent_id', '=', 'DT2.dish_id')
+                        ->whereRaw("(DT1.dish_id = '{$dish->dish_id}' OR DT2.dish_id = '{$dish->dish_id}' OR DT3.dish_id = '{$dish->dish_id}') AND DT1.parent_id IS NULL")
+                        ->groupBy('DT1.dish_id')
+                        ->first();
+                    
+                    if($dishTypeLevel0)
+                    {
+                        if( !in_array($dishTypeLevel0->dish_id, $dishIds) )
+                        {
+                            $dishIds[] = $dishTypeLevel0->dish_id;
+
+                            $extraDishTypes[$dishTypeLevel0->dish_id] = $dishTypeLevel0->dish_name;
+                        }
+                    }
+                }
+                else
+                {
+                    if( !in_array($dish->dish_id, $dishIds) )
+                    {
+                        $dishIds[] = $dish->dish_id;
+
+                        $extraDishTypes[$dish->dish_id] = $dish->dish_name;
+                    }
+                }
+            }
+        }
+        $selecteds = array();
+        if($dishType->extras == '0'){
+            $checked = $display = '';
+        }else{
+            $checked = 'checked';
+            $display = 'style="display:none"';
+        }
+        $output = '<label for="extra_dish">'.__('messages.extra').'</label><input type="checkbox" name="extra_dish" id="extra_dish" value="1" '.$checked.'></div><div class="col-md-12 extra_dish_type_div" '.$display.'>';
+        $output .= '<label for="extra_dish_type">'.__("messages.extras").':</label><select class="extra_dish_type_append" name="extra_dish_type[]" multiple="multiple">';
+
+        if(!empty($dishType->extraDishTypeName->toArray())){
+            foreach($dishType->extraDishTypeName as $item){
+                $selecteds[] = $item->extra_dish_type_id;
+            }
+        }
+        foreach($extraDishTypes as $key => $val){
+            if(in_array($key, $selecteds)){
+                $output .= '<option value="'.$key.'" selected>'.$val.'</option>';
+            }else{
+                $output .= '<option value="'.$key.'">'.$val.'</option>';
+            }
+        }
+        $output .='</select><br>';
+        return response()->json(['dishType' => $dishType, 'output' => $output]);
     }
 
     /**
@@ -228,8 +379,28 @@ class DishTypeController extends Controller
             }
 
             // 
+            if(isset($request->extra_dish)){
+                $extra_dish = '1';
+            }else{
+                $extra_dish = '0';
+            }
+
+            // update dish type
             DishType::where('dish_id', $request->dish_id)
-                ->update(['dish_lang' => $request->dish_lang, 'dish_name' => $request->dish_name, 'parent_id' => $request->parent_id, 'dish_image' => $filePath]);
+                ->update(['dish_lang' => $request->dish_lang, 'dish_name' => $request->dish_name, 'parent_id' => $request->parent_id, 'extras' => $extra_dish, 'dish_image' => $filePath]);
+
+            ProductsExtra::where('dish_type_id',$request->dish_id)->where('store_id',Session::get('kitchenStoreId'))->delete();
+            if($extra_dish == '0'){
+                if(isset($request->extra_dish_type)){
+                    foreach($request->extra_dish_type as $key => $val){
+                        ProductsExtra::create([
+                            'dish_type_id' => $request->dish_id,
+                            'extra_dish_type_id' => $val,
+                            'store_id' => Session::get('kitchenStoreId'),
+                        ]);
+                    }
+                }
+            }
         }
         
         return redirect('kitchen/dishtype/list')->with('success', __('messages.dishTypeUpdated'));

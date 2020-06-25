@@ -9,6 +9,7 @@ use App\Company;
 use App\DishType;
 use App\Order;
 use App\OrderDetail;
+use App\ProductsExtra;
 use App\Gdpr;
 use App\User;
 use App\PromotionLoyalty;
@@ -518,6 +519,7 @@ class HomeController extends Controller
                 ->where('u_id' , $storedetails->u_id)
                 // ->where('parent_id', null)
                 ->where('dish_activate','1')
+                ->where('extras','0')
                 ->whereIn('dish_id', $dish_ids)
                 ->orderBy('rank')
                 ->orderBy('dish_id')
@@ -533,7 +535,7 @@ class HomeController extends Controller
                     {
                         // Get 'dish id' from parent ID
                         $dishTypeLevel0 = DishType::from('dish_type AS DT1')
-                            ->select(['DT1.dish_id', 'DT1.dish_name', 'DT1.dish_image', 'DT1.rank'])
+                            ->select(['DT1.dish_id', 'DT1.dish_name', 'DT1.dish_image', 'DT1.rank', 'DT1.extras'])
                             ->leftJoin('dish_type AS DT2', 'DT2.parent_id', '=', 'DT1.dish_id')
                             ->leftJoin('dish_type AS DT3', 'DT3.parent_id', '=', 'DT2.dish_id')
                             ->whereRaw("(DT1.dish_id = '{$dish->dish_id}' OR DT2.dish_id = '{$dish->dish_id}' OR DT3.dish_id = '{$dish->dish_id}') AND DT1.parent_id IS NULL")
@@ -551,6 +553,7 @@ class HomeController extends Controller
                                     'dish_name' => $dishTypeLevel0->dish_name,
                                     'dish_image' => $dishTypeLevel0->dish_image,
                                     'rank' => $dishTypeLevel0->rank,
+                                    'extras' => $dish->extras,
                                 );
                             }
                         }
@@ -566,6 +569,7 @@ class HomeController extends Controller
                                 'dish_name' => $dish->dish_name,
                                 'dish_image' => $dish->dish_image,
                                 'rank' => $dish->rank,
+                                'extras' => $dish->extras,
                             );
                         }
                     }
