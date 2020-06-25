@@ -336,9 +336,6 @@
 	    $('#save-price-btn').on('click', function() {
 	    	dkS = moment($("#date-start").val(),'DD/MM/YYYY HH:mm').toDate();
 	    	dkE = moment($("#date-end").val(),'DD/MM/YYYY HH:mm').toDate();
-
-	    	TmS = moment(dkS).format("HH:mm");
-	    	TmE = moment(dkE).format("HH:mm");
 	    	
 			if(dkS>dkE){
 				alert("Publishing start date must be smaller than publishing end date");
@@ -346,29 +343,21 @@
 			}
 			else
 			{
-				if(TmS >= TmE)
+				$.post("{{url('kitchen/is-future-date-available')}}", 
 				{
-					alert("Publishing start time must be smaller than publishing end time");
-					return false;
-				}
-				else
-				{
-					$.post("{{url('kitchen/is-future-date-available')}}", 
-					{
-						"_token": "{{ csrf_token() }}", 
-						'product_id': $('#selected_prod_product_id').val(),
-						'store_id': $('#selected_prod_store_id').val(),
-						'publishing_start_date': $("#date-start-utc").val(), 
-						'publishing_end_date': $("#date-end-utc").val()
-					}, 
-					function(data) {
-						if(data.status){
-							alert('Invalid date !'); return false;
-						}else{
-							$('#add-dish-price-frm').submit();
-						}
-					});
-				}
+					"_token": "{{ csrf_token() }}", 
+					'product_id': $('#selected_prod_product_id').val(),
+					'store_id': $('#selected_prod_store_id').val(),
+					'publishing_start_date': $("#date-start-utc").val(), 
+					'publishing_end_date': $("#date-end-utc").val()
+				}, 
+				function(data) {
+					if(data.status){
+						alert('Invalid date !'); return false;
+					}else{
+						$('#add-dish-price-frm').submit();
+					}
+				});
 			}
 	    });
 
