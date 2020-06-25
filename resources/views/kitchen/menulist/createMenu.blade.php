@@ -396,26 +396,15 @@
     	dkS = moment($("#date-start").val(),'DD/MM/YYYY HH:mm').toDate();
     	dkE = moment($("#date-end").val(),'DD/MM/YYYY HH:mm').toDate();
 
-    	TmS = moment(dkS).format("HH:mm");
-	    TmE = moment(dkE).format("HH:mm");
-
         if(fileSize>6000000){
 				alert("Image size should be smaller than 6MB");          	
 				return false;
 		}else if(fileExt!="" && fileExt!="png" && fileExt!="jpg" && fileExt!="jpeg"){
 				alert("Only PNG, JPG and JPEG images are allowed");
 				return false;
-		}else{
-			if(dkS>dkE){
-				alert("Publishing start date must be smaller than publishing end date");
-				return false;
-			}else{
-				if(TmS >= TmE)
-				{
-					alert("Publishing start time must be smaller than publishing end time");
-					return false;
-				}
-			}
+		}else if(dkS>dkE){
+			alert("Publishing start date must be smaller than publishing end date");
+			return false;
 		}
     });
 
