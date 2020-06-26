@@ -18,6 +18,7 @@ safari = /safari/.test( userAgent );
 ios = /iphone|ipod|ipad/.test( userAgent );
 userAction = 'msg';
 watchPositionAction = '';
+responseGeoAddressCnt = 0;
 
 $(document).ready(function($) {
 
@@ -439,237 +440,221 @@ function requestGeoAddressToIosNative(action = 'msg')
 // Get updated lat/lng (response) from IOS native
 function responseGeoAddressFromIosNative(data)
 {
-    if(1)
-    {
-        locationPermission = (typeof data['locationPermission'] !== 'undefined') ? data['locationPermission'] : '0';
-        action = (typeof data['action'] !== 'undefined') ? data['action'] : userAction;
+    locationPermission = (typeof data['locationPermission'] !== 'undefined') ? data['locationPermission'] : '0';
+    action = (typeof data['action'] !== 'undefined') ? data['action'] : userAction;
+    responseGeoAddressCnt++;
 
-        // If added watch here on position (home page, location, map etc)
-        if(action == 'getLocation')
+    // If added watch here on position (home page, location, map etc)
+    if(action == 'getLocation')
+    {
+        //
+        if(locationPermission == '1')
+        {
+            if( (data['lat'] == '0.00' || data['long'] == '0.00') && responseGeoAddressCnt < 20 )
+            {
+                requestGeoAddressToIosNative('getLocation');
+                return false;
+            }
+        }
+
+        // Page 'location.blade.php', 'map/index.blade.php'
+        if(watchPositionAction == 'updateLocationOnMap')
         {
             //
-            if(locationPermission == '1')
+            if($('input[name="street_address"]').length && $('input[name="street_address"]').val() != '')
             {
-                if(data['lat'] == '0.00' || data['long'] == '0.00')
-                {
-                    requestGeoAddressToIosNative('getLocation');
-                    return false;
-                }
+                return false;
             }
 
-            // Page 'location.blade.php', 'map/index.blade.php'
-            if(watchPositionAction == 'updateLocationOnMap')
+            var lat1 = getCookie("latitude"); var lon1 = getCookie("longitude");
+            var lat2 = data['lat']; var lon2 = data['long'];
+
+            if(typeof changeMarkerPosition == 'function')
             {
-                //
-                if($('input[name="street_address"]').length && $('input[name="street_address"]').val() != '')
-                {
-                    return false;
-                }
-
-                var lat1 = getCookie("latitude"); var lon1 = getCookie("longitude");
-                var lat2 = data['lat']; var lon2 = data['long'];
-
-                if(typeof changeMarkerPosition == 'function')
-                {
-                    changeMarkerPosition(lat2, lon2);
-                }
-                else
-                {
-                    alert('function \'changeMarkerPosition\' does not exist!');
-                }
-            }
-            // Page 'map/single_res_map.blade.php'
-            else if(watchPositionAction == 'showLocation')
-            {
-                var lat1 = getCookie("latitude"); var lon1 = getCookie("longitude");
-                var lat2 = data['lat']; var lon2 = data['long'];
-                markers[0][0] = lat2; markers[0][1] = lon2;
-
-                if(typeof calculateAndDisplayRoute == 'function')
-                {
-                    calculateAndDisplayRoute();
-                }
-                else
-                {
-                    alert('function \'calculateAndDisplayRoute\' does not exist!');
-                }
+                changeMarkerPosition(lat2, lon2);
             }
             else
             {
-                // Check if function exist
-                if(typeof setDistanceParmeter == 'function')
+                alert('function \'changeMarkerPosition\' does not exist!');
+            }
+        }
+        // Page 'map/single_res_map.blade.php'
+        else if(watchPositionAction == 'showLocation')
+        {
+            var lat1 = getCookie("latitude"); var lon1 = getCookie("longitude");
+            var lat2 = data['lat']; var lon2 = data['long'];
+            markers[0][0] = lat2; markers[0][1] = lon2;
+
+            if(typeof calculateAndDisplayRoute == 'function')
+            {
+                calculateAndDisplayRoute();
+            }
+            else
+            {
+                alert('function \'calculateAndDisplayRoute\' does not exist!');
+            }
+        }
+        else
+        {
+            // Check if function exist
+            if(typeof setDistanceParmeter == 'function')
+            {
+                if( (data['lat'] != '0.00' && data['long'] != '0.00') || responseGeoAddressCnt >= 20 )
                 {
-                    if(data['lat'] != '0.00' && data['long'] != '0.00')
+                    if( getCookie('latitude') == '' || getCookie('longitude') == '' )
                     {
-                        if( getCookie('latitude') == '' || getCookie('longitude') == '' )
-                        {
-                            document.cookie = "latitude=" + data['lat'];
-                            document.cookie = "longitude=" + data['long'];
-                        }
+                        document.cookie = "latitude=" + data['lat'];
+                        document.cookie = "longitude=" + data['long'];
+                    }
 
-                        setMyCookie('everyMinutelatitude', data['lat'], 7);
-                        setMyCookie('everyMinutelongitude', data['long'], 7);
-                        setMyCookie('showError','', 0);
+                    setMyCookie('everyMinutelatitude', data['lat'], 7);
+                    setMyCookie('everyMinutelongitude', data['long'], 7);
+                    setMyCookie('showError','', 0);
 
-                        var flag=checkTimeAfterLocationSet();
+                    var flag=checkTimeAfterLocationSet();
 
-                        if(flag==false){
-                            setDistanceParmeter();
-                        }
+                    if(flag==false){
+                        setDistanceParmeter();
                     }
                 }
-                else
-                {
-                    alert('function \'setDistanceParmeter\' does not exist!');
-                }
-            }
-        }
-        
-        // On load home page if type_selection is null 'popupSelection'
-        if(action == 'setCurrentLatLong')
-        {
-            if(data['lat'] != '0.00' && data['long'] != '0.00')
-            {
-                // Update Cookie
-                document.cookie="latitude=" + data['lat'];
-                document.cookie="longitude=" + data['long'];
-                
-                // Update Session
-                var latitude  = getCookie("latitude");
-                var longitude = getCookie("longitude");
-
-                $.ajax({
-                    url: BASE_URL+"/update-location",
-                    type: "GET",
-                    data: {lat : latitude, long : longitude},
-                    dataType: "json"
-                });
-            }
-        }
-        
-        // type_selection is not null, get current position and show restaurant listing on home page
-        if(action == 'getPos')
-        {
-            if(locationPermission == '1')
-            {
-                // 
-                if(data['lat'] == '0.00' || data['long'] == '0.00')
-                {
-                    requestGeoAddressToIosNative('getPos');
-                    return false;
-                }
-
-                loc_flag=1;
-                // Update Cookie
-                document.cookie="latitude=" + data['lat'];
-                document.cookie="longitude=" + data['long'];
-
-                loc_lat = data['lat'];
-                loc_lng = data['long'];
-
-                var extraclass = document.body;
-                extraclass.classList.remove('disableClass');
-
-                if(typeof add == 'function')
-                {
-                    add(constUrlLatLng,constUrlRestaurantMenu,noImageUrl);
-                }
-                else
-                {
-                    alert('function \'add\' does not exist!');
-                }
             }
             else
             {
-                if (typeof loc_lat === "undefined" || loc_lat == "")
-                {
-                    $("#loading-img").hide();
-                    $("#overlay").hide();
-                    $('.login-inner-section a').attr('href','javascript:void(0)');
-                    $('#login-popup').modal("show");
-                    /*if (!getCookie("latitude"))
-                    {
-                        $("#loading-img").hide();
-                        $("#overlay").hide();
-                        $('.login-inner-section a').attr('href','javascript:void(0)');
-                        $('#login-popup').modal("show");
-                    }
-                    else
-                    {
-                        loc_flag=2;
-                        document.cookie="latitude=" + getCookie("latitude");
-                        document.cookie="longitude=" + getCookie("longitude");
-                        add(constUrlLatLng,constUrlRestaurantMenu,noImageUrl);
-                    }*/
-                }
-                else
-                {
-                    loc_flag=3;
-                    document.cookie="latitude=" + loc_lat;
-                    document.cookie="longitude=" + loc_lng;
-                    add(constUrlLatLng,constUrlRestaurantMenu,noImageUrl);
-                }
+                alert('function \'setDistanceParmeter\' does not exist!');
             }
         }
-        
-        // Check the position afer 20 min and reset the longitude and latitude
-        if(action == 'getCurrentCoordinates')
+    }
+    
+    // On load home page if type_selection is null 'popupSelection'
+    if(action == 'setCurrentLatLong')
+    {
+        if( (data['lat'] != '0.00' && data['long'] != '0.00') || responseGeoAddressCnt >= 20 )
         {
-            if(data['lat'] != '0.00' && data['long'] != '0.00')
-            {
-                // Update Cookie
-                document.cookie="latitude=" + data['lat'];
-                document.cookie="longitude=" + data['long'];
-                
-                // Update Session
-                var latitude  = getCookie("latitude");
-                var longitude = getCookie("longitude");
+            // Update Cookie
+            document.cookie="latitude=" + data['lat'];
+            document.cookie="longitude=" + data['long'];
+            
+            // Update Session
+            var latitude  = getCookie("latitude");
+            var longitude = getCookie("longitude");
 
-                $.ajax({
-                    url: BASE_URL+"/update-location",
-                    type: "GET",
-                    data: {lat : latitude, long : longitude},
-                    dataType: "json"
-                });
-
-                if(typeof reloadRestaurantList == 'function')
-                {
-                    reloadRestaurantList();
-                }
-                else
-                {
-                    alert('function \'reloadRestaurantList\' does not exist!');
-                }
-            }
+            $.ajax({
+                url: BASE_URL+"/update-location",
+                type: "GET",
+                data: {lat : latitude, long : longitude},
+                dataType: "json"
+            });
         }
-        
-        // Reset current position from 'Settings'
-        if(action == 'locationSave')
+    }
+    
+    // type_selection is not null, get current position and show restaurant listing on home page
+    if(action == 'getPos')
+    {
+        if(locationPermission == '1')
         {
-            if(locationPermission == '1')
+            // 
+            if( (data['lat'] == '0.00' || data['long'] == '0.00') && responseGeoAddressCnt < 20 )
             {
-                if(data['lat'] != '0.00' && data['long'] != '0.00')
-                {
-                    // Update Cookie
-                    document.cookie="latitude=" + data['lat'];
-                    document.cookie="longitude=" + data['long'];
-                    
-                    // Update Session
-                    var latitude  = getCookie("latitude");
-                    var longitude = getCookie("longitude");
+                requestGeoAddressToIosNative('getPos');
+                return false;
+            }
 
-                    $.get(BASE_URL+'/saveCurrentlat-long', { lat: latitude, lng : longitude}, function(returnedData){
-                        console.log(returnedData["data"]);
-                        unsetLocationCookieTime();
-                        window.location.reload();
-                    });
-                }
+            loc_flag=1;
+            // Update Cookie
+            document.cookie="latitude=" + data['lat'];
+            document.cookie="longitude=" + data['long'];
+
+            loc_lat = data['lat'];
+            loc_lng = data['long'];
+
+            var extraclass = document.body;
+            extraclass.classList.remove('disableClass');
+
+            if(typeof add == 'function')
+            {
+                add(constUrlLatLng,constUrlRestaurantMenu,noImageUrl);
             }
             else
             {
+                alert('function \'add\' does not exist!');
+            }
+        }
+        else
+        {
+            if (typeof loc_lat === "undefined" || loc_lat == "")
+            {
+                $("#loading-img").hide();
+                $("#overlay").hide();
                 $('.login-inner-section a').attr('href','javascript:void(0)');
                 $('#login-popup').modal("show");
             }
+            else
+            {
+                loc_flag=3;
+                document.cookie="latitude=" + loc_lat;
+                document.cookie="longitude=" + loc_lng;
+                add(constUrlLatLng,constUrlRestaurantMenu,noImageUrl);
+            }
+        }
+    }
+    
+    // Check the position afer 20 min and reset the longitude and latitude
+    if(action == 'getCurrentCoordinates')
+    {
+        if( (data['lat'] != '0.00' && data['long'] != '0.00') || responseGeoAddressCnt >= 20 )
+        {
+            // Update Cookie
+            document.cookie="latitude=" + data['lat'];
+            document.cookie="longitude=" + data['long'];
+            
+            // Update Session
+            var latitude  = getCookie("latitude");
+            var longitude = getCookie("longitude");
+
+            $.ajax({
+                url: BASE_URL+"/update-location",
+                type: "GET",
+                data: {lat : latitude, long : longitude},
+                dataType: "json"
+            });
+
+            if(typeof reloadRestaurantList == 'function')
+            {
+                reloadRestaurantList();
+            }
+            else
+            {
+                alert('function \'reloadRestaurantList\' does not exist!');
+            }
+        }
+    }
+    
+    // Reset current position from 'Settings'
+    if(action == 'locationSave')
+    {
+        if(locationPermission == '1')
+        {
+            if( (data['lat'] != '0.00' && data['long'] != '0.00') || responseGeoAddressCnt >= 20 )
+            {
+                // Update Cookie
+                document.cookie="latitude=" + data['lat'];
+                document.cookie="longitude=" + data['long'];
+                
+                // Update Session
+                var latitude  = getCookie("latitude");
+                var longitude = getCookie("longitude");
+
+                $.get(BASE_URL+'/saveCurrentlat-long', { lat: latitude, lng : longitude}, function(returnedData){
+                    console.log(returnedData["data"]);
+                    unsetLocationCookieTime();
+                    window.location.reload();
+                });
+            }
+        }
+        else
+        {
+            $('.login-inner-section a').attr('href','javascript:void(0)');
+            $('#login-popup').modal("show");
         }
     }
 }
