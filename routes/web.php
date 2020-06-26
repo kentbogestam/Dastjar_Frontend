@@ -90,7 +90,7 @@ Route::post('store-device-token-order-view', 'CustomerController@storeDeviceToke
 
 Route::get('restro-menu-list/{storeID}/{styleType?}', 'HomeController@menuList');
 Route::get('get-menu-detail/{dishType}/{level}/{storeId?}', 'HomeController@getMenuDetail');
-Route::post('extra-menu-list', 'HomeController@extraMenuList')->name('extraMenuList');
+Route::post('extra-menu-list/{styleType?}', 'HomeController@extraMenuList')->name('extraMenuList');
 
 Route::get('search-store-map', 'MapController@searchStoreMap');
 Route::get('404', 'HomeController@page_404')->name('page_404');

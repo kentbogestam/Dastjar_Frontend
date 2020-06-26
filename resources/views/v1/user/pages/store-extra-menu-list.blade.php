@@ -42,12 +42,25 @@
 	</div>
 
 	@if( !empty($menuTypes) )
-		<form id="form" class="form-horizontal" method="post" action="{{ route('extraMenuList') }}">
+		<form id="form" class="form-horizontal" method="post" action="{{ url('cart') }}">
 			{{ csrf_field() }}
 			<div class="{{ ($styleType || $storedetails->menu_style_type) ? 'row' : 'hotel-service-list' }}">
 				@php
 				$strMenuDetail = "";
 				@endphp
+				<div class="row" style="margin:0px">
+					<div class="col-md-12">
+						<p id="askText">{{__('messages.needSomeExtra')}}</p>
+					</div>
+				</div>
+
+				@forelse($items as $key => $val)
+					<input type="hidden" name="product[{{@$key}}][prod_quant]" value="{{@$val['prod_quant']}}" />
+					<input type="hidden" name="product[{{@$key}}][id]" value="{{@$val['id']}}" />
+					<input type="hidden" name="product[{{@$key}}][dish_type]" value="{{@$val['dish_type']}}" />
+					<input type="hidden" name="product[{{@$key}}][prod_desc]" value="{{@$val['prod_desc']}}" />
+				@empty
+				@endforelse
 				@foreach($menuTypes as $menuType)
 					@php
 					$strLoyaltyOffer = "";
@@ -157,6 +170,11 @@
 						</div>
 					@endif
 				@endforeach
+				<div class="row" style="margin:0px">
+					<div class="col-md-12">
+						<br><p id="continueText">{{__('messages.continue')}}</p>
+					</div>
+				</div>
 			</div>
 			<input type="hidden" id="browserCurrentTime" name="browserCurrentTime" value="" />
 			<input type="hidden" name="storeID" value="{{ $storedetails->store_id }}" />
@@ -231,6 +249,10 @@
 	@endif
 
 	$(function() {
+		setTimeout(function(){
+			$('.restaurant-box:first a').trigger('click');
+		}, 1000)
+
 		$(document).on('click', '.extra-btn a', function() {
 			id=$(this).attr('id');
 			comment = $('#orderDetail'+id).val();
@@ -260,39 +282,11 @@
 		});
 
 		// 
-		$("#menudataSave").click(function(e){
-			if( !checkTime(store_open_close_day_time, '{{ Session::get('order_date') }}') )
-			{
-				$('.alert-store-closed').removeClass('collapse').addClass('collapse-in');
-
-				$('html, body').animate({
-					scrollTop: ($(".alert-store-closed").offset().top - 50)
-				}, 'slow');
-			}
-			else
-			{
-				var d = new Date();
-				//console.log(d);
-				$("#browserCurrentTime").val(d);
-				var flag = false;
-				var x = $('form input[type="text"]').each(function(){
-		        	// Do your magic here
-		        	var checkVal = parseInt($(this).val());
-		        	console.log(checkVal);
-		        	if(checkVal > 0){
-		        		flag = true;
-		        		return flag;
-		        	}
-				});
-
-				if(flag){
-					send_btn();
-				} else{
-					alert("Please select item from the menu.");
-					e.preventDefault();
-				}
-			}
-			console.log('menudataSave');
+		$("#menudataSave,#continueText").click(function(e){
+			var d = new Date();
+			$("#browserCurrentTime").val(d);
+			send_btn();
+			console.log('Proceed to cart');
 		});
 
 		$("body").on('click',".accept-btn", function(){

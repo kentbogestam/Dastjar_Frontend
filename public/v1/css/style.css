@@ -1141,6 +1141,8 @@ button.btn.btn-address {
     font-weight: bold;
     font-size: 18px;
     margin-bottom:30px;
+    text-align: center;
+    margin-top: 20px;
 }
 #continueText{
 	background-color: #ecc291;

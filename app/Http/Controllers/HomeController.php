@@ -624,6 +624,151 @@ class HomeController extends Controller
         // return view('v1.user.pages.store-menu-grid', compact('storedetails', 'menuTypes', 'promotionLoyalty', 'customerLoyalty', 'orderCustomerLoyalty'));
     }
 
+    public function extraMenuList(Request $request, $styleType = 0){
+
+        //get main categories and data
+        $dish_ids = array();
+        $dish_type = array();
+        $datas = $request->all();
+        $items = array();
+        foreach ($datas['product'] as $key => $value) {
+            if($value['prod_quant'] > '0'){
+                $dish_type[] = $value['dish_type'];
+                $items[$key] = $value;
+            }
+        }
+
+        // Get store detail
+        $storeId = $request->storeID;
+        $storedetails = Store::where('store_id' , $storeId)->first();
+
+        // get mapped dish id s with categories data
+        if( !empty($dish_type) )
+        {   
+            $ids = ProductsExtra::whereIn('dish_type_id', $dish_type)->where('store_id', $storeId)->pluck('extra_dish_type_id');
+            if( !empty($ids) )
+            {
+                $dish_ids = $ids->toArray();
+            }
+        }
+
+        // 
+        if( !empty($dish_ids) )
+        {
+            $menuTypes = array();
+
+            $dishType = DishType::from('dish_type')
+                ->where('u_id' , $storedetails->u_id)
+                // ->where('parent_id', null)
+                ->where('dish_activate','1')
+                ->where('extras','1')
+                ->whereIn('dish_id', $dish_ids)
+                ->orderBy('rank')
+                ->orderBy('dish_id')
+                ->get();
+                
+            if($dishType)
+            {
+                $dishIds = array();
+
+                foreach($dishType as $dish)
+                {
+                    if( !is_null($dish->parent_id) )
+                    {
+                        // Get 'dish id' from parent ID
+                        $dishTypeLevel0 = DishType::from('dish_type AS DT1')
+                            ->select(['DT1.dish_id', 'DT1.dish_name', 'DT1.dish_image', 'DT1.rank', 'DT1.extras'])
+                            ->leftJoin('dish_type AS DT2', 'DT2.parent_id', '=', 'DT1.dish_id')
+                            ->leftJoin('dish_type AS DT3', 'DT3.parent_id', '=', 'DT2.dish_id')
+                            ->whereRaw("(DT1.dish_id = '{$dish->dish_id}' OR DT2.dish_id = '{$dish->dish_id}' OR DT3.dish_id = '{$dish->dish_id}') AND DT1.parent_id IS NULL")
+                            ->groupBy('DT1.dish_id')
+                            ->first();
+                        
+                        if($dishTypeLevel0)
+                        {
+                            if( !in_array($dishTypeLevel0->dish_id, $dishIds) )
+                            {
+                                $dishIds[] = $dishTypeLevel0->dish_id;
+
+                                $menuTypes[] = (object) array(
+                                    'dish_id' => $dishTypeLevel0->dish_id,
+                                    'dish_name' => $dishTypeLevel0->dish_name,
+                                    'dish_image' => $dishTypeLevel0->dish_image,
+                                    'rank' => $dishTypeLevel0->rank,
+                                    'extras' => $dish->extras,
+                                );
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if( !in_array($dish->dish_id, $dishIds) )
+                        {
+                            $dishIds[] = $dish->dish_id;
+
+                            $menuTypes[] = (object) array(
+                                'dish_id' => $dish->dish_id,
+                                'dish_name' => $dish->dish_name,
+                                'dish_image' => $dish->dish_image,
+                                'rank' => $dish->rank,
+                                'extras' => $dish->extras,
+                            );
+                        }
+                    }
+                }
+
+                // Sort the category
+                usort($menuTypes, function($a, $b) {
+                    return $a->rank <=> $b->rank;
+                });
+            }
+
+            if( !empty($menuTypes) )
+            {
+                // Get loyalty offer
+                $promotionLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
+                    ->select(['PL.id', 'PL.quantity_to_buy', 'PL.quantity_get', 'PL.validity', DB::raw('DATE_FORMAT(PL.end_date, "%d/%m-%Y") AS end_date'), DB::raw('GROUP_CONCAT(dish_type_id) AS dish_type_ids')])
+                    ->join('promotion_loyalty_dish_type AS PLDT', 'PLDT.loyalty_id', '=', 'PL.id')
+                    ->where(['PL.store_id' => $storedetails->store_id, 'PL.status' => '1'])
+                    ->where('PL.start_date', '<=', Carbon::now()->format('Y-m-d h:i:00'))
+                    ->where('PL.end_date', '>=', Carbon::now()->format('Y-m-d h:i:00'))
+                    ->groupBy('PL.id')
+                    ->first();
+                
+                $customerLoyalty = null;
+                
+                if( Auth::check() && $promotionLoyalty )
+                {
+                    // Get count of 'loyalty' used number of times
+                    $orderCustomerLoyalty = OrderCustomerLoyalty::from('order_customer_loyalty AS OCL')
+                        ->select([DB::raw('COUNT(OCL.id) AS cnt')])
+                        ->join('orders', 'orders.order_id', '=', 'OCL.order_id')
+                        ->where(['OCL.customer_id' => Auth::id(), 'OCL.loyalty_id' => $promotionLoyalty->id])
+                        ->where('orders.online_paid', '!=', 2)
+                        ->first();
+
+                    // Check if loyalty validity is 'false' so user can use n number of times or, validity should be greater than used validity of user
+                    if( (!$promotionLoyalty->validity) || ($promotionLoyalty->validity > $orderCustomerLoyalty->cnt) )
+                    {
+                        // Get customer loyalty
+                        $customerLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
+                            ->select(['OD.loyalty_id', DB::raw('SUM(OD.product_quality) AS quantity_bought')])
+                            ->join('order_details AS OD', 'OD.loyalty_id', '=', 'PL.id')
+                            ->join('orders', 'orders.order_id', '=', 'OD.order_id')
+                            ->where(['PL.id' => $promotionLoyalty->id, 'OD.user_id' => Auth::id()])
+                            ->where('orders.online_paid', '!=', 2)
+                            ->where('OD.loyalty_id', '!=', null)
+                            ->groupBy('OD.loyalty_id')
+                            ->first();
+                    }
+                }
+            }
+        }
+
+        // dd($menuTypes);
+        return view('v1.user.pages.store-extra-menu-list', compact('storedetails', 'menuTypes', 'promotionLoyalty', 'customerLoyalty', 'orderCustomerLoyalty', 'styleType', 'items'));
+    }
+
     function getMenuDetail($dishType, $level, $storeId = null)
     {
         $status = false;
@@ -731,6 +876,7 @@ class HomeController extends Controller
                                         <span class='plus max' onclick='incrementValue(\"{$row->product_id}\",\"{$people_serve}\")'><i class='fa fa-plus'></i></span>
                                     </div>
                                     <input type='hidden' name='product[{$row->product_id}][id]' value='{$row->product_id}' />
+                                    <input type='hidden' name='product[{$row->product_id}][dish_type]' value='{$dishType}' />
                                 </div>
                                 <div class='additional-set extra-btn'>
                                     <a href='javascript:void(0)'><i class='fa fa-clock-o'></i> {$result}</a>
