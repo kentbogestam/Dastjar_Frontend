@@ -400,4 +400,6 @@ return [
     'doYouWantsToShareOverPhone' => 'Do you wants to share detail on phone',
     'enterYourPhoneNumber' => 'Enter Your Phone Number',
     '10digitNumber' => 'Your 10 digit number',
+    'infoText' => 'On continue order will get rejected.',
+    'return' => 'Return',
 ];

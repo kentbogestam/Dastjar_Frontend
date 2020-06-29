@@ -746,9 +746,11 @@ class OrderController extends Controller
                         if(($delivery_timestamp - time()) < 86400){
                             $order->catering_order_status = '2';
                             $order->is_verified = '1';
+                            $order->online_paid = '2';
                         }else{
                             $order->catering_order_status = '0';
                             $order->is_verified = '0';
+                            $order->online_paid = '0';
                         }
 
                         $order->save();
@@ -798,18 +800,11 @@ class OrderController extends Controller
 
             // Update order_total, delivery_time and 'online_paid' => 2 (default)
             $final_order_total = $total_price;
-
-            if($order->order_type == "eat_now"){
-                $online_paid = 2;
-            }else{
-                $online_paid = 0;
-            }
             
             DB::table('orders')->where('order_id', $orderId)->update([
                 'order_delivery_time' => $max_time,
                 'order_total' => $total_price,
-                'final_order_total' => $final_order_total,
-                'online_paid' => $online_paid
+                'final_order_total' => $final_order_total
             ]);
 
             // Start applying discount rule

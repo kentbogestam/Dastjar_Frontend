@@ -402,4 +402,6 @@ return [
     'doYouWantsToShareOverPhone' => 'Vill du dela information på telefon',
     'enterYourPhoneNumber' => 'Skriv in ditt telefonnummer',
     '10digitNumber' => 'Ditt 10-siffriga nummer',
+    'infoText' => 'Vid fortsättning kommer beställningen att avvisas.',
+    'return' => 'Tillbaka',
 ];

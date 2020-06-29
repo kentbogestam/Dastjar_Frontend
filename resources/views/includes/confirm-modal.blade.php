@@ -25,8 +25,8 @@
 <div id="myConfirmModal" class="confirm-modal">
   <div class="confirm-modal-content">
     <p class="confirm-text"></p><br>
-    <button type="button" class="btn confirm-conti">{{__('messages.continue')}}</button>
-    <button type="button" class="btn confirm-close">{{__('messages.Cancel')}}</button>
+    <button type="button" class="btn confirm-close" style="background-color:#0fcd12;color:black;border:2px solid black;width: 100%;margin-bottom:5px">{{__('messages.return')}}</button>
+    <button type="button" class="btn confirm-conti" style="background-color:#ff0b0b;color:white;border:2px solid black;width: 70%;margin-left:15%">{{__('messages.continue')}}</button>
   </div>
 
 </div>
