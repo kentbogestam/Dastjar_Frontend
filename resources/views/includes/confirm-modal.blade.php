@@ -26,7 +26,7 @@
   <div class="confirm-modal-content">
     <center style="border:2px solid black;padding:5px;">
       <p style="color:red;font-weight: bold;font-size: 18px"><img src="{{ asset('kitchenImages/warning.jpg') }}" width="18" height="18" style="margin: 0px 10px"> {{__('messages.warning')}}!</p>
-      <p class="confirm-text"></p>
+      <p class="confirm-text">{{ __('messages.doYoureallywantstoReject') }}</p>
       <p>{{__('messages.areYouSure')}}</p>
     </center>
     <div class="rowfull" style="width:100%;margin-top:10px">

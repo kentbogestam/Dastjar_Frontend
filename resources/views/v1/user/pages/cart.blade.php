@@ -941,12 +941,10 @@
 			if(phone_number != '' && phone_number_prifix != ''){
 				$('.phone-text2').css("display","none")
 				$('.phone-text1').css("display","block")
-				console.log('+'+phone_number_prifix + phone_number)
 			}
 			else{
 				$('.phone-text1').css("display","none")
 				$('.phone-text2').css("display","block")
-				console.log('+'+phone_number_prifix + phone_number)
 			}
 
 			$('#myPhoneBtn').trigger('click');

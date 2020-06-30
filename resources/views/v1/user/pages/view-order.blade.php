@@ -133,7 +133,7 @@
 
 @section('content')
 	@include('includes.phone-modal')
-	@include('includes.confirm-modal')
+	@include('includes.cancel-modal')
 
 	<div class="order-summery-section">
 		<div class="order-summery order-confirmation-block">
@@ -697,11 +697,9 @@
 
 	function cancelMyOrder()
 	{
-		var msg = "{{ __('messages.doYoureallywantstoCancel') }}";
-		$('.confirm-text').html(msg);
-		$('#myConfirmBtn').trigger('click');
-        $('.confirm-conti').on('click', function(){
-        	$('.confirm-close').trigger('click');
+		$('#myCancelBtn').trigger('click');
+        $('.cancel-conti').on('click', function(){
+        	$('.cancel-close').trigger('click');
         	$('#loading-img').css("display", "block");
 			$.ajax({
 				type: 'post',

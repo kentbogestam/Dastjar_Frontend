@@ -351,8 +351,6 @@
         function rejectit(id){
             var status = '1';
             $("#popupCloseRight2").popup("close");
-            var msg = "{{ __('messages.doYoureallywantstoReject') }}";
-            $('.confirm-text').html(msg);
             $('#myConfirmBtn').trigger('click');
             $('.confirm-conti').on('click', function(){
                 $('.confirm-close').trigger('click');
