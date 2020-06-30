@@ -133,6 +133,7 @@
 
 @section('content')
 	@include('includes.phone-modal')
+	@include('includes.confirm-modal')
 
 	<div class="order-summery-section">
 		<div class="order-summery order-confirmation-block">
@@ -735,30 +736,31 @@
 				'eatLater' : '1'
 			},
 			success: function(data, status){
-				window.location.href = "{{url('order-view').'/'.$order->order_id}}";
+				AskPhoneForInfo();
 			}
 		});
 	}
 
 	function AskPhoneForInfo(){
+		var delivery_type = '{{@$order->delivery_type}}';
 		//send sms to user when its dine-in or take-away not home-delivery
-		if($('input[name=delivery_type]:checked').val() != '3'){
+		if(delivery_type != '3'){
 			var nmbr;
 			var phone_number = "{{@$order->phone_number}}";
 			var phone_number_prifix = "{{@$order->phone_number_prifix}}";
 
 			// if no phone number then ask number
 			if(phone_number != null && phone_number_prifix != null){
-				$('.confirm-text2').css("display","none")
-				$('.confirm-text1').css("display","block")
+				$('.phone-text2').css("display","none")
+				$('.phone-text1').css("display","block")
 			}
 			else{
-				$('.confirm-text1').css("display","none")
-				$('.confirm-text2').css("display","block")
+				$('.phone-text1').css("display","none")
+				$('.phone-text2').css("display","block")
 			}
 
-			$('#myConfirmBtn').trigger('click');
-	        $('.confirm-conti').on('click', function(){
+			$('#myPhoneBtn').trigger('click');
+	        $('.phone-conti').on('click', function(){
 	        	$('#loading-img').css("display", "block");
 	        	$.ajax({
 					url: "{{ url('smsOverPhone') }}",
@@ -771,7 +773,7 @@
 				});
 	        	location.reload(true);
 	        });
-	        $('.confirm-close').on('click', function(){
+	        $('.phone-close').on('click', function(){
 	        	location.reload(true);
 	        });
 		}else{

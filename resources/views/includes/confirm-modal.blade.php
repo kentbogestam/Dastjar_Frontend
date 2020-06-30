@@ -24,9 +24,20 @@
 <button id="myConfirmBtn" style="display:none">Open Modal</button>
 <div id="myConfirmModal" class="confirm-modal">
   <div class="confirm-modal-content">
-    <p class="confirm-text"></p><br>
-    <button type="button" class="btn confirm-close" style="background-color:#0fcd12;color:black;border:2px solid black;width: 100%;margin-bottom:5px">{{__('messages.return')}}</button>
-    <button type="button" class="btn confirm-conti" style="background-color:#ff0b0b;color:white;border:2px solid black;width: 70%;margin-left:15%">{{__('messages.continue')}}</button>
+    <center style="border:2px solid black;padding:5px;">
+      <p style="color:red;font-weight: bold;font-size: 18px"><img src="{{ asset('kitchenImages/warning.jpg') }}" width="18" height="18" style="margin: 0px 10px"> {{__('messages.warning')}}!</p>
+      <p class="confirm-text"></p>
+      <p>{{__('messages.areYouSure')}}</p>
+    </center>
+    <div class="rowfull" style="width:100%;margin-top:10px">
+      <div class="colmd6" style="width:50% !important;float:left">
+        <button type="button" class="btn confirm-close" style="border:2px solid black;padding:5px;width:100%">{{__('messages.no')}} <img src="{{ asset('kitchenImages/enter.png') }}" width="30" height="30"></button>
+      </div>
+      <div class="colmd6" style="width:42% !important;float:left;margin-left: 8%;margin-top:3px">
+        <button type="button" class="btn confirm-conti" style="background-color:red;text-shadow:none;color:black;width:100%">{{__('messages.yes')}}!</button>
+      </div>
+      <div style="clear:both"></div>
+    </div>
   </div>
 
 </div>

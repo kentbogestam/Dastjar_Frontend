@@ -387,8 +387,8 @@ return [
     'success' => 'Success',
     'acceptMsg' => 'Your order will be ready on the desired date!',
     'cancelMyOrder' => 'Cancel My Order',
-    'doYoureallywantstoCancel' => 'Do you really want to cancel this Order?',
-    'doYoureallywantstoReject' => 'Do you really want to reject this Order?',
+    'doYoureallywantstoCancel' => 'Do you want to CANCEL the Order?',
+    'doYoureallywantstoReject' => 'Do you want to REJECT the Order?',
     'okay' => 'OK',
     'pleaseWait' => 'Please Wait',
     'OrdersNotReady' => 'This Order is not Ready Yet',
@@ -402,4 +402,6 @@ return [
     '10digitNumber' => 'Your 10 digit number',
     'infoText' => 'On continue order will get rejected.',
     'return' => 'Return',
+    'areYouSure' => 'Are you sure?',
+    'warning' => 'WARNING'
 ];

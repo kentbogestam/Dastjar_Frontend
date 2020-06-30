@@ -629,7 +629,7 @@
 				'eatLater' : '0'
 			},
 			success: function(data, status){
-				window.location.href = "{{url('order-view').'/'.$order->order_id}}";
+				AskPhoneForInfo();
 			}
 		});
 	}
@@ -767,7 +767,7 @@
 			} else {
 				// Show success message
 				$('.row-new-card').find('div.card-errors').html('');
-				window.location.href = "{{ url('order-view/'.$order->order_id) }}";
+				AskPhoneForInfo();
 			}
 		}
 
@@ -856,7 +856,7 @@
 			} else {
 				// Show success message
 				$('.row-saved-cards').find('div.card-errors').html('');
-				window.location.href = "{{ url('order-view/'.$order->order_id) }}";
+				AskPhoneForInfo();
 			}
 		}
 
@@ -939,18 +939,18 @@
 
 			// if no phone number then ask number
 			if(phone_number != '' && phone_number_prifix != ''){
-				$('.confirm-text2').css("display","none")
-				$('.confirm-text1').css("display","block")
+				$('.phone-text2').css("display","none")
+				$('.phone-text1').css("display","block")
 				console.log('+'+phone_number_prifix + phone_number)
 			}
 			else{
-				$('.confirm-text1').css("display","none")
-				$('.confirm-text2').css("display","block")
+				$('.phone-text1').css("display","none")
+				$('.phone-text2').css("display","block")
 				console.log('+'+phone_number_prifix + phone_number)
 			}
 
-			$('#myConfirmBtn').trigger('click');
-	        $('.confirm-conti').on('click', function(){
+			$('#myPhoneBtn').trigger('click');
+	        $('.phone-conti').on('click', function(){
 	        	$('#loading-img').css("display", "block");
 	        	$.ajax({
 					url: "{{ url('smsOverPhone') }}",
@@ -963,7 +963,7 @@
 				});
 	        	window.location.href = "{{ url('order-view/'.$order->order_id) }}";
 	        });
-	        $('.confirm-close').on('click', function(){
+	        $('.phone-close').on('click', function(){
 	        	window.location.href = "{{ url('order-view/'.$order->order_id) }}";
 	        });
 		}else{

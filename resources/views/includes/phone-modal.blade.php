@@ -1,5 +1,5 @@
 <style>
-  .confirm-modal {
+  .phone-modal {
     display: none; 
     position: fixed; 
     z-index: 1;
@@ -12,7 +12,7 @@
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.4); 
   }
-  .confirm-modal-content {
+  .phone-modal-content {
     background-color: #fefefe;
     margin: auto;
     padding: 20px;
@@ -21,11 +21,11 @@
   }
 </style>
 
-<button id="myConfirmBtn" style="display:none">Open Modal</button>
-<div id="myConfirmModal" class="confirm-modal">
-  <div class="confirm-modal-content">
-    <p class="confirm-text1">{{ __('messages.doYouWantsToShareOverPhone') }}?<br></p>
-    <div class="row confirm-text2">
+<button id="myPhoneBtn" style="display:none">Open Modal</button>
+<div id="myPhoneModal" class="phone-modal">
+  <div class="phone-modal-content">
+    <p class="phone-text1">{{ __('messages.doYouWantsToShareOverPhone') }}?<br></p>
+    <div class="row phone-text2">
       <div class="col-xs-12">{{ __('messages.enterYourPhoneNumber') }}?<br><br></div>
       <div class="col-xs-3">
         @php $phone_number_prifix = 46; @endphp
@@ -42,20 +42,20 @@
         <input type="text" id="phone_number" value="{{ !is_null($order->phone_number) ? $order->phone_number : '' }}" placeholder="{{ __('messages.mobileNumber') }}*" class="form-control" required>
       </div>
     </div><br>
-    <button type="button" class="btn confirm-conti">{{__('messages.continue')}}</button>
-    <button type="button" class="btn confirm-close">{{__('messages.Cancel')}}</button>
+    <button type="button" class="btn phone-conti">{{__('messages.continue')}}</button>
+    <button type="button" class="btn phone-close">{{__('messages.Cancel')}}</button>
   </div>
 
 </div>
 
 <script>
-var confirmModal = document.getElementById("myConfirmModal");
-var confirmBtn = document.getElementById("myConfirmBtn");
-var confirmSpan = document.getElementsByClassName("confirm-close")[0];
-confirmBtn.onclick = function() {
-  confirmModal.style.display = "block";
+var phoneModal = document.getElementById("myPhoneModal");
+var phoneBtn = document.getElementById("myPhoneBtn");
+var phoneSpan = document.getElementsByClassName("phone-close")[0];
+phoneBtn.onclick = function() {
+  phoneModal.style.display = "block";
 }
-confirmSpan.onclick = function() {
-  confirmModal.style.display = "none";
+phoneSpan.onclick = function() {
+  phoneModal.style.display = "none";
 }
 </script>
