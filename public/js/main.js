@@ -152,6 +152,8 @@ function setCurrentLatLong(urllatlng){
         },function(error){
             if(!getCookie("latitude") && !getCookie("longitude"))
             {
+                $("#loading-img").hide();
+                $("#overlay").hide();
                 $('#login-popup').modal("show");
             }
         });
@@ -650,6 +652,8 @@ function responseGeoAddressFromIosNative(data)
         }
         else
         {
+            $("#loading-img").hide();
+            $("#overlay").hide();
             $('.login-inner-section a').attr('href','javascript:void(0)');
             $('#login-popup').modal("show");
         }
