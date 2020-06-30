@@ -389,8 +389,8 @@ return [
     'success' => 'Framgång',
     'acceptMsg' => 'Din beställning är klar på önskat datum!',
     'cancelMyOrder' => 'Avboka Min Beställning',
-    'doYoureallywantstoCancel' => 'Är du säker på att du vill avboka din order!?',
-    'doYoureallywantstoReject' => 'Do you really want to avvisa this Order?',
+    'doYoureallywantstoCancel' => 'Vill du avbryta den här beställningen?',
+    'doYoureallywantstoReject' => 'Vill du Avvisa den här ordern?',
     'okay' => 'OK',
     'pleaseWait' => 'Var god vänta',
     'OrdersNotReady' => 'Den här ordern är inte färdig ännu',
@@ -402,4 +402,8 @@ return [
     'doYouWantsToShareOverPhone' => 'Vill du dela information på telefon',
     'enterYourPhoneNumber' => 'Skriv in ditt telefonnummer',
     '10digitNumber' => 'Ditt 10-siffriga nummer',
+    'infoText' => 'Vid fortsättning kommer beställningen att avvisas.',
+    'return' => 'Tillbaka',
+    'areYouSure' => 'Är du säker?',
+    'warning' => 'VARNING'
 ];

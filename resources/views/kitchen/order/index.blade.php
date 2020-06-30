@@ -123,8 +123,6 @@
 
 	function rejectOrder(id){
 	    var status = '1';
-		var msg = "{{ __('messages.doYoureallywantstoReject') }}";
-        $('.confirm-text').html(msg);
         $('#myConfirmBtn').trigger('click');
         $('.confirm-conti').on('click', function(){
             $('.confirm-close').trigger('click');
