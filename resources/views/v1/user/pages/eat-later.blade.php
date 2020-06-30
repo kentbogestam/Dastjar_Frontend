@@ -37,7 +37,7 @@
 		<div class="hotel-list" id="companyDetailContianer"></div>
 	</div>
 
-	<div id="loading-img" class="ui-loader ui-corner-all ui-body-a ui-loader-default" style="display: none;">
+	<div id="loading-img" class="ui-loader ui-corner-all ui-body-a ui-loader-default">
 		<span class="ui-icon-loading"></span><h1>loading</h1>
 	</div>
 

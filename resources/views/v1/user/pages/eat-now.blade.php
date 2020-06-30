@@ -50,7 +50,7 @@
 	
 
 	<!-- Popup if location not allowed -->
-	<div id="login-popup" class="modal fade login-popup" role="dialog">
+	<div id="login-popup" class="modal fade login-popup" role="dialog" data-keyboard="false" data-backdrop="static">
 		<div class='modal-dialog'>
 			<div class="modal-content">
 				<div class="modal-body text-center">
@@ -61,7 +61,7 @@
 		</div>
 	</div>
 
-	<div id="loading-img" class="ui-loader ui-corner-all ui-body-a ui-loader-default" style="display: none;">
+	<div id="loading-img" class="ui-loader ui-corner-all ui-body-a ui-loader-default">
 		<span class="ui-icon-loading"></span><h1>loading</h1>
 	</div>
 
