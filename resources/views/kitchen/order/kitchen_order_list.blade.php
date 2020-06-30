@@ -164,6 +164,7 @@
 		}
 
 		function rejectOrder(id){
+			$('#add-manual-prep-time').popup('close');
             var status = '1';
             $('#myConfirmBtn').trigger('click');
             $('.confirm-conti').on('click', function(){
@@ -357,7 +358,7 @@
 				          		liItem +="</a>";
 				          		var utcTime = new Date(temp[i]['created_at']+" UTC").getTime()/1000;
 				          		if((temp[i]["delivery_timestamp"] < (utcTime + 86400)) && (utcTime > {{ time()-300 }} )) {
-				          			liItem +="<a href='javascript:void(0)' class='rejectRemove' rel='"+utcTime+"' onclick='rejectOrder("+temp[i]['order_id']+");'><br>reject</a>";
+				          			$('.addRejectBtn').append("<button class='rejectRemove' rel='"+utcTime+"' onclick='rejectOrder("+temp[i]['order_id']+");'>reject</button>");
 				          		}
 				          		liItem +="</td>";
 				          		
@@ -567,7 +568,7 @@
 				          		liItem +="</a>";
 				          		var utcTime = new Date(temp[i]['created_at']+" UTC").getTime()/1000;
 				          		if((temp[i]["delivery_timestamp"] < (utcTime + 86400)) && (utcTime > {{ time()-300 }} )) {
-				          			liItem +="<a href='javascript:void(0)' class='rejectRemove' rel='"+utcTime+"' onclick='rejectOrder("+temp[i]['order_id']+");'><br>reject</a>";
+				          			$('.addRejectBtn').append("<button class='rejectRemove' rel='"+utcTime+"' onclick='rejectOrder("+temp[i]['order_id']+");'>reject</button>");
 				          		}
 				          		liItem +="</td>";
 			          		}else{
@@ -799,7 +800,7 @@
 		          		liItem +="</a>";
 		          		var utcTime = new Date(list[i]['created_at']+" UTC").getTime()/1000;
 		          		if((list[i]["delivery_timestamp"] < (utcTime + 86400)) && (utcTime > {{ time()-300 }} )) {
-		          			liItem +="<a href='javascript:void(0)' class='rejectRemove' rel='"+utcTime+"' onclick='rejectOrder("+list[i]['order_id']+");'><br>reject</a>";
+		          			$('.addRejectBtn').append("<button class='rejectRemove' rel='"+utcTime+"' onclick='rejectOrder("+list[i]['order_id']+");'>reject</button>");
 		          		}
 		          		liItem +="</td>";
 		      		}else{
