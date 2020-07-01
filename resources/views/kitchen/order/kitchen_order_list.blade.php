@@ -183,6 +183,9 @@
                             function(){ 
                                 $('.ready_notifications').hide();
                         }, 3000);
+
+                        // Update item as speak
+						updateSpeak(id);
                     }
                 });
             });

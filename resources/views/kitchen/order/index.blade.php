@@ -141,6 +141,8 @@
                         function(){ 
                             $('.ready_notifications').hide();
                     }, 3000);
+
+                    clearSpeakTextInterval();
                 }
             });
 		});
