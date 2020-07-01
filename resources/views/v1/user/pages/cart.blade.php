@@ -108,7 +108,7 @@
 			@if($order->order_type == 'eat_later' && ($order->delivery_timestamp > strtotime('+1 day')))
             	{{-- Send Order For Confirmation --}}
                 <div class="col-md-12 text-center"> 
-                    <br><button class="btn btn-primary send-order-confirmation">{{ __('messages.sendorderforconfirmation') }}</button><br>
+                    <br><button class="btn btn-success send-order-confirmation">{{ __('messages.sendorderforconfirmation') }}</button><br>
                 </div>
             @else
                 {{-- Proceed to pay --}}

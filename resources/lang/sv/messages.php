@@ -287,7 +287,7 @@ return [
     'submit' => 'Skicka',
     'update' => 'Uppdatera',
     'yes' => 'Ja',
-    'no' => 'Nr',
+    'no' => 'Nej',
     'close' => 'Stäng',
     'back' => 'Tillbaka',
     'save' => 'Spara',
@@ -405,5 +405,6 @@ return [
     'infoText' => 'Vid fortsättning kommer beställningen att avvisas.',
     'return' => 'Tillbaka',
     'areYouSure' => 'Är du säker?',
-    'warning' => 'VARNING'
+    'warning' => 'VARNING',
+    'reject' => 'Avvisa',
 ];

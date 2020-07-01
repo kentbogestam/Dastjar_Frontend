@@ -448,20 +448,6 @@ input[type=number]::-webkit-outer-spin-button {
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d1d1d1', endColorstr='#000000', GradientType=0 );
 }
 
-button.rejectRemove {
-    color: red;
-    background-color: darkgray;
-    border: none;
-    padding: 3px 10px;
-}
-.addRejectBtn{
-    text-align: right;
-}
-
-.addRejectBtn form{
-    text-align: left;
-}
-
 /* -=========== popup design  ============= */
 .pop.in{
  width: 100%;

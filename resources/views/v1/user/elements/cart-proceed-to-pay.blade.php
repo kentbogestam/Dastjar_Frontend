@@ -62,7 +62,7 @@
 		</div>
 	@else
 		<div class="col-md-12 text-center">
-			<button type="button" class="btn btn-primary send-order" disabled="">{{ __('messages.send order and pay in restaurant') }}</button>
+			<button type="button" class="btn btn-success send-order" disabled="">{{ __('messages.send order and pay in restaurant') }}</button>
 		</div>
 	@endif
 </div>

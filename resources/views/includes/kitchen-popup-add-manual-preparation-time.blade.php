@@ -1,7 +1,7 @@
 <!-- Popup to add manual preparation time -->
 <div data-role="popup" data-dismissible="false" id="add-manual-prep-time" style="max-width:550px;">
 	<div data-role="header"><h2>Preparation Time</h2></div>
-	<div class="ui-content addRejectBtn" style="padding: 15px;">
+	<div class="ui-content" style="padding: 15px;">
 		<form name="frm-add-manual-prep-time">
 			<fieldset data-role="controlgroup" data-type="horizontal">
 				<legend>{{ __('messages.textAddManualPrepTime') }}</legend>

@@ -87,6 +87,7 @@
 			    </tr>
 			</tfoot>
 			@endif
+			<tfoot id="rejectBtnShow"></tfoot>
 		</table>
 	</div>
 
@@ -164,7 +165,7 @@
 		}
 
 		function rejectOrder(id){
-			$('#add-manual-prep-time').popup('close');
+			$('#popupCloseRight').popup('close');
             var status = '1';
             $('#myConfirmBtn').trigger('click');
             $('.confirm-conti').on('click', function(){
@@ -194,6 +195,7 @@
 			$.get("{{url('api/v1/kitchen/orderSpecificOdrderDetail')}}/"+orderId,
 			function(returnedData){
 				var temp = returnedData["data"];
+				var rejectBtnShow = returnedData["rejectBtnShow"];
 				var isQuantityFree = 0;
 
 				for (var i=0;i<temp.length;i++){
@@ -215,6 +217,7 @@
 					}
 				}
 				$("#specificOrderDetailContianer").html(liItem);
+      			$("#rejectBtnShow").html(rejectBtnShow);	
 				$("#printCopy").attr('onclick','printCopy('+orderId+');');
 
 				// Show/hide loyalty column in 'order detail' popup
@@ -356,10 +359,6 @@
 				          		liItem += aString
 				          		liItem += "<img id='"+ids+"' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
 				          		liItem +="</a>";
-				          		var utcTime = new Date(temp[i]['created_at']+" UTC").getTime()/1000;
-				          		if((temp[i]["delivery_timestamp"] < (utcTime + 86400)) && (utcTime > {{ time()-300 }} )) {
-				          			$('.addRejectBtn').append("<button class='rejectRemove' rel='"+utcTime+"' onclick='rejectOrder("+temp[i]['order_id']+");'>reject</button>");
-				          		}
 				          		liItem +="</td>";
 				          		
 			          		}else{
@@ -566,10 +565,6 @@
 				          		liItem += aString
 				          		liItem += "<img id='"+ids+"' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
 				          		liItem +="</a>";
-				          		var utcTime = new Date(temp[i]['created_at']+" UTC").getTime()/1000;
-				          		if((temp[i]["delivery_timestamp"] < (utcTime + 86400)) && (utcTime > {{ time()-300 }} )) {
-				          			$('.addRejectBtn').append("<button class='rejectRemove' rel='"+utcTime+"' onclick='rejectOrder("+temp[i]['order_id']+");'>reject</button>");
-				          		}
 				          		liItem +="</td>";
 			          		}else{
 			          			liItem += "<td>"
@@ -798,10 +793,6 @@
 		          		liItem += aString
 		          		liItem += "<img id='"+ids+"' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
 		          		liItem +="</a>";
-		          		var utcTime = new Date(list[i]['created_at']+" UTC").getTime()/1000;
-		          		if((list[i]["delivery_timestamp"] < (utcTime + 86400)) && (utcTime > {{ time()-300 }} )) {
-		          			$('.addRejectBtn').append("<button class='rejectRemove' rel='"+utcTime+"' onclick='rejectOrder("+list[i]['order_id']+");'>reject</button>");
-		          		}
 		          		liItem +="</td>";
 		      		}else{
 		      			liItem += "<td>"
@@ -919,8 +910,6 @@
 		  return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2)
 		}
 
-        var crntTime = parseInt({{time()}});
-
         setInterval(function(){
             $('#orderDetailContianer tr').each(function(){
              	// blink image time caculator getting time based on pick up and current time
@@ -932,20 +921,11 @@
                 var new_time = parseInt(today.getHours())*60 + parseInt(today.getMinutes())
                 var chng = $(this).find('.ready_class');
                 var len = chng.length;
-                var tym = crntTime-300;
-                var utctym =  $(this).find('.rejectRemove').attr('rel');
              	// flash image based on pick up and new time
                 if(old_time < new_time && len > 0){
                     chng.find('img').attr('src',"{{asset('kitchenImages/red_blink_image.gif')}}");
                 }
-
-                if(utctym != undefined){
-	                if(utctym < tym){
-	                	$(this).find('.rejectRemove').remove();
-	                }
-                }
             });
-            crntTime = crntTime + 10;
-        },10000,crntTime);
+        },10000);
     </script>
 @endsection
