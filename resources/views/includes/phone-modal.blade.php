@@ -24,9 +24,9 @@
 <button id="myPhoneBtn" style="display:none">Open Modal</button>
 <div id="myPhoneModal" class="phone-modal">
   <div class="phone-modal-content">
-    <p class="phone-text1">{{ __('messages.doYouWantsToShareOverPhone') }}?<br></p>
-    <div class="row phone-text2">
-      <div class="col-xs-12">{{ __('messages.enterYourPhoneNumber') }}?<br><br></div>
+    <div class="row">
+      <div class="col-xs-12"><b>{{ __('messages.doYouWantsToShareOverPhone') }}?</b><br><br></div>
+      <div class="col-xs-12">{{ __('messages.enterYourPhoneNumber') }}.<br><br></div>
       <div class="col-xs-3">
         @php $phone_number_prifix = 46; @endphp
         @if( !is_null(@$order->phone_number_prifix) )

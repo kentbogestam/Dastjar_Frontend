@@ -39,7 +39,7 @@ class PaymentController extends Controller
     	$created_at = strtotime($order->created_at) + 86400; //convert created time to time function
     	$heartbeat = Helper::isStoreLive($storeId);
 
-    	if( (!is_null($heartbeat) && $heartbeat < 1) || $order->order_type == 'eat_later' )
+    	if( (!is_null($heartbeat) && $heartbeat < 1) || ($deliveryTimestamp > $created_at) )
     	{
 	    	// Get connect a/c detail
 	        $companySubscriptionDetail = CompanySubscriptionDetail::from('company_subscription_detail AS CSD')

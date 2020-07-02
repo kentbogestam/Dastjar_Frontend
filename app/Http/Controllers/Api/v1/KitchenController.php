@@ -128,7 +128,7 @@ class KitchenController extends Controller
             $utcTime = strtotime($order->created_at);
 
             if(($order->delivery_timestamp < ($utcTime + 86400)) && ($utcTime > (time()-900) ) && $order->order_started == '0') {
-                $rejectBtnShow = '<tr class="ui-bar-d"><th id="rejectOrder" colspan="4" onclick="rejectOrder('.$order->order_id.');" style="cursor:pointer;">'. __("messages.reject") .'</th></tr>';
+                $rejectBtnShow = '<tr><th colspan="4" style="text-align:right"><button id="rejectOrder" onclick="rejectOrder('.$order->order_id.');" style="cursor:pointer;color: red;background-color: #808080e6;border: none;">'. __("messages.reject") .'</button></th></tr>';
             }
         }
 
