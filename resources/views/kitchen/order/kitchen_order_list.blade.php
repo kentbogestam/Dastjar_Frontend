@@ -80,13 +80,13 @@
 			    </tr>
 			</thead>
 			<tbody id="specificOrderDetailContianer"></tbody>
-			@if(App\Helper::isPackageSubscribed(13))
-			<tfoot>
+			{{-- @if(App\Helper::isPackageSubscribed(13)) --}}
+			<thead>
 				<tr class="ui-bar-d">
 					<th id="printCopy" colspan="4" onclick="" style="cursor:pointer;">{{ __('messages.print') }}</th> 
 			    </tr>
-			</tfoot>
-			@endif
+			</thead>
+			{{-- @endif --}}
 			<tfoot id="rejectBtnShow"></tfoot>
 		</table>
 	</div>

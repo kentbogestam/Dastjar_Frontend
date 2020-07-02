@@ -82,11 +82,11 @@
 			</thead>
 			<tbody id="specificOrderDetailContianer"></tbody>
 			@if(App\Helper::isPackageSubscribed(13))
-			<tfoot>
+			<thead>
 				<tr class="ui-bar-d">
 					<th id="printCopy" colspan="4" onclick="" style="cursor:pointer;">{{ __('messages.print') }}</th> 
 			    </tr>
-			</tfoot>
+			</thead>
 			@endif
 			@if( !Session::has('subscribedPlans.kitchen') )
 				<tfoot id="rejectBtnShow"></tfoot>
