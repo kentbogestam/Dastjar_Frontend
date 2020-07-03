@@ -39,13 +39,32 @@ class User extends Authenticatable
     public function paidOrderList()
     {
         // return $this->hasMany('App\Order','user_id')->where('paid', 0)->whereNotIn('online_paid', [2])->where('orders.cancel', '!=', 1)->orderBy('order_id', 'desc');
-        
+        $data = Self::getPaidOrderList();
         return $this->hasMany('App\Order','user_id')
-            ->where(['paid' => 0])
-            ->where('orders.check_deliveryDate', '>=', date('Y-m-d'))
-//            ->whereNotIn('online_paid', [2])
-            ->where('orders.cancel', '!=', 1)
-            ->orderBy('order_id', 'desc');
+            ->whereIn('order_id',$data);
+    }
+
+    public static function getPaidOrderList()
+    {
+        $items = Order::where('user_id', \Auth::user()->id)
+                    ->where(['paid' => 0])
+                    ->where('orders.check_deliveryDate', '>=', date('Y-m-d'))
+                    ->where('orders.cancel', '!=', 1)
+                    ->orderBy('order_id', 'desc')
+                    ->get();
+        $orderIds = array();
+        foreach($items as $item){
+            if($item->delivery_timestamp > (strtotime($item->created_at) + 86400)){
+                if($item->online_paid != '0'){
+                    $orderIds[] = $item->order_id;
+                }
+            }else{
+                if($item->online_paid != '2'){
+                    $orderIds[] = $item->order_id;
+                }
+            }
+        }
+        return $orderIds;
     }
 
     /**

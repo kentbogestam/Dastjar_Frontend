@@ -748,18 +748,8 @@
 			var phone_number_prifix = "{{@$order->phone_number_prifix}}";
 
 			// if no phone number then ask number
-			if(phone_number != null && phone_number_prifix != null){
-				$('.phone-text2').css("display","none")
-				$('.phone-text1').css("display","block")
-			}
-			else{
-				$('.phone-text1').css("display","none")
-				$('.phone-text2').css("display","block")
-			}
-
-			$('#myPhoneBtn').trigger('click');
-	        $('.phone-conti').on('click', function(){
-	        	$('#loading-img').css("display", "block");
+			if(phone_number != '' && phone_number_prifix != ''){
+				$('#loading-img').css("display", "block");
 	        	$.ajax({
 					url: "{{ url('smsOverPhone') }}",
 					method: 'post',
@@ -769,8 +759,24 @@
 						'order_number':'{{$order->order_id}}',
 					}
 				});
-	        	location.reload(true);
-	        });
+	        	window.location.href = "{{ url('order-view/'.$order->order_id) }}";
+			}else{
+
+				$('#myPhoneBtn').trigger('click');
+		        $('.phone-conti').on('click', function(){
+		        	$('#loading-img').css("display", "block");
+		        	$.ajax({
+						url: "{{ url('smsOverPhone') }}",
+						method: 'post',
+						data:{
+							'phone_number_prifix':$('#phone_number_prifix').val(),
+							'phone_number':$('#phone_number').val(),
+							'order_number':'{{$order->order_id}}',
+						}
+					});
+		        	window.location.href = "{{ url('order-view/'.$order->order_id) }}";
+		        });
+		    }
 	        $('.phone-close').on('click', function(){
 	        	location.reload(true);
 	        });
@@ -778,6 +784,5 @@
 			location.reload(true);
 		}
 	}
-
 </script>
 @endsection

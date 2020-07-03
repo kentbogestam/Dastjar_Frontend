@@ -82,11 +82,14 @@
 			</thead>
 			<tbody id="specificOrderDetailContianer"></tbody>
 			@if(App\Helper::isPackageSubscribed(13))
-			<tfoot>
+			<thead>
 				<tr class="ui-bar-d">
 					<th id="printCopy" colspan="4" onclick="" style="cursor:pointer;">{{ __('messages.print') }}</th> 
 			    </tr>
-			</tfoot>
+			</thead>
+			@endif
+			@if( !Session::has('subscribedPlans.kitchen') )
+				<tfoot id="rejectBtnShow"></tfoot>
 			@endif
 		</table>
 	</div>
@@ -105,7 +108,6 @@
 	var imageUrlLoad = "{{asset('kitchenImages/red_blink_image.png')}}";
 	var speakOrderItemList = [];
 	var driverapp = "{{ Session::get('driverapp') }}";
-	var crntTime = parseInt({{time()}});
 
 	$(function(){
 		ajaxCall();
@@ -122,6 +124,7 @@
     });
 
 	function rejectOrder(id){
+		$('#popupCloseRight').popup('close');
 	    var status = '1';
         $('#myConfirmBtn').trigger('click');
         $('.confirm-conti').on('click', function(){
@@ -153,6 +156,7 @@
 		$.get("{{url('api/v1/kitchen/orderSpecificOdrderDetail')}}/"+orderId,
 		function(returnedData){
 			var temp = returnedData["data"];
+			var rejectBtnShow = returnedData["rejectBtnShow"];
 			var isQuantityFree = 0;
 
 			for (var i=0;i<temp.length;i++){
@@ -174,6 +178,7 @@
 				}
 			}
 			$("#specificOrderDetailContianer").html(liItem);
+      		$("#rejectBtnShow").html(rejectBtnShow);	
 			$("#printCopy").attr('onclick','printCopy('+orderId+');');
 
 			// Show/hide loyalty column in 'order detail' popup
@@ -232,7 +237,7 @@
 			      		var time = addTimes(temp[i]['deliver_time']);
 			      	}
                     
-//                    blink image time caculator getting time based on pick up and current time
+                   	// blink image time calculator getting time based on pick up and current time
                     var today = new Date(); 
                     old_hour = time.substr(0,2);
                     old_mins = time.substr(3,5);
@@ -258,7 +263,7 @@
 	          			orderStatus += orderStatus.length ? ' not-accepted' : 'not-accepted';
 	          		}
 
-	          		liItem += "<tr class='"+orderStatus+"'>";
+	          		liItem += "<tr class='order_id_"+orderIdSpecific+" "+orderStatus+"'>";
 	          		liItem += "<th>"
 	          		liItem += "<a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>"
 	          		liItem += temp[i]["customer_order_id"]
@@ -291,10 +296,6 @@
 			          		liItem += "<img id='"+ids+"' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
 			          		liItem +="</a>";
 			          		var utcTime = new Date(temp[i]['created_at']+" UTC").getTime()/1000;
-			          		
-			          		if((temp[i]["delivery_timestamp"] < (utcTime + 86400)) && (utcTime > (crntTime-300) )) {
-			          			liItem +="<a href='javascript:void(0)' class='rejectRemove' rel='"+utcTime+"' onclick='rejectOrder("+temp[i]['order_id']+");'><br>reject</a>";
-			          		}
 			          		liItem +="</td>";
 		          		}else{
 		          			liItem += "<td>"
@@ -468,10 +469,9 @@
           		$('.catering-badge').html('');
           	}
 		});
-		crntTime = crntTime + 10; 
 	}
 
-	setInterval(ajaxCall, 10000, crntTime);
+	setInterval(ajaxCall, 10000);
 
 	var tempCount = 18;
 	$(document).on("scrollstop", function (e) {
@@ -561,7 +561,7 @@
   			orderStatus += orderStatus.length ? ' not-accepted' : 'not-accepted';
   		}
 
-      	liItem += "<tr class='"+orderStatus+"'>";
+      	liItem += "<tr class='order_id_"+orderIdSpecific+" "+orderStatus+"'>";
   		liItem += "<th>"
   		liItem += "<a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>"
   		liItem += list[i]["customer_order_id"]
@@ -596,10 +596,6 @@
           		liItem += aString
           		liItem += "<img id='"+ids+"' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
           		liItem +="</a>";
-          		var utcTime = new Date(list[i]['created_at']+" UTC").getTime()/1000;
-          		if((list[i]["delivery_timestamp"] < (utcTime + 86400)) && (utcTime > (crntTime-300) )) {
-          			liItem +="<a href='javascript:void(0)' class='rejectRemove' rel='"+utcTime+"' onclick='rejectOrder("+list[i]['order_id']+");'><br>reject</a>";
-          		}
           		liItem +="</td>";
       		}else{
       			liItem += "<td>"

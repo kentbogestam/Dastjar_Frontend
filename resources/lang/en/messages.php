@@ -403,5 +403,6 @@ return [
     'infoText' => 'On continue order will get rejected.',
     'return' => 'Return',
     'areYouSure' => 'Are you sure?',
-    'warning' => 'WARNING'
+    'warning' => 'WARNING',
+    'reject' => 'Reject',
 ];
