@@ -333,18 +333,44 @@
 	                            <p> {{ __('messages.acceptMsg') }} </p>
 	                        </div>
 	                    @endif
+	                @else
+	                	{{-- Cancellation message --}}
+	                    <div class="rejectbox">
+	                        <p> {{ __('messages.orderCanceled', ['order_id' => $order->customer_order_id]) }} </p>
+	                    </div>
+	                    @if($order->is_seen == "0")
+	                	<!-- if seen by user -->
+			                {{-- okay order message --}}
+							<div class="col-md-12 text-center">
+								<button type="button" class="btn btn-primary" onclick="isSeenMyOrder();">{{ __('messages.okay') }}</button><br><br>
+							</div>
+						@endif
 	                @endif
                 @else
-                	@if($order->cancel == "0" && $order->online_paid != "1")
-                    	<!-- if not cancelled and not paid-->
-	                    {{-- waiting message --}}
-	                    <div class="waitingtbox">
-	                        <p> {{ __('messages.waitForOrderConfirmation') }} </p>
+                	@if($order->cancel == "0")
+                		@if($order->online_paid != "1")
+	                    	<!-- if not cancelled and not paid-->
+		                    {{-- waiting message --}}
+		                    <div class="waitingtbox">
+		                        <p> {{ __('messages.waitForOrderConfirmation') }} </p>
+		                    </div>
+			                {{-- Cancel order message --}}
+							<div class="col-md-12 text-center">
+								<button type="button" class="btn btn-danger" onclick="cancelMyOrder();">{{ __('messages.cancelMyOrder') }}</button><br><br>
+							</div>
+						@endif
+					@else
+	                	{{-- Cancellation message --}}
+	                    <div class="rejectbox">
+	                        <p> {{ __('messages.orderCanceled', ['order_id' => $order->customer_order_id]) }} </p>
 	                    </div>
-		                {{-- Cancel order message --}}
-						<div class="col-md-12 text-center">
-							<button type="button" class="btn btn-danger" onclick="cancelMyOrder();">{{ __('messages.cancelMyOrder') }}</button><br><br>
-						</div>
+	                    @if($order->is_seen == "0")
+	                	<!-- if seen by user -->
+			                {{-- okay order message --}}
+							<div class="col-md-12 text-center">
+								<button type="button" class="btn btn-primary" onclick="isSeenMyOrder();">{{ __('messages.okay') }}</button><br><br>
+							</div>
+						@endif
 					@endif
                 @endif
             @else
@@ -714,12 +740,7 @@
 				},
 				dataType: 'json',
 				success: function(response) {
-					if(response.order_number == ''){
-						location.reload(true);
-					}else{
-						$('#loading-img').css("display", "none");
-						window.location.href="{{ url('cancel-order') }}/"+response.order_number;
-					}
+					location.reload(true);
 				}
 			});
         });
