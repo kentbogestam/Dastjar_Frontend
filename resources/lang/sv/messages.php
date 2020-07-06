@@ -397,7 +397,7 @@ return [
     'deliveryAtDoor' => 'Lämna vid dörren',
     'orderDeliveryAtDoor' => 'Din beställning är nu levererad till din dörr! Tack för beställningen och Välkommen tillbaka!',
     'deliverAtDoor' => '||Leverera till dörren||',
-    'deliverOn' => 'Lverans den:',
+    'deliverOn' => 'Leverans den:',
     'zip' => 'postnr',
     'doYouWantsToShareOverPhone' => 'Vill du dela information på telefon',
     'enterYourPhoneNumber' => 'Skriv in ditt telefonnummer',
@@ -407,4 +407,5 @@ return [
     'areYouSure' => 'Är du säker?',
     'warning' => 'VARNING',
     'reject' => 'Avvisa',
+    'orderCanceled' => 'Din order har avslutats',
 ];

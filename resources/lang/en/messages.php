@@ -405,4 +405,5 @@ return [
     'areYouSure' => 'Are you sure?',
     'warning' => 'WARNING',
     'reject' => 'Reject',
+    'orderCanceled' => 'Your order :order_id has been canceled',
 ];
