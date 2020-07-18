@@ -24,7 +24,7 @@
 	// Call geolocation API and set updated position
 	if(!getCookie("latitude") && !getCookie("longitude"))
 	{
-		setCurrentLatLong("{{ url('update-location') }}");
+		// setCurrentLatLong("{{ url('update-location') }}");
 
 		// Set default type store 'eatnow/eatlater'
 		setResttype("{{ url('setResttype') }}", 'eatnow');
@@ -96,10 +96,12 @@
 	});
 
 	$(function(){
-		if( (getCookie("latitude") && getCookie("longitude")) || (loc_lat && loc_lng) )
+		/*if( (getCookie("latitude") && getCookie("longitude")) || (loc_lat && loc_lng) )
 		{
 			getPos("{{url('lat-long')}}","{{url('restro-menu-list/')}}",noImageUrl);
-		}
+		}*/
+
+		getPos("{{url('lat-long')}}","{{url('restro-menu-list/')}}",noImageUrl);
 		
 		checkUserLogin("{{url('checkUserLogin')}}");
 	});

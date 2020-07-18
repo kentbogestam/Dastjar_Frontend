@@ -120,7 +120,7 @@ function decrementValue(id)
 
 // Call from 'popupSelection' on load and update user location (if type_selection is null)
 function setCurrentLatLong(urllatlng){
-    var userLang = navigator.language || navigator.userLanguage; 
+    /*var userLang = navigator.language || navigator.userLanguage; 
     
     if (userLang=='sv'){
         $("#contentEnglish").hide();
@@ -129,7 +129,7 @@ function setCurrentLatLong(urllatlng){
     }else{
         $("#contentEnglish").show();
         $("#contentSwedish").hide();
-    }
+    }*/
 
     if(ios && (!standalone && !safari))
     {
@@ -558,13 +558,21 @@ function responseGeoAddressFromIosNative(data)
                 return false;
             }
 
-            loc_flag=1;
+            // loc_flag=1;
             // Update Cookie
-            document.cookie="latitude=" + data['lat'];
-            document.cookie="longitude=" + data['long'];
-
             loc_lat = data['lat'];
             loc_lng = data['long'];
+
+            document.cookie="latitude=" + loc_lat;
+            document.cookie="longitude=" + loc_lng;
+
+            // update user location
+            $.ajax({
+                url: BASE_URL+"/update-location",
+                type: "GET",
+                data: {lat : loc_lat, long : loc_lng},
+                dataType: "json"
+            });
 
             var extraclass = document.body;
             extraclass.classList.remove('disableClass');
@@ -580,7 +588,7 @@ function responseGeoAddressFromIosNative(data)
         }
         else
         {
-            if (typeof loc_lat === "undefined" || loc_lat == "")
+            if(!getCookie("latitude") && !getCookie("longitude"))
             {
                 $("#loading-img").hide();
                 $("#overlay").hide();
@@ -589,7 +597,7 @@ function responseGeoAddressFromIosNative(data)
             }
             else
             {
-                loc_flag=3;
+                // loc_flag=3;
                 document.cookie="latitude=" + loc_lat;
                 document.cookie="longitude=" + loc_lng;
                 add(constUrlLatLng,constUrlRestaurantMenu,noImageUrl);

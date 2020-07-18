@@ -51,47 +51,43 @@ function getPos(urlLatlng,urlMenulist,noImageUrl){
 		else
 		{
 			navigator.geolocation.getCurrentPosition(function(position) { 
-				loc_flag=1;
-			    document.cookie="latitude="  + position.coords.latitude;
-			    document.cookie="longitude=" + position.coords.longitude;
-
-			    loc_lat = position.coords.latitude;
+				loc_lat = position.coords.latitude;
 			    loc_lng = position.coords.longitude;
+			    
+				// loc_flag=1;
+			    document.cookie="latitude=" + loc_lat;
+			    document.cookie="longitude=" + loc_lng;
+
+			    // update user location
+			    $.ajax({
+	                url: BASE_URL+"/update-location",
+	                type: "GET",
+	                data: {lat : loc_lat, long : loc_lng},
+	                dataType: "json"
+	            });
 
 			    var extraclass = document.body;
 				extraclass.classList.remove('disableClass');
 				
 				add(urlLatlng,urlMenulist,noImageUrl);
 		   	},function(error){
-				// $.get("{{url('writeLogs')}}",{'log':'cookie ' + getCookie("latitude")});
-				if (typeof loc_lat === "undefined" || loc_lat == "") {
-					if (!getCookie("latitude")){
-			    		$("#loading-img").hide();
-			    		$("#overlay").hide();
-					    $('.login-inner-section a').attr('href','javascript:void(0)');
-		 			    $('#login-popup').modal("show");
-						// $.get("{{url('writeLogs')}}",{'log':'location 2 ' + error + ' ' + loc_lat});
-					} else {
-						loc_flag=2;
-					    document.cookie="latitude=" + getCookie("latitude");
-					    document.cookie="longitude=" + getCookie("longitude");		
-						// $.get("{{url('writeLogs')}}",{'log':'location 3'});
-						add(urlLatlng,urlMenulist,noImageUrl);					
-					}
-				}else{
-					loc_flag=3;
-				    document.cookie="latitude=" + loc_lat;
-				    document.cookie="longitude=" + loc_lng;		
-					// $.get("{{url('writeLogs')}}",{'log':'location 4'});
-					add(urlLatlng,urlMenulist,noImageUrl);
-				} 
+		   		if(!getCookie("latitude") && !getCookie("longitude")){
+		    		$("#loading-img").hide();
+		    		$("#overlay").hide();
+				    $('.login-inner-section a').attr('href','javascript:void(0)');
+	 			    $('#login-popup').modal("show");
+				} else {
+					// loc_flag=2;
+				    document.cookie="latitude=" + getCookie("latitude");
+				    document.cookie="longitude=" + getCookie("longitude");		
+					add(urlLatlng,urlMenulist,noImageUrl);					
+				}
 			},{maximumAge:0,timeout:5000});
 		}
 	}else{
-		loc_flag=5;
+		// loc_flag=5;
 	    document.cookie="latitude=" + loc_lat;
 	    document.cookie="longitude=" + loc_lng;	
-		// $.get("{{url('writeLogs')}}",{'log':'location 5'});
 		add(urlLatlng,urlMenulist,noImageUrl);		    
 	}
 }
@@ -109,7 +105,7 @@ function add(urlLatlng,urlMenulist,noImageUrl){
 			url: urlLatlng+'?lat='+getCookie("latitude")+'&lng='+getCookie("longitude")+'&currentdateTime='+d+'&browserVersion='+getCookie("browserVersion"),
 			async: false,
 			success: function(returnedData) {
-				loc_flag=4;
+				// loc_flag=4;
 	    		$('#login-popup').modal("hide");
 				$("#loading-img").hide();
 	    		$("#overlay").hide();
