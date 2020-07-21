@@ -46,7 +46,8 @@ function getPos(urlLatlng,urlMenulist,noImageUrl){
 	if (typeof loc_lat === "undefined" || loc_lat == "") {
 		if(ios && (!standalone && !safari))
 		{
-			requestGeoAddressToIosNative('getPos');
+			// requestGeoAddressToIosNative('getPos');
+			setTimeout(function(){ requestGeoAddressToIosNative('getPos'); }, 300);
 		}
 		else
 		{
