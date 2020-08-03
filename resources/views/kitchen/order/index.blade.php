@@ -727,42 +727,47 @@
 	}
 
 	function addTimes (startTime, endTime, extra_prep_time) {
-	  var times = [ 0, 0, 0 ]
-	  var max = times.length
+		var times = [ 0, 0, 0 ]
+		var max = times.length
 
-	  var a = (startTime || '').split(':')
-	  var b = (endTime || '').split(':')
-	  var c = (extra_prep_time || '').split(':')
+		var a = (startTime || '').split(':')
+		var b = (endTime || '').split(':')
+		var c = (extra_prep_time || '').split(':')
 
-	  // normalize time values
-	  for (var i = 0; i < max; i++) {
-	    a[i] = isNaN(parseInt(a[i])) ? 0 : parseInt(a[i])
-	    b[i] = isNaN(parseInt(b[i])) ? 0 : parseInt(b[i])
-	    c[i] = isNaN(parseInt(c[i])) ? 0 : parseInt(c[i])
-	  }
+		// normalize time values
+		for (var i = 0; i < max; i++) {
+			a[i] = isNaN(parseInt(a[i])) ? 0 : parseInt(a[i])
+			b[i] = isNaN(parseInt(b[i])) ? 0 : parseInt(b[i])
+			c[i] = isNaN(parseInt(c[i])) ? 0 : parseInt(c[i])
+		}
 
-	  // store time values
-	  for (var i = 0; i < max; i++) {
-	    times[i] = a[i] + b[i] + c[i]
-	  }
+		// store time values
+		for (var i = 0; i < max; i++) {
+			times[i] = a[i] + b[i] + c[i]
+		}
 
-	  var hours = times[0]
-	  var minutes = times[1]
-	  var seconds = times[2]
+		var hours = times[0]
+		var minutes = times[1]
+		var seconds = times[2]
 
-	  if (seconds > 59) {
-	    var m = (seconds / 60) << 0
-	    minutes += m
-	    seconds -= 60 * m
-	  }
+		if (seconds >= 60) {
+			var m = (seconds / 60) << 0
+			minutes += m
+			seconds -= 60 * m
+		}
 
-	  if (minutes > 59) {
-	    var h = (minutes / 60) << 0
-	    hours += h
-	    minutes -= 60 * h
-	  }
+		if (minutes >= 60) {
+			var h = (minutes / 60) << 0
+			hours += h
+			minutes -= 60 * h
+		}
 
-	  return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2)
+		if(hours >= 24) {
+			hours = hours %24;
+			hours = hours < 0 ? 24 + hours : +hours;
+		}
+
+		return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2)
 	}
 
 	// Update all the order items status 'order_started' to 1
