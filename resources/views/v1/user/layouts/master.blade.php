@@ -70,7 +70,7 @@
 			</div>
 		</div>
 
-		<div class="block-loader"><span class="block-loader-icon"></span></div>
+		<div class="block-loader"><div class="block-loader-icon"></div></div>
 		
 		@section('footer')
 			@includeIf('v1.user.elements.footer')

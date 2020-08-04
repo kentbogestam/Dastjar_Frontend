@@ -297,6 +297,8 @@
 		// 
 		if($('input[name=user_address_id]:checked').length)
 		{
+			showLoading();
+			$('input[name=user_address_id]').attr('disabled', true);
 			$.ajax({
 				type: 'POST',
 				url: "{{ url('update-order-user-address') }}",
@@ -326,6 +328,14 @@
 						$('.send-order-confirmation').prop('disabled', false);
 						$('.send-order').prop('disabled', false);
 					}
+
+					hideLoading();
+					$('input[name=user_address_id]').attr('disabled', false);
+				},
+				error: function() {
+					hideLoading();
+					$('input[name=user_address_id]').prop('checked', false);
+					callUpdateCartManually();
 				}
 			});
 		}
