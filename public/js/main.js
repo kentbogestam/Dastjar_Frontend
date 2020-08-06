@@ -173,7 +173,7 @@ function incrementCartValue(id)
     updateCartDetail(id);
 
     // Update cart
-    updateCart(itemQty, $('#prod'+id).val(), 0, 0);
+    updateCart(itemQty, $('#prod'+id).val(), 0, 0, 1);
 
     // Update value in cart badge and show
     cntCartItems++;
@@ -205,7 +205,7 @@ function decrementCartValue(id,msg)
         updateCartDetail(id);
 
         // Update cart
-        updateCart(itemQty, productId, 0, 0);
+        updateCart(itemQty, productId, 0, 0, 1);
 
         // Update value in cart badge and hide/show
         cntCartItems--;
@@ -278,9 +278,10 @@ function onDeleteLastItemFromCart(id = null)
 }*/
 
 // Update cart
-function updateCart(qty,productId,totalProductPrice,grandtotal, homeDelPartCntRefresh = true){
+function updateCart(qty, productId, totalProductPrice, grandtotal, isOrderUpdateDeliveryType = 0){
     var url= $('#baseUrl').val()+"/updateCart";
     var orderid= $('#orderid').val();
+    // showLoading();
 
     $.ajaxSetup({
         headers: {
@@ -303,7 +304,7 @@ function updateCart(qty,productId,totalProductPrice,grandtotal, homeDelPartCntRe
         success: function (response) {
             if (response.status) {
                 orderInvoice = response.data.orderInvoice;
-                console.log(orderInvoice);
+                // console.log(orderInvoice);
 
                 // Update total and sub-total
                 $('#sub-total').html(orderInvoice.order_total.toFixed(2));
@@ -337,16 +338,20 @@ function updateCart(qty,productId,totalProductPrice,grandtotal, homeDelPartCntRe
                             $('.row-delivery-charge').addClass('hidden');
                         }
                     }
+                }
 
-                    /*if($('input[name=delivery_type]:checked').val() == '3' && homeDelPartCntRefresh)
-                    {
-                        getHomeDeliveryPartContent(orderid);
-                    }*/
+                // Switch 'delivery type' again on update cart qty
+                if(isOrderUpdateDeliveryType)
+                {
+                    orderUpdateDeliveryType();
                 }
             }
+
+            // hideLoading();
         },
         error: function (response) {
             $('#errormessage').html(response.message);
+            // hideLoading();
         }
     });
 }
@@ -652,7 +657,7 @@ function responseGeoAddressFromIosNative(data)
                 var longitude = getCookie("longitude");
 
                 $.get(BASE_URL+'/saveCurrentlat-long', { lat: latitude, lng : longitude}, function(returnedData){
-                    console.log(returnedData["data"]);
+                    // console.log(returnedData["data"]);
                     unsetLocationCookieTime();
                     window.location.reload();
                 });

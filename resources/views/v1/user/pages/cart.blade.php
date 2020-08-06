@@ -245,12 +245,6 @@
 			$('.send-order').prop('disabled', false);
 			$('.send-order-confirmation').prop('disabled', false);
 		}
-
-		// Start: Just to update cart
-		id = 1;
-		var qty = parseInt($('#qty'+id).val(), 10);
-		var prod = $('#prod'+id).val();
-		// End: Just to update cart
 		
 		// Update 'delivery_type' in DB
 		$.ajax({
@@ -264,7 +258,7 @@
 			},
 			dataType: 'json',
 			success: function(response) {
-				updateCart(qty, prod, 0, 0);
+				callUpdateCartManually();
 			}
 		});
 	}
@@ -348,7 +342,7 @@
 		var qty = parseInt($('#qty'+id).val(), 10);
 		var prod = $('#prod'+id).val();
 
-		updateCart(qty, prod, 0, 0, false);
+		updateCart(qty, prod, 0, 0);
 	}
 
 	// 
