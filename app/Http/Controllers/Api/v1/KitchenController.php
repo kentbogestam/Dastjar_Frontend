@@ -120,6 +120,7 @@ class KitchenController extends Controller
     }
 
     public function orderSpecificOrderDetail($orderId){
+        // Get order detail
         $orderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid','orders.created_at','orders.delivery_timestamp','orders.order_started')->where(['order_details.order_id' => $orderId])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
 
         $rejectBtnShow = '';
@@ -132,7 +133,13 @@ class KitchenController extends Controller
             }
         }
 
-        return response()->json(['status' => 'success', 'data'=>$orderDetails, 'rejectBtnShow'=>$rejectBtnShow]);
+        // Get order
+        $order = Order::select(['order_total', 'delivery_charge', 'final_order_total'])
+            ->where('order_id', $orderId)
+            ->first();
+
+        // Return response
+        return response()->json(['status' => 'success', 'order' => $order, 'data'=>$orderDetails, 'rejectBtnShow'=>$rejectBtnShow]);
     }
 
     /**

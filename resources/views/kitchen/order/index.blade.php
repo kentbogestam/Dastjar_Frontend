@@ -156,6 +156,7 @@
 		$.get("{{url('api/v1/kitchen/orderSpecificOdrderDetail')}}/"+orderId,
 		function(returnedData){
 			var temp = returnedData["data"];
+			var order = returnedData['order'];
 			var rejectBtnShow = returnedData["rejectBtnShow"];
 			var isQuantityFree = 0;
 
@@ -177,6 +178,10 @@
 					isQuantityFree = 1;
 				}
 			}
+
+			// 
+			liItem += "<tr><td colspan='5'>Order Total: "+order.final_order_total.toFixed(2)+" SEK</td></tr>";
+
 			$("#specificOrderDetailContianer").html(liItem);
       		$("#rejectBtnShow").html(rejectBtnShow);	
 			$("#printCopy").attr('onclick','printCopy('+orderId+');');
