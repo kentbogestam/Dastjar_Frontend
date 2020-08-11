@@ -82,11 +82,14 @@
 			</thead>
 			<tbody id="specificOrderDetailContianer"></tbody>
 			@if(App\Helper::isPackageSubscribed(13))
-			<tfoot>
+			<thead>
 				<tr class="ui-bar-d">
 					<th id="printCopy" colspan="4" onclick="" style="cursor:pointer;">{{ __('messages.print') }}</th> 
 			    </tr>
-			</tfoot>
+			</thead>
+			@endif
+			@if( !Session::has('subscribedPlans.kitchen') )
+				<tfoot id="rejectBtnShow"></tfoot>
 			@endif
 		</table>
 	</div>
@@ -105,7 +108,6 @@
 	var imageUrlLoad = "{{asset('kitchenImages/red_blink_image.png')}}";
 	var speakOrderItemList = [];
 	var driverapp = "{{ Session::get('driverapp') }}";
-	var crntTime = parseInt({{time()}});
 
 	$(function(){
 		ajaxCall();
@@ -122,9 +124,8 @@
     });
 
 	function rejectOrder(id){
+		$('#popupCloseRight').popup('close');
 	    var status = '1';
-		var msg = "{{ __('messages.doYoureallywantstoReject') }}";
-        $('.confirm-text').html(msg);
         $('#myConfirmBtn').trigger('click');
         $('.confirm-conti').on('click', function(){
             $('.confirm-close').trigger('click');
@@ -143,6 +144,8 @@
                         function(){ 
                             $('.ready_notifications').hide();
                     }, 3000);
+
+                    clearSpeakTextInterval();
                 }
             });
 		});
@@ -153,6 +156,8 @@
 		$.get("{{url('api/v1/kitchen/orderSpecificOdrderDetail')}}/"+orderId,
 		function(returnedData){
 			var temp = returnedData["data"];
+			var order = returnedData['order'];
+			var rejectBtnShow = returnedData["rejectBtnShow"];
 			var isQuantityFree = 0;
 
 			for (var i=0;i<temp.length;i++){
@@ -173,7 +178,12 @@
 					isQuantityFree = 1;
 				}
 			}
+
+			// 
+			liItem += "<tr><td colspan='5'>Order Total: "+order.final_order_total.toFixed(2)+" SEK</td></tr>";
+
 			$("#specificOrderDetailContianer").html(liItem);
+      		$("#rejectBtnShow").html(rejectBtnShow);	
 			$("#printCopy").attr('onclick','printCopy('+orderId+');');
 
 			// Show/hide loyalty column in 'order detail' popup
@@ -232,7 +242,7 @@
 			      		var time = addTimes(temp[i]['deliver_time']);
 			      	}
                     
-//                    blink image time caculator getting time based on pick up and current time
+                   	// blink image time calculator getting time based on pick up and current time
                     var today = new Date(); 
                     old_hour = time.substr(0,2);
                     old_mins = time.substr(3,5);
@@ -258,7 +268,7 @@
 	          			orderStatus += orderStatus.length ? ' not-accepted' : 'not-accepted';
 	          		}
 
-	          		liItem += "<tr class='"+orderStatus+"'>";
+	          		liItem += "<tr class='order_id_"+orderIdSpecific+" "+orderStatus+"'>";
 	          		liItem += "<th>"
 	          		liItem += "<a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>"
 	          		liItem += temp[i]["customer_order_id"]
@@ -291,10 +301,6 @@
 			          		liItem += "<img id='"+ids+"' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
 			          		liItem +="</a>";
 			          		var utcTime = new Date(temp[i]['created_at']+" UTC").getTime()/1000;
-			          		
-			          		if((temp[i]["delivery_timestamp"] < (utcTime + 86400)) && (utcTime > (crntTime-300) )) {
-			          			liItem +="<a href='javascript:void(0)' class='rejectRemove' rel='"+utcTime+"' onclick='rejectOrder("+temp[i]['order_id']+");'><br>reject</a>";
-			          		}
 			          		liItem +="</td>";
 		          		}else{
 		          			liItem += "<td>"
@@ -468,10 +474,9 @@
           		$('.catering-badge').html('');
           	}
 		});
-		crntTime = crntTime + 10; 
 	}
 
-	setInterval(ajaxCall, 10000, crntTime);
+	setInterval(ajaxCall, 10000);
 
 	var tempCount = 18;
 	$(document).on("scrollstop", function (e) {
@@ -561,7 +566,7 @@
   			orderStatus += orderStatus.length ? ' not-accepted' : 'not-accepted';
   		}
 
-      	liItem += "<tr class='"+orderStatus+"'>";
+      	liItem += "<tr class='order_id_"+orderIdSpecific+" "+orderStatus+"'>";
   		liItem += "<th>"
   		liItem += "<a href='javascript:getList("+orderIdSpecific+")' data-rel='popup'>"
   		liItem += list[i]["customer_order_id"]
@@ -596,10 +601,6 @@
           		liItem += aString
           		liItem += "<img id='"+ids+"' class='image_clicked' src='{{asset('kitchenImages/red_blink_image.png')}}'>"
           		liItem +="</a>";
-          		var utcTime = new Date(list[i]['created_at']+" UTC").getTime()/1000;
-          		if((list[i]["delivery_timestamp"] < (utcTime + 86400)) && (utcTime > (crntTime-300) )) {
-          			liItem +="<a href='javascript:void(0)' class='rejectRemove' rel='"+utcTime+"' onclick='rejectOrder("+list[i]['order_id']+");'><br>reject</a>";
-          		}
           		liItem +="</td>";
       		}else{
       			liItem += "<td>"
@@ -731,42 +732,47 @@
 	}
 
 	function addTimes (startTime, endTime, extra_prep_time) {
-	  var times = [ 0, 0, 0 ]
-	  var max = times.length
+		var times = [ 0, 0, 0 ]
+		var max = times.length
 
-	  var a = (startTime || '').split(':')
-	  var b = (endTime || '').split(':')
-	  var c = (extra_prep_time || '').split(':')
+		var a = (startTime || '').split(':')
+		var b = (endTime || '').split(':')
+		var c = (extra_prep_time || '').split(':')
 
-	  // normalize time values
-	  for (var i = 0; i < max; i++) {
-	    a[i] = isNaN(parseInt(a[i])) ? 0 : parseInt(a[i])
-	    b[i] = isNaN(parseInt(b[i])) ? 0 : parseInt(b[i])
-	    c[i] = isNaN(parseInt(c[i])) ? 0 : parseInt(c[i])
-	  }
+		// normalize time values
+		for (var i = 0; i < max; i++) {
+			a[i] = isNaN(parseInt(a[i])) ? 0 : parseInt(a[i])
+			b[i] = isNaN(parseInt(b[i])) ? 0 : parseInt(b[i])
+			c[i] = isNaN(parseInt(c[i])) ? 0 : parseInt(c[i])
+		}
 
-	  // store time values
-	  for (var i = 0; i < max; i++) {
-	    times[i] = a[i] + b[i] + c[i]
-	  }
+		// store time values
+		for (var i = 0; i < max; i++) {
+			times[i] = a[i] + b[i] + c[i]
+		}
 
-	  var hours = times[0]
-	  var minutes = times[1]
-	  var seconds = times[2]
+		var hours = times[0]
+		var minutes = times[1]
+		var seconds = times[2]
 
-	  if (seconds > 59) {
-	    var m = (seconds / 60) << 0
-	    minutes += m
-	    seconds -= 60 * m
-	  }
+		if (seconds >= 60) {
+			var m = (seconds / 60) << 0
+			minutes += m
+			seconds -= 60 * m
+		}
 
-	  if (minutes > 59) {
-	    var h = (minutes / 60) << 0
-	    hours += h
-	    minutes -= 60 * h
-	  }
+		if (minutes >= 60) {
+			var h = (minutes / 60) << 0
+			hours += h
+			minutes -= 60 * h
+		}
 
-	  return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2)
+		if(hours >= 24) {
+			hours = hours %24;
+			hours = hours < 0 ? 24 + hours : +hours;
+		}
+
+		return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2)
 	}
 
 	// Update all the order items status 'order_started' to 1

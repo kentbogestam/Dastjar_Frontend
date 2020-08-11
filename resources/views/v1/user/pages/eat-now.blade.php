@@ -24,7 +24,7 @@
 	// Call geolocation API and set updated position
 	if(!getCookie("latitude") && !getCookie("longitude"))
 	{
-		setCurrentLatLong("{{ url('update-location') }}");
+		// setCurrentLatLong("{{ url('update-location') }}");
 
 		// Set default type store 'eatnow/eatlater'
 		setResttype("{{ url('setResttype') }}", 'eatnow');
@@ -50,7 +50,7 @@
 	
 
 	<!-- Popup if location not allowed -->
-	<div id="login-popup" class="modal fade login-popup" role="dialog">
+	<div id="login-popup" class="modal fade login-popup" role="dialog" data-keyboard="false" data-backdrop="static">
 		<div class='modal-dialog'>
 			<div class="modal-content">
 				<div class="modal-body text-center">
@@ -61,7 +61,7 @@
 		</div>
 	</div>
 
-	<div id="loading-img" class="ui-loader ui-corner-all ui-body-a ui-loader-default" style="display: none;">
+	<div id="loading-img" class="ui-loader ui-corner-all ui-body-a ui-loader-default">
 		<span class="ui-icon-loading"></span><h1>loading</h1>
 	</div>
 
@@ -96,10 +96,12 @@
 	});
 
 	$(function(){
-		if( (getCookie("latitude") && getCookie("longitude")) || (loc_lat && loc_lng) )
+		/*if( (getCookie("latitude") && getCookie("longitude")) || (loc_lat && loc_lng) )
 		{
 			getPos("{{url('lat-long')}}","{{url('restro-menu-list/')}}",noImageUrl);
-		}
+		}*/
+
+		getPos("{{url('lat-long')}}","{{url('restro-menu-list/')}}",noImageUrl);
 		
 		checkUserLogin("{{url('checkUserLogin')}}");
 	});

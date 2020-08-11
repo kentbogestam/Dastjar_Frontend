@@ -108,7 +108,7 @@
 			@if($order->order_type == 'eat_later' && ($order->delivery_timestamp > strtotime('+1 day')))
             	{{-- Send Order For Confirmation --}}
                 <div class="col-md-12 text-center"> 
-                    <br><button class="btn btn-primary send-order-confirmation">{{ __('messages.sendorderforconfirmation') }}</button><br>
+                    <br><button class="btn btn-success send-order-confirmation">{{ __('messages.sendorderforconfirmation') }}</button><br>
                 </div>
             @else
                 {{-- Proceed to pay --}}
@@ -245,12 +245,6 @@
 			$('.send-order').prop('disabled', false);
 			$('.send-order-confirmation').prop('disabled', false);
 		}
-
-		// Start: Just to update cart
-		id = 1;
-		var qty = parseInt($('#qty'+id).val(), 10);
-		var prod = $('#prod'+id).val();
-		// End: Just to update cart
 		
 		// Update 'delivery_type' in DB
 		$.ajax({
@@ -264,7 +258,7 @@
 			},
 			dataType: 'json',
 			success: function(response) {
-				updateCart(qty, prod, 0, 0);
+				callUpdateCartManually();
 			}
 		});
 	}
@@ -297,6 +291,8 @@
 		// 
 		if($('input[name=user_address_id]:checked').length)
 		{
+			showLoading();
+			$('input[name=user_address_id]').attr('disabled', true);
 			$.ajax({
 				type: 'POST',
 				url: "{{ url('update-order-user-address') }}",
@@ -326,6 +322,14 @@
 						$('.send-order-confirmation').prop('disabled', false);
 						$('.send-order').prop('disabled', false);
 					}
+
+					hideLoading();
+					$('input[name=user_address_id]').attr('disabled', false);
+				},
+				error: function() {
+					hideLoading();
+					$('input[name=user_address_id]').prop('checked', false);
+					callUpdateCartManually();
 				}
 			});
 		}
@@ -338,7 +342,7 @@
 		var qty = parseInt($('#qty'+id).val(), 10);
 		var prod = $('#prod'+id).val();
 
-		updateCart(qty, prod, 0, 0, false);
+		updateCart(qty, prod, 0, 0);
 	}
 
 	// 
@@ -629,7 +633,7 @@
 				'eatLater' : '0'
 			},
 			success: function(data, status){
-				window.location.href = "{{url('order-view').'/'.$order->order_id}}";
+				AskPhoneForInfo();
 			}
 		});
 	}
@@ -767,7 +771,7 @@
 			} else {
 				// Show success message
 				$('.row-new-card').find('div.card-errors').html('');
-				window.location.href = "{{ url('order-view/'.$order->order_id) }}";
+				AskPhoneForInfo();
 			}
 		}
 
@@ -856,7 +860,7 @@
 			} else {
 				// Show success message
 				$('.row-saved-cards').find('div.card-errors').html('');
-				window.location.href = "{{ url('order-view/'.$order->order_id) }}";
+				AskPhoneForInfo();
 			}
 		}
 
@@ -939,19 +943,7 @@
 
 			// if no phone number then ask number
 			if(phone_number != '' && phone_number_prifix != ''){
-				$('.confirm-text2').css("display","none")
-				$('.confirm-text1').css("display","block")
-				console.log('+'+phone_number_prifix + phone_number)
-			}
-			else{
-				$('.confirm-text1').css("display","none")
-				$('.confirm-text2').css("display","block")
-				console.log('+'+phone_number_prifix + phone_number)
-			}
-
-			$('#myConfirmBtn').trigger('click');
-	        $('.confirm-conti').on('click', function(){
-	        	$('#loading-img').css("display", "block");
+				$('#loading-img').css("display", "block");
 	        	$.ajax({
 					url: "{{ url('smsOverPhone') }}",
 					method: 'post',
@@ -962,8 +954,24 @@
 					}
 				});
 	        	window.location.href = "{{ url('order-view/'.$order->order_id) }}";
-	        });
-	        $('.confirm-close').on('click', function(){
+			}else{
+
+				$('#myPhoneBtn').trigger('click');
+		        $('.phone-conti').on('click', function(){
+		        	$('#loading-img').css("display", "block");
+		        	$.ajax({
+						url: "{{ url('smsOverPhone') }}",
+						method: 'post',
+						data:{
+							'phone_number_prifix':$('#phone_number_prifix').val(),
+							'phone_number':$('#phone_number').val(),
+							'order_number':'{{$order->order_id}}',
+						}
+					});
+		        	window.location.href = "{{ url('order-view/'.$order->order_id) }}";
+		        });
+		    }
+	        $('.phone-close').on('click', function(){
 	        	window.location.href = "{{ url('order-view/'.$order->order_id) }}";
 	        });
 		}else{

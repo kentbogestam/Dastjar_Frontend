@@ -54,8 +54,8 @@ class KitchenController extends Controller
         $orderDetailscustomer = Order::select(['orders.*','customer.name as name', 'OCD.discount_id', 'PD.discount_value', DB::raw('COUNT(OCL.id) AS cntLoyaltyUsed'), 'OD.status AS orderDeliveryStatus', 'CA.street'])
             ->whereIn('orders.store_id', $stores)
             ->where('user_type','=','customer')
-            ->where('orders.check_deliveryDate', '>=', date("Y-m-d"))
-            ->where('orders.check_deliveryDate', '<=', date("Y-m-d",strtotime("+1 day")))
+            ->where('orders.check_deliveryDate', '>=', date("Y-m-d", strtotime("-3 day")))
+            ->where('orders.check_deliveryDate', '<=', date("Y-m-d", strtotime("+1 day")))
             ->where('orders.paid', '0')
             ->whereNotIn('orders.online_paid', [2])
             ->where('orders.cancel','!=', 1)
@@ -120,8 +120,26 @@ class KitchenController extends Controller
     }
 
     public function orderSpecificOrderDetail($orderId){
-         $orderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid')->where(['order_details.order_id' => $orderId])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
-        return response()->json(['status' => 'success', 'data'=>$orderDetails]);
+        // Get order detail
+        $orderDetails = OrderDetail::select('order_details.*','product.product_name','orders.deliver_date','orders.deliver_time','orders.order_delivery_time','orders.customer_order_id','orders.online_paid','orders.created_at','orders.delivery_timestamp','orders.order_started')->where(['order_details.order_id' => $orderId])->join('product','product.product_id','=','order_details.product_id')->join('orders','orders.order_id','=','order_details.order_id')->get();
+
+        $rejectBtnShow = '';
+
+        foreach($orderDetails as $order){
+            $utcTime = strtotime($order->created_at);
+
+            if(($order->delivery_timestamp < ($utcTime + 86400)) && ($utcTime > (time()-900) ) && $order->order_started == '0') {
+                $rejectBtnShow = '<tr><th colspan="4" style="text-align:right"><button id="rejectOrder" onclick="rejectOrder('.$order->order_id.');" style="cursor:pointer;color: red;background-color: #808080e6;border: none;">'. __("messages.reject") .'</button></th></tr>';
+            }
+        }
+
+        // Get order
+        $order = Order::select(['order_total', 'delivery_charge', 'final_order_total'])
+            ->where('order_id', $orderId)
+            ->first();
+
+        // Return response
+        return response()->json(['status' => 'success', 'order' => $order, 'data'=>$orderDetails, 'rejectBtnShow'=>$rejectBtnShow]);
     }
 
     /**

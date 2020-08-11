@@ -71,10 +71,10 @@ class OrderController extends Controller
             // Check if store is open
             $heartbeat = Helper::isStoreLive($order->store_id);
 
-            if( !is_null($heartbeat) && $heartbeat < 1)
+            if( (!is_null($heartbeat) && $heartbeat < 1) || ($order->delivery_timestamp > (strtotime($order->created_at) + 86400)))
             {
                 DB::table('orders')->where('order_id', $orderId)->update([
-                    'online_paid' => $setvar,
+                    'online_paid' => $setvar
                 ]);
             }
         }
@@ -84,11 +84,12 @@ class OrderController extends Controller
         $orderInvoice = array();
 
         $order = Order::from('orders AS O')
-            ->select(['O.order_id', 'O.check_deliveryDate', 'O.deliver_time', 'O.customer_order_id', 'O.store_id', 'O.user_id',  'O.cancel', 'O.order_type', 'O.delivery_type', 'O.delivery_timestamp', 'O.created_at', 'O.deliver_date', 'O.deliver_time', 'O.order_total', 'O.delivery_charge', 'O.final_order_total', 'O.order_delivery_time', 'O.is_seen', 'O.order_response', 'O.order_accepted', 'O.catering_order_status', 'O.extra_prep_time', 'O.online_paid', 'S.store_name', 'S.driverapp', 'company.currencies', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address')])
+            ->select(['O.order_id', 'O.check_deliveryDate', 'O.deliver_time', 'O.customer_order_id', 'O.store_id', 'O.user_id',  'O.cancel', 'O.order_type', 'O.delivery_type', 'O.delivery_timestamp', 'O.created_at', 'O.deliver_date', 'O.deliver_time', 'O.order_total', 'O.delivery_charge', 'O.final_order_total', 'O.order_delivery_time', 'O.is_seen', 'O.order_response', 'O.order_accepted', 'O.catering_order_status', 'O.extra_prep_time', 'O.online_paid', 'S.store_name', 'S.driverapp', 'company.currencies', DB::raw('CONCAT(CA.street, ", ", CA.city, ", ", CA.zipcode, ", ", CA.country) AS customer_address'), DB::raw('CONCAT(S.street, ", ", S.city, ", ", S.zip, ", ", S.country) AS store_address'),'customer.phone_number','customer.phone_number_prifix',])
             ->join('order_details', 'O.order_id', '=', 'order_details.order_id')
             ->join('store AS S','O.store_id', '=', 'S.store_id')
             ->join('company','O.company_id', '=', 'company.company_id')
             ->leftJoin('customer_addresses AS CA', 'CA.id', '=', 'O.user_address_id')
+            ->join('customer','O.user_id', '=', 'customer.id')
             ->where('O.order_id', $orderId)
             ->first();
 
@@ -104,7 +105,7 @@ class OrderController extends Controller
             }
             $heartbeat = Helper::isStoreLive($order->store_id);
 
-            if( is_null($heartbeat) || $heartbeat > 0)
+            if( (is_null($heartbeat) || $heartbeat > 0) && ($order->delivery_timestamp < (strtotime($order->created_at) + 86400)))
             {
                 return redirect()->route('cancel-order', $order->customer_order_id)->with(['errorHeartbeat' => 1]);
             }
@@ -746,9 +747,11 @@ class OrderController extends Controller
                         if(($delivery_timestamp - time()) < 86400){
                             $order->catering_order_status = '2';
                             $order->is_verified = '1';
+                            $order->online_paid = '2';
                         }else{
                             $order->catering_order_status = '0';
                             $order->is_verified = '0';
+                            $order->online_paid = '0';
                         }
 
                         $order->save();
@@ -798,18 +801,11 @@ class OrderController extends Controller
 
             // Update order_total, delivery_time and 'online_paid' => 2 (default)
             $final_order_total = $total_price;
-
-            if($order->order_type == "eat_now"){
-                $online_paid = 2;
-            }else{
-                $online_paid = 0;
-            }
             
             DB::table('orders')->where('order_id', $orderId)->update([
                 'order_delivery_time' => $max_time,
                 'order_total' => $total_price,
-                'final_order_total' => $final_order_total,
-                'online_paid' => $online_paid
+                'final_order_total' => $final_order_total
             ]);
 
             // Start applying discount rule

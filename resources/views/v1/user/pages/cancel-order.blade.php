@@ -16,12 +16,12 @@
 			</div>
 		@else
 			@if(Session::get('order_already_cancelled') == 1)
-				<h2 class="text-info">Order number {{$order_number}} has already been cancelled.</h2>
+				<h2 class="text-info">{{ __('messages.orderCanceled', ['order_id' => $order_number]) }}</h2>
 			@else
-				<h2 class="text-success">Request to cancel order number {{$order_number}} has been placed.</h2>
+				<h2 class="text-success">{{ __('messages.orderCanceled', ['order_id' => $order_number]) }}</h2>
 			@endif
 		@endif
 		<br>
-		<a href="{{url('')}}" style="color:#1275ff" data-ajax="false">Return <img src="{{asset('kitchenImages/returnImage.png')}}" width="20" height="20"></a>
+		<button type="button" class="btn btn-primary"><a href="{{ url('') }}" style="color:white;">{{ __('messages.okay') }}</a></button>
 	</div>
 @endsection

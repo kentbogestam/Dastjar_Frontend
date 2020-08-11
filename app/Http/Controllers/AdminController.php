@@ -1870,7 +1870,7 @@ class AdminController extends Controller
     public function kitchenDeleteDish(Request $request){
         $productid = $request->product_id;
 
-        foreach ($res1 as $rs1) {
+        /*foreach ($res1 as $rs1) {
             $productId = $rs1['product_id'];
             $couponId = $rs1['coupon_id'];
             $storeId = $rs1['store_id'];
@@ -1903,7 +1903,7 @@ class AdminController extends Controller
                     $res8 = $coupon_keywords_lang_list->where('coupon','=',$couponId)->delete();
                 }
             }
-        }
+        }*/
 
         // 
         $product = new Product();

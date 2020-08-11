@@ -199,7 +199,7 @@ class DishTypeController extends Controller
         // Create DishType
         $item = DishType::create($data);
         echo $item;
-        if($item->extra_dish == '0'){
+        if($item->extras == '0'){
             if(isset($request->extra_dish_type)){
                 foreach($request->extra_dish_type as $key => $val){
                     ProductsExtra::create([

@@ -133,6 +133,7 @@
 
 @section('content')
 	@include('includes.phone-modal')
+	@include('includes.cancel-modal')
 
 	<div class="order-summery-section">
 		<div class="order-summery order-confirmation-block">
@@ -332,18 +333,44 @@
 	                            <p> {{ __('messages.acceptMsg') }} </p>
 	                        </div>
 	                    @endif
+	                @else
+	                	{{-- Cancellation message --}}
+	                    <div class="rejectbox">
+	                        <p> {{ __('messages.orderCanceled', ['order_id' => $order->customer_order_id]) }} </p>
+	                    </div>
+	                    @if($order->is_seen == "0")
+	                	<!-- if seen by user -->
+			                {{-- okay order message --}}
+							<div class="col-md-12 text-center">
+								<button type="button" class="btn btn-primary" onclick="isSeenMyOrder();">{{ __('messages.okay') }}</button><br><br>
+							</div>
+						@endif
 	                @endif
                 @else
-                	@if($order->cancel == "0" && $order->online_paid != "1")
-                    	<!-- if not cancelled and not paid-->
-	                    {{-- waiting message --}}
-	                    <div class="waitingtbox">
-	                        <p> {{ __('messages.waitForOrderConfirmation') }} </p>
+                	@if($order->cancel == "0")
+                		@if($order->online_paid != "1")
+	                    	<!-- if not cancelled and not paid-->
+		                    {{-- waiting message --}}
+		                    <div class="waitingtbox">
+		                        <p> {{ __('messages.waitForOrderConfirmation') }} </p>
+		                    </div>
+			                {{-- Cancel order message --}}
+							<div class="col-md-12 text-center">
+								<button type="button" class="btn btn-danger" onclick="cancelMyOrder();">{{ __('messages.cancelMyOrder') }}</button><br><br>
+							</div>
+						@endif
+					@else
+	                	{{-- Cancellation message --}}
+	                    <div class="rejectbox">
+	                        <p> {{ __('messages.orderCanceled', ['order_id' => $order->customer_order_id]) }} </p>
 	                    </div>
-		                {{-- Cancel order message --}}
-						<div class="col-md-12 text-center">
-							<button type="button" class="btn btn-danger" onclick="cancelMyOrder();">{{ __('messages.cancelMyOrder') }}</button><br><br>
-						</div>
+	                    @if($order->is_seen == "0")
+	                	<!-- if seen by user -->
+			                {{-- okay order message --}}
+							<div class="col-md-12 text-center">
+								<button type="button" class="btn btn-primary" onclick="isSeenMyOrder();">{{ __('messages.okay') }}</button><br><br>
+							</div>
+						@endif
 					@endif
                 @endif
             @else
@@ -696,11 +723,9 @@
 
 	function cancelMyOrder()
 	{
-		var msg = "{{ __('messages.doYoureallywantstoCancel') }}";
-		$('.confirm-text').html(msg);
-		$('#myConfirmBtn').trigger('click');
-        $('.confirm-conti').on('click', function(){
-        	$('.confirm-close').trigger('click');
+		$('#myCancelBtn').trigger('click');
+        $('.cancel-conti').on('click', function(){
+        	$('.cancel-close').trigger('click');
         	$('#loading-img').css("display", "block");
 			$.ajax({
 				type: 'post',
@@ -715,12 +740,7 @@
 				},
 				dataType: 'json',
 				success: function(response) {
-					if(response.order_number == ''){
-						location.reload(true);
-					}else{
-						$('#loading-img').css("display", "none");
-						window.location.href="{{ url('cancel-order') }}/"+response.order_number;
-					}
+					location.reload(true);
 				}
 			});
         });
@@ -735,31 +755,22 @@
 				'eatLater' : '1'
 			},
 			success: function(data, status){
-				window.location.href = "{{url('order-view').'/'.$order->order_id}}";
+				AskPhoneForInfo();
 			}
 		});
 	}
 
 	function AskPhoneForInfo(){
+		var delivery_type = '{{@$order->delivery_type}}';
 		//send sms to user when its dine-in or take-away not home-delivery
-		if($('input[name=delivery_type]:checked').val() != '3'){
+		if(delivery_type != '3'){
 			var nmbr;
 			var phone_number = "{{@$order->phone_number}}";
 			var phone_number_prifix = "{{@$order->phone_number_prifix}}";
 
 			// if no phone number then ask number
-			if(phone_number != null && phone_number_prifix != null){
-				$('.confirm-text2').css("display","none")
-				$('.confirm-text1').css("display","block")
-			}
-			else{
-				$('.confirm-text1').css("display","none")
-				$('.confirm-text2').css("display","block")
-			}
-
-			$('#myConfirmBtn').trigger('click');
-	        $('.confirm-conti').on('click', function(){
-	        	$('#loading-img').css("display", "block");
+			if(phone_number != '' && phone_number_prifix != ''){
+				$('#loading-img').css("display", "block");
 	        	$.ajax({
 					url: "{{ url('smsOverPhone') }}",
 					method: 'post',
@@ -769,15 +780,30 @@
 						'order_number':'{{$order->order_id}}',
 					}
 				});
-	        	location.reload(true);
-	        });
-	        $('.confirm-close').on('click', function(){
+	        	window.location.href = "{{ url('order-view/'.$order->order_id) }}";
+			}else{
+
+				$('#myPhoneBtn').trigger('click');
+		        $('.phone-conti').on('click', function(){
+		        	$('#loading-img').css("display", "block");
+		        	$.ajax({
+						url: "{{ url('smsOverPhone') }}",
+						method: 'post',
+						data:{
+							'phone_number_prifix':$('#phone_number_prifix').val(),
+							'phone_number':$('#phone_number').val(),
+							'order_number':'{{$order->order_id}}',
+						}
+					});
+		        	window.location.href = "{{ url('order-view/'.$order->order_id) }}";
+		        });
+		    }
+	        $('.phone-close').on('click', function(){
 	        	location.reload(true);
 	        });
 		}else{
 			location.reload(true);
 		}
 	}
-
 </script>
 @endsection

@@ -70,7 +70,7 @@
 			</div>
 		</div>
 
-		<div class="block-loader"><span class="block-loader-icon"></span></div>
+		<div class="block-loader"><div class="block-loader-icon"></div></div>
 		
 		@section('footer')
 			@includeIf('v1.user.elements.footer')
@@ -103,20 +103,21 @@
     	});
 
 		// Check in each x second and if order is ready, redirect on 'order ready' page automatically
-		setInterval(function() {
-			$.get('{{ url('check-if-order-ready') }}', function(result) {
-				if(result.status)
-				{			
-					if(result.order){
-						window.location = "{{ url('ready-notification') }}/"+result.order['customer_order_id'];
+		@if(Auth::check())
+			setInterval(function() {
+				$.get('{{ url('check-if-order-ready') }}', function(result) {
+					if(result.status)
+					{			
+						if(result.order){
+							window.location = "{{ url('ready-notification') }}/"+result.order['customer_order_id'];
+						}
+						if(result.catering_id){
+							window.location = "{{ url('order-view') }}/"+result.catering_id['order_id'];
+						}
 					}
-					if(result.catering_id){
-						window.location = "{{ url('order-view') }}/"+result.catering_id['order_id'];
-					}
-				}
-			});
-		},10000);
-
+				});
+			},10000);
+		@endif
     </script>
 </body>
 </html>

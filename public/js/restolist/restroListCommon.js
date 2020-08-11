@@ -2,8 +2,8 @@
  var loc_lng;
 
 $(document).ready(function () {
-    $("#overlay").show();
-    $("#loading-img").show();
+    // $("#overlay").show();
+    // $("#loading-img").show();
 });
 
 function iconEatInactive(){

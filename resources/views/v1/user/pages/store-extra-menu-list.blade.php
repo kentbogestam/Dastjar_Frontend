@@ -41,27 +41,28 @@
 		<i class="fa fa-warning"></i> {{ __('messages.alertStoreClosed', ['closeTime' => $time]) }}
 	</div>
 
-	@if( !empty($menuTypes) )
-		<form id="form" class="form-horizontal" method="post" action="{{ url('cart') }}">
-			{{ csrf_field() }}
-			<div class="{{ ($styleType || $storedetails->menu_style_type) ? 'row' : 'hotel-service-list' }}">
-				@php
-				$strMenuDetail = "";
-				@endphp
-				<div class="row" style="margin:0px">
-					<div class="col-md-12">
-						<p id="askText">{{__('messages.needSomeExtra')}}</p>
-					</div>
+	<form id="form" class="form-horizontal" method="post" action="{{ url('cart') }}">
+		{{ csrf_field() }}
+		<div class="{{ ($styleType || $storedetails->menu_style_type) ? 'row' : 'hotel-service-list' }}">
+			@php
+			$strMenuDetail = "";
+			@endphp
+			<div class="row" style="margin:0px">
+				<div class="col-md-12">
+					<p id="askText">{{__('messages.needSomeExtra')}}</p>
 				</div>
+			</div>
 
-				@forelse($items as $key => $val)
-					<input type="hidden" name="product[{{@$key}}][prod_quant]" value="{{@$val['prod_quant']}}" />
-					<input type="hidden" name="product[{{@$key}}][id]" value="{{@$val['id']}}" />
-					<input type="hidden" name="product[{{@$key}}][dish_type]" value="{{@$val['dish_type']}}" />
-					<input type="hidden" name="product[{{@$key}}][prod_desc]" value="{{@$val['prod_desc']}}" />
-				@empty
-				@endforelse
-				@foreach($menuTypes as $menuType)
+			@forelse($items as $key => $val)
+				<input type="hidden" name="product[{{@$key}}][prod_quant]" value="{{@$val['prod_quant']}}" />
+				<input type="hidden" name="product[{{@$key}}][id]" value="{{@$val['id']}}" />
+				<input type="hidden" name="product[{{@$key}}][dish_type]" value="{{@$val['dish_type']}}" />
+				<input type="hidden" name="product[{{@$key}}][prod_desc]" value="{{@$val['prod_desc']}}" />
+			@empty
+			@endforelse
+
+			@if(!empty($menuTypes))
+				@foreach(@$menuTypes as $menuType)
 					@php
 					$strLoyaltyOffer = "";
 					@endphp
@@ -170,71 +171,72 @@
 						</div>
 					@endif
 				@endforeach
-				<div class="row" style="margin:0px">
-					<div class="col-md-12">
-						<br><p id="continueText">{{__('messages.continue')}}</p>
-					</div>
-				</div>
-			</div>
-			<input type="hidden" id="browserCurrentTime" name="browserCurrentTime" value="" />
-			<input type="hidden" name="storeID" value="{{ $storedetails->store_id }}" />
-			<input type="hidden" name="browser" id="browser" value="">
-			@if($storedetails->deliveryTypes->count() == 1)
-				@if($storedetails->deliveryTypes[0]['delivery_type'] == 3 && Helper::isPackageSubscribed(12))
-					<input type="hidden" name="delivery_type" value="{{ $storedetails->deliveryTypes[0]['delivery_type'] }}" />
-				@elseif($storedetails->deliveryTypes[0]['delivery_type'] != 3)
-					<input type="hidden" name="delivery_type" value="{{ $storedetails->deliveryTypes[0]['delivery_type'] }}" />
-				@endif
+			@else
+				<br><br><h1 class="text-center">{{ __('messages.Menu is not available.') }}</h1>
 			@endif
-		</form>
-		
-		<!-- Popup add comment -->
-		<div id="transitionExample" class="modal fade" role="dialog">
-			<div class='modal-dialog'>
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
-						<h4 class="modal-title">{{ __('messages.Add Comments') }}</h4>
+			<div class="row" style="margin:0px">
+				<div class="col-md-12">
+					<br><p id="continueText">{{__('messages.continue')}}</p>
+				</div>
+			</div>
+		</div>
+		<input type="hidden" id="browserCurrentTime" name="browserCurrentTime" value="" />
+		<input type="hidden" name="storeID" value="{{ $storedetails->store_id }}" />
+		<input type="hidden" name="browser" id="browser" value="">
+		@if($storedetails->deliveryTypes->count() == 1)
+			@if($storedetails->deliveryTypes[0]['delivery_type'] == 3 && Helper::isPackageSubscribed(12))
+				<input type="hidden" name="delivery_type" value="{{ $storedetails->deliveryTypes[0]['delivery_type'] }}" />
+			@elseif($storedetails->deliveryTypes[0]['delivery_type'] != 3)
+				<input type="hidden" name="delivery_type" value="{{ $storedetails->deliveryTypes[0]['delivery_type'] }}" />
+			@endif
+		@endif
+	</form>
+	
+	<!-- Popup add comment -->
+	<div id="transitionExample" class="modal fade" role="dialog">
+		<div class='modal-dialog'>
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">{{ __('messages.Add Comments') }}</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<textarea name="textarea-1" id="textarea-1" placeholder="{{ __('messages.Add Comments') }}" class="form-control" rows="2"></textarea>
 					</div>
-					<div class="modal-body">
-						<div class="form-group">
-							<textarea name="textarea-1" id="textarea-1" placeholder="{{ __('messages.Add Comments') }}" class="form-control" rows="2"></textarea>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">{{ __('messages.Cancel') }}</button>
-						<button type="button" class="btn btn-primary submit-btn" id="submitId">{{ __('messages.Submit') }}</button>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">{{ __('messages.Cancel') }}</button>
+					<button type="button" class="btn btn-primary submit-btn" id="submitId">{{ __('messages.Submit') }}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Popup GDPR -->
+	<div class="modal fade pop_up popgdpr" role="dialog">
+		<div class='modal-dialog'>
+			<div class="modal-content">
+				<div class="modal-header text-center">
+					<button type="button" class="close popup-close1" onclick="off()">&times;</button>
+					<h3 class="modal-title">GDPR</h3>
+				</div>
+				<div class="modal-body">
+					{!! __('messages.gdprModalText') !!}
+					<div class="text-center">
+						<button type="button" class="btn btn-success accept-btn submit_btn">Accept</button>
 					</div>
 				</div>
 			</div>
 		</div>
+	</div>
 
-		<!-- Popup GDPR -->
-		<div class="modal fade pop_up popgdpr" role="dialog">
-			<div class='modal-dialog'>
-				<div class="modal-content">
-					<div class="modal-header text-center">
-						<button type="button" class="close popup-close1" onclick="off()">&times;</button>
-						<h3 class="modal-title">GDPR</h3>
-					</div>
-					<div class="modal-body">
-						{!! __('messages.gdprModalText') !!}
-						<div class="text-center">
-							<button type="button" class="btn btn-success accept-btn submit_btn">Accept</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+	<div id="loading-img" class="ui-loader ui-corner-all ui-body-a ui-loader-default" style="display: none;">
+		<span class="ui-icon-loading"></span><h1>loading</h1>
+	</div>
 
-		<div id="loading-img" class="ui-loader ui-corner-all ui-body-a ui-loader-default" style="display: none;">
-			<span class="ui-icon-loading"></span><h1>loading</h1>
-		</div>
+	<div id="overlay" onclick="off()" style="display: none;"></div>
 
-		<div id="overlay" onclick="off()" style="display: none;"></div>
-	@else
-		<p class="text-center">{{ __('messages.Menu is not available.') }}</p>
-	@endif
 @endsection
 
 @section('footer-script')
