@@ -256,7 +256,7 @@
 					var orderCreateDate = new Date(temp[i]["created_at"]+' UTC');
 	                var hours = ("0" + orderCreateDate.getHours()).slice(-2);
 	                var minutes = ("0" + orderCreateDate.getMinutes()).slice(-2);
-	                var orderCreate = days[orderCreateDate.getDay()]+' '+monthNames[orderCreateDate.getMonth()]+' '+orderCreateDate.getDate()+' '+orderCreateDate.getFullYear()+' '+hours+':'+minutes;
+	                var orderCreate = '<small>'+days[orderCreateDate.getDay()]+' '+monthNames[orderCreateDate.getMonth()]+' '+orderCreateDate.getDate()+' '+orderCreateDate.getFullYear()+'</small><br>'+hours+':'+minutes;
 	          		if(temp[i]["order_type"] == "eat_now"){
 	          			var orderStatus = temp[i]["order_started"] == 0 ? 'new' : ''; // Add class 'new' until order 'started'
 	          		}else{
@@ -388,7 +388,7 @@
 	          			liItem += '<div class="show-total"><strong>Loyalty</strong></div>';
 	          		}
                     
-	          		liItem += "<td>"+time+"</td>";
+	          		liItem += "<td><small>"+temp[i]['deliver_date']+"</small><br>"+time+"</td>";
 
 	          		var deliveryType = '';
 	          		if( temp[i]['delivery_type'] == 1 )
