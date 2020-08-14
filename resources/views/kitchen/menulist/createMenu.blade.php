@@ -448,10 +448,11 @@
 		@endif
 
 		dKStart = dStart;
-
+		var dateToday = new Date();
+		
 		$('#date-start').bootstrapMaterialDatePicker
 		({
-			weekStart: 0, format: 'DD/MM/YYYY HH:mm', minDate: defaultStartDate, maxDate: defaultEndDate, clearButton: true
+			weekStart: 0, format: 'DD/MM/YYYY HH:mm', minDate: dateToday, maxDate: defaultEndDate, clearButton: true
 		}).on('change', function(e, date)
 		{
 			dKStart = date;
@@ -461,7 +462,7 @@
 
 		$('#date-end').bootstrapMaterialDatePicker
 		({
-			weekStart: 0, format: 'DD/MM/YYYY HH:mm', minDate: defaultStartDate, maxDate: defaultEndDate, clearButton: true
+			weekStart: 0, format: 'DD/MM/YYYY HH:mm', minDate: dateToday, maxDate: defaultEndDate, clearButton: true
 		}).on('change', function(e2, date2)
 		{
 			dKEnd = date2;

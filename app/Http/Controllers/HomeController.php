@@ -765,8 +765,34 @@ class HomeController extends Controller
             }
         }
 
-        // dd($menuTypes);
-        return view('v1.user.pages.store-extra-menu-list', compact('storedetails', 'menuTypes', 'promotionLoyalty', 'customerLoyalty', 'orderCustomerLoyalty', 'styleType', 'items'));
+        $move = 'cart';
+
+        if(!empty(@$menuTypes)){
+            foreach(@$menuTypes as $menu){
+                $products = Product::from('product AS P')
+                    ->select(['P.product_id', 'P.product_name', 'P.product_description', 'P.preparation_Time', 'P.small_image', 'PPL.price', 'S.extra_prep_time', 'PPL.publishing_start_date', 'PPL.publishing_end_date'])
+                    ->join('product_price_list AS PPL', 'P.product_id', '=', 'PPL.product_id')
+                    ->join('store AS S', 'S.store_id', '=', 'PPL.store_id')
+                    ->where(['P.dish_type' => $menu->dish_id, 'PPL.store_id' => $storedetails->store_id])
+                    ->where('PPL.publishing_start_date','<=',Carbon::now())
+                    ->where('PPL.publishing_end_date','>=',Carbon::now())
+                    ->groupBy('P.product_id')
+                    ->orderBy('P.product_rank', 'ASC')
+                    ->orderBy('P.product_id')
+                    ->get();
+                if(!empty($products->toArray())){
+                    $move = 'extra';
+                } 
+            }
+        }
+
+        if($move == "cart"){
+            Session::forget('move');
+            Session::put('move',$request->all());
+            return redirect('/cart');
+        }else{
+            return view('v1.user.pages.store-extra-menu-list', compact('storedetails', 'menuTypes', 'promotionLoyalty', 'customerLoyalty', 'orderCustomerLoyalty', 'styleType', 'items'));
+        }
     }
 
     function getMenuDetail($dishType, $level, $storeId = null)

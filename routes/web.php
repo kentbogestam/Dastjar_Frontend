@@ -113,8 +113,8 @@ Route::group(['middleware' => ['latlng']], function(){
 
 Route::resource('customer', 'CustomerController');
 Route::get('checkDistance','DistanceController@checkDistance');
-Route::post('cart', 'OrderController@cart');
-Route::get('cart', 'OrderController@cart');
+Route::post('cart', 'OrderController@cart')->name('cartPost');
+Route::get('cart', 'OrderController@cart')->name('cartGet');
 Route::get('cart-sca-test', 'OrderController@cartScaTest');
 Route::group(['namespace' => 'User'], function() {
 	Route::post('confirm-payment', 'PaymentController@confirmPayment');
