@@ -631,6 +631,8 @@ class OrderController extends Controller
     public function cart(Request $request){
         // Get orderData either from 'session' (right after login) or 'post' (if alreadt logged-in)
 
+        $data = array();
+        
         if( Session::has('orderData') )
         {
             $data = Session::get('orderData');
