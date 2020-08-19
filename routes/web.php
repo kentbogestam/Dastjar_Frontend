@@ -90,6 +90,7 @@ Route::post('store-device-token-order-view', 'CustomerController@storeDeviceToke
 
 Route::get('restro-menu-list/{storeID}/{styleType?}', 'HomeController@menuList');
 Route::get('get-menu-detail/{dishType}/{level}/{storeId?}', 'HomeController@getMenuDetail');
+Route::post('extra-menu-list/{styleType?}', 'HomeController@extraMenuList')->name('extraMenuList');
 
 Route::get('search-store-map', 'MapController@searchStoreMap');
 Route::get('404', 'HomeController@page_404')->name('page_404');
@@ -112,8 +113,8 @@ Route::group(['middleware' => ['latlng']], function(){
 
 Route::resource('customer', 'CustomerController');
 Route::get('checkDistance','DistanceController@checkDistance');
-Route::post('cart', 'OrderController@cart');
-Route::get('cart', 'OrderController@cart');
+Route::post('cart', 'OrderController@cart')->name('cartPost');
+Route::get('cart', 'OrderController@cart')->name('cartGet');
 Route::get('cart-sca-test', 'OrderController@cartScaTest');
 Route::group(['namespace' => 'User'], function() {
 	Route::post('confirm-payment', 'PaymentController@confirmPayment');
