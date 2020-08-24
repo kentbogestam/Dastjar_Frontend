@@ -624,11 +624,12 @@ class HomeController extends Controller
         // return view('v1.user.pages.store-menu-grid', compact('storedetails', 'menuTypes', 'promotionLoyalty', 'customerLoyalty', 'orderCustomerLoyalty'));
     }
 
-    public function extraMenuList(Request $request, $styleType = 0){
-
+    public function extraMenuList(Request $request, $styleType = 0)
+    {
         //get main categories and data
         $dish_ids = array();
         $dish_type = array();
+        $dish_types = array();
         $datas = $request->all();
         $items = array();
         foreach ($datas['product'] as $key => $value) {
@@ -645,7 +646,18 @@ class HomeController extends Controller
         // get mapped dish id s with categories data
         if( !empty($dish_type) )
         {   
-            $ids = ProductsExtra::whereIn('dish_type_id', $dish_type)->where('store_id', $storeId)->pluck('extra_dish_type_id');
+            $parent1 = DishType::whereIn('dish_id',$dish_type)->pluck('parent_id')->toArray();
+            $dish_types = $dish_type;
+            if(!empty($parent1)){
+                $dish_types = array_merge($dish_type,$parent1);
+                $parent2 = DishType::whereIn('dish_id',$parent1)->pluck('parent_id')->toArray();
+                $dish_types = array_merge($dish_type,$parent1); 
+                if(!empty($parent2)){
+                    $dish_types = array_merge($dish_type,$parent1,$parent2);
+                }
+            }
+            $dish_types = array_unique(array_filter($dish_types));
+            $ids = ProductsExtra::whereIn('dish_type_id', $dish_types)->where('store_id', $storeId)->pluck('extra_dish_type_id');
             if( !empty($ids) )
             {
                 $dish_ids = $ids->toArray();
@@ -765,35 +777,9 @@ class HomeController extends Controller
             }
         }
 
-        $move = 'cart';
-
-        if(!empty(@$menuTypes)){
-            foreach(@$menuTypes as $menu){
-                $products = Product::from('product AS P')
-                    ->select(['P.product_id', 'P.product_name', 'P.product_description', 'P.preparation_Time', 'P.small_image', 'PPL.price', 'S.extra_prep_time', 'PPL.publishing_start_date', 'PPL.publishing_end_date'])
-                    ->join('product_price_list AS PPL', 'P.product_id', '=', 'PPL.product_id')
-                    ->join('store AS S', 'S.store_id', '=', 'PPL.store_id')
-                    ->where(['P.dish_type' => $menu->dish_id, 'PPL.store_id' => $storedetails->store_id])
-                    ->where('PPL.publishing_start_date','<=',Carbon::now())
-                    ->where('PPL.publishing_end_date','>=',Carbon::now())
-                    ->groupBy('P.product_id')
-                    ->orderBy('P.product_rank', 'ASC')
-                    ->orderBy('P.product_id')
-                    ->get();
-                if(!empty($products->toArray())){
-                    $move = 'extra';
-                } 
-            }
-        }
-
-        if($move == "cart"){
-            Session::forget('move');
-            Session::put('move',$request->all());
-            return redirect('/cart');
-        }else{
-            return view('v1.user.pages.store-extra-menu-list', compact('storedetails', 'menuTypes', 'promotionLoyalty', 'customerLoyalty', 'orderCustomerLoyalty', 'styleType', 'items'));
-        }
-    }
+        // dd($menuTypes);
+        return view('v1.user.pages.store-extra-menu-list', compact('storedetails', 'menuTypes', 'promotionLoyalty', 'customerLoyalty', 'orderCustomerLoyalty', 'styleType', 'items'));
+    }   
 
     function getMenuDetail($dishType, $level, $storeId = null)
     {
@@ -897,7 +883,7 @@ class HomeController extends Controller
                                     <div class='quantity'>
                                         <span class='minus min' onclick='decrementValue(\"{$row->product_id}\")'><i class='fa fa-minus'></i></span>
                                         <span class='inputBox'>
-                                            <input type='text' name='product[{$row->product_id}][prod_quant]' onchange='changeValueQuantity(this)' maxlength='2' size='1' value='0' id='{$row->product_id}' class='product_input_quantity' />
+                                            <input type='text' name='product[{$row->product_id}][prod_quant]' onchange='changeValueQuantity(this)' maxlength='2' size='1' value='0' id='{$row->product_id}' class='product_input_quantity'  rel='{$dishType}'/>
                                         </span>
                                         <span class='plus max' onclick='incrementValue(\"{$row->product_id}\",\"{$people_serve}\")'><i class='fa fa-plus'></i></span>
                                     </div>

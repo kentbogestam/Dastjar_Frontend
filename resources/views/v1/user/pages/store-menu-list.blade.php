@@ -42,7 +42,7 @@
 	</div>
 
 	@if( !empty($menuTypes) )
-		<form id="form" class="form-horizontal" method="post" action="{{ route('extraMenuList') }}">
+		<form id="form" class="form-horizontal" method="post" action="{{ url('cart') }}">
 			{{ csrf_field() }}
 			<div class="{{ ($styleType || $storedetails->menu_style_type) ? 'row' : 'hotel-service-list' }}">
 				@php
@@ -412,21 +412,35 @@
 	function send_btn(){
 		$('#overlay').css("display", "block");
 		$('#loading-img').css("display", "block");
+		
+		var checkList = [];
+		$('.product .product_input_quantity').each(function(){
+			if($(this).val() > 0){
+				checkList.push($(this).attr('rel'));
+			}
+		});
 
 		$.ajax({
-			url: "{{ url('gdpr') }}", 
+			url: "{{ url('gdprExtra') }}", 
 			type: "POST",
 			data: {
-				"_token": "{{ csrf_token() }}"
+				"_token": "{{ csrf_token() }}",
+				'checkList' : checkList,
+				'storeID' : $('input[name=storeID]').val(),
 			},
 			success: function(result){
-				console.log(result);
-				if(result == 0){
-					$("#loading-img").hide();
-					$('#overlay').show();
-					$('.pop_up').modal("show");
-				}else{
+				// console.log(result);
+				if(result.extra_product == '1'){
+					$("#form").attr('action',"{{ route('extraMenuList') }}"); 
 					$("#form").submit();
+				}else{
+					if(result.gdpr_val == 0){
+						$("#loading-img").hide();
+						$('#overlay').show();
+						$('.pop_up').modal("show");
+					}else{
+						$("#form").submit();
+					}
 				}
 			}
 		});		

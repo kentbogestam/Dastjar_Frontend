@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Gdpr;
+use App\DishType;
+use App\ProductsExtra;
 use App\Product;
+use Carbon\Carbon;
 use Auth;
 
 class AjaxController extends Controller
@@ -24,6 +27,60 @@ class AjaxController extends Controller
         }else{
             return 0;
         }
+    }
+
+    public function gdprExtra(Request $request)
+    {
+        $extra_product = $gdpr_val = '0';
+        if(Auth::check()){
+            $gdpr = new Gdpr();
+            $user_id = Auth::user()->id;
+            if($gdpr->where('user_id', '=', $user_id)->exists())
+            {
+                $gdpr_val = $gdpr->where('user_id', '=', $user_id)->first()->gdpr;
+            }
+        }
+
+        $storeId = $request->storeID;
+        $checkList = $request->checkList;
+        
+        ///check for parental rule if parent exits then find its extra dish.
+        if(!empty(@$checkList)){
+            foreach($checkList as $list){
+                $parent1 = array($list);
+                if(!empty($parent1)){
+                    $parent2 = DishType::where('dish_id',$parent1)->pluck('parent_id')->toArray();
+                    $parent = $parent1;
+                    if(!empty($parent2)){
+                        $parent = array_merge($parent1,$parent2);
+                        $parent3 = DishType::where('dish_id',$parent2)->pluck('parent_id')->toArray();
+                        if(!empty($parent3)){
+                            $parent = array_merge($parent1,$parent2,$parent3);
+                        }
+                    }
+                }
+                $productsExtra = ProductsExtra::whereIn('dish_type_id',$parent)->where('store_id',$storeId)->pluck('extra_dish_type_id')->toArray();
+                
+                $products = Product::from('product AS P')
+                    ->select(['P.product_id', 'P.product_name', 'P.product_description', 'P.preparation_Time', 'P.small_image', 'PPL.price', 'S.extra_prep_time', 'PPL.publishing_start_date', 'PPL.publishing_end_date'])
+                    ->join('product_price_list AS PPL', 'P.product_id', '=', 'PPL.product_id')
+                    ->join('store AS S', 'S.store_id', '=', 'PPL.store_id')
+                    ->whereIn('P.dish_type', $productsExtra)
+                    ->where('PPL.store_id', $storeId)
+                    ->where('PPL.publishing_start_date','<=',Carbon::now())
+                    ->where('PPL.publishing_end_date','>=',Carbon::now())
+                    ->groupBy('P.product_id')
+                    ->orderBy('P.product_rank', 'ASC')
+                    ->orderBy('P.product_id')
+                    ->get();
+
+                if(!empty($products->toArray())){
+                    $extra_product = '1';
+                } 
+            }
+        }
+        $data = array('gdpr_val'=>$gdpr_val,'extra_product'=>$extra_product);
+        return $data;
     }
 
     public function accept_gdpr(){

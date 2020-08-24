@@ -32,6 +32,7 @@ Route::group(['middleware' => ['preventBackHistory']], function(){
  Route::get('/home', 'HomeController@index')->name('home');
 
 Route::post('contact-us', 'HomeController@contact_us');
+Route::post('gdprExtra', 'AjaxController@gdprExtra')->name('gdprExtra');
 Route::post('gdpr', 'AjaxController@gdpr');
 Route::post('accept-gdpr', 'AjaxController@accept_gdpr');
 

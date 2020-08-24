@@ -638,11 +638,6 @@ class OrderController extends Controller
             $data = Session::get('orderData');
             Session::forget('orderData');
         }
-        elseif( Session::get('move') )
-        {
-            $data = Session::get('move');
-            Session::forget('move');
-        }
         elseif( !empty($request->input()) )
         {
             $data = $request->input();
