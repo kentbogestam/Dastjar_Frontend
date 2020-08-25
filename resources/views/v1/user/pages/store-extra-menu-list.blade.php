@@ -174,11 +174,6 @@
 			@else
 				<br><br><h1 class="text-center">{{ __('messages.Menu is not available.') }}</h1>
 			@endif
-			<div class="row" style="margin:0px">
-				<div class="col-md-12">
-					<br><p id="continueText">{{__('messages.continue')}}</p>
-				</div>
-			</div>
 		</div>
 		<input type="hidden" id="browserCurrentTime" name="browserCurrentTime" value="" />
 		<input type="hidden" name="storeID" value="{{ $storedetails->store_id }}" />
@@ -191,7 +186,12 @@
 			@endif
 		@endif
 	</form>
-	
+	<div class="row" style="margin:0px">
+		<div class="col-md-12 text-center">
+			<button id="continueText">{{__('messages.continue')}}</button>
+		</div>
+	</div>
+
 	<!-- Popup add comment -->
 	<div id="transitionExample" class="modal fade" role="dialog">
 		<div class='modal-dialog'>
