@@ -356,12 +356,11 @@ class DishTypeController extends Controller
         {
             $filePath = null;
 
-            // 
+            // Check if image exist, and then delete
+            $dishType = DishType::where('dish_id', $request->dish_id)->first();
+
             if ($request->hasFile('dish_image'))
-            {
-                // Check if image exist, and then delete
-                $dishType = DishType::where('dish_id', $request->dish_id)->first();
-                
+            {   
                 if( !is_null($dishType->dish_image) )
                 {
                     Storage::disk('s3')->delete($dishType->dish_image);
@@ -376,6 +375,8 @@ class DishTypeController extends Controller
                 $filePath = 'upload/category/'.$imageName;
                 // Storage::disk('s3')->put($filePath, file_get_contents($file), 'public');
                 Storage::disk('s3')->put($filePath, $newFile, 'public');
+            }else{
+                $filePath = $dishType->dish_image;
             }
 
             // 
