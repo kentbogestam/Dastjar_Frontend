@@ -76,13 +76,14 @@ class IframeController extends Controller
     public function menuList(Request $request, $storeId, $styleType = 0){
         // 
         $request->session()->put('iFrameMenu', true);
-
+        
         // Get store detail
         $request->session()->put('storeId', $storeId);
         $storedetails = Store::where('store_id' , $storeId)->first();
 
         // Get the dish_type ids have products available
         $dish_ids = array();
+
         $productPriceList = ProductPriceList::select('dish_type')
             ->where('store_id',$storeId)
             ->where('publishing_start_date','<=',Carbon::now())
@@ -111,6 +112,7 @@ class IframeController extends Controller
                 ->where('u_id' , $storedetails->u_id)
                 // ->where('parent_id', null)
                 ->where('dish_activate','1')
+                ->where('extras','0')
                 ->whereIn('dish_id', $dish_ids)
                 ->orderBy('rank')
                 ->orderBy('dish_id')
@@ -126,7 +128,7 @@ class IframeController extends Controller
                     {
                         // Get 'dish id' from parent ID
                         $dishTypeLevel0 = DishType::from('dish_type AS DT1')
-                            ->select(['DT1.dish_id', 'DT1.dish_name', 'DT1.dish_image', 'DT1.rank'])
+                            ->select(['DT1.dish_id', 'DT1.dish_name', 'DT1.dish_image', 'DT1.rank', 'DT1.extras'])
                             ->leftJoin('dish_type AS DT2', 'DT2.parent_id', '=', 'DT1.dish_id')
                             ->leftJoin('dish_type AS DT3', 'DT3.parent_id', '=', 'DT2.dish_id')
                             ->whereRaw("(DT1.dish_id = '{$dish->dish_id}' OR DT2.dish_id = '{$dish->dish_id}' OR DT3.dish_id = '{$dish->dish_id}') AND DT1.parent_id IS NULL")
@@ -144,6 +146,7 @@ class IframeController extends Controller
                                     'dish_name' => $dishTypeLevel0->dish_name,
                                     'dish_image' => $dishTypeLevel0->dish_image,
                                     'rank' => $dishTypeLevel0->rank,
+                                    'extras' => $dish->extras,
                                 );
                             }
                         }
@@ -159,6 +162,7 @@ class IframeController extends Controller
                                 'dish_name' => $dish->dish_name,
                                 'dish_image' => $dish->dish_image,
                                 'rank' => $dish->rank,
+                                'extras' => $dish->extras,
                             );
                         }
                     }
@@ -212,6 +216,7 @@ class IframeController extends Controller
             }
         }
 
+        // dd($menuTypes);
         return view('v1.user.pages.store-menu-list', compact('storedetails', 'menuTypes', 'promotionLoyalty', 'customerLoyalty', 'orderCustomerLoyalty', 'styleType'));
     }
 }
