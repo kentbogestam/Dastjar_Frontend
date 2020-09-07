@@ -139,7 +139,7 @@ trait PosReceipt {
                         // Add product comment if have
                         if( !is_null($row->product_description) )
                         {
-                            $printer->add_text_line('      ('.$row->product_description.')');
+                            $printer->add_text_line('      ('.$this->replaceAsciiToHex($row->product_description).')');
                         }
                     }
                     $printer->add_text_line($this->get_seperator_dashed());
