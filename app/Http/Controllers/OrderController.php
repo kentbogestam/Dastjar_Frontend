@@ -630,7 +630,6 @@ class OrderController extends Controller
      */
     public function cart(Request $request){
         // Get orderData either from 'session' (right after login) or 'post' (if alreadt logged-in)
-
         $data = array();
         
         if( Session::has('orderData') )
@@ -642,6 +641,8 @@ class OrderController extends Controller
         {
             $data = $request->input();
         }
+
+        Session::forget('userDeliverAddressDistance');
 
         // 
         if( Auth::check() && !empty($data) )
@@ -990,6 +991,7 @@ class OrderController extends Controller
     {
         $isPaymentPackageSubscribed = Helper::isPackageSubscribed(5);
         $isHomeDeliveryPackageSubscribed = Helper::isPackageSubscribed(12);
+        Session::forget('userDeliverAddressDistance');
 
         // 
         $orderInvoice = array();
@@ -1305,7 +1307,7 @@ class OrderController extends Controller
         $user = User::find(Auth::id());
 
         // Get order
-        $order = Order::select(['orders.final_order_total', 'company.currencies'])
+        $order = Order::select(['orders.user_address_id', 'orders.final_order_total', 'company.currencies'])
             ->join('company','orders.company_id', '=', 'company.company_id')
             ->where(['orders.order_id' => $order_id])
             ->first();
@@ -1339,7 +1341,7 @@ class OrderController extends Controller
             if($userAddresses)
             {
                 // List user address form
-                $html .= view('v1.user.elements.cart-list-user-address-frm', compact('userAddresses'))->render();
+                $html .= view('v1.user.elements.cart-list-user-address-frm', compact('userAddresses', 'order'))->render();
             }
         }
         else

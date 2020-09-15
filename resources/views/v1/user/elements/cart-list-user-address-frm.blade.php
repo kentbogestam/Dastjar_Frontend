@@ -1,15 +1,22 @@
 @if($userAddresses)
     <div class="col-md-12 added-address-sec">
         <form id="frm-user-address" method="post">
+            @php
+            $checked_address_id = $order->user_address_id;
+            @endphp
+
             @foreach($userAddresses as $address)
                 @php
                 $strAddress = Helper::convertAddressToStr($address);
+
+                if( !isset($checked_address_id) && $address->is_default == '1')
+                {
+                    $checked_address_id = $address->id;
+                }
                 @endphp
                 <div class='col-sm-6'>
                     <div class='added-address list-group-item'>
-                        <label><input type='radio' name='user_address_id' value='{{ $address->id }}' {{ ($address->is_default == '1') ? 'checked' : '' }}>{{ $strAddress }}</label>
-                        <!-- <a href="javascript:void(0)" onclick="editUserAddressModal({{$address->id}});"><i class="fa fa-edit" aria-hidden="true"></i></a>
-                        <a href="javascript:void(0)" onclick="deleteUserAddress({{$address->id}});"><i class="fa fa-trash-o" aria-hidden="true"></i></a> -->
+                        <label><input type='radio' name='user_address_id' value='{{ $address->id }}' {{ ($address->id == $checked_address_id) ? 'checked' : '' }}>{{ $strAddress }}</label>
                         <div style="margin-left: 22px;">
                             <a href="javascript:void(0)" onclick="editUserAddressModal({{$address->id}});">{{ __('messages.edit') }}</i></a> | 
                             <a href="javascript:void(0)" onclick="deleteUserAddress({{$address->id}});">{{ __('messages.Remove') }}</a>
