@@ -1637,6 +1637,7 @@ class OrderController extends Controller
     {
         $status = $distanceBasedDeliveryPrice = 0;
         $msg = __('messages.homeDeliveryNotInRange');
+        Session::forget('userDeliverAddressDistance');
 
         // Check if delivery address is in store delivery range
         $store = Store::select(['street', 'city', 'zip', 'country', 'delivery_range'])
@@ -1668,7 +1669,7 @@ class OrderController extends Controller
                 if( isset($storeDeliveryPrice->delivery_rule_id) && $storeDeliveryPrice->delivery_rule_id == 5)
                 {
                     $distanceBasedDeliveryPrice = 1;
-                    Session::flash('userDeliverAddressDistance', $distance);
+                    Session::put('userDeliverAddressDistance', $distance);
                 }
             }
         }
