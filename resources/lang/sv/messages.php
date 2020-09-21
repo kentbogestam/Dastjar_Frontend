@@ -297,6 +297,7 @@ return [
     'pagination' => 'Visar :first av :last av :total antal',
     'aboutDastjarAnar' => 'Om Dastjar RS/Anar',
     'aboutCompanyAdmin' => 'Ditt Företags Admin',
+    'rosUserManual' => 'ROS användarhandbok',
     'marketingTools' => 'Marknadsverktyg',
     'range' => 'Räckvidd (In km)',
     'noDriverApp' => 'Ingen Förarapp',

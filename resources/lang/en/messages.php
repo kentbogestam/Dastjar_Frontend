@@ -296,6 +296,7 @@ return [
     'pagination' => 'Showing :first to :last of :total entries',
     'aboutDastjarAnar' => 'About Dastjar RS/Anar',
     'aboutCompanyAdmin' => 'Your Company Admin',
+    'rosUserManual' => 'ROS user manual',
     'marketingTools' => 'Marketing Tools',
     'range' => 'Range (In km)',
     'noDriverApp' => 'No Driver app',

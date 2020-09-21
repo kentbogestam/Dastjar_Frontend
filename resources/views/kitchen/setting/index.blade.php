@@ -10,6 +10,14 @@
 		text-align: left;
 		padding-left: 2em;
 	}
+
+	.btn_blk a{
+		text-align: left;
+		padding-left: 2em;
+		outline: none;
+		text-decoration: none;
+		color: #fff;
+	}
 	
 	.msg-lbl{
 		color: #000; 
@@ -315,7 +323,9 @@ textarea.ui-input-text{
 					 <li id="about_us" class="range-sec btn_blk">
 						<h2 class="ui-btn">{{  __("messages.aboutDastjarAnar") }}</h2>
 					</li>
-
+					<li class="range-sec btn_blk">
+						<a href="https://www.dastjar.com/ros-user-manual/" target="_blank" class="ui-btn">{{  __("messages.rosUserManual") }}</a>
+					</li>
 					<!-- <li id="admin" class="range-sec btn_blk">
 						<h2 class="ui-btn">{{  __("messages.aboutCompanyAdmin") }}</h2>
 					</li> -->
