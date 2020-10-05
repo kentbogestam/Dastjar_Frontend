@@ -818,8 +818,7 @@ class OrderController extends Controller
                     ->select(['OD.loyalty_id', DB::raw('SUM(OD.product_quality) AS quantity_bought')])
                     ->join('order_details AS OD', 'OD.loyalty_id', '=', 'PL.id')
                     ->join('orders', 'orders.order_id', '=', 'OD.order_id')
-                    ->where('PL.id', $promotionLoyalty->id)
-                    ->where('OD.user_id', Auth::id())
+                    ->where(['PL.id' => $promotionLoyalty->id, 'OD.user_id' => Auth::id()])
                     ->whereRaw("(orders.online_paid != 2 OR orders.order_id = {$orderId})")
                     ->first();
 
@@ -832,35 +831,33 @@ class OrderController extends Controller
                     // Calculate if 'loyalty' already have been applied
                     // $quantity_bought -= ($quantity_to_buy*$orderCustomerLoyalty->cnt);
 
-                    // Check if eligible to get free item quantity, and update final_total
-                    if($quantity_to_buy < $quantity_bought)
+                    // Get offered quantity on applied loyalty
+                    $num = floor($quantity_bought/$quantity_to_buy);
+                    // $quantity_offered = floor($quantity_bought/$quantity_to_buy)*$quantity_get;
+                    $quantity_offered = floor(($quantity_bought - $num)/$quantity_to_buy)*$quantity_get;
+                    $quantity_offered = $quantity_offered - ($orderCustomerLoyalty->cntLoyaltyUsed * $quantity_get);
+
+                    if($quantity_offered)
                     {
-                        // Get offered quantity on applied loyalty
-                        $quantity_offered = floor($quantity_bought/$quantity_to_buy)*$quantity_get;
-                        $quantity_offered = $quantity_offered - ($orderCustomerLoyalty->cntLoyaltyUsed * $quantity_get);
-
-                        if($quantity_offered)
+                        if( count($loyaltyProducts) < $quantity_offered )
                         {
-                            if( count($loyaltyProducts) < $quantity_offered )
-                            {
-                                $quantity_offered = count($loyaltyProducts);
-                            }
-
-                            // Calculate min price to be deducted and update final_total
-                            $productPrices = array_column($loyaltyProducts, 'price');
-                            $index = array_search(min($productPrices), $productPrices, true);
-                            $itemMinPrice = $loyaltyProducts[$index]['price'];
-                            $loyalty_discount = $itemMinPrice * $quantity_offered;
-                            $final_order_total -= $loyalty_discount;
-                            $orderInvoice['loyalty_quantity_free'] = $quantity_offered;
-                            $orderInvoice['loyaltyOfferApplied'] = __('messages.loyaltyOfferApplied', ['loyalty_quantity_free' => $quantity_offered]);
-
-                            // Insert into customer loyalty
-                            OrderCustomerLoyalty::create(['customer_id' => Auth::id(), 'loyalty_id' =>$promotionLoyalty->id, 'order_id' => $orderId]);
-
-                            // Update 'quantity_free' in order_detail
-                            OrderDetail::where(['id' => $loyaltyProducts[$index]['id']])->update(['quantity_free' => $quantity_offered]);
+                            $quantity_offered = count($loyaltyProducts);
                         }
+
+                        // Calculate min price to be deducted and update final_total
+                        $productPrices = array_column($loyaltyProducts, 'price');
+                        $index = array_search(min($productPrices), $productPrices, true);
+                        $itemMinPrice = $loyaltyProducts[$index]['price'];
+                        $loyalty_discount = $itemMinPrice * $quantity_offered;
+                        $final_order_total -= $loyalty_discount;
+                        $orderInvoice['loyalty_quantity_free'] = $quantity_offered;
+                        $orderInvoice['loyaltyOfferApplied'] = __('messages.loyaltyOfferApplied', ['loyalty_quantity_free' => $quantity_offered]);
+
+                        // Insert into customer loyalty
+                        OrderCustomerLoyalty::create(['customer_id' => Auth::id(), 'loyalty_id' =>$promotionLoyalty->id, 'order_id' => $orderId]);
+
+                        // Update 'quantity_free' in order_detail
+                        OrderDetail::where(['id' => $loyaltyProducts[$index]['id']])->update(['quantity_free' => $quantity_offered]);
                     }
                 }
             }
@@ -1060,8 +1057,7 @@ class OrderController extends Controller
                     ->select(['OD.loyalty_id', DB::raw('SUM(OD.product_quality) AS quantity_bought')])
                     ->join('order_details AS OD', 'OD.loyalty_id', '=', 'PL.id')
                     ->join('orders', 'orders.order_id', '=', 'OD.order_id')
-                    ->where('PL.id', $promotionLoyalty->id)
-                    ->where('OD.user_id', Auth::id())
+                    ->where(['PL.id' => $promotionLoyalty->id, 'OD.user_id' => Auth::id()])
                     ->whereRaw("(orders.online_paid != 2 OR orders.order_id = {$orderId})")
                     ->first();
 
@@ -1073,30 +1069,28 @@ class OrderController extends Controller
 
                     // Calculate if 'loyalty' already have been applied
                     // $quantity_bought -= ($quantity_to_buy*$orderCustomerLoyalty->cntLoyaltyUsed);
+                    
+                    // Get offered quantity on applied loyalty
+                    $num = floor($quantity_bought/$quantity_to_buy);
+                    // $quantity_offered = floor($quantity_bought/$quantity_to_buy)*$quantity_get;
+                    $quantity_offered = floor(($quantity_bought - $num)/$quantity_to_buy)*$quantity_get;
+                    $quantity_offered = $quantity_offered - ($orderCustomerLoyalty->cntLoyaltyUsed * $quantity_get);
 
-                    // Check if eligible to get free item quantity, and update final_total
-                    if($quantity_to_buy < $quantity_bought)
+                    if($quantity_offered)
                     {
-                        // Get offered quantity on applied loyalty
-                        $quantity_offered = floor($quantity_bought/$quantity_to_buy)*$quantity_get;
-                        $quantity_offered = $quantity_offered - ($orderCustomerLoyalty->cntLoyaltyUsed * $quantity_get);
-
-                        if($quantity_offered)
+                        if( count($loyaltyProducts) < $quantity_offered )
                         {
-                            if( count($loyaltyProducts) < $quantity_offered )
-                            {
-                                $quantity_offered = count($loyaltyProducts);
-                            }
-
-                            // Calculate min price to be deducted and update final_total
-                            $productPrices = array_column($loyaltyProducts, 'price');
-                            $index = array_search(min($productPrices), $productPrices, true);
-                            $itemMinPrice = $loyaltyProducts[$index]['price'];
-                            $loyalty_discount = $itemMinPrice * $quantity_offered;
-                            $final_order_total -= $loyalty_discount;
-                            $orderInvoice['loyalty_quantity_free'] = $quantity_offered;
-                            $orderInvoice['loyaltyOfferApplied'] = __('messages.loyaltyOfferApplied', ['loyalty_quantity_free' => $quantity_offered]);
+                            $quantity_offered = count($loyaltyProducts);
                         }
+
+                        // Calculate min price to be deducted and update final_total
+                        $productPrices = array_column($loyaltyProducts, 'price');
+                        $index = array_search(min($productPrices), $productPrices, true);
+                        $itemMinPrice = $loyaltyProducts[$index]['price'];
+                        $loyalty_discount = $itemMinPrice * $quantity_offered;
+                        $final_order_total -= $loyalty_discount;
+                        $orderInvoice['loyalty_quantity_free'] = $quantity_offered;
+                        $orderInvoice['loyaltyOfferApplied'] = __('messages.loyaltyOfferApplied', ['loyalty_quantity_free' => $quantity_offered]);
                     }
                 }
             }
@@ -1780,8 +1774,7 @@ class OrderController extends Controller
                         ->select(['OD.loyalty_id', DB::raw('SUM(OD.product_quality) AS quantity_bought')])
                         ->join('order_details AS OD', 'OD.loyalty_id', '=', 'PL.id')
                         ->join('orders', 'orders.order_id', '=', 'OD.order_id')
-                        ->where('PL.id', $promotionLoyalty->id)
-                        ->where('OD.user_id', Auth::id())
+                        ->where(['PL.id' => $promotionLoyalty->id, 'OD.user_id' => Auth::id()])
                         ->whereRaw("(orders.online_paid != 2 OR orders.order_id = {$orderId})")
                         ->first();
 
@@ -1793,41 +1786,39 @@ class OrderController extends Controller
 
                         // Calculate if 'loyalty' have already been applied
                         // $quantity_bought -= ($quantity_to_buy*$orderCustomerLoyalty->cntLoyaltyUsed);
+                        
+                        // Get offered quantity on applied loyalty
+                        $num = floor($quantity_bought/$quantity_to_buy);
+                        // $quantity_offered = floor($quantity_bought/$quantity_to_buy)*$quantity_get;
+                        $quantity_offered = floor(($quantity_bought - $num)/$quantity_to_buy)*$quantity_get;
+                        $quantity_offered = $quantity_offered - ($orderCustomerLoyalty->cntLoyaltyUsed * $quantity_get);
 
-                        // Check if eligible to get free item quantity, and update final_total
-                        if($quantity_to_buy < $quantity_bought)
+                        if($quantity_offered)
                         {
-                            // Get offered quantity on applied loyalty
-                            $quantity_offered = floor($quantity_bought/$quantity_to_buy)*$quantity_get;
-                            $quantity_offered = $quantity_offered - ($orderCustomerLoyalty->cntLoyaltyUsed * $quantity_get);
-
-                            if($quantity_offered)
+                            if( count($loyaltyProducts) < $quantity_offered )
                             {
-                                if( count($loyaltyProducts) < $quantity_offered )
-                                {
-                                    $quantity_offered = count($loyaltyProducts);
-                                }
-
-                                // Calculate min price to be deducted and update final_total
-                                $productPrices = array_column($loyaltyProducts, 'price');
-                                $index = array_search(min($productPrices), $productPrices, true);
-                                $itemMinPrice = $loyaltyProducts[$index]['price'];
-                                $loyalty_discount = $itemMinPrice * $quantity_offered;
-                                $final_order_total -= $loyalty_discount;
-                                $orderInvoice['loyalty_quantity_free'] = $quantity_offered;
-                                $orderInvoice['loyaltyOfferApplied'] = __('messages.loyaltyOfferApplied', ['loyalty_quantity_free' => $quantity_offered]);
-
-                                // Insert into customer loyalty
-                                if( !OrderCustomerLoyalty::where(['order_id' => $orderId])->count() )
-                                {
-                                    OrderCustomerLoyalty::create(['customer_id' => Auth::id(), 'loyalty_id' =>$promotionLoyalty->id, 'order_id' => $orderId]);
-                                }
-
-                                // Update 'quantity_free' in order_detail
-                                OrderDetail::where(['id' => $loyaltyProducts[$index]['id']])->update(['quantity_free' => $quantity_offered]);
-
-                                $is_order_customer_loyalty = 1;
+                                $quantity_offered = count($loyaltyProducts);
                             }
+
+                            // Calculate min price to be deducted and update final_total
+                            $productPrices = array_column($loyaltyProducts, 'price');
+                            $index = array_search(min($productPrices), $productPrices, true);
+                            $itemMinPrice = $loyaltyProducts[$index]['price'];
+                            $loyalty_discount = $itemMinPrice * $quantity_offered;
+                            $final_order_total -= $loyalty_discount;
+                            $orderInvoice['loyalty_quantity_free'] = $quantity_offered;
+                            $orderInvoice['loyaltyOfferApplied'] = __('messages.loyaltyOfferApplied', ['loyalty_quantity_free' => $quantity_offered]);
+
+                            // Insert into customer loyalty
+                            if( !OrderCustomerLoyalty::where(['order_id' => $orderId])->count() )
+                            {
+                                OrderCustomerLoyalty::create(['customer_id' => Auth::id(), 'loyalty_id' =>$promotionLoyalty->id, 'order_id' => $orderId]);
+                            }
+
+                            // Update 'quantity_free' in order_detail
+                            OrderDetail::where(['id' => $loyaltyProducts[$index]['id']])->update(['quantity_free' => $quantity_offered]);
+
+                            $is_order_customer_loyalty = 1;
                         }
                     }
                 }
