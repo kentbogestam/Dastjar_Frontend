@@ -813,14 +813,30 @@ class OrderController extends Controller
             // Start applying discount rule
             if( !empty($loyaltyProducts) )
             {
+                $orderDetailRecentLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
+                    ->select(['OD.order_id'])
+                    ->join('order_details AS OD', 'OD.loyalty_id', '=', 'PL.id')
+                    ->join('orders', 'orders.order_id', '=', 'OD.order_id')
+                    ->where(['PL.id' => $promotionLoyalty->id, 'orders.user_id' => Auth::id(), 'OD.quantity_free' => '1'])
+                    ->where('orders.online_paid', '!=', 2)
+                    ->groupBy('orders.order_id')
+                    ->orderBy('OD.order_id', 'DESC')
+                    ->limit(1)->first();
+
                 // Get customer loyalty for order
                 $customerLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
                     ->select(['OD.loyalty_id', DB::raw('SUM(OD.product_quality) AS quantity_bought')])
                     ->join('order_details AS OD', 'OD.loyalty_id', '=', 'PL.id')
                     ->join('orders', 'orders.order_id', '=', 'OD.order_id')
-                    ->where(['PL.id' => $promotionLoyalty->id, 'OD.user_id' => Auth::id()])
-                    ->whereRaw("(orders.online_paid != 2 OR orders.order_id = {$orderId})")
-                    ->first();
+                    ->where(['PL.id' => $promotionLoyalty->id, 'orders.user_id' => Auth::id()])
+                    ->whereRaw("(orders.online_paid != 2 OR orders.order_id = {$orderId})");
+
+                if($orderDetailRecentLoyalty)
+                {
+                    $customerLoyalty->where('OD.order_id', '>', $orderDetailRecentLoyalty->order_id);
+                }
+
+                $customerLoyalty = $customerLoyalty->first();
 
                 if($customerLoyalty)
                 {
@@ -833,11 +849,9 @@ class OrderController extends Controller
 
                     // Get offered quantity on applied loyalty
                     $num = floor($quantity_bought/$quantity_to_buy);
-                    // $quantity_offered = floor($quantity_bought/$quantity_to_buy)*$quantity_get;
                     $quantity_offered = floor(($quantity_bought - $num)/$quantity_to_buy)*$quantity_get;
-                    $quantity_offered = $quantity_offered - ($orderCustomerLoyalty->cntLoyaltyUsed * $quantity_get);
 
-                    if($quantity_offered)
+                    if($quantity_offered > 0)
                     {
                         if( count($loyaltyProducts) < $quantity_offered )
                         {
@@ -1052,31 +1066,42 @@ class OrderController extends Controller
             // Start applying discount rule
             if( !empty($loyaltyProducts) )
             {
+                $orderDetailRecentLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
+                    ->select(['OD.order_id'])
+                    ->join('order_details AS OD', 'OD.loyalty_id', '=', 'PL.id')
+                    ->join('orders', 'orders.order_id', '=', 'OD.order_id')
+                    ->where(['PL.id' => $promotionLoyalty->id, 'orders.user_id' => Auth::id(), 'OD.quantity_free' => '1'])
+                    ->where('orders.online_paid', '!=', 2)
+                    ->groupBy('orders.order_id')
+                    ->orderBy('OD.order_id', 'DESC')
+                    ->limit(1)->first();
+
                 // Get customer loyalty for order
                 $customerLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
                     ->select(['OD.loyalty_id', DB::raw('SUM(OD.product_quality) AS quantity_bought')])
                     ->join('order_details AS OD', 'OD.loyalty_id', '=', 'PL.id')
                     ->join('orders', 'orders.order_id', '=', 'OD.order_id')
-                    ->where(['PL.id' => $promotionLoyalty->id, 'OD.user_id' => Auth::id()])
-                    ->whereRaw("(orders.online_paid != 2 OR orders.order_id = {$orderId})")
-                    ->first();
+                    ->where(['PL.id' => $promotionLoyalty->id, 'orders.user_id' => Auth::id()])
+                    ->whereRaw("(orders.online_paid != 2 OR orders.order_id = {$orderId})");
+
+                if($orderDetailRecentLoyalty)
+                {
+                    $customerLoyalty->where('OD.order_id', '>', $orderDetailRecentLoyalty->order_id);
+                }
+
+                $customerLoyalty = $customerLoyalty->first();
 
                 if($customerLoyalty)
                 {
                     $quantity_to_buy = $promotionLoyalty->quantity_to_buy;
                     $quantity_get = $promotionLoyalty->quantity_get;
                     $quantity_bought = $customerLoyalty->quantity_bought;
-
-                    // Calculate if 'loyalty' already have been applied
-                    // $quantity_bought -= ($quantity_to_buy*$orderCustomerLoyalty->cntLoyaltyUsed);
                     
                     // Get offered quantity on applied loyalty
                     $num = floor($quantity_bought/$quantity_to_buy);
-                    // $quantity_offered = floor($quantity_bought/$quantity_to_buy)*$quantity_get;
                     $quantity_offered = floor(($quantity_bought - $num)/$quantity_to_buy)*$quantity_get;
-                    $quantity_offered = $quantity_offered - ($orderCustomerLoyalty->cntLoyaltyUsed * $quantity_get);
 
-                    if($quantity_offered)
+                    if($quantity_offered > 0)
                     {
                         if( count($loyaltyProducts) < $quantity_offered )
                         {
@@ -1687,6 +1712,7 @@ class OrderController extends Controller
      * @return [type]           [description]
      */
     public function updateCart(Request $request){
+        // return false;
         $data = $request->input();
         $orderInvoice = array();
         $deleteWholecart = 0; $status = 0;
@@ -1769,31 +1795,43 @@ class OrderController extends Controller
                 // Start applying discount rule
                 if( !empty($loyaltyProducts) )
                 {
+                    $orderDetailRecentLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
+                        ->select(['OD.order_id'])
+                        ->join('order_details AS OD', 'OD.loyalty_id', '=', 'PL.id')
+                        ->join('orders', 'orders.order_id', '=', 'OD.order_id')
+                        ->where(['PL.id' => $promotionLoyalty->id, 'orders.user_id' => Auth::id(), 'OD.quantity_free' => '1'])
+                        ->where('orders.online_paid', '!=', 2)
+                        ->groupBy('orders.order_id')
+                        ->orderBy('OD.order_id', 'DESC')
+                        ->limit(1)->first();
+                        // echo $orderDetailRecentLoyalty->order_id; exit;
+
                     // Get customer loyalty for order
                     $customerLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
                         ->select(['OD.loyalty_id', DB::raw('SUM(OD.product_quality) AS quantity_bought')])
                         ->join('order_details AS OD', 'OD.loyalty_id', '=', 'PL.id')
                         ->join('orders', 'orders.order_id', '=', 'OD.order_id')
-                        ->where(['PL.id' => $promotionLoyalty->id, 'OD.user_id' => Auth::id()])
-                        ->whereRaw("(orders.online_paid != 2 OR orders.order_id = {$orderId})")
-                        ->first();
+                        ->where(['PL.id' => $promotionLoyalty->id, 'orders.user_id' => Auth::id()])
+                        ->whereRaw("(orders.online_paid != 2 OR orders.order_id = {$orderId})");
+
+                    if($orderDetailRecentLoyalty)
+                    {
+                        $customerLoyalty->where('OD.order_id', '>', $orderDetailRecentLoyalty->order_id);
+                    }
+
+                    $customerLoyalty = $customerLoyalty->first();
 
                     if($customerLoyalty)
                     {
                         $quantity_to_buy = $promotionLoyalty->quantity_to_buy;
                         $quantity_get = $promotionLoyalty->quantity_get;
                         $quantity_bought = $customerLoyalty->quantity_bought;
-
-                        // Calculate if 'loyalty' have already been applied
-                        // $quantity_bought -= ($quantity_to_buy*$orderCustomerLoyalty->cntLoyaltyUsed);
                         
                         // Get offered quantity on applied loyalty
                         $num = floor($quantity_bought/$quantity_to_buy);
-                        // $quantity_offered = floor($quantity_bought/$quantity_to_buy)*$quantity_get;
                         $quantity_offered = floor(($quantity_bought - $num)/$quantity_to_buy)*$quantity_get;
-                        $quantity_offered = $quantity_offered - ($orderCustomerLoyalty->cntLoyaltyUsed * $quantity_get);
 
-                        if($quantity_offered)
+                        if($quantity_offered > 0)
                         {
                             if( count($loyaltyProducts) < $quantity_offered )
                             {
