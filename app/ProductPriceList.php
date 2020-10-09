@@ -19,6 +19,11 @@ class ProductPriceList extends Model
     	return $this->hasMany('App\ProductPriceList','product_id','product_id');
     }
 
+    public function productData()
+    {
+        return $this->hasOne('App\Product','product_id','product_id');
+    }
+
     public function storeProduct()
     {
 //Jab description vali error aaye tb ye use krna.
@@ -37,6 +42,6 @@ class ProductPriceList extends Model
         return $this->belongsTo('App\Store','store_id','store_id');
     }
 
-    protected $fillable = ['product_id', 'store_id', 'text', 'price', 'lang', 'publishing_start_date', 'publishing_end_date'];
+    protected $fillable = ['product_id', 'store_id', 'text', 'price', 'lang', 'publishing_start_date', 'publishing_end_date', 'publishing_start_time', 'publishing_end_time'];
     
 }

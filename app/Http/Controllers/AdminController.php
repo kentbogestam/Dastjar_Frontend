@@ -496,12 +496,13 @@ class AdminController extends Controller
     public function kitchenPreOrder(Request $request){
         $menuTypes = null;
         $request->session()->forget('order_date');
-        
+        $timeToday = date('H:i:s',strtotime(Carbon::now()));
         if(Session::get('kitchenStoreId')){
-            $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())
+            $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))->where('publishing_start_time','<=',$timeToday)->where('publishing_end_time','>=',$timeToday)
             ->with('menuPrice')->with('storeProduct')
             ->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')
             ->orderBy('product.product_rank', 'ASC')
+            ->where('product.start_of_publishing', '<=', Carbon::now())
             ->get();
 
             if($menuDetails){
@@ -727,7 +728,11 @@ class AdminController extends Controller
                     if($max_time < $productTime->preparation_Time){
                         $max_time = $productTime->preparation_Time;
                     }else{}
-                    $productPrice = ProductPriceList::select('price')->whereProductId($value['id'])->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->first();
+                    $timeToday = date('H:i:s',strtotime(Carbon::now()));
+                    $productPrice = ProductPriceList::select('price')->whereProductId($value['id'])->where('publishing_start_time','<=',$timeToday)->where('publishing_end_time','>=',$timeToday)
+                        ->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')
+                        ->where('product.start_of_publishing', '<=', Carbon::now())
+                        ->first();
                     $total_price = $total_price + ($productPrice->price * $value['prod_quant']); 
                     $orderDetail =  new OrderDetail();
                     $orderDetail->order_id = $orders->order_id;
@@ -781,7 +786,11 @@ class AdminController extends Controller
             // return view('kitchen.order.order-detail', compact('order','orderDetails','storeDetail'));
         }else{
             $menuTypes = null;
-            $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->with('menuPrice')->with('storeProduct')->get();
+            $timeToday = date('H:i:s',strtotime(Carbon::now()));
+            $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))->where('publishing_start_time','<=',$timeToday)->where('publishing_end_time','>=',$timeToday)->with('menuPrice')->with('storeProduct')
+                ->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')
+                ->where('product.start_of_publishing', '<=', Carbon::now())
+                ->get();
             if(count($menuDetails) != 0){
 
                 foreach ($menuDetails as $menuDetail) {
@@ -900,7 +909,9 @@ class AdminController extends Controller
         }else{}
 
         $menuTypes = null;
-        $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->with('menuPrice')->with('storeProduct')->get();
+        $timeToday = date('H:i:s',strtotime(Carbon::now()));
+        $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))->where('publishing_start_time','<=',$timeToday)->where('publishing_end_time','>=',$timeToday)->with('menuPrice')->with('storeProduct')->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')
+                ->where('product.start_of_publishing', '<=', Carbon::now())->get();
 
         if(count($menuDetails) != 0){
             foreach ($menuDetails as $menuDetail) {
@@ -1134,11 +1145,11 @@ class AdminController extends Controller
             $dishType = DishType::select('DT.dish_name','DT.dish_id', 'DT.parent_id', 'DT.rank')
                 ->from('dish_type AS DT')
                 ->join('product AS P', 'P.dish_type', '=', 'DT.dish_id')
-                ->join('product_price_list AS PPL', 'PPL.product_id', '=', 'P.product_id')
+                // ->join('product_price_list AS PPL', 'PPL.product_id', '=', 'P.product_id')
                 ->where('P.u_id', Auth::user()->u_id)
                 ->where('P.s_activ', '!=' , 2)
                 ->where('DT.dish_activate', 1)
-                ->where('PPL.store_id', Session::get('kitchenStoreId'))
+                // ->where('PPL.store_id', Session::get('kitchenStoreId'))
                 ->groupBy('DT.dish_id')
                 ->orderBy('DT.rank')
                 ->orderBy('DT.dish_id')
@@ -1229,13 +1240,14 @@ class AdminController extends Controller
         }
         
         // Get all products by dish
-        $products = Product::select('product.product_id', 'product.product_name', 'product.product_description', 'product.small_image')
+        $products = Product::with('ProductPriceListData')
+            // ->select('product.product_id', 'product.product_name', 'product.product_description', 'product.small_image')
             ->join('dish_type','dish_type.dish_id','=','product.dish_type')
-            ->join('product_price_list AS PPL', 'PPL.product_id', '=', 'product.product_id')
+            // ->join('product_price_list AS PPL', 'PPL.product_id', '=', 'product.product_id')
             // ->where('product.dish_type', $request->dish_id)
             ->whereIn('product.dish_type', array_unique($menuTypes))
             ->where('product.u_id', Auth::user()->u_id)
-            ->where('PPL.store_id', Session::get('kitchenStoreId'))
+            // ->where('PPL.store_id', Session::get('kitchenStoreId'))
             ->where('product.s_activ', '!=' , 2)
             ->where('dish_type.dish_activate',1)
             ->groupBy('product.product_id')
@@ -1259,23 +1271,6 @@ class AdminController extends Controller
                 {
                     $data[$key]['small_image'] = $value->small_image;
                 }
-
-                // Get current product price detail
-                $data[$key]['current_price'] = null;
-                $current_date = Carbon::now()->format('Y-m-d h:i:00');
-
-                $currentProductPrice = ProductPriceList::select('id', 'text', 'price', 'publishing_start_date', 'publishing_end_date')
-                    ->where('product_id', $value->product_id)
-                    ->where('store_id', Session::get('kitchenStoreId'))
-                    ->where('publishing_start_date', '<=', $current_date)
-                    ->where('publishing_end_date', '>=', $current_date)
-                    ->first();
-                    //->toSql();
-                
-                if($currentProductPrice)
-                {
-                    $data[$key]['current_price'] = $currentProductPrice;
-                }
             }
         }
 
@@ -1292,12 +1287,12 @@ class AdminController extends Controller
         //
         $current_date = Carbon::now()->format('Y-m-d h:i:00');
         $data = null;
-
-        $futureProductPrices = ProductPriceList::select('id', 'product_id', 'text', 'price', 'publishing_start_date', 'publishing_end_date')
+        $timeToday = date('H:i:s',strtotime(Carbon::now()));
+        $futureProductPrices = ProductPriceList::select('id', 'product_id', 'text', 'price', 'publishing_start_time', 'publishing_end_time')
             ->where('product_id', $request->product_id)
             ->where('store_id', Session::get('kitchenStoreId'))
-            ->whereRaw("(publishing_start_date > '{$current_date}' OR publishing_start_date IS NULL)")
-            ->orderBy('publishing_start_date')
+            ->whereRaw("(publishing_start_time > '{$timeToday}' OR publishing_start_time IS NULL)")
+            ->orderBy('publishing_start_time')
             ->get();
 
         if($futureProductPrices)
@@ -1321,17 +1316,18 @@ class AdminController extends Controller
         $storedetails = $store->first();
         $storeName = $storedetails->store_name;
 
-        $employer = new Employer();
-        $companyId = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
+        // $employer = new Employer();
+        // $companyId = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
 
         $dishType = new DishType();
         // $listDishes = $dishType->where('company_id' , '=', $companyId)->where('dish_activate', '=', '1')->pluck('dish_name','dish_id');
         $listDishes = $helper->getDishTypeTree(Auth::user()->u_id);
 
-        $companydetails = new Company();
-        $currency = $companydetails->where('company_id' , '=', $companyId)->first()->currencies;
+        // $companydetails = new Company();
+        // $currency = $companydetails->where('company_id' , '=', $companyId)->first()->currencies;
 
-        return view('kitchen.menulist.createMenu', compact('storedetails', 'storeName', 'listDishes' ,'currency'));
+        return view('kitchen.menulist.createMenu', compact('storedetails', 'storeName', 'listDishes'));
+        // return view('kitchen.menulist.createMenu', compact('storedetails', 'storeName', 'listDishes' ,'currency'));
     }
 
     public function kitchenCreateMenuPost(Request $request){
@@ -1343,13 +1339,13 @@ class AdminController extends Controller
             $product_id = $helper->uuid();
         }
    
-        $store_id = Session::get('kitchenStoreId');
+        // $store_id = Session::get('kitchenStoreId');
         $message = "Dish Created Successfully.";
 
         $util = new Util(env('APP42_API_KEY'),env('APP42_API_SECRET'));
 
         $publish_start_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_start_date);
-        $publish_end_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_end_date);
+        // $publish_end_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_end_date);
 
         $employer = new Employer();
         $company_id = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
@@ -1364,58 +1360,6 @@ class AdminController extends Controller
         // if (!empty($_FILES["prodImage"]["name"]))
         if ($request->hasFile('prodImage'))
         {
-            /*// 
-            $basePath = app_path();
-            define('UPLOAD_DIR', public_path() . '/upload/images/');
-            define('IMAGE_AMAZON_PATH', 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/');
-            define('IMAGE_DIR_PATH', $basePath . '/lib/bin/cumbari_s3.sh ');
-
-            // 
-            $info = pathinfo($_FILES["prodImage"]["name"]);
-            $file_extension = strtolower($info['extension']);
-
-            if ($file_extension == "png" || $file_extension == "jpg" || $file_extension == "jpeg" || $file_extension == "gif" || $file_extension == "bmp")
-            {
-                if ($_FILES["prodImage"]["error"] > 0)
-                {
-                    $error.=$_FILES["prodImage"]["error"] . "<br />";
-                }
-                else
-                {
-                    try{
-                        $helper = new Helper();
-
-                        $fileOriginal = $_FILES['prodImage']['tmp_name'];
-                        $path = UPLOAD_DIR . "category/";
-
-                        // Resize image (small and large)
-                        $fileName = 'dish-thumbnail-'.time().'.jpg';
-                        $smallImg = $helper->gumletImageResize($fileOriginal, $fileName, $path, 256);
-
-                        $fileName = 'dish-large-'.time().'.jpg';
-                        $largeImg = $helper->gumletImageResize($fileOriginal, $fileName, $path, 1024);
-
-                        // Upload image to AWS
-                        $file1 = $path.$smallImg;
-                        $dir1 = "category";
-                        $command = IMAGE_DIR_PATH . $file1 . " " . $dir1;
-                        system($command);
-
-                        $file2 = $path.$largeImg;
-                        $dir2 = "coupon";
-                        $command2 = IMAGE_DIR_PATH . $file2 . " " . $dir2;
-                        system($command2);
-
-                        // 
-                        $product->small_image = IMAGE_AMAZON_PATH . 'category/' . $smallImg;
-                        $product->large_image = IMAGE_AMAZON_PATH . 'coupon/' . $largeImg;
-                    } catch (\Exception $ex) {
-                        echo $ex->getMessage();
-                        die();
-                    }
-                }
-            }*/
-
             define('IMAGE_AMAZON_PATH', 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/');
             $file = $request->file('prodImage');
             $time = time();
@@ -1443,10 +1387,6 @@ class AdminController extends Controller
 
             }
         }
-        else
-        {
-            // $product->small_image = $product->large_image = 'https://s3-eu-west-1.amazonaws.com/dastjar-coupons/upload/category/cat_icon_b738a523d72867d1fc84e1f9d3c18b29.png';
-        }
 
         // Set rank
         $rank = Product::orderBy('product_rank', 'DESC')->where(['dish_type' => $request->dishType, 'u_id' => Auth::user()->u_id, 'company_id' => $company_id, 's_activ' => 0])->first();
@@ -1471,18 +1411,18 @@ class AdminController extends Controller
         $product->category = "7099ead0-8d47-102e-9bd4-12313b062day";
         $product->product_number = "";
         $product->product_info_page = "";
-        $product->start_of_publishing = Carbon::now();
+        $product->start_of_publishing = $publish_start_date;
         $product->company_id = $company_id;
         $product->save();
 
-        $product_price_list = ProductPriceList::firstOrNew(['product_id' => $product_id]);
-        $product_price_list->store_id = $store_id;
-        $product_price_list->text = "Price:" . $request->prodPrice . $request->currency;
-        $product_price_list->price = $request->prodPrice;
-        $product_price_list->lang = $request->dishLang;
-        $product_price_list->publishing_start_date = $publish_start_date;
-        $product_price_list->publishing_end_date = $publish_end_date;
-        $product_price_list->save();
+        // $product_price_list = ProductPriceList::firstOrNew(['product_id' => $product_id]);
+        // $product_price_list->store_id = $store_id;
+        // $product_price_list->text = "Price:" . $request->prodPrice . $request->currency;
+        // $product_price_list->price = $request->prodPrice;
+        // $product_price_list->lang = $request->dishLang;
+        // $product_price_list->publishing_start_date = $publish_start_date;
+        // $product_price_list->publishing_end_date = $publish_end_date;
+        // $product_price_list->save();
 
         // Add product meta
         $data = array(
@@ -1565,33 +1505,33 @@ class AdminController extends Controller
     public function kitchenUpdateMenuPost(Request $request){
         // Validate if publish start/end datetime shouldn't already exist
         $publishing_start_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_start_date);
-        $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_end_date);
+        // $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_end_date);
 
-        $startDt = strtotime($publishing_start_date_time->format('Y-m-d H:i:s'));
-        $endDt = strtotime($publishing_end_date_time->format('Y-m-d H:i:s'));
+        // $startDt = strtotime($publishing_start_date_time->format('Y-m-d H:i:s'));
+        // $endDt = strtotime($publishing_end_date_time->format('Y-m-d H:i:s'));
 
         $publishStartDateTime = $publishing_start_date_time->format('Y-m-d H:i:s');
-        $publishEndDateTime = $publishing_end_date_time->format('Y-m-d H:i:s');
+        // $publishEndDateTime = $publishing_end_date_time->format('Y-m-d H:i:s');
 
         $product_id = $request->product_id;
-        $store_id = $request->store_id;
-        $price_id = $request->price_id;
+        // $store_id = $request->store_id;
+        // $price_id = $request->price_id;
         $message = "Dish Updated Successfully.";
 
         //check for validation with time availability
-        $data = ProductPriceList::where('product_id', $product_id)
-                        ->where('store_id', $store_id)
-                        ->where('id', '!=', $price_id)
-                        ->pluck('publishing_end_date','publishing_start_date');
+        // $data = ProductPriceList::where('product_id', $product_id)
+        //                 ->where('store_id', $store_id)
+        //                 ->where('id', '!=', $price_id)
+        //                 ->pluck('publishing_end_date','publishing_start_date');
         
-        foreach($data as $key => $val){
-            $keys = strtotime($key); $vals = strtotime($val);
-            if($startDt > $keys && $startDt > $vals && $endDt > $keys && $endDt > $vals){
-            }else if($startDt < $keys && $startDt < $vals && $endDt < $keys && $endDt < $vals){
-            }else{
-                return back()->with('error','Invalid date');
-            }       
-        }
+        // foreach($data as $key => $val){
+        //     $keys = strtotime($key); $vals = strtotime($val);
+        //     if($startDt > $keys && $startDt > $vals && $endDt > $keys && $endDt > $vals){
+        //     }else if($startDt < $keys && $startDt < $vals && $endDt < $keys && $endDt < $vals){
+        //     }else{
+        //         return back()->with('error','Time Slab is not available !');
+        //     }       
+        // }
 
         $helper = new Helper();
 
@@ -1670,7 +1610,7 @@ class AdminController extends Controller
         $product->category = "7099ead0-8d47-102e-9bd4-12313b062day";
         $product->product_number = "";
         $product->product_info_page = "";
-        $product->start_of_publishing = Carbon::now();
+        $product->start_of_publishing = $publishStartDateTime;
         $product->company_id = $company_id;
         $product->save();
 
@@ -1696,18 +1636,18 @@ class AdminController extends Controller
         $langText->save();
 
         // 
-        $product_price_list = ProductPriceList::where(['id' => $price_id])->first();
-        $product_price_list->store_id = $store_id;
-        $product_price_list->text = "Price:" . $request->prodPrice . $request->currency;
-        $product_price_list->price = $request->prodPrice;
-        $product_price_list->lang = $request->dishLang;
-        if($publishStartDateTime!=null){
-            $product_price_list->publishing_start_date = $publishStartDateTime;
-        }
-        if($publishEndDateTime!=null){      
-            $product_price_list->publishing_end_date = $publishEndDateTime;
-        }
-        $product_price_list->save();
+        // $product_price_list = ProductPriceList::where(['id' => $price_id])->first();
+        // $product_price_list->store_id = $store_id;
+        // $product_price_list->text = "Price:" . $request->prodPrice . $request->currency;
+        // $product_price_list->price = $request->prodPrice;
+        // $product_price_list->lang = $request->dishLang;
+        // if($publishStartDateTime!=null){
+        //     $product_price_list->publishing_start_date = $publishStartDateTime;
+        // }
+        // if($publishEndDateTime!=null){      
+        //     $product_price_list->publishing_end_date = $publishEndDateTime;
+        // }
+        // $product_price_list->save();
 
         return redirect()->route('menu')->with('success', $message);
     }
@@ -1716,35 +1656,35 @@ class AdminController extends Controller
         $helper = new Helper();
 
         $productid = $request->product_id;
-        $store_id = $request->store_id;
-        $price_id = $request->price_id;
+        $store_id = Session::get('kitchenStoreId');
+        // $price_id = $request->price_id;
 
         $product = Product::where('product_id','=',$productid)->first();
 
         try{
-                getimagesize($product->small_image);
-                $product->small_image = $product->small_image;
-            }catch(\Exception $ex){
-                $product->small_image = null;
+            getimagesize($product->small_image);
+            $product->small_image = $product->small_image;
+        }catch(\Exception $ex){
+            $product->small_image = null;
         }
 
-        $product_price_list = ProductPriceList::where('id','=',$price_id)->first();
+        // $product_price_list = ProductPriceList::where('id','=',$price_id)->first();
 
         $storedetails = Store::where('store_id' , Session::get('kitchenStoreId'))->first();
         $storeName = $storedetails->store_name;
 
         $dishType = new DishType();
 
-        // $listDishes = $dishType->where('u_id' , '=', Auth::user()->u_id)->where('dish_activate', '=', '1')->pluck('dish_name','dish_id');
+        // // $listDishes = $dishType->where('u_id' , '=', Auth::user()->u_id)->where('dish_activate', '=', '1')->pluck('dish_name','dish_id');
         $listDishes = $helper->getDishTypeTree(Auth::user()->u_id);
 
         $listSubCategory = $dishType->where('parent_id' , '=', $product->dish_type)->where('dish_activate', '=', '1')->pluck('dish_name','dish_id');
 
-        $employer = new Employer();
-        $companyId = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
+        // $employer = new Employer();
+        // $companyId = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
 
-        $companydetails = new Company();
-        $currency = $companydetails->where('company_id' , '=', $companyId)->first()->currencies;
+        // $companydetails = new Company();
+        // $currency = $companydetails->where('company_id' , '=', $companyId)->first()->currencies;
 
         $hour = explode(':', $product->preparation_Time)[0];
         $minute = explode(':', $product->preparation_Time)[1];
@@ -1752,7 +1692,8 @@ class AdminController extends Controller
 
         $product->preparation_Time = $time;
 
-        return view('kitchen.menulist.createMenu',compact('product', 'product_price_list', 'store_id', 'storeName', 'listDishes', 'currency', 'listSubCategory'));
+        // return view('kitchen.menulist.createMenu',compact('product', 'product_price_list', 'store_id', 'storeName', 'listDishes', 'currency', 'listSubCategory'));
+        return view('kitchen.menulist.createMenu',compact('product', 'store_id', 'storeName', 'listDishes', 'listSubCategory'));
     }
 
     /**
@@ -1804,33 +1745,33 @@ class AdminController extends Controller
             if($productNew->save())
             {
                 // Get product price detail
-                $current_date = Carbon::now()->format('Y-m-d h:i:00');
+                // $current_date = Carbon::now()->format('Y-m-d h:i:00');
 
-                $currentProductPrice = ProductPriceList::select('product_id', 'store_id', 'text', 'price', 'lang', 'publishing_start_date', 'publishing_end_date')
-                    ->where('product_id', $productId)
-                    ->where('store_id', Session::get('kitchenStoreId'))
-                    ->where('publishing_start_date', '<=', $current_date)
-                    ->where('publishing_end_date', '>=', $current_date)
-                    ->first();
+                // $currentProductPrice = ProductPriceList::select('product_id', 'store_id', 'text', 'price', 'lang', 'publishing_start_date', 'publishing_end_date')
+                //     ->where('product_id', $productId)
+                //     ->where('store_id', Session::get('kitchenStoreId'))
+                //     ->where('publishing_start_date', '<=', $current_date)
+                //     ->where('publishing_end_date', '>=', $current_date)
+                //     ->first();
                 
-                if(!$currentProductPrice)
-                {
-                    $currentProductPrice = ProductPriceList::select('product_id', 'store_id', 'text', 'price', 'lang', 'publishing_start_date', 'publishing_end_date')
-                        ->where('product_id', $productId)
-                        ->where('store_id', Session::get('kitchenStoreId'))
-                        ->orderBy('id', 'DESC')
-                        ->first();
-                }
+                // if(!$currentProductPrice)
+                // {
+                //     $currentProductPrice = ProductPriceList::select('product_id', 'store_id', 'text', 'price', 'lang', 'publishing_start_date', 'publishing_end_date')
+                //         ->where('product_id', $productId)
+                //         ->where('store_id', Session::get('kitchenStoreId'))
+                //         ->orderBy('id', 'DESC')
+                //         ->first();
+                // }
 
-                if($currentProductPrice)
-                {
-                    $product_price_list = ProductPriceList::firstOrNew(['product_id' => $productNew->product_id]);
-                    $product_price_list->store_id = $currentProductPrice->store_id;
-                    $product_price_list->text = $currentProductPrice->text;
-                    $product_price_list->price = $currentProductPrice->price;
-                    $product_price_list->lang = $currentProductPrice->lang;
-                    $product_price_list->save();
-                }
+                // if($currentProductPrice)
+                // {
+                //     $product_price_list = ProductPriceList::firstOrNew(['product_id' => $productNew->product_id]);
+                //     $product_price_list->store_id = $currentProductPrice->store_id;
+                //     $product_price_list->text = $currentProductPrice->text;
+                //     $product_price_list->price = $currentProductPrice->price;
+                //     $product_price_list->lang = $currentProductPrice->lang;
+                //     $product_price_list->save();
+                // }
 
                 // Add product meta
                 $data = array(
@@ -1922,50 +1863,56 @@ class AdminController extends Controller
      */
     public function isFutureDateAvailable(Request $request)
     {
-        $publishing_start_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_start_date);
-        $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_end_date);
-
-        //check for validation with time availability
-        $startDt = strtotime($publishing_start_date_time->format('Y-m-d H:i:s'));
-        $endDt = strtotime($publishing_end_date_time->format('Y-m-d H:i:s'));
+        $startDt = strtotime($request->publishing_start_date);
+        $endDt = strtotime($request->publishing_end_date);
+        
         $status = 0;
-        $data = ProductPriceList::where('product_id', $request->product_id)
+        if(!empty($request->priceId)){
+            $data = ProductPriceList::where('product_id', $request->product_id)
                         ->where('store_id', $request->store_id)
-                        ->pluck('publishing_end_date','publishing_start_date');
-        foreach($data as $key => $val){
-            $keys = strtotime($key); $vals = strtotime($val);
-            if($startDt > $keys && $startDt > $vals && $endDt > $keys && $endDt > $vals){
-            }else if($startDt < $keys && $startDt < $vals && $endDt < $keys && $endDt < $vals){
-            }else{
-                ++$status;
-            }       
+                        ->where('id', '!=', $request->priceId)
+                        ->pluck('publishing_end_time','publishing_start_time');
+        }else{
+            $data = ProductPriceList::where('product_id', $request->product_id)
+                        ->where('store_id', $request->store_id)
+                        ->pluck('publishing_end_time','publishing_start_time');
+        }
+        
+        if(!empty($data)){
+            foreach($data as $key => $val){
+                $keys = strtotime($key); 
+                $vals = strtotime($val);
+                if($startDt > $keys && $startDt > $vals && $endDt > $keys && $endDt > $vals){
+                }else if($startDt < $keys && $startDt < $vals && $endDt < $keys && $endDt < $vals){
+                }else{
+                    ++$status;
+                }
+            }      
         }
         return response()->json(['status' => $status]);
     }
 
     public function addDishPrice(Request $request)
     {
-        $publishing_start_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_start_date);
-        $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_end_date);
+        $publishing_start_date = $request->publishing_start_date;
+        $startDt = strtotime($publishing_start_date);
 
-        //check for validation with time availability
-        $startDt = strtotime($publishing_start_date_time->format('Y-m-d H:i:s'));
-        $endDt = strtotime($publishing_end_date_time->format('Y-m-d H:i:s'));
-
-        $publishStartDateTime = $publishing_start_date_time->format('Y-m-d H:i:s');
-        $publishEndDateTime = $publishing_end_date_time->format('Y-m-d H:i:s');
+        $publishing_end_date = $request->publishing_end_date;
+        $endDt = strtotime($publishing_end_date);
         
         $status = 0;
         $data = ProductPriceList::where('product_id', $request->product_id)
                         ->where('store_id', $request->store_id)
-                        ->pluck('publishing_end_date','publishing_start_date');
-        foreach($data as $key => $val){
-            $keys = strtotime($key); $vals = strtotime($val);
-            if($startDt > $keys && $startDt > $vals && $endDt > $keys && $endDt > $vals){
-            }else if($startDt < $keys && $startDt < $vals && $endDt < $keys && $endDt < $vals){
-            }else{
-                return back()->with('error','Invalid date');
-            }       
+                        ->pluck('publishing_end_time','publishing_start_time');
+        if(!empty($data)){
+            foreach($data as $key => $val){
+                $keys = strtotime($key); $vals = strtotime($val);
+                if($startDt > $keys && $startDt > $vals && $endDt > $keys && $endDt > $vals){
+                }else if($startDt < $keys && $startDt < $vals && $endDt < $keys && $endDt < $vals){
+                }else{
+                    return back()->with('error','Time Slab is not available !');
+                }       
+            }      
         }
 
         $product_price_list = new ProductPriceList();
@@ -1982,8 +1929,8 @@ class AdminController extends Controller
         $product_price_list->store_id = $request->store_id;
         $product_price_list->text = "Price:" . $request->price . $request->currency;
         $product_price_list->price = $request->price;
-        $product_price_list->publishing_start_date = $publishStartDateTime;
-        $product_price_list->publishing_end_date = $publishEndDateTime;
+        $product_price_list->publishing_start_time = $publishing_start_date;
+        $product_price_list->publishing_end_time = $publishing_end_date;
         $product_price_list->save();
 
         // Check if time doesn't cover the working hours of the restaurant
@@ -1991,35 +1938,74 @@ class AdminController extends Controller
                     ->where('store_id', $request->store_id)
                     ->first();
 
-        if($store)
-        {
-            $openTimeRestaurant = $closeTimeRestaurant = null;
-            $dayOfPriceDate = $publishing_start_date_time->format('D');
-            $openCloseList = explode(",", $store->store_open_close_day_time);
-            $startTimeFuturePrice = \DateTime::createFromFormat('d/m/Y - H:i', $request->dateStart)->format('H:i:00');
-            $endTimeFuturePrice = \DateTime::createFromFormat('d/m/Y - H:i', $request->dateEnd)->format('H:i:00');
+        // if($store)
+        // {
+        //     $openTimeRestaurant = $closeTimeRestaurant = null;
+        //     $dayOfPriceDate = $publishing_start_date_time->format('D');
+        //     $openCloseList = explode(",", $store->store_open_close_day_time);
+        //     $startTimeFuturePrice = \DateTime::createFromFormat('d/m/Y - H:i', $request->dateStart)->format('H:i:00');
+        //     $endTimeFuturePrice = \DateTime::createFromFormat('d/m/Y - H:i', $request->dateEnd)->format('H:i:00');
 
-            // Get restaurant working hours
-            if( (count($openCloseList) == 1) && strpos($store->store_open_close_day_time, 'All') >= 0 )
-            {
-                $getDay = explode("::", $openCloseList[0]);
-                $getTime = explode("to", $getDay[1]);
-                $openTimeRestaurant = $getTime[0];
-                $closeTimeRestaurant = $getTime[1];
-            }
+        //     // Get restaurant working hours
+        //     if( (count($openCloseList) == 1) && strpos($store->store_open_close_day_time, 'All') >= 0 )
+        //     {
+        //         $getDay = explode("::", $openCloseList[0]);
+        //         $getTime = explode("to", $getDay[1]);
+        //         $openTimeRestaurant = $getTime[0];
+        //         $closeTimeRestaurant = $getTime[1];
+        //     }
 
-            // Check if future price time doesn't cover restaurant working hours
-            if( $openTimeRestaurant != null & $closeTimeRestaurant != null )
-            {
-                if( strtotime($startTimeFuturePrice) < strtotime($openTimeRestaurant) || 
-                    strtotime($endTimeFuturePrice) > strtotime($closeTimeRestaurant) )
-                {
-                    $request->session()->flash('warningAddFuturePrice', 1);
-                }
-            }
-        }
+        //     // Check if future price time doesn't cover restaurant working hours
+        //     if( $openTimeRestaurant != null & $closeTimeRestaurant != null )
+        //     {
+        //         if( strtotime($startTimeFuturePrice) < strtotime($openTimeRestaurant) || 
+        //             strtotime($endTimeFuturePrice) > strtotime($closeTimeRestaurant) )
+        //         {
+        //             $request->session()->flash('warningAddFuturePrice', 1);
+        //         }
+        //     }
+        // }
 
         return back()->with('success','Price added successfully');
+    }
+
+    public function editDishPrice(Request $request)
+    {
+        $publishing_start_date = $request->publishing_start_date;
+        $startDt = strtotime($publishing_start_date);
+
+        $publishing_end_date = $request->publishing_end_date;
+        $endDt = strtotime($publishing_end_date);
+        
+        $status = 0;
+        
+        $data = ProductPriceList::where('product_id', $request->product_id)
+                        ->where('store_id', $request->store_id)
+                        ->where('id', '!=', $request->priceId)
+                        ->pluck('publishing_end_time','publishing_start_time');
+
+        if(!empty($data)){
+            foreach($data as $key => $val){
+                $keys = strtotime($key); $vals = strtotime($val);
+                if($startDt > $keys && $startDt > $vals && $endDt > $keys && $endDt > $vals){
+                }else if($startDt < $keys && $startDt < $vals && $endDt < $keys && $endDt < $vals){
+                }else{
+                    return back()->with('error','Time Slab is not available !');
+                }       
+            }      
+        }
+
+        $product_price_list = ProductPriceList::where('product_id', $request->product_id)
+                        ->where('store_id', $request->store_id)
+                        ->where('id', $request->priceId)
+                        ->first();
+        $product_price_list->text = "Price:" . $request->price . $request->currency;
+        $product_price_list->price = $request->price;
+        $product_price_list->publishing_start_time = $publishing_start_date;
+        $product_price_list->publishing_end_time = $publishing_end_date;
+        $product_price_list->save();
+
+        return back()->with('success','Price updated successfully');
     }
 
     // Kitchen Payment 

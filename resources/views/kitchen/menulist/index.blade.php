@@ -254,7 +254,7 @@
 			  
 				<!-- Modal Header -->
 				<div class="modal-header">
-				  <h4 class="modal-title">Add New Price</h4>
+				  <h4 class="modal-title save-title">Product Price</h4>
 				  <button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
@@ -263,18 +263,19 @@
 				<div class="modal-body">
 					  	<input type="hidden" id="selected_prod_product_id" name="product_id"/>
 					  	<input type="hidden" id="selected_prod_store_id" name="store_id"/>	  
-						<input type="number" name="price" placeholder="Price ({{$currency}})" autocomplete="off" required />
+						<input type="number" id="selected_prod_price" name="price" placeholder="Price ({{$currency}})" autocomplete="off" required />
 						<input type="text" id="date-start" name="dateStart" placeholder="Publishing Start Date" required />
 						<input type="hidden" id="date-start-utc" name="publishing_start_date"/>
 						<input type="text" id="date-end" name="dateEnd" placeholder="Publishing End Date" required />
 						<input type="hidden" id="date-end-utc" name="publishing_end_date"/>						  
+						<input type="hidden" id="priceId" name="priceId"/>						  
 						{{ csrf_field() }}
 				</div>
 				
 				<!-- Modal footer -->
 				<div class="modal-footer">
 				  <button type="button" id="close-price-btn" class="btn btn-secondary" data-dismiss="modal">Close</button>
-				  <button type="button" id="save-price-btn" class="btn btn-primary">Save</button>
+				  <button type="button" id="save-price-btn" rel="1" class="btn btn-primary">Save</button>
 				</div>
 				</form>
 			  </div>
@@ -284,7 +285,7 @@
 	
 	@include('includes.kitchen-footer-menu')
 
-	<div data-role="popup" id="popupCloseRight" class="ui-content" style="max-width:100%;border: none;">
+	{{-- <div data-role="popup" id="popupCloseRight" class="ui-content" style="max-width:100%;border: none;">
 	    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" style="background-color:#000;border-color: #000;">Close</a>
 		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow table-stripe ui-responsive table_size" >
 			<thead>
@@ -301,7 +302,7 @@
 				</tr> 
 			</tbody>
 		</table>
-	</div>
+	</div> --}}
 
 	<!-- Warning Model: if time doesn't cover the working hours of the restaurant -->
 	<div class="modal fade" id="warning-add-product-future-price">
@@ -334,11 +335,11 @@
 	$(document).ready(function(){
 		// Validation before add the future date
 	    $('#save-price-btn').on('click', function() {
-	    	dkS = moment($("#date-start").val(),'DD/MM/YYYY HH:mm').toDate();
-	    	dkE = moment($("#date-end").val(),'DD/MM/YYYY HH:mm').toDate();
-	    	
+	    	dkS = moment($("#date-start").val(),'HH:mm').toDate();
+	    	dkE = moment($("#date-end").val(),'HH:mm').toDate();
+
 			if(dkS>dkE){
-				alert("Publishing start date must be smaller than publishing end date");
+				alert("Publishing start time must be smaller than publishing end time");
 				return false;
 			}
 			else
@@ -346,14 +347,16 @@
 				$.post("{{url('kitchen/is-future-date-available')}}", 
 				{
 					"_token": "{{ csrf_token() }}", 
+					'priceId': $('#priceId').val(),
 					'product_id': $('#selected_prod_product_id').val(),
 					'store_id': $('#selected_prod_store_id').val(),
 					'publishing_start_date': $("#date-start-utc").val(), 
-					'publishing_end_date': $("#date-end-utc").val()
+					'publishing_end_date': $("#date-end-utc").val(),
 				}, 
-				function(data) {
+				function(data,status) {
+					// console.log(data); return false;
 					if(data.status){
-						alert('Invalid date !'); return false;
+						alert('Time Slab is not available !'); return false;
 					}else{
 						$('#add-dish-price-frm').submit();
 					}
@@ -368,20 +371,20 @@
 
 		$('#date-start').bootstrapMaterialDatePicker
 		({
-			weekStart: 0, format: 'DD/MM/YYYY - HH:mm', minDate: dateToday, clearButton: true
-		}).on('change', function(e, date)
+			date: false, format: 'HH:mm', clearButton: true
+		}).on('change', function(e, time)
 		{
-			$('#date-end').bootstrapMaterialDatePicker('setMinDate', date);
-			$('#date-start-utc').val(moment.utc(date).format('DD/MM/YYYY HH:mm'));								
+			$('#date-end').bootstrapMaterialDatePicker('setMinDate', time);
+			$('#date-start-utc').val(moment.utc(time).format('HH:mm'));
 		});
 
 		$('#date-end').bootstrapMaterialDatePicker
 		({
-			weekStart: 0, format: 'DD/MM/YYYY - HH:mm', minDate: dateToday, clearButton: true
-		}).on('change', function(e2, date2)
+			date: false, format: 'HH:mm', clearButton: true
+		}).on('change', function(e2, time2)
 		{
-			dKEnd = date2;
-			$('#date-end-utc').val(moment.utc(date2).format('DD/MM/YYYY HH:mm'));
+			dKEnd = time2;
+			$('#date-end-utc').val(moment.utc(time2).format('HH:mm'));
 		});
 
 		$.material.init();
@@ -403,31 +406,38 @@
 						var html = '';
 
 				        $.each(returnedData.products, function(i, item) {
-				        	//console.log(item.current_price);
+				        	// console.log(item);
 				        	
 				        	var currentPrice = '';
-				        	if(item.current_price != null)
+				        	if(item.product_price_list_data.length != null)
 				        	{
-				        		//
-								dStart = item.current_price.publishing_start_date;
-								dStart = moment.utc(dStart).toDate();
-								dStart = moment(dStart).local().format('MMM DD, Y HH:mm');
-								dEnd = item.current_price.publishing_end_date;
-								dEnd = moment.utc(dEnd).toDate();				
-								dEnd = moment(dEnd).local().format('MMM DD, Y HH:mm');
-								formattedFromToDate = " " + dStart + " - " + dEnd;
+				        		for(var i=0;i < item.product_price_list_data.length; i++)
+				        		{
+									dStart = item.product_price_list_data[i].publishing_start_time;
+									dStartUtc = dStart.substring(0,5);
+									dStart = moment.utc(dStart, 'HH:mm').toDate();
+									dStart = moment(dStart).local().format('HH:mm');
+									
+									dEnd = item.product_price_list_data[i].publishing_end_time;
+									dEndUtc = dEnd.substring(0,5);
+									dEnd = moment.utc(dEnd, 'HH:mm').toDate();	
+									dEnd = moment(dEnd).local().format('HH:mm');
 
-								//
-				        		currentPrice += '<div class="menu_icons row">'+
-				        			'<div class="col-sm-12">'+
-				        				'<span style="margin-right: 10px; color: rgba(199,7,17,1)">SEK '+item.current_price.price+'</span><span class="fa fa-calendar"></span><span>'+formattedFromToDate+'</span>'+
-					        			'<a href="javascript:void(0)" title="{{ __('messages.iDishRemovePrice') }}" onClick="deleteDishPrice(\'{{url('kitchen/delete-dish-price?price_id=')}}'+item.current_price.id+'\')" data-ajax="false">'+
-					        				'<span class="fa fa-trash" style="margin-left: 15px"></span>'+
-					        			'</a>'+
-					        			'<a href="{{url('kitchen/edit-menu-dish?product_id=')}}'+item.product_id+'&store_id={{ Session::get('kitchenStoreId') }}&price_id='+item.current_price.id+'" title="{{ __('messages.iDishUpdatePrice') }}" data-ajax="false"><span class="fa fa-edit" style="margin-left: 5px"></span>'+
-					        			'</a>'+
-				        			'</div>'+
-				        		'</div>';
+									formattedFromToDate = " " + dStart + " - " + dEnd;
+									var price = item.product_price_list_data[i].price;
+									var priceId = item.product_price_list_data[i].id;
+									//
+					        		currentPrice += '<div class="menu_icons row">'+
+					        			'<div class="col-sm-12">'+
+					        				'<span style="margin-right: 10px; color: rgba(199,7,17,1)">SEK '+price+'</span><span class="fa fa-calendar"></span><span>'+formattedFromToDate+'</span>'+
+						        			'<a href="javascript:void(0)" title="{{ __('messages.iDishRemovePrice') }}" onClick="deleteDishPrice(\'{{url('kitchen/delete-dish-price?price_id=')}}'+item.product_price_list_data[i].id+'\')" data-ajax="false">'+
+						        				'<span class="fa fa-trash" style="margin-left: 15px"></span>'+
+						        			'</a>'+
+						        			'<a href="javascript:void(0)"  class="edit-price-btn" title="{{ __('messages.iDishUpdatePrice') }}" onClick="edit_dish_price(\''+priceId+'\', \''+item.product_id+'\', \'{{Session::get('kitchenStoreId')}}\', \''+price+'\', \''+dStart+'\', \''+dStartUtc+'\', \''+dEnd+'\', \''+dEndUtc+'\')" data-ajax="false"><span class="fa fa-edit" style="margin-left: 5px"></span>'+
+						        			'</a>'+
+					        			'</div>'+
+					        		'</div>';
+					        	}
 				        	}
 
 				        	// HTML part
@@ -440,14 +450,17 @@
 				            			'<h3>'+item.product_name+'</h3>'+
 										'<p>'+item.product_description+'</p>'+
 										'<div class="current-price">'+currentPrice+'</div>'+
-										'<button type="button" class="ui-btn ui-mini ui-btn-inline btn-show-future-prices" onclick="getFuturePriceByProduct(\''+item.product_id+'\', this);">Show future prices</button>'+
-				            			'<div class="future-prices"></div>'+
+										// '<button type="button" class="ui-btn ui-mini ui-btn-inline btn-show-future-prices" onclick="getFuturePriceByProduct(\''+item.product_id+'\', this);">Show future prices</button>'+
+				            			// '<div class="future-prices"></div>'+
 				            		'</div>'+
 				            		'<div class="col-sm-4 text-right">'+
 				            			'<span><a href="javascript:void(0)" onClick="copyDish(\'{{url('kitchen/copy-dish')}}/'+item.product_id+'\')" data-ajax="false">'+
 					        				'<i class="fa fa-clone" aria-hidden="true"></i>'+
 					        			'</a></span>'+
-				            			'<span style="margin-left: 10px"><a href="javascript:void(0)" onClick="delete_dish(\'{{url('kitchen/delete-menu-dish?product_id=')}}'+item.product_id+'\')" data-ajax="false">'+
+				            			'<span style="margin-left: 10px"><a href="javascript:void(0)" onClick="edit_dish(\'{{url('kitchen/edit-menu-dish?product_id=')}}'+item.product_id+'\')" data-ajax="false">'+
+					        				'<span class="fa fa-pencil"></span>'+
+					        			'</a></span>'+
+					        			'<span style="margin-left: 10px"><a href="javascript:void(0)" onClick="delete_dish(\'{{url('kitchen/delete-menu-dish?product_id=')}}'+item.product_id+'\')" data-ajax="false">'+
 					        				'<span class="fa fa-trash"></span>'+
 					        			'</a></span>'+
 				            			'<a href="javascript:void(0)" title="{{ __('messages.iDishAddNewPrice') }}" onClick="add_dish_price(\''+item.product_id+'\', \'{{Session::get('kitchenStoreId')}}\')" class="btn waves-effect add-price-btn" data-ajax="false">Add New Price</a>'+
@@ -505,6 +518,14 @@
 	    }
 	}
 
+	// Copy dish
+	function edit_dish(url)
+	{
+		if(confirm('Are you sure you want to edit this product?')) {
+    	    window.location = url;
+	    }
+	}
+
 	// Delete Dish
 	function delete_dish(url){
 		if(confirm('Are you sure you want to delete this product?')) {
@@ -521,67 +542,94 @@
 	}
 
 	function add_dish_price(product_id, store_id){
-			$('#selected_prod_product_id').val(product_id);
-			$('#selected_prod_store_id').val(store_id);
-    	    // show Modal
-        	$('#myModal').modal('show');
+		$('#priceId').val('');
+		$('#selected_prod_product_id').val(product_id);
+		$('#selected_prod_store_id').val(store_id);
+		$('#selected_prod_price').val('');
+		$('#date-start').val('');
+		$('#date-start-utc').val('');
+		$('#date-end').val('');
+		$('#date-end-utc').val('');
+		$('.save-title').html('Add New Price');
+		$('#save-price-btn').html('Save');
+		$('#add-dish-price-frm').attr('action',"{{ url('kitchen/add-dish-price') }}");
+
+	    // show Modal
+    	$('#myModal').modal('show');
+	}
+
+	function edit_dish_price(price_id,product_id,store_id,price,dStart,dStartUtc,dEnd,dEndUtc){
+		$('#priceId').val(price_id);
+		$('#selected_prod_product_id').val(product_id);
+		$('#selected_prod_store_id').val(store_id);
+		$('#selected_prod_price').val(price);
+		$('#date-start').val(dStart);
+		$('#date-start-utc').val(dStartUtc);
+		$('#date-end').val(dEnd);
+		$('#date-end-utc').val(dEndUtc);
+		$('.save-title').html('Update Price');
+		$('#save-price-btn').html('Update');
+		$('#add-dish-price-frm').attr('action',"{{ url('kitchen/edit-dish-price') }}");
+
+	    // show Modal
+    	$('#myModal').modal('show');
 	}
 
 	//
-	function getFuturePriceByProduct(product_id, This)
-	{
-		var $this = $(This);
+	// function getFuturePriceByProduct(product_id, This)
+	// {
+	// 	var $this = $(This);
 
-		if( $this.next('.future-prices').text().length )
-		{
-			$this.next('.future-prices').slideUp('100').text('');
-			$this.text('Show future prices');
-		}
-		else
-		{
-			$.post("{{url('kitchen/ajax-get-future-price-by-product')}}",
-				{"_token": "{{ csrf_token() }}", "product_id": product_id},
-				function(returnedData){
-					// console.log(returnedData);
-					// console.log(returnedData.futureProductPrices.length);
-					var futurePricesHtml = '';
+	// 	if( $this.next('.future-prices').text().length )
+	// 	{
+	// 		$this.next('.future-prices').slideUp('100').text('');
+	// 		$this.text('Show future prices');
+	// 	}
+	// 	else
+	// 	{
+	// 		$.post("{{url('kitchen/ajax-get-future-price-by-product')}}",
+	// 			{"_token": "{{ csrf_token() }}", "product_id": product_id},
+	// 			function(returnedData){
+	// 				// console.log(returnedData);
+	// 				// console.log(returnedData.futureProductPrices.length);
+	// 				var futurePricesHtml = '';
 
-					if(returnedData.futureProductPrices != null && returnedData.futureProductPrices.length)
-					{
-						$.each(returnedData.futureProductPrices, function(i, item) {
-							//
-							dStart = item.publishing_start_date;
-							dStart = moment.utc(dStart).toDate();
-							dStart = moment(dStart).local().format('MMM DD, Y HH:mm');
-							dEnd = item.publishing_end_date;
-							dEnd = moment.utc(dEnd).toDate();				
-							dEnd = moment(dEnd).local().format('MMM DD, Y HH:mm');
-							formattedFromToDate = " " + dStart + " - " + dEnd;
+	// 				if(returnedData.futureProductPrices != null && returnedData.futureProductPrices.length)
+	// 				{
+	// 					$.each(returnedData.futureProductPrices, function(i, item) {
+	// 						//
+	// 						dStart = item.publishing_start_date;
+	// 						dStart = moment.utc(dStart).toDate();
+	// 						dStart = moment(dStart).local().format('MMM DD, Y HH:mm');
+	// 						dEnd = item.publishing_end_date;
+	// 						dEnd = moment.utc(dEnd).toDate();				
+	// 						dEnd = moment(dEnd).local().format('MMM DD, Y HH:mm');
+	// 						formattedFromToDate = " " + dStart + " - " + dEnd;
 
-							//
-				        	futurePricesHtml += '<div class="menu_icons row">'+
-				        		'<div class="col-sm-12">'+
-				        			'<span style="margin-right: 10px; color: rgba(199,7,17,1)">SEK '+item.price+'</span><span class="fa fa-calendar"></span><span>'+formattedFromToDate+'</span>'+
-				        			'<a href="javascript:void(0)" title="{{ __('messages.iDishRemovePrice') }}" onClick="deleteDishPrice(\'{{url('kitchen/delete-dish-price?price_id=')}}'+item.id+'&price_id='+item.id+'\')" data-ajax="false">'+
-				        				'<span class="fa fa-trash" style="margin-left: 15px"></span>'+
-				        			'</a>'+
-				        			'<a href="{{url('kitchen/edit-menu-dish?product_id=')}}'+item.product_id+'&store_id={{ Session::get('kitchenStoreId') }}&price_id='+item.id+'" title="{{ __('messages.iDishUpdatePrice') }}" data-ajax="false"><span class="fa fa-edit" style="margin-left: 5px"></span>'+
-				        			'</a>'+
-				        		'</div>'+
-			        		'</div>';
-				        });
-					}
-					else
-					{
-						futurePricesHtml += 'No future price found for this product.';
-					}
+	// 						//
+	// 			        	futurePricesHtml += '<div class="menu_icons row">'+
+	// 			        		'<div class="col-sm-12">'+
+	// 			        			'<span style="margin-right: 10px; color: rgba(199,7,17,1)">SEK '+item.price+'</span><span class="fa fa-calendar"></span><span>'+formattedFromToDate+'</span>'+
+	// 			        			'<a href="javascript:void(0)" title="{{ __('messages.iDishRemovePrice') }}" onClick="deleteDishPrice(\'{{url('kitchen/delete-dish-price?price_id=')}}'+item.id+'&price_id='+item.id+'\')" data-ajax="false">'+
+	// 			        				'<span class="fa fa-trash" style="margin-left: 15px"></span>'+
+	// 			        			'</a>'+
+	// 			        			'<a href="{{url('kitchen/edit-menu-dish?product_id=')}}'+item.product_id+'&store_id={{ Session::get('kitchenStoreId') }}&price_id='+item.id+'" title="{{ __('messages.iDishUpdatePrice') }}" data-ajax="false"><span class="fa fa-edit" style="margin-left: 5px"></span>'+
+	// 			        			'</a>'+
+	// 			        		'</div>'+
+	// 		        		'</div>';
+	// 			        });
+	// 				}
+	// 				else
+	// 				{
+	// 					futurePricesHtml += 'No future price found for this product.';
+	// 				}
 
-					$this.next('.future-prices').html(futurePricesHtml).slideDown(200);
-					$this.text('Hide future prices');
-				}
-			);
-		}
-	}
+	// 				$this.next('.future-prices').html(futurePricesHtml).slideDown(200);
+	// 				$this.text('Hide future prices');
+	// 			}
+	// 		);
+	// 	}
+	// }
 
 	var lastDishId;
 
@@ -621,7 +669,7 @@
 
 					$.post("{{ url('api/v1/kitchen/update-menu-rank') }}", 
 						{
-							u_id: "<?php echo Auth::user()->u_id; ?>",
+							u_id: "<?php //echo Auth::user()->u_id; ?>",
 							items: items
 						}, function(data, status){
 							// console.log("Data: " + data + "\nStatus: " + status);

@@ -632,6 +632,8 @@ class OrderController extends Controller
         // Get orderData either from 'session' (right after login) or 'post' (if alreadt logged-in)
         $data = array();
         
+        $timeToday = date('H:i:s',strtotime(Carbon::now()));
+
         if( Session::has('orderData') )
         {
             $data = Session::get('orderData');
@@ -771,9 +773,10 @@ class OrderController extends Controller
                     $productPrice = ProductPriceList::select('price')
                         ->whereProductId($value['id'])
                         ->where('store_id' , $data['storeID'])
-                        ->where('publishing_start_date','<=',Carbon::now())
-                        ->where('publishing_end_date','>=',Carbon::now())
+                        ->where('publishing_start_time','<=',$timeToday)
+                        ->where('publishing_end_time','>=',$timeToday)
                         ->first();
+
                     $total_price = $total_price + ($productPrice->price * $value['prod_quant']); 
                     $orderDetail =  new OrderDetail();
                     $orderDetail->order_id = $orders->order_id;

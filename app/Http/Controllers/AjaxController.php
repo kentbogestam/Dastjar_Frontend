@@ -43,7 +43,7 @@ class AjaxController extends Controller
 
         $storeId = $request->storeID;
         $checkList = $request->checkList;
-        
+        $timeToday = date('H:i:s',strtotime(Carbon::now()));
         ///check for parental rule if parent exits then find its extra dish.
         if(!empty(@$checkList)){
             foreach($checkList as $list){
@@ -62,13 +62,13 @@ class AjaxController extends Controller
                 $productsExtra = ProductsExtra::whereIn('dish_type_id',$parent)->where('store_id',$storeId)->pluck('extra_dish_type_id')->toArray();
                 
                 $products = Product::from('product AS P')
-                    ->select(['P.product_id', 'P.product_name', 'P.product_description', 'P.preparation_Time', 'P.small_image', 'PPL.price', 'S.extra_prep_time', 'PPL.publishing_start_date', 'PPL.publishing_end_date'])
+                    ->select(['P.product_id', 'P.product_name', 'P.product_description', 'P.preparation_Time', 'P.small_image', 'PPL.price', 'S.extra_prep_time', 'PPL.publishing_start_time', 'PPL.publishing_end_time'])
                     ->join('product_price_list AS PPL', 'P.product_id', '=', 'PPL.product_id')
                     ->join('store AS S', 'S.store_id', '=', 'PPL.store_id')
                     ->whereIn('P.dish_type', $productsExtra)
                     ->where('PPL.store_id', $storeId)
-                    ->where('PPL.publishing_start_date','<=',Carbon::now())
-                    ->where('PPL.publishing_end_date','>=',Carbon::now())
+                    ->where('PPL.publishing_start_time','<=',$timeToday)
+                    ->where('PPL.publishing_end_time','>=',$timeToday)
                     ->groupBy('P.product_id')
                     ->orderBy('P.product_rank', 'ASC')
                     ->orderBy('P.product_id')

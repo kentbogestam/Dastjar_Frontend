@@ -487,15 +487,20 @@ class HomeController extends Controller
             }
         }*/
 
+        $timeToday = date('H:i:s',strtotime(Carbon::now()));
+
         $productPriceList = ProductPriceList::select('dish_type')
             ->where('store_id',$storeId)
-            ->where('publishing_start_date','<=',Carbon::now())
-            ->where('publishing_end_date','>=',Carbon::now())
+            ->where('publishing_start_time','<=',$timeToday)
+            ->where('publishing_end_time','>=',$timeToday)
             ->where('dish_type', '!=', null)
             ->join('product', 'product_price_list.product_id', '=', 'product.product_id')
             ->orderBy('product.product_rank', 'ASC')
             ->orderBy('product.product_id')
+            ->where('product.start_of_publishing', '<=', Carbon::now())
             ->get();
+
+        // print_r($productPriceList); die;
 
         if($productPriceList->count())
         {
@@ -620,7 +625,7 @@ class HomeController extends Controller
         }
 
         // dd($menuTypes);
-        return view('v1.user.pages.store-menu-list', compact('storedetails', 'menuTypes', 'promotionLoyalty', 'customerLoyalty', 'orderCustomerLoyalty', 'styleType'));
+        return view('v1.user.pages.store-menu-list', compact('storedetails', 'menuTypes', 'promotionLoyalty', 'customerLoyalty', 'styleType'));
         // return view('v1.user.pages.store-menu-grid', compact('storedetails', 'menuTypes', 'promotionLoyalty', 'customerLoyalty', 'orderCustomerLoyalty'));
     }
 
@@ -787,6 +792,8 @@ class HomeController extends Controller
         $html = '';
 
         // 
+        $timeToday = date('H:i:s',strtotime(Carbon::now()));
+
         if(is_null($storeId))
         {
             $storeId = Session::get('storeId');
@@ -825,12 +832,12 @@ class HomeController extends Controller
         if($status == false)
         {
             $products = Product::from('product AS P')
-                ->select(['P.product_id', 'P.product_name', 'P.product_description', 'P.preparation_Time', 'P.small_image', 'PPL.price', 'S.extra_prep_time', 'PPL.publishing_start_date', 'PPL.publishing_end_date'])
+                ->select(['P.product_id', 'P.product_name', 'P.product_description', 'P.preparation_Time', 'P.small_image', 'PPL.price', 'S.extra_prep_time', 'PPL.publishing_start_time', 'PPL.publishing_end_time'])
                 ->join('product_price_list AS PPL', 'P.product_id', '=', 'PPL.product_id')
                 ->join('store AS S', 'S.store_id', '=', 'PPL.store_id')
                 ->where(['P.dish_type' => $dishType, 'PPL.store_id' => $storeId])
-                ->where('PPL.publishing_start_date','<=',Carbon::now())
-                ->where('PPL.publishing_end_date','>=',Carbon::now())
+                ->where('PPL.publishing_start_time','<=',$timeToday)
+                ->where('PPL.publishing_end_time','>=',$timeToday)
                 ->groupBy('P.product_id')
                 ->orderBy('P.product_rank', 'ASC')
                 ->orderBy('P.product_id')

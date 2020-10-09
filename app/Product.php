@@ -28,4 +28,9 @@ class Product extends Model
     {
         return $this->hasMany('App\DishType','u_id','u_id');
     }
+
+    public function ProductPriceListData()
+    {
+        return $this->hasMany('App\ProductPriceList','product_id','product_id');
+    }
 }

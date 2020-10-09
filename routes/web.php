@@ -236,6 +236,7 @@ Route::group(['prefix' => 'kitchen'], function(){
 	Route::get('delete-dish-price', 'AdminController@deleteDishPrice');	
 	Route::get('createStandardOffer', 'AdminController@createStandardOffer');			
 	Route::post('add-dish-price', 'AdminController@addDishPrice');	
+	Route::post('edit-dish-price', 'AdminController@editDishPrice');	
 	Route::post('is-future-date-available', 'AdminController@isFutureDateAvailable');
 	Route::post('remove-order', 'AdminController@removeOrder');	
 	Route::get('kitchen-menu-new/{dishId}/{storeId}', 'AdminController@kitchenMenuNew');			

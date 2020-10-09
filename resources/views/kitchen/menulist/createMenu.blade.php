@@ -205,9 +205,9 @@
 		<form class="create-menu-form" method="post" action="{{ url('kitchen/create-menu-update') }}" enctype="multipart/form-data" data-ajax="false">
 @endif
 
-@if(!isset($product_price_list))
-	<?php $product_price_list = new stdClass(); ?>
-@endif
+{{-- @if(!isset($product_price_list)) --}}
+	<?php //$product_price_list = new stdClass(); ?>
+{{-- @endif --}}
 
 		<div class="row">
 			<div class="col-10 dish_name_col">
@@ -277,13 +277,13 @@
 			</div>
 		</div>
 
-		<div class="row">
+		{{-- <div class="row">
 			<div class="col-12">
 				<input type="number" name="prodPrice" placeholder="Price ({{$currency}})" value="{{ $product_price_list->price ?? "" }}" required title="{{ __('messages.iDishPrice') }}" />
 			</div>
-		</div>
+		</div> --}}
 
-		<input type="hidden" name="currency" value="{{$currency}}"/>
+		{{-- <input type="hidden" name="currency" value="{{$currency}}"/> --}}
 
 		<div class="row">
 			<div class="col-12">
@@ -293,56 +293,35 @@
 			</div>
 		</div>
 
-		<div class="row">
+		{{-- <div class="row">
 			<div class="col-12">
 				<input type="text" id="date-end" name="" placeholder="Publishing End Date" value="" required title="{{ __('messages.iDishEndPublishDate') }}" />
 				<input type="hidden" id="date-end-utc" name="publish_end_date">				
 				<span class="fa fa-calendar cal_icon"></span>
 			</div>
-		</div>
+		</div> --}}
 
 		@if(isset($product->product_id))
 		<input type="hidden" name="product_id" value="{{ $product->product_id ?? "" }}"/>
 		@endif
 
-		@if(isset($store_id))
-		<input type="hidden" name="store_id" value="{{ $store_id ?? "" }}"/>
-		@endif
 
-		@if(isset($product_price_list->id))
+		{{-- @if(isset($product_price_list->id))
 			<input type="hidden" name="price_id" value="{{ $product_price_list->id }}">
-		@endif
+		@endif --}}
 
 		{{ csrf_field() }}
 
 		<div class="row">
-				<div class="col-12">
-					<button class="btn menu_save_btn">SAVE</button>
-				</div>
+			<div class="col-12">
+				<button class="btn menu_save_btn">SAVE</button>
+			</div>
 		</div>
 		</form>
 	</div>
 	
 	@include('includes.kitchen-footer-menu')
-
-	<div data-role="popup" id="popupCloseRight" class="ui-content" style="max-width:100%;border: none;">
-	    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" style="background-color:#000;border-color: #000;">Close</a>
-		<table data-role="table" id="table-custom-2" class="ui-body-d ui-shadow table-stripe ui-responsive table_size" >
-			<thead>
-				<tr class="ui-bar-d">
-					<th data-priority="2">{{ __('messages.Orders') }}</th>
-			   		<th>{{ __('messages.Amount') }}</th> 
-			   		<th data-priority="3">{{ __('messages.Product') }}</th>
-			    	<th data-priority="1">{{ __('messages.Comments') }}</th> 
-			    </tr>
-			</thead>
-			<tbody id="specificOrderDetailContianer">
-				<tr>
-				
-				</tr> 
-			</tbody>
-		</table>
-	</div>
+	
 @endsection
 
 @section('footer-script')
@@ -394,7 +373,7 @@
 
     $('.create-menu-form').submit(function(e){     
     	dkS = moment($("#date-start").val(),'DD/MM/YYYY HH:mm').toDate();
-    	dkE = moment($("#date-end").val(),'DD/MM/YYYY HH:mm').toDate();
+    	// dkE = moment($("#date-end").val(),'DD/MM/YYYY HH:mm').toDate();
 
         if(fileSize>6000000){
 				alert("Image size should be smaller than 6MB");          	
@@ -402,17 +381,23 @@
 		}else if(fileExt!="" && fileExt!="png" && fileExt!="jpg" && fileExt!="jpeg"){
 				alert("Only PNG, JPG and JPEG images are allowed");
 				return false;
-		}else if(dkS>dkE){
-			alert("Publishing start date must be smaller than publishing end date");
-			return false;
+		// }else if(dkS>dkE){
+		// 	alert("Publishing start date must be smaller than publishing end date");
+		// 	return false;
 		}
     });
 
 	$(document).ready(function(){
 		var defaultStartDate = "{{date('d/m/Y',strtotime('+1day'))}} 05:00";
-		var defaultEndDate = "{{date('d/m/Y',strtotime('+10Year'))}} 05:00";
-		@if(isset($product_price_list->publishing_start_date) && $product_price_list->publishing_start_date != "0000-00-00 00:00:00")
+		{{--var defaultEndDate = "{{date('d/m/Y',strtotime('+10Year'))}} 05:00";--}}
+		{{--@if(isset($product_price_list->publishing_start_date) && $product_price_list->publishing_start_date != "0000-00-00 00:00:00")
 			dStart = "{{date('Y-m-d H:i:s', strtotime($product_price_list->publishing_start_date))}}";
+			dStart = moment.utc(dStart).toDate();
+			$('#date-start').val(moment(dStart).local().format("DD/MM/YYYY HH:mm"));
+			$('#date-start-utc').val(moment.utc(dStart).format("DD/MM/YYYY HH:mm"));
+			dStart = moment(dStart).local().format("DD/MM/YYYY HH:mm");--}}
+		@if(isset($product->start_of_publishing) && $product->start_of_publishing != "0000-00-00 00:00:00")
+			dStart = "{{date('Y-m-d H:i:s', strtotime($product->start_of_publishing))}}";
 			dStart = moment.utc(dStart).toDate();
 			$('#date-start').val(moment(dStart).local().format("DD/MM/YYYY HH:mm"));
 			$('#date-start-utc').val(moment.utc(dStart).format("DD/MM/YYYY HH:mm"));
@@ -425,7 +410,7 @@
 			$('#date-start-utc').val(dStart);
 		@endif
 
-		@if(isset($product_price_list->publishing_end_date) && $product_price_list->publishing_end_date != "0000-00-00 00:00:00")
+		{{--@if(isset($product_price_list->publishing_end_date) && $product_price_list->publishing_end_date != "0000-00-00 00:00:00")
 			dEnd = "{{date('Y-m-d H:i:s', strtotime($product_price_list->publishing_end_date))}}";
 			dEnd = moment.utc(dEnd).toDate();
 			$('#date-end').val(moment(dEnd).local().format("DD/MM/YYYY HH:mm"));
@@ -439,7 +424,7 @@
 			dKEnd = moment(dEnd).local().format("YYYY-MM-DD HH:mm");											
 			dEnd = moment.utc(dEnd).format("DD/MM/YYYY HH:mm");
 			$('#date-end-utc').val(dEnd);
-		@endif
+		@endif --}}
 
 		@if(isset($product->small_image))
 			$('.camera_icon').hide();
@@ -452,7 +437,8 @@
 		
 		$('#date-start').bootstrapMaterialDatePicker
 		({
-			weekStart: 0, format: 'DD/MM/YYYY HH:mm', minDate: dateToday, maxDate: defaultEndDate, clearButton: true
+			// weekStart: 0, format: 'DD/MM/YYYY HH:mm', minDate: dateToday, maxDate: defaultEndDate, clearButton: true
+			weekStart: 0, format: 'DD/MM/YYYY HH:mm', minDate: dateToday, clearButton: true
 		}).on('change', function(e, date)
 		{
 			dKStart = date;
@@ -460,14 +446,14 @@
 			$('#date-start-utc').val(moment.utc(date).format('DD/MM/YYYY HH:mm'));
 		});
 
-		$('#date-end').bootstrapMaterialDatePicker
+		{{--$('#date-end').bootstrapMaterialDatePicker
 		({
 			weekStart: 0, format: 'DD/MM/YYYY HH:mm', minDate: dateToday, maxDate: defaultEndDate, clearButton: true
 		}).on('change', function(e2, date2)
 		{
 			dKEnd = date2;
 			$('#date-end-utc').val(moment.utc(date2).format('DD/MM/YYYY HH:mm'));
-		});
+		});--}}
 
 		$.material.init();
 	});
