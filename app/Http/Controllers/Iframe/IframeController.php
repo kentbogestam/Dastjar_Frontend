@@ -201,16 +201,33 @@ class IframeController extends Controller
                     // Check if loyalty validity is 'false' so user can use n number of times or, validity should be greater than used validity of user
                     if( (!$promotionLoyalty->validity) || ($promotionLoyalty->validity > $orderCustomerLoyalty->cnt) )
                     {
-                        // Get customer loyalty
-                        $customerLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
-                            ->select(['OD.loyalty_id', DB::raw('SUM(OD.product_quality) AS quantity_bought')])
+                        $orderDetailRecentLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
+                            ->select(['OD.order_id'])
                             ->join('order_details AS OD', 'OD.loyalty_id', '=', 'PL.id')
                             ->join('orders', 'orders.order_id', '=', 'OD.order_id')
-                            ->where(['PL.id' => $promotionLoyalty->id, 'OD.user_id' => Auth::id()])
+                            ->where(['PL.id' => $promotionLoyalty->id, 'orders.user_id' => Auth::id(), 'OD.quantity_free' => '1'])
                             ->where('orders.online_paid', '!=', 2)
                             ->where('OD.loyalty_id', '!=', null)
-                            ->groupBy('OD.loyalty_id')
-                            ->first();
+                            ->groupBy('orders.order_id')
+                            ->orderBy('OD.order_id', 'DESC')
+                            ->limit(1)->first();
+                        
+                        // Get customer loyalty
+                        $customerLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
+                            ->select([DB::raw('SUM(OD.product_quality) AS quantity_bought')])
+                            ->join('order_details AS OD', 'OD.loyalty_id', '=', 'PL.id')
+                            ->join('orders', 'orders.order_id', '=', 'OD.order_id')
+                            ->where(['PL.id' => $promotionLoyalty->id, 'orders.user_id' => Auth::id(), 'OD.quantity_free' => '0'])
+                            ->where('orders.online_paid', '!=', 2)
+                            ->where('OD.loyalty_id', '!=', null)
+                            ->groupBy('OD.loyalty_id');
+
+                        if($orderDetailRecentLoyalty)
+                        {
+                            $customerLoyalty->where('OD.order_id', '>', $orderDetailRecentLoyalty->order_id);
+                        }
+
+                        $customerLoyalty = $customerLoyalty->first();
                     }
                 }
             }
