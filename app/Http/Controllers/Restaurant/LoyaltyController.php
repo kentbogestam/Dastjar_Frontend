@@ -38,7 +38,7 @@ class LoyaltyController extends Controller
 
         // Get dish type
         $dishType = DishType::select(['dish_id', 'dish_lang', 'dish_name'])
-            ->where(['u_id' => Auth::user()->u_id, 'dish_activate' => 1])
+            ->where(['u_id' => Auth::user()->u_id, 'dish_activate' => 1, 'parent_id' => NULL])
             ->orderBy('rank')
             ->get();
 
@@ -124,7 +124,7 @@ class LoyaltyController extends Controller
 
         // Get dish type
         $dishType = DishType::select(['dish_id', 'dish_lang', 'dish_name'])
-            ->where(['u_id' => Auth::user()->u_id, 'dish_activate' => 1])
+            ->where(['u_id' => Auth::user()->u_id, 'dish_activate' => 1, 'parent_id' => NULL])
             ->orderBy('rank')
             ->get();
 

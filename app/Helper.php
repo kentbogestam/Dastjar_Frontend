@@ -479,6 +479,29 @@ class Helper extends Model
         return $dishType->get();
     }
 
+    // Get DishType level 0
+    function getdDishTypeLevel0($dishId)
+    {
+        $dishTypeLevel0 = DishType::from('dish_type AS DT1')
+            ->select(['DT1.dish_id', 'DT1.dish_name', 'DT1.dish_image', 'DT1.rank', 'DT1.extras'])
+            ->leftJoin('dish_type AS DT2', 'DT2.parent_id', '=', 'DT1.dish_id')
+            ->leftJoin('dish_type AS DT3', 'DT3.parent_id', '=', 'DT2.dish_id')
+            ->whereRaw("(DT1.dish_id = '{$dishId}' OR DT2.dish_id = '{$dishId}' OR DT3.dish_id = '{$dishId}') AND DT1.parent_id IS NULL")
+            ->groupBy('DT1.dish_id')
+            ->first();
+
+        if($dishTypeLevel0)
+        {
+            $dishType0 = $dishTypeLevel0->dish_id;
+        }
+        else
+        {
+            $dishType0 = $dishId;
+        }
+
+        return $dishType0;
+    }
+
     /**
      * Add specific character into string
      * @param  string  $input  [description]

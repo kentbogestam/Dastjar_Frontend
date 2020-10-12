@@ -791,7 +791,10 @@ class OrderController extends Controller
                     // Check if loyalty exist and if product belongs to associated dish_type 
                     if( $promotionLoyalty && (!$promotionLoyalty->validity || ($promotionLoyalty->validity > $orderCustomerLoyalty->cntLoyaltyUsed)) )
                     {
-                        if( in_array($productTime->dish_type, explode(',', $promotionLoyalty->dish_type_ids)) )
+                        $helper = new Helper();
+                        $dishType0 = $helper->getdDishTypeLevel0($productTime->dish_type);
+
+                        if( in_array($dishType0, explode(',', $promotionLoyalty->dish_type_ids)) )
                         {
                             OrderDetail::where(['id' => $orderDetail->id])->update(['loyalty_id' => $promotionLoyalty->id]);
 
@@ -1054,7 +1057,10 @@ class OrderController extends Controller
                 // Check if loyalty exist and if product belongs to associated dish_type 
                 if( $promotionLoyalty && (!$promotionLoyalty->validity || ($promotionLoyalty->validity > $orderCustomerLoyalty->cntLoyaltyUsed)) )
                 {
-                    if( in_array($row->dish_type, explode(',', $promotionLoyalty->dish_type_ids)) )
+                    $helper = new Helper();
+                    $dishType0 = $helper->getdDishTypeLevel0($row->dish_type);
+
+                    if( in_array($dishType0, explode(',', $promotionLoyalty->dish_type_ids)) )
                     {
                         $loyaltyProducts[] = array('id' => $row->id, 'price' => $row->price, 'qty' => $row->product_quality);
                     }
@@ -1783,7 +1789,10 @@ class OrderController extends Controller
                     // Check if loyalty exist and if product belongs to associated dish_type 
                     if( $promotionLoyalty && (!$promotionLoyalty->validity || ($promotionLoyalty->validity > $orderCustomerLoyalty->cntLoyaltyUsed)) )
                     {
-                        if( in_array($row->dish_type, explode(',', $promotionLoyalty->dish_type_ids)) )
+                        $helper = new Helper();
+                        $dishType0 = $helper->getdDishTypeLevel0($row->dish_type);
+
+                        if( in_array($dishType0, explode(',', $promotionLoyalty->dish_type_ids)) )
                         {
                             $loyaltyProducts[] = array('id' => $row->id, 'price' => $row->price, 'qty' => $row->product_quality);
                         }
@@ -1804,7 +1813,6 @@ class OrderController extends Controller
                         ->groupBy('orders.order_id')
                         ->orderBy('OD.order_id', 'DESC')
                         ->limit(1)->first();
-                        // echo $orderDetailRecentLoyalty->order_id; exit;
 
                     // Get customer loyalty for order
                     $customerLoyalty = PromotionLoyalty::from('promotion_loyalty AS PL')
