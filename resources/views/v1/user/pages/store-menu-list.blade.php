@@ -80,7 +80,7 @@
 								$quantity_bought = $customerLoyalty->quantity_bought;
 
 								// Calculate if 'loyalty' already have been applied
-								$quantity_bought -= ($quantity_to_buy*$orderCustomerLoyalty->cnt);
+								// $quantity_bought -= ($quantity_to_buy*$orderCustomerLoyalty->cnt);
 
 								//
 								if($quantity_to_buy > $quantity_bought)
@@ -99,8 +99,11 @@
 								else
 								{
 									$quantity_offered = floor($quantity_bought/$quantity_to_buy)*$quantity_get;
-									
-									$strLoyaltyOffer = "<span class='loyalty-offer loyalty-offer-apply'>".__('messages.loyaltyOfferOnApply', ['quantity_offered' => $quantity_offered])."</span>";
+
+									if($quantity_offered > 0)
+									{
+										$strLoyaltyOffer = "<span class='loyalty-offer loyalty-offer-apply'>".__('messages.loyaltyOfferOnApply', ['quantity_offered' => $quantity_offered])."</span>";
+									}
 								}
 								@endphp
 							@endif
