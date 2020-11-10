@@ -85,11 +85,12 @@ class IframeController extends Controller
         $dish_ids = array();
 
         $timeToday = date('H:i:s',strtotime(Carbon::now()));
+        $dateToday = date('Y-m-d',strtotime(Carbon::now()));
         
         $productPriceList = ProductPriceList::select('dish_type')
             ->where('store_id',$storeId)
-            // ->where('publishing_start_date','<=',Carbon::now())
-            // ->where('publishing_end_date','>=',Carbon::now())
+            ->where('publishing_start_date','<=',$dateToday)
+            ->where('publishing_end_date','>=',$dateToday)
             ->where('publishing_start_time','<=',$timeToday)
             ->where('publishing_end_time','>=',$timeToday)
             ->where('dish_type', '!=', null)

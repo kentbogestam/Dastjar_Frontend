@@ -488,9 +488,12 @@ class HomeController extends Controller
         }*/
 
         $timeToday = date('H:i:s',strtotime(Carbon::now()));
+        $dateToday = date('Y-m-d',strtotime(Carbon::now()));
 
         $productPriceList = ProductPriceList::select('dish_type')
             ->where('store_id',$storeId)
+            ->where('publishing_start_date','<=',$dateToday)
+            ->where('publishing_end_date','>=',$dateToday)
             ->where('publishing_start_time','<=',$timeToday)
             ->where('publishing_end_time','>=',$timeToday)
             ->where('dish_type', '!=', null)
@@ -810,6 +813,7 @@ class HomeController extends Controller
 
         // 
         $timeToday = date('H:i:s',strtotime(Carbon::now()));
+        $dateToday = date('Y-m-d',strtotime(Carbon::now()));
 
         if(is_null($storeId))
         {
@@ -853,6 +857,8 @@ class HomeController extends Controller
                 ->join('product_price_list AS PPL', 'P.product_id', '=', 'PPL.product_id')
                 ->join('store AS S', 'S.store_id', '=', 'PPL.store_id')
                 ->where(['P.dish_type' => $dishType, 'PPL.store_id' => $storeId])
+                ->where('PPL.publishing_start_date','<=',$dateToday)
+                ->where('PPL.publishing_end_date','>=',$dateToday)
                 ->where('PPL.publishing_start_time','<=',$timeToday)
                 ->where('PPL.publishing_end_time','>=',$timeToday)
                 ->groupBy('P.product_id')

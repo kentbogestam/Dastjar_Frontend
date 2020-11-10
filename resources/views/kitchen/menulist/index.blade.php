@@ -266,8 +266,12 @@
 						<input type="number" id="selected_prod_price" name="price" placeholder="Price ({{$currency}})" autocomplete="off" required />
 						<input type="text" id="date-start" name="dateStart" placeholder="Publishing Start Date" required />
 						<input type="hidden" id="date-start-utc" name="publishing_start_date"/>
+						<input type="text" id="time-start" name="timeStart" placeholder="Publishing Start Time" required />
+						<input type="hidden" id="time-start-utc" name="publishing_start_time"/>
 						<input type="text" id="date-end" name="dateEnd" placeholder="Publishing End Date" required />
-						<input type="hidden" id="date-end-utc" name="publishing_end_date"/>						  
+						<input type="hidden" id="date-end-utc" name="publishing_end_date"/>
+						<input type="text" id="time-end" name="timeEnd" placeholder="Publishing End Time" required />
+						<input type="hidden" id="time-end-utc" name="publishing_end_time"/>						  
 						<input type="hidden" id="priceId" name="priceId"/>						  
 						{{ csrf_field() }}
 				</div>
@@ -335,15 +339,18 @@
 	$(document).ready(function(){
 		// Validation before add the future date
 	    $('#save-price-btn').on('click', function() {
-	    	dkS = moment($("#date-start").val(),'HH:mm').toDate();
-	    	dkE = moment($("#date-end").val(),'HH:mm').toDate();
+	    	dkS = moment($("#date-start").val(),'YYYY-MM-DD').toDate();
+	    	dkE = moment($("#date-end").val(),'YYYY-MM-DD').toDate();
+	    	tmS = moment($("#time-start").val(),'HH:mm').toDate();
+	    	tmE = moment($("#time-end").val(),'HH:mm').toDate();
 
 			if(dkS>dkE){
-				alert("Publishing start time must be smaller than publishing end time");
+				alert("Publishing start Date must be smaller than publishing end Date");
 				return false;
-			}
-			else
-			{
+			}else if(tmS>tmE){
+				alert("Publishing start Time must be smaller than publishing end Time");
+				return false;
+			}else{
 				$.post("{{url('kitchen/is-future-date-available')}}", 
 				{
 					"_token": "{{ csrf_token() }}", 
@@ -352,6 +359,8 @@
 					'store_id': $('#selected_prod_store_id').val(),
 					'publishing_start_date': $("#date-start-utc").val(), 
 					'publishing_end_date': $("#date-end-utc").val(),
+					'publishing_start_time': $("#time-start-utc").val(), 
+					'publishing_end_time': $("#time-end-utc").val(),
 				}, 
 				function(data,status) {
 					// console.log(data); return false;
@@ -371,20 +380,38 @@
 
 		$('#date-start').bootstrapMaterialDatePicker
 		({
-			date: false, format: 'HH:mm', clearButton: true
+			time: false, format: 'YYYY-MM-DD', clearButton: true
 		}).on('change', function(e, time)
 		{
 			$('#date-end').bootstrapMaterialDatePicker('setMinDate', time);
-			$('#date-start-utc').val(moment.utc(time).format('HH:mm'));
+			$('#date-start-utc').val(moment.utc(time).format('YYYY-MM-DD'));
 		});
 
 		$('#date-end').bootstrapMaterialDatePicker
+		({
+			time: false, format: 'YYYY-MM-DD', clearButton: true
+		}).on('change', function(e2, time2)
+		{
+			dKEnd = time2;
+			$('#date-end-utc').val(moment.utc(time2).format('YYYY-MM-DD'));
+		});
+
+		$('#time-start').bootstrapMaterialDatePicker
+		({
+			date: false, format: 'HH:mm', clearButton: true
+		}).on('change', function(e, time)
+		{
+			$('#time-end').bootstrapMaterialDatePicker('setMinDate', time);
+			$('#time-start-utc').val(moment.utc(time).format('HH:mm'));
+		});
+
+		$('#time-end').bootstrapMaterialDatePicker
 		({
 			date: false, format: 'HH:mm', clearButton: true
 		}).on('change', function(e2, time2)
 		{
 			dKEnd = time2;
-			$('#date-end-utc').val(moment.utc(time2).format('HH:mm'));
+			$('#time-end-utc').val(moment.utc(time2).format('HH:mm'));
 		});
 
 		$.material.init();
@@ -413,17 +440,27 @@
 				        	{
 				        		for(var i=0;i < item.product_price_list_data.length; i++)
 				        		{
-									dStart = item.product_price_list_data[i].publishing_start_time;
-									dStartUtc = dStart.substring(0,5);
-									dStart = moment.utc(dStart, 'HH:mm').toDate();
-									dStart = moment(dStart).local().format('HH:mm');
-									
-									dEnd = item.product_price_list_data[i].publishing_end_time;
-									dEndUtc = dEnd.substring(0,5);
-									dEnd = moment.utc(dEnd, 'HH:mm').toDate();	
-									dEnd = moment(dEnd).local().format('HH:mm');
+									dStart = item.product_price_list_data[i].publishing_start_date;
+									dStartUtc = dStart;
+									dStart = moment.utc(dStart, 'YYYY-MM-DD').toDate();
+									dStart = moment(dStart).local().format('YYYY-MM-DD');
 
-									formattedFromToDate = " " + dStart + " - " + dEnd;
+									tStart = item.product_price_list_data[i].publishing_start_time;
+									tStartUtc = tStart.substring(0,5);
+									tStart = moment.utc(tStart, 'HH:mm').toDate();
+									tStart = moment(tStart).local().format('HH:mm');
+									
+									dEnd = item.product_price_list_data[i].publishing_end_date;
+									dEndUtc = dEnd;
+									dEnd = moment.utc(dEnd, 'YYYY-MM-DD').toDate();	
+									dEnd = moment(dEnd).local().format('YYYY-MM-DD');
+									
+									tEnd = item.product_price_list_data[i].publishing_end_time;
+									tEndUtc = tEnd;
+									tEnd = moment.utc(tEnd, 'HH:mm').toDate();	
+									tEnd = moment(tEnd).local().format('HH:mm');
+
+									formattedFromToDate = " " + dStart + " to " + dEnd + " " + tStart + " - " + tEnd;
 									var price = item.product_price_list_data[i].price;
 									var priceId = item.product_price_list_data[i].id;
 									//
@@ -433,7 +470,7 @@
 						        			'<a href="javascript:void(0)" title="{{ __('messages.iDishRemovePrice') }}" onClick="deleteDishPrice(\'{{url('kitchen/delete-dish-price?price_id=')}}'+item.product_price_list_data[i].id+'\')" data-ajax="false">'+
 						        				'<span class="fa fa-trash" style="margin-left: 15px"></span>'+
 						        			'</a>'+
-						        			'<a href="javascript:void(0)"  class="edit-price-btn" title="{{ __('messages.iDishUpdatePrice') }}" onClick="edit_dish_price(\''+priceId+'\', \''+item.product_id+'\', \'{{Session::get('kitchenStoreId')}}\', \''+price+'\', \''+dStart+'\', \''+dStartUtc+'\', \''+dEnd+'\', \''+dEndUtc+'\')" data-ajax="false"><span class="fa fa-edit" style="margin-left: 5px"></span>'+
+						        			'<a href="javascript:void(0)"  class="edit-price-btn" title="{{ __('messages.iDishUpdatePrice') }}" onClick="edit_dish_price(\''+priceId+'\', \''+item.product_id+'\', \'{{Session::get('kitchenStoreId')}}\', \''+price+'\', \''+dStart+'\', \''+dStartUtc+'\', \''+dEnd+'\', \''+dEndUtc+'\', \''+tStart+'\', \''+tStartUtc+'\', \''+tEnd+'\', \''+tEndUtc+'\')" data-ajax="false"><span class="fa fa-edit" style="margin-left: 5px"></span>'+
 						        			'</a>'+
 					        			'</div>'+
 					        		'</div>';
@@ -550,6 +587,10 @@
 		$('#date-start-utc').val('');
 		$('#date-end').val('');
 		$('#date-end-utc').val('');
+		$('#time-start').val('');
+		$('#time-start-utc').val('');
+		$('#time-end').val('');
+		$('#time-end-utc').val('');
 		$('.save-title').html('Add New Price');
 		$('#save-price-btn').html('Save');
 		$('#add-dish-price-frm').attr('action',"{{ url('kitchen/add-dish-price') }}");
@@ -558,7 +599,7 @@
     	$('#myModal').modal('show');
 	}
 
-	function edit_dish_price(price_id,product_id,store_id,price,dStart,dStartUtc,dEnd,dEndUtc){
+	function edit_dish_price(price_id,product_id,store_id,price,dStart,dStartUtc,dEnd,dEndUtc,tStart,tStartUtc,tEnd,tEndUtc){
 		$('#priceId').val(price_id);
 		$('#selected_prod_product_id').val(product_id);
 		$('#selected_prod_store_id').val(store_id);
@@ -567,6 +608,10 @@
 		$('#date-start-utc').val(dStartUtc);
 		$('#date-end').val(dEnd);
 		$('#date-end-utc').val(dEndUtc);
+		$('#time-start').val(tStart);
+		$('#time-start-utc').val(tStartUtc);
+		$('#time-end').val(tEnd);
+		$('#time-end-utc').val(tEndUtc);
 		$('.save-title').html('Update Price');
 		$('#save-price-btn').html('Update');
 		$('#add-dish-price-frm').attr('action',"{{ url('kitchen/edit-dish-price') }}");

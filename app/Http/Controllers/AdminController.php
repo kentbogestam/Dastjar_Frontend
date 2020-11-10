@@ -497,8 +497,13 @@ class AdminController extends Controller
         $menuTypes = null;
         $request->session()->forget('order_date');
         $timeToday = date('H:i:s',strtotime(Carbon::now()));
+        $dateToday = date('Y-m-d',strtotime(Carbon::now()));
         if(Session::get('kitchenStoreId')){
-            $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))->where('publishing_start_time','<=',$timeToday)->where('publishing_end_time','>=',$timeToday)
+            $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))
+            ->where('publishing_start_date','<=',$dateToday)
+            ->where('publishing_end_date','>=',$dateToday)
+            ->where('publishing_start_time','<=',$timeToday)
+            ->where('publishing_end_time','>=',$timeToday)
             ->with('menuPrice')->with('storeProduct')
             ->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')
             ->orderBy('product.product_rank', 'ASC')
@@ -729,7 +734,12 @@ class AdminController extends Controller
                         $max_time = $productTime->preparation_Time;
                     }else{}
                     $timeToday = date('H:i:s',strtotime(Carbon::now()));
-                    $productPrice = ProductPriceList::select('price')->whereProductId($value['id'])->where('publishing_start_time','<=',$timeToday)->where('publishing_end_time','>=',$timeToday)
+                    $dateToday = date('Y-m-d',strtotime(Carbon::now()));
+                    $productPrice = ProductPriceList::select('price')->whereProductId($value['id'])
+                        ->where('publishing_start_date','<=',$dateToday)
+                        ->where('publishing_end_date','>=',$dateToday)
+                        ->where('publishing_start_time','<=',$timeToday)
+                        ->where('publishing_end_time','>=',$timeToday)
                         ->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')
                         ->where('product.start_of_publishing', '<=', Carbon::now())
                         ->first();
@@ -787,7 +797,13 @@ class AdminController extends Controller
         }else{
             $menuTypes = null;
             $timeToday = date('H:i:s',strtotime(Carbon::now()));
-            $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))->where('publishing_start_time','<=',$timeToday)->where('publishing_end_time','>=',$timeToday)->with('menuPrice')->with('storeProduct')
+            $dateToday = date('Y-m-d',strtotime(Carbon::now()));
+            $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))
+                ->where('publishing_start_date','<=',$dateToday)
+                ->where('publishing_end_date','>=',$dateToday)
+                ->where('publishing_start_time','<=',$timeToday)
+                ->where('publishing_end_time','>=',$timeToday)
+                ->with('menuPrice')->with('storeProduct')
                 ->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')
                 ->where('product.start_of_publishing', '<=', Carbon::now())
                 ->get();
@@ -910,8 +926,16 @@ class AdminController extends Controller
 
         $menuTypes = null;
         $timeToday = date('H:i:s',strtotime(Carbon::now()));
-        $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))->where('publishing_start_time','<=',$timeToday)->where('publishing_end_time','>=',$timeToday)->with('menuPrice')->with('storeProduct')->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')
-                ->where('product.start_of_publishing', '<=', Carbon::now())->get();
+        $dateToday = date('Y-m-d',strtotime(Carbon::now()));
+        $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))
+            ->where('publishing_start_date','<=',$dateToday)
+            ->where('publishing_end_date','>=',$dateToday)
+            ->where('publishing_start_time','<=',$timeToday)
+            ->where('publishing_end_time','>=',$timeToday)
+            ->with('menuPrice')
+            ->with('storeProduct')
+            ->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')
+            ->where('product.start_of_publishing', '<=', Carbon::now())->get();
 
         if(count($menuDetails) != 0){
             foreach ($menuDetails as $menuDetail) {
@@ -1865,30 +1889,42 @@ class AdminController extends Controller
     {
         $startDt = strtotime($request->publishing_start_date);
         $endDt = strtotime($request->publishing_end_date);
+        $startTm = strtotime($request->publishing_start_time);
+        $endTm = strtotime($request->publishing_end_time);
         
         $status = 0;
         if(!empty($request->priceId)){
-            $data = ProductPriceList::where('product_id', $request->product_id)
+            $datas = ProductPriceList::where('product_id', $request->product_id)
                         ->where('store_id', $request->store_id)
                         ->where('id', '!=', $request->priceId)
-                        ->pluck('publishing_end_time','publishing_start_time');
+                        ->select('publishing_end_time','publishing_start_time','publishing_end_date','publishing_start_date')
+                        ->get();
         }else{
-            $data = ProductPriceList::where('product_id', $request->product_id)
+            $datas = ProductPriceList::where('product_id', $request->product_id)
                         ->where('store_id', $request->store_id)
-                        ->pluck('publishing_end_time','publishing_start_time');
+                        ->select('publishing_end_time','publishing_start_time','publishing_end_date','publishing_start_date')
+                        ->get();
         }
-        
-        if(!empty($data)){
-            foreach($data as $key => $val){
-                $keys = strtotime($key); 
-                $vals = strtotime($val);
-                if($startDt > $keys && $startDt > $vals && $endDt > $keys && $endDt > $vals){
-                }else if($startDt < $keys && $startDt < $vals && $endDt < $keys && $endDt < $vals){
+        if(!empty($datas)){
+            foreach($datas as $data){
+                $start_date = strtotime($data->publishing_start_date); 
+                $start_time = strtotime($data->publishing_start_time);
+                $end_date = strtotime($data->publishing_end_date);
+                $end_time = strtotime($data->publishing_end_time);
+                // print_r($data);
+                if($startDt > $start_date && $startDt > $end_date && $endDt > $start_date && $endDt > $end_date){
+                }else if($startDt < $start_date && $startDt < $end_date && $endDt < $start_date && $endDt < $end_date){
                 }else{
-                    ++$status;
+                    if($startTm > $start_time && $startTm > $end_time && $endTm > $start_time && $endTm > $end_time){
+                    }else if($startTm < $start_time && $startTm < $end_time && $endTm < $start_time && $endTm < $end_time){
+                    }else{
+                        // print_r($data);
+                        ++$status;
+                    }
                 }
             }      
         }
+        // die('hehe');
         return response()->json(['status' => $status]);
     }
 
@@ -1899,19 +1935,35 @@ class AdminController extends Controller
 
         $publishing_end_date = $request->publishing_end_date;
         $endDt = strtotime($publishing_end_date);
+
+        $publishing_start_time = $request->publishing_start_time;
+        $startTm = strtotime($publishing_start_time);
+
+        $publishing_end_time = $request->publishing_end_time;
+        $endTm = strtotime($publishing_end_time);
         
         $status = 0;
         $data = ProductPriceList::where('product_id', $request->product_id)
                         ->where('store_id', $request->store_id)
-                        ->pluck('publishing_end_time','publishing_start_time');
-        if(!empty($data)){
-            foreach($data as $key => $val){
-                $keys = strtotime($key); $vals = strtotime($val);
-                if($startDt > $keys && $startDt > $vals && $endDt > $keys && $endDt > $vals){
-                }else if($startDt < $keys && $startDt < $vals && $endDt < $keys && $endDt < $vals){
+                        ->select('publishing_end_time','publishing_start_time','publishing_end_date','publishing_start_date')
+                        ->get();
+        
+        if(!empty($datas)){
+            foreach($datas as $data){
+                $start_date = strtotime($data->publishing_start_date); 
+                $start_time = strtotime($data->publishing_start_time);
+                $end_date = strtotime($data->publishing_end_date);
+                $end_time = strtotime($data->publishing_end_time);
+                
+                if($startDt > $start_date && $startDt > $end_date && $endDt > $start_date && $endDt > $end_date){
+                }else if($startDt < $start_date && $startDt < $end_date && $endDt < $start_date && $endDt < $end_date){
                 }else{
-                    return back()->with('error','Time Slab is not available !');
-                }       
+                    if($startTm > $start_time && $startTm > $end_time && $endTm > $start_time && $endTm > $end_time){
+                    }else if($startTm < $start_time && $startTm < $end_time && $endTm < $start_time && $endTm < $end_time){
+                    }else{
+                        return back()->with('error','Time Slab is not available !');
+                    }
+                }
             }      
         }
 
@@ -1929,8 +1981,10 @@ class AdminController extends Controller
         $product_price_list->store_id = $request->store_id;
         $product_price_list->text = "Price:" . $request->price . $request->currency;
         $product_price_list->price = $request->price;
-        $product_price_list->publishing_start_time = $publishing_start_date;
-        $product_price_list->publishing_end_time = $publishing_end_date;
+        $product_price_list->publishing_start_date = $publishing_start_date;
+        $product_price_list->publishing_end_date = $publishing_end_date;
+        $product_price_list->publishing_start_time = $publishing_start_time;
+        $product_price_list->publishing_end_time = $publishing_end_time;
         $product_price_list->save();
 
         // Check if time doesn't cover the working hours of the restaurant
@@ -1976,24 +2030,40 @@ class AdminController extends Controller
 
         $publishing_end_date = $request->publishing_end_date;
         $endDt = strtotime($publishing_end_date);
+
+        $publishing_start_time = $request->publishing_start_time;
+        $startTm = strtotime($publishing_start_time);
+
+        $publishing_end_time = $request->publishing_end_time;
+        $endTm = strtotime($publishing_end_time);
         
         $status = 0;
         
         $data = ProductPriceList::where('product_id', $request->product_id)
                         ->where('store_id', $request->store_id)
                         ->where('id', '!=', $request->priceId)
-                        ->pluck('publishing_end_time','publishing_start_time');
-
-        if(!empty($data)){
-            foreach($data as $key => $val){
-                $keys = strtotime($key); $vals = strtotime($val);
-                if($startDt > $keys && $startDt > $vals && $endDt > $keys && $endDt > $vals){
-                }else if($startDt < $keys && $startDt < $vals && $endDt < $keys && $endDt < $vals){
+                        ->select('publishing_end_time','publishing_start_time','publishing_end_date','publishing_start_date')
+                        ->get();                        
+        
+        if(!empty($datas)){
+            foreach($datas as $data){
+                $start_date = strtotime($data->publishing_start_date); 
+                $start_time = strtotime($data->publishing_start_time);
+                $end_date = strtotime($data->publishing_end_date);
+                $end_time = strtotime($data->publishing_end_time);
+                
+                if($startDt > $start_date && $startDt > $end_date && $endDt > $start_date && $endDt > $end_date){
+                }else if($startDt < $start_date && $startDt < $end_date && $endDt < $start_date && $endDt < $end_date){
                 }else{
-                    return back()->with('error','Time Slab is not available !');
-                }       
+                    if($startTm > $start_time && $startTm > $end_time && $endTm > $start_time && $endTm > $end_time){
+                    }else if($startTm < $start_time && $startTm < $end_time && $endTm < $start_time && $endTm < $end_time){
+                    }else{
+                        return back()->with('error','Time Slab is not available !');
+                    }
+                }
             }      
         }
+
 
         $product_price_list = ProductPriceList::where('product_id', $request->product_id)
                         ->where('store_id', $request->store_id)
@@ -2001,8 +2071,10 @@ class AdminController extends Controller
                         ->first();
         $product_price_list->text = "Price:" . $request->price . $request->currency;
         $product_price_list->price = $request->price;
-        $product_price_list->publishing_start_time = $publishing_start_date;
-        $product_price_list->publishing_end_time = $publishing_end_date;
+        $product_price_list->publishing_start_date = $publishing_start_date;
+        $product_price_list->publishing_end_date = $publishing_end_date;
+        $product_price_list->publishing_start_time = $publishing_start_time;
+        $product_price_list->publishing_end_time = $publishing_end_time;
         $product_price_list->save();
 
         return back()->with('success','Price updated successfully');
