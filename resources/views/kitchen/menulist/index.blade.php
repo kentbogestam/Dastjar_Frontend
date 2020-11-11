@@ -443,6 +443,7 @@
 									dStart = item.product_price_list_data[i].publishing_start_date;
 									dStartUtc = dStart;
 									dStart = moment.utc(dStart, 'YYYY-MM-DD').toDate();
+									dConvertStart = moment(dStart).local().format('ll');
 									dStart = moment(dStart).local().format('YYYY-MM-DD');
 
 									tStart = item.product_price_list_data[i].publishing_start_time;
@@ -453,6 +454,7 @@
 									dEnd = item.product_price_list_data[i].publishing_end_date;
 									dEndUtc = dEnd;
 									dEnd = moment.utc(dEnd, 'YYYY-MM-DD').toDate();	
+									dConvertEnd = moment(dEnd).local().format('ll');
 									dEnd = moment(dEnd).local().format('YYYY-MM-DD');
 									
 									tEnd = item.product_price_list_data[i].publishing_end_time;
@@ -460,7 +462,7 @@
 									tEnd = moment.utc(tEnd, 'HH:mm').toDate();	
 									tEnd = moment(tEnd).local().format('HH:mm');
 
-									formattedFromToDate = " " + dStart + " to " + dEnd + " " + tStart + " - " + tEnd;
+									formattedFromToDate = " <span style='font-weight:500'>" + dConvertStart + "</span> to <span style='font-weight:500'>" + dConvertEnd + "</span> " + tStart + " - " + tEnd;
 									var price = item.product_price_list_data[i].price;
 									var priceId = item.product_price_list_data[i].id;
 									//

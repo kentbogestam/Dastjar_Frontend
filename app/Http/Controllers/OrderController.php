@@ -633,6 +633,7 @@ class OrderController extends Controller
         $data = array();
         
         $timeToday = date('H:i:s',strtotime(Carbon::now()));
+        $dateToday = date('Y-m-d',strtotime(Carbon::now()));
 
         if( Session::has('orderData') )
         {
@@ -773,6 +774,8 @@ class OrderController extends Controller
                     $productPrice = ProductPriceList::select('price')
                         ->whereProductId($value['id'])
                         ->where('store_id' , $data['storeID'])
+                        ->where('publishing_start_date','<=',$dateToday)
+                        ->where('publishing_end_date','>=',$dateToday)
                         ->where('publishing_start_time','<=',$timeToday)
                         ->where('publishing_end_time','>=',$timeToday)
                         ->first();

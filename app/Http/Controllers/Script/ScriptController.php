@@ -163,6 +163,8 @@ class ScriptController extends Controller
                                         'text' => $price->text,
                                         'price' => $price->price,
                                         'lang' => $price->lang,
+                                        'publishing_start_date' => $price->publishing_start_date,
+                                        'publishing_end_date' => $price->publishing_end_date,
                                         'publishing_start_time' => $price->publishing_start_time,
                                         'publishing_end_time' => $price->publishing_end_time,
                                     );
