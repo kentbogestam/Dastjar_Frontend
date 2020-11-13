@@ -630,9 +630,14 @@
 			url : "{{url('order-confirmation-status').'/'.$order->order_id}}",
 			type : 'get',
 			data : {
+				'timeNow': new Date(),
 				'eatLater' : '0'
 			},
 			success: function(data, status){
+				if(data == 'stop'){
+					alert("Try Again! Time has been exhausted you can't proceed further");
+					return false;
+				}
 				AskPhoneForInfo();
 			}
 		});
@@ -699,7 +704,7 @@
 						'payment_method_id': result.paymentMethod.id
 					}
 					// Otherwise send paymentMethod.id to your server (see Step 2)
-					fetch('{{ url('confirm-payment') }}', {
+					fetch('{{ url('confirm-payment') }}?timeNow='+new Date(), {
 						method: 'POST',
 						body: JSON.stringify(data),
 						headers: {
@@ -708,6 +713,10 @@
 					}).then(function(result) {
 						// Handle server response (see Step 3)
 						result.json().then(function(json) {
+							if(json.status == "expire"){
+								alert("Try Again! Time has been exhausted you can't proceed further");
+								return false;
+							}
 							handleServerResponse(json);
 							$('#card-button').prop('disabled', false);
 						})
@@ -757,14 +766,14 @@
 						}
 						// The card action has been handled
 						// The PaymentIntent can be confirmed again on the server
-						fetch('{{ url('confirm-payment') }}', {
+						fetch('{{ url('confirm-payment') }}?timeNow='+new Date(), {
 							method: 'POST',
 							body: JSON.stringify(data),
 							headers: {
 								'Content-Type': 'application/json'
 							}
 						}).then(function(confirmResult) {
-							return confirmResult.json();
+							
 						}).then(handleServerResponse);
 					}
 				});
@@ -785,10 +794,10 @@
 					'_token': "{{ csrf_token() }}",
 					'order_id': "{{ $order->order_id }}",
 					'chargingSavedCard': true,
-					'payment_method_id': payment_method_id
+					'payment_method_id': payment_method_id,
 				}
 				// Otherwise send paymentMethod.id to your server (see Step 2)
-				fetch('{{ url('confirm-payment') }}', {
+				fetch('{{ url('confirm-payment') }}?timeNow='+new Date(), {
 					method: 'POST',
 					body: JSON.stringify(data),
 					headers: {
@@ -797,6 +806,10 @@
 				}).then(function(result) {
 					// Handle server response (see Step 3)
 					result.json().then(function(json) {
+						if(json.status == "expire"){
+							alert("Try Again! Time has been exhausted you can't proceed further");
+							return false;
+						}
 						handleServerResponseSavedCard(json);
 						$('#charging-saved-cards').prop('disabled', false);
 					})
@@ -846,14 +859,14 @@
 						}
 						// The card action has been handled
 						// The PaymentIntent can be confirmed again on the server
-						fetch('{{ url('confirm-payment') }}', {
+						fetch('{{ url('confirm-payment') }}?timeNow='+new Date(), {
 							method: 'POST',
 							body: JSON.stringify(data),
 							headers: {
 								'Content-Type': 'application/json'
 							}
 						}).then(function(confirmResult) {
-							return confirmResult.json();
+
 						}).then(handleServerResponseSavedCard);
 					}
 				});
