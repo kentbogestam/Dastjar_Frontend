@@ -12,6 +12,9 @@
 	<link href="//fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 	<style>
+		.slaveDiv select,.slaveDiv input{
+			width:100%;
+		}
 		.menu_txt{
 			color: rgba(199,7,17,1);
 			text-align: center;
@@ -212,7 +215,6 @@
 		<div class="row">
 			<div class="col-10 dish_name_col">
 				<a href="{{ url('kitchen/menu') }}" class="menu_back_btn" data-ajax="false"><span class="fa fa-chevron-left"></span>Back</a>
-				<input type="text" name="prodName" placeholder="Dish Name" class="dish_name" value="{{ $product->product_name ?? "" }}" maxlength="24" title="{{ __('messages.iDishName') }}" required/>
 			</div>
 			<div class="col-2 menu_image_col">
 				<label class="upload_menu" for="fileupload" title="{{ __('messages.iDishImage') }}">
@@ -230,23 +232,25 @@
 
 		<input type="hidden" name="timezoneOffset" class="timezoneOffset">
 
-		<div class="row">
-			<div class="col-12">
-				<select id="dishLang" name="dishLang" required title="{{ __('messages.iDishLanguage') }}">
-					<option value="" selected disabled>Dish Language</option>
-					@if(isset($product->lang))
-						<option <?php if ($product->lang == "SWE")echo "selected='selected'"; ?> value="SWE">Swedish</option>
-						<option <?php if ($product->lang == "ENG")echo "selected='selected'"; ?> value="ENG">English</option>
-					@else
-						@if(isset($storedetails->country_code))
-							<option <?php if ($storedetails->country_code != "IN")echo "selected='selected'"; ?> value="SWE">Swedish</option>
-							<option <?php if ($storedetails->country_code == "IN")echo "selected='selected'"; ?> value="ENG">English</option>
-						@else
-							<option value="SWE">Swedish</option>
-							<option value="ENG">English</option>
-						@endif
-					@endif
-				</select>
+		<button class="btn btn-success addMore" type="button">Add More Languages</button>
+		<div class="masterDiv">
+			<div class="row slaveDiv" id="slaveDiv1">
+				<div class="col-3">
+					<select name="dishLang[]" required title="{{ __('messages.iDishLanguage') }}">
+						<option value="" selected disabled>Dish Language</option>
+						<option value="SWE">Swedish</option>
+						<option value="ENG">English</option>
+					</select>
+				</div>
+				<div class="col-4">
+					<input type="text" name="prodName" placeholder="Dish Name" class="dish_name" value="" maxlength="24" title="{{ __('messages.iDishName') }}" required/>
+				</div>
+				<div class="col-4">
+					<input type="text" name="prodDesc" placeholder="Description" value="" maxlength="50" title="{{ __('messages.iDishDescription') }}" required/>
+				</div>
+				<div class="col-1">''
+					<button class="btn btn-danger removeMore" rel="1" type="button">X</button>
+				</div>
 			</div>
 		</div>
 
@@ -262,12 +266,6 @@
 						@endif
 					@endforeach
 				</select>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-12">
-				<input type="text" name="prodDesc" placeholder="Description" value="{{ $product->product_description ?? "" }}" maxlength="50" title="{{ __('messages.iDishDescription') }}" required/>
 			</div>
 		</div>
 
@@ -355,6 +353,27 @@
 <script type="text/javascript" src="{{ asset('js/bootstrap-material-datetimepicker.js') }}"></script>
 
 <script type="text/javascript">
+
+	$('body').on('click', '.addMore', function(){
+		$('.masterDiv').append('<div class="row slaveDiv" id="slaveDiv1"><div class="col-3"><select name="dishLang[]" required title="{{ __('messages.iDishLanguage') }}"><option value="" selected disabled>Dish Language</option><option value="SWE">Swedish</option><option value="ENG">English</option></select></div><div class="col-4"><input type="text" name="prodName" placeholder="Dish Name" class="dish_name" value="" maxlength="24" title="{{ __('messages.iDishName') }}" required/></div><div class="col-4"><input type="text" name="prodDesc" placeholder="Description" value="" maxlength="50" title="{{ __('messages.iDishDescription') }}" required/></div><div class="col-1"><button class="btn btn-danger removeMore" rel="1"  type="button">X</button></div></div>');
+		countSet();
+	});
+
+	$('body').on('click', '.removeMore', function(){
+		var rel = $(this).attr('rel');
+		$('#slaveDiv'+rel).remove();
+		countSet();
+	});
+
+	function countSet(){
+		var count = 0;
+		$('.masterDiv .slaveDiv').each(function(){
+			++count;
+			$(this).attr('id', 'slaveDiv'+count);
+			$(this).find('.removeMore').attr('rel', count);
+		});
+	}
+
 	var list = Array();
 	var tempCount = 18;
 	var fileExt = "";
