@@ -783,6 +783,7 @@
 
 			// if no phone number then ask number
 			if(phone_number != '' && phone_number_prifix != ''){
+				$('#myPhoneModal').css('display','none');
 				$('#loading-img').css("display", "block");
 	        	$.ajax({
 					url: "{{ url('smsOverPhone') }}",
@@ -810,10 +811,11 @@
 					});
 		        	window.location.href = "{{ url('order-view/'.$order->order_id) }}";
 		        });
+		        $('.phone-close').on('click', function(){
+		        	$('#myPhoneModal').css('display','none');
+		        	location.reload(true);
+		        });
 		    }
-	        $('.phone-close').on('click', function(){
-	        	location.reload(true);
-	        });
 		}else{
 			location.reload(true);
 		}

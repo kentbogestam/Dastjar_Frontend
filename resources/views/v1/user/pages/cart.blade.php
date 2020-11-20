@@ -971,6 +971,7 @@
 
 				$('#myPhoneBtn').trigger('click');
 		        $('.phone-conti').on('click', function(){
+		        	$('#myPhoneModal').css('display','none');
 		        	$('#loading-img').css("display", "block");
 		        	$.ajax({
 						url: "{{ url('smsOverPhone') }}",
@@ -983,10 +984,11 @@
 					});
 		        	window.location.href = "{{ url('order-view/'.$order->order_id) }}";
 		        });
+		        $('.phone-close').on('click', function(){
+		        	$('#myPhoneModal').css('display','none');
+		        	window.location.href = "{{ url('order-view/'.$order->order_id) }}";
+		        });
 		    }
-	        $('.phone-close').on('click', function(){
-	        	window.location.href = "{{ url('order-view/'.$order->order_id) }}";
-	        });
 		}else{
 			window.location.href = "{{ url('order-view/'.$order->order_id) }}";
 		}
