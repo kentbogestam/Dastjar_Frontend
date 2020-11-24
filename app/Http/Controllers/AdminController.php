@@ -1358,7 +1358,7 @@ class AdminController extends Controller
         $product = new Product();
         $product->product_id = $product_id;        
         $product->u_id = Auth::user()->u_id;
-        $product->product_name = $request->prodName;
+        $product->product_name = $request->prodName[0];
 
         // Product image
         // if (!empty($_FILES["prodImage"]["name"]))
@@ -1463,15 +1463,15 @@ class AdminController extends Controller
         $minutes = $request->prepTime;
         $hours = intdiv($minutes, 60).':'. ($minutes % 60).':00';
 
-        $product->lang = $request->dishLang;
+        $product->lang = $request->dishLang[0];
         $product->dish_type = $request->dishType;
 
-        $product->product_description = $request->prodDesc;
+        $product->product_description = $request->prodDesc[0];
         $product->preparation_Time = $hours;
         $product->category = "7099ead0-8d47-102e-9bd4-12313b062day";
         $product->product_number = "";
         $product->product_info_page = "";
-        $product->start_of_publishing = Carbon::now();
+        $product->start_of_publishing = $publish_start_date;
         $product->company_id = $company_id;
         $product->save();
 
@@ -1479,7 +1479,7 @@ class AdminController extends Controller
         $product_price_list->store_id = $store_id;
         $product_price_list->text = "Price:" . $request->prodPrice . $request->currency;
         $product_price_list->price = $request->prodPrice;
-        $product_price_list->lang = $request->dishLang;
+        $product_price_list->lang = $request->dishLang[0];
         $product_price_list->publishing_start_date = $publish_start_date;
         $product_price_list->publishing_end_date = $publish_end_date;
         $product_price_list->save();
@@ -1487,7 +1487,7 @@ class AdminController extends Controller
         // Add product meta
         $data = array(
             'product_id' => $product_id,
-            'company_id' => $company_id,
+            'countParam' => $request->countParam,
             'lang' => $request->dishLang,
             'product_description' => $request->prodDesc,
             'product_name' => $request->prodName,
@@ -1502,63 +1502,70 @@ class AdminController extends Controller
     private function addProductMeta($data)
     {
         $helper = new Helper();
-        $sloganSubLangId = $helper->uuid();
+        for($i=0; $i<$data['countParam']; $i++)
+        {
+            $sloganSubLangId = $helper->uuid();
 
-        $productOfferSubSloganLangList = new ProductOfferSubSloganLangList();
-        $productOfferSubSloganLangList->product_id = $data['product_id'];
-        $productOfferSubSloganLangList->offer_sub_slogan_lang_list = $sloganSubLangId;
-        $productOfferSubSloganLangList->save();
+            $productOfferSubSloganLangList = new ProductOfferSubSloganLangList();
+            $productOfferSubSloganLangList->product_id = $data['product_id'];
+            $productOfferSubSloganLangList->offer_sub_slogan_lang_list = $sloganSubLangId;
+            $productOfferSubSloganLangList->save();
 
-        // insert product description in lang_text table
-        $langText = new LangText();
-        $langText->id = $sloganSubLangId;
-        $langText->lang = $data['lang'];
-        $langText->text = $data['product_description'];
-        $langText->save();
+            // insert product description in lang_text table
+        
+            $langText = new LangText();
+            $langText->id = $sloganSubLangId;
+            $langText->lang = $data['lang'][$i];
+            $langText->text = $data['product_description'][$i];
+            $langText->save();
+        
+            $sloganLangId = $helper->uuid();
 
-        $sloganLangId = $helper->uuid();
+            $productOfferSloganLangList = new ProductOfferSloganLangList();
+            $productOfferSloganLangList->product_id = $data['product_id'];
+            $productOfferSloganLangList->offer_slogan_lang_list = $sloganLangId;
+            $productOfferSloganLangList->save();
 
-        $productOfferSloganLangList = new ProductOfferSloganLangList();
-        $productOfferSloganLangList->product_id = $data['product_id'];
-        $productOfferSloganLangList->offer_slogan_lang_list = $sloganLangId;
-        $productOfferSloganLangList->save();
+            // insert product name in lang_text table
+            
+            $langText = new LangText();
+            $langText->id = $sloganLangId;
+            $langText->lang = $data['lang'][$i];
+            $langText->text = $data['product_name'][$i];
+            $langText->save();
+        
+            // $SystemkeyId = $helper->uuid();
 
-        // insert product name in lang_text table
-        $langText = new LangText();
-        $langText->id = $sloganLangId;
-        $langText->lang = $data['lang'];
-        $langText->text = $data['product_name'];
-        $langText->save();
+            // // insert product language in lang_text table
+        
+            // $langText = new LangText();
+            // $langText->id = $SystemkeyId;
+            // $langText->lang = $data['lang'][$i];
+            // $langText->text = $data['product_id'];
+            // $langText->save();
 
-        $SystemkeyId = $helper->uuid();
+            // // insert product id in product_keyword table
+            // $productKeyword = new ProductKeyword();
+            // $productKeyword->product_id = $data['product_id'];
+            // $productKeyword->system_key = $SystemkeyId;
+            // $productKeyword->save();
 
-        // insert product language in lang_text table
-        $langText = new LangText();
-        $langText->id = $SystemkeyId;
-        $langText->lang = $data['lang'];
-        $langText->text = $data['product_id'];
-        $langText->save();
+            // $Systemkey_companyId = $helper->uuid();
 
-        // insert product id in product_keyword table
-        $productKeyword = new ProductKeyword();
-        $productKeyword->product_id = $data['product_id'];
-        $productKeyword->system_key = $SystemkeyId;
-        $productKeyword->save();
+            // // insert company id in lang_text table
+        
+            // $langText = new LangText();
+            // $langText->id = $Systemkey_companyId;
+            // $langText->lang = $data['lang'][$i];
+            // $langText->text = $data['company_id'];
+            // $langText->save();
 
-        $Systemkey_companyId = $helper->uuid();
-
-        // insert company id in lang_text table
-        $langText = new LangText();
-        $langText->id = $Systemkey_companyId;
-        $langText->lang = $data['lang'];
-        $langText->text = $data['company_id'];
-        $langText->save();
-   
-        // insert company id in product_keyword table
-        $productKeyword = new ProductKeyword();
-        $productKeyword->product_id = $data['product_id'];
-        $productKeyword->system_key = $Systemkey_companyId;
-        $productKeyword->save();
+            // // insert company id in product_keyword table
+            // $productKeyword = new ProductKeyword();
+            // $productKeyword->product_id = $data['product_id'];
+            // $productKeyword->system_key = $Systemkey_companyId;
+            // $productKeyword->save();
+        }
     }
 
 
@@ -1602,7 +1609,7 @@ class AdminController extends Controller
 
         // 
         $product = Product::where(['product_id' => $product_id])->first();
-        $product->product_name = $request->prodName;
+        $product->product_name = $request->prodName[0];
 
         // if (!empty($_FILES["prodImage"]["name"]))
         if ($request->hasFile('prodImage'))
@@ -1662,45 +1669,67 @@ class AdminController extends Controller
         $minutes = $request->prepTime;
         $hours = intdiv($minutes, 60).':'. ($minutes % 60).':00';
 
-        $product->lang = $request->dishLang;
+        $product->lang = $request->dishLang[0];
         $product->dish_type = $request->dishType;
 
-        $product->product_description = $request->prodDesc;
+        $product->product_description = $request->prodDesc[0];
         $product->preparation_Time = $hours;
         $product->category = "7099ead0-8d47-102e-9bd4-12313b062day";
         $product->product_number = "";
         $product->product_info_page = "";
-        $product->start_of_publishing = Carbon::now();
+        $product->start_of_publishing = $publishStartDateTime;
         $product->company_id = $company_id;
         $product->save();
 
-        $sloganSubLangId = ProductOfferSubSloganLangList::where('product_id',$product_id)->first()->offer_sub_slogan_lang_list;
+        // $sloganSubLangId = ProductOfferSubSloganLangList::where('product_id',$product_id)->first()->offer_sub_slogan_lang_list;
 
-        /*** insert product description in lang_text table */
-        $langText = LangText::where('id',$sloganSubLangId)->first();
-        $langText->lang = $request->dishLang;
-        $langText->text = $request->prodDesc;
-        $langText->save();
+        // /*** insert product description in lang_text table */
+        // $langText = LangText::where('id',$sloganSubLangId)->first();
+        // $langText->lang = $request->dishLang;
+        // $langText->text = $request->prodDesc;
+        // $langText->save();
 
-        $sloganLangId = ProductOfferSloganLangList::where('product_id',$product_id)->first()->offer_slogan_lang_list;
+        // $sloganLangId = ProductOfferSloganLangList::where('product_id',$product_id)->first()->offer_slogan_lang_list;
 
-        /*** insert product name in lang_text table */
-        $langText = LangText::where('id',$sloganLangId)->first();
-        $langText->lang = $request->dishLang;
-        $langText->text = $request->prodName;
-        $langText->save();
+        // /*** insert product name in lang_text table */
+        // $langText = LangText::where('id',$sloganLangId)->first();
+        // $langText->lang = $request->dishLang;
+        // $langText->text = $request->prodName;
+        // $langText->save();
 
-        /*** insert product language in lang_text table */
-        $langText = LangText::where('text',$product_id)->first();
-        $langText->lang = $request->dishLang;
-        $langText->save();
+        // /*** insert product language in lang_text table */
+        // $langText = LangText::where('text',$product_id)->first();
+        // $langText->lang = $request->dishLang;
+        // $langText->save();
 
+        $ProductOfferSloganLangList = ProductOfferSloganLangList::where('product_id','=',$product_id)->pluck('offer_slogan_lang_list');
+
+        $ProductOfferSubSloganLangList = ProductOfferSubSloganLangList::where('product_id','=',$product_id)->pluck('offer_sub_slogan_lang_list');
+        
+        if(!empty($ProductOfferSloganLangList)){
+            LangText::whereIn('id', $ProductOfferSloganLangList->toArray())->delete();
+            ProductOfferSloganLangList::where('product_id','=',$product_id)->delete();
+        }
+        if(!empty($ProductOfferSubSloganLangList)){
+            LangText::whereIn('id', $ProductOfferSubSloganLangList->toArray())->delete();
+            ProductOfferSubSloganLangList::where('product_id','=',$product_id)->delete();
+        }
+
+        $data = array(
+            'product_id' => $product_id,
+            'countParam' => $request->countParam,
+            'lang' => $request->dishLang,
+            'product_description' => $request->prodDesc,
+            'product_name' => $request->prodName,
+        );
+
+        $this->addProductMeta($data);
         // 
         $product_price_list = ProductPriceList::where(['id' => $price_id])->first();
         $product_price_list->store_id = $store_id;
         $product_price_list->text = "Price:" . $request->prodPrice . $request->currency;
         $product_price_list->price = $request->prodPrice;
-        $product_price_list->lang = $request->dishLang;
+        $product_price_list->lang = $request->dishLang[0];
         if($publishStartDateTime!=null){
             $product_price_list->publishing_start_date = $publishStartDateTime;
         }
@@ -1721,11 +1750,24 @@ class AdminController extends Controller
 
         $product = Product::where('product_id','=',$productid)->first();
 
+        $ProductOfferSloganLangList = ProductOfferSloganLangList::where('product_id','=',$productid)->pluck('offer_slogan_lang_list');
+
+        $ProductOfferSubSloganLangList = ProductOfferSubSloganLangList::where('product_id','=',$productid)->pluck('offer_sub_slogan_lang_list');
+        
+        $names =  $descs = array();
+        if(!empty($ProductOfferSloganLangList)){
+            $langs = LangText::whereIn('id', $ProductOfferSloganLangList->toArray())->pluck('lang')->toArray();
+            $names = LangText::whereIn('id', $ProductOfferSloganLangList->toArray())->pluck('text')->toArray();
+        }
+        if(!empty($ProductOfferSubSloganLangList)){
+            $descs = LangText::whereIn('id', $ProductOfferSubSloganLangList->toArray())->pluck('text')->toArray();
+        }
+        
         try{
-                getimagesize($product->small_image);
-                $product->small_image = $product->small_image;
-            }catch(\Exception $ex){
-                $product->small_image = null;
+            getimagesize($product->small_image);
+            $product->small_image = $product->small_image;
+        }catch(\Exception $ex){
+            $product->small_image = null;
         }
 
         $product_price_list = ProductPriceList::where('id','=',$price_id)->first();
@@ -1752,7 +1794,7 @@ class AdminController extends Controller
 
         $product->preparation_Time = $time;
 
-        return view('kitchen.menulist.createMenu',compact('product', 'product_price_list', 'store_id', 'storeName', 'listDishes', 'currency', 'listSubCategory'));
+        return view('kitchen.menulist.createMenu',compact('product', 'product_price_list', 'store_id', 'storeName', 'listDishes', 'currency', 'listSubCategory', 'ProductOfferSloganLangList', 'ProductOfferSubSloganLangList', 'names', 'descs', 'langs'));
     }
 
     /**
