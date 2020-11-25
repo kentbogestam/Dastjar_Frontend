@@ -388,14 +388,14 @@
 	});
 
 	$('body').on('click', '.removeMore', function(){
-		if($('#countParam').val() == "1"){
-			alert('At least one Row must be here');
-			return false;
-		}
 		var rel = $(this).attr('rel');
 		$('#slaveDiv'+rel).remove();
 		var countParam = countSet();
 		$('#countParam').val(countParam);
+	});
+
+	$(document).ready(function(){
+		countSet();
 	});
 
 	function countSet(){
@@ -405,6 +405,12 @@
 			$(this).attr('id', 'slaveDiv'+count);
 			$(this).find('.removeMore').attr('rel', count);
 		});
+		if(count < 2){
+			$('.removeMore').css('display','none');
+		}
+		if(count > 1){
+			$('.removeMore').css('display','block');
+		}
 		return count;
 	}
 
