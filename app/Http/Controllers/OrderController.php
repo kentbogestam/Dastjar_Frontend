@@ -66,6 +66,28 @@ class OrderController extends Controller
                 $setvar = 4;
             }
         }
+        $pieces = explode(" ", $request->timeNow);
+        $date=date_create($pieces[3]."-".$pieces[1]."-".$pieces[2]);
+        $checkOrderDate = date_format($date,"Y-m-d");
+        $orderType = 'eat_now';
+        $orderDate = $pieces[0]." ".$pieces[1]." ".$pieces[2]." ".$pieces[3];
+        $orderTime = $pieces[4];
+        $delivery_timestamp = strtotime($checkOrderDate." ".$orderTime);
+
+        if($order->order_type == 'eat_now'){
+            $order->deliver_date = $orderDate;
+            $order->deliver_time = $orderTime;
+            $order->check_deliveryDate = $checkOrderDate;
+            $order->delivery_timestamp = $delivery_timestamp;
+            $order->save();
+        }else{
+            $timesDb = explode(":",$order->order_delivery_time);
+            $secondstotal = $timesDb['0'] * 3600 + $timesDb['1'] * 60 + $timesDb['2'];
+            $finaltimestamp = $order->delivery_timestamp - $secondstotal;
+            if($delivery_timestamp >= $finaltimestamp){
+                return 'stop';
+            }
+        }
         if( $order->online_paid == $chkvar )
         {
             // Check if store is open

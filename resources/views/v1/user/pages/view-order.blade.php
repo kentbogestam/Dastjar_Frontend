@@ -462,7 +462,7 @@
 						'payment_method_id': result.paymentMethod.id
 					}
 					// Otherwise send paymentMethod.id to your server (see Step 2)
-					fetch('{{ url('confirm-payment') }}', {
+					fetch('{{ url('confirm-payment') }}'?timeNow='+new Date(), {
 						method: 'POST',
 						body: JSON.stringify(data),
 						headers: {
@@ -471,6 +471,10 @@
 					}).then(function(result) {
 						// Handle server response (see Step 3)
 						result.json().then(function(json) {
+							if(json.status == "expire"){
+								alert("Try Again! Time has been exhausted you can't proceed further");
+								return false;
+							}
 							handleServerResponse(json);
 							$('#card-button').prop('disabled', false);
 						})
@@ -520,7 +524,7 @@
 						}
 						// The card action has been handled
 						// The PaymentIntent can be confirmed again on the server
-						fetch('{{ url('confirm-payment') }}', {
+						fetch('{{ url('confirm-payment') }}'?timeNow='+new Date(), {
 							method: 'POST',
 							body: JSON.stringify(data),
 							headers: {
@@ -551,7 +555,7 @@
 					'payment_method_id': payment_method_id
 				}
 				// Otherwise send paymentMethod.id to your server (see Step 2)
-				fetch('{{ url('confirm-payment') }}', {
+				fetch('{{ url('confirm-payment') }}'?timeNow='+new Date(), {
 					method: 'POST',
 					body: JSON.stringify(data),
 					headers: {
@@ -560,6 +564,10 @@
 				}).then(function(result) {
 					// Handle server response (see Step 3)
 					result.json().then(function(json) {
+						if(json.status == "expire"){
+							alert("Try Again! Time has been exhausted you can't proceed further");
+							return false;
+						}
 						handleServerResponseSavedCard(json);
 						$('#charging-saved-cards').prop('disabled', false);
 					})
@@ -609,7 +617,7 @@
 						}
 						// The card action has been handled
 						// The PaymentIntent can be confirmed again on the server
-						fetch('{{ url('confirm-payment') }}', {
+						fetch('{{ url('confirm-payment') }}'?timeNow='+new Date(), {
 							method: 'POST',
 							body: JSON.stringify(data),
 							headers: {
@@ -752,9 +760,14 @@
 			url : "{{url('order-confirmation-status').'/'.$order->order_id}}",
 			type : 'get',
 			data : {
+				'timeNow': new Date(),
 				'eatLater' : '1'
 			},
 			success: function(data, status){
+				if(data == 'stop'){
+					alert("Try Again! Time has been exhausted you can't proceed further");
+					return false;
+				}
 				AskPhoneForInfo();
 			}
 		});
@@ -770,6 +783,7 @@
 
 			// if no phone number then ask number
 			if(phone_number != '' && phone_number_prifix != ''){
+				$('#myPhoneModal').css('display','none');
 				$('#loading-img').css("display", "block");
 	        	$.ajax({
 					url: "{{ url('smsOverPhone') }}",
@@ -797,10 +811,11 @@
 					});
 		        	window.location.href = "{{ url('order-view/'.$order->order_id) }}";
 		        });
+		        $('.phone-close').on('click', function(){
+		        	$('#myPhoneModal').css('display','none');
+		        	location.reload(true);
+		        });
 		    }
-	        $('.phone-close').on('click', function(){
-	        	location.reload(true);
-	        });
 		}else{
 			location.reload(true);
 		}
