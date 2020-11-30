@@ -72,6 +72,14 @@ trait PosReceipt {
 
             if( !empty($fileName) )
             {
+                $currencies = $order->currencies;
+
+                if($currencies == 'SEK')
+                {
+                    $currencies = 'kr';
+                }
+
+                // 
                 $printer = new StarCloudPrintStarLineModeJob($printerMac, $fileName);
 
                 // Header
@@ -133,13 +141,15 @@ trait PosReceipt {
                     {
                         $product_name = $this->replaceAsciiToHex($row->product_name);
                         $arrIndex1 = "{$row->product_quality} {$product_name}";
-                        $arrIndex2 = number_format(($row->product_quality*$row->price), 2, '.', '')." ".$order->currencies;
+                        $arrIndex2 = number_format(($row->product_quality*$row->price), 2, '.', '')." ".$currencies;
+                        $printer->set_text_emphasized();
                         $printer->add_text_line($this->get_column_separated_data(array($arrIndex1, $arrIndex2)));
+                        $printer->cancel_text_emphasized();
 
                         // Add product comment if have
                         if( !is_null($row->product_description) )
                         {
-                            $printer->add_text_line('      ('.$this->replaceAsciiToHex($row->product_description).')');
+                            $printer->add_text_line("      [".$this->replaceAsciiToHex($row->product_description)."]\n");
                         }
                     }
                     $printer->add_text_line($this->get_seperator_dashed());
@@ -149,21 +159,21 @@ trait PosReceipt {
                 if($orderDiscount)
                 {
                     $discountAmount = ($order->final_order_total*$orderDiscount->discount_value/100);
-                    $printer->add_text_line($this->get_column_separated_data(array(__('messages.Discount'), number_format($discountAmount, 2, '.', '')." ".$order->currencies)));
+                    $printer->add_text_line($this->get_column_separated_data(array(__('messages.Discount'), number_format($discountAmount, 2, '.', '')." ".$currencies)));
                 }
                 // Delivery Charge
                 if($order->delivery_type == 3 && $order->delivery_charge)
                 {
                     $delivery_charge = $order->delivery_charge;
-                    $printer->add_text_line($this->get_column_separated_data(array(__('messages.delivery_charge'), number_format($delivery_charge, 2, '.', '')." ".$order->currencies)));
+                    $printer->add_text_line($this->get_column_separated_data(array(__('messages.delivery_charge'), number_format($delivery_charge, 2, '.', '')." ".$currencies)));
                 }
                 // Total
-                $total = number_format(($order->final_order_total), 2, '.', '')." ".$order->currencies;
+                $total = number_format(($order->final_order_total), 2, '.', '')." ".$currencies;
                 $printer->set_text_emphasized();
                 $printer->add_text_line($this->get_column_separated_data(array(__('messages.TOTAL'), $total)));
                 $printer->cancel_text_emphasized();
                 // Vat
-                $vat = number_format(($order->final_order_total*12/100), 2, '.', '')." ".$order->currencies;
+                $vat = number_format(($order->final_order_total*12/100), 2, '.', '')." ".$currencies;
                 $printer->add_text_line($this->get_column_separated_data(array(__('messages.vat'), $vat)));
                 $printer->set_text_center_align();
                 // Loyalty
