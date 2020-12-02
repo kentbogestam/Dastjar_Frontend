@@ -21,6 +21,7 @@ use Session;
 use App\User;
 use App\Payment;
 use App\Coupon;
+use App\ProductExtraPriceList;
 use App\CouponKeywordsLangList;
 use App\CouponOfferSloganLangList;
 use App\CouponOfferTitleLangList;
@@ -1262,7 +1263,7 @@ class AdminController extends Controller
 
                 // Get current product price detail
                 $data[$key]['current_price'] = null;
-                $current_date = Carbon::now()->format('Y-m-d h:i:00');
+                $current_date = Carbon::now()->format('Y-m-d');
 
                 $currentProductPrice = ProductPriceList::select('id', 'text', 'price', 'publishing_start_date', 'publishing_end_date')
                     ->where('product_id', $value->product_id)
@@ -1290,7 +1291,7 @@ class AdminController extends Controller
     public function ajaxGetFuturePriceByProduct(Request $request)
     {
         //
-        $current_date = Carbon::now()->format('Y-m-d h:i:00');
+        $current_date = Carbon::now()->format('Y-m-d');
         $data = null;
 
         $futureProductPrices = ProductPriceList::select('id', 'product_id', 'text', 'price', 'publishing_start_date', 'publishing_end_date')
@@ -1348,8 +1349,8 @@ class AdminController extends Controller
 
         $util = new Util(env('APP42_API_KEY'),env('APP42_API_SECRET'));
 
-        $publish_start_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_start_date);
-        $publish_end_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_end_date);
+        $publish_start_date = \DateTime::createFromFormat('d/m/Y', $request->publish_start_date);
+        $publish_end_date = \DateTime::createFromFormat('d/m/Y', $request->publish_end_date);
 
         $employer = new Employer();
         $company_id = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
@@ -1471,7 +1472,7 @@ class AdminController extends Controller
         $product->category = "7099ead0-8d47-102e-9bd4-12313b062day";
         $product->product_number = "";
         $product->product_info_page = "";
-        $product->start_of_publishing = $publish_start_date;
+        $product->start_of_publishing = null;
         $product->company_id = $company_id;
         $product->save();
 
@@ -1482,6 +1483,8 @@ class AdminController extends Controller
         $product_price_list->lang = $request->dishLang[0];
         $product_price_list->publishing_start_date = $publish_start_date;
         $product_price_list->publishing_end_date = $publish_end_date;
+        $product_price_list->publishing_start_time = null;
+        $product_price_list->publishing_end_time = null;
         $product_price_list->save();
 
         // Add product meta
@@ -1571,14 +1574,14 @@ class AdminController extends Controller
 
     public function kitchenUpdateMenuPost(Request $request){
         // Validate if publish start/end datetime shouldn't already exist
-        $publishing_start_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_start_date);
-        $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_end_date);
+        $publishing_start_date_time = \DateTime::createFromFormat('d/m/Y', $request->publish_start_date);
+        $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y', $request->publish_end_date);
 
-        $startDt = strtotime($publishing_start_date_time->format('Y-m-d H:i:s'));
-        $endDt = strtotime($publishing_end_date_time->format('Y-m-d H:i:s'));
+        $startDt = strtotime($publishing_start_date_time->format('Y-m-d'));
+        $endDt = strtotime($publishing_end_date_time->format('Y-m-d'));
 
-        $publishStartDateTime = $publishing_start_date_time->format('Y-m-d H:i:s');
-        $publishEndDateTime = $publishing_end_date_time->format('Y-m-d H:i:s');
+        $publishStartDateTime = $publishing_start_date_time->format('Y-m-d');
+        $publishEndDateTime = $publishing_end_date_time->format('Y-m-d');
 
         $product_id = $request->product_id;
         $store_id = $request->store_id;
@@ -1598,6 +1601,25 @@ class AdminController extends Controller
             }else{
                 return back()->with('error','Invalid date');
             }       
+        }
+
+        if(!empty($request->startTime) && !empty($request->endTime) && !empty($request->price)){
+            $startTm = strtotime($request->startTime);
+            $endTm = strtotime($request->endTime);   
+
+            //check for validation with time availability
+            $data1 = ProductExtraPriceList::where('product_id', $product_id)
+                            ->where('ppl_id', $price_id)
+                            ->pluck('publishing_end_time','publishing_start_time');
+            
+            foreach($data1 as $key => $val){
+                $keys = strtotime($key); $vals = strtotime($val);
+                if($startTm > $keys && $startTm > $vals && $endTm > $keys && $endTm > $vals){
+                }else if($startTm < $keys && $startTm < $vals && $endTm < $keys && $endTm < $vals){
+                }else{
+                    return back()->with('error','Invalid time');
+                }       
+            }
         }
 
         $helper = new Helper();
@@ -1677,7 +1699,7 @@ class AdminController extends Controller
         $product->category = "7099ead0-8d47-102e-9bd4-12313b062day";
         $product->product_number = "";
         $product->product_info_page = "";
-        $product->start_of_publishing = $publishStartDateTime;
+        $product->start_of_publishing = null;
         $product->company_id = $company_id;
         $product->save();
 
@@ -1738,7 +1760,22 @@ class AdminController extends Controller
         }
         $product_price_list->save();
 
+        if(!empty($request->startTime) && !empty($request->endTime) && !empty($request->price)){
+            ProductExtraPriceList::create([
+                'product_id' => $product_id,
+                'ppl_id' => $price_id,
+                'price' => $request->price,
+                'publishing_start_time' => $request->startTime,
+                'publishing_end_time' => $request->endTime,
+            ]);
+        }
+
         return redirect()->route('menu')->with('success', $message);
+    }
+
+    public function kitchenDeleteTime(Request $request,$id){
+        ProductExtraPriceList::where('id',$id)->delete();
+        return back()->with('success','Time Deleted');
     }
 
     public function kitchenEditDish(Request $request){
@@ -1771,6 +1808,7 @@ class AdminController extends Controller
         }
 
         $product_price_list = ProductPriceList::where('id','=',$price_id)->first();
+        $product_extra_price_list = ProductExtraPriceList::where('ppl_id','=',$price_id)->where('product_id','=',$productid)->get();
 
         $storedetails = Store::where('store_id' , Session::get('kitchenStoreId'))->first();
         $storeName = $storedetails->store_name;
@@ -1794,7 +1832,7 @@ class AdminController extends Controller
 
         $product->preparation_Time = $time;
 
-        return view('kitchen.menulist.createMenu',compact('product', 'product_price_list', 'store_id', 'storeName', 'listDishes', 'currency', 'listSubCategory', 'ProductOfferSloganLangList', 'ProductOfferSubSloganLangList', 'names', 'descs', 'langs'));
+        return view('kitchen.menulist.createMenu',compact('product', 'product_price_list', 'store_id', 'storeName', 'listDishes', 'currency', 'listSubCategory', 'ProductOfferSloganLangList', 'ProductOfferSubSloganLangList', 'names', 'descs', 'langs', 'product_extra_price_list'));
     }
 
     /**
@@ -1964,12 +2002,12 @@ class AdminController extends Controller
      */
     public function isFutureDateAvailable(Request $request)
     {
-        $publishing_start_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_start_date);
-        $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_end_date);
+        $publishing_start_date_time = \DateTime::createFromFormat('d/m/Y', $request->publishing_start_date);
+        $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y', $request->publishing_end_date);
 
         //check for validation with time availability
-        $startDt = strtotime($publishing_start_date_time->format('Y-m-d H:i:s'));
-        $endDt = strtotime($publishing_end_date_time->format('Y-m-d H:i:s'));
+        $startDt = strtotime($publishing_start_date_time->format('Y-m-d'));
+        $endDt = strtotime($publishing_end_date_time->format('Y-m-d'));
         $status = 0;
         $data = ProductPriceList::where('product_id', $request->product_id)
                         ->where('store_id', $request->store_id)
@@ -1987,15 +2025,15 @@ class AdminController extends Controller
 
     public function addDishPrice(Request $request)
     {
-        $publishing_start_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_start_date);
-        $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_end_date);
+        $publishing_start_date_time = \DateTime::createFromFormat('d/m/Y', $request->publishing_start_date);
+        $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y', $request->publishing_end_date);
 
         //check for validation with time availability
-        $startDt = strtotime($publishing_start_date_time->format('Y-m-d H:i:s'));
-        $endDt = strtotime($publishing_end_date_time->format('Y-m-d H:i:s'));
+        $startDt = strtotime($publishing_start_date_time->format('Y-m-d'));
+        $endDt = strtotime($publishing_end_date_time->format('Y-m-d'));
 
-        $publishStartDateTime = $publishing_start_date_time->format('Y-m-d H:i:s');
-        $publishEndDateTime = $publishing_end_date_time->format('Y-m-d H:i:s');
+        $publishStartDateTime = $publishing_start_date_time->format('Y-m-d');
+        $publishEndDateTime = $publishing_end_date_time->format('Y-m-d');
         
         $status = 0;
         $data = ProductPriceList::where('product_id', $request->product_id)
@@ -2038,8 +2076,8 @@ class AdminController extends Controller
             $openTimeRestaurant = $closeTimeRestaurant = null;
             $dayOfPriceDate = $publishing_start_date_time->format('D');
             $openCloseList = explode(",", $store->store_open_close_day_time);
-            $startTimeFuturePrice = \DateTime::createFromFormat('d/m/Y - H:i', $request->dateStart)->format('H:i:00');
-            $endTimeFuturePrice = \DateTime::createFromFormat('d/m/Y - H:i', $request->dateEnd)->format('H:i:00');
+            $startTimeFuturePrice = \DateTime::createFromFormat('d/m/Y', $request->publishing_start_date)->format('H:i:00');
+            $endTimeFuturePrice = \DateTime::createFromFormat('d/m/Y', $request->publishing_end_date)->format('H:i:00');
 
             // Get restaurant working hours
             if( (count($openCloseList) == 1) && strpos($store->store_open_close_day_time, 'All') >= 0 )

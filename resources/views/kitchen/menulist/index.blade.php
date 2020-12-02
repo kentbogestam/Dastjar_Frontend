@@ -254,7 +254,7 @@
 			  
 				<!-- Modal Header -->
 				<div class="modal-header">
-				  <h4 class="modal-title">Add New Price</h4>
+				  <h4 class="modal-title">Add New Date</h4>
 				  <button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
@@ -264,10 +264,8 @@
 					  	<input type="hidden" id="selected_prod_product_id" name="product_id"/>
 					  	<input type="hidden" id="selected_prod_store_id" name="store_id"/>	  
 						<input type="number" name="price" placeholder="Price ({{$currency}})" autocomplete="off" required />
-						<input type="text" id="date-start" name="dateStart" placeholder="Publishing Start Date" required />
-						<input type="hidden" id="date-start-utc" name="publishing_start_date"/>
-						<input type="text" id="date-end" name="dateEnd" placeholder="Publishing End Date" required />
-						<input type="hidden" id="date-end-utc" name="publishing_end_date"/>						  
+						<input type="text" id="date-start" name="publishing_start_date" placeholder="Publishing Start Date" required />
+						<input type="text" id="date-end" name="publishing_end_date" placeholder="Publishing End Date" required />	  
 						{{ csrf_field() }}
 				</div>
 				
@@ -334,8 +332,8 @@
 	$(document).ready(function(){
 		// Validation before add the future date
 	    $('#save-price-btn').on('click', function() {
-	    	dkS = moment($("#date-start").val(),'DD/MM/YYYY HH:mm').toDate();
-	    	dkE = moment($("#date-end").val(),'DD/MM/YYYY HH:mm').toDate();
+	    	dkS = moment($("#date-start").val(),'DD/MM/YYYY').toDate();
+	    	dkE = moment($("#date-end").val(),'DD/MM/YYYY').toDate();
 	    	
 			if(dkS>dkE){
 				alert("Publishing start date must be smaller than publishing end date");
@@ -348,8 +346,8 @@
 					"_token": "{{ csrf_token() }}", 
 					'product_id': $('#selected_prod_product_id').val(),
 					'store_id': $('#selected_prod_store_id').val(),
-					'publishing_start_date': $("#date-start-utc").val(), 
-					'publishing_end_date': $("#date-end-utc").val()
+					'publishing_start_date': $("#date-start").val(), 
+					'publishing_end_date': $("#date-end").val()
 				}, 
 				function(data) {
 					if(data.status){
@@ -368,20 +366,18 @@
 
 		$('#date-start').bootstrapMaterialDatePicker
 		({
-			weekStart: 0, format: 'DD/MM/YYYY - HH:mm', minDate: dateToday, clearButton: true
+			weekStart: 0, time: false, format: 'DD/MM/YYYY', minDate: dateToday, clearButton: true
 		}).on('change', function(e, date)
 		{
 			$('#date-end').bootstrapMaterialDatePicker('setMinDate', date);
-			$('#date-start-utc').val(moment.utc(date).format('DD/MM/YYYY HH:mm'));								
 		});
 
 		$('#date-end').bootstrapMaterialDatePicker
 		({
-			weekStart: 0, format: 'DD/MM/YYYY - HH:mm', minDate: dateToday, clearButton: true
+			weekStart: 0, time: false, format: 'DD/MM/YYYY', minDate: dateToday, clearButton: true
 		}).on('change', function(e2, date2)
 		{
 			dKEnd = date2;
-			$('#date-end-utc').val(moment.utc(date2).format('DD/MM/YYYY HH:mm'));
 		});
 
 		$.material.init();
@@ -403,7 +399,7 @@
 						var html = '';
 
 				        $.each(returnedData.products, function(i, item) {
-				        	//console.log(item.current_price);
+				        	console.log(item.current_price);
 				        	
 				        	var currentPrice = '';
 				        	if(item.current_price != null)
@@ -411,10 +407,10 @@
 				        		//
 								dStart = item.current_price.publishing_start_date;
 								dStart = moment.utc(dStart).toDate();
-								dStart = moment(dStart).local().format('MMM DD, Y HH:mm');
+								dStart = moment(dStart).local().format('MMM DD, Y');
 								dEnd = item.current_price.publishing_end_date;
 								dEnd = moment.utc(dEnd).toDate();				
-								dEnd = moment(dEnd).local().format('MMM DD, Y HH:mm');
+								dEnd = moment(dEnd).local().format('MMM DD, Y');
 								formattedFromToDate = " " + dStart + " - " + dEnd;
 
 								//
@@ -447,10 +443,13 @@
 				            			'<span><a href="javascript:void(0)" onClick="copyDish(\'{{url('kitchen/copy-dish')}}/'+item.product_id+'\')" data-ajax="false">'+
 					        				'<i class="fa fa-clone" aria-hidden="true"></i>'+
 					        			'</a></span>'+
+				            // 			'<span style="margin-left: 10px"><a href="javascript:void(0)" onClick="edit_dish(\'{{url('kitchen/edit-menu-dish?product_id=')}}'+item.product_id+'\')" data-ajax="false">'+
+					        			// 	'<span class="fa fa-pencil"></span>'+
+					        			// '</a></span>'+
 				            			'<span style="margin-left: 10px"><a href="javascript:void(0)" onClick="delete_dish(\'{{url('kitchen/delete-menu-dish?product_id=')}}'+item.product_id+'\')" data-ajax="false">'+
 					        				'<span class="fa fa-trash"></span>'+
 					        			'</a></span>'+
-				            			'<a href="javascript:void(0)" title="{{ __('messages.iDishAddNewPrice') }}" onClick="add_dish_price(\''+item.product_id+'\', \'{{Session::get('kitchenStoreId')}}\')" class="btn waves-effect add-price-btn" data-ajax="false">Add New Price</a>'+
+				            			'<a href="javascript:void(0)" title="{{ __('messages.iDishAddNewPrice') }}" onClick="add_dish_price(\''+item.product_id+'\', \'{{Session::get('kitchenStoreId')}}\')" class="btn waves-effect add-price-btn" data-ajax="false">Add New Date</a>'+
 				            		'</div>'+
 				            	'</div>'+
 				            '</div>';
@@ -505,6 +504,14 @@
 	    }
 	}
 
+	// Edit dish
+	function edit_dish(url)
+	{
+		if(confirm('Are you sure you want to edit this product?')) {
+    	    window.location = url;
+	    }
+	}
+
 	// Delete Dish
 	function delete_dish(url){
 		if(confirm('Are you sure you want to delete this product?')) {
@@ -552,10 +559,10 @@
 							//
 							dStart = item.publishing_start_date;
 							dStart = moment.utc(dStart).toDate();
-							dStart = moment(dStart).local().format('MMM DD, Y HH:mm');
+							dStart = moment(dStart).local().format('MMM DD, Y');
 							dEnd = item.publishing_end_date;
 							dEnd = moment.utc(dEnd).toDate();				
-							dEnd = moment(dEnd).local().format('MMM DD, Y HH:mm');
+							dEnd = moment(dEnd).local().format('MMM DD, Y');
 							formattedFromToDate = " " + dStart + " - " + dEnd;
 
 							//

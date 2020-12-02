@@ -308,19 +308,44 @@
 
 		<div class="row">
 			<div class="col-12">
-				<input type="text" id="date-start" name="" placeholder="Publishing Start Date" value="" required title="{{ __('messages.iDishStartPublishDate') }}" />
-				<input type="hidden" id="date-start-utc" name="publish_start_date">
+				<input type="text" id="date-start" name="publish_start_date" placeholder="Publishing Start Date" value="" required title="{{ __('messages.iDishStartPublishDate') }}" />
 				<span class="fa fa-calendar cal_icon"></span>
 			</div>
 		</div>
 
 		<div class="row">
 			<div class="col-12">
-				<input type="text" id="date-end" name="" placeholder="Publishing End Date" value="" required title="{{ __('messages.iDishEndPublishDate') }}" />
-				<input type="hidden" id="date-end-utc" name="publish_end_date">				
+				<input type="text" id="date-end" name="publish_end_date" placeholder="Publishing End Date" value="" required title="{{ __('messages.iDishEndPublishDate') }}" />			
 				<span class="fa fa-calendar cal_icon"></span>
 			</div>
 		</div>
+		@if(!empty(@$product->product_id))
+			<div class="row">
+				<div class="col-12">
+					<p style="font-weight: 600;margin-top:20px">Multiple Price Per Day <span style="font-weight: 400">(max. limit 3)</span> <span class="fa fa-plus addMultiple" rel="{{count(@$product_extra_price_list)}}"></span></p>
+					@forelse(@$product_extra_price_list as $pl)
+						<p>SEK {{@$pl->price}} {{substr(@$pl->publishing_start_time,0,5)}} to {{substr(@$pl->publishing_end_time,0,5)}} <a href="{{ url('kitchen/delete-extra-time/'.@$pl->id) }}"><span class="fa fa-trash"></span></a></p>
+					@empty
+					@endforelse
+				</div>
+				<div class="col-12 slaveMultiple" style="display:none">
+					<div class="row">
+						<div class="col-3">
+							<input type="text" name="price" placeholder="Price" class="startTime extraPrice" value="" maxlength="24" title="Dish Price">
+						</div>
+						<div class="col-4">
+							<input type="text" name="startTime" placeholder="Start Time" class="startTime extraStartTime" value="" maxlength="24" title="Start Time">
+						</div>
+						<div class="col-4">
+							<input type="text" name="endTime" placeholder="End time" value="" class="endTime extraEndTime" maxlength="50" title="End Time">
+						</div>
+						<div class="col-1">
+							<button class="btn btn-danger btn-sm removeMultiple ui-btn ui-shadow ui-corner-all" style="background-color:maroon;color:white" type="button">X</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		@endif
 
 		@if(isset($product->product_id))
 		<input type="hidden" name="product_id" value="{{ $product->product_id ?? "" }}"/>
@@ -337,9 +362,9 @@
 		{{ csrf_field() }}
 
 		<div class="row">
-				<div class="col-12">
-					<button class="btn menu_save_btn">SAVE</button>
-				</div>
+			<div class="col-12">
+				<button class="btn menu_save_btn">SAVE</button>
+			</div>
 		</div>
 		</form>
 	</div>
@@ -377,11 +402,31 @@
 
 <script type="text/javascript">
 
-	$('body').on('click', '.addMore', function(){
-		// var html = $('#slaveDiv1').html();
-		// $('.masterDiv').append('<div class="row slaveDiv" id="slaveDiv1">'+html+'</div>');
-		// $('.masterDiv').append('<div class="row slaveDiv" id="slaveDiv1"><div class="col-3"><select name="dishLang[]" class="dishLang" required title="{{ __('messages.iDishLanguage') }}"><option value="" selected disabled>Dish Language</option><option value="SWE">SWE</option><option value="ENG">ENG</option></select></div><div class="col-4"><input type="text" name="prodName" placeholder="Dish Name" class="dish_name" value="" maxlength="24" title="{{ __('messages.iDishName') }}" required/></div><div class="col-4"><input type="text" name="prodDesc" placeholder="Description" value="" maxlength="50" title="{{ __('messages.iDishDescription') }}" required/></div><div class="col-1"><button class="btn btn-danger removeMore" rel="1"  type="button">X</button></div></div>');
+	$(document).ready(function(){
+		countSet();
+	});
 
+	$('body').on('click', '.addMultiple', function(){
+		var rel = $('.addMultiple').attr('rel');
+		if(rel < 3){
+			$('.addMultiple').attr('rel', ++rel);
+			$('.slaveMultiple').css('display','block');
+			$('.extraPrice').attr('required',true);
+			$('.extraStartTime').attr('required',true);
+			$('.extraEndTime').attr('required',true);
+		}
+	});
+
+	$('body').on('click', '.removeMultiple', function(){
+		$('.slaveMultiple').css('display','none');
+		var rel = $('.addMultiple').attr('rel');
+		$('.addMultiple').attr('rel', --rel);
+		$('.extraPrice').attr('required',false);
+		$('.extraStartTime').attr('required',false);
+		$('.extraEndTime').attr('required',false);
+	});
+
+	$('body').on('click', '.addMore', function(){
 		$('.masterDiv').append('<div class="row slaveDiv" id="slaveDiv1"><div class="col-3"><div class="ui-select"><div id="select-10-button" class="ui-btn ui-icon-carat-d ui-btn-icon-right ui-corner-all ui-shadow"><span>Dish Language</span><select name="dishLang[]" class="dishLang" required="" title="{{ __('messages.iDishLanguage') }}"><option value="" selected="" disabled="">Dish Language</option><option value="SWE">SWE</option><option value="ENG">ENG</option></select></div></div></div><div class="col-4"><div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset"><input type="text" name="prodName[]" placeholder="Dish Name" class="dish_name" value="" maxlength="24" title="{{ __('messages.iDishName') }}" required=""></div></div><div class="col-4"><div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset"><input type="text" name="prodDesc[]" placeholder="Description" value="" maxlength="50" title="{{ __('messages.iDishDescription') }}" required=""></div></div><div class="col-1"><button class="btn btn-danger btn-sm removeMore ui-btn ui-shadow ui-corner-all" style="background-color:maroon;color:white" rel="1" type="button">X</button></div></div>');
 		var countParam = countSet();
 		$('#countParam').val(countParam);
@@ -392,10 +437,6 @@
 		$('#slaveDiv'+rel).remove();
 		var countParam = countSet();
 		$('#countParam').val(countParam);
-	});
-
-	$(document).ready(function(){
-		countSet();
 	});
 
 	function countSet(){
@@ -456,8 +497,8 @@
     }
 
     $('.create-menu-form').submit(function(e){     
-    	dkS = moment($("#date-start").val(),'DD/MM/YYYY HH:mm').toDate();
-    	dkE = moment($("#date-end").val(),'DD/MM/YYYY HH:mm').toDate();
+    	dkS = moment($("#date-start").val(),'DD/MM/YYYY').toDate();
+    	dkE = moment($("#date-end").val(),'DD/MM/YYYY').toDate();
 
         if(fileSize>6000000){
 				alert("Image size should be smaller than 6MB");          	
@@ -472,36 +513,22 @@
     });
 
 	$(document).ready(function(){
-		var defaultStartDate = "{{date('d/m/Y',strtotime('+1day'))}} 05:00";
-		var defaultEndDate = "{{date('d/m/Y',strtotime('+10Year'))}} 05:00";
-		@if(isset($product_price_list->publishing_start_date) && $product_price_list->publishing_start_date != "0000-00-00 00:00:00")
-			dStart = "{{date('Y-m-d H:i:s', strtotime($product_price_list->publishing_start_date))}}";
+		var defaultStartDate = "{{date('d/m/Y',strtotime('+1day'))}}";
+		var defaultEndDate = "{{date('d/m/Y',strtotime('+10Year'))}}";
+		@if(isset($product_price_list->publishing_start_date) && $product_price_list->publishing_start_date != "0000-00-00")
+			dStart = "{{date('d/m/Y', strtotime($product_price_list->publishing_start_date))}}";
+			$('#date-start').val(dStart);
 			dStart = moment.utc(dStart).toDate();
-			$('#date-start').val(moment(dStart).local().format("DD/MM/YYYY HH:mm"));
-			$('#date-start-utc').val(moment.utc(dStart).format("DD/MM/YYYY HH:mm"));
-			dStart = moment(dStart).local().format("DD/MM/YYYY HH:mm");
 		@else
 			$('#date-start').val(defaultStartDate);
-			dStart = "{{date('Y-m-d',strtotime('+1Day'))}} 05:00";	
-			dStart = moment(dStart).toDate();
-			dStart = moment.utc(dStart).format("DD/MM/YYYY HH:mm");
-			$('#date-start-utc').val(dStart);
+			dStart = moment(defaultStartDate).toDate();
 		@endif
 
-		@if(isset($product_price_list->publishing_end_date) && $product_price_list->publishing_end_date != "0000-00-00 00:00:00")
-			dEnd = "{{date('Y-m-d H:i:s', strtotime($product_price_list->publishing_end_date))}}";
-			dEnd = moment.utc(dEnd).toDate();
-			$('#date-end').val(moment(dEnd).local().format("DD/MM/YYYY HH:mm"));
-			$('#date-end-utc').val(moment.utc(dEnd).format("DD/MM/YYYY HH:mm"));
-			dKEnd = moment(dEnd).local().format("YYYY-MM-DD HH:mm");					
-			dEnd = moment(dEnd).local().format("DD/MM/YYYY HH:mm");	
+		@if(isset($product_price_list->publishing_end_date) && $product_price_list->publishing_end_date != "0000-00-00")
+			dEnd = "{{date('d/m/Y', strtotime($product_price_list->publishing_end_date))}}";
+			$('#date-end').val(dEnd);	
 		@else
 			$('#date-end').val(defaultEndDate);
-			dEnd = "{{date('Y-m-d',strtotime('+10Year'))}} 05:00";
-			dEnd = moment(dEnd).toDate();
-			dKEnd = moment(dEnd).local().format("YYYY-MM-DD HH:mm");											
-			dEnd = moment.utc(dEnd).format("DD/MM/YYYY HH:mm");
-			$('#date-end-utc').val(dEnd);
 		@endif
 
 		@if(isset($product->small_image))
@@ -515,21 +542,35 @@
 		
 		$('#date-start').bootstrapMaterialDatePicker
 		({
-			weekStart: 0, format: 'DD/MM/YYYY HH:mm', minDate: dateToday, maxDate: defaultEndDate, clearButton: true
+			weekStart: 0, format: 'DD/MM/YYYY', minDate: dateToday, maxDate: defaultEndDate, time: false, clearButton: true
 		}).on('change', function(e, date)
 		{
 			dKStart = date;
 			$('#date-end').bootstrapMaterialDatePicker('setMinDate', date);
-			$('#date-start-utc').val(moment.utc(date).format('DD/MM/YYYY HH:mm'));
 		});
 
 		$('#date-end').bootstrapMaterialDatePicker
 		({
-			weekStart: 0, format: 'DD/MM/YYYY HH:mm', minDate: dateToday, maxDate: defaultEndDate, clearButton: true
+			weekStart: 0, format: 'DD/MM/YYYY', minDate: dateToday, maxDate: defaultEndDate, time: false, clearButton: true
 		}).on('change', function(e2, date2)
 		{
 			dKEnd = date2;
-			$('#date-end-utc').val(moment.utc(date2).format('DD/MM/YYYY HH:mm'));
+		});
+
+		$('.extraStartTime').bootstrapMaterialDatePicker
+		({
+			weekStart: 0, format: 'HH:mm', date: false, clearButton: true
+		}).on('change', function(e, date)
+		{									
+			$('#endTime').bootstrapMaterialDatePicker('setMinDate', date);
+		});
+
+		$('.extraEndTime').bootstrapMaterialDatePicker
+		({
+			weekStart: 0, format: 'HH:mm', date: false, clearButton: true
+		}).on('change', function(e2, date2)
+		{
+
 		});
 
 		$.material.init();
