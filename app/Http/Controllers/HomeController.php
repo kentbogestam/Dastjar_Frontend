@@ -841,14 +841,14 @@ class HomeController extends Controller
             $html .= '</div>';
         }
 
-        echo $dateNow = date("Y-m-d",time()); 
+        $dateNow = date("Y-m-d",time()); 
         $dateUtc = new \DateTime(date('H:i:s'));
         $ip = $_SERVER['REMOTE_ADDR'];
         $dataa = json_decode(file_get_contents("http://www.geoplugin.net/json.gp?ip=".@$ip));
         $timezone = $dataa->geoplugin_timezone;
         $dateUtc->setTimezone(new \DateTimeZone($timezone));
-        echo $timeNow = $dateUtc->format('H:i:s');
-        die;
+        $timeNow = $dateUtc->format('H:i:s');
+        
         // If no 'sub-cat' found
         if($status == false)
         {
