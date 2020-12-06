@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Gdpr;
 use App\DishType;
 use App\ProductsExtra;
+use App\ProductExtraPriceList;
 use App\Product;
 use Carbon\Carbon;
 use Auth;
@@ -61,14 +62,16 @@ class AjaxController extends Controller
                 }
                 $productsExtra = ProductsExtra::whereIn('dish_type_id',$parent)->where('store_id',$storeId)->pluck('extra_dish_type_id')->toArray();
                 
+                $dateNow = date("Y-m-d",time()); $timeNow = date("H:i:s",time());
+
                 $products = Product::from('product AS P')
-                    ->select(['P.product_id', 'P.product_name', 'P.product_description', 'P.preparation_Time', 'P.small_image', 'PPL.price', 'S.extra_prep_time', 'PPL.publishing_start_date', 'PPL.publishing_end_date'])
+                    ->select(['P.product_id', 'P.product_name', 'P.product_description', 'P.preparation_Time', 'P.small_image', 'PPL.id', 'PPL.price', 'S.extra_prep_time', 'PPL.publishing_start_date', 'PPL.publishing_end_date'])
                     ->join('product_price_list AS PPL', 'P.product_id', '=', 'PPL.product_id')
                     ->join('store AS S', 'S.store_id', '=', 'PPL.store_id')
                     ->whereIn('P.dish_type', $productsExtra)
                     ->where('PPL.store_id', $storeId)
-                    ->where('PPL.publishing_start_date','<=',Carbon::now())
-                    ->where('PPL.publishing_end_date','>=',Carbon::now())
+                    ->where('PPL.publishing_start_date','<=',$dateNow)
+                    ->where('PPL.publishing_end_date','>=',$dateNow)
                     ->groupBy('P.product_id')
                     ->orderBy('P.product_rank', 'ASC')
                     ->orderBy('P.product_id')

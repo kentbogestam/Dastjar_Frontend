@@ -498,8 +498,10 @@ class AdminController extends Controller
         $menuTypes = null;
         $request->session()->forget('order_date');
         
+        $dateNow = date("Y-m-d",time()); $timeNow = date("H:i:s",time());
+
         if(Session::get('kitchenStoreId')){
-            $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())
+            $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))->where('publishing_start_date','<=',$dateNow)->where('publishing_end_date','>=',$dateNow)
             ->with('menuPrice')->with('storeProduct')
             ->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')
             ->orderBy('product.product_rank', 'ASC')
@@ -728,15 +730,34 @@ class AdminController extends Controller
                     if($max_time < $productTime->preparation_Time){
                         $max_time = $productTime->preparation_Time;
                     }else{}
-                    $productPrice = ProductPriceList::select('price')->whereProductId($value['id'])->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->first();
-                    $total_price = $total_price + ($productPrice->price * $value['prod_quant']); 
+
+
+                    $dateNow = date("Y-m-d",time()); 
+                    $dateUtc = new \DateTime(date('H:i:s'));
+                    $ip = $_SERVER['REMOTE_ADDR'];
+                    $dataa = json_decode(file_get_contents("http://www.geoplugin.net/json.gp?ip=".@$ip));
+                    $timezone = $dataa->geoplugin_timezone;
+                    $dateUtc->setTimezone(new \DateTimeZone($timezone));
+                    $timeNow = $dateUtc->format('H:i:s');
+
+                    $productPrice = ProductPriceList::select('price','id')->whereProductId($value['id'])->where('publishing_start_date','<=',$dateNow)->where('publishing_end_date','>=',$dateNow)->first();
+
+                    $extraPrice = ProductExtraPriceList::select('price')->where('ppl_id',$productPrice->id)->where('publishing_start_time','<=',$timeNow)->where('publishing_end_time','>=',$timeNow)->first();
+                    
+                    if(!empty($extraPrice)){
+                        $usePrice = $extraPrice->price;
+                    }else{
+                        $usePrice = $productPrice->price;
+                    }
+                    
+                    $total_price = $total_price + ($usePrice * $value['prod_quant']); 
                     $orderDetail =  new OrderDetail();
                     $orderDetail->order_id = $orders->order_id;
                     $orderDetail->user_id = $customer_id;
                     $orderDetail->product_id = $value['id'];
                     $orderDetail->product_quality = $value['prod_quant'];
                     $orderDetail->product_description = $value['prod_desc'];
-                    $orderDetail->price = $productPrice->price;
+                    $orderDetail->price = $usePrice;
                     $orderDetail->time = $productTime->preparation_Time;
                     $orderDetail->company_id = $productTime->company_id;
                     $orderDetail->store_id = Session::get('kitchenStoreId');
@@ -782,7 +803,10 @@ class AdminController extends Controller
             // return view('kitchen.order.order-detail', compact('order','orderDetails','storeDetail'));
         }else{
             $menuTypes = null;
-            $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->with('menuPrice')->with('storeProduct')->get();
+
+            $dateNow = date("Y-m-d",time()); $timeNow = date("H:i:s",time());
+
+            $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))->where('publishing_start_date','<=',$dateNow)->where('publishing_end_date','>=',$dateNow)->with('menuPrice')->with('storeProduct')->get();
             if(count($menuDetails) != 0){
 
                 foreach ($menuDetails as $menuDetail) {
@@ -901,7 +925,10 @@ class AdminController extends Controller
         }else{}
 
         $menuTypes = null;
-        $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->with('menuPrice')->with('storeProduct')->get();
+
+        $dateNow = date("Y-m-d",time()); $timeNow = date("H:i:s",time());
+
+        $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))->where('publishing_start_date','<=',$dateNow)->where('publishing_end_date','>=',$dateNow)->with('menuPrice')->with('storeProduct')->get();
 
         if(count($menuDetails) != 0){
             foreach ($menuDetails as $menuDetail) {
@@ -1790,14 +1817,18 @@ class AdminController extends Controller
         $ProductOfferSloganLangList = ProductOfferSloganLangList::where('product_id','=',$productid)->pluck('offer_slogan_lang_list');
 
         $ProductOfferSubSloganLangList = ProductOfferSubSloganLangList::where('product_id','=',$productid)->pluck('offer_sub_slogan_lang_list');
-        
-        $names =  $descs = array();
+
+        $names = $langs = $descs = array();
         if(!empty($ProductOfferSloganLangList)){
-            $langs = LangText::whereIn('id', $ProductOfferSloganLangList->toArray())->pluck('lang')->toArray();
-            $names = LangText::whereIn('id', $ProductOfferSloganLangList->toArray())->pluck('text')->toArray();
+            foreach($ProductOfferSloganLangList as $data){
+                $langs[] = LangText::where('id', $data)->first()->lang;
+                $names[] = LangText::where('id', $data)->first()->text;
+            }
         }
         if(!empty($ProductOfferSubSloganLangList)){
-            $descs = LangText::whereIn('id', $ProductOfferSubSloganLangList->toArray())->pluck('text')->toArray();
+            foreach($ProductOfferSubSloganLangList as $data){
+                $descs[] = LangText::where('id', $data)->first()->text;
+            }
         }
         
         try{

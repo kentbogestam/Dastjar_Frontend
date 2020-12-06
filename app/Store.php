@@ -135,6 +135,8 @@ class Store extends Model
         $lng = $longitude;
         $radius = $radius;
 
+        $dateNow = date("Y-m-d",time()); $timeNow = date("H:i:s",time());
+
         $latLngList = Store::from('store AS S')
             ->select(['S.store_id', 'S.tagline', 'S.islive', DB::raw("TIMESTAMPDIFF(MINUTE, S.islive, UTC_TIMESTAMP()) AS heartbeat"), 'S.latitude', 'S.longitude', 'S.store_name', 'S.large_image AS store_large_image', 'S.store_open_close_day_time', DB::raw("($unit * ACOS(COS(RADIANS(".$lat.")) * COS(RADIANS(latitude)) * COS(RADIANS(".$lng.") - RADIANS(longitude)) + SIN(RADIANS(".$lat.")) * SIN(RADIANS(latitude)))) AS distance")])
             ->join('company', 'company.u_id', '=', 'S.u_id')
@@ -149,8 +151,8 @@ class Store extends Model
             })
             ->where('S.s_activ','=','1')
             ->where('dish_type.dish_activate',1)
-            ->where('product_price_list.publishing_start_date','<=',Carbon::now())
-            ->where('product_price_list.publishing_end_date','>=',Carbon::now())
+            ->where('product_price_list.publishing_start_date','<=',$dateNow)
+            ->where('product_price_list.publishing_end_date','>=',$dateNow)
             ->groupBy('S.store_id')
             ->having('distance','<=',$radius)
             ->orderBy('distance')
@@ -242,7 +244,7 @@ class Store extends Model
         $lat = $latitude;
         $lng = $longitude;
         $radius = $radius;
-
+        $dateNow = date("Y-m-d",time()); $timeNow = date("H:i:s",time());
         $latLngList = Store::from('store AS S')
             ->select(['S.store_id', 'S.tagline', 'S.latitude', 'S.longitude', 'S.store_name', 'S.large_image AS store_large_image', 'S.store_open_close_day_time_catering', DB::raw("($unit * ACOS(COS(RADIANS(".$lat.")) * COS(RADIANS(latitude)) * COS(RADIANS(".$lng.") - RADIANS(longitude)) + SIN(RADIANS(".$lat.")) * SIN(RADIANS(latitude)))) AS distance")])
             ->join('company', 'company.u_id', '=', 'S.u_id')
@@ -257,8 +259,8 @@ class Store extends Model
             })
             ->where('S.s_activ','=','1')
             ->where('dish_type.dish_activate',1)
-            ->where('product_price_list.publishing_start_date','<=',Carbon::now())
-            ->where('product_price_list.publishing_end_date','>=',Carbon::now())
+            ->where('product_price_list.publishing_start_date','<=',$dateNow)
+            ->where('product_price_list.publishing_end_date','>=',$dateNow)
             ->groupBy('S.store_id')
             ->having('distance','<=',$radius)
             ->orderBy('distance')
@@ -313,7 +315,8 @@ class Store extends Model
     }
 
     public function publishing_dates2(){
-        return $this->hasMany('App\ProductPriceList','product_id','product_id')->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now());
+        $dateNow = date("Y-m-d",time()); $timeNow = date("H:i:s",time());
+        return $this->hasMany('App\ProductPriceList','product_id','product_id')->where('publishing_start_date','<=',$dateNow)->where('publishing_end_date','>=',$dateNow);
     }
 
     /**

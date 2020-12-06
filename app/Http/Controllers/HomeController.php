@@ -14,6 +14,7 @@ use App\Gdpr;
 use App\User;
 use App\PromotionLoyalty;
 use App\OrderCustomerLoyalty;
+use App\ProductExtraPriceList;
 use Session;
 use Cookie;
 use DB;
@@ -487,10 +488,12 @@ class HomeController extends Controller
             }
         }*/
 
+        $dateNow = date("Y-m-d",time()); $timeNow = date("H:i:s",time()); 
+
         $productPriceList = ProductPriceList::select('dish_type')
             ->where('store_id',$storeId)
-            ->where('publishing_start_date','<=',Carbon::now())
-            ->where('publishing_end_date','>=',Carbon::now())
+            ->where('publishing_start_date','<=',$dateNow)
+            ->where('publishing_end_date','>=',$dateNow)
             ->where('dish_type', '!=', null)
             ->join('product', 'product_price_list.product_id', '=', 'product.product_id')
             ->orderBy('product.product_rank', 'ASC')
@@ -838,16 +841,24 @@ class HomeController extends Controller
             $html .= '</div>';
         }
 
+        echo $dateNow = date("Y-m-d",time()); 
+        $dateUtc = new \DateTime(date('H:i:s'));
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $dataa = json_decode(file_get_contents("http://www.geoplugin.net/json.gp?ip=".@$ip));
+        $timezone = $dataa->geoplugin_timezone;
+        $dateUtc->setTimezone(new \DateTimeZone($timezone));
+        echo $timeNow = $dateUtc->format('H:i:s');
+        die;
         // If no 'sub-cat' found
         if($status == false)
         {
             $products = Product::from('product AS P')
-                ->select(['P.product_id', 'P.product_name', 'P.product_description', 'P.preparation_Time', 'P.small_image', 'PPL.price', 'S.extra_prep_time', 'PPL.publishing_start_date', 'PPL.publishing_end_date'])
+                ->select(['P.product_id', 'P.product_name', 'P.product_description', 'P.preparation_Time', 'P.small_image', 'PPL.id', 'PPL.price', 'S.extra_prep_time', 'PPL.publishing_start_date', 'PPL.publishing_end_date'])
                 ->join('product_price_list AS PPL', 'P.product_id', '=', 'PPL.product_id')
                 ->join('store AS S', 'S.store_id', '=', 'PPL.store_id')
                 ->where(['P.dish_type' => $dishType, 'PPL.store_id' => $storeId])
-                ->where('PPL.publishing_start_date','<=',Carbon::now())
-                ->where('PPL.publishing_end_date','>=',Carbon::now())
+                ->where('PPL.publishing_start_date','<=',$dateNow)
+                ->where('PPL.publishing_end_date','>=',$dateNow)
                 ->groupBy('P.product_id')
                 ->orderBy('P.product_rank', 'ASC')
                 ->orderBy('P.product_id')
@@ -860,7 +871,15 @@ class HomeController extends Controller
                 
                 foreach($products as $row)
                 {
-                    // 
+                    // check if any extra price
+                    $extraPrice = ProductExtraPriceList::select('price')->where('ppl_id',$row->id)->where('publishing_start_time','<=',$timeNow)->where('publishing_end_time','>=',$timeNow)->first();
+
+                    if(!empty($extraPrice)){
+                        $usePrice = $extraPrice->price; 
+                    }else{
+                        $usePrice = $row->price; 
+                    } 
+
                     $time = $row->preparation_Time;
                     if(!is_null($row->extra_prep_time)){
                         $time2 = $row->extra_prep_time;
@@ -893,7 +912,7 @@ class HomeController extends Controller
                                     <div class='discription'>
                                         <h3>{$row->product_name}</h3>
                                         <p>{$row->product_description}</p>
-                                        <p class='price'>".number_format((float)$row->price, 2, '.', '')." SEK</p>
+                                        <p class='price'>".number_format((float)$usePrice, 2, '.', '')." SEK</p>
                                     </div>
                                 </div>
                                 <div class='col-md-2 col-sm-2 col-xs-4 quantity-sec'>
