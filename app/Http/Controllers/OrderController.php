@@ -794,8 +794,12 @@ class OrderController extends Controller
                     $dateNow = date("Y-m-d",time()); 
                     $dateUtc = new \DateTime(date('H:i:s'));
                     $ip = $_SERVER['REMOTE_ADDR'];
-                    $dataa = json_decode(file_get_contents("http://www.geoplugin.net/json.gp?ip=".@$ip));
-                    $timezone = $dataa->geoplugin_timezone;
+                    if($ip != '::1'){
+                        $dataa = json_decode(file_get_contents("http://www.geoplugin.net/json.gp?ip=".@$ip));
+                        $timezone = $dataa->geoplugin_timezone;
+                    }else{
+                        $timezone = 'Asia/Kolkata';
+                    }
                     $dateUtc->setTimezone(new \DateTimeZone($timezone));
                     $timeNow = $dateUtc->format('H:i:s');
 
