@@ -330,7 +330,7 @@
 				<div class="col-12">
 					<p style="font-weight: 600;margin-top:20px">Multiple Price Per Day <span style="font-weight: 400">(max. limit 3)</span> <span class="fa fa-plus addMultiple" rel="{{count(@$product_extra_price_list)}}"></span></p>
 					@forelse(@$product_extra_price_list as $pl)
-						<p>SEK {{@$pl->price}} {{substr(@$pl->publishing_start_time,0,5)}} to {{substr(@$pl->publishing_end_time,0,5)}} <a href="{{ url('kitchen/delete-extra-time/'.@$pl->id) }}"><span class="fa fa-trash"></span></a></p>
+						<p>SEK {{@$pl->price}} {{substr(@$pl->publishing_start_time,0,5)}} to {{substr(@$pl->publishing_end_time,0,5)}} <a href="javascript:void(0)" class="deleteExtraTime" rel="{{@$pl->id}}"><span class="fa fa-trash"></span></a></p>
 					@empty
 					@endforelse
 				</div>
@@ -410,6 +410,12 @@
 
 	$(document).ready(function(){
 		countSet();
+	});
+
+	$('body').on('click', '.deleteExtraTime', function(){
+		var url = '{{ route("deleteExtraTime", ":id") }}';
+		url = url.replace(':id', $(this).attr('rel'));
+		window.location = url;
 	});
 
 	$('body').on('click', '.addMultiple', function(){
