@@ -51,7 +51,7 @@ class KitchenController extends Controller
             }
         }
 
-        $orderDetailscustomer = Order::select(['orders.*','customer.name as name', 'OCD.discount_id', 'PD.discount_value', DB::raw('COUNT(OCL.id) AS cntLoyaltyUsed'), 'OD.status AS orderDeliveryStatus', 'CA.street'])
+        $orderDetailscustomer = Order::select(['orders.*','customer.name as name', 'OCD.discount_id', 'PD.discount_value', DB::raw('COUNT(OCL.id) AS cntLoyaltyUsed'), 'OD.status AS orderDeliveryStatus', 'CA.street', 'CS.street as userStreet'])
             ->whereIn('orders.store_id', $stores)
             ->where('user_type','=','customer')
             ->where('orders.check_deliveryDate', '>=', date("Y-m-d", strtotime("-3 day")))
@@ -62,6 +62,7 @@ class KitchenController extends Controller
             ->join('order_details', 'orders.order_id', '=', 'order_details.order_id')
             ->leftJoin('customer','orders.user_id','=','customer.id')
             ->leftJoin('customer_addresses AS CA','CA.id','=','orders.user_address_id')
+            ->leftJoin('customer_addresses AS CS','CS.customer_id','=','orders.user_id')
             ->leftJoin('order_customer_discount AS OCD', 'orders.order_id', '=', 'OCD.order_id')
             ->leftJoin('promotion_discount AS PD', 'OCD.discount_id', '=', 'PD.id')
             ->leftJoin('order_customer_loyalty AS OCL', 'OCL.order_id', '=', 'orders.order_id')
@@ -103,7 +104,38 @@ class KitchenController extends Controller
             ->where('is_verified', '0')
             ->where('catering_order_status', '0')->count();
 
-        return response()->json(['status' => 'success', 'response' => true, 'store' => $store, 'extra_prep_time' => $extra_prep_time, 'data'=>$results, 'orderItems' => $orderItems, 'catCount' => $catCount]);
+        // $kitchenCount = $ordersCount = '';
+        // if( \Session::has('subscribedPlans.kitchen') ){
+            $kitchenCount = Order::whereIn('store_id',$stores)
+                ->where('delivery_timestamp', '>=', time())
+                ->where('cancel','!=', 1)
+                ->where('order_started', '0')
+                ->whereNotIn('online_paid', [2])
+                ->where('is_verified', '1')
+                ->where('catering_order_status', '2')
+                ->count();
+            $ordersCount = Order::whereIn('store_id',$stores)
+                ->where('delivery_timestamp', '>=', time())
+                ->where('cancel','!=', 1)
+                ->where('order_started', '1')
+                ->where('order_ready', '1')
+                ->where('paid', '0')
+                ->whereNotIn('online_paid', [2])
+                ->where('is_verified', '1')
+                ->where('catering_order_status', '2')
+                ->count();
+        // }else{
+        //     $ordersCount = Order::whereIn('store_id',$stores)
+        //         ->where('delivery_timestamp', '>=', time())
+        //         ->where('cancel','!=', 1)
+        //         ->where('order_started', '0')
+        //         ->whereNotIn('online_paid', [2])
+        //         ->where('is_verified', '1')
+        //         ->where('catering_order_status', '2')
+        //         ->count();
+        // }
+
+        return response()->json(['status' => 'success', 'response' => true, 'store' => $store, 'extra_prep_time' => $extra_prep_time, 'data'=>$results, 'orderItems' => $orderItems, 'catCount' => $catCount, 'kitchenCount' => $kitchenCount, 'ordersCount' => $ordersCount]);
     }
     
     /**

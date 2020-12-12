@@ -65,20 +65,51 @@ class CateringController extends Controller
         
     public function cateringOrders($id)
     {
-        $query = Order::with(['orderdetailDetail','customerDetail','customerFullDetail'])
-            ->where('store_id',$id)
+        $query = Order::with(['orderdetailDetail', 'customerDetail', 'customerFullAddress', 'customerFullDetail'])
+            ->where('store_id', $id)
             ->where('order_type', 'eat_later')
-            ->where('cancel','!=', 1)
-            ->where('online_paid','!=', '0')
+            ->where('cancel', '!=', 1)
+            ->where('online_paid', '!=', '0')
             ->where('delivery_timestamp', '>', time())
             ->where('is_verified', '0');
 
         //to get list of orders
         $items = $query->where('catering_order_status', '!=', 2)->get();
-        //to get list of orders
+        //to get number of orders
         $count = $query->where('catering_order_status', '0')->count();
 
-        return response()->json(['status' => true, 'data' => $items, 'count' => $count]);
+        $kitchenCount = $ordersCount = '';
+        if( \Session::has('subscribedPlans.kitchen') ){
+            $kitchenCount = Order::where('store_id', $id)
+                ->where('delivery_timestamp', '>=', time())
+                ->where('cancel','!=', 1)
+                ->where('order_started', '0')
+                ->whereNotIn('online_paid', [2])
+                ->where('is_verified', '1')
+                ->where('catering_order_status', '2')
+                ->count();
+            $ordersCount = Order::where('store_id', $id)
+                ->where('delivery_timestamp', '>=', time())
+                ->where('cancel','!=', 1)
+                ->where('order_started', '1')
+                ->where('order_ready', '1')
+                ->where('paid', '0')
+                ->whereNotIn('online_paid', [2])
+                ->where('is_verified', '1')
+                ->where('catering_order_status', '2')
+                ->count();
+        }else{
+            $ordersCount = Order::where('store_id', $id)
+                ->where('delivery_timestamp', '>=', time())
+                ->where('cancel','!=', 1)
+                ->where('order_started', '0')
+                ->whereNotIn('online_paid', [2])
+                ->where('is_verified', '1')
+                ->where('catering_order_status', '2')
+                ->count();
+        }  
+
+        return response()->json(['status' => true, 'data' => $items, 'count' => $count, 'kitchenCount' => $kitchenCount, 'ordersCount' => $ordersCount]);
     }
         
     public function orderCateringRejectAccept($id,$status)

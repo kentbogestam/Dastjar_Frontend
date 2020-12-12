@@ -573,7 +573,7 @@ class AdminController extends Controller
             }
         }
 
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time', 'orders.order_type', 'orders.customer_order_id','orders.online_paid', 'orders.delivery_timestamp', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.user_id','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time', 'orders.order_type', 'orders.customer_order_id','orders.online_paid', 'orders.delivery_timestamp', 'orders.user_address_id', 'CA.street', 'CS.street as userStreet', 'OD.status AS orderDeliveryStatus')
             ->whereIn('order_details.store_id', $stores)
             // ->where('delivery_date', '>=', $deliveryDate)
             // ->where('delivery_date', '<=', $deliveryDateTill)
@@ -583,6 +583,7 @@ class AdminController extends Controller
             ->join('product','product.product_id','=','order_details.product_id')
             ->join('orders','orders.order_id','=','order_details.order_id')
             ->leftJoin('customer_addresses AS CA','CA.id','=','orders.user_address_id')
+            ->leftJoin('customer_addresses AS CS','CS.customer_id','=','orders.user_id')
             ->leftJoin('order_delivery AS OD', 'OD.order_id', '=', 'orders.order_id')
             ->where('orders.is_verified', '1')
             ->where('orders.catering_order_status', '2')
@@ -600,7 +601,27 @@ class AdminController extends Controller
             ->where('is_verified', '0')
             ->where('catering_order_status', '0')->count();
 
-        return response()->json(['status' => 'success', 'user' => $text_speech, 'extra_prep_time' => $extra_prep_time, 'data'=>$kitchenorderDetails, 'catCount' => $catCount]);
+        $ordersCount = Order::whereIn('store_id',$stores)
+            ->where('delivery_timestamp', '>=', time())
+            ->where('cancel','!=', 1)
+            ->where('order_started', '1')
+            ->where('order_ready', '1')
+            ->where('paid', '0')
+            ->whereNotIn('online_paid', [2])
+            ->where('is_verified', '1')
+            ->where('catering_order_status', '2')
+            ->count();
+
+        $kitchenCount = Order::whereIn('store_id',$stores)
+            ->where('delivery_timestamp', '>=', time())
+            ->where('cancel','!=', 1)
+            ->where('order_started', '0')
+            ->whereNotIn('online_paid', [2])
+            ->where('is_verified', '1')
+            ->where('catering_order_status', '2')
+            ->count(); 
+
+        return response()->json(['status' => 'success', 'user' => $text_speech, 'extra_prep_time' => $extra_prep_time, 'data'=>$kitchenorderDetails, 'catCount' => $catCount, 'ordersCount' => $ordersCount, 'kitchenCount' => $kitchenCount]);
     }
 
     public function kitchenOrdersNew($id){
@@ -622,7 +643,7 @@ class AdminController extends Controller
             }
         }
 
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time', 'orders.customer_order_id','orders.online_paid', 'orders.delivery_timestamp', 'orders.user_address_id', 'orders.order_type', 'CA.street', 'OD.status AS orderDeliveryStatus')
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.user_id','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time', 'orders.customer_order_id','orders.online_paid', 'orders.delivery_timestamp', 'orders.user_address_id', 'orders.order_type', 'CA.street', 'CS.street as userStreet', 'OD.status AS orderDeliveryStatus')
             ->whereIn('order_details.store_id', $stores)
             // ->where('delivery_date', '>=', $deliveryDate)
             // ->where('delivery_date', '<=', $deliveryDateTill)
@@ -633,6 +654,7 @@ class AdminController extends Controller
             ->join('product','product.product_id','=','order_details.product_id')
             ->join('orders','orders.order_id','=','order_details.order_id')
             ->leftJoin('customer_addresses AS CA','CA.id','=','orders.user_address_id')
+            ->leftJoin('customer_addresses AS CS','CS.customer_id','=','orders.user_id')
             ->leftJoin('order_delivery AS OD', 'OD.order_id', '=', 'orders.order_id')
             ->where('orders.is_verified', '1')
             ->where('orders.catering_order_status', '2')
@@ -641,7 +663,34 @@ class AdminController extends Controller
         $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;
         
         $text_speech = Auth::guard('admin')->user()->text_speech;
-        return response()->json(['status' => 'success', 'user' => $text_speech, 'extra_prep_time' => $extra_prep_time,'data'=>$kitchenorderDetails]);
+
+        $catCount = Order::whereIn('store_id',$stores)
+            ->where('order_type', 'eat_later')
+            ->where('cancel','!=', 1)
+            ->where('online_paid', '>', 0)
+            ->where('delivery_timestamp', '>', time())
+            ->where('is_verified', '0')
+            ->where('catering_order_status', '0')->count();
+        $ordersCount = Order::whereIn('store_id',$stores)
+            ->where('delivery_timestamp', '>=', time())
+            ->where('cancel','!=', 1)
+            ->where('order_started', '1')
+            ->where('order_ready', '1')
+            ->where('paid', '0')
+            ->whereNotIn('online_paid', [2])
+            ->where('is_verified', '1')
+            ->where('catering_order_status', '2')
+            ->count();
+        $kitchenCount = Order::whereIn('store_id',$stores)
+            ->where('delivery_timestamp', '>=', time())
+            ->where('cancel','!=', 1)
+            ->where('order_started', '0')
+            ->whereNotIn('online_paid', [2])
+            ->where('is_verified', '1')
+            ->where('catering_order_status', '2')
+            ->count();
+
+        return response()->json(['status' => 'success', 'user' => $text_speech, 'extra_prep_time' => $extra_prep_time, 'data'=>$kitchenorderDetails, 'catCount' => $catCount, 'ordersCount' => $ordersCount, 'kitchenCount' => $kitchenCount]);
     }
 
     public function kitchenOrderSave(Request $request){
@@ -2369,6 +2418,49 @@ class AdminController extends Controller
     {
         $strAddress = '';
         $userAddress = UserAddress::find($addressId);
+
+        if($userAddress)
+        {
+            $strAddress = Helper::convertAddressToStr($userAddress, 0);
+
+            if( !empty($userAddress->mobile) )
+            {
+                $strAddress .= "<p><strong>".__('messages.phone').":</strong> {$userAddress->mobile}</p>";
+            }
+
+            if( !is_null($userAddress->entry_code) )
+            {
+                $strAddress .= "<p><strong>".__('messages.entryCode').":</strong> {$userAddress->entry_code}</p>";
+            }
+
+            if( !is_null($userAddress->apt_no) )
+            {
+                $strAddress .= "<p><strong>".__('messages.aptNo').":</strong> {$userAddress->apt_no}</p>";
+            }
+
+            if( !is_null($userAddress->company_name) )
+            {
+                $strAddress .= "<p><strong>".__('messages.companyName').":</strong> {$userAddress->company_name}</p>";
+            }
+
+            if( !is_null($userAddress->other_info) )
+            {
+                $strAddress .= "<p><strong>".__('messages.otherInfo').":</strong> {$userAddress->other_info}</p>";
+            }
+        }
+
+        return response()->json(['strAddress' => $strAddress]);
+    }
+
+    /**
+     * [getOrderUserAddress description]
+     * @param  [type] $addressId [description]
+     * @return [type]            [description]
+     */
+    function getOrderUserAddress($addressId)
+    {
+        $strAddress = '';
+        $userAddress = UserAddress::where('customer_id',$addressId)->first();
 
         if($userAddress)
         {

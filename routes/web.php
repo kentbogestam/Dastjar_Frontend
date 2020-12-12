@@ -201,6 +201,7 @@ Route::group(['prefix' => 'kitchen'], function(){
 	Route::post('add-manual-prep-time','AdminController@addManualPrepTime');
 	Route::get('get-available-driver-to-assign/{orderId}', 'AdminController@getAvailableDriverToAssign');
 	Route::get('get-order-delivery-address/{addressId}', 'AdminController@getOrderDeliveryAddress');
+	Route::get('get-order-user-address/{userId}', 'AdminController@getOrderUserAddress');
 	Route::post('order-assign-driver', 'AdminController@orderAssignDriver');
 	Route::post('kitchen-order-save','AdminController@kitchenOrderSave');
 	Route::get('kitchen-order-save','AdminController@kitchenOrderSave');

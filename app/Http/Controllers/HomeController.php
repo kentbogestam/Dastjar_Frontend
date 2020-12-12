@@ -914,8 +914,8 @@ class HomeController extends Controller
                                 <div class='col-sm-10 col-md-10 col-xs-8'>
                                     <div class='product-detail'>{$proImg}</div>
                                     <div class='discription'>
-                                        <h3>{$row->product_name}</h3>
-                                        <p>{$row->product_description}</p>
+                                        <h3 title='{$row->product_name}'>".substr($row->product_name,0,40)."</h3>
+                                        <p title='{$row->product_description}'>".substr($row->product_description,0,100)."</p>
                                         <p class='price'>".number_format((float)$usePrice, 2, '.', '')." SEK</p>
                                     </div>
                                 </div>

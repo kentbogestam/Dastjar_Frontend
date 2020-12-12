@@ -245,10 +245,10 @@
 							</select>
 						</div>
 						<div class="col-4">
-							<input type="text" name="prodName[]" placeholder="Dish Name" class="dish_name" value="{{@$names[$i]}}" maxlength="24" title="{{ __('messages.iDishName') }}" required/>
+							<input type="text" name="prodName[]" placeholder="Dish Name" class="dish_name" value="{{@$names[$i]}}" maxlength="40" title="{{ __('messages.iDishName') }}" required/>
 						</div>
 						<div class="col-4">
-							<input type="text" name="prodDesc[]" placeholder="Description" maxlength="50" title="{{ __('messages.iDishDescription') }}" value="{{@$descs[$i]}}" required/>
+							<input type="text" name="prodDesc[]" placeholder="Description" maxlength="100" title="{{ __('messages.iDishDescription') }}" value="{{@$descs[$i]}}" required/>
 						</div>
 						<div class="col-1">
 							<button class="btn btn-danger btn-sm removeMore" style="background-color:maroon;color:white" rel="1" type="button">X</button>
@@ -265,10 +265,10 @@
 						</select>
 					</div>
 					<div class="col-4">
-						<input type="text" name="prodName[]" placeholder="Dish Name" class="dish_name" value="" maxlength="24" title="{{ __('messages.iDishName') }}" required/>
+						<input type="text" name="prodName[]" placeholder="Dish Name" class="dish_name" value="" maxlength="40" title="{{ __('messages.iDishName') }}" required/>
 					</div>
 					<div class="col-4">
-						<input type="text" name="prodDesc[]" placeholder="Description" value="" maxlength="50" title="{{ __('messages.iDishDescription') }}" required/>
+						<input type="text" name="prodDesc[]" placeholder="Description" value="" maxlength="100" title="{{ __('messages.iDishDescription') }}" required/>
 					</div>
 					<div class="col-1">
 						<button class="btn btn-danger btn-sm removeMore" style="background-color:maroon;color:white" rel="1" type="button">X</button>
@@ -343,7 +343,7 @@
 							<input type="text" name="startTime" placeholder="Start Time" class="startTime extraStartTime" value="" maxlength="24" title="Start Time">
 						</div>
 						<div class="col-4">
-							<input type="text" name="endTime" placeholder="End time" value="" class="endTime extraEndTime" maxlength="50" title="End Time">
+							<input type="text" name="endTime" placeholder="End time" value="" class="endTime extraEndTime" maxlength="24" title="End Time">
 						</div>
 						<div class="col-1">
 							<button class="btn btn-danger btn-sm removeMultiple ui-btn ui-shadow ui-corner-all" style="background-color:maroon;color:white" type="button">X</button>
@@ -439,7 +439,7 @@
 	});
 
 	$('body').on('click', '.addMore', function(){
-		$('.masterDiv').append('<div class="row slaveDiv"><div class="col-3"><div class="ui-select"><div id="select-10-button" class="ui-btn ui-icon-carat-d ui-btn-icon-right ui-corner-all ui-shadow"><span>Dish Language</span><select name="dishLang[]" class="dishLang" required="" title="{{ __('messages.iDishLanguage') }}"><option value="" selected="" disabled="">Dish Language</option><option value="SWE">SWE</option><option value="ENG">ENG</option></select></div></div></div><div class="col-4"><div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset"><input type="text" name="prodName[]" placeholder="Dish Name" class="dish_name" value="" maxlength="24" title="{{ __('messages.iDishName') }}" required=""></div></div><div class="col-4"><div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset"><input type="text" name="prodDesc[]" placeholder="Description" value="" maxlength="50" title="{{ __('messages.iDishDescription') }}" required=""></div></div><div class="col-1"><button class="btn btn-danger btn-sm removeMore ui-btn ui-shadow ui-corner-all" style="background-color:maroon;color:white" rel="1" type="button">X</button></div></div>');
+		$('.masterDiv').append('<div class="row slaveDiv"><div class="col-3"><div class="ui-select"><div id="select-10-button" class="ui-btn ui-icon-carat-d ui-btn-icon-right ui-corner-all ui-shadow"><span>Dish Language</span><select name="dishLang[]" class="dishLang" required="" title="{{ __('messages.iDishLanguage') }}"><option value="" selected="" disabled="">Dish Language</option><option value="SWE">SWE</option><option value="ENG">ENG</option></select></div></div></div><div class="col-4"><div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset"><input type="text" name="prodName[]" placeholder="Dish Name" class="dish_name" value="" maxlength="40" title="{{ __('messages.iDishName') }}" required=""></div></div><div class="col-4"><div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset"><input type="text" name="prodDesc[]" placeholder="Description" value="" maxlength="100" title="{{ __('messages.iDishDescription') }}" required=""></div></div><div class="col-1"><button class="btn btn-danger btn-sm removeMore ui-btn ui-shadow ui-corner-all" style="background-color:maroon;color:white" rel="1" type="button">X</button></div></div>');
 		var countParam = countSet();
 		$('#countParam').val(countParam);
 	});
