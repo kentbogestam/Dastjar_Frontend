@@ -1169,3 +1169,10 @@ button.btn.btn-address {
     margin-bottom:30px;
     cursor:pointer;
 }
+
+.truncated {
+  	display: -webkit-box;
+  	-webkit-line-clamp: 1; 
+  	-webkit-box-orient: vertical; 
+  	overflow: hidden; 
+}
