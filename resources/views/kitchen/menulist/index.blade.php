@@ -402,28 +402,31 @@
 				        	console.log(item.current_price);
 				        	
 				        	var currentPrice = '';
-				        	if(item.current_price != null)
-				        	{
-				        		//
-								dStart = item.current_price.publishing_start_date;
-								dStart = moment.utc(dStart).toDate();
-								dStart = moment(dStart).local().format('MMM DD, Y');
-								dEnd = item.current_price.publishing_end_date;
-								dEnd = moment.utc(dEnd).toDate();				
-								dEnd = moment(dEnd).local().format('MMM DD, Y');
-								formattedFromToDate = " " + dStart + " - " + dEnd;
 
-								//
-				        		currentPrice += '<div class="menu_icons row">'+
-				        			'<div class="col-sm-12">'+
-				        				'<span style="margin-right: 10px; color: rgba(199,7,17,1)">SEK '+item.current_price.price+'</span><span class="fa fa-calendar"></span><span>'+formattedFromToDate+'</span>'+
-					        			'<a href="javascript:void(0)" title="{{ __('messages.iDishRemovePrice') }}" onClick="deleteDishPrice(\'{{url('kitchen/delete-dish-price?price_id=')}}'+item.current_price.id+'\')" data-ajax="false">'+
-					        				'<span class="fa fa-trash" style="margin-left: 15px"></span>'+
-					        			'</a>'+
-					        			'<a href="{{url('kitchen/edit-menu-dish?product_id=')}}'+item.product_id+'&store_id={{ Session::get('kitchenStoreId') }}&price_id='+item.current_price.id+'" title="{{ __('messages.iDishUpdatePrice') }}" data-ajax="false"><span class="fa fa-edit" style="margin-left: 5px"></span>'+
-					        			'</a>'+
-				        			'</div>'+
-				        		'</div>';
+							if(item.current_price != null)
+				        	{
+				        		$.each(item.current_price, function(j, itm) {
+					        		//
+									dStart = itm.publishing_start_date;
+									dStart = moment.utc(dStart).toDate();
+									dStart = moment(dStart).local().format('MMM DD, Y');
+									dEnd = itm.publishing_end_date;
+									dEnd = moment.utc(dEnd).toDate();				
+									dEnd = moment(dEnd).local().format('MMM DD, Y');
+									formattedFromToDate = " " + dStart + " - " + dEnd;
+
+									//
+					        		currentPrice += '<div class="menu_icons row">'+
+					        			'<div class="col-sm-12">'+
+					        				'<span style="margin-right: 10px; color: rgba(199,7,17,1)">SEK '+itm.price+'</span><span class="fa fa-calendar"></span><span>'+formattedFromToDate+'</span>'+
+						        			'<a href="javascript:void(0)" title="{{ __('messages.iDishRemovePrice') }}" onClick="deleteDishPrice(\'{{url('kitchen/delete-dish-price?price_id=')}}'+itm.id+'\')" data-ajax="false">'+
+						        				'<span class="fa fa-trash" style="margin-left: 15px"></span>'+
+						        			'</a>'+
+						        			'<a href="{{url('kitchen/edit-menu-dish?product_id=')}}'+item.product_id+'&store_id={{ Session::get('kitchenStoreId') }}&price_id='+itm.id+'" title="{{ __('messages.iDishUpdatePrice') }}" data-ajax="false"><span class="fa fa-edit" style="margin-left: 5px"></span>'+
+						        			'</a>'+
+					        			'</div>'+
+					        		'</div>';
+					        	});
 				        	}
 
 				        	// HTML part

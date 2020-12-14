@@ -1349,8 +1349,9 @@ class AdminController extends Controller
                     ->where('product_id', $value->product_id)
                     ->where('store_id', Session::get('kitchenStoreId'))
                     ->where('publishing_start_date', '<=', $current_date)
-                    ->where('publishing_end_date', '>=', $current_date)
-                    ->first();
+                    // ->where('publishing_end_date', '>=', $current_date)
+                    ->get();
+                    // ->first();
                     //->toSql();
                 
                 if($currentProductPrice)
