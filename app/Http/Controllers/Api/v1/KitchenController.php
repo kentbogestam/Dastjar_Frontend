@@ -125,17 +125,17 @@ class KitchenController extends Controller
                 ->where('catering_order_status', '2')
                 ->count();
         // }else{
-        //     $ordersCount = Order::whereIn('store_id',$stores)
-        //         ->where('delivery_timestamp', '>=', time())
-        //         ->where('cancel','!=', 1)
-        //         ->where('order_started', '0')
-        //         ->whereNotIn('online_paid', [2])
-        //         ->where('is_verified', '1')
-        //         ->where('catering_order_status', '2')
-        //         ->count();
+            $ordersCount2 = Order::whereIn('store_id',$stores)
+                ->where('delivery_timestamp', '>=', time())
+                ->where('cancel','!=', 1)
+                ->where('order_started', '0')
+                ->whereNotIn('online_paid', [2])
+                ->where('is_verified', '1')
+                ->where('catering_order_status', '2')
+                ->count();
         // }
 
-        return response()->json(['status' => 'success', 'response' => true, 'store' => $store, 'extra_prep_time' => $extra_prep_time, 'data'=>$results, 'orderItems' => $orderItems, 'catCount' => $catCount, 'kitchenCount' => $kitchenCount, 'ordersCount' => $ordersCount]);
+        return response()->json(['status' => 'success', 'response' => true, 'store' => $store, 'extra_prep_time' => $extra_prep_time, 'data'=>$results, 'orderItems' => $orderItems, 'catCount' => $catCount, 'kitchenCount' => $kitchenCount, 'ordersCount' => $ordersCount, 'ordersCount2' => $ordersCount2]);
     }
     
     /**

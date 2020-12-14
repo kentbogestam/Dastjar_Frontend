@@ -476,17 +476,25 @@
           		$('.catering-badge').html('');
           	}
 
-          	if(returnedData['kitchenCount'] > 0){
-             $('.kitchen-badge').html(returnedData['kitchenCount']);
-            }else{
-                $('.kitchen-badge').html('');
-            }
+          	@if( Session::has('subscribedPlans.kitchen') )
+	          	if(returnedData['kitchenCount'] > 0){
+	             $('.kitchen-badge').html(returnedData['kitchenCount']);
+	            }else{
+	                $('.kitchen-badge').html('');
+	            }
 
-          	if(returnedData['ordersCount'] > 0){
-          		$('.orders-badge').html(returnedData['ordersCount']);
-          	}else{
-          		$('.orders-badge').html('');
-          	}
+	          	if(returnedData['ordersCount'] > 0){
+	          		$('.orders-badge').html(returnedData['ordersCount']);
+	          	}else{
+	          		$('.orders-badge').html('');
+	          	}
+	        @else
+	        	if(returnedData['ordersCount2'] > 0){
+	          		$('.orders-badge').html(returnedData['ordersCount2']);
+	          	}else{
+	          		$('.orders-badge').html('');
+	          	}
+	        @endif
 		});
 	}
 
