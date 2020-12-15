@@ -226,6 +226,12 @@ class OrderController extends Controller
     // Upload all txt file from printdata directory to printer server
     function uploadPrintFile()
     {
+        // If not 'production', dont upload file on print server
+        if(env('APP_ENV') == 'local' || env('APP_ENV') == 'dev')
+        {
+            return true;
+        }
+
         $PRINTER_BASE_URL = env('PRINTER_BASE_URL');
         $filePath = storage_path('app/printerdata');
         $files = File::files($filePath);
