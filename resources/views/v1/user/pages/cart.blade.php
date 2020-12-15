@@ -234,11 +234,15 @@
 		// 
 		if(deliveryType == '3')
 		{
+			@if( $isPaymentPackageSubscribed )
+				$('.send-order').text("{{ __('messages.Send order and pay at delivery') }}");
+			@endif
 			$('.delivery_at_door').css("display","block");
 			getHomeDeliveryPartContent($('#orderid').val());
 		}
 		else
 		{
+			$('.send-order').text("{{ __('messages.send order and pay in restaurant') }}");
 			$('.delivery_at_door').css("display","none");
 			$('.block-address').addClass('hidden');
 			$('.btn-pay').prop('disabled', false);

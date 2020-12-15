@@ -140,6 +140,7 @@ return [
     'waitForOrderConfirmation' => 'Din order är mottagen. Var vänlig invänta konfirmationen på ordern.',
     'noRestaurantFound' => 'Det finns vid den här tiden inga öppna restauranger i detta område.',
     'send order and pay in restaurant'=>'skicka order och betala i restaurang',
+    'Send order and pay at delivery'=>'Skicka ordern och betala vid leverans',
     'Send Order'=>'skicka order',
     'Delete Product'=>'Är du säker på att du vill radera produkten?',
     'Delete Cart Order'=>'Är du säker på att du vill radera alla beställningar?',
