@@ -172,6 +172,7 @@ Route::group(['prefix' => 'kitchen'], function(){
 	Route::get('checkStoreFirst', 'AdminController@checkStoreFirst');
 	Route::post('store', 'AdminController@index');
 	Route::get('store', 'AdminController@index');
+	Route::get('store-responsive', 'AdminController@storeResponsive');
 	Route::get('logout', 'Auth\AdminLoginController@logout');
 	Route::get('onReadyAjax/{OrderId}', 'AdminController@onReadyAjax');		
 	

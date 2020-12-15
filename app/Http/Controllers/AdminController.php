@@ -157,6 +157,60 @@ class AdminController extends Controller
         return view('kitchen.order.index', compact('storedetails', 'storeName', 'textSpeech'));    
     }
 
+    public function storeResponsive(Request $request){
+        if(!empty($request->input())){
+            $data = $request->input();
+            Session::put('kitchenStoreId', $data['storeId']);
+            $storeId = $data['storeId'];
+
+            // Check if driver app is active
+            $store = Store::select('driverapp')->where('store_id', $storeId)->first();
+
+            if($store->driverapp == '1')
+            {
+                Session::put('driverapp', 1);
+            }
+
+            // Get virtual restaurant if mapped and set them in session
+            $storeMapping = StoreVirtualMapping::where('store_id', $storeId)
+                ->get();
+
+            if($storeMapping)
+            {
+                $virtualStores = array();
+
+                foreach($storeMapping as $row)
+                {
+                    $virtualStores[] = $row['virtual_store_id'];
+                }
+
+                Session::put('virtualStores', $virtualStores);
+            }
+        }else{
+            $storeId = Session::get('kitchenStoreId');
+        }
+
+        Session::put('checkStore', 1);
+        $store = Store::where('store_id' , $storeId);
+
+        if(!$store->exists()){
+            $storeDetails = [];
+            return view('kitchen.storeList', compact('storeDetails'));
+        }
+
+        // Update subscription plan for logged-in store
+        $this->updateStoreSubscriptionPlan();
+        // dd($request->session()->all());
+
+        $storedetails = $store->first();
+        $storeName = $storedetails->store_name;
+
+        // Get if Text2Speech is on/off
+        $textSpeech = Auth::guard('admin')->user()->text_speech;
+
+        return view('kitchen.order.store-responsive', compact('storedetails', 'storeName', 'textSpeech'));    
+    }
+
     /**
      * Get subscribed plan for logged-in store and set them in session to access the module
      * @return [type] [description]
