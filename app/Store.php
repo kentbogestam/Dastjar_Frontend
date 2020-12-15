@@ -142,7 +142,11 @@ class Store extends Model
             ->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')
             ->leftJoin('dish_type', 'dish_type.dish_id', '=', 'product.dish_type')
             ->whereIn('S.store_type', [1, 3])
-            ->where('S.store_close_dates', 'not like', '%'.$todayDate.'%')
+            // ->where('S.store_close_dates', 'not like', '%'.$todayDate.'%')
+            ->where(function($query) use($todayDate) {
+                return $query->whereNull('S.store_close_dates')
+                    ->orWhere('S.store_close_dates', 'not like', '%'.$todayDate.'%');
+            })
             ->where(function($query) use($todayDay) {
                 return $query->where('S.store_open_close_day_time', 'like', '%'.$todayDay.'%')
                     ->orWhere('S.store_open_close_day_time', 'like', '%'."All".'%');
@@ -250,7 +254,11 @@ class Store extends Model
             ->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')
             ->leftJoin('dish_type', 'dish_type.dish_id', '=', 'product.dish_type')
             ->whereIn('S.store_type', [2, 3])
-            ->where('S.store_close_dates', 'not like', '%'.$todayDate.'%')
+            // ->where('S.store_close_dates', 'not like', '%'.$todayDate.'%')
+            ->where(function($query) use($todayDate) {
+                return $query->whereNull('S.store_close_dates')
+                    ->orWhere('S.store_close_dates', 'not like', '%'.$todayDate.'%');
+            })
             ->where(function($query) use($todayDay) {
                 return $query->where('S.store_open_close_day_time_catering', 'like', '%'.$todayDay.'%')
                     ->orWhere('S.store_open_close_day_time_catering', 'like', '%'."All".'%');
