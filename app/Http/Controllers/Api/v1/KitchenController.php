@@ -51,7 +51,7 @@ class KitchenController extends Controller
             }
         }
 
-        $orderDetailscustomer = Order::select(['orders.*','customer.name as name', 'OCD.discount_id', 'PD.discount_value', DB::raw('COUNT(OCL.id) AS cntLoyaltyUsed'), 'OD.status AS orderDeliveryStatus', 'CA.street', 'CS.street as userStreet'])
+        $orderDetailscustomer = Order::select(['orders.*','customer.name as name', 'OCD.discount_id', 'PD.discount_value', DB::raw('COUNT(OCL.id) AS cntLoyaltyUsed'), 'OD.status AS orderDeliveryStatus', 'CA.street'])
             ->whereIn('orders.store_id', $stores)
             ->where('user_type','=','customer')
             ->where('orders.check_deliveryDate', '>=', date("Y-m-d", strtotime("-3 day")))
@@ -62,7 +62,7 @@ class KitchenController extends Controller
             ->join('order_details', 'orders.order_id', '=', 'order_details.order_id')
             ->leftJoin('customer','orders.user_id','=','customer.id')
             ->leftJoin('customer_addresses AS CA','CA.id','=','orders.user_address_id')
-            ->leftJoin('customer_addresses AS CS','CS.customer_id','=','orders.user_id')
+            // ->leftJoin('customer_addresses AS CS','CS.customer_id','=','orders.user_id')
             ->leftJoin('order_customer_discount AS OCD', 'orders.order_id', '=', 'OCD.order_id')
             ->leftJoin('promotion_discount AS PD', 'OCD.discount_id', '=', 'PD.id')
             ->leftJoin('order_customer_loyalty AS OCL', 'OCL.order_id', '=', 'orders.order_id')
