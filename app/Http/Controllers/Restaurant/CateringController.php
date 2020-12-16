@@ -12,6 +12,8 @@ use App\Customer;
 use App\Order;
 use App\User;
 use Carbon\Carbon;
+use App\Payment;
+use App\CompanySubscriptionDetail;
 
 class CateringController extends Controller
 {
@@ -122,6 +124,22 @@ class CateringController extends Controller
             $messageDelever = __('messages.notificationOrderReceived', ['order_id' => $order->customer_order_id]);
         }else{
             $messageDelever = __('messages.notificationOrderReject', ['order_id' => $order->customer_order_id]);
+
+            // Initialize Stripe
+            \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+
+            $payment = Payment::where('order_id',$order->order_id)->first();
+            
+            if(!empty($payment)){
+                $companySubscriptionDetail = CompanySubscriptionDetail::where('company_id',$order->company_id)->first();
+
+                //check for transaction id idf exists then make refund
+                $intent = \Stripe\PaymentIntent::retrieve($payment->transaction_id, ['stripe_account' => $companySubscriptionDetail->stripe_user_id]);
+                if(!empty($intent)){
+                    $intent->cancel();
+                    $payment->update(['status' => '3']);
+                }
+            }
         }
 
         if($order)
