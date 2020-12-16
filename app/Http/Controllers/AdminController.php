@@ -2948,7 +2948,24 @@ class AdminController extends Controller
         $order = new Order();
         $order->where('order_id',$request->order_id)->update(['cancel'=>1]);
         $order_number = $order->where('order_id',$request->order_id)->first()->customer_order_id;
+        $orderData = $order->where('order_id',$request->order_id)->first();
 
+        // Initialize Stripe
+        \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+
+        $payment = Payment::where('order_id',$orderData->order_id)->first();
+        
+        if(!empty($payment)){
+            $companySubscriptionDetail = CompanySubscriptionDetail::where('company_id',$orderData->company_id)->first();
+
+            //check for transaction id idf exists then make refund
+            $intent = \Stripe\PaymentIntent::retrieve($payment->transaction_id, ['stripe_account' => $companySubscriptionDetail->stripe_user_id]);
+            if(!empty($intent)){
+                $intent->cancel();
+                $payment->update(['status' => '3']);
+            }
+        }
+        
         $message = 'Your order ' . $order_number . ' has been cancelled according to your request';
 
         $phone_number_prifix = User::where('id',$request->user_id)->first()->phone_number_prifix;
