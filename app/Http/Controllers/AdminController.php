@@ -627,7 +627,7 @@ class AdminController extends Controller
             }
         }
 
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.user_id','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time', 'orders.order_type', 'orders.customer_order_id','orders.online_paid', 'orders.delivery_timestamp', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.user_id','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time', 'orders.order_type', 'orders.customer_order_id','orders.online_paid', 'orders.delivery_timestamp', 'orders.user_address_id', 'CA.street', 'CS.street as userStreet', 'OD.status AS orderDeliveryStatus')
             ->whereIn('order_details.store_id', $stores)
             // ->where('delivery_date', '>=', $deliveryDate)
             // ->where('delivery_date', '<=', $deliveryDateTill)
@@ -637,10 +637,11 @@ class AdminController extends Controller
             ->join('product','product.product_id','=','order_details.product_id')
             ->join('orders','orders.order_id','=','order_details.order_id')
             ->leftJoin('customer_addresses AS CA','CA.id','=','orders.user_address_id')
-            // ->leftJoin('customer_addresses AS CS','CS.customer_id','=','orders.user_id')
+            ->leftJoin('customer_addresses AS CS','CS.customer_id','=','orders.user_id')
             ->leftJoin('order_delivery AS OD', 'OD.order_id', '=', 'orders.order_id')
             ->where('orders.is_verified', '1')
             ->where('orders.catering_order_status', '2')
+            ->groupBy('order_details.id')
             ->get();
 
         $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;
@@ -697,7 +698,7 @@ class AdminController extends Controller
             }
         }
 
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.user_id','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time', 'orders.customer_order_id','orders.online_paid', 'orders.delivery_timestamp', 'orders.user_address_id', 'orders.order_type', 'CA.street', 'OD.status AS orderDeliveryStatus')
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.user_id','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time', 'orders.customer_order_id','orders.online_paid', 'orders.delivery_timestamp', 'orders.user_address_id', 'orders.order_type', 'CA.street', 'CS.street as userStreet', 'OD.status AS orderDeliveryStatus')
             ->whereIn('order_details.store_id', $stores)
             // ->where('delivery_date', '>=', $deliveryDate)
             // ->where('delivery_date', '<=', $deliveryDateTill)
@@ -708,7 +709,7 @@ class AdminController extends Controller
             ->join('product','product.product_id','=','order_details.product_id')
             ->join('orders','orders.order_id','=','order_details.order_id')
             ->leftJoin('customer_addresses AS CA','CA.id','=','orders.user_address_id')
-            // ->leftJoin('customer_addresses AS CS','CS.customer_id','=','orders.user_id')
+            ->leftJoin('customer_addresses AS CS','CS.customer_id','=','orders.user_id')
             ->leftJoin('order_delivery AS OD', 'OD.order_id', '=', 'orders.order_id')
             ->where('orders.is_verified', '1')
             ->where('orders.catering_order_status', '2')

@@ -398,7 +398,7 @@
 	          		else if( temp[i]['delivery_type'] == 2 )
 	          		{
 	          			deliveryType = '{{ __('messages.deliveryOptionTakeAway') }}';
-	          			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderUserAddress('+temp[i]['user_id']+')"><span>click to see</span></a>';
+	          			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderUserAddress('+temp[i]['user_id']+')"><span>'+temp[i]['userStreet']+'</span></a>';
 	          		}
 	          		else if( temp[i]['delivery_type'] == 3 )
 	          		{
@@ -730,7 +730,7 @@
   		else if( list[i]['delivery_type'] == 2 )
   		{
   			deliveryType = '{{ __('messages.deliveryOptionTakeAway') }}';
-  			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderUserAddress('+list[i]['user_id']+')"><span>click to see</span></a>';
+  			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderUserAddress('+list[i]['user_id']+')"><span>'+list[i]['userStreet']+'</span></a>';
   		}
   		else if( list[i]['delivery_type'] == 3 )
   		{
