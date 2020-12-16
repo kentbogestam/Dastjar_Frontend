@@ -777,7 +777,7 @@
 								'Content-Type': 'application/json'
 							}
 						}).then(function(confirmResult) {
-							
+							return confirmResult.json();
 						}).then(handleServerResponse);
 					}
 				});
@@ -870,7 +870,7 @@
 								'Content-Type': 'application/json'
 							}
 						}).then(function(confirmResult) {
-
+							return confirmResult.json();
 						}).then(handleServerResponseSavedCard);
 					}
 				});
