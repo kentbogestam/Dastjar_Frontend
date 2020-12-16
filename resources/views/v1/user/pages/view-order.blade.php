@@ -462,7 +462,7 @@
 						'payment_method_id': result.paymentMethod.id
 					}
 					// Otherwise send paymentMethod.id to your server (see Step 2)
-					fetch('{{ url('confirm-payment') }}'?timeNow='+new Date(), {
+					fetch('{{ url('confirm-payment') }}?timeNow='+new Date(), {
 						method: 'POST',
 						body: JSON.stringify(data),
 						headers: {
@@ -524,7 +524,7 @@
 						}
 						// The card action has been handled
 						// The PaymentIntent can be confirmed again on the server
-						fetch('{{ url('confirm-payment') }}'?timeNow='+new Date(), {
+						fetch('{{ url('confirm-payment') }}?timeNow='+new Date(), {
 							method: 'POST',
 							body: JSON.stringify(data),
 							headers: {
@@ -555,7 +555,7 @@
 					'payment_method_id': payment_method_id
 				}
 				// Otherwise send paymentMethod.id to your server (see Step 2)
-				fetch('{{ url('confirm-payment') }}'?timeNow='+new Date(), {
+				fetch('{{ url('confirm-payment') }}?timeNow='+new Date(), {
 					method: 'POST',
 					body: JSON.stringify(data),
 					headers: {
@@ -617,7 +617,7 @@
 						}
 						// The card action has been handled
 						// The PaymentIntent can be confirmed again on the server
-						fetch('{{ url('confirm-payment') }}'?timeNow='+new Date(), {
+						fetch('{{ url('confirm-payment') }}?timeNow='+new Date(), {
 							method: 'POST',
 							body: JSON.stringify(data),
 							headers: {

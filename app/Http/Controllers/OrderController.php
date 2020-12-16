@@ -30,6 +30,7 @@ use Session;
 use App\Helper;
 use Stripe;
 use App\Traits\PosReceipt;
+use App\Payment;
 
 use Illuminate\Support\Facades\File;
 
@@ -641,6 +642,22 @@ class OrderController extends Controller
         }
 
         $order->where('order_id',$request->order_id)->update(['cancel'=>2]);
+
+        // // Initialize Stripe and make refund 
+        // \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+
+        // $payment = Payment::where('order_id',$orderdata->order_id)->first();
+        
+        // if(!empty($payment)){
+        //     $companySubscriptionDetail = CompanySubscriptionDetail::where('company_id',$orderdata->company_id)->first();
+
+        //     //check for transaction id idf exists then make refund
+        //     $intent = \Stripe\PaymentIntent::retrieve($payment->transaction_id, ['stripe_account' => $companySubscriptionDetail->stripe_user_id]);
+        //     if(!empty($intent)){
+        //         $intent->cancel();
+        //         $payment->update(['status' => '3']);
+        //     }
+        // }
 
         return response()->json(['status' => true, 'order_number' => $request->order_number]);
     }
