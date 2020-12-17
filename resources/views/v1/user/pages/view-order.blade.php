@@ -175,7 +175,7 @@
 						@endif
 
 						@if($order->driverapp == '1')
-							<br><a href="{{ url('track-order/'.$order->order_id) }}" class="ui-btn ui-btn-inline track-order" data-ajax="false">{{ __('messages.trackOrder') }}</a>
+							<br><a style="color:white" href="{{ url('track-order/'.$order->order_id) }}" class="ui-btn ui-btn-inline track-order" data-ajax="false">{{ __('messages.trackOrder') }}</a>
 						@endif
 					</p>
 				@else
