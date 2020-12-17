@@ -113,8 +113,8 @@
 								timeObj = new Array(response.orderDelivery[i]['deliver_time'], response.orderDelivery[i]['o_extra_prep_time']);
 							}
 							let time = addTimeByMoment(timeObj);
-							
-							getDistanceMatrix(response.orderDelivery[i]['store_address'], response.orderDelivery[i]['customer_address'])
+							var customer_addres = response.orderDelivery[i]['street']+','+response.orderDelivery[i]['city']+','+response.orderDelivery[i]['zipcode']+','+response.orderDelivery[i]['country'];
+							getDistanceMatrix(response.orderDelivery[i]['store_address'], customer_addres)
 								.then(duration => {
 									// Add travelling time (driving)
 									if(duration == null)
