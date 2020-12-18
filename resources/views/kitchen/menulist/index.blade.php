@@ -247,6 +247,8 @@
 			</div>
 		@endif
 
+		<a href="https://www.dastjar.com/ros-user-manual/" target="_blank"><button class="btn" style="background-color: lightgray;color: rgba(171,8,16,1);text-shadow: none;font-weight: bolder;">ROS User-Manual</button></a></h3>
+
 		<!-- The Modal -->
 		<div class="modal fade" id="myModal">
 			<div class="modal-dialog modal-dialog-centered">
