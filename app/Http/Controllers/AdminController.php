@@ -2404,13 +2404,13 @@ class AdminController extends Controller
         $address = Helper::getLocation($address);
         // dd($address);
         
-        if($address['latitude'] != null && $address['longitude'] != null)
+        if($store['latitude'] != null && $store['longitude'] != null)
         {
             $company_id = Company::where('u_id' , Auth::guard('admin')->user()->u_id)->first()->company_id;
 
             if($company_id)
             {
-                $haversine = "(6371 * acos(cos(radians({$address['latitude']})) * cos(radians(latitude)) * cos(radians(longitude) - radians({$address['longitude']})) + sin(radians({$address['latitude']})) * sin(radians(latitude)))) AS distance";
+                $haversine = "(6371 * acos(cos(radians({$store['latitude']})) * cos(radians(latitude)) * cos(radians(longitude) - radians({$store['longitude']})) + sin(radians({$store['latitude']})) * sin(radians(latitude)))) AS distance";
                 
                 if($store->driver_range)
                 {
