@@ -202,6 +202,7 @@ Route::group(['prefix' => 'kitchen'], function(){
 	Route::post('add-manual-prep-time','AdminController@addManualPrepTime');
 	Route::get('get-available-driver-to-assign/{orderId}', 'AdminController@getAvailableDriverToAssign');
 	Route::get('get-order-delivery-address/{addressId}', 'AdminController@getOrderDeliveryAddress');
+	Route::get('get-order-user-address/{userId}', 'AdminController@getOrderUserAddress');
 	Route::post('order-assign-driver', 'AdminController@orderAssignDriver');
 	Route::post('kitchen-order-save','AdminController@kitchenOrderSave');
 	Route::get('kitchen-order-save','AdminController@kitchenOrderSave');
@@ -232,6 +233,7 @@ Route::group(['prefix' => 'kitchen'], function(){
 	Route::post('create-menu-update', 'AdminController@kitchenUpdateMenuPost');
 
 	Route::get('edit-menu-dish', 'AdminController@kitchenEditDish');
+	Route::get('delete-extra-time/{id}', 'AdminController@kitchenDeleteTime')->name('deleteExtraTime');
 	Route::get('copy-dish/{productId}', 'AdminController@copyDish');
 	Route::get('delete-menu-dish', 'AdminController@kitchenDeleteDish');
 	Route::get('delete-dish-price', 'AdminController@deleteDishPrice');	

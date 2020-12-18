@@ -8,6 +8,7 @@ use App\Order;
 use App\Customer;
 use App\OrderDetail;
 use App\OrderCustomerDiscount;
+use App\ProductExtraPriceList;
 use App\PromotionDiscount;
 use App\CustomerDiscount;
 use App\PromotionLoyalty;
@@ -813,20 +814,41 @@ class OrderController extends Controller
                         $max_time = $productTime->preparation_Time;
                     }
 
-                    $productPrice = ProductPriceList::select('price')
+                    $dateNow = date("Y-m-d",time()); 
+                    $dateUtc = new \DateTime(date('H:i:s'));
+                    $ip = $_SERVER['REMOTE_ADDR'];
+                    if($ip != '::1'){
+                        $dataa = json_decode(file_get_contents("http://www.geoplugin.net/json.gp?ip=".@$ip));
+                        $timezone = $dataa->geoplugin_timezone;
+                    }else{
+                        $timezone = 'Asia/Kolkata';
+                    }
+                    $dateUtc->setTimezone(new \DateTimeZone($timezone));
+                    $timeNow = $dateUtc->format('H:i:s');
+
+                    $productPrice = ProductPriceList::select('price','id')
                         ->whereProductId($value['id'])
                         ->where('store_id' , $data['storeID'])
-                        ->where('publishing_start_date','<=',Carbon::now())
-                        ->where('publishing_end_date','>=',Carbon::now())
+                        ->where('publishing_start_date','<=',$dateNow)
+                        ->where('publishing_end_date','>=',$dateNow)
                         ->first();
-                    $total_price = $total_price + ($productPrice->price * $value['prod_quant']); 
+
+                    $extraPrice = ProductExtraPriceList::select('price')->where('ppl_id',$productPrice->id)->where('publishing_start_time','<=',$timeNow)->where('publishing_end_time','>=',$timeNow)->first();
+
+                    if(!empty($extraPrice)){
+                        $usePrice = $extraPrice->price; 
+                    }else{
+                        $usePrice = $productPrice->price; 
+                    } 
+                    
+                    $total_price = $total_price + ($usePrice * $value['prod_quant']); 
                     $orderDetail =  new OrderDetail();
                     $orderDetail->order_id = $orders->order_id;
                     $orderDetail->user_id = Auth::id();
                     $orderDetail->product_id = $value['id'];
                     $orderDetail->product_quality = $value['prod_quant'];
                     $orderDetail->product_description = $value['prod_desc'];
-                    $orderDetail->price = $productPrice->price;
+                    $orderDetail->price = $usePrice;
                     $orderDetail->time = $productTime->preparation_Time;
                     $orderDetail->company_id = $productTime->company_id;
                     $orderDetail->store_id = $data['storeID'];

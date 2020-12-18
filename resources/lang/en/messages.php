@@ -138,6 +138,7 @@ return [
     'waitForOrderConfirmation' => 'Your order has been received. Please wait for order confirmation.',
     'noRestaurantFound' => 'There are no open restaurants in you area at this hour.',
     'send order and pay in restaurant'=>'send order and pay in restaurant',
+    'Send order and pay at delivery'=>'Send order and pay at delivery',
     'Send Order' => 'Send Order',
     'Delete Product'=>'Are you sure you want to delete the product?',
     'Delete Cart Order'=>'Are you sure that you want to delete all orders?',

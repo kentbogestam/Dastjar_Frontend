@@ -27,4 +27,9 @@ class Order extends Model
     {
         return $this->hasMany('App\CustomerAddress','id','user_address_id');
     }
+    
+    public function customerFullAddress()
+    {
+        return $this->hasOne('App\CustomerAddress','customer_id','user_id');
+    }
 }

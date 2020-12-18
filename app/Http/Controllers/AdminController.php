@@ -21,6 +21,7 @@ use Session;
 use App\User;
 use App\Payment;
 use App\Coupon;
+use App\ProductExtraPriceList;
 use App\CouponKeywordsLangList;
 use App\CouponOfferSloganLangList;
 use App\CouponOfferTitleLangList;
@@ -551,8 +552,10 @@ class AdminController extends Controller
         $menuTypes = null;
         $request->session()->forget('order_date');
         
+        $dateNow = date("Y-m-d",time()); $timeNow = date("H:i:s",time());
+
         if(Session::get('kitchenStoreId')){
-            $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())
+            $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))->where('publishing_start_date','<=',$dateNow)->where('publishing_end_date','>=',$dateNow)
             ->with('menuPrice')->with('storeProduct')
             ->leftJoin('product', 'product_price_list.product_id', '=', 'product.product_id')
             ->orderBy('product.product_rank', 'ASC')
@@ -624,7 +627,7 @@ class AdminController extends Controller
             }
         }
 
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time', 'orders.order_type', 'orders.customer_order_id','orders.online_paid', 'orders.delivery_timestamp', 'orders.user_address_id', 'CA.street', 'OD.status AS orderDeliveryStatus')
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.user_id','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time', 'orders.order_type', 'orders.customer_order_id','orders.online_paid', 'orders.delivery_timestamp', 'orders.user_address_id', 'CA.street', 'CS.street as userStreet', 'OD.status AS orderDeliveryStatus')
             ->whereIn('order_details.store_id', $stores)
             // ->where('delivery_date', '>=', $deliveryDate)
             // ->where('delivery_date', '<=', $deliveryDateTill)
@@ -634,9 +637,11 @@ class AdminController extends Controller
             ->join('product','product.product_id','=','order_details.product_id')
             ->join('orders','orders.order_id','=','order_details.order_id')
             ->leftJoin('customer_addresses AS CA','CA.id','=','orders.user_address_id')
+            ->leftJoin('customer_addresses AS CS','CS.customer_id','=','orders.user_id')
             ->leftJoin('order_delivery AS OD', 'OD.order_id', '=', 'orders.order_id')
             ->where('orders.is_verified', '1')
             ->where('orders.catering_order_status', '2')
+            ->groupBy('order_details.id')
             ->get();
 
         $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;
@@ -651,7 +656,27 @@ class AdminController extends Controller
             ->where('is_verified', '0')
             ->where('catering_order_status', '0')->count();
 
-        return response()->json(['status' => 'success', 'user' => $text_speech, 'extra_prep_time' => $extra_prep_time, 'data'=>$kitchenorderDetails, 'catCount' => $catCount]);
+        $ordersCount = Order::whereIn('store_id',$stores)
+            ->where('delivery_timestamp', '>=', time())
+            ->where('cancel','!=', 1)
+            ->where('order_started', '1')
+            ->where('order_ready', '1')
+            ->where('paid', '0')
+            ->whereNotIn('online_paid', [2])
+            ->where('is_verified', '1')
+            ->where('catering_order_status', '2')
+            ->count();
+
+        $kitchenCount = Order::whereIn('store_id',$stores)
+            ->where('delivery_timestamp', '>=', time())
+            ->where('cancel','!=', 1)
+            ->where('order_started', '0')
+            ->whereNotIn('online_paid', [2])
+            ->where('is_verified', '1')
+            ->where('catering_order_status', '2')
+            ->count(); 
+
+        return response()->json(['status' => 'success', 'user' => $text_speech, 'extra_prep_time' => $extra_prep_time, 'data'=>$kitchenorderDetails, 'catCount' => $catCount, 'ordersCount' => $ordersCount, 'kitchenCount' => $kitchenCount]);
     }
 
     public function kitchenOrdersNew($id){
@@ -673,7 +698,7 @@ class AdminController extends Controller
             }
         }
 
-        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time', 'orders.customer_order_id','orders.online_paid', 'orders.delivery_timestamp', 'orders.user_address_id', 'orders.order_type', 'CA.street', 'OD.status AS orderDeliveryStatus')
+        $kitchenorderDetails = OrderDetail::select('order_details.*','product.product_name','orders.user_id','orders.delivery_type','orders.deliver_date','orders.deliver_time','orders.order_delivery_time', 'orders.order_response', 'orders.extra_prep_time', 'orders.customer_order_id','orders.online_paid', 'orders.delivery_timestamp', 'orders.user_address_id', 'orders.order_type', 'CA.street', 'CS.street as userStreet', 'OD.status AS orderDeliveryStatus')
             ->whereIn('order_details.store_id', $stores)
             // ->where('delivery_date', '>=', $deliveryDate)
             // ->where('delivery_date', '<=', $deliveryDateTill)
@@ -684,6 +709,7 @@ class AdminController extends Controller
             ->join('product','product.product_id','=','order_details.product_id')
             ->join('orders','orders.order_id','=','order_details.order_id')
             ->leftJoin('customer_addresses AS CA','CA.id','=','orders.user_address_id')
+            ->leftJoin('customer_addresses AS CS','CS.customer_id','=','orders.user_id')
             ->leftJoin('order_delivery AS OD', 'OD.order_id', '=', 'orders.order_id')
             ->where('orders.is_verified', '1')
             ->where('orders.catering_order_status', '2')
@@ -692,7 +718,34 @@ class AdminController extends Controller
         $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;
         
         $text_speech = Auth::guard('admin')->user()->text_speech;
-        return response()->json(['status' => 'success', 'user' => $text_speech, 'extra_prep_time' => $extra_prep_time,'data'=>$kitchenorderDetails]);
+
+        $catCount = Order::whereIn('store_id',$stores)
+            ->where('order_type', 'eat_later')
+            ->where('cancel','!=', 1)
+            ->where('online_paid', '>', 0)
+            ->where('delivery_timestamp', '>', time())
+            ->where('is_verified', '0')
+            ->where('catering_order_status', '0')->count();
+        $ordersCount = Order::whereIn('store_id',$stores)
+            ->where('delivery_timestamp', '>=', time())
+            ->where('cancel','!=', 1)
+            ->where('order_started', '1')
+            ->where('order_ready', '1')
+            ->where('paid', '0')
+            ->whereNotIn('online_paid', [2])
+            ->where('is_verified', '1')
+            ->where('catering_order_status', '2')
+            ->count();
+        $kitchenCount = Order::whereIn('store_id',$stores)
+            ->where('delivery_timestamp', '>=', time())
+            ->where('cancel','!=', 1)
+            ->where('order_started', '0')
+            ->whereNotIn('online_paid', [2])
+            ->where('is_verified', '1')
+            ->where('catering_order_status', '2')
+            ->count();
+
+        return response()->json(['status' => 'success', 'user' => $text_speech, 'extra_prep_time' => $extra_prep_time, 'data'=>$kitchenorderDetails, 'catCount' => $catCount, 'ordersCount' => $ordersCount, 'kitchenCount' => $kitchenCount]);
     }
 
     public function kitchenOrderSave(Request $request){
@@ -781,15 +834,38 @@ class AdminController extends Controller
                     if($max_time < $productTime->preparation_Time){
                         $max_time = $productTime->preparation_Time;
                     }else{}
-                    $productPrice = ProductPriceList::select('price')->whereProductId($value['id'])->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->first();
-                    $total_price = $total_price + ($productPrice->price * $value['prod_quant']); 
+
+
+                    $dateNow = date("Y-m-d",time()); 
+                    $dateUtc = new \DateTime(date('H:i:s'));
+                    $ip = $_SERVER['REMOTE_ADDR'];
+                    if($ip != '::1'){
+                        $dataa = json_decode(file_get_contents("http://www.geoplugin.net/json.gp?ip=".@$ip));
+                        $timezone = $dataa->geoplugin_timezone;
+                    }else{
+                        $timezone = 'Asia/Kolkata';
+                    }
+                    $dateUtc->setTimezone(new \DateTimeZone($timezone));
+                    $timeNow = $dateUtc->format('H:i:s');
+
+                    $productPrice = ProductPriceList::select('price','id')->whereProductId($value['id'])->where('publishing_start_date','<=',$dateNow)->where('publishing_end_date','>=',$dateNow)->first();
+
+                    $extraPrice = ProductExtraPriceList::select('price')->where('ppl_id',$productPrice->id)->where('publishing_start_time','<=',$timeNow)->where('publishing_end_time','>=',$timeNow)->first();
+                    
+                    if(!empty($extraPrice)){
+                        $usePrice = $extraPrice->price;
+                    }else{
+                        $usePrice = $productPrice->price;
+                    }
+                    
+                    $total_price = $total_price + ($usePrice * $value['prod_quant']); 
                     $orderDetail =  new OrderDetail();
                     $orderDetail->order_id = $orders->order_id;
                     $orderDetail->user_id = $customer_id;
                     $orderDetail->product_id = $value['id'];
                     $orderDetail->product_quality = $value['prod_quant'];
                     $orderDetail->product_description = $value['prod_desc'];
-                    $orderDetail->price = $productPrice->price;
+                    $orderDetail->price = $usePrice;
                     $orderDetail->time = $productTime->preparation_Time;
                     $orderDetail->company_id = $productTime->company_id;
                     $orderDetail->store_id = Session::get('kitchenStoreId');
@@ -835,7 +911,10 @@ class AdminController extends Controller
             // return view('kitchen.order.order-detail', compact('order','orderDetails','storeDetail'));
         }else{
             $menuTypes = null;
-            $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->with('menuPrice')->with('storeProduct')->get();
+
+            $dateNow = date("Y-m-d",time()); $timeNow = date("H:i:s",time());
+
+            $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))->where('publishing_start_date','<=',$dateNow)->where('publishing_end_date','>=',$dateNow)->with('menuPrice')->with('storeProduct')->get();
             if(count($menuDetails) != 0){
 
                 foreach ($menuDetails as $menuDetail) {
@@ -954,7 +1033,10 @@ class AdminController extends Controller
         }else{}
 
         $menuTypes = null;
-        $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))->where('publishing_start_date','<=',Carbon::now())->where('publishing_end_date','>=',Carbon::now())->with('menuPrice')->with('storeProduct')->get();
+
+        $dateNow = date("Y-m-d",time()); $timeNow = date("H:i:s",time());
+
+        $menuDetails = ProductPriceList::where('store_id',Session::get('kitchenStoreId'))->where('publishing_start_date','<=',$dateNow)->where('publishing_end_date','>=',$dateNow)->with('menuPrice')->with('storeProduct')->get();
 
         if(count($menuDetails) != 0){
             foreach ($menuDetails as $menuDetail) {
@@ -1316,14 +1398,15 @@ class AdminController extends Controller
 
                 // Get current product price detail
                 $data[$key]['current_price'] = null;
-                $current_date = Carbon::now()->format('Y-m-d h:i:00');
+                $current_date = Carbon::now()->format('Y-m-d');
 
                 $currentProductPrice = ProductPriceList::select('id', 'text', 'price', 'publishing_start_date', 'publishing_end_date')
                     ->where('product_id', $value->product_id)
                     ->where('store_id', Session::get('kitchenStoreId'))
                     ->where('publishing_start_date', '<=', $current_date)
-                    ->where('publishing_end_date', '>=', $current_date)
-                    ->first();
+                    // ->where('publishing_end_date', '>=', $current_date)
+                    ->get();
+                    // ->first();
                     //->toSql();
                 
                 if($currentProductPrice)
@@ -1344,7 +1427,7 @@ class AdminController extends Controller
     public function ajaxGetFuturePriceByProduct(Request $request)
     {
         //
-        $current_date = Carbon::now()->format('Y-m-d h:i:00');
+        $current_date = Carbon::now()->format('Y-m-d');
         $data = null;
 
         $futureProductPrices = ProductPriceList::select('id', 'product_id', 'text', 'price', 'publishing_start_date', 'publishing_end_date')
@@ -1402,8 +1485,8 @@ class AdminController extends Controller
 
         $util = new Util(env('APP42_API_KEY'),env('APP42_API_SECRET'));
 
-        $publish_start_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_start_date);
-        $publish_end_date = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_end_date);
+        $publish_start_date = \DateTime::createFromFormat('d/m/Y', $request->publish_start_date);
+        $publish_end_date = \DateTime::createFromFormat('d/m/Y', $request->publish_end_date);
 
         $employer = new Employer();
         $company_id = $employer->where('u_id' , '=', Auth::user()->u_id)->first()->company_id;
@@ -1525,7 +1608,7 @@ class AdminController extends Controller
         $product->category = "7099ead0-8d47-102e-9bd4-12313b062day";
         $product->product_number = "";
         $product->product_info_page = "";
-        $product->start_of_publishing = $publish_start_date;
+        $product->start_of_publishing = null;
         $product->company_id = $company_id;
         $product->save();
 
@@ -1536,6 +1619,8 @@ class AdminController extends Controller
         $product_price_list->lang = $request->dishLang[0];
         $product_price_list->publishing_start_date = $publish_start_date;
         $product_price_list->publishing_end_date = $publish_end_date;
+        $product_price_list->publishing_start_time = null;
+        $product_price_list->publishing_end_time = null;
         $product_price_list->save();
 
         // Add product meta
@@ -1625,14 +1710,14 @@ class AdminController extends Controller
 
     public function kitchenUpdateMenuPost(Request $request){
         // Validate if publish start/end datetime shouldn't already exist
-        $publishing_start_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_start_date);
-        $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publish_end_date);
+        $publishing_start_date_time = \DateTime::createFromFormat('d/m/Y', $request->publish_start_date);
+        $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y', $request->publish_end_date);
 
-        $startDt = strtotime($publishing_start_date_time->format('Y-m-d H:i:s'));
-        $endDt = strtotime($publishing_end_date_time->format('Y-m-d H:i:s'));
+        $startDt = strtotime($publishing_start_date_time->format('Y-m-d'));
+        $endDt = strtotime($publishing_end_date_time->format('Y-m-d'));
 
-        $publishStartDateTime = $publishing_start_date_time->format('Y-m-d H:i:s');
-        $publishEndDateTime = $publishing_end_date_time->format('Y-m-d H:i:s');
+        $publishStartDateTime = $publishing_start_date_time->format('Y-m-d');
+        $publishEndDateTime = $publishing_end_date_time->format('Y-m-d');
 
         $product_id = $request->product_id;
         $store_id = $request->store_id;
@@ -1652,6 +1737,25 @@ class AdminController extends Controller
             }else{
                 return back()->with('error','Invalid date');
             }       
+        }
+
+        if(!empty($request->startTime) && !empty($request->endTime) && !empty($request->price)){
+            $startTm = strtotime($request->startTime);
+            $endTm = strtotime($request->endTime);   
+
+            //check for validation with time availability
+            $data1 = ProductExtraPriceList::where('product_id', $product_id)
+                            ->where('ppl_id', $price_id)
+                            ->pluck('publishing_end_time','publishing_start_time');
+            
+            foreach($data1 as $key => $val){
+                $keys = strtotime($key); $vals = strtotime($val);
+                if($startTm > $keys && $startTm > $vals && $endTm > $keys && $endTm > $vals){
+                }else if($startTm < $keys && $startTm < $vals && $endTm < $keys && $endTm < $vals){
+                }else{
+                    return back()->with('error','Invalid time');
+                }       
+            }
         }
 
         $helper = new Helper();
@@ -1731,7 +1835,7 @@ class AdminController extends Controller
         $product->category = "7099ead0-8d47-102e-9bd4-12313b062day";
         $product->product_number = "";
         $product->product_info_page = "";
-        $product->start_of_publishing = $publishStartDateTime;
+        $product->start_of_publishing = null;
         $product->company_id = $company_id;
         $product->save();
 
@@ -1792,7 +1896,22 @@ class AdminController extends Controller
         }
         $product_price_list->save();
 
+        if(!empty($request->startTime) && !empty($request->endTime) && !empty($request->price)){
+            ProductExtraPriceList::create([
+                'product_id' => $product_id,
+                'ppl_id' => $price_id,
+                'price' => $request->price,
+                'publishing_start_time' => $request->startTime,
+                'publishing_end_time' => $request->endTime,
+            ]);
+        }
+
         return redirect()->route('menu')->with('success', $message);
+    }
+
+    public function kitchenDeleteTime(Request $request,$id){
+        ProductExtraPriceList::where('id',$id)->delete();
+        return back()->with('success','Time Deleted');
     }
 
     public function kitchenEditDish(Request $request){
@@ -1807,14 +1926,18 @@ class AdminController extends Controller
         $ProductOfferSloganLangList = ProductOfferSloganLangList::where('product_id','=',$productid)->pluck('offer_slogan_lang_list');
 
         $ProductOfferSubSloganLangList = ProductOfferSubSloganLangList::where('product_id','=',$productid)->pluck('offer_sub_slogan_lang_list');
-        
-        $names =  $descs = array();
+
+        $names = $langs = $descs = array();
         if(!empty($ProductOfferSloganLangList)){
-            $langs = LangText::whereIn('id', $ProductOfferSloganLangList->toArray())->pluck('lang')->toArray();
-            $names = LangText::whereIn('id', $ProductOfferSloganLangList->toArray())->pluck('text')->toArray();
+            foreach($ProductOfferSloganLangList as $data){
+                $langs[] = LangText::where('id', $data)->first()->lang;
+                $names[] = LangText::where('id', $data)->first()->text;
+            }
         }
         if(!empty($ProductOfferSubSloganLangList)){
-            $descs = LangText::whereIn('id', $ProductOfferSubSloganLangList->toArray())->pluck('text')->toArray();
+            foreach($ProductOfferSubSloganLangList as $data){
+                $descs[] = LangText::where('id', $data)->first()->text;
+            }
         }
         
         try{
@@ -1825,6 +1948,7 @@ class AdminController extends Controller
         }
 
         $product_price_list = ProductPriceList::where('id','=',$price_id)->first();
+        $product_extra_price_list = ProductExtraPriceList::where('ppl_id','=',$price_id)->where('product_id','=',$productid)->get();
 
         $storedetails = Store::where('store_id' , Session::get('kitchenStoreId'))->first();
         $storeName = $storedetails->store_name;
@@ -1848,7 +1972,7 @@ class AdminController extends Controller
 
         $product->preparation_Time = $time;
 
-        return view('kitchen.menulist.createMenu',compact('product', 'product_price_list', 'store_id', 'storeName', 'listDishes', 'currency', 'listSubCategory', 'ProductOfferSloganLangList', 'ProductOfferSubSloganLangList', 'names', 'descs', 'langs'));
+        return view('kitchen.menulist.createMenu',compact('product', 'product_price_list', 'store_id', 'storeName', 'listDishes', 'currency', 'listSubCategory', 'ProductOfferSloganLangList', 'ProductOfferSubSloganLangList', 'names', 'descs', 'langs', 'product_extra_price_list'));
     }
 
     /**
@@ -2018,12 +2142,12 @@ class AdminController extends Controller
      */
     public function isFutureDateAvailable(Request $request)
     {
-        $publishing_start_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_start_date);
-        $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_end_date);
+        $publishing_start_date_time = \DateTime::createFromFormat('d/m/Y', $request->publishing_start_date);
+        $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y', $request->publishing_end_date);
 
         //check for validation with time availability
-        $startDt = strtotime($publishing_start_date_time->format('Y-m-d H:i:s'));
-        $endDt = strtotime($publishing_end_date_time->format('Y-m-d H:i:s'));
+        $startDt = strtotime($publishing_start_date_time->format('Y-m-d'));
+        $endDt = strtotime($publishing_end_date_time->format('Y-m-d'));
         $status = 0;
         $data = ProductPriceList::where('product_id', $request->product_id)
                         ->where('store_id', $request->store_id)
@@ -2041,15 +2165,15 @@ class AdminController extends Controller
 
     public function addDishPrice(Request $request)
     {
-        $publishing_start_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_start_date);
-        $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y H:i', $request->publishing_end_date);
+        $publishing_start_date_time = \DateTime::createFromFormat('d/m/Y', $request->publishing_start_date);
+        $publishing_end_date_time = \DateTime::createFromFormat('d/m/Y', $request->publishing_end_date);
 
         //check for validation with time availability
-        $startDt = strtotime($publishing_start_date_time->format('Y-m-d H:i:s'));
-        $endDt = strtotime($publishing_end_date_time->format('Y-m-d H:i:s'));
+        $startDt = strtotime($publishing_start_date_time->format('Y-m-d'));
+        $endDt = strtotime($publishing_end_date_time->format('Y-m-d'));
 
-        $publishStartDateTime = $publishing_start_date_time->format('Y-m-d H:i:s');
-        $publishEndDateTime = $publishing_end_date_time->format('Y-m-d H:i:s');
+        $publishStartDateTime = $publishing_start_date_time->format('Y-m-d');
+        $publishEndDateTime = $publishing_end_date_time->format('Y-m-d');
         
         $status = 0;
         $data = ProductPriceList::where('product_id', $request->product_id)
@@ -2092,8 +2216,8 @@ class AdminController extends Controller
             $openTimeRestaurant = $closeTimeRestaurant = null;
             $dayOfPriceDate = $publishing_start_date_time->format('D');
             $openCloseList = explode(",", $store->store_open_close_day_time);
-            $startTimeFuturePrice = \DateTime::createFromFormat('d/m/Y - H:i', $request->dateStart)->format('H:i:00');
-            $endTimeFuturePrice = \DateTime::createFromFormat('d/m/Y - H:i', $request->dateEnd)->format('H:i:00');
+            $startTimeFuturePrice = \DateTime::createFromFormat('d/m/Y', $request->publishing_start_date)->format('H:i:00');
+            $endTimeFuturePrice = \DateTime::createFromFormat('d/m/Y', $request->publishing_end_date)->format('H:i:00');
 
             // Get restaurant working hours
             if( (count($openCloseList) == 1) && strpos($store->store_open_close_day_time, 'All') >= 0 )
@@ -2350,6 +2474,49 @@ class AdminController extends Controller
     {
         $strAddress = '';
         $userAddress = UserAddress::find($addressId);
+
+        if($userAddress)
+        {
+            $strAddress = Helper::convertAddressToStr($userAddress, 0);
+
+            if( !empty($userAddress->mobile) )
+            {
+                $strAddress .= "<p><strong>".__('messages.phone').":</strong> {$userAddress->mobile}</p>";
+            }
+
+            if( !is_null($userAddress->entry_code) )
+            {
+                $strAddress .= "<p><strong>".__('messages.entryCode').":</strong> {$userAddress->entry_code}</p>";
+            }
+
+            if( !is_null($userAddress->apt_no) )
+            {
+                $strAddress .= "<p><strong>".__('messages.aptNo').":</strong> {$userAddress->apt_no}</p>";
+            }
+
+            if( !is_null($userAddress->company_name) )
+            {
+                $strAddress .= "<p><strong>".__('messages.companyName').":</strong> {$userAddress->company_name}</p>";
+            }
+
+            if( !is_null($userAddress->other_info) )
+            {
+                $strAddress .= "<p><strong>".__('messages.otherInfo').":</strong> {$userAddress->other_info}</p>";
+            }
+        }
+
+        return response()->json(['strAddress' => $strAddress]);
+    }
+
+    /**
+     * [getOrderUserAddress description]
+     * @param  [type] $addressId [description]
+     * @return [type]            [description]
+     */
+    function getOrderUserAddress($addressId)
+    {
+        $strAddress = '';
+        $userAddress = UserAddress::where('customer_id',$addressId)->first();
 
         if($userAddress)
         {

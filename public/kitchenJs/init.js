@@ -168,6 +168,19 @@ function getOrderDeliveryAddress(id)
 	});
 }
 
+// take away user address
+function getOrderUserAddress(id)
+{
+	$.ajax({
+		url: RESTAURANT_BASE_URL+'/get-order-user-address/'+id,
+		dataType: 'json',
+		success: function(response) {
+			$('#popup-order-delivery-address').find('.addr').html(response.strAddress).text();
+			$('#popup-order-delivery-address').popup('open');
+		}
+	});
+}
+
 intervalSpeakText = 0;
 
 // Function to speak text once/repeat 

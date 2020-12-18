@@ -424,6 +424,19 @@
                 }else{
                     $('.catering-badge').html('');
                 }
+
+                if(returnedData['kitchenCount'] > 0){
+                    $('.kitchen-badge').html(returnedData['kitchenCount']);
+                }else{
+                    $('.kitchen-badge').html('');
+                }
+
+                if(returnedData['ordersCount'] > 0){
+                    $('.orders-badge').html(returnedData['ordersCount']);
+                }else{
+                    $('.orders-badge').html('');
+                }
+                
 	          	$("#orderDetailContianer").html(liItem);
 			}); 
 		}
@@ -496,6 +509,7 @@
                     deliveryType = '{{ __('messages.deliveryOptionDineIn') }}';
                 }else if( temp[i]['delivery_type'] == 2 ){
                     deliveryType = '{{ __('messages.deliveryOptionTakeAway') }}';
+                    deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderUserAddress('+temp[i]['user_id']+')"><span>'+temp[i]["customer_full_address"]["street"]+'</span></a>';
                 }else if( temp[i]['delivery_type'] == 3 ){
                     deliveryType = '<span>{{ __('messages.deliveryOptionHomeDelivery') }}</span>';
                     if(temp[i]['delivery_at_door'] == '1'){
@@ -513,6 +527,7 @@
                 }
                 liItem += "</tr>";
             }
+            
             return liItem;
         }
         

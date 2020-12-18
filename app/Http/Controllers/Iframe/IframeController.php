@@ -83,11 +83,11 @@ class IframeController extends Controller
 
         // Get the dish_type ids have products available
         $dish_ids = array();
-
+        $dateNow = date("Y-m-d",time()); $timeNow = date("H:i:s",time());
         $productPriceList = ProductPriceList::select('dish_type')
             ->where('store_id',$storeId)
-            ->where('publishing_start_date','<=',Carbon::now())
-            ->where('publishing_end_date','>=',Carbon::now())
+            ->where('publishing_start_date','<=',$dateNow)
+            ->where('publishing_end_date','>=',$dateNow)
             ->where('dish_type', '!=', null)
             ->join('product', 'product_price_list.product_id', '=', 'product.product_id')
             ->orderBy('product.product_rank', 'ASC')

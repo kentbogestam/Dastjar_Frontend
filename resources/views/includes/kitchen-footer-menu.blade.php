@@ -17,6 +17,7 @@
 					<img src="{{asset('kitchenImages/icon-1.png')}}">
 				</div>
 				<span>{{ __('messages.Orders') }}</span>
+                <i class="badge orders-badge"></i>
 				</a>
 			</div>
 			<div class="ui-block-b{{ request()->is('kitchen/kitchen-detail') ? ' block_div active' : '' }}" title="{{ __('messages.Kitchen') }}">
@@ -25,6 +26,7 @@
 					<img src="{{asset('kitchenImages/icon-2.png')}}">
 				</div>
 				<span>{{ __('messages.Kitchen') }}</span>
+                <i class="badge kitchen-badge"></i>
 				</a>
 			</div>
 			<div class="ui-block-b{{ request()->is('kitchen/catering') ? ' block_div active' : '' }}" title="{{ __('messages.Catering') }}">

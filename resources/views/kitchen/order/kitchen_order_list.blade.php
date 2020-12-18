@@ -418,6 +418,7 @@
 			          		else if( temp[i]['delivery_type'] == 2 )
 			          		{
 			          			deliveryType = '{{ __('messages.deliveryOptionTakeAway') }}';
+			          			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderUserAddress('+temp[i]['user_id']+')"><span>'+temp[i]['userStreet']+'</span></a>';
 			          		}
 			          		else if( temp[i]['delivery_type'] == 3 )
 			          		{
@@ -452,6 +453,18 @@
 	          	}else{
 	          		$('.catering-badge').html('');
 	          	}
+
+	          	if(returnedData['kitchenCount'] > 0){
+                 $('.kitchen-badge').html(returnedData['kitchenCount']);
+                }else{
+                    $('.kitchen-badge').html('');
+                }
+
+	          	if(returnedData['ordersCount'] > 0){
+	          		$('.orders-badge').html(returnedData['ordersCount']);
+	          	}else{
+	          		$('.orders-badge').html('');
+	          	}
 			}); 
 		});
         
@@ -464,6 +477,24 @@
 				extra_prep_time = returnedData["extra_prep_time"];
 				totallength = temp.length;
 	          	list = temp;
+
+	          	if(returnedData['catCount'] > 0){
+	          		$('.catering-badge').html(returnedData['catCount']);
+	          	}else{
+	          		$('.catering-badge').html('');
+	          	}
+
+	          	if(returnedData['kitchenCount'] > 0){
+                 $('.kitchen-badge').html(returnedData['kitchenCount']);
+                }else{
+                    $('.kitchen-badge').html('');
+                }
+
+	          	if(returnedData['ordersCount'] > 0){
+	          		$('.orders-badge').html(returnedData['ordersCount']);
+	          	}else{
+	          		$('.orders-badge').html('');
+	          	}
                 
 	          	var liItem = "";
 	          	var ids = '';
@@ -618,6 +649,7 @@
 			          		else if( temp[i]['delivery_type'] == 2 )
 			          		{
 			          			deliveryType = '{{ __('messages.deliveryOptionTakeAway') }}';
+			          			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderUserAddress('+temp[i]['user_id']+')"><span>'+temp[i]['userStreet']+'</span></a>';
 			          		}
 			          		else if( temp[i]['delivery_type'] == 3 )
 			          		{
@@ -846,6 +878,7 @@
 	          		else if( list[i]['delivery_type'] == 2 )
 	          		{
 	          			deliveryType = '{{ __('messages.deliveryOptionTakeAway') }}';
+	          			deliveryType += '<br><a href="javascript:void(0)" onclick="getOrderUserAddress('+list[i]['user_id']+')"><span>'+list[i]['userStreet']+'</span></a>';
 	          		}
 	          		else if( list[i]['delivery_type'] == 3 )
 	          		{
