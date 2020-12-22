@@ -713,6 +713,7 @@ class AdminController extends Controller
             ->leftJoin('order_delivery AS OD', 'OD.order_id', '=', 'orders.order_id')
             ->where('orders.is_verified', '1')
             ->where('orders.catering_order_status', '2')
+            ->groupBy('order_details.id')
             ->get();
  
         $extra_prep_time = Store::where('store_id', $reCompanyId)->first()->extra_prep_time;
