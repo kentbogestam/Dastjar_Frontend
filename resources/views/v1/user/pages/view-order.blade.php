@@ -227,7 +227,7 @@
 						<tbody>
 							@foreach($orderDetails as $orderDetail)
 								<tr>
-									<td colspan="2">{{$orderDetail->product_name}}</td>
+									<td colspan="2">{{Helper::getProductName($orderDetail->product_id)}}</td>
 									<td class="text-center">{{$orderDetail->product_quality}} x {{$orderDetail->price}}</td>
 									<td class="text-right">{{ number_format(($orderDetail->product_quality*$orderDetail->price), 2, '.', '') }}  {{$order->currencies}}</td>
 								</tr>

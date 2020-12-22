@@ -9,10 +9,12 @@ use Session;
 
 use \Gumlet\ImageResize;
 
+use Auth;
 use App\Order;
 use App\DishType;
 use App\Store;
 use App\StoreVirtualMapping;
+use App\ProductOfferSloganLangList;
 
 // 
 use Aws\Ses\SesClient;
@@ -35,6 +37,38 @@ use Illuminate\Support\Facades\File;
 
 class Helper extends Model
 {
+    public static function getProductName($product_id)
+    {
+        if(!empty(Auth::user()->language)){
+            $lg = Auth::user()->language;
+        }else{
+            $lg = 'ENG';
+        }
+        $data = ProductOfferSloganLangList::where('product_id', $product_id)
+                        ->pluck('offer_slogan_lang_list');
+        $lang = LangText::whereIn('id',$data)->where('lang',$lg)->first();
+        if(empty($lang)){
+            $lang = LangText::whereIn('id',$data)->where('lang','ENG')->first();
+        }
+        return $lang->text;
+    }
+
+    public static function getProductDesc($product_id)
+    {
+        if(!empty(Auth::user()->language)){
+            $lg = Auth::user()->language;
+        }else{
+            $lg = 'ENG';
+        }
+        $data = ProductOfferSubSloganLangList::where('product_id', $product_id)
+                        ->pluck('offer_sub_slogan_lang_list');
+        $lang = LangText::whereIn('id',$data)->where('lang',$lg)->first();
+        if(empty($lang)){
+            $lang = LangText::whereIn('id',$data)->where('lang','ENG')->first();
+        }
+        return $lang->text;
+    }
+
     public static function getLocation($address)
     {
         $address = str_replace(' ', '+', $address);

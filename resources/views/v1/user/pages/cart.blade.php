@@ -31,7 +31,7 @@
 							@endphp
 							<tr class="custom_row1" id="row_{{$j}}">
 								<td colspan="2">
-									<span class="truncated" title="{{$value->product_name}}">{{ substr($value->product_name,0,40) }} </span>
+									<span class="truncated" title="{{$value->product_name}}">{{ substr(Helper::getProductName($value->product_id),0,40) }} </span>
 									<p>{{ $value->price }} {{ $order->currencies }}</p>
 									<input type="hidden" name="prod[{{$j}}]" id="prod{{$j}}" value="{{ $value->product_id }}">
 									<input type="hidden" name="itemprice[{{$j}}]" id="itemprice{{$j}}" value="{{$value->price}}"/>

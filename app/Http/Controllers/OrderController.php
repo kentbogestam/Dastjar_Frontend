@@ -154,7 +154,7 @@ class OrderController extends Controller
 
             $storeDetail = Store::where('store_id', $order->store_id)->first();
             $user = User::where('id',$order->user_id)->first();
-            $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
+            $orderDetails = OrderDetail::select('order_details.order_id','order_details.user_id','order_details.product_quality','order_details.product_description','order_details.price','order_details.time','product.product_name','product.product_id')->join('product', 'order_details.product_id', '=', 'product.product_id')->where('order_details.order_id',$orderId)->get();
 
             // Check if loyalty exist for order
             $orderCustomerLoyalty = OrderCustomerLoyalty::select()
