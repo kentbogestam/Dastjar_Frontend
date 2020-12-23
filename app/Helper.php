@@ -47,10 +47,10 @@ class Helper extends Model
         $data = ProductOfferSloganLangList::where('product_id', $product_id)
                         ->pluck('offer_slogan_lang_list');
         $lang = LangText::whereIn('id',$data)->where('lang',$lg)->first();
-        if(empty($lang)){
-            $lang = LangText::whereIn('id',$data)->where('lang','ENG')->first();
+        if(!empty($lang)){
+            return $lang->text;
         }
-        return $lang->text;
+        return 'empty';
     }
 
     public static function getProductDesc($product_id)
@@ -63,10 +63,10 @@ class Helper extends Model
         $data = ProductOfferSubSloganLangList::where('product_id', $product_id)
                         ->pluck('offer_sub_slogan_lang_list');
         $lang = LangText::whereIn('id',$data)->where('lang',$lg)->first();
-        if(empty($lang)){
-            $lang = LangText::whereIn('id',$data)->where('lang','ENG')->first();
+        if(!empty($lang)){
+            return $lang->text;
         }
-        return $lang->text;
+        return 'empty';
     }
 
     public static function getLocation($address)

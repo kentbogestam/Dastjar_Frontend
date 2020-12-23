@@ -226,8 +226,15 @@
 					<table class="table">
 						<tbody>
 							@foreach($orderDetails as $orderDetail)
+								@php
+								if(Helper::getProductName($orderDetail->product_id) == "empty"){
+			                        $productName = $orderDetail->product_name;
+			                    }else{
+			                        $productName = Helper::getProductName($orderDetail->product_id);
+			                    }
+								@endphp
 								<tr>
-									<td colspan="2">{{Helper::getProductName($orderDetail->product_id)}}</td>
+									<td colspan="2">{{$productName}}</td>
 									<td class="text-center">{{$orderDetail->product_quality}} x {{$orderDetail->price}}</td>
 									<td class="text-right">{{ number_format(($orderDetail->product_quality*$orderDetail->price), 2, '.', '') }}  {{$order->currencies}}</td>
 								</tr>
