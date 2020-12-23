@@ -3177,12 +3177,14 @@ class AdminController extends Controller
             ->join('orders', 'orders.order_id', '=', 'order_details.order_id')
             ->join('product', 'product.product_id', '=', 'order_details.product_id')
             ->whereIn('orders.store_id', $stores)
-            ->where(['user_type' => 'customer', 'orders.order_started' => '0', 'orders.paid' => '0'])
-            ->where('orders.check_deliveryDate', '>=', date("Y-m-d"))
-            ->where('orders.check_deliveryDate', '<=', date("Y-m-d",strtotime("+1 day")))
-            ->where('orders.cancel','!=', 1)
-            ->where('orders.is_verified', '1')
+            ->where(['user_type' => 'customer', 'orders.order_started' => '0','orders.order_ready' => '0', 'orders.paid' => '0'])
+            ->where('orders.check_deliveryDate', '>=', date("Y-m-d",time()))
+            ->whereNotIn('orders.online_paid', [2])
+            ->whereNotIn('orders.cancel', [1,2,3])
+            ->where('orders.catering_order_status','!=','1')
+            ->groupBy('order_details.id')
             ->get();
+
             $orderIds = array();
             if(!empty($orderDetails->toArray())){
                 foreach($orderDetails as $ord){
