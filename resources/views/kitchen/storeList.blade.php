@@ -29,11 +29,13 @@
                     @endif
                     @if($storeDetails)
                         @foreach($storeDetails as $storeName)
-                             <label>
+                             <label class="storeId">
                                 <input type="radio" name="storeId" id="{{$storeName->store_id}}" value="{{$storeName->store_id}}" required>{{$storeName->store_name}}
                             </label>
                         @endforeach
-                    <input class="select_store" type="submit" value="Done">
+                    <div style="display:none">
+                        <button type="submit" class="select_store">Done</button>
+                    </div>
                     @else <h3> Store is not avaliable.</h3>
                     @endif
                 </div>
@@ -49,6 +51,12 @@
     // Handle page restore.
     window.location.reload();
   }
+});
+
+$('body').on('click', '.storeId', function(){
+    setTimeout(function(){
+        $('.select_store').trigger('click');
+    });
 });
 </script>
    

@@ -224,6 +224,12 @@
         $(window).on('load', function() {
             addWatchOnPosition();
         });
+
+        $('body').on('blur', '#pac-input', function(){
+            setTimeout(function(){
+                $('#dataSave').trigger('click');
+            },1000);
+        });
 	</script>
 
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyByLiizP2XW9JUAiD92x57u7lFvU3pS630&libraries=places&callback=initMap" async defer></script>
