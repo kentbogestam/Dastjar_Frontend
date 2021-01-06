@@ -259,9 +259,9 @@
 				<div class="row slaveDiv">
 					<div class="col-3">
 						<select name="dishLang[]" class="dishLang" required title="{{ __('messages.iDishLanguage') }}">
-							<option value="" disabled>Dish Language</option>
-							<option value="SWE" selected>SWE</option>
-							<option value="ENG">ENG</option>
+							<option value="" selected disabled>Dish Language</option>
+							<option value="SWE" @if(\Auth::user()->language == "SWE") selected @endif>SWE</option>
+							<option value="ENG"  @if(\Auth::user()->language == "ENG") selected @endif>ENG</option>
 						</select>
 					</div>
 					<div class="col-4">
