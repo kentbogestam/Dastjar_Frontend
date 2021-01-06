@@ -259,8 +259,8 @@
 				<div class="row slaveDiv">
 					<div class="col-3">
 						<select name="dishLang[]" class="dishLang" required title="{{ __('messages.iDishLanguage') }}">
-							<option value="" selected disabled>Dish Language</option>
-							<option value="SWE">SWE</option>
+							<option value="" disabled>Dish Language</option>
+							<option value="SWE" selected>SWE</option>
 							<option value="ENG">ENG</option>
 						</select>
 					</div>
