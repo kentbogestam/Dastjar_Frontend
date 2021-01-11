@@ -2,7 +2,7 @@
 /public/hot
 /public/storage
 /storage/*.key
-#/vendor
+/vendor
 /.idea
 /.vagrant
 Homestead.json
@@ -11,4 +11,4 @@ npm-debug.log
 yarn-error.log
 .env
 config/services.php
-public/uploads/*
+/public/upload/images/*
