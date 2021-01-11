@@ -2025,41 +2025,70 @@ class AdminController extends Controller
             if($productNew->save())
             {
                 // Get product price detail
-                $current_date = Carbon::now()->format('Y-m-d h:i:00');
+                $current_date = Carbon::now()->format('Y-m-d');
 
-                $currentProductPrice = ProductPriceList::select('product_id', 'store_id', 'text', 'price', 'lang', 'publishing_start_date', 'publishing_end_date')
+                $currentProductPrice = ProductPriceList::select('id', 'product_id', 'store_id', 'text', 'price', 'lang', 'publishing_start_date', 'publishing_end_date')
                     ->where('product_id', $productId)
                     ->where('store_id', Session::get('kitchenStoreId'))
-                    ->where('publishing_start_date', '<=', $current_date)
-                    ->where('publishing_end_date', '>=', $current_date)
-                    ->first();
-                
-                if(!$currentProductPrice)
-                {
-                    $currentProductPrice = ProductPriceList::select('product_id', 'store_id', 'text', 'price', 'lang', 'publishing_start_date', 'publishing_end_date')
-                        ->where('product_id', $productId)
-                        ->where('store_id', Session::get('kitchenStoreId'))
-                        ->orderBy('id', 'DESC')
-                        ->first();
-                }
+                    ->orderBy('id', 'ASC')
+                    ->get();
 
-                if($currentProductPrice)
+                if(!empty($currentProductPrice->toArray()))
                 {
-                    $product_price_list = ProductPriceList::firstOrNew(['product_id' => $productNew->product_id]);
-                    $product_price_list->store_id = $currentProductPrice->store_id;
-                    $product_price_list->text = $currentProductPrice->text;
-                    $product_price_list->price = $currentProductPrice->price;
-                    $product_price_list->lang = $currentProductPrice->lang;
-                    $product_price_list->save();
+                    foreach($currentProductPrice as $data)
+                    {
+                        $priceList = ProductPriceList::create([
+                            'product_id' => $productNew->product_id,
+                            'store_id' => $data->store_id,
+                            'text' => $data->text,
+                            'price' => $data->price,
+                            'lang' => $data->lang,
+                            'publishing_start_date' => $data->publishing_start_date,
+                            'publishing_end_date' => $data->publishing_end_date,
+                            'publishing_start_time' => null,
+                            'publishing_end_time' => null,
+                        ]);
+
+                        $extraPriceList = ProductExtraPriceList::where('product_id',$productId)->where('ppl_id',$data->id)->get();
+
+                        if(!empty($extraPriceList->toArray())){
+                            foreach($extraPriceList as $extraPrice){
+                                ProductExtraPriceList::create([
+                                    'product_id' => $pId,
+                                    'ppl_id' => $priceList->id,
+                                    'price' => $extraPrice->price,
+                                    'publishing_start_time' => $extraPrice->publishing_start_time,
+                                    'publishing_end_time' => $extraPrice->publishing_end_time,
+                                ]);  
+                            }
+                        }
+                    }
                 }
 
                 // Add product meta
+                $offer_slogan_lang_list = ProductOfferSloganLangList::where('product_id',$productId)->orderBy('id','ASC')->pluck('offer_slogan_lang_list')->toArray();
+                $offer_sub_slogan_lang_list = ProductOfferSubSloganLangList::where('product_id',$productId)->orderBy('id','ASC')->pluck('offer_sub_slogan_lang_list')->toArray();
+
+                $countParam = 0;
+                $lang = array();
+                $product_description = array();
+                $product_name = array();
+
+                foreach($offer_slogan_lang_list as $val){
+                    $lang[] = LangText::where('id',$val)->first()->lang;
+                    $product_name[] = LangText::where('id',$val)->first()->text;
+                    ++$countParam;
+                }
+                foreach($offer_sub_slogan_lang_list as $val){
+                    $product_description[] = LangText::where('id',$val)->first()->text;
+                }
+
                 $data = array(
                     'product_id' => $pId,
-                    'company_id' => $productNew->company_id,
-                    'lang' => $productNew->lang,
-                    'product_description' => $productNew->product_description,
-                    'product_name' => $productNew->product_name,
+                    'countParam' => $countParam,
+                    'lang' => $lang,
+                    'product_description' => $product_description,
+                    'product_name' => $product_name,
                 );
 
                 $this->addProductMeta($data);
