@@ -214,7 +214,7 @@
 
 		<div class="row">
 			<div class="col-10 dish_name_col">
-				<a href="{{ url('kitchen/menu') }}" class="menu_back_btn" data-ajax="false"><span class="fa fa-chevron-left"></span>Back</a>
+				<a href="{{ url('kitchen/menu') }}/{{@$product->dish_type}}" class="menu_back_btn" data-ajax="false"><span class="fa fa-chevron-left"></span>Back</a>
 			</div>
 			<div class="col-2 menu_image_col">
 				<label class="upload_menu" for="fileupload" title="{{ __('messages.iDishImage') }}">

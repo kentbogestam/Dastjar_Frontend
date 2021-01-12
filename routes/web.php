@@ -222,7 +222,7 @@ Route::group(['prefix' => 'kitchen'], function(){
 	Route::post('save-kitchenSetting', 'AdminController@saveKitchenSetting');
 	Route::post('payment', 'AdminController@payment');
 	Route::get('payment', 'AdminController@payment');
-	Route::get('menu', 'AdminController@kitchenMenu')->name('menu');
+	Route::get('menu/{id?}', 'AdminController@kitchenMenu')->name('menu');
 	Route::post('ajax-get-product-by-dish-type', 'AdminController@ajaxGetProductByDishType');
 	Route::post('ajax-get-future-price-by-product', 'AdminController@ajaxGetFuturePriceByProduct');
 	Route::get('kitchen-orders', 'AdminController@kitchenOrders');

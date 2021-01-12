@@ -1247,7 +1247,7 @@ class AdminController extends Controller
         return $pushNotification;
     }
 
-    public function kitchenMenu(){
+    public function kitchenMenu($id=null){
         if(Session::get('kitchenStoreId')){
             $products = new Product();
             $productPriceList = new ProductPriceList();
@@ -1330,7 +1330,7 @@ class AdminController extends Controller
             $companydetails = new Company();
             $currency = $companydetails->where('company_id' , '=', $companyId)->first()->currencies;
 
-            return view('kitchen.menulist.index', compact('menuTypes','storeName', 'currency', 'allData'));
+            return view('kitchen.menulist.index', compact('menuTypes','storeName', 'currency', 'allData', 'id'));
         }
     }
 
@@ -1635,7 +1635,7 @@ class AdminController extends Controller
 
         $this->addProductMeta($data);
 
-        return redirect()->route('menu')->with('success', $message);
+        return redirect()->route('menu',@$request->dishType)->with('success', $message);
     }
 
     // Add product meta while adding new product
@@ -1907,7 +1907,7 @@ class AdminController extends Controller
             ]);
         }
 
-        return redirect()->route('menu')->with('success', $message);
+        return redirect()->route('menu',@$request->dishType)->with('success', $message);
     }
 
     public function kitchenDeleteTime(Request $request,$id){
@@ -2101,7 +2101,7 @@ class AdminController extends Controller
             $message = 'Dish not found.';
         }
 
-        return redirect()->route('menu')->with('success', $message);
+        return redirect()->route('menu',@$product->dish_type)->with('success', $message);
     }
 
     /**
@@ -2111,58 +2111,27 @@ class AdminController extends Controller
      */
     function deleteDishPrice(Request $request)
     {
+        $productId = ProductPriceList::where('id', $request->price_id)->first()->product_id;
+        $dishType = Product::where('product_id', $productId)->first()->dish_type;
+
         $productPriceList = new ProductPriceList();
         $productPriceList->where('id', '=', $request->price_id)->delete();
 
-        return back()->with('success','Dish Price deleted successfully');
+        return redirect()->route('menu',@$dishType)->with('success', 'Dish Price deleted successfully');
     }
 
     public function kitchenDeleteDish(Request $request){
         $productid = $request->product_id;
 
-        /*foreach ($res1 as $rs1) {
-            $productId = $rs1['product_id'];
-            $couponId = $rs1['coupon_id'];
-            $storeId = $rs1['store_id'];
+        $dishType = Product::where('product_id',$productid)->first()->dish_type;
 
-            if ($couponId) {
-                $coupon = new Coupon();
-                $res3 = $coupon->where('coupon_id','=',$couponId)->delete();
-
-                $coupon_offer_slogan_lang_list = new CouponOfferSloganLangList();
-                $res4 = $coupon_offer_slogan_lang_list->where('coupon','=',$couponId)->get();
-
-                foreach ($res4 as $rs4) {
-                    $offslogen = $rs4['offer_slogan_lang_list'];
-                    $res5 = $coupon_offer_slogan_lang_list->where('coupon','=',$couponId)->delete();
-                }
-
-                $coupon_offer_title_lang_list = new CouponOfferTitleLangList();
-                $res7 = $coupon_offer_title_lang_list->where('coupon','=',$couponId)->get();
-
-                foreach ($res7 as $rs7) {
-                    $offtitle = $rs7['offer_title_lang_list'];
-                    $res8 = $coupon_offer_title_lang_list->where('coupon','=',$couponId)->delete();
-                }
-
-                $coupon_keywords_lang_list = new CouponKeywordsLangList();
-                $res10 = $coupon_keywords_lang_list->where('coupon','=',$couponId)->get();
-
-                foreach ($res10 as $rs10) {
-                    $ckeyword = $rs10['keywords_lang_list'];
-                    $res8 = $coupon_keywords_lang_list->where('coupon','=',$couponId)->delete();
-                }
-            }
-        }*/
-
-        // 
         $product = new Product();
         $q = $product->where('product_id', '=', $productid)->update(['s_activ' => '2']);
 
         // Delete all price
         ProductPriceList::where('product_id', $productid)->delete();
 
-        return back()->with('success','Dish deleted successfully');
+        return redirect()->route('menu',@$dishType)->with('success', 'Dish Deleted successfully');
     }
 
     /**
@@ -2269,7 +2238,9 @@ class AdminController extends Controller
             }
         }
 
-        return back()->with('success','Price added successfully');
+        $dishType = Product::where('product_id',$request->product_id)->first()->dish_type;
+        
+        return redirect()->route('menu',@$dishType)->with('success', 'Price added successfully');
     }
 
     // Kitchen Payment 

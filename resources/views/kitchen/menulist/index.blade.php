@@ -645,4 +645,10 @@
 	});
 	</script>
 
+	<script>
+		setTimeout(function(){
+			$("div#{{@$id}} .dish_type").trigger('click');
+		},500);
+	</script>
+
 @endsection
