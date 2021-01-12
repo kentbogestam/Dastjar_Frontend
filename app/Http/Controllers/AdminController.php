@@ -1635,7 +1635,8 @@ class AdminController extends Controller
 
         $this->addProductMeta($data);
 
-        return redirect()->route('menu',@$request->dishType)->with('success', $message);
+        $dishType = Helper::getDishTypeToOpen(@$product_id);
+        return redirect()->route('menu',@$dishType)->with('success', $message);
     }
 
     // Add product meta while adding new product
@@ -1907,7 +1908,9 @@ class AdminController extends Controller
             ]);
         }
 
-        return redirect()->route('menu',@$request->dishType)->with('success', $message);
+        $dishType = Helper::getDishTypeToOpen(@$product_id);
+
+        return redirect()->route('menu',@$dishType)->with('success', $message);
     }
 
     public function kitchenDeleteTime(Request $request,$id){
@@ -2101,7 +2104,10 @@ class AdminController extends Controller
             $message = 'Dish not found.';
         }
 
-        return redirect()->route('menu',@$product->dish_type)->with('success', $message);
+        $dishType = Helper::getDishTypeToOpen(@$productId);
+
+        return redirect()->route('menu',@$dishType)->with('success', $message);
+        
     }
 
     /**
@@ -2112,7 +2118,7 @@ class AdminController extends Controller
     function deleteDishPrice(Request $request)
     {
         $productId = ProductPriceList::where('id', $request->price_id)->first()->product_id;
-        $dishType = Product::where('product_id', $productId)->first()->dish_type;
+        $dishType = Helper::getDishTypeToOpen(@$productId);
 
         $productPriceList = new ProductPriceList();
         $productPriceList->where('id', '=', $request->price_id)->delete();
@@ -2123,7 +2129,7 @@ class AdminController extends Controller
     public function kitchenDeleteDish(Request $request){
         $productid = $request->product_id;
 
-        $dishType = Product::where('product_id',$productid)->first()->dish_type;
+        $dishType = Helper::getDishTypeToOpen(@$productid);
 
         $product = new Product();
         $q = $product->where('product_id', '=', $productid)->update(['s_activ' => '2']);
@@ -2238,7 +2244,7 @@ class AdminController extends Controller
             }
         }
 
-        $dishType = Product::where('product_id',$request->product_id)->first()->dish_type;
+        $dishType = Helper::getDishTypeToOpen(@$request->product_id);
         
         return redirect()->route('menu',@$dishType)->with('success', 'Price added successfully');
     }
