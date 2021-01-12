@@ -42,7 +42,12 @@ class Helper extends Model
         if(!empty(Auth::user()->language)){
             $lg = Auth::user()->language;
         }else{
-            $lg = 'ENG';
+            $lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+            if($lang == 'sv'){
+                $lg = 'SWE';
+            }else{
+                $lg = 'ENG';
+            }
         }
         $data = ProductOfferSloganLangList::where('product_id', $product_id)
                         ->pluck('offer_slogan_lang_list');
