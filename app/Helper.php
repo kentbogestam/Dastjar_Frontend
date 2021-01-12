@@ -740,23 +740,27 @@ class Helper extends Model
 
     public static function getDishTypeToOpen($id)
     {
-        $dishType = Product::where('product_id', $id)->first()->dish_type;
-        if(!empty($dishType)){
-            $parent_id1 = DishType::where('dish_id',$dishType)->first()->parent_id;
-            if(!empty($parent_id1)){
-                $parent_id2 = DishType::where('dish_id',$parent_id1)->first()->parent_id;
-                if(!empty($parent_id2)){
-                    $parent_id3 = DishType::where('dish_id',$parent_id2)->first()->parent_id;
-                    if(!empty($parent_id3)){
-                        $parent_id3 = DishType::where('dish_id',$parent_id3)->first()->parent_id;
-                        return $parent_id3;
+        $dishType = '';
+        $product = Product::where('product_id', $id)->first();
+        if(!empty($product))
+        {
+            $dishType = $product->dish_type;
+            $dish = DishType::where('dish_id',$dishType)->first();
+            if(!empty($dish) && !empty($dish->parent_id))
+            {
+                $dishType = $dish->parent_id;
+                $dish = DishType::where('dish_id',$dishType)->first();
+                if(!empty($dish) && !empty($dish->parent_id))
+                {
+                    $dishType = $dish->parent_id;
+                    $dish = DishType::where('dish_id',$dishType)->first();
+                    if(!empty($dish) && !empty($dish->parent_id))
+                    {
+                        $dishType = $dish->parent_id;
                     }
-                    return $parent_id2;
                 }
-                return $parent_id1;
             }
-            return $dishType;
         }
-        return '';
+        return $dishType;
     }
 }
