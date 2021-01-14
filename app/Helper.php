@@ -42,8 +42,8 @@ class Helper extends Model
         if(!empty(Auth::user()->language)){
             $lg = Auth::user()->language;
         }else{
-            $lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
-            if($lang == 'sv'){
+            $langs = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+            if($langs == 'sv'){
                 $lg = 'SWE';
             }else{
                 $lg = 'ENG';
@@ -55,7 +55,8 @@ class Helper extends Model
         if(!empty($lang)){
             return $lang->text;
         }
-        return 'empty';
+        $product = Product::where('product_id',$product_id)->first();
+        return $product->product_name;
     }
 
     public static function getProductDesc($product_id)
@@ -63,7 +64,12 @@ class Helper extends Model
         if(!empty(Auth::user()->language)){
             $lg = Auth::user()->language;
         }else{
-            $lg = 'ENG';
+            $langs = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+            if($langs == 'sv'){
+                $lg = 'SWE';
+            }else{
+                $lg = 'ENG';
+            }
         }
         $data = ProductOfferSubSloganLangList::where('product_id', $product_id)
                         ->pluck('offer_sub_slogan_lang_list');
@@ -71,7 +77,30 @@ class Helper extends Model
         if(!empty($lang)){
             return $lang->text;
         }
-        return 'empty';
+        $product = Product::where('product_id',$product_id)->first();
+        return $product->product_name;
+    }
+    
+    public static function getDishTypeName($dish_id)
+    {
+        if(!empty(Auth::user()->language)){
+            $lg = Auth::user()->language;
+        }else{
+            $langs = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+            if($langs == 'sv'){
+                $lg = 'SWE';
+            }else{
+                $lg = 'ENG';
+            }
+        }
+        $data = DishOfferSloganLangList::where('dish_id', $dish_id)
+                        ->pluck('offer_slogan_lang_list');
+        $lang = LangText::whereIn('id',$data)->where('lang',$lg)->first();
+        if(!empty($lang)){
+            return $lang->text;
+        }
+        $dish = DishType::where('dish_id',$dish_id)->first();
+        return $dish->dish_name;
     }
 
     public static function getLocation($address)

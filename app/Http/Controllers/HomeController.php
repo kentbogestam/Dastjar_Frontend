@@ -829,7 +829,7 @@ class HomeController extends Controller
                 $html .= "
                     <div class='product-sub'>
                         <a href='#sub-menu-{$row->dish_id}' onclick='getMenuDetail(this, {$row->dish_id}, {$level}, \"{$storeId}\")' data-toggle='collapse'>
-                            <span>{$row->dish_name}</span>                            
+                            <span>".Helper::getDishTypeName($row->dish_id)." </span>                            
                         </a>
                         <div class='collapse sub-menu-detail' id='sub-menu-{$row->dish_id}'>
                             <div class='text-center'><i class='fa fa-spinner' aria-hidden='true'></i></div>
@@ -908,17 +908,6 @@ class HomeController extends Controller
                         $proImg = "<img src='{$row->small_image}' alt='{$row->product_name}' title='{$row->product_name}'>";
                     }
                     
-                    if(Helper::getProductName($row->product_id) == "empty"){
-                        $productName = $row->product_name;
-                    }else{
-                        $productName = Helper::getProductName($row->product_id);
-                    }
-                    if(Helper::getProductDesc($row->product_id) == "empty"){
-                        $productDesc = $row->product_description;
-                    }else{
-                        $productDesc = Helper::getProductDesc($row->product_id);
-                    }
-                    
                     $people_serve=session()->get('people_serve');
                     $html .= "
                         <div class='hotel-product'>
@@ -926,8 +915,8 @@ class HomeController extends Controller
                                 <div class='col-sm-10 col-md-10 col-xs-8'>
                                     <div class='product-detail'>{$proImg}</div>
                                     <div class='discription'>
-                                        <h3 class='truncated' title='{productName}'>".substr($productName,0,40)."</h3>
-                                        <p class='truncated' title='{productDesc}'>".substr($productDesc,0,100)."</p>
+                                        <h3 class='truncated' title='".Helper::getProductName($row->product_id)."'>".substr(Helper::getProductName($row->product_id),0,40)."</h3>
+                                        <p class='truncated' title='".Helper::getProductDesc($row->product_id)."'>".substr(Helper::getProductDesc($row->product_id),0,100)."</p>
                                         <p class='price'>".number_format((float)$usePrice, 2, '.', '')." SEK</p>
                                     </div>
                                 </div>

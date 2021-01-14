@@ -118,10 +118,10 @@
 							<a href="javascript:void(0);" onclick="getMenuDetail(this, {{ $menuType->dish_id }}, 1, '{{ $storedetails->store_id }}')">
 								@if( !is_null($menuType->dish_image) )
 									<div class="box-img">
-										<img src="https://s3.eu-west-1.amazonaws.com/dastjar-coupons/{{ $menuType->dish_image }}" alt="{{ $menuType->dish_name }}">
+										<img src="https://s3.eu-west-1.amazonaws.com/dastjar-coupons/{{ $menuType->dish_image }}" alt="{{ Helper::getDishTypeName($menuType->dish_id) }}">
 									</div>
 								@else
-									<div class="box-img"><img src="{{ asset('v1/images/img-pizza.jpg') }}" alt="{{ $menuType->dish_name }}"></div>
+									<div class="box-img"><img src="{{ asset('v1/images/img-pizza.jpg') }}" alt="{{ Helper::getDishTypeName($menuType->dish_id) }}"></div>
 								@endif
 
 								<div class="restaurant-contant">
@@ -130,7 +130,7 @@
 											<small>{!! $strLoyaltyOffer !!}</small><br>
 										</div>
 									@endif
-									<h4 class="text-center">{{ $menuType->dish_name }}</h4>
+									<h4 class="text-center">{{ Helper::getDishTypeName($menuType->dish_id) }}</h4>
 								</div>
 							</a>
 						</div>
@@ -149,7 +149,7 @@
 						<div class="hotel-ser{{ ($strLoyaltyOffer != '') ? ' row-loyalty-offer' : '' }}">
 							<a href="#menu-{{ $menuType->dish_id }}" onclick="getMenuDetail(this, {{ $menuType->dish_id }}, 1, '{{ $storedetails->store_id }}')" data-toggle="collapse">
 								<span>
-									{{ $menuType->dish_name }} 
+									{{ Helper::getDishTypeName($menuType->dish_id) }}
 									{!! $strLoyaltyOffer !!}
 								</span> 
 								<!-- <span class="icon-fa-angle-right"><i class="fa fa-angle-right"></i></span> -->
