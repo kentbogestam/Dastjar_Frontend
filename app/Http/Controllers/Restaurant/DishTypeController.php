@@ -14,7 +14,9 @@ use App\Helper;
 use App\DishType;
 use App\Company;
 use App\Product;
+use App\LangText;
 use App\ProductsExtra;
+use App\DishOfferSloganLangList;
 
 use \Gumlet\ImageResize;
 
@@ -131,13 +133,15 @@ class DishTypeController extends Controller
     {
         // Validation
         $this->validate($request, [
-            'dish_lang' => 'required',
-            'dish_name' => [
-                'required',
-                Rule::unique('dish_type')->where(function($query) use ($request) {
-                    return $query->where(['dish_lang' => $request->dish_lang, 'dish_name' => $request->dish_name, 'u_id' => Auth::user()->u_id, 'dish_activate' => 1, 'parent_id' => $request->parent_id]);
-                })
-            ],
+            'dishTypeLang' => 'required',
+            'dishTypeName' => 'required',
+            // 'dish_lang' => 'required',
+            // 'dish_name' => [
+            //     'required',
+            //     Rule::unique('dish_type')->where(function($query) use ($request) {
+            //         return $query->where(['dish_lang' => $request->dish_lang, 'dish_name' => $request->dish_name, 'u_id' => Auth::user()->u_id, 'dish_activate' => 1, 'parent_id' => $request->parent_id]);
+            //     })
+            // ],
             'dish_image' => 'image|mimes:jpeg,png,jpg|max:2048',
         ], [
             'dish_name.required' => __('messages.fieldRequired'),
@@ -196,9 +200,12 @@ class DishTypeController extends Controller
             $data['extras'] = '0';
         }
 
+        $data['dish_lang'] = $request->dishTypeLang['0'];
+        $data['dish_name'] = $request->dishTypeName['0'];
+
         // Create DishType
         $item = DishType::create($data);
-        echo $item;
+
         if($item->extras == '0'){
             if(isset($request->extra_dish_type)){
                 foreach($request->extra_dish_type as $key => $val){
@@ -209,6 +216,26 @@ class DishTypeController extends Controller
                     ]);
                 }
             }
+        }
+
+        $helper = new Helper();
+
+        for($i=0; $i<$request->countParam; $i++)
+        {
+            $sloganLangId = $helper->uuid();
+
+            $dishOfferSloganLangList = new DishOfferSloganLangList();
+            $dishOfferSloganLangList->dish_id = $item->id;
+            $dishOfferSloganLangList->offer_slogan_lang_list = $sloganLangId;
+            $dishOfferSloganLangList->save();
+
+            // insert dish description in lang_text table
+
+            $langText = new LangText();
+            $langText->id = $sloganLangId;
+            $langText->lang = $request->dishTypeLang["$i"];
+            $langText->text = $request->dishTypeName["$i"];
+            $langText->save();
         }
 
         return redirect('kitchen/dishtype/list')->with('success', __('messages.dishTypeCreated'));
@@ -303,7 +330,43 @@ class DishTypeController extends Controller
             }
         }
         $output .='</select><br>';
-        return response()->json(['dishType' => $dishType, 'output' => $output]);
+
+        $dishOutput = '';
+        $countParam = 0;
+
+        $offer_slogan_lang_list = DishOfferSloganLangList::where('dish_id', $id)->orderBy('id','ASC')->pluck('offer_slogan_lang_list');
+        if(!empty($offer_slogan_lang_list->toArray()))
+        {
+            foreach($offer_slogan_lang_list as $val)
+            {            
+                $langVars = LangText::where('id',$val)->first();
+                if(!empty($langVars))
+                {
+                    ++$countParam;
+                    $dishOutput .= '<div class="row slaveDiv"  id="slaveDiv'.$countParam.'"><div class="col-md-6"><div class="form-group"><select name="dishTypeLang[]" class="form-control dishTypeLang" required><option value="" selected disabled>Dish Type Language</option>';
+                    if(@$langVars->lang == "SWE"){
+                        $dishOutput .= '<option value="SWE" selected>SWE</option>';
+                    }else{
+                        $dishOutput .= '<option value="SWE">SWE</option>';
+                    }
+                    if(@$langVars->lang == "ENG"){
+                        $dishOutput .= '<option value="ENG" selected>ENG</option>';
+                    }else{
+                        $dishOutput .= '<option value="ENG">ENG</option>';
+                    }
+                    
+                    $dishOutput .= '</select></div></div><div class="col-md-5"><div class="form-group">';
+                    $dishOutput .= '<input type="text" name="dishTypeName[]" placeholder="Dish Type Name" class="form-control dishTypeName" value="'.@$langVars->text.'" maxlength="50" required/>';
+                    $dishOutput .= '</div></div><div class="col-md-1"><button class="btn btn-danger btn-sm pull-right removeMore" style="background-color:maroon;color:white" rel="'.$countParam.'" type="button">X</button></div></div>';
+                }
+            }
+        }
+
+        if($dishOutput == ''){
+            $countParam = 1;
+            $dishOutput .= '<div class="row slaveDiv" id="slaveDiv1"><div class="col-md-6"><div class="form-group"><select name="dishTypeLang[]" class="form-control dishTypeLang" required><option value="" selected disabled>Dish Type Language</option><option value="SWE">SWE</option><option value="ENG">ENG</option></select></div></div><div class="col-md-5"><div class="form-group"><input type="text" name="dishTypeName[]" placeholder="Dish Type Name" class="form-control dishTypeName" value="" maxlength="50" required/></div></div><div class="col-md-1"><button class="btn btn-danger btn-sm pull-right removeMore" style="background-color:maroon;color:white" rel="1" type="button">X</button></div></div>';
+        }
+        return response()->json(['dishType' => $dishType, 'output' => $output, 'dishOutput' => $dishOutput, 'countParam' => $countParam]);
     }
 
     /**
@@ -336,13 +399,15 @@ class DishTypeController extends Controller
     {
         // Validation
         $this->validate($request, [
-            'dish_lang' => 'required',
-            'dish_name' => [
-                'required',
-                Rule::unique('dish_type')->where(function($query) use ($request) {
-                    return $query->where(['dish_lang' => $request->dish_lang, 'dish_name' => $request->dish_name, 'u_id' => Auth::user()->u_id, 'dish_activate' => 1, 'parent_id' => $request->parent_id])->where('dish_id', '!=', $request->dish_id);
-                })
-            ],
+            'dishTypeLang' => 'required',
+            'dishTypeName' => 'required',
+            // 'dish_lang' => 'required',
+            // 'dish_name' => [
+            //     'required',
+            //     Rule::unique('dish_type')->where(function($query) use ($request) {
+            //         return $query->where(['dish_lang' => $request->dish_lang, 'dish_name' => $request->dish_name, 'u_id' => Auth::user()->u_id, 'dish_activate' => 1, 'parent_id' => $request->parent_id])->where('dish_id', '!=', $request->dish_id);
+            //     })
+            // ],
             'dish_image' => 'image|mimes:jpeg,png,jpg|max:2048',
         ], [
             'dish_name.required' => __('messages.fieldRequired'),
@@ -388,7 +453,7 @@ class DishTypeController extends Controller
 
             // update dish type
             DishType::where('dish_id', $request->dish_id)
-                ->update(['dish_lang' => $request->dish_lang, 'dish_name' => $request->dish_name, 'parent_id' => $request->parent_id, 'extras' => $extra_dish, 'dish_image' => $filePath]);
+                ->update(['dish_lang' => $request->dishTypeLang['0'], 'dish_name' =>  $request->dishTypeName['0'], 'parent_id' => $request->parent_id, 'extras' => $extra_dish, 'dish_image' => $filePath]);
 
             ProductsExtra::where('dish_type_id',$request->dish_id)->where('store_id',Session::get('kitchenStoreId'))->delete();
             if($extra_dish == '0'){
@@ -401,6 +466,32 @@ class DishTypeController extends Controller
                         ]);
                     }
                 }
+            }
+
+            $offer_slogan_lang_list = DishOfferSloganLangList::where('dish_id', $request->dish_id)->pluck('offer_slogan_lang_list');
+            if(!empty($offer_slogan_lang_list->toArray())){
+                LangText::whereIn('id',$offer_slogan_lang_list->toArray())->delete();
+                DishOfferSloganLangList::where('dish_id',$request->dish_id)->delete();
+            }
+            
+            $helper = new Helper();
+
+            for($i=0; $i<$request->countParam; $i++)
+            {
+                $sloganLangId = $helper->uuid();
+
+                $dishOfferSloganLangList = new DishOfferSloganLangList();
+                $dishOfferSloganLangList->dish_id = $request->dish_id;
+                $dishOfferSloganLangList->offer_slogan_lang_list = $sloganLangId;
+                $dishOfferSloganLangList->save();
+
+                // insert dish description in lang_text table
+
+                $langText = new LangText();
+                $langText->id = $sloganLangId;
+                $langText->lang = $request->dishTypeLang["$i"];
+                $langText->text = $request->dishTypeName["$i"];
+                $langText->save();
             }
         }
         

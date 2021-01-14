@@ -31,6 +31,9 @@
         background-color: #F9F9F9 !important;
     } */
     
+    .modal-dialog{
+        max-width: 70%;
+    }
     </style>
     <link rel="stylesheet" href="{{ asset('css/multi.min.css') }}" />
 @stop
@@ -165,15 +168,34 @@
                 <form name="add-form" id="add-form" method="POST" action="{{ url('kitchen/dishtype/store') }}" enctype="multipart/form-data" data-ajax="false">
                         @csrf
                     <div class="modal-body">
+                        <div class="text-center">
+                            <button class="btn btn-success addMores" style="background-color:green;color:white" type="button">Add More Languages</button>
+                        </div>
+                        <br>
+                        <input type="hidden" name="countParam" id="countParams" value="1">
+                        <div class="masterDivs">
+                            <div class="row slaveDivs">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <select name="dishTypeLang[]" class="form-control dishTypeLang" required>
+                                        <option value="" selected disabled>Dish Type Language</option>
+                                        <option value="SWE">SWE</option>
+                                        <option value="ENG">ENG</option>
+                                    </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <input type="text" name="dishTypeName[]" placeholder="Dish Type Name" class="form-control dishTypeName" value="" maxlength="50" required/>
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <button class="btn btn-danger btn-sm pull-right removeMores" style="background-color:maroon;color:white" rel="1" type="button">X</button>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="dish_lang">{{ __('messages.language') }} <span class='mandatory'>*</span>:</label>
-                                    <select name="dish_lang" class="form-control" id="dish_lang" data-rule-required="true">
-                                        <option value="SWE">Swedish</option>
-                                        <option value="ENG">English</option>
-                                    </select>
-                                </div>
                                 <div class="form-group">
                                     <label for="parent_id">{{ __('messages.parentCategory') }}</label>
                                     <select name="parent_id" id="parent_id" class="form-control">
@@ -191,10 +213,6 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="dish_name">{{ __('messages.dishType') }} <span class='mandatory'>*</span>:</label>
-                                    <input type="text" name="dish_name" placeholder="Enter title" class="form-control" id="dish_name" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
-                                </div>
                                  <div class="form-group">
                                     <label for="dish_image">{{ __('messages.dishImage') }}:</label>
                                     <input type="file" name="dish_image" class="" />
@@ -231,15 +249,14 @@
                 <form name="update-form" id="update-form" method="POST" action="{{ url('kitchen/dishtype/update') }}" enctype="multipart/form-data" data-ajax="false">
                         @csrf
                     <div class="modal-body">
+                        <div class="text-center">
+                            <button class="btn btn-success addMore" style="background-color:green;color:white" type="button">Add More Languages</button>
+                        </div>
+                        <br>
+                        <div class="masterDiv"></div>
+                        <input type="hidden" name="countParam" id="countParam" value="1">
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="dish_lang">{{ __('messages.language') }} <span class='mandatory'>*</span>:</label>
-                                    <select name="dish_lang" class="form-control" id="dish_lang" data-rule-required="true">
-                                        <option value="SWE">Swedish</option>
-                                        <option value="ENG">English</option>
-                                    </select>
-                                </div>
                                 <div class="form-group">
                                     <label for="parent_id">{{ __('messages.parentCategory') }}</label>
                                     <select name="parent_id" id="parent_id" class="form-control">
@@ -257,10 +274,6 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="dish_name">{{ __('messages.dishType') }} <span class='mandatory'>*</span>:</label>
-                                    <input type="text" name="dish_name" placeholder="Enter title" class="form-control" id="dish_name" data-rule-required="true" data-msg-required="{{ __('messages.fieldRequired') }}">
-                                </div>
                                 <div class="form-group">
                                     <label for="dish_image">{{ __('messages.dishImage') }}:</label>
                                     <input type="file" name="dish_image" class="form-control" />
@@ -294,6 +307,64 @@
         $("#update-form").validate();
     });
 
+    $('body').on('click', '.addMores', function(){
+        $('.masterDivs').append('<div class="row slaveDivs"><div class="col-md-6"><div class="form-group"><select name="dishTypeLang[]" class="form-control dishTypeLang" required><option value="" selected disabled>Dish Type Language</option><option value="SWE">SWE</option><option value="ENG">ENG</option></select></div></div><div class="col-md-5"><div class="form-group"><input type="text" name="dishTypeName[]" placeholder="Dish Type Name" class="form-control dishTypeName" value="" maxlength="50" required/></div></div><div class="col-md-1"><button class="btn btn-danger btn-sm pull-right removeMores" style="background-color:maroon;color:white" rel="1" type="button">X</button></div></div>');
+        var countParam = countSets();
+        $('#countParams').val(countParam);
+    });
+
+    $('body').on('click', '.removeMores', function(){
+        var rel = $(this).attr('rel');
+        $('#slaveDivs'+rel).remove();
+        var countParam = countSets();
+        $('#countParams').val(countParam);
+    });
+
+    $('body').on('click', '.addMore', function(){
+        $('.masterDiv').append('<div class="row slaveDiv"><div class="col-md-6"><div class="form-group"><select name="dishTypeLang[]" class="form-control dishTypeLang" required><option value="" selected disabled>Dish Type Language</option><option value="SWE">SWE</option><option value="ENG">ENG</option></select></div></div><div class="col-md-5"><div class="form-group"><input type="text" name="dishTypeName[]" placeholder="Dish Type Name" class="form-control dishTypeName" value="" maxlength="50" required/></div></div><div class="col-md-1"><button class="btn btn-danger btn-sm pull-right removeMore" style="background-color:maroon;color:white" rel="1" type="button">X</button></div></div>');
+        var countParam = countSet();
+        $('#countParam').val(countParam);
+    });
+
+    $('body').on('click', '.removeMore', function(){
+        var rel = $(this).attr('rel');
+        $('#slaveDiv'+rel).remove();
+        var countParam = countSet();
+        $('#countParam').val(countParam);
+    });
+
+    function countSets(){
+        var count = 0;
+        $('.masterDivs .slaveDivs').each(function(){
+            ++count;
+            $(this).attr('id', 'slaveDivs'+count);
+            $(this).find('.removeMores').attr('rel', count);
+        });
+        if(count < 2){
+            $('.removeMores').css('display','none');
+        }
+        if(count > 1){
+            $('.removeMores').css('display','block');
+        }
+        return count;
+    }
+
+    function countSet(){
+        var count = 0;
+        $('.masterDiv .slaveDiv').each(function(){
+            ++count;
+            $(this).attr('id', 'slaveDiv'+count);
+            $(this).find('.removeMore').attr('rel', count);
+        });
+        if(count < 2){
+            $('.removeMore').css('display','none');
+        }
+        if(count > 1){
+            $('.removeMore').css('display','block');
+        }
+        return count;
+    }
+
     // extra_dish_type
     $('body').on('click', '.extra_dish_div input', function(){
         if($(this).is(':checked')){
@@ -315,9 +386,10 @@
             url: '{{ url('kitchen/dishtype/get-dish-type') }}/'+id,
             dataType: 'json',
             success: function(response) {
+                console.log(response.countParam);
+                $('#update-form-model .masterDiv').html(response.dishOutput);
+                $('#update-form-model').find('#countParam').val(response.countParam);
                 $('#update-form-model').find('#dish_id').val(response.dishType.dish_id);
-                $('#update-form-model').find('#dish_lang').val(response.dishType.dish_lang);
-                $('#update-form-model').find('#dish_name').val(response.dishType.dish_name);
                 $('#update-form-model').find('#parent_id').val(response.dishType.parent_id);
 
                 if(response.dishType.dish_image){
@@ -326,7 +398,7 @@
                 }
                 $('.append_here').html('');
                 //auto select items 
-                console.log(response.output)
+
                 if(response.output){
                     $('.append_here').html(response.output);
                 }
