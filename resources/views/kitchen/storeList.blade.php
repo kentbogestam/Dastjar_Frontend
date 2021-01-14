@@ -53,10 +53,11 @@
   }
 });
 
-$('body').on('click', '.storeId', function(){
+$('body').on('click touchstart', '.storeId', function(){
     setTimeout(function(){
+        $('.select_store').trigger('touchstart');
         $('.select_store').trigger('click');
-    });
+    },500);
 });
 </script>
    
