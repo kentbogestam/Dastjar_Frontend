@@ -257,11 +257,11 @@ return [
     'deliveryPriceUpdated' => 'Leveranspris updaterat',
     'deliveryPriceDeleted' => 'Leveranspriset raderat',
     'addDeliveryType' => 'Lägg till Leveranstyp',
-    'ruleDeliveryType1' => 'Lägg till Pris för varje Leverans',
-    'ruleDeliveryType2' => 'Lägg till pris för leverans och lägsta beställningsvärde för gratis leverans',
-    'ruleDeliveryType3' => 'Lägg till ordervärde när en hemleverans är möjlig',
-    'ruleDeliveryType4' => 'Lägg till pris för leverans och lägsta beställningsvärde för leverans',
-    'ruleDeliveryType5' => 'Pris baserat på avstånd',
+    'ruleDeliveryType1' => 'Lägg till Pris för Leverans',
+    'ruleDeliveryType2' => 'Gratis leverans om du beställer mer än minsta beställningsvärde!',
+    'ruleDeliveryType3' => 'Hemleverans är möjlig om ordervärdet är högre än det minimiorder värdet',
+    'ruleDeliveryType4' => 'Lägg till det minsta ordervärdet och leverans pris',
+    'ruleDeliveryType5' => 'Avståndsbaserat pris för hemleverans',
 
     // Driver
     'driver' => 'Förare',
@@ -365,7 +365,7 @@ return [
     'iDriverPhone' => 'Numret till den mobil som föraren använder',
 
     // delivery-price-model
-    'iDeliveryType' => "Välj vilken prismodell du ska använda. Du kan välja mellan: <ul><li>Lägg till Pris för varje Leverans<ul><li>Använd en enkel prismodell där varje leverans oberoende av ordervärde har ett och samma pris</li><li>Därefter lägg också till kostnaden för varje enskild leverans</li></ul></li><li>Lägg till ett pris för leverans och lägsta beställningsvärde för gratis leverans<ul><li>Använd en prismodell där varje leverans har ett och samma pris upp till ett Minimum Ordervärde. Därutöver är leveransen gratis.</li><li>Därefter lägg också till kostnaden för enskild leverans</li></ul></li><li>Lägg till ordervärde när en hemleverans är möjlig<ul><li>Välj den här optionen om du bara vill leverera om ordervärdet passerat en viss summa som du anger i Minimum Ordervärde</li></ul></li></ul>",
+    'iDeliveryType' => "Välj vilken prismodell du ska använda. Du kan välja mellan:<ul><li>Lägg till Pris för Leverans<ul><li>Använd en enkel prismodell där varje leverans oberoende av ordervärde har ett och samma pris</li><li>Därefter lägg också till kostnaden för varje enskild leverans</li></ul></li><li>Gratis leverans om du beställer mer än minsta beställningsvärde!<ul><li>Använd en prismodell där varje leverans har ett och samma pris upp till ett Minimum Ordervärde. Därutöver är leveransen gratis.</li><li>Därefter lägg också till kostnaden för enskild leverans</li></ul></li><li>Hemleverans är möjlig om ordervärdet är högre än det minimiorder värdet<ul><li>Välj den här optionen om du bara vill leverera om ordervärdet passerat en viss summa som du anger i Minimum Ordervärde</li></ul></li><li>Lägg till det minsta ordervärdet och leverans pris<ul><li>Den här optionen väljer du om du både vill leverera endast om ordervärdet passerat en viss summa som du anger i Minimum Ordervärde samt ett pris för leveransen</li></ul></li><li>Avståndsbaserat pris för hemleverans<ul><li>Här kan du skapa  ett antal olika priser för olika distanser</li></ul></li></ul>",
 
     // POS printer
     'printerSetup' => 'Skrivarinställningar',

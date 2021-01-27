@@ -255,12 +255,12 @@ return [
     'deliveryPriceCreated' => 'Delivery price created successfully.',
     'deliveryPriceUpdated' => 'Delivery price updated successfully.',
     'deliveryPriceDeleted' => 'Delivery price deleted successfully.',
-    'addDeliveryType' => 'Add Delivery Type',
-    'ruleDeliveryType1' => 'Add Price for each Delivery',
-    'ruleDeliveryType2' => 'Add Price for Delivery and the minimum Order Value for Free Delivery',
-    'ruleDeliveryType3' => 'Add order value when a home delivery is possible',
-    'ruleDeliveryType4' => 'Add Price for Delivery and the minimum Order Value for Delivery',
-    'ruleDeliveryType5' => 'Distance based delivery price',
+    'addDeliveryType'   => 'Add Delivery Type',
+    'ruleDeliveryType1' => 'Add Price for Delivery',
+    'ruleDeliveryType2' => 'Free delivery if you order more than the minimum order value!',
+    'ruleDeliveryType3' => 'Home delivery is possible if the order value is higher than the minimum order value.',
+    'ruleDeliveryType4' => 'Add the minimum order value and delivery price',
+    'ruleDeliveryType5' => 'Distance-based price for home delivery',
 
     // Driver
     'driver' => 'Driver',
@@ -364,7 +364,7 @@ return [
     'iDriverPhone' => 'The number to the mobile used by the driver',
 
     // delivery-price-model
-    'iDeliveryType' => "Select the price rule  you want shall be applied. You can select between: <ul><li>Add Price for each Delivery<ul><li>Have a simple single price to each delivery independent of order value.</li><li>Then do also add the value you want to charge for each delivery under Delivery Charge</li></ul></li><li>Add Price for Delivery and the minimum Order value for Free Delivery<ul><li>Use a single price to each delivery up to a Threshold value, that is the order value without delivery cost, after this the delivery is free.</li><li>Then do also add the value you want to charge for each delivery up to the Threshold under Delivery Charge</li></ul></li><li>Add order value when a home delivery is possible:<ul><li>Select this option if you only do delivery when the order value passas a certain amount. Add this amount in Threshold.</li></ul></li></ul>",
+    'iDeliveryType' => "Select the price rule you want shall be applied. You can select between:<ul><li>Add a Price for Delivery<ul><li>Have a simple single price to each delivery independent of order value.</li><li>Then do also add the value you want to charge for each delivery under Delivery Charge</li></ul></li><li>Free delivery if the customer orders more than the minimum order value!<ul><li>Use a single price to each delivery up to a Threshold value, that is the order value without delivery cost, after this the delivery is free.</li><li>Then do also add the value you want to charge for each delivery up to the Threshold under Delivery Charge</li></ul></li><li>Home delivery is possible if the order value is higher than the minimum order value:<ul><li>Select this option if you only do delivery when the order value passas a certain amount.</li></ul></li><li>Add the minimum order value and delivery price<ul><li>Choose this option when you wants to deliver only when the order value is greater then an amount that you add in minumum order value and you at the same time wants a Delivery Charge</li></ul></li><li>Distance-based price for home delivery<ul><li>You can here create dedicated prices per distance</li></ul></li></ul>",
 
     // POS printer
     'printerSetup' => 'Printer Setup',
