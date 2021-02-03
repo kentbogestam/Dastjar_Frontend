@@ -25,11 +25,11 @@
                     </div>
                     <div class="social-sec">
                         <div class="ui-grid-solo">                          
-                         <input id="mobileNo" type="tel" class="form-control" name="mobileNo" min="0" max="100" value="<?php
+                         <input id="mobileNo" type="text" class="form-control" name="mobileNo" minlength="6" maxlength="15" value="<?php
                           if(isset($_GET['m'])){
                             echo $_GET['m'];
                           }
-                          ?>" required autofocus placeholder="Enter Mobile No.*">
+                          ?>" required autofocus placeholder="Enter Mobile No.*" onkeypress="return isNumberKey(event)">
                         </div>
                     </div>
                     <div class="ui-grid-solo">
@@ -48,30 +48,23 @@
 @section('footer-script')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript">
-        $(document).ready(function(){          
-          $(".mobile_otp_btn").on("click", function(){
-                var mobNum = $('#mobileNo').val();
-                var filter = /^\d*(?:\.\d{1,2})?$/;
+       
+          function isNumberKey(evt)
+          {
+              var charCode = (evt.which) ? evt.which : evt.keyCode;
+              if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)){
+                if(charCode == 32 || charCode == 43 || charCode ==45){
+                  return true;
+                }else{
+                  return false;
+                }
+              }
+              return true;
+          }
 
-                  if (filter.test(mobNum)) {
-                    if(mobNum.length==9 || mobNum.length==10){
-                          document.getElementById('form11').submit();
-                          return true;
-                     } else {
-                        alert('Please put 9 or 10 digit mobile number');
-                       $("#folio-invalid").removeClass("hidden");
-                       $("#mobile-valid").addClass("hidden");
-                        return false;
-                      }
-                    }
-                    else {
-                      alert('Not a valid number');
-                      $("#folio-invalid").removeClass("hidden");
-                      $("#mobile-valid").addClass("hidden");
-                      return false;
-                   }            
+          $(".mobile_otp_btn").on("click", function(){
+            var mobNum = $('#mobileNo').val();
+            document.getElementById('form11').submit();            
           });
-          
-       });
     </script>
 @endsection
